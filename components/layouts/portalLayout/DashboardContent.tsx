@@ -42,7 +42,7 @@ export default function DashboardContent() {
       }
     }).catch(console.error);
 
-    getActiveBookingAPI('ACCEPTED', 1, 5).then(res => {
+    getActiveBookingAPI('ACCEPTED', 1, 4).then(res => {
       if (res?.data?.bookings) {
         setActiveBookings(res.data.bookings);
       }

@@ -49,6 +49,7 @@ export default function BookingsContent() {
   const [activeBookings, setActiveBookings] = useState<any[]>([]);
   const [activePage, setActivePage] = useState(1);
   const [activeTotalPages, setActiveTotalPages] = useState(1);
+  const [isFetchingBookings, setIsFetchingBookings] = useState(true);
   const statuses = ['Accepted', 'Enroute', 'Arrived', 'Ongoing', 'Completed'];
 
   const [otpModalOpen, setOtpModalOpen] = useState(false);
@@ -226,6 +227,7 @@ export default function BookingsContent() {
       showLoader(`Updating status to ${newStatus}...`);
       await updateBookingStatusAPI(updatingJobId, newStatus.toUpperCase());
       setActiveBookings((prev) => prev.map(job => (job.originalData?.id || job.id) === updatingJobId ? { ...job, status: newStatus.toUpperCase() } : job));
+      setIsFetchingBookings(true);
       setActiveStatus(newStatus);
       showSnackbar(`Booking status updated to ${newStatus}`, 'success');
     } catch (error) {
@@ -308,10 +310,13 @@ export default function BookingsContent() {
 
   useEffect(() => {
     if (!isClient) return;
+    let isMounted = true;
 
     const fetchAvailableBookings = async () => {
+      setIsFetchingBookings(true);
       try {
         const response = await getAvailableBookingsAPI();
+        if (!isMounted) return;
         if (response?.data?.bookings) {
           const getPriceDisplay = (booking: any) => {
             if (booking.purohitPayoutAmount && Number(booking.purohitPayoutAmount) > 0) return `₹${booking.purohitPayoutAmount}`;
@@ -339,12 +344,16 @@ export default function BookingsContent() {
         }
       } catch (error) {
         console.error("Error fetching available bookings:", error);
+      } finally {
+        if (isMounted) setIsFetchingBookings(false);
       }
     };
 
     const fetchActiveBookings = async () => {
+      setIsFetchingBookings(true);
       try {
         const response = await getActiveBookingAPI(activeStatus, activePage, 10);
+        if (!isMounted) return;
         if (response?.data?.bookings) {
           const getPriceDisplay = (booking: any) => {
             if (booking.purohitPayoutAmount && Number(booking.purohitPayoutAmount) > 0) return `₹${booking.purohitPayoutAmount}`;
@@ -365,7 +374,7 @@ export default function BookingsContent() {
             distance: 'N/A',
             duration: booking.service?.durationMinutes ? `${booking.service.durationMinutes} Mins` : 'N/A',
             price: getPriceDisplay(booking),
-            status: booking.status,
+            status: activeStatus.toUpperCase(),
             originalData: booking
           }));
           setActiveBookings(mappedBookings);
@@ -373,6 +382,8 @@ export default function BookingsContent() {
         }
       } catch (error) {
         console.error("Error fetching active bookings:", error);
+      } finally {
+        if (isMounted) setIsFetchingBookings(false);
       }
     };
 
@@ -381,6 +392,10 @@ export default function BookingsContent() {
     } else if (tabValue === 1) {
       fetchActiveBookings();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [tabValue, isClient, activeStatus, activePage, refreshTrigger]);
 
   return (
@@ -418,7 +433,13 @@ export default function BookingsContent() {
           
           {/* --- TAB 0: New Requests --- */}
           <CustomTabPanel value={tabValue} index={0}>
-            {newRequests.length === 0 ? (
+            {isFetchingBookings ? (
+              <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px solid #eee' }}>
+                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
+                  Loading new requests...
+                </Typography>
+              </Paper>
+            ) : newRequests.length === 0 ? (
               <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
                 <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
                   No new bookings available at the moment.
@@ -482,7 +503,7 @@ export default function BookingsContent() {
                   key={status}
                   label={status}
                   clickable
-                  onClick={() => { setActiveStatus(status); setActivePage(1); }}
+                  onClick={() => { setIsFetchingBookings(true); setActiveStatus(status); setActivePage(1); }}
                   sx={{
                     fontFamily: 'var(--font-outfit), sans-serif',
                     fontWeight: 600,
@@ -499,7 +520,13 @@ export default function BookingsContent() {
               ))}
             </Box>
 
-            {activeBookings.filter(job => job.status?.toUpperCase() === activeStatus.toUpperCase()).length === 0 ? (
+            {isFetchingBookings ? (
+              <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px solid #eee' }}>
+                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
+                  Loading bookings...
+                </Typography>
+              </Paper>
+            ) : activeBookings.filter(job => job.status?.toUpperCase() === activeStatus.toUpperCase()).length === 0 ? (
               <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
                 <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
                   No active bookings found.

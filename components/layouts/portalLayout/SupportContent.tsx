@@ -24,7 +24,7 @@ import {
   Chip,
   CircularProgress,
   Grid,
-  Pagination
+  TablePagination
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -232,17 +232,19 @@ function ComplaintsTable() {
             </Box>
 
             {totalItems > 0 && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', p: 3, borderTop: '1px solid #e2e8f0' }}>
-                <Pagination
-                  count={Math.ceil(totalItems / limit)}
-                  page={page}
-                  onChange={(e, v) => setPage(v)}
-                  sx={{ 
-                    '& .MuiPaginationItem-root': { fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600 },
-                    '& .Mui-selected': { bgcolor: '#FF6200 !important', color: 'white' }
-                  }}
-                />
-              </Box>
+              <TablePagination
+                component="div"
+                count={totalItems}
+                page={page - 1}
+                onPageChange={(event, newPage) => setPage(newPage + 1)}
+                rowsPerPage={limit}
+                onRowsPerPageChange={(event) => {
+                  setLimit(parseInt(event.target.value, 10));
+                  setPage(1);
+                }}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                sx={{ borderTop: '1px solid #e2e8f0', p: 1 }}
+              />
             )}
           </>
         ) : (

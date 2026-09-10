@@ -1,4 +1,4 @@
-import { ServiceCategoryType } from './enum';
+export type ServiceCategoryType = 'PUJA' | 'ASTROLOGY' | 'RITUAL' | 'OTHER' | string;
 
 export interface IPurohit {
   id: number;

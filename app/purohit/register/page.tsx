@@ -1,8 +1,19 @@
 import { Metadata } from 'next';
 import PortalRegisterContent from '@/components/layouts/portalLayout/PortalRegisterContent';
 
+import { Suspense } from 'react';
+import { Box, CircularProgress } from '@mui/material';
+
 export default function RegisterPage() {
-  return <PortalRegisterContent />;
+  return (
+    <Suspense fallback={
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress sx={{ color: '#FF6200' }} />
+      </Box>
+    }>
+      <PortalRegisterContent />
+    </Suspense>
+  );
 }
 
 export const metadata: Metadata = {

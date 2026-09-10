@@ -172,6 +172,11 @@ export default function AdminLoginForm() {
                 background: '#F05A00', 
                 borderColor: '#F05A00',
                 boxShadow: '0 4px 14px rgba(255, 98, 0, 0.4)' 
+              },
+              '&.Mui-disabled': {
+                background: 'rgba(255, 98, 0, 0.6)',
+                borderColor: 'rgba(255, 98, 0, 0.0)',
+                color: '#fff',
               }
             }}
           >

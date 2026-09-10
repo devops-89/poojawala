@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description: 'Manage all service bookings, view details, and handle assignments.',
 };
 
+import { Suspense } from 'react';
+import { Box, CircularProgress } from '@mui/material';
+
 export default function AdminBookingsPage() {
-  return <AdminBookingsContent />;
+  return (
+    <Suspense fallback={
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress sx={{ color: '#FF6200' }} />
+      </Box>
+    }>
+      <AdminBookingsContent />
+    </Suspense>
+  );
 }

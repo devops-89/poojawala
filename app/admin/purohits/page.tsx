@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description: 'Manage and onboard purohits for Poojawala.',
 };
 
+import { Suspense } from 'react';
+import { Box, CircularProgress } from '@mui/material';
+
 export default function PurohitsPage() {
-  return <AdminPurohitsContent />;
+  return (
+    <Suspense fallback={
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress sx={{ color: '#FF6200' }} />
+      </Box>
+    }>
+      <AdminPurohitsContent />
+    </Suspense>
+  );
 }
