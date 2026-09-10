@@ -32,7 +32,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { getComplaintByIdAPI, getComplaintsAPI } from '@/api/bookingControllers';
-import RaiseTicketModal from '@/components/widgets/RaiseTicketModal';
+import { useTicketModalStore } from '@/stores/ticketModalStore';
 
 export enum COMPLAINT_STATUS {
   OPEN = 'OPEN',
@@ -75,7 +75,7 @@ const getChipStatusColor = (status: string) => {
 };
 
 export default function CustomerSupportContent() {
-  const [ticketModalOpen, setTicketModalOpen] = useState(false);
+  const { openModal } = useTicketModalStore();
 
   const [complaints, setComplaints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -139,11 +139,6 @@ export default function CustomerSupportContent() {
     setPage(value);
   };
 
-  const handleTicketModalClose = () => {
-    setTicketModalOpen(false);
-    fetchComplaints(); // Refresh tickets after creating one
-  };
-
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
@@ -157,7 +152,7 @@ export default function CustomerSupportContent() {
         </Box>
         <Box 
           component="button"
-          onClick={() => setTicketModalOpen(true)}
+          onClick={() => openModal(0, undefined, fetchComplaints)}
           sx={{ 
             display: 'inline-flex',
             alignItems: 'center',
@@ -370,13 +365,6 @@ export default function CustomerSupportContent() {
           ))}
         </Box>
       </Box>
-
-      {/* Raise Ticket Modal */}
-      <RaiseTicketModal 
-        open={ticketModalOpen} 
-        onClose={handleTicketModalClose} 
-        bookingId={0} 
-      />
 
       {/* Complaint Details Dialog */}
       <Dialog 

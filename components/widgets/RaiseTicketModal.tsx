@@ -18,13 +18,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { addComplaintAPI } from '@/api/bookingControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
-
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  bookingId: string | number;
-  linkedPaymentId?: string | number;
-}
+import { useTicketModalStore } from '@/stores/ticketModalStore';
 
 const CATEGORIES = [
   { value: 'SERVICE_NOT_PROVIDED', label: 'Service Not Provided' },
@@ -38,7 +32,8 @@ const CATEGORIES = [
   { value: 'OTHER', label: 'Other' },
 ];
 
-export default function RaiseTicketModal({ open, onClose, bookingId, linkedPaymentId }: Props) {
+export default function RaiseTicketModal() {
+  const { isOpen: open, closeModal: onClose, bookingId, linkedPaymentId, onSuccess } = useTicketModalStore();
   const [category, setCategory] = useState('');
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
@@ -89,6 +84,7 @@ export default function RaiseTicketModal({ open, onClose, bookingId, linkedPayme
         setDescription('');
         setEvidence([]);
         
+        if (onSuccess) onSuccess();
         onClose();
       } else {
         showSnackbar(res.message || 'Failed to raise ticket', 'error');

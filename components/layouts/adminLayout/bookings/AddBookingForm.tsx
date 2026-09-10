@@ -12,6 +12,7 @@ import * as Yup from 'yup';
 
 import { useEffect, useState } from 'react';
 import { getCustomersListAPI, createCustomerByAdminAPI, getAvailablePurohitsForBookingAPI } from '@/api/userControllers';
+import { getServicesAPI } from '@/api/serviceControllers';
 import { createBookingByAdminAPI } from '@/api/bookingControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
@@ -68,6 +69,7 @@ export default function AddBookingForm() {
   const { showSnackbar } = useSnackbarStore();
   const [customers, setCustomers] = useState<any[]>([]);
   const [purohits, setPurohits] = useState<any[]>([]);
+  const [allServices, setAllServices] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
@@ -80,7 +82,10 @@ export default function AddBookingForm() {
       const fetchData = async () => {
         try {
           const custRes = await getCustomersListAPI(1, 100, customerSearchText, 'ACTIVE');
-          if (custRes.success) setCustomers(custRes.data?.data || []);
+          if (custRes.success) {
+            const list = Array.isArray(custRes.data?.data) ? custRes.data.data : Array.isArray(custRes.data) ? custRes.data : Array.isArray(custRes.users) ? custRes.users : [];
+            setCustomers(list);
+          }
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -89,6 +94,21 @@ export default function AddBookingForm() {
     }, 500);
     return () => clearTimeout(timer);
   }, [customerSearchText]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await getServicesAPI(1, 100, '', undefined, undefined, undefined, true);
+        if (res.success) {
+          const list = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+          setAllServices(list);
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+    fetchServices();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -149,13 +169,16 @@ export default function AddBookingForm() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const fetchPurohits = async () => {
-        if (values.customerId && values.bookingMode) {
+        if (values.customerId && values.bookingMode && values.serviceId) {
           const selectedCustomer = customers.find(c => c.id === Number(values.customerId));
           const defaultAddress = selectedCustomer?.addresses?.find((a: any) => a.isDefault) || selectedCustomer?.addresses?.[0];
           const city = defaultAddress?.city || selectedCustomer?.city || values.newCustomerCity || '';
           try {
-            const purRes = await getAvailablePurohitsForBookingAPI(city, values.bookingMode, purohitSearchText);
-            if (purRes.success) setPurohits(purRes.data?.data || []);
+            const purRes = await getAvailablePurohitsForBookingAPI(city, values.bookingMode, purohitSearchText, values.serviceId);
+            if (purRes.success) {
+              const list = Array.isArray(purRes.data?.data) ? purRes.data.data : Array.isArray(purRes.data) ? purRes.data : Array.isArray(purRes.purohits) ? purRes.purohits : [];
+              setPurohits(list);
+            }
           } catch (error) {
             console.error('Error fetching purohits:', error);
           }
@@ -166,7 +189,7 @@ export default function AddBookingForm() {
       fetchPurohits();
     }, 500);
     return () => clearTimeout(timer);
-  }, [values.customerId, values.bookingMode, customers, purohitSearchText]);
+  }, [values.customerId, values.bookingMode, customers, purohitSearchText, values.serviceId]);
 
   const handleCreateCustomer = async () => {
     const { newCustomerName, newCustomerMobile, newCustomerEmail, newCustomerAddress, newCustomerCity, newCustomerPassword } = values;
@@ -260,6 +283,7 @@ export default function AddBookingForm() {
                   options={customers}
                   getOptionLabel={(option) => `${option.firstName} ${option.lastName || ''} (${option.phone || option.email})`}
                   value={customers.find(c => c.id === Number(values.customerId)) || null}
+                  filterOptions={(x) => x}
                   onInputChange={(_, newInputValue, reason) => {
                     if (reason === 'input' || reason === 'clear') {
                       setCustomerSearchText(newInputValue);
@@ -272,7 +296,7 @@ export default function AddBookingForm() {
                     <TextField 
                       {...params}
                       variant="outlined"
-                      placeholder="Search customer by name or phone"
+                      placeholder="Search customer by name, email or phone"
                       error={touched.customerId && Boolean(errors.customerId)}
                       helperText={touched.customerId ? (errors.customerId as string) : undefined}
                       sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
@@ -399,44 +423,13 @@ export default function AddBookingForm() {
               </TextField>
             </Grid>
 
-            {/* Field 3: Select Purohit */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, mb: 1, color: '#1e293b' }}>Select Purohit</Typography>
-              <Autocomplete
-                options={purohits}
-                disabled={!values.bookingMode || !values.customerId}
-                getOptionLabel={(option) => `${option.firstName} ${option.lastName || ''} (${option.phone || option.email})`}
-                value={purohits.find(p => p.id === Number(values.purohitId)) || null}
-                onInputChange={(_, newInputValue, reason) => {
-                  if (reason === 'input' || reason === 'clear') {
-                    setPurohitSearchText(newInputValue);
-                  }
-                }}
-                onChange={(_, newValue) => {
-                  setFieldValue('purohitId', newValue ? newValue.id : '');
-                  setFieldValue('serviceId', ''); // Cascade reset
-                }}
-                renderInput={(params) => (
-                  <TextField 
-                    {...params}
-                    variant="outlined"
-                    placeholder={(!values.bookingMode || !values.customerId) ? "Select Customer & Booking Mode first" : "Search purohit by name"}
-                    error={touched.purohitId && Boolean(errors.purohitId)}
-                    helperText={touched.purohitId ? (errors.purohitId as string) : undefined}
-                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-                  />
-                )}
-              />
-            </Grid>
-
-            {/* Field 4: Select Service */}
+            {/* Field 3: Select Service */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, mb: 1, color: '#1e293b' }}>Select Service</Typography>
               <TextField 
                 fullWidth select name="serviceId" variant="outlined" 
                 value={values.serviceId} onChange={handleChange} onBlur={handleBlur}
-                disabled={!values.purohitId}
-                error={touched.serviceId && Boolean(errors.serviceId)} helperText={touched.serviceId && errors.serviceId}
+                error={touched.serviceId && Boolean(errors.serviceId)} helperText={touched.serviceId && (errors.serviceId as string)}
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
                 slotProps={{
                   select: {
@@ -448,17 +441,43 @@ export default function AddBookingForm() {
                   }
                 }}
               >
-                {values.purohitId && availableServices.length === 0 && (
-                  <MenuItem disabled value="" sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}>No services available for this Purohit</MenuItem>
+                {allServices.length === 0 && (
+                  <MenuItem disabled value="" sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}>Loading services...</MenuItem>
                 )}
-                {availableServices.map((ps: any) => {
-                  const s = ps.service;
-                  if (!s) return null;
-                  return (
-                    <MenuItem key={s.id} value={s.id} sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}>{s.name}</MenuItem>
-                  );
-                })}
+                {allServices.map((s: any) => (
+                  <MenuItem key={s.id} value={s.id} sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}>{s.name}</MenuItem>
+                ))}
               </TextField>
+            </Grid>
+
+            {/* Field 4: Select Purohit */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, mb: 1, color: '#1e293b' }}>Select Purohit</Typography>
+              <Autocomplete
+                options={purohits}
+                disabled={!values.bookingMode || !values.customerId || !values.serviceId}
+                getOptionLabel={(option) => `${option.firstName} ${option.lastName || ''} (${option.phone || option.email})`}
+                value={purohits.find(p => p.id === Number(values.purohitId)) || null}
+                filterOptions={(x) => x}
+                onInputChange={(_, newInputValue, reason) => {
+                  if (reason === 'input' || reason === 'clear') {
+                    setPurohitSearchText(newInputValue);
+                  }
+                }}
+                onChange={(_, newValue) => {
+                  setFieldValue('purohitId', newValue ? newValue.id : '');
+                }}
+                renderInput={(params) => (
+                  <TextField 
+                    {...params}
+                    variant="outlined"
+                    placeholder={(!values.bookingMode || !values.customerId || !values.serviceId) ? "Select Customer, Mode & Service first" : "Search purohit by name, email or phone"}
+                    error={touched.purohitId && Boolean(errors.purohitId)}
+                    helperText={touched.purohitId ? (errors.purohitId as string) : undefined}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                  />
+                )}
+              />
             </Grid>
 
             {/* Field 5: Booking Date & Time */}

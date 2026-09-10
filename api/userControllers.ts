@@ -126,7 +126,7 @@ export const getCustomersListAPI = async (
   }
 };
 
-export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMode: string, search?: string) => {
+export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMode: string, search?: string, serviceId?: string | number) => {
   try {
     const params = new URLSearchParams();
     params.append('role', 'PUROHIT');
@@ -135,6 +135,9 @@ export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMod
     params.append('limit', '100');
     
     if (search) params.append('search', search);
+    if (serviceId && !isNaN(Number(serviceId))) {
+      params.append('serviceId', String(Number(serviceId)));
+    }
 
     if (bookingMode === 'ONLINE') {
       params.append('isOnlineAvailable', 'true');

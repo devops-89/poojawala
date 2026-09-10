@@ -77,7 +77,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
 
   return (
     <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', p: 2, '&::-webkit-scrollbar': { display: 'none' }, msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
         <List sx={{ p: 0, '& .MuiListItemButton-root': { mb: 0.5, borderRadius: '12px' } }}>
           {menuItems.map((item: any) => {
             const hasChildren = !!item.children && item.children.length > 0;

@@ -87,8 +87,8 @@ export default function EditServiceForm() {
         formData.append('maxPrice', String(values.maxPrice));
         formData.append('commissionPercentage', String(values.commissionPercentage));
         formData.append('durationMinutes', String(values.durationMinutes));
-        formData.append('requiresVenue', String(values.requiresVenue));
-        formData.append('isUpcomingFestival', String(values.isUpcomingFestival));
+        formData.append('requiresVenue', values.requiresVenue ? 'true' : 'false');
+        formData.append('isUpcomingFestival', values.isUpcomingFestival ? 'true' : 'false');
         if (values.isUpcomingFestival) {
           formData.append('festivalStartDate', new Date(values.festivalStartDate).toISOString());
           formData.append('festivalEndDate', new Date(values.festivalEndDate).toISOString());

@@ -248,8 +248,8 @@ export default function BookingsContent() {
     setIsCancelling(true);
     try {
       await cancelBookingAPI(updatingJobId, cancelReason);
-      setActiveBookings((prev) => prev.map(job => (job.originalData?.id || job.id) === updatingJobId ? { ...job, status: 'CANCELLED' } : job));
-      setActiveStatus('Cancelled');
+      setActiveBookings((prev) => prev.filter(job => (job.originalData?.id || job.id) !== updatingJobId));
+      useSocketStore.getState().triggerRefresh();
       showSnackbar('Booking cancelled successfully', 'success');
       setCancelModalOpen(false);
       setCancelReason('');

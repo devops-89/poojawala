@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Typography, Paper, TextField, InputAdornment, Button, Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Chip, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, TablePagination, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, TextField, InputAdornment, Button, Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Chip, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, TablePagination, CircularProgress, Autocomplete } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -343,44 +343,43 @@ export default function AdminBookingsContent() {
         <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>Assign Purohit</DialogTitle>
         <DialogContent sx={{ mt: 1, overflow: 'visible' }}>
           <FormControl fullWidth size="small" sx={{ mt: 1 }}>
-            <InputLabel sx={{ fontFamily: 'var(--font-outfit), sans-serif', '&.Mui-focused': { color: '#FF6200' } }}>Select Purohit</InputLabel>
-            <Select
-              value={selectedPurohit}
-              label="Select Purohit"
-              onChange={(e) => setSelectedPurohit(e.target.value)}
-              sx={{ 
-                fontFamily: 'var(--font-outfit), sans-serif', 
-                borderRadius: '8px',
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#FF6200',
-                }
-              }}
-            >
-              {purohitsList.map((u: any) => {
-                const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.username;
-                const purohitProfile = u.purohitProfile || u.profile || u.purohit;
-                const purohitId = purohitProfile?.id;
+            <Autocomplete
+              options={purohitsList.filter((u: any) => {
+                const purohitId = u.purohitProfile?.id || u.profile?.id || u.purohit?.id;
+                if (!purohitId) return false;
                 
-                // Only list valid purohits that have an ID
-                if (!purohitId) return null;
-
                 const selectedBooking = assignTarget ? bookings.find(b => b.id === assignTarget) : null;
                 const selectedServiceId = selectedBooking?.service?.id || selectedBooking?.serviceId;
-
-                // Filter by service if selectedServiceId is present
+                
                 if (selectedServiceId) {
-                  const services = purohitProfile?.purohitServices || [];
+                  const services = u.purohitProfile?.purohitServices || u.profile?.purohitServices || u.purohit?.purohitServices || [];
                   const hasService = services.some((s: any) => s.serviceId === selectedServiceId || s.service?.id === selectedServiceId);
-                  if (!hasService) return null;
+                  if (!hasService) return false;
                 }
-
-                return (
-                  <MenuItem key={u.id} value={purohitId} sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
-                    {name} ({u.profile?.city || u.purohitProfile?.city || 'N/A'})
-                  </MenuItem>
-                );
+                return true;
               })}
-            </Select>
+              getOptionLabel={(u: any) => {
+                const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.username;
+                return `${name} (${u.profile?.city || u.purohitProfile?.city || 'N/A'})`;
+              }}
+              value={purohitsList.find((u: any) => (u.purohitProfile?.id || u.profile?.id || u.purohit?.id) === selectedPurohit) || null}
+              onChange={(_, newValue) => {
+                setSelectedPurohit(newValue ? (newValue.purohitProfile?.id || newValue.profile?.id || newValue.purohit?.id) : '');
+              }}
+              renderInput={(params) => (
+                <TextField 
+                  {...params} 
+                  label="Select Purohit" 
+                  variant="outlined"
+                  placeholder="Search purohit by name, email or phone"
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { borderRadius: '8px' },
+                    '& label.Mui-focused': { color: '#FF6200' },
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FF6200' }
+                  }}
+                />
+              )}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>

@@ -1,7 +1,7 @@
 'use client';
 import { cancelBookingAPI, getBookingDetailsAPI, rescheduleBookingAPI } from '@/api/bookingControllers';
 import { getPaymentLinkAPI } from '@/api/paymentControllers';
-import RaiseTicketModal from '@/components/widgets/RaiseTicketModal';
+import { useTicketModalStore } from '@/stores/ticketModalStore';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Breadcrumbs, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from '@mui/material';
@@ -138,7 +138,7 @@ export default function CustomerBookingDetailsContent({ bookingId }: { bookingId
     }
   };
 
-  const [isRaiseTicketModalOpen, setIsRaiseTicketModalOpen] = useState(false);
+  const { openModal } = useTicketModalStore();
 
   const formattedDate = useMemo(() => {
     if (booking?.scheduledAtIst) return booking.scheduledAtIst;
@@ -225,7 +225,7 @@ export default function CustomerBookingDetailsContent({ bookingId }: { bookingId
           isActive={isActive}
           onCancelClick={() => setCancelModalOpen(true)}
           onRescheduleClick={() => setRescheduleModalOpen(true)}
-          onRaiseTicketClick={() => setIsRaiseTicketModalOpen(true)}
+          onRaiseTicketClick={() => openModal(bookingId)}
           onCompletePaymentClick={handleCompletePayment}
           isRedirectingPayment={isRedirectingPayment}
         />
@@ -341,13 +341,6 @@ export default function CustomerBookingDetailsContent({ bookingId }: { bookingId
           </Box>
         </DialogActions>
       </Dialog>
-
-      {/* Raise Ticket Modal */}
-      <RaiseTicketModal 
-        open={isRaiseTicketModalOpen} 
-        onClose={() => setIsRaiseTicketModalOpen(false)} 
-        bookingId={bookingId} 
-      />
     </Box>
   );
 }
