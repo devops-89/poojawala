@@ -10,14 +10,14 @@ const festivals = [
     title: 'Navratri Special',
     date: 'Oct 11 - Oct 12',
     description: 'Book Early & Get 15% OFF',
-    image: '/images/home/navratri.png'
+    image: '/images/home/navratri.webp'
   },
   {
     id: 2,
     title: 'Ganesh Chaturthi',
     date: '14 Sept 2026',
     description: 'Book Early & Get 15% OFF',
-    image: '/images/home/ganeshChaturthi.png'
+    image: '/images/home/ganeshChaturthi.webp'
   }
 ];
 
@@ -41,7 +41,7 @@ export default function UpcomingFestivals() {
               title: item.name,
               date: dateString,
               description: item.description || '',
-              image: item.iconDownloadurl || item.iconUrl || '/images/home/navratri.png'
+              image: item.iconDownloadurl || item.iconUrl || '/images/home/navratri.webp'
             };
           });
           setFestivalsData(apiFestivals.length > 0 ? apiFestivals : festivals);
@@ -71,7 +71,7 @@ export default function UpcomingFestivals() {
           transform: 'translateY(-50%)',
           width: '559px',
           height: '559px',
-          backgroundImage: 'url(/images/home/chakra.png)',
+          backgroundImage: 'url(/images/home/chakra.webp)',
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           zIndex: 0,
@@ -88,7 +88,7 @@ export default function UpcomingFestivals() {
           transform: 'translateY(-50%)',
           width: '559px',
           height: '559px',
-          backgroundImage: 'url(/images/home/chakraright.png)',
+          backgroundImage: 'url(/images/home/chakraright.webp)',
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'right center',
@@ -101,13 +101,13 @@ export default function UpcomingFestivals() {
       <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header Section */}
         <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h2" component="h2" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: '48px', lineHeight: '62px', color: '#141414', mb: '9px' }}>
+          <Typography variant="h2" component="h2" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: { xs: '28px', sm: '36px', md: '48px' }, lineHeight: { xs: '36px', md: '62px' }, color: '#141414', mb: '9px' }}>
             Upcoming Festivals and Offers
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box 
               component="img"
-              src="/images/home/poojaPackages/dhanush.png"
+              src="/images/home/poojaPackages/dhanush.webp"
               alt="Decorative Arch"
               sx={{ width: '750px', height: '47px', maxWidth: '100%', objectFit: 'contain' }}
             />
@@ -127,8 +127,8 @@ export default function UpcomingFestivals() {
               sx={{
                 width: { xs: '100%', md: 'calc(50% - 21px)' },
                 maxWidth: '558px',
-                height: '322px',
-                borderRadius: '42px',
+                height: { xs: '260px', sm: '322px' },
+                borderRadius: { xs: '24px', md: '42px' },
                 backgroundImage: `url(${fest.image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -136,7 +136,7 @@ export default function UpcomingFestivals() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding: '48px 26px 36px 26px',
+                padding: { xs: '30px 20px 24px', md: '48px 26px 36px 26px' },
                 boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -149,12 +149,12 @@ export default function UpcomingFestivals() {
                   bottom: 0,
                   background: 'linear-gradient(90deg, #261500 0%, rgba(38,21,0,0.6) 55%, transparent 100%)',
                   zIndex: 1,
-                  borderRadius: '42px',
+                  borderRadius: { xs: '24px', md: '42px' },
                 }
               }}
             >
               <Box sx={{ position: 'relative', zIndex: 2 }}>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '32px', lineHeight: '130.6%', color: '#fff', mb: '6px' }}>
+                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: { xs: '24px', md: '32px' }, lineHeight: '130.6%', color: '#fff', mb: '6px' }}>
                   {fest.title}
                 </Typography>
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 400, fontSize: '20px', lineHeight: '130.6%', color: 'rgba(255,255,255,0.8)', fontStyle: 'italic', mb: '15px' }}>
@@ -162,7 +162,7 @@ export default function UpcomingFestivals() {
                 </Typography>
                 <Box 
                   component="img" 
-                  src="/images/home/cardline.png" 
+                  src="/images/home/cardline.webp" 
                   alt="divider line"
                   sx={{ display: 'block', width: '139px', height: '12px' }}
                 />

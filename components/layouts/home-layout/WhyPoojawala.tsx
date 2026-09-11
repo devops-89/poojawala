@@ -4,7 +4,7 @@ import { Box, Container, Typography } from '@mui/material';
 
 export default function WhyPoojawala() {
   return (
-    <Box sx={{ position: 'relative',overflow: 'hidden', bgcolor: '#ffffff', minHeight: { md: '850px' }, py: { xs: 8, md: 10 }, display: 'flex', alignItems: 'center' ,pb:10}}>
+    <Box sx={{ position: 'relative',overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '850px' }, py: { xs: 8, md: 10 }, display: 'flex', alignItems: 'center' ,pb:10}}>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', maxWidth: '875px', pr: { md: 5 }, display: 'flex', flexDirection: 'column' }}>
           <Typography 
@@ -24,9 +24,9 @@ export default function WhyPoojawala() {
           
           <Box 
             component="img"
-            src="/images/home/whyLine.png"
+            src="/images/home/whyLine.webp"
             alt="Decoration Line"
-            sx={{ width: '390px', height: '34px', mb: '40px' }} 
+            sx={{ width: { xs: '250px', md: '390px' }, height: '34px', mb: '40px' }} 
           />
 
           <Typography 
@@ -73,7 +73,7 @@ export default function WhyPoojawala() {
         {/* Chakra Right */}
         <Box 
           component="img"
-          src="/images/home/chakraright.png"
+          src="/images/home/chakraright.webp"
           alt="Chakra Pattern"
           sx={{
             position: 'absolute',
@@ -89,7 +89,7 @@ export default function WhyPoojawala() {
         {/* Thali Image */}
         <Box 
           component="img"
-          src="/images/home/thali.png"
+          src="/images/home/thali.webp"
           alt="Pooja Thali"
           sx={{
             position: 'absolute',

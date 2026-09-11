@@ -55,7 +55,7 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
           description: s.description || '',
           duration: s.durationMinutes ? `${Math.round(s.durationMinutes/60)} hr` : (s.duration || '1 hr'),
           price: (s.minPrice && s.maxPrice) ? `${s.minPrice} - ${s.maxPrice}` : (s.minPrice?.toString() || s.basePrice?.toString() || s.price?.toString() || '0'),
-          image: s.iconDownloadurl  || '/images/home/poojaPackages/satyanarayan.png',
+          image: s.iconDownloadurl  || '/images/home/poojaPackages/satyanarayan.webp',
           language: s.language || 'all', // Changed to 'all' so language filter doesn't hide it if filter is on
           experience: s.experience || 'all',
           location: s.location || 'all',

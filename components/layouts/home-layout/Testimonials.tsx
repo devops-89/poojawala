@@ -15,7 +15,7 @@ const fallbackTestimonials = [
     text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
     name: 'Neha Sharma',
     location: 'Mumbai',
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
     rating: 5
   },
   {
@@ -23,7 +23,7 @@ const fallbackTestimonials = [
     text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
     name: 'Neha Sharma',
     location: 'Mumbai',
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
     rating: 5
   },
   {
@@ -31,7 +31,7 @@ const fallbackTestimonials = [
     text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
     name: 'Neha Sharma',
     location: 'Mumbai',
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
     rating: 5
   },
   {
@@ -39,7 +39,7 @@ const fallbackTestimonials = [
     text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
     name: 'Neha Sharma',
     location: 'Mumbai',
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
     rating: 5
   }
 ];
@@ -58,7 +58,7 @@ export default function Testimonials() {
             text: `"${item.customerReview}"`,
             name: `${item.customer?.firstName || ''} ${item.customer?.lastName || ''}`.trim() || 'Anonymous',
             location: item.purohit?.city || 'India',
-            image: item.customer?.profileImage || '/images/home/usericon.png',
+            image: item.customer?.profileImage || '/images/home/usericon.webp',
             rating: Math.round(parseFloat(item.customerRating || '5'))
           }));
           setReviews(apiReviews.length > 0 ? apiReviews : fallbackTestimonials);
@@ -89,7 +89,7 @@ export default function Testimonials() {
             sx={{ 
               fontFamily: '"DM Sans", sans-serif', 
               fontWeight: 700, 
-              fontSize: '48px', 
+              fontSize: { xs: '28px', sm: '36px', md: '48px' }, 
               color: '#C82E2E', 
               mb: '15px' 
             }}
@@ -100,7 +100,7 @@ export default function Testimonials() {
             sx={{ 
               fontFamily: '"DM Sans", sans-serif', 
               fontWeight: 500, 
-              fontSize: '24px',
+              fontSize: { xs: '16px', md: '24px' },
               lineHeight: '130.6%', 
               color: '#141414' 
             }}
@@ -150,18 +150,19 @@ export default function Testimonials() {
             spaceBetween={32}
             pagination={{ clickable: true }}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
-            style={{ width: '100%', maxWidth: '1152px', overflow: 'visible', margin: '0 auto' }}
+            style={{ width: '100%', maxWidth: '1152px', overflow: 'visible', margin: '0 auto', paddingLeft: '16px', paddingRight: '16px', boxSizing: 'border-box' }}
           >
             {displayReviews.map((review, index) => (
-              <SwiperSlide key={`${review.id}-${index}`} style={{ width: '560px', boxSizing: 'border-box' }}>
+              <SwiperSlide key={`${review.id}-${index}`} style={{ width: '100%', maxWidth: '560px', minWidth: '280px', boxSizing: 'border-box' }}>
                 <Box
                   sx={{
                     width: '100%',
-                    height: '280px',
+                    height: { xs: 'auto', md: '280px' },
+                    minHeight: '240px',
                     bgcolor: '#ffffff',
                     border: '1.26px solid rgba(20, 20, 20, 0.15)',
                     borderRadius: '39.1px',
-                    padding: '43px 33px 35px 33px',
+                    padding: { xs: '28px 20px 24px', md: '43px 33px 35px 33px' },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -178,7 +179,7 @@ export default function Testimonials() {
                     sx={{ 
                       fontFamily: '"DM Sans", sans-serif',
                       fontWeight: 400,
-                      fontSize: '20px',
+                      fontSize: { xs: '16px', md: '20px' },
                       color: '#141414',
                       lineHeight: '130.6%',
                       flexGrow: 1,
@@ -192,7 +193,7 @@ export default function Testimonials() {
                     <Avatar 
                       src={review.image} 
                       alt={review.name}
-                      sx={{ width: '69px', height: '69px' }}
+                      sx={{ width: { xs: '50px', md: '69px' }, height: { xs: '50px', md: '69px' } }}
                     />
                     <Box>
                       <Typography 

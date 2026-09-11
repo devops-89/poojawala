@@ -74,7 +74,7 @@ export default function PurohitGrid() {
           return {
             id: p.userId || p.id,
             title: `${p.purohitFirstName || ''} ${p.lastName || ''}`.trim() || p.username || 'Purohit',
-            image: p.profileImage || '/images/purohits/pandit1.jpg',
+            image: p.profileImage || '/images/purohits/pandit1.webp',
             price: priceStr,
             category: p.qualification || 'Purohit',
             language: languageStr,

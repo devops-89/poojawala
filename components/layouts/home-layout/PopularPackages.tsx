@@ -12,35 +12,35 @@ const fallbackPackages = [
     title: 'Griha Pravesh',
     duration: '2-3 hrs',
     price: '3,999',
-    image: '/images/home/poojaPackages/grahpravesh.png'
+    image: '/images/home/poojaPackages/grahpravesh.webp'
   },
   {
     id: 2,
     title: 'Satyanarayan Puja',
     duration: '2-3 hrs',
     price: '3,999',
-    image: '/images/home/poojaPackages/satyanarayan.png'
+    image: '/images/home/poojaPackages/satyanarayan.webp'
   },
   {
     id: 3,
     title: 'Ganesh Puja',
     duration: '2-3 hrs',
     price: '3,999',
-    image: '/images/home/poojaPackages/ganesh.png'
+    image: '/images/home/poojaPackages/ganesh.webp'
   },
   {
     id: 4,
     title: 'Havan/Yagya',
     duration: '2-3 hrs',
     price: '3,999',
-    image: '/images/home/poojaPackages/havan.png'
+    image: '/images/home/poojaPackages/havan.webp'
   },
   {
     id: 5,
     title: 'Laxmi Puja',
     duration: '2-3 hrs',
     price: '3,999',
-    image: '/images/home/poojaPackages/laxmi.png'
+    image: '/images/home/poojaPackages/laxmi.webp'
   }
 ];
 
@@ -69,7 +69,7 @@ export default function PopularPackages() {
             title: item.name,
             duration: formatDuration(item.durationMinutes),
             price: item.minPrice ? Math.floor(parseFloat(item.minPrice)).toLocaleString('en-IN') : '3,999',
-            image: item.iconDownloadurl || item.iconUrl || '/images/home/poojaPackages/satyanarayan.png'
+            image: item.iconDownloadurl || item.iconUrl || '/images/home/poojaPackages/satyanarayan.webp'
           }));
           setPackages(apiPackages.length > 0 ? apiPackages : fallbackPackages);
         } else {
@@ -92,15 +92,15 @@ export default function PopularPackages() {
       <Container maxWidth="lg">
         {/* Header Section */}
         <Box sx={{ textAlign: 'center', mb: 6, position: 'relative' }}>
-          <Typography variant="h3" component="h2" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: '48px', color: '#1A1A1A', mb: 2 }}>
+          <Typography variant="h3" component="h2" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: { xs: '28px', sm: '36px', md: '48px' }, color: '#1A1A1A', mb: 2 }}>
             Popular Pooja Packages
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center',pb:5 }}>
             <Box 
               component="img"
-              src="/images/home/poojaPackages/dhanush.png"
+              src="/images/home/poojaPackages/dhanush.webp"
               alt="Decorative Arch"
-              sx={{ width: '750px', height: '47px', maxWidth: '100%', objectFit: 'contain'}}
+              sx={{ width: { xs: '90%', sm: '80%', md: '750px' }, height: { xs: 'auto', md: '47px' }, maxWidth: '100%', objectFit: 'contain'}}
             />
           </Box>
           <Box sx={{ position: 'absolute', right: 0, bottom: 0, display: { xs: 'none', md: 'block' } }}>
@@ -162,7 +162,7 @@ export default function PopularPackages() {
             <Grid size={{xs:12,sm:6,md:4,lg:2.4}} key={pkg.id}>
               <Card sx={{ 
                 width: '100%',
-                maxWidth: '213px',
+                maxWidth: { xs: '280px', sm: '213px' },
                 height: '100%',
                 margin: '0 auto',
                 display: 'flex', 

@@ -25,7 +25,7 @@ const fallbackPurohits = [
     speciality: 'Vedic & Tantra',
     rating: '4.5',
     reviews: 91,
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
   },
   {
     id: 2,
@@ -35,7 +35,7 @@ const fallbackPurohits = [
     speciality: 'Vedic & Tantra',
     rating: '4.5',
     reviews: 91,
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
   },
   {
     id: 3,
@@ -45,7 +45,7 @@ const fallbackPurohits = [
     speciality: 'Vedic & Tantra',
     rating: '4.5',
     reviews: 91,
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
   },
   {
     id: 4,
@@ -55,7 +55,7 @@ const fallbackPurohits = [
     speciality: 'Vedic & Tantra',
     rating: '4.5',
     reviews: 91,
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
   },
   {
     id: 5,
@@ -65,7 +65,7 @@ const fallbackPurohits = [
     speciality: 'Vedic & Tantra',
     rating: '4.5',
     reviews: 91,
-    image: '/images/home/usericon.png',
+    image: '/images/home/usericon.webp',
   },
 ];
 
@@ -89,7 +89,7 @@ export default function VerifiedPurohits() {
           const formatted = fetchedPurohits.map((p: any) => ({
             id: p.userId || p.id,
             name: `${p.purohitFirstName || ''} ${p.lastName || ''}`.trim() || p.username || 'Purohit',
-            image: p.profileImage || '/images/home/usericon.png',
+            image: p.profileImage || '/images/home/usericon.webp',
             languages: Array.isArray(p.languages) ? p.languages.join(', ') : (p.languages || null),
             experience: p.experienceYears ? `${p.experienceYears} Years` : null,
             rating: parseFloat(p.averageRating || 0) > 0 ? parseFloat(p.averageRating).toFixed(1) : 'New',
@@ -115,7 +115,7 @@ export default function VerifiedPurohits() {
   return (
     <Box
       sx={{
-        py: '110px',
+        py: { xs: '60px', md: '110px' },
         bgcolor: '#fff',
         overflow: 'hidden',
       }}
@@ -134,7 +134,7 @@ export default function VerifiedPurohits() {
             sx={{
               fontFamily: 'DM Sans',
               fontWeight: 700,
-              fontSize: '48px',
+              fontSize: { xs: '28px', sm: '36px', md: '48px' },
               lineHeight: '130.6%',
               color: '#C92B2B',
             }}
@@ -147,7 +147,7 @@ export default function VerifiedPurohits() {
               mt: 1,
               fontFamily: 'DM Sans',
               fontWeight: 500,
-              fontSize: '24px',
+              fontSize: { xs: '18px', md: '24px' },
               lineHeight: '130.6%',
               color: '#1B1B1B',
             }}
@@ -183,7 +183,7 @@ export default function VerifiedPurohits() {
           centeredSlides
           loop={displayPurohits.length > 1}
           slidesPerView="auto"
-          spaceBetween={-180}
+          spaceBetween={-60}
           autoplay={{
             delay: 2500,
             disableOnInteraction: false,
@@ -196,7 +196,8 @@ export default function VerifiedPurohits() {
             <SwiperSlide
               key={item.id}
               style={{
-                width: '597.41px',
+                width: '400px',
+                maxWidth: '90vw',
                 display: 'flex',
                 justifyContent: 'center',
               }}
@@ -204,18 +205,20 @@ export default function VerifiedPurohits() {
               {({ isActive }) => (
                 <Box
                   sx={{
-                    width: '480px',
-                    height: '220px',
-                    borderRadius: '41.71px',
+                    width: '100%',
+                    maxWidth: '480px',
+                    minHeight: { xs: 'auto', md: '220px' },
+                    borderRadius: { xs: '24px', md: '41.71px' },
                     background: '#FFF',
                     border: '1.35px solid rgba(20,20,20,.15)',
                     boxShadow: isActive
                       ? '0px 12px 35px rgba(0,0,0,.08)'
                       : 'none',
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    padding: '39px 50px',
-                    gap: '35px',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'center', sm: 'flex-start' },
+                    padding: { xs: '24px 20px', sm: '30px 30px', md: '39px 50px' },
+                    gap: { xs: '20px', md: '35px' },
                     transition: '.35s',
                     transform: isActive
                       ? 'scale(1)'
@@ -237,8 +240,8 @@ export default function VerifiedPurohits() {
                   >
                     <Box
                       sx={{
-                        width: '130px',
-                        height: '130px',
+                      width: { xs: '100px', sm: '130px' },
+                      height: { xs: '100px', sm: '130px' },
                         borderRadius: '50%',
                         bgcolor: '#D9D9D9',
                         position: 'relative',
@@ -319,13 +322,14 @@ export default function VerifiedPurohits() {
                         sx={{
                           fontFamily: 'DM Sans',
                           fontWeight: 400,
-                          fontSize: '26.91px',
+                          fontSize: { xs: '20px', md: '26.91px' },
                           lineHeight: '130.6%',
                           color: '#1A1A1A',
                           mb: '18px',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
+                          textTransform: 'capitalize',
                         }}
                       >
                         {item.name}
@@ -444,15 +448,15 @@ export default function VerifiedPurohits() {
                         variant="contained"
                         onClick={() => router.push('/sign-in')}
                         sx={{
-                          width: '151.82px',
-                          height: '54.91px',
+                          width: { xs: '120px', md: '151.82px' },
+                          height: { xs: '44px', md: '54.91px' },
                           borderRadius: '41.71px',
                           background: '#FF6200',
                           color: '#FFFFFF',
                           textTransform: 'none',
                           fontFamily: 'DM Sans',
                           fontWeight: 400,
-                          fontSize: '21.53px',
+                          fontSize: { xs: '16px', md: '21.53px' },
                           lineHeight: 'normal',
                           letterSpacing: '-0.01em',
                           boxShadow:

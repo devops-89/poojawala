@@ -48,7 +48,7 @@ export default function SignUpContent() {
       {/* Background Decor */}
       <Box 
         component="img"
-        src="/images/home/chakra.png"
+        src="/images/home/chakra.webp"
         alt="Chakra Decor Left"
         sx={{
           position: 'absolute',
@@ -62,7 +62,7 @@ export default function SignUpContent() {
       />
       <Box 
         component="img"
-        src="/images/home/chakraright.png"
+        src="/images/home/chakraright.webp"
         alt="Chakra Decor Right"
         sx={{
           position: 'absolute',
@@ -106,7 +106,7 @@ export default function SignUpContent() {
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', lineHeight: 1.6, opacity: 0.9, mb: 4 }}>
                   Create an account to manage your puja bookings, view upcoming appointments, and consult with our verified Pandits seamlessly.
                 </Typography>
-                <Box component="img" src="/images/home/poojaPackages/dhanush.png" sx={{ width: '250px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
+                <Box component="img" src="/images/home/poojaPackages/dhanush.webp" sx={{ width: '250px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
               </Box>
 
               {/* Right Side Form */}

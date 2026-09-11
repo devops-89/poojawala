@@ -36,7 +36,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
           setPurohit({
             id: p.userId,
             title: `${p.purohitFirstName || ''} ${p.lastName || ''}`.trim() || p.username || 'Purohit',
-            image: p.profileImage || '/images/purohits/pandit1.jpg',
+            image: p.profileImage || '/images/purohits/pandit1.webp',
             education: (p.qualification || 'Purohit') + ' in Vedic Astrology',
             language: Array.isArray(p.languages) ? p.languages.join(', ') : (p.languages || 'Not specified'),
             experience: p.experienceYears ? `${p.experienceYears}+ Years` : '',
@@ -84,7 +84,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
         {/* Decorative Chakras */}
         <Box 
           component="img"
-          src="/images/home/chakra.png"
+          src="/images/home/chakra.webp"
           alt="Chakra Decor Left"
           sx={{
             position: 'absolute',
@@ -98,7 +98,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
         />
         <Box 
           component="img"
-          src="/images/home/chakraright.png"
+          src="/images/home/chakraright.webp"
           alt="Chakra Decor Right"
           sx={{
             position: 'absolute',
@@ -232,7 +232,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
               <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 About Pandit Ji
               </Typography>
-              <Box component="img" src="/images/home/poojaPackages/dhanush.png" alt="Decoration" sx={{ height: '12px', width: '180px', mb: 2, display: 'block', opacity: 0.8 }} />
+              <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '180px', mb: 2, display: 'block', opacity: 0.8 }} />
               <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', color: '#555', lineHeight: 1.8 }}>
                 {purohit.bio}
               </Typography>
@@ -242,7 +242,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
               <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 Expertise & Services
               </Typography>
-              <Box component="img" src="/images/home/poojaPackages/dhanush.png" alt="Decoration" sx={{ height: '12px', width: '230px', mb: 2.5, display: 'block', opacity: 0.8 }} />
+              <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '230px', mb: 2.5, display: 'block', opacity: 0.8 }} />
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                 {purohit.expertise.map((item: any, index: number) => (
                   <Chip 
@@ -266,7 +266,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
               <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 Client Reviews
               </Typography>
-              <Box component="img" src="/images/home/poojaPackages/dhanush.png" alt="Decoration" sx={{ height: '12px', width: '175px', mb: 2.5, display: 'block', opacity: 0.8 }} />
+              <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '175px', mb: 2.5, display: 'block', opacity: 0.8 }} />
               {/* Dummy Review 1 */}
               <Box sx={{ mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
@@ -311,9 +311,9 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
               <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 Gallery of Past Pujas
               </Typography>
-              <Box component="img" src="/images/home/poojaPackages/dhanush.png" alt="Decoration" sx={{ height: '12px', width: '235px', mb: 2.5, display: 'block', opacity: 0.8 }} />
+              <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '235px', mb: 2.5, display: 'block', opacity: 0.8 }} />
               <ImageList sx={{ width: '100%', height: 'auto', overflow: 'hidden', m: 0 }} cols={3} gap={12}>
-                {['/images/home/poojaPackages/satyanarayan.png', '/images/home/poojaPackages/ganesh.png', '/images/home/poojaPackages/havan.png', '/images/home/poojaPackages/laxmi.png', '/images/home/poojaPackages/grahpravesh.png', '/images/home/poojaPackages/satyanarayan.png'].map((item, index) => (
+                {['/images/home/poojaPackages/satyanarayan.webp', '/images/home/poojaPackages/ganesh.webp', '/images/home/poojaPackages/havan.webp', '/images/home/poojaPackages/laxmi.webp', '/images/home/poojaPackages/grahpravesh.webp', '/images/home/poojaPackages/satyanarayan.webp'].map((item, index) => (
                   <ImageListItem 
                     key={index} 
                     sx={{ 
@@ -375,7 +375,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                 }}>
                   <Box 
                     component="img"
-                    src="/images/home/cardline.png"
+                    src="/images/home/cardline.webp"
                     sx={{ width: '100%', mb: 2, height: 'auto' }}
                   />
                   <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#777', fontSize: '14px', mb: 1 }}>

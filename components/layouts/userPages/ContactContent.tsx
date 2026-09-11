@@ -108,7 +108,7 @@ export default function ContactContent() {
           <Box sx={{ flex: 1.5, bgcolor: '#ffffff', p: { xs: 4, md: 6 } }}>
             {success ? (
               <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                <Box component="img" src="/images/home/poojaPackages/dhanush.png" sx={{ width: '120px', mb: 3 }} />
+                <Box component="img" src="/images/home/poojaPackages/dhanush.webp" sx={{ width: '120px', mb: 3 }} />
                 <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
                   Message Sent!
                 </Typography>

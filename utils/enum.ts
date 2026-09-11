@@ -1,8 +1,8 @@
 export const COLORS = {
-  PRIMARY: '#D68910', // Deep elegant gold
+  PRIMARY: '#D68910',
   PRIMARY_LIGHT: '#F8C471',
   PRIMARY_DARK: '#935116',
-  SECONDARY: '#884EA0', // Deep spiritual purple
+  SECONDARY: '#884EA0',
   WHITE: '#FFFFFF',
   BLACK: '#000000',
   DARK_CHARCOAL: '#111111',

@@ -10,7 +10,7 @@ import { Box } from '@mui/material';
 
 export default function Home() {
   return (
-    <Box component="main">
+    <Box component="main" sx={{ overflowX: 'hidden', width: '100%', position: 'relative' }}>
       <HeroSection />
       <Features />
       <PopularPackages />

@@ -142,13 +142,13 @@ export default function VerifyOtpContent() {
       {/* Background Decor */}
       <Box 
         component="img"
-        src="/images/home/chakra.png"
+        src="/images/home/chakra.webp"
         alt="Chakra Decor Left"
         sx={{ position: 'absolute', top: -150, left: -150, width: '500px', opacity: 0.5, pointerEvents: 'none', zIndex: 0 }}
       />
       <Box 
         component="img"
-        src="/images/home/chakraright.png"
+        src="/images/home/chakraright.webp"
         alt="Chakra Decor Right"
         sx={{ position: 'absolute', bottom: -150, right: -150, width: '500px', opacity: 0.5, pointerEvents: 'none', zIndex: 0 }}
       />
@@ -184,7 +184,7 @@ export default function VerifyOtpContent() {
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', lineHeight: 1.6, opacity: 0.9, mb: 4 }}>
                   Please enter the 6-digit one-time password sent to your mobile number to securely complete your registration.
                 </Typography>
-                <Box component="img" src="/images/home/poojaPackages/dhanush.png" sx={{ width: '250px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
+                <Box component="img" src="/images/home/poojaPackages/dhanush.webp" sx={{ width: '250px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
               </Box>
 
               {/* Right Side Form */}
