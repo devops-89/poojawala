@@ -9,7 +9,7 @@ export default function HeroSection() {
         minHeight: { xs: "600px", md: "777px" },
         backgroundImage: {
           xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.85) 0%, rgba(255, 253, 249, 0.6) 55%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-          md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.55) 40%, transparent 60%), url(/images/home/hero/heroSectionHome.webp)"
+          md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.2) 40%, transparent 60%), url(/images/home/hero/heroSectionHome.webp)",
         },
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -112,7 +112,7 @@ export default function HeroSection() {
                 borderRadius: "30px",
                 fontWeight: 600,
                 textTransform: "none",
-                fontSize: { xs: '0.875rem', md: '1rem' },
+                fontSize: { xs: "0.875rem", md: "1rem" },
                 boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
                 transition: "all 0.3s ease",
                 "&:hover": {
@@ -136,7 +136,7 @@ export default function HeroSection() {
                 borderRadius: "30px",
                 fontWeight: 600,
                 textTransform: "none",
-                fontSize: { xs: '0.875rem', md: '1rem' },
+                fontSize: { xs: "0.875rem", md: "1rem" },
                 borderWidth: "2px",
                 transition: "all 0.3s ease",
                 "&:hover": {
