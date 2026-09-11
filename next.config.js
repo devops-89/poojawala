@@ -25,7 +25,7 @@ const nextConfig = {
   async rewrites() {
     const AUTH_SERVER = process.env.NEXT_SERVER_URL;
     const USER_SERVER = process.env.NEXT_SERVER_URL;
-    const SOCKET_URL = process.env.NEXT_SOCKET_URL;
+    const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL;
     const PAYMENT_SERVER = process.env.NEXT_SERVER_URL;
 
     return [
