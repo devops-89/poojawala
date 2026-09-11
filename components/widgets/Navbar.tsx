@@ -56,14 +56,18 @@ export default function Navbar() {
             justifyContent: "space-between",
           }}
         >
-          <Link component={NextLink} href="/" underline="none">
-            <Typography
-              variant="h5"
-              component="div"
-              sx={{ color: "#D32F2F", fontWeight: 700 }}
-            >
-              Poojawala
-            </Typography>
+          <Link
+            component={NextLink}
+            href="/"
+            underline="none"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Box
+              component="img"
+              src="/images/logo.png"
+              alt="Poojawala"
+              sx={{ height: { xs: "40px", md: "60px" }, objectFit: "contain" }}
+            />
           </Link>
 
           {/* Desktop Nav Links */}
@@ -176,7 +180,9 @@ export default function Navbar() {
                   sx={{
                     borderRadius: "12px",
                     mb: 0.5,
-                    bgcolor: isActive ? "rgba(211, 47, 47, 0.08)" : "transparent",
+                    bgcolor: isActive
+                      ? "rgba(211, 47, 47, 0.08)"
+                      : "transparent",
                     "&:hover": {
                       bgcolor: "rgba(211, 47, 47, 0.05)",
                     },
