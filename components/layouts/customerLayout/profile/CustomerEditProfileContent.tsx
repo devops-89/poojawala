@@ -545,7 +545,6 @@ function CustomerEditProfileContentInner() {
               </Box>
             )}
 
-            {/* ADDRESSES TAB */}
             {activeTab === "location" && (
               <Box>
                 <Box
