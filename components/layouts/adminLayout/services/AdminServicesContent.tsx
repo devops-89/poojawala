@@ -226,7 +226,7 @@ export default function AdminServicesContent() {
                     </Box>
                   </TableCell>
                   <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#0f172a' }}>₹{service.minPrice} - ₹{service.maxPrice}</TableCell>
-                  <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>{service.bookings || 0}</TableCell>
+                  <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>{service.totalBookings ?? service.bookings ?? 0}</TableCell>
                   <TableCell>
                     <Select
                       size="small"

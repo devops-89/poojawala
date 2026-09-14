@@ -112,7 +112,7 @@ export default function AdminServiceDetailsContent() {
             <Image src={service.iconDownloadurl || service.iconUrl || PLACEHOLDER} alt={service.name} fill style={{ objectFit: 'cover' }} unoptimized={true} />
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1, flexWrap: 'wrap' }}>
               <Typography variant="h3" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', fontSize: { xs: '1.75rem', md: '2.25rem' } }}>
                 {service.name}
               </Typography>
@@ -127,6 +127,29 @@ export default function AdminServiceDetailsContent() {
                   boxShadow: service.isActive ? '0 4px 14px 0 rgba(16, 185, 129, 0.39)' : 'none'
                 }} 
               />
+              <Chip 
+                label={service.isUpcomingFestival ? "Upcoming Festival" : "Regular Service"} 
+                sx={{ 
+                  bgcolor: service.isUpcomingFestival ? '#8b5cf6' : '#f1f5f9', 
+                  color: service.isUpcomingFestival ? '#ffffff' : '#64748b', 
+                  fontWeight: 700, 
+                  fontFamily: 'var(--font-outfit), sans-serif', 
+                  borderRadius: '8px',
+                  boxShadow: service.isUpcomingFestival ? '0 4px 14px 0 rgba(139, 92, 246, 0.39)' : 'none'
+                }} 
+              />
+              <Chip 
+                icon={<AccessTimeIcon style={{ color: '#FF6200', fontSize: '1.1rem' }} />}
+                label={`${service.durationMinutes} Mins`} 
+                sx={{ 
+                  bgcolor: '#FFF0E6', 
+                  color: '#FF6200', 
+                  fontWeight: 700, 
+                  fontFamily: 'var(--font-outfit), sans-serif', 
+                  borderRadius: '8px',
+                  border: '1px solid #ffedd5'
+                }} 
+              />
             </Box>
             <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#475569', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: '800px' }}>
               {service.description}
@@ -137,7 +160,7 @@ export default function AdminServiceDetailsContent() {
 
       {/* Main Content Grid */}
       <Grid container spacing={4}>
-        {/* Left Column - Core Info */}
+        {/* Left Column - Core Info & Performance Stats */}
         <Grid size={{ xs: 12, md: 8 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white', height: '100%' }}>
             <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -145,43 +168,6 @@ export default function AdminServiceDetailsContent() {
               Specifications & Availability
             </Typography>
             <Grid container spacing={3}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: '#FF6200', boxShadow: '0 4px 20px rgba(255,98,0,0.05)', bgcolor: '#fff' } }}>
-                  <Box sx={{ p: 1.5, bgcolor: '#FFF0E6', borderRadius: '12px', color: '#FF6200', display: 'flex' }}>
-                    <AccessTimeIcon />
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Duration</Typography>
-                    <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>{service.durationMinutes} Minutes</Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: service.supportsOnline ? '#10b981' : '#ef4444', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', bgcolor: '#fff' } }}>
-                  <Box sx={{ p: 1.5, bgcolor: service.supportsOnline ? '#d1fae5' : '#fee2e2', borderRadius: '12px', color: service.supportsOnline ? '#10b981' : '#ef4444', display: 'flex' }}>
-                    <WifiIcon />
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Supports Online</Typography>
-                    <Typography sx={{ fontWeight: 800, color: service.supportsOnline ? '#10b981' : '#ef4444', fontSize: '1.1rem' }}>
-                      {service.supportsOnline ? 'Yes, Available' : 'Not Available'}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: service.supportsOffline ? '#10b981' : '#ef4444', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', bgcolor: '#fff' } }}>
-                  <Box sx={{ p: 1.5, bgcolor: service.supportsOffline ? '#d1fae5' : '#fee2e2', borderRadius: '12px', color: service.supportsOffline ? '#10b981' : '#ef4444', display: 'flex' }}>
-                    <WifiOffIcon />
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Supports Offline</Typography>
-                    <Typography sx={{ fontWeight: 800, color: service.supportsOffline ? '#10b981' : '#ef4444', fontSize: '1.1rem' }}>
-                      {service.supportsOffline ? 'Yes, Available' : 'Not Available'}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: service.requiresVenue ? '#3b82f6' : '#94a3b8', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', bgcolor: '#fff' } }}>
                   <Box sx={{ p: 1.5, bgcolor: service.requiresVenue ? '#dbeafe' : '#f1f5f9', borderRadius: '12px', color: service.requiresVenue ? '#3b82f6' : '#64748b', display: 'flex' }}>
@@ -195,19 +181,46 @@ export default function AdminServiceDetailsContent() {
                   </Box>
                 </Box>
               </Grid>
+
+              {/* Total Bookings */}
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: service.isUpcomingFestival ? '#8b5cf6' : '#94a3b8', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', bgcolor: '#fff' } }}>
-                  <Box sx={{ p: 1.5, bgcolor: service.isUpcomingFestival ? '#ede9fe' : '#f1f5f9', borderRadius: '12px', color: service.isUpcomingFestival ? '#8b5cf6' : '#64748b', display: 'flex' }}>
-                    <CelebrationIcon />
+                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: '#10b981', boxShadow: '0 4px 20px rgba(16,185,129,0.05)', bgcolor: '#fff' } }}>
+                  <Box sx={{ p: 1.5, bgcolor: '#d1fae5', borderRadius: '12px', color: '#10b981', display: 'flex' }}>
+                    <ConfirmationNumberIcon />
                   </Box>
                   <Box>
-                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Festival Status</Typography>
-                    <Typography sx={{ fontWeight: 800, color: service.isUpcomingFestival ? '#8b5cf6' : '#64748b', fontSize: '1.1rem' }}>
-                      {service.isUpcomingFestival ? 'Upcoming Festival' : 'Regular Service'}
-                    </Typography>
+                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Total Bookings</Typography>
+                    <Typography sx={{ fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>{service.totalBookings ?? service.bookings ?? 0}</Typography>
                   </Box>
                 </Box>
               </Grid>
+
+              {/* Online Purohits */}
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: '#0284c7', boxShadow: '0 4px 20px rgba(2,132,199,0.05)', bgcolor: '#fff' } }}>
+                  <Box sx={{ p: 1.5, bgcolor: '#e0f2fe', borderRadius: '12px', color: '#0284c7', display: 'flex' }}>
+                    <WifiIcon />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Online Purohits</Typography>
+                    <Typography sx={{ fontWeight: 800, color: '#0284c7', fontSize: '1.1rem' }}>{service.onlinepurohitCount ?? 0}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+
+              {/* Offline Purohits */}
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Box sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 2, transition: 'all 0.2s', '&:hover': { borderColor: '#9333ea', boxShadow: '0 4px 20px rgba(147,51,234,0.05)', bgcolor: '#fff' } }}>
+                  <Box sx={{ p: 1.5, bgcolor: '#f3e8ff', borderRadius: '12px', color: '#9333ea', display: 'flex' }}>
+                    <WifiOffIcon />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, mb: 0.5 }}>Offline Purohits</Typography>
+                    <Typography sx={{ fontWeight: 800, color: '#9333ea', fontSize: '1.1rem' }}>{service.offlinepurohitCount ?? 0}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+
               {service.isUpcomingFestival && (
                 <>
                   <Grid size={{ xs: 12, sm: 6 }}>
@@ -242,77 +255,44 @@ export default function AdminServiceDetailsContent() {
           </Paper>
         </Grid>
 
-        {/* Right Column - Pricing & Stats */}
+        {/* Right Column - Pricing Details */}
         <Grid size={{ xs: 12, md: 4 }}>
-          <Grid container spacing={4}>
-            <Grid size={{ xs: 12 }}>
-              <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box component="span" sx={{ width: 8, height: 24, bgcolor: '#FF6200', borderRadius: 4, display: 'inline-block' }} />
-                  Pricing Details
-                </Typography>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', mb: 2, border: '1px solid #f1f5f9' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: '#FF6200', display: 'flex' }}>
-                      <CurrencyRupeeIcon fontSize="small" />
-                    </Box>
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Minimum Price</Typography>
-                  </Box>
-                  <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>₹{service.minPrice}</Typography>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white', height: '100%' }}>
+            <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box component="span" sx={{ width: 8, height: 24, bgcolor: '#FF6200', borderRadius: 4, display: 'inline-block' }} />
+              Pricing Details
+            </Typography>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', mb: 2, border: '1px solid #f1f5f9' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: '#FF6200', display: 'flex' }}>
+                  <CurrencyRupeeIcon fontSize="small" />
                 </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', mb: 2, border: '1px solid #f1f5f9' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: '#FF6200', display: 'flex' }}>
-                      <CurrencyRupeeIcon fontSize="small" />
-                    </Box>
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Maximum Price</Typography>
-                  </Box>
-                  <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>₹{service.maxPrice}</Typography>
+                <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Minimum Price</Typography>
+              </Box>
+              <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>₹{service.minPrice}</Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', mb: 2, border: '1px solid #f1f5f9' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: '#FF6200', display: 'flex' }}>
+                  <CurrencyRupeeIcon fontSize="small" />
                 </Box>
+                <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Maximum Price</Typography>
+              </Box>
+              <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>₹{service.maxPrice}</Typography>
+            </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: '#FF6200', display: 'flex' }}>
-                      <PercentIcon fontSize="small" />
-                    </Box>
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Commission</Typography>
-                  </Box>
-                  <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>{service.commissionPercentage}%</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: '#FF6200', display: 'flex' }}>
+                  <PercentIcon fontSize="small" />
                 </Box>
-              </Paper>
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box component="span" sx={{ width: 8, height: 24, bgcolor: '#10b981', borderRadius: 4, display: 'inline-block' }} />
-                  Performance Stats
-                </Typography>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', mb: 2, border: '1px solid #f1f5f9' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#d1fae5', borderRadius: '8px', color: '#10b981', display: 'flex' }}>
-                      <ConfirmationNumberIcon fontSize="small" />
-                    </Box>
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Total Bookings</Typography>
-                  </Box>
-                  <Typography sx={{ fontWeight: 800, color: '#10b981', fontSize: '1.2rem' }}>{service.bookings || 0}</Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#fef3c7', borderRadius: '8px', color: '#f59e0b', display: 'flex' }}>
-                      <StarIcon fontSize="small" />
-                    </Box>
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Average Rating</Typography>
-                  </Box>
-                  <Typography sx={{ fontWeight: 800, color: '#f59e0b', fontSize: '1.2rem' }}>★ {service.rating || 'N/A'}</Typography>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
+                <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.95rem' }}>Commission</Typography>
+              </Box>
+              <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '1.1rem' }}>{service.commissionPercentage}%</Typography>
+            </Box>
+          </Paper>
         </Grid>
       </Grid>
     </Box>
