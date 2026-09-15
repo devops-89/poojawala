@@ -191,8 +191,13 @@ export default function SignInContent() {
                         showSnackbar("Login successful!", "success");
 
                         setTimeout(() => {
-                          if (userObj?.role === "CUSTOMER") {
+                          const role = userObj?.role || response?.user?.role;
+                          if (role === "CUSTOMER") {
                             router.push("/customer/dashboard");
+                          } else if (role === "PUROHIT") {
+                            router.push("/purohit/dashboard");
+                          } else if (role === "ADMIN" || role === "SUPERADMIN") {
+                            router.push("/admin/dashboard");
                           } else {
                             router.push("/");
                           }

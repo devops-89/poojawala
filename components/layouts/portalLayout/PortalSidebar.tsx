@@ -48,7 +48,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
       clearProfile();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        router.push("/purohit");
+        router.push("/sign-in");
       }, 1000);
     } catch (error) {
       console.error("Logout error", error);
