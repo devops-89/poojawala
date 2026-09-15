@@ -14,6 +14,8 @@ import WorkIcon from '@mui/icons-material/Work';
 import { Avatar, Box, Button, Card, CardContent, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Paper, Select, TextField, Typography, Slider } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { MuiTelInput } from 'mui-tel-input';
+
 
 const AVAILABLE_LANGUAGES = ['Hindi', 'English', 'Sanskrit', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Bengali'];
 const AVAILABLE_RITUALS = ['Astrology', 'Satyanarayan Katha', 'Grah Pravesh', 'Marriage Ceremony', 'Vastu Shanti', 'Navagraha Shanti', 'Maha Mrityunjaya Jaap', 'Rudrabhishek'];
@@ -151,8 +153,6 @@ export default function ProfileContent() {
       formData.append('firstName', firstName);
       formData.append('lastName', lastName);
       formData.append('username', username);
-      formData.append('email', email);
-      formData.append('phone', phone);
       if (dob) formData.append('dob', new Date(dob).toISOString());
       formData.append('birthPlace', birthPlace);
       formData.append('bio', bio);
@@ -417,12 +417,7 @@ export default function ProfileContent() {
               <Grid size={{xs:12,sm:6}}>
                 <TextField fullWidth label="Username" value={username} onChange={(e) => setUsername(e.target.value)} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
               </Grid>
-              <Grid size={{xs:12,sm:6}}>
-                <TextField fullWidth label="Email" value={email} onChange={(e) => setEmail(e.target.value)} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
-              </Grid>
-              <Grid size={{xs:12,sm:6}}>
-                <TextField fullWidth label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
-              </Grid>
+
               <Grid size={{xs:12,sm:6}}>
                 <TextField fullWidth label="Date of Birth" type="date" value={dob} onChange={(e) => setDob(e.target.value)} variant="outlined" slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
               </Grid>

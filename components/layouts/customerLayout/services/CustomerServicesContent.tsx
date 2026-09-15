@@ -261,17 +261,26 @@ export default function CustomerServicesContent() {
           
           <Grid container spacing={2}>
             <Grid size={{xs:12}}>
-              <TextField
-                fullWidth
-                type="datetime-local"
-                label="Scheduled Date & Time"
-                value={bookingForm.scheduledAt}
-                onChange={(e) => setBookingForm({ ...bookingForm, scheduledAt: e.target.value })}
-                slotProps={{ 
-                  inputLabel: { shrink: true },
-                  htmlInput: { min: new Date().toISOString().slice(0, 16) }
-                }}
-              />
+              {(() => {
+                const now = new Date();
+                const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                const max = new Date(now);
+                max.setMonth(max.getMonth() + 6);
+                const maxDate = new Date(max.getTime() - max.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                return (
+                  <TextField
+                    fullWidth
+                    type="datetime-local"
+                    label="Scheduled Date & Time"
+                    value={bookingForm.scheduledAt}
+                    onChange={(e) => setBookingForm({ ...bookingForm, scheduledAt: e.target.value })}
+                    slotProps={{ 
+                      inputLabel: { shrink: true },
+                      htmlInput: { min: minDate, max: maxDate }
+                    }}
+                  />
+                );
+              })()}
             </Grid>
             <Grid size={{xs:12}}>
               <FormControl fullWidth>

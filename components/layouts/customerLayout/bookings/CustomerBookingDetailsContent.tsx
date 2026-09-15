@@ -281,21 +281,33 @@ export default function CustomerBookingDetailsContent({ bookingId }: { bookingId
               Please select a new date and time and provide a reason for the reschedule.
             </Typography>
             
-            <TextField
-              fullWidth
-              type="datetime-local"
-              label="New Schedule Date & Time"
-              variant="outlined"
-              value={newScheduleTime}
-              onChange={(e) => setNewScheduleTime(e.target.value)}
-              slotProps={{ inputLabel: { shrink: true } }}
-              sx={{
-                '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
-                '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' },
-                '& .Mui-focused fieldset': { borderColor: '#3b82f6 !important' },
-                '& label.Mui-focused': { color: '#3b82f6' }
-              }}
-            />
+            {(() => {
+              const now = new Date();
+              const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+              const max = new Date(now);
+              max.setMonth(max.getMonth() + 6);
+              const maxDate = new Date(max.getTime() - max.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+              return (
+                <TextField
+                  fullWidth
+                  type="datetime-local"
+                  label="New Schedule Date & Time"
+                  variant="outlined"
+                  value={newScheduleTime}
+                  onChange={(e) => setNewScheduleTime(e.target.value)}
+                  slotProps={{ 
+                    inputLabel: { shrink: true },
+                    htmlInput: { min: minDate, max: maxDate }
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
+                    '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' },
+                    '& .Mui-focused fieldset': { borderColor: '#3b82f6 !important' },
+                    '& label.Mui-focused': { color: '#3b82f6' }
+                  }}
+                />
+              );
+            })()}
             
             <TextField
               fullWidth
