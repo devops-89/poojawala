@@ -25,6 +25,12 @@ const TABS = [
   { id: 'bank', label: 'Bank Details', icon: <AccountBalanceIcon sx={{ fontSize: 20 }} /> },
 ];
 
+const maxDobDate = (() => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 20);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+})();
+
 export default function ProfileContent() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(() => {
@@ -418,7 +424,7 @@ export default function ProfileContent() {
                 <TextField fullWidth label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
               </Grid>
               <Grid size={{xs:12,sm:6}}>
-                <TextField fullWidth label="Date of Birth" type="date" value={dob} onChange={(e) => setDob(e.target.value)} variant="outlined" slotProps={{ inputLabel: { shrink: true } }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+                <TextField fullWidth label="Date of Birth" type="date" value={dob} onChange={(e) => setDob(e.target.value)} variant="outlined" slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
               </Grid>
               <Grid size={{xs:12,sm:6}}>
                 <TextField fullWidth label="Birth Place" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />

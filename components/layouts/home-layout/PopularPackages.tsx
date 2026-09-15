@@ -62,9 +62,10 @@ export default function PopularPackages() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await getServicesAPI(1, 5); // Fetch top 5 services
+        const response = await getServicesAPI(1, 10, '', undefined, undefined, undefined, true); // Fetch active services
         if (response?.success && response?.data?.data && Array.isArray(response.data.data)) {
-          const apiPackages = response.data.data.slice(0, 5).map((item: any) => ({
+          const activeOnly = response.data.data.filter((item: any) => item.isActive !== false);
+          const apiPackages = activeOnly.slice(0, 5).map((item: any) => ({
             id: item.id,
             title: item.name,
             duration: formatDuration(item.durationMinutes),

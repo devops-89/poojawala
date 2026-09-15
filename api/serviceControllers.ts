@@ -142,13 +142,15 @@ export const getPurohitServiceByIdAPI = async (id: string | number) => {
 export const getAllServicesAPI = async (
   page: number = 1,
   limit: number = 10,
-  search: string = ""
+  search: string = "",
+  isActive?: boolean
 ) => {
   try {
     const params = new URLSearchParams();
     if (page) params.append('page', String(page));
     if (limit) params.append('limit', String(limit));
     if (search) params.append('search', search);
+    if (isActive !== undefined) params.append('isActive', String(isActive));
 
     const response = await userPublicApi.get('/service/', { params });
     return response.data;

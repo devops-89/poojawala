@@ -11,7 +11,6 @@ import { useSnackbarStore } from '@/stores/snackbarStore';
 const STATUS_TABS = [
   { id: 'All', label: 'All' },
   { id: 'ACTIVE', label: 'Active' },
-  { id: 'REJECTED', label: 'Rejected' },
   { id: 'BLOCKED', label: 'Blocked' },
 ];
 
@@ -100,28 +99,27 @@ export default function AdminUsersContent() {
       </Box>
 
       <Paper sx={{ borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-        <Tabs 
-          value={statusFilter} 
-          onChange={(_, val) => setStatusFilter(val)}
-          sx={{ 
-            px: 2, pt: 1, borderBottom: '1px solid #e2e8f0',
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200' },
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, color: '#64748b', minWidth: 100, fontFamily: 'var(--font-outfit), sans-serif' },
-            '& .MuiTab-root.Mui-selected': { color: '#FF6200' },
-          }}
-        >
-          {STATUS_TABS.map(tab => (
-            <Tab key={tab.id} label={tab.label} value={tab.id} />
-          ))}
-        </Tabs>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', px: 2, py: 1, gap: 2 }}>
+          <Tabs 
+            value={statusFilter} 
+            onChange={(_, val) => setStatusFilter(val)}
+            sx={{ 
+              '& .MuiTabs-indicator': { backgroundColor: '#FF6200' },
+              '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, color: '#64748b', minWidth: 100, fontFamily: 'var(--font-outfit), sans-serif' },
+              '& .MuiTab-root.Mui-selected': { color: '#FF6200' },
+            }}
+          >
+            {STATUS_TABS.map(tab => (
+              <Tab key={tab.id} label={tab.label} value={tab.id} />
+            ))}
+          </Tabs>
 
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
           <TextField 
             placeholder="Search by name, email, or phone" 
             size="small"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-            sx={{ width: 300, bgcolor: 'white', borderRadius: '8px', '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+            sx={{ width: { xs: '100%', sm: 280, md: 320 }, bgcolor: 'white', borderRadius: '8px', '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
             slotProps={{
               input: {
                 startAdornment: (
@@ -153,10 +151,11 @@ export default function AdminUsersContent() {
                 <TableRow>
                   <TableCell colSpan={4} align="center" sx={{ py: 4, color: '#64748b' }}>No customers found</TableCell>
                 </TableRow>
-              ) : users.map((row: any) => {
+              ) : users.map((row: any, idx: number) => {
                 const name = `${row.firstName || ''} ${row.lastName || ''}`.trim() || row.username || 'Customer';
+                const rowKey = row.userId || row.id || `user-row-${idx}`;
                 return (
-                  <TableRow key={row.userId} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableRow key={rowKey} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell sx={{ fontWeight: 600, color: '#FF6200' }}>C-{row.userId || row.id}</TableCell>
                     <TableCell>
                       <Typography sx={{ fontWeight: 600, color: '#1e293b', fontFamily: 'var(--font-outfit), sans-serif' }}>
@@ -190,7 +189,6 @@ export default function AdminUsersContent() {
                         }}
                       >
                         <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-                        <MenuItem value="REJECTED">REJECTED</MenuItem>
                         <MenuItem value="BLOCKED">BLOCKED</MenuItem>
                       </Select>
                     </TableCell>

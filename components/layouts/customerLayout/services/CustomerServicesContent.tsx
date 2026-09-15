@@ -112,15 +112,20 @@ export default function CustomerServicesContent() {
     const fetchServices = async () => {
       setLoading(true);
       try {
-        const res = await getAllServicesAPI(page, 6, debouncedSearch);
+        const res = await getAllServicesAPI(page, 6, debouncedSearch, true);
+        let rawList: any[] = [];
         if (res.success && res.data?.data) {
-          setServices(res.data.data);
+          rawList = res.data.data;
           if (res.data?.pagination?.totalPages) {
             setTotalPages(res.data.pagination.totalPages);
           }
         } else if (res.success && Array.isArray(res.data)) {
-          setServices(res.data);
+          rawList = res.data;
         }
+
+        // Filter only active services (isActive: true)
+        const activeServices = rawList.filter((item: any) => item.isActive !== false);
+        setServices(activeServices);
       } catch (error) {
         console.error('Failed to fetch services:', error);
       } finally {

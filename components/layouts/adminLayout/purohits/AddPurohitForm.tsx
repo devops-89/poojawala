@@ -14,6 +14,10 @@ import { useState } from 'react';
 import * as Yup from 'yup';
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 
+const today = new Date();
+const twentyYearsAgo = new Date(today.getFullYear() - 20, today.getMonth(), today.getDate());
+const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(twentyYearsAgo.getMonth() + 1).padStart(2, '0')}-${String(twentyYearsAgo.getDate()).padStart(2, '0')}`;
+
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required').trim(),
   lastName: Yup.string().required('Last name is required').trim(),
@@ -24,7 +28,7 @@ const validationSchema = Yup.object().shape({
     const combined = this.parent.countryCode ? this.parent.countryCode + value : value;
     return matchIsValidTel(combined);
   }),
-  dob: Yup.string().required('Date of Birth is required'),
+  dob: Yup.date().max(twentyYearsAgo, 'Date of birth must be at least 20 years ago').required('Date of Birth is required'),
   password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters').trim(),
   confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match').required('Confirm Password is required'),
 });
@@ -155,7 +159,7 @@ export default function AddPurohitForm() {
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth name="dob" label="Date of Birth" type="date" variant="outlined" value={values.dob} onChange={handleChange} onBlur={handleBlur} error={touched.dob && Boolean(errors.dob)} helperText={touched.dob && errors.dob as string} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} slotProps={{ inputLabel: { shrink: true } }} />
+            <TextField fullWidth name="dob" label="Date of Birth" type="date" variant="outlined" value={values.dob} onChange={handleChange} onBlur={handleBlur} error={touched.dob && Boolean(errors.dob)} helperText={touched.dob && errors.dob as string} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 

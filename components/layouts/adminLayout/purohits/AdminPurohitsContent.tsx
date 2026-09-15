@@ -166,42 +166,41 @@ export default function AdminPurohitsContent() {
 
       {/* Tabs and Table */}
       <Paper elevation={0} sx={{ borderRadius: '16px', border: '1px solid #e2e8f0', bgcolor: 'white', overflow: 'hidden' }}>
-        <Tabs 
-          value={statusFilter} 
-          onChange={(_, val) => setStatusFilter(val)}
-          sx={{ 
-            px: 2, pt: 1, borderBottom: '1px solid #e2e8f0',
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200' },
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, color: '#64748b', minWidth: 100, fontFamily: 'var(--font-outfit), sans-serif' },
-            '& .MuiTab-root.Mui-selected': { color: '#FF6200' },
-          }}
-        >
-          {STATUS_TABS.map(tab => (
-            <Tab key={tab.id} label={tab.label} value={tab.id} />
-          ))}
-        </Tabs>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', px: 2, py: 1, gap: 2 }}>
+          <Tabs 
+            value={statusFilter} 
+            onChange={(_, val) => setStatusFilter(val)}
+            sx={{ 
+              '& .MuiTabs-indicator': { backgroundColor: '#FF6200' },
+              '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, color: '#64748b', minWidth: 100, fontFamily: 'var(--font-outfit), sans-serif' },
+              '& .MuiTab-root.Mui-selected': { color: '#FF6200' },
+            }}
+          >
+            {STATUS_TABS.map(tab => (
+              <Tab key={tab.id} label={tab.label} value={tab.id} />
+            ))}
+          </Tabs>
 
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <TextField 
-                placeholder="Search by name, email or phone..." 
-                variant="outlined" 
-                size="small" 
-                value={searchValue} 
-                onChange={(e) => setSearchValue(e.target.value)} 
-                slotProps={{
-                    input: {
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon fontSize="small" />
-                            </InputAdornment>
-                        ),
-                    }
-                }}
-                sx={{ 
-                    width: { xs: '100%', sm: 320 }, 
-                    '& .MuiOutlinedInput-root': { borderRadius: '12px' } 
-                }} 
-            />
+          <TextField 
+            placeholder="Search by name, email or phone..." 
+            variant="outlined" 
+            size="small" 
+            value={searchValue} 
+            onChange={(e) => setSearchValue(e.target.value)} 
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }
+            }}
+            sx={{ 
+              width: { xs: '100%', sm: 280, md: 320 }, 
+              '& .MuiOutlinedInput-root': { borderRadius: '12px' } 
+            }} 
+          />
         </Box>
 
         <TableContainer>
@@ -227,10 +226,11 @@ export default function AdminPurohitsContent() {
                   <TableCell colSpan={7} align="center" sx={{ py: 4, color: '#64748b' }}>No purohits found</TableCell>
                 </TableRow>
               ) : (
-                purohits.map((purohit) => {
+                purohits.map((purohit, idx) => {
                   const statusStyle = getStatusStyle(purohit.status);
+                  const pKey = purohit.id || purohit.userId || `purohit-${idx}`;
                   return (
-                    <TableRow key={purohit.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableRow key={pKey} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell sx={{ fontWeight: 600, color: '#FF6200' }}>P-{purohit.id}</TableCell>
                       <TableCell>
                         <Typography sx={{ fontWeight: 600, color: '#1e293b', fontFamily: 'var(--font-outfit), sans-serif' }}>

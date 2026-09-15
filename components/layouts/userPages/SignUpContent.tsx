@@ -13,6 +13,10 @@ import { MuiTelInput } from 'mui-tel-input';
 
 const emailTldRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
 
+const today = new Date();
+const fifteenYearsAgo = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+const maxDobDate = `${fifteenYearsAgo.getFullYear()}-${String(fifteenYearsAgo.getMonth() + 1).padStart(2, '0')}-${String(fifteenYearsAgo.getDate()).padStart(2, '0')}`;
+
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
   lastName: Yup.string().required('Last name is required'),
@@ -22,7 +26,9 @@ const validationSchema = Yup.object().shape({
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
     .required('Phone number is required'),
-  dob: Yup.date().required('Date of birth is required'),
+  dob: Yup.date()
+    .max(fifteenYearsAgo, 'Date of birth must be at least 15 years ago')
+    .required('Date of birth is required'),
   birthPlace: Yup.string().required('Birth place is required'),
   password: Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
   confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match').required('Confirm Password is required'),
@@ -241,7 +247,7 @@ export default function SignUpContent() {
                                 label="Date of Birth" 
                                 variant="outlined" 
                                 margin="dense"
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }}
                                 error={meta.touched && !!meta.error}
                                 helperText={meta.touched && meta.error}
                                 sx={{ 

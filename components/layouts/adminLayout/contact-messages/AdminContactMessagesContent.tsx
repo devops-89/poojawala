@@ -105,48 +105,47 @@ export default function AdminContactMessagesContent() {
 
   return (
     <Box sx={{ p: 4, bgcolor: '#f8fafc', minHeight: '100vh' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
-            Contact Messages
-          </Typography>
-          <Typography sx={{ color: '#64748b', mt: 1, fontFamily: 'var(--font-outfit), sans-serif' }}>
-            Manage and respond to user inquiries from the contact page.
-          </Typography>
-        </Box>
-        <TextField
-          placeholder="Search by name or email..."
-          variant="outlined"
-          size="small"
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          slotProps={{
-            input: {
-              startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-              sx: { bgcolor: 'white', borderRadius: '12px' }
-            }
-          }}
-          sx={{ width: 300 }}
-        />
-      </Box>
-
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs 
-          value={statusFilter} 
-          onChange={(_, newValue) => { setStatusFilter(newValue); setPage(1); }}
-          sx={{ 
-            '& .MuiTab-root': { fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, textTransform: 'none', fontSize: '1rem' },
-            '& .Mui-selected': { color: '#FF6200 !important' },
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200' }
-          }}
-        >
-          <Tab label="All Messages" value="ALL" />
-          <Tab label="Unread (Draft)" value="DRAFT" />
-          <Tab label="Read" value="READ" />
-        </Tabs>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
+          Contact Messages
+        </Typography>
+        <Typography sx={{ color: '#64748b', mt: 1, fontFamily: 'var(--font-outfit), sans-serif' }}>
+          Manage and respond to user inquiries from the contact page.
+        </Typography>
       </Box>
 
       <TableContainer component={Paper} elevation={0} sx={{ borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', px: 2, py: 1, gap: 2 }}>
+          <Tabs 
+            value={statusFilter} 
+            onChange={(_, newValue) => { setStatusFilter(newValue); setPage(1); }}
+            sx={{ 
+              '& .MuiTab-root': { fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, textTransform: 'none', fontSize: '1rem' },
+              '& .Mui-selected': { color: '#FF6200 !important' },
+              '& .MuiTabs-indicator': { backgroundColor: '#FF6200' }
+            }}
+          >
+            <Tab label="All Messages" value="ALL" />
+            <Tab label="Unread (Draft)" value="DRAFT" />
+            <Tab label="Read" value="READ" />
+          </Tabs>
+
+          <TextField
+            placeholder="Search by name or email..."
+            variant="outlined"
+            size="small"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            slotProps={{
+              input: {
+                startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                sx: { bgcolor: 'white', borderRadius: '12px' }
+              }
+            }}
+            sx={{ width: { xs: '100%', sm: 280, md: 320 } }}
+          />
+        </Box>
+
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: '#f1f5f9' }}>
             <TableRow>
@@ -165,8 +164,8 @@ export default function AdminContactMessagesContent() {
             ) : messages.length === 0 ? (
               <TableRow><TableCell colSpan={6} align="center">No messages found.</TableCell></TableRow>
             ) : (
-              messages.map((msg) => (
-                <TableRow key={msg.id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: '#f8fafc' } }}>
+              messages.map((msg, idx) => (
+                <TableRow key={msg.id || `msg-${idx}`} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: '#f8fafc' } }}>
                   <TableCell sx={{ fontWeight: 700, color: '#FF6200', fontFamily: 'var(--font-outfit), sans-serif' }}>
                     CM-{msg.id}
                   </TableCell>

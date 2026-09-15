@@ -112,12 +112,13 @@ function ComplaintsTable() {
   }, [fetchComplaints]);
 
   return (
-    <Box sx={{ bgcolor: 'white', border: '1px solid #e2e8f0', borderRadius: '24px', boxShadow: 1, mb: 3, mt: 4 }}>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, borderBottom: '1px solid #e2e8f0', px: 3, pt: 2, width: '100%', maxWidth: '100%' }}>
-        <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', pb: { xs: 2, sm: 0 }, flexShrink: 0 }}>
-          Support Complaints
-        </Typography>
-        <Box sx={{ maxWidth: '100%', width: '100%', overflowX: 'auto' }}>
+    <Box sx={{ width: '100%', mt: 2 }}>
+      <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3 }}>
+        Support Complaints
+      </Typography>
+
+      <Box sx={{ bgcolor: 'white', border: '1px solid #e2e8f0', borderRadius: '24px', boxShadow: 1, mb: 3 }}>
+        <Box sx={{ borderBottom: '1px solid #e2e8f0', px: 3, pt: 1, width: '100%', maxWidth: '100%', overflowX: 'auto' }}>
           <Tabs 
             value={statusTab} 
             onChange={(e, val) => { setStatusTab(val); setPage(1); }} 
@@ -139,7 +140,6 @@ function ComplaintsTable() {
             <Tab label="Rejected" value={COMPLAINT_STATUS.REJECTED} />
           </Tabs>
         </Box>
-      </Box>
 
       <Box sx={{ p: 3 }}>
         {loading ? (
@@ -253,6 +253,7 @@ function ComplaintsTable() {
           </Box>
         )}
       </Box>
+    </Box>
 
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>

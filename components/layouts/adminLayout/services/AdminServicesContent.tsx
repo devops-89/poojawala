@@ -125,74 +125,78 @@ export default function AdminServicesContent() {
         </Button>
       </Box>
 
-      {/* Filters */}
-      <Paper elevation={0} sx={{ p: 2, borderRadius: '16px', border: 'none', bgcolor: 'white' }}>
-        <TextField
-          placeholder="Search services..."
-          size="small"
-          variant="outlined"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon style={{ color: focused ? '#FF6200' : '#94a3b8', transition: 'color 0.2s ease' }} />
-                </InputAdornment>
-              ),
-            },
-          }}
-          sx={{
-            width: "100%",
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              height: 44,
-              backgroundColor: '#fff',
-              transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
-              '& fieldset': { borderColor: '#cbd5e1' },
-              '&:hover fieldset': { borderColor: '#FF6200' },
-              '&.Mui-focused fieldset': { borderColor: '#FF6200', borderWidth: '1.5px' },
-              '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(255,98,0,0.12)' },
-            },
-            '& .MuiInputBase-input': { fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.875rem' },
-          }}
-        />
-      </Paper>
-
       {/* Table Area */}
       <Paper elevation={0} sx={{ border: "1px solid #e2e8f0", borderRadius: '12px', overflow: "hidden", bgcolor: 'white' }}>
-        <Tabs
-          value={statusFilter}
-          onChange={(_, newValue) => setStatusFilter(newValue)}
-          sx={{
-            minHeight: 48,
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200', height: 3, borderRadius: '3px 3px 0 0' },
-            borderBottom: '1px solid #e2e8f0',
-            mb: 2,
-            px: 2,
-          }}
-        >
-          {STATUS_TABS.map((tab) => (
-            <Tab
-              key={tab.id}
-              value={tab.id}
-              label={<Typography variant="body2" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: statusFilter === tab.id ? 700 : 500 }}>{tab.label}</Typography>}
-              sx={{ textTransform: 'none', minWidth: 'auto', px: 3, color: '#64748b', '&.Mui-selected': { color: '#FF6200' } }}
-            />
-          ))}
-        </Tabs>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', px: 2, py: 1, gap: 2 }}>
+          <Tabs
+            value={statusFilter}
+            onChange={(_, newValue) => setStatusFilter(newValue)}
+            sx={{
+              minHeight: 48,
+              '& .MuiTabs-indicator': { backgroundColor: '#FF6200', height: 3, borderRadius: '3px 3px 0 0' },
+            }}
+          >
+            {STATUS_TABS.map((tab) => (
+              <Tab
+                key={tab.id}
+                value={tab.id}
+                label={tab.label}
+                sx={{
+                  minHeight: 48,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  fontFamily: 'var(--font-outfit), sans-serif',
+                  color: '#64748b',
+                  '&.Mui-selected': { color: '#FF6200 !important' },
+                }}
+              />
+            ))}
+          </Tabs>
+
+          <TextField
+            placeholder="Search services..."
+            size="small"
+            variant="outlined"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon style={{ color: focused ? '#FF6200' : '#94a3b8', transition: 'color 0.2s ease' }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{
+              width: { xs: '100%', sm: 280, md: 320 },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '12px',
+                height: 40,
+                backgroundColor: '#fff',
+                transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
+                '& fieldset': { borderColor: '#cbd5e1' },
+                '&:hover fieldset': { borderColor: '#FF6200' },
+                '&.Mui-focused fieldset': { borderColor: '#FF6200', borderWidth: '1.5px' },
+                '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(255,98,0,0.12)' },
+              },
+              '& .MuiInputBase-input': { fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.875rem' },
+            }}
+          />
+        </Box>
 
         <TableContainer>
-          <Table size="small" sx={{ minWidth: 800 }}>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#f8fafc" }}>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", py: 2 }}>Service Details</TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Price</TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bookings</TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }} align="right">Actions</TableCell>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead sx={{ backgroundColor: '#f8fafc' }}>
+              <TableRow>
+                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Service Details</TableCell>
+                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Price</TableCell>
+                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Bookings</TableCell>
+                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Status</TableCell>
+                <TableCell align="right" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -208,8 +212,8 @@ export default function AdminServicesContent() {
                     No services found matching the criteria.
                   </TableCell>
                 </TableRow>
-              ) : services.map((service) => (
-                <TableRow key={service.id} hover sx={{ "&:last-child td": { borderBottom: 0 } }}>
+              ) : services.map((service, idx) => (
+                <TableRow key={service.id || `service-${idx}`} hover sx={{ "&:last-child td": { borderBottom: 0 } }}>
                   <TableCell sx={{ py: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                       <Box sx={{ width: 48, height: 48, position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>

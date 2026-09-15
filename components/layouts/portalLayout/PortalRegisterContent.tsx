@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useRef } from 'react';
-import { Box, Container, Typography, Stepper, Step, StepLabel, Paper, Button, TextField, IconButton, Dialog, Select, MenuItem, InputLabel, FormControl, OutlinedInput, Checkbox, ListItemText, FormControlLabel, InputAdornment, RadioGroup, Radio } from '@mui/material';
+import { Box, Container, Typography, Stepper, Step, StepLabel, Paper, Button, TextField, IconButton, Dialog, Select, MenuItem, InputLabel, FormControl, OutlinedInput, Checkbox, ListItemText, FormControlLabel, InputAdornment, RadioGroup, Radio, Link as MuiLink } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -23,6 +23,10 @@ const QUALIFICATIONS = ['SHASTRI', 'ACHARYA', 'VEDPATHI', 'OTHER'];
 
 const emailTldRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
 
+const today = new Date();
+const twentyYearsAgo = new Date(today.getFullYear() - 20, today.getMonth(), today.getDate());
+const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(twentyYearsAgo.getMonth() + 1).padStart(2, '0')}-${String(twentyYearsAgo.getDate()).padStart(2, '0')}`;
+
 const validationSchema = [
   yup.object({
     firstName: yup.string().required('First Name is required'),
@@ -34,7 +38,9 @@ const validationSchema = [
     email: yup.string()
       .matches(emailTldRegex, 'Please enter a valid email address with a valid TLD (e.g. .com, .in)')
       .required('Email is required'),
-    dob: yup.string().required('Date of Birth is required'),
+    dob: yup.date()
+      .max(twentyYearsAgo, 'Date of birth must be at least 20 years ago')
+      .required('Date of Birth is required'),
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
     confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Confirm Password is required'),
   }),
@@ -94,6 +100,8 @@ const selectMenuProps = {
   },
 };
 
+
+
 export default function PortalRegisterContent() {
   const searchParams = useSearchParams();
   const initialStep = parseInt(searchParams.get('step') || '0', 10);
@@ -109,6 +117,36 @@ export default function PortalRegisterContent() {
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [resendTimer, setResendTimer] = useState(30);
+
+  React.useEffect(() => {
+    let interval: any = null;
+    if (activeStep === 1 && resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeStep, resendTimer]);
+
+  const handlePortalResendOtp = async () => {
+    if (resendTimer > 0) return;
+    try {
+      await resendOtpAPI({ 
+        phone: formik.values.mobileNumber, 
+        email: formik.values.email, 
+        otpType: 'REGISTER', 
+        countryCode: formik.values.countryCode 
+      });
+      showSnackbar('OTP resent successfully!', 'success');
+      setResendTimer(30);
+    } catch (err: any) {
+      showSnackbar(err.response?.data?.message || 'Failed to resend OTP', 'error');
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -373,7 +411,7 @@ export default function PortalRegisterContent() {
                     <TextField fullWidth name="email" label="Email Address" type="email" variant="outlined" value={formik.values.email} onChange={formik.handleChange} error={formik.touched.email && Boolean(formik.errors.email)} helperText={formik.touched.email && formik.errors.email as string} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField fullWidth name="dob" label="Date of Birth" type="date" slotProps={{ inputLabel: { shrink: true } }} variant="outlined" value={formik.values.dob} onChange={formik.handleChange} error={formik.touched.dob && Boolean(formik.errors.dob)} helperText={formik.touched.dob && formik.errors.dob as string} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+                    <TextField fullWidth name="dob" label="Date of Birth" type="date" slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }} variant="outlined" value={formik.values.dob} onChange={formik.handleChange} error={formik.touched.dob && Boolean(formik.errors.dob)} helperText={formik.touched.dob && formik.errors.dob as string} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
                   </Grid>
 
                   <Grid size={{ xs: 12, sm: 6 }}>
@@ -392,7 +430,7 @@ export default function PortalRegisterContent() {
                   Verify your Identity
                 </Typography>
                 <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', mb: 4 }}>
-                  We've sent a 6-digit OTP to {formik.values.mobileNumber}.
+                  We've sent a 6-digit OTP to {formik.values.email}.
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 4 }}>
                   {formik.values.otp.map((val, idx) => (
@@ -408,7 +446,21 @@ export default function PortalRegisterContent() {
                     />
                   ))}
                 </Box>
-                <Button type="button" onClick={() => resendOtpAPI({ phone: formik.values.mobileNumber, email: formik.values.email, otpType: 'REGISTER', countryCode: formik.values.countryCode }).then(()=>showSnackbar('OTP Resent', 'success')).catch((err) => showSnackbar(err.response?.data?.message || 'Failed to resend OTP', 'error'))} variant="contained" sx={{ background: '#FF6200', color: 'white', textTransform: 'none', fontWeight: 600, borderRadius: '30px', px: 3, boxShadow: 'none', '&:hover': { background: '#F05A00', boxShadow: 'none' } }}>Resend OTP</Button>
+                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', textAlign: 'center', mt: 3, fontSize: '14px' }}>
+                  Didn't receive the OTP?{' '}
+                  {resendTimer > 0 ? (
+                    <span style={{ color: '#999', fontWeight: 600 }}>Resend in {resendTimer}s</span>
+                  ) : (
+                    <MuiLink 
+                      component="button"
+                      type="button"
+                      onClick={handlePortalResendOtp} 
+                      sx={{ color: '#FF6200', fontWeight: 700, textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px' }}
+                    >
+                      Resend
+                    </MuiLink>
+                  )}
+                </Typography>
               </Box>
             )}
 

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useLoaderStore } from '@/stores/loaderStore';
-import { verifyOtpAPI, registerPurohitAPI } from '@/api/userControllers';
+import { verifyOtpAPI, registerPurohitAPI, sendOtpAPI } from '@/api/userControllers';
 import Link from 'next/link';
 
 export default function VerifyOtpContent() {
@@ -17,6 +17,37 @@ export default function VerifyOtpContent() {
   const { showLoader, hideLoader } = useLoaderStore();
   
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const [resendTimer, setResendTimer] = useState(30);
+
+  useEffect(() => {
+    let interval: any = null;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [resendTimer]);
+
+  const handleResendOtp = async () => {
+    if (resendTimer > 0) return;
+    try {
+      if (signupData) {
+        const res = await sendOtpAPI({ phone: signupData.phone, email: signupData.email, role: 'CUSTOMER' });
+        if (res.success || res.statusCode === 200) {
+          showSnackbar('OTP resent successfully!', 'success');
+          setResendTimer(30);
+        } else {
+          showSnackbar(res.message || 'Failed to resend OTP', 'error');
+        }
+      }
+    } catch (err: any) {
+      showSnackbar(err?.response?.data?.message || err.message || 'Failed to resend OTP', 'error');
+    }
+  };
 
   useEffect(() => {
     const data = sessionStorage.getItem('signupData');
@@ -179,10 +210,10 @@ export default function VerifyOtpContent() {
                 }}
               >
                 <Typography variant="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, mb: 2 }}>
-                  Verify Mobile
+                  Verify Email
                 </Typography>
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', lineHeight: 1.6, opacity: 0.9, mb: 4 }}>
-                  Please enter the 6-digit one-time password sent to your mobile number to securely complete your registration.
+                  Please enter the 6-digit one-time password sent to your email address to securely complete your registration.
                 </Typography>
                 <Box component="img" src="/images/home/poojaPackages/dhanush.webp" sx={{ width: '250px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
               </Box>
@@ -193,7 +224,7 @@ export default function VerifyOtpContent() {
                   Enter OTP
                 </Typography>
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', mb: 4 }}>
-                  Code sent to <span style={{ fontWeight: 700, color: '#1A1A1A' }}>{signupData?.phone ? `+91 ${signupData.phone}` : 'your phone'}</span>
+                  Code sent to <span style={{ fontWeight: 700, color: '#1A1A1A' }}>{signupData?.email || 'your email'}</span>
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, justifyContent: 'space-between', mb: 4 }}>
@@ -252,15 +283,17 @@ export default function VerifyOtpContent() {
                 
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', textAlign: 'center', mt: 4, fontSize: '14px' }}>
                   Didn't receive the code?{' '}
-                  <MuiLink 
-                    component="button"
-                    onClick={() => {
-                      showSnackbar('OTP resent successfully!', 'success');
-                    }} 
-                    sx={{ color: '#FF6200', fontWeight: 700, textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', fontSize: '14px' }}
-                  >
-                    Resend
-                  </MuiLink>
+                  {resendTimer > 0 ? (
+                    <span style={{ color: '#999', fontWeight: 600 }}>Resend in {resendTimer}s</span>
+                  ) : (
+                    <MuiLink 
+                      component="button"
+                      onClick={handleResendOtp} 
+                      sx={{ color: '#FF6200', fontWeight: 700, textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', fontSize: '14px' }}
+                    >
+                      Resend
+                    </MuiLink>
+                  )}
                 </Typography>
                 <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', textAlign: 'center', mt: 1, fontSize: '14px' }}>
                   <Link href="/sign-up" style={{ color: '#64748b', textDecoration: 'none' }}>

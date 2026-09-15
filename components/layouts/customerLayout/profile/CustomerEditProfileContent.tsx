@@ -37,6 +37,12 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
 
+const maxDobDate = (() => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 15);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+})();
+
 const TABS = [
   {
     id: "personal",
@@ -497,7 +503,7 @@ function CustomerEditProfileContentInner() {
                       fullWidth
                       type="date"
                       label="Date of Birth"
-                      slotProps={{ inputLabel: { shrink: true } }}
+                      slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }}
                       value={dob}
                       onChange={(e) => setDob(e.target.value)}
                     />

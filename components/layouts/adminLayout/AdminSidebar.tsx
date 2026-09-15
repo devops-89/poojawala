@@ -412,15 +412,6 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             alt="Poojawala"
             sx={{ height: { xs: "40px", md: "60px" }, objectFit: "contain" }}
           />
-          <Typography
-            variant="body2"
-            sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              color: "#64748b",
-            }}
-          >
-            Admin Portal
-          </Typography>
         </Box>
         <SidebarContent />
       </Drawer>
@@ -465,15 +456,6 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               }}
             >
               Poojawala
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
-                color: "#64748b",
-              }}
-            >
-              Admin Portal
             </Typography>
           </Box>
           <IconButton

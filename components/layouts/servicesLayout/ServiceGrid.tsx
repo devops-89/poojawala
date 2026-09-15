@@ -24,9 +24,8 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
     const fetchServices = async () => {
       try {
         setLoading(true);
-        // Using getServicesAPI from serviceControllers which uses userPublicApi (no roleguard)
-        // Passes page, limit, and searchQuery
-        const response = await getServicesAPI(1, 100, searchQuery || "");
+        // Using getServicesAPI from serviceControllers with isActive = true
+        const response = await getServicesAPI(1, 100, searchQuery || "", undefined, undefined, undefined, true);
         
         // Postman showed nested data for some endpoints, trying to handle that safely.
         let fetchedServices = [];
@@ -46,9 +45,11 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
           fetchedServices = rawData.data.services;
         }
 
+        // Filter only active services (isActive: true)
+        const activeOnly = fetchedServices.filter((s: any) => s.isActive !== false);
 
         // Map the backend data to match the UI requirements
-        const formattedServices = fetchedServices.map((s: any) => ({
+        const formattedServices = activeOnly.map((s: any) => ({
           id: s.id || s._id,
           title: s.name || s.title || 'Service',
           category: s.category?.name || s.category || 'All',
