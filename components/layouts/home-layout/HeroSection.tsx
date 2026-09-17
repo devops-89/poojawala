@@ -34,7 +34,8 @@ export default function HeroSection() {
               fontWeight: 600,
               color: "#1A1A1A",
               mb: 1,
-              fontSize: { xs: "2.5rem", md: "48px" },
+              fontSize: { xs: "1.85rem", sm: "2.5rem", md: "48px" },
+              lineHeight: { xs: 1.15, md: 1.2 },
               letterSpacing: "-0.04em",
             }}
           >
@@ -48,7 +49,8 @@ export default function HeroSection() {
               fontWeight: 600,
               color: "#1A1A1A",
               mb: 1,
-              fontSize: { xs: "2.5rem", md: "48px" },
+              fontSize: { xs: "1.85rem", sm: "2.5rem", md: "48px" },
+              lineHeight: { xs: 1.15, md: 1.2 },
               letterSpacing: "-0.04em",
             }}
           >
@@ -62,7 +64,8 @@ export default function HeroSection() {
               fontWeight: 600,
               color: "#D32F2F",
               mb: 3,
-              fontSize: { xs: "2.5rem", md: "48px" },
+              fontSize: { xs: "1.85rem", sm: "2.5rem", md: "48px" },
+              lineHeight: { xs: 1.15, md: 1.2 },
               letterSpacing: "-0.04em",
             }}
           >

@@ -111,30 +111,33 @@ export default function VerifiedPurohits() {
   }, []);
 
   const displayPurohits = purohits.length > 0 ? purohits : fallbackPurohits;
+  // Ensure enough items for smooth infinite looping
+  const loopedPurohits =
+    displayPurohits.length > 0 && displayPurohits.length < 9
+      ? [...displayPurohits, ...displayPurohits, ...displayPurohits]
+      : displayPurohits;
 
   return (
     <Box
       sx={{
-        py: { xs: '60px', md: '110px' },
+        py: { xs: '50px', md: '100px' },
         bgcolor: '#fff',
         overflow: 'hidden',
       }}
     >
       <Container maxWidth="xl">
-
         {/* Heading */}
-
         <Box
           sx={{
             textAlign: 'center',
-            mb: '60px',
+            mb: { xs: '40px', md: '60px' },
           }}
         >
           <Typography
             sx={{
-              fontFamily: 'DM Sans',
+              fontFamily: '"DM Sans", sans-serif',
               fontWeight: 700,
-              fontSize: { xs: '28px', sm: '36px', md: '48px' },
+              fontSize: { xs: '26px', sm: '36px', md: '48px' },
               lineHeight: '130.6%',
               color: '#C92B2B',
             }}
@@ -145,9 +148,9 @@ export default function VerifiedPurohits() {
           <Typography
             sx={{
               mt: 1,
-              fontFamily: 'DM Sans',
+              fontFamily: '"DM Sans", sans-serif',
               fontWeight: 500,
-              fontSize: { xs: '18px', md: '24px' },
+              fontSize: { xs: '16px', md: '24px' },
               lineHeight: '130.6%',
               color: '#1B1B1B',
             }}
@@ -178,307 +181,293 @@ export default function VerifiedPurohits() {
               <CircularProgress sx={{ color: '#FF6200' }} />
             </Box>
           ) : (
-          <Swiper
-          modules={[Autoplay]}
-          centeredSlides
-          loop={displayPurohits.length > 1}
-          slidesPerView="auto"
-          spaceBetween={-60}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          style={{
-            padding: '35px 0 55px',
-          }}
-        >
-          {displayPurohits.map((item: any) => (
-            <SwiperSlide
-              key={item.id}
+            <Swiper
+              modules={[Autoplay]}
+              centeredSlides={true}
+              loop={true}
+              slidesPerView="auto"
+              spaceBetween={-60}
+              autoplay={{
+                delay: 2500,
+                disableOnInteraction: false,
+              }}
               style={{
-                width: '400px',
-                maxWidth: '90vw',
-                display: 'flex',
-                justifyContent: 'center',
+                padding: '35px 0 55px',
               }}
             >
-              {({ isActive }) => (
-                <Box
-                  sx={{
-                    width: '100%',
-                    maxWidth: '480px',
-                    minHeight: { xs: 'auto', md: '220px' },
-                    borderRadius: { xs: '24px', md: '41.71px' },
-                    background: '#FFF',
-                    border: '1.35px solid rgba(20,20,20,.15)',
-                    boxShadow: isActive
-                      ? '0px 12px 35px rgba(0,0,0,.08)'
-                      : 'none',
+              {loopedPurohits.map((item: any, index: number) => (
+                <SwiperSlide
+                  key={`${item.id}-${index}`}
+                  style={{
+                    width: '400px',
+                    maxWidth: '90vw',
                     display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    alignItems: { xs: 'center', sm: 'flex-start' },
-                    padding: { xs: '24px 20px', sm: '30px 30px', md: '39px 50px' },
-                    gap: { xs: '20px', md: '35px' },
-                    transition: '.35s',
-                    transform: isActive
-                      ? 'scale(1)'
-                      : 'scale(.9)',
-                    opacity: isActive ? 1 : .8,
-                    zIndex: isActive ? 2 : 1,
-                    position: 'relative',
+                    justifyContent: 'center',
                   }}
                 >
-                                    {/* Left Section */}
-                  <Box
-                    sx={{
-                      width: '165px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
+                  {({ isActive }) => (
                     <Box
                       sx={{
-                      width: { xs: '100px', sm: '130px' },
-                      height: { xs: '100px', sm: '130px' },
-                        borderRadius: '50%',
-                        bgcolor: '#D9D9D9',
-                        position: 'relative',
+                        width: '100%',
+                        maxWidth: '480px',
+                        minHeight: { xs: 'auto', md: '220px' },
+                        borderRadius: { xs: '24px', md: '41.71px' },
+                        background: '#FFF',
+                        border: '1.35px solid rgba(20,20,20,.15)',
+                        boxShadow: isActive
+                          ? '0px 12px 35px rgba(0,0,0,.08)'
+                          : 'none',
                         display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        alignItems: { xs: 'center', sm: 'flex-start' },
+                        padding: { xs: '20px 16px', sm: '24px 24px', md: '28px 32px' },
+                        gap: { xs: '16px', md: '24px' },
+                        transition: '.35s',
+                        transform: isActive
+                          ? 'scale(1)'
+                          : 'scale(.9)',
+                        opacity: isActive ? 1 : 0.8,
+                        zIndex: isActive ? 2 : 1,
+                        position: 'relative',
                       }}
                     >
-                      <Box
-                        component="img"
-                        src={item.image}
-                        alt={item.name}
-                        sx={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    </Box>
-
-                    {parseFloat(item.rating) > 0 && (
+                      {/* Left Section */}
                       <Box
                         sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          mt: '12px',
-                        }}
-                      >
-                        <StarIcon
-                          sx={{
-                            color: '#FFC107',
-                            fontSize: '20px',
-                          }}
-                        />
-
-                        <Typography
-                          sx={{
-                            fontFamily: 'DM Sans',
-                            fontWeight: 700,
-                            fontSize: '18px',
-                            color: '#222',
-                          }}
-                        >
-                          {item.rating}
-
-                          <Typography
-                            component="span"
-                            sx={{
-                              ml: .5,
-                              fontWeight: 400,
-                              fontSize: '18px',
-                              color: '#666',
-                            }}
-                          >
-                            ({item.reviews})
-                          </Typography>
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-
-                  {/* Right Section */}
-
-                  <Box
-                    sx={{
-                      flex: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      height: '100%',
-                    }}
-                  >
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontFamily: 'DM Sans',
-                          fontWeight: 400,
-                          fontSize: { xs: '20px', md: '26.91px' },
-                          lineHeight: '130.6%',
-                          color: '#1A1A1A',
-                          mb: '18px',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-
-                      <Box
-                        sx={{
+                          width: { xs: '100px', sm: '165px' },
                           display: 'flex',
                           flexDirection: 'column',
-                          gap: '12px',
+                          alignItems: 'center',
+                          flexShrink: 0,
                         }}
                       >
-                        {item.languages && (
+                        <Box
+                          sx={{
+                            width: { xs: '90px', sm: '130px' },
+                            height: { xs: '90px', sm: '130px' },
+                            borderRadius: '50%',
+                            bgcolor: '#D9D9D9',
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <Box
+                            component="img"
+                            src={item.image}
+                            alt={item.name}
+                            sx={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              borderRadius: '50%',
+                            }}
+                          />
+                        </Box>
+
+                        {parseFloat(item.rating) > 0 && (
                           <Box
                             sx={{
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '12px',
+                              gap: '6px',
+                              mt: '12px',
                             }}
                           >
-                            <TranslateIcon
+                            <StarIcon
                               sx={{
-                                fontSize: '19px',
-                                color: '#707070',
+                                color: '#FFC107',
+                                fontSize: '20px',
                               }}
                             />
-
                             <Typography
                               sx={{
                                 fontFamily: 'DM Sans',
-                                fontWeight: 400,
-                                fontSize: '16px',
-                                lineHeight: '130.6%',
-                                color: '#555',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
+                                fontWeight: 700,
+                                fontSize: '18px',
+                                color: '#222',
                               }}
                             >
-                              {item.languages}
-                            </Typography>
-                          </Box>
-                        )}
-
-                        {item.experience && (
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                            }}
-                          >
-                            <PersonOutlinedIcon
-                              sx={{
-                                fontSize: '19px',
-                                color: '#707070',
-                              }}
-                            />
-
-                            <Typography
-                              sx={{
-                                fontFamily: 'DM Sans',
-                                fontWeight: 400,
-                                fontSize: '16px',
-                                lineHeight: '130.6%',
-                                color: '#555',
-                              }}
-                            >
-                              {item.experience}
-                            </Typography>
-                          </Box>
-                        )}
-
-                        {item.speciality && (
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                            }}
-                          >
-                            <WorkspacePremiumOutlinedIcon
-                              sx={{
-                                fontSize: '19px',
-                                color: '#707070',
-                              }}
-                            />
-
-                            <Typography
-                              sx={{
-                                fontFamily: 'DM Sans',
-                                fontWeight: 400,
-                                fontSize: '16px',
-                                lineHeight: '130.6%',
-                                color: '#555',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                              }}
-                            >
-                              {item.speciality}
+                              {item.rating}
+                              <Typography
+                                component="span"
+                                sx={{
+                                  ml: 0.5,
+                                  fontWeight: 400,
+                                  fontSize: '18px',
+                                  color: '#666',
+                                }}
+                              >
+                                ({item.reviews})
+                              </Typography>
                             </Typography>
                           </Box>
                         )}
                       </Box>
-                    </Box>
 
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        pt: '18px',
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        onClick={() => router.push('/sign-in')}
+                      {/* Right Section */}
+                      <Box
                         sx={{
-                          width: { xs: '120px', md: '151.82px' },
-                          height: { xs: '44px', md: '54.91px' },
-                          borderRadius: '41.71px',
-                          background: '#FF6200',
-                          color: '#FFFFFF',
-                          textTransform: 'none',
-                          fontFamily: 'DM Sans',
-                          fontWeight: 400,
-                          fontSize: { xs: '16px', md: '21.53px' },
-                          lineHeight: 'normal',
-                          letterSpacing: '-0.01em',
-                          boxShadow:
-                            '0px 4px 12px rgba(255,98,0,.35)',
-
-                          '&:hover': {
-                            background: '#F05A00',
-                            boxShadow:
-                              '0px 4px 12px rgba(255,98,0,.35)',
-                          },
+                          flex: 1,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          height: '100%',
+                          minWidth: 0,
                         }}
                       >
-                        Book Now
-                      </Button>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontFamily: '"DM Sans", sans-serif',
+                              fontWeight: 700,
+                              fontSize: { xs: '16px', sm: '18px', md: '20px' },
+                              lineHeight: '1.2',
+                              color: '#1A1A1A',
+                              mb: '12px',
+                              textTransform: 'capitalize',
+                            }}
+                          >
+                            {item.name}
+                          </Typography>
+
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '10px',
+                            }}
+                          >
+                            {item.languages && (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                }}
+                              >
+                                <TranslateIcon
+                                  sx={{
+                                    fontSize: '16px',
+                                    color: '#707070',
+                                    flexShrink: 0,
+                                  }}
+                                />
+                                <Typography
+                                  sx={{
+                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontWeight: 600,
+                                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
+                                    lineHeight: '1.3',
+                                    color: '#444',
+                                  }}
+                                >
+                                  {item.languages}
+                                </Typography>
+                              </Box>
+                            )}
+
+                            {item.experience && (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                }}
+                              >
+                                <PersonOutlinedIcon
+                                  sx={{
+                                    fontSize: '16px',
+                                    color: '#707070',
+                                    flexShrink: 0,
+                                  }}
+                                />
+                                <Typography
+                                  sx={{
+                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontWeight: 600,
+                                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
+                                    lineHeight: '1.3',
+                                    color: '#444',
+                                  }}
+                                >
+                                  {item.experience}
+                                </Typography>
+                              </Box>
+                            )}
+
+                            {item.speciality && (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                }}
+                              >
+                                <WorkspacePremiumOutlinedIcon
+                                  sx={{
+                                    fontSize: '16px',
+                                    color: '#707070',
+                                    flexShrink: 0,
+                                  }}
+                                />
+                                <Typography
+                                  sx={{
+                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontWeight: 600,
+                                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
+                                    lineHeight: '1.3',
+                                    color: '#444',
+                                  }}
+                                >
+                                  {item.speciality}
+                                </Typography>
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            pt: '18px',
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            onClick={() => router.push('/sign-in')}
+                            sx={{
+                              width: { xs: '110px', md: '135px' },
+                              height: { xs: '38px', md: '44px' },
+                              borderRadius: '41.71px',
+                              background: '#FF6200',
+                              color: '#FFFFFF',
+                              textTransform: 'none',
+                              fontFamily: '"DM Sans", sans-serif',
+                              fontWeight: 600,
+                              fontSize: { xs: '14px', md: '16px' },
+                              lineHeight: 'normal',
+                              letterSpacing: '-0.01em',
+                              boxShadow: '0px 4px 12px rgba(255,98,0,.35)',
+                              '&:hover': {
+                                background: '#F05A00',
+                                boxShadow: '0px 4px 12px rgba(255,98,0,.35)',
+                              },
+                            }}
+                          >
+                            Book Now
+                          </Button>
+                        </Box>
+                      </Box>
                     </Box>
-                  </Box>
-                                  </Box>
-              )}
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        )}
+                  )}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </Box>
       </Container>
     </Box>

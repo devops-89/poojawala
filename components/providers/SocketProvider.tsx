@@ -34,8 +34,7 @@ export default function SocketProvider({ children }: { children: React.ReactNode
     // However, Next.js proxy rewrites do not support WebSockets properly.
     // Falling back to direct backend connection to ensure notifications work.
     // Extract origin from NEXT_PUBLIC_SOCKET_URL (e.g. "http://200.234.41.149/api" -> "http://200.234.41.149")
-    const envUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
-    const socketUrl = envUrl ? new URL(envUrl).origin : "http://200.234.41.149";
+    const socketUrl = SERVER_ENDPOINTS.SOCKET_URL;
     
     const socket = io(socketUrl, {
       path: "/socket.io/",

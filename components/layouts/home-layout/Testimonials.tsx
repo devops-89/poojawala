@@ -115,116 +115,129 @@ export default function Testimonials() {
           <CircularProgress sx={{ color: '#CC2E2E' }} />
         </Box>
       ) : (
-        <Box 
-          sx={{ 
-            width: '100%',
-            overflow: 'hidden',
-            '.swiper-pagination': {
-              position: 'relative',
-              mt: 4,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '6px'
-            },
-            '.swiper-pagination-bullet': {
-              width: '10px',
-              height: '10px',
-              bgcolor: '#CC2E2E',
-              opacity: 0.4,
-              transition: 'all 0.3s ease',
-              margin: '0 !important'
-            },
-            '.swiper-pagination-bullet-active': {
-              width: '12px',
-              height: '12px',
-              opacity: 1,
-            }
-          }}
-        >
-          <Swiper
-            modules={[Pagination, Autoplay]}
-            loop={true}
-            centeredSlides={false}
-            slidesPerView="auto"
-            spaceBetween={32}
-            pagination={{ clickable: true }}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
-            style={{ width: '100%', maxWidth: '1152px', overflow: 'visible', margin: '0 auto', paddingLeft: '16px', paddingRight: '16px', boxSizing: 'border-box' }}
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              width: '100%',
+              '.swiper-pagination': {
+                position: 'relative',
+                mt: 4,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '6px',
+              },
+              '.swiper-pagination-bullet': {
+                width: '10px',
+                height: '10px',
+                bgcolor: '#CC2E2E',
+                opacity: 0.4,
+                transition: 'all 0.3s ease',
+                margin: '0 !important',
+              },
+              '.swiper-pagination-bullet-active': {
+                width: '12px',
+                height: '12px',
+                opacity: 1,
+              },
+            }}
           >
-            {displayReviews.map((review, index) => (
-              <SwiperSlide key={`${review.id}-${index}`} style={{ width: '100%', maxWidth: '560px', minWidth: '280px', boxSizing: 'border-box' }}>
-                <Box
-                  sx={{
-                    width: '100%',
-                    height: { xs: 'auto', md: '280px' },
-                    minHeight: '240px',
-                    bgcolor: '#ffffff',
-                    border: '1.26px solid rgba(20, 20, 20, 0.15)',
-                    borderRadius: '39.1px',
-                    padding: { xs: '28px 20px 24px', md: '43px 33px 35px 33px' },
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <Box sx={{ display: 'flex', gap: '18px' }}>
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon key={i} sx={{ color: i < (review.rating || 5) ? '#FFCD29' : '#e2e8f0', fontSize: '22.83px' }} />
-                    ))}
-                  </Box>
-                  
-                  <Typography 
-                    sx={{ 
-                      fontFamily: '"DM Sans", sans-serif',
-                      fontWeight: 400,
-                      fontSize: { xs: '16px', md: '20px' },
-                      color: '#141414',
-                      lineHeight: '130.6%',
-                      flexGrow: 1,
-                      mt: 2
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              loop={true}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              pagination={{ clickable: true }}
+              breakpoints={{
+                0: {
+                  slidesPerView: 1,
+                  spaceBetween: 16,
+                },
+                600: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                960: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+              }}
+              style={{ width: '100%', padding: '10px 4px 30px 4px' }}
+            >
+              {displayReviews.map((review, index) => (
+                <SwiperSlide key={`${review.id}-${index}`} style={{ height: 'auto' }}>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      minHeight: { xs: '200px', md: '250px' },
+                      bgcolor: '#ffffff',
+                      border: '1.26px solid rgba(20, 20, 20, 0.15)',
+                      borderRadius: { xs: '20px', md: '30px' },
+                      padding: { xs: '20px 16px', md: '28px 24px' },
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      boxSizing: 'border-box',
                     }}
                   >
-                    {review.text}
-                  </Typography>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-                    <Avatar 
-                      src={review.image} 
-                      alt={review.name}
-                      sx={{ width: { xs: '50px', md: '69px' }, height: { xs: '50px', md: '69px' } }}
-                    />
                     <Box>
-                      <Typography 
-                        sx={{ 
+                      <Box sx={{ display: 'flex', gap: '8px', mb: 1.5 }}>
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon key={i} sx={{ color: i < (review.rating || 5) ? '#FFCD29' : '#e2e8f0', fontSize: '20px' }} />
+                        ))}
+                      </Box>
+
+                      <Typography
+                        sx={{
                           fontFamily: '"DM Sans", sans-serif',
-                          fontWeight: 400,
-                          fontSize: '20px',
-                          lineHeight: '130.6%',
-                          color: '#1A1A1A'
+                          fontWeight: 500,
+                          fontSize: { xs: '14px', md: '16px' },
+                          color: '#141414',
+                          lineHeight: '1.4',
+                          mb: 2,
                         }}
                       >
-                        {review.name}
-                      </Typography>
-                      <Typography 
-                        sx={{ 
-                          fontFamily: '"DM Sans", sans-serif',
-                          fontWeight: 400,
-                          fontSize: '20px',
-                          lineHeight: '130.6%',
-                          color: '#888888'
-                        }}
-                      >
-                        {review.location}
+                        {review.text}
                       </Typography>
                     </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', mt: 'auto' }}>
+                      <Avatar
+                        src={review.image}
+                        alt={review.name}
+                        sx={{ width: { xs: '45px', md: '56px' }, height: { xs: '45px', md: '56px' } }}
+                      />
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontFamily: '"DM Sans", sans-serif',
+                            fontWeight: 700,
+                            fontSize: { xs: '15px', md: '17px' },
+                            lineHeight: '1.2',
+                            color: '#1A1A1A',
+                          }}
+                        >
+                          {review.name}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontFamily: '"DM Sans", sans-serif',
+                            fontWeight: 400,
+                            fontSize: { xs: '13px', md: '14px' },
+                            color: '#888888',
+                            mt: 0.3,
+                          }}
+                        >
+                          {review.location}
+                        </Typography>
+                      </Box>
+                    </Box>
                   </Box>
-                </Box>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </Box>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </Box>
+        </Container>
       )}
     </Box>
   );

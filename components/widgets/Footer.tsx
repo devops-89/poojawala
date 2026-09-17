@@ -85,21 +85,18 @@ export default function Footer() {
           <Grid container spacing={4}>
             {/* Brand Column */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <Link component={NextLink} href="/" underline="none">
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontFamily: '"Inter", sans-serif',
-                    fontWeight: 500,
-                    color: "#C82E2E",
-                    mb: 1.5,
-                    fontSize: { xs: '28px', md: '36px' },
-                    lineHeight: "normal",
-                    letterSpacing: "0px",
-                  }}
-                >
-                  Poojawala
-                </Typography>
+              <Link
+                component={NextLink}
+                href="/"
+                underline="none"
+                sx={{ display: "inline-block", mb: 1.5 }}
+              >
+                <Box
+                  component="img"
+                  src="/images/logo.png"
+                  alt="Poojawala"
+                  sx={{ height: { xs: "45px", md: "60px" }, objectFit: "contain" }}
+                />
               </Link>
               <Typography
                 sx={{

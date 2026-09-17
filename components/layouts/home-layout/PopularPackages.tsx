@@ -158,12 +158,12 @@ export default function PopularPackages() {
             <CircularProgress sx={{ color: '#FF6200' }} />
           </Box>
         ) : (
-        <Grid container spacing={3} sx={{justifyContent:'center'}}>
+        <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ justifyContent: 'center' }}>
           {displayPackages.map((pkg) => (
-            <Grid size={{xs:12,sm:6,md:4,lg:2.4}} key={pkg.id}>
+            <Grid size={{ xs: 6, sm: 4, md: 2.4 }} key={pkg.id}>
               <Card sx={{ 
                 width: '100%',
-                maxWidth: { xs: '280px', sm: '213px' },
+                maxWidth: '100%',
                 height: '100%',
                 margin: '0 auto',
                 display: 'flex', 

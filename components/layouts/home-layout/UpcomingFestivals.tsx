@@ -120,14 +120,15 @@ export default function UpcomingFestivals() {
             <CircularProgress sx={{ color: '#FF6200' }} />
           </Box>
         ) : (
-        <Box sx={{ maxWidth: '1158px', margin: '0 auto', display: 'flex', gap: '42px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Box sx={{ maxWidth: '1158px', margin: '0 auto', display: 'flex', gap: { xs: '20px', md: '42px' }, flexWrap: 'wrap', justifyContent: 'center' }}>
           {displayFestivals.map((fest) => (
             <Box
               key={fest.id}
               sx={{
                 width: { xs: '100%', md: 'calc(50% - 21px)' },
                 maxWidth: '558px',
-                height: { xs: '260px', sm: '322px' },
+                height: { xs: 'auto', sm: '322px' },
+                minHeight: { xs: '260px', sm: '322px' },
                 borderRadius: { xs: '24px', md: '42px' },
                 backgroundImage: `url(${fest.image})`,
                 backgroundSize: 'cover',
