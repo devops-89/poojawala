@@ -13,6 +13,15 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata: Metadata = {
   title: "Poojawala | Book Verified Purohits & Pujas Online",
   description: "Your trusted platform for discovering verified Purohits, booking online or temple pujas, and astrology consultations.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport = {
@@ -29,10 +38,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${inter.variable} ${outfit.variable} min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9] overflow-x-hidden`}>
+      <body suppressHydrationWarning className={`${inter.variable} ${outfit.variable} min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9]`}>
         <ThemeRegistry>
           <Navbar />
-          <main className="flex-grow flex flex-col overflow-x-hidden w-full relative">
+          <main className="flex-grow flex flex-col w-full relative">
             {children}
           </main>
           <Footer />

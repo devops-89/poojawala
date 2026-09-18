@@ -186,21 +186,29 @@ export default function VerifiedPurohits() {
               centeredSlides={true}
               loop={true}
               slidesPerView="auto"
-              spaceBetween={-60}
+              spaceBetween={16}
+              breakpoints={{
+                640: {
+                  spaceBetween: -30,
+                },
+                900: {
+                  spaceBetween: -50,
+                },
+              }}
               autoplay={{
                 delay: 2500,
                 disableOnInteraction: false,
               }}
               style={{
-                padding: '35px 0 55px',
+                padding: '25px 0 50px',
               }}
             >
               {loopedPurohits.map((item: any, index: number) => (
                 <SwiperSlide
                   key={`${item.id}-${index}`}
                   style={{
-                    width: '400px',
-                    maxWidth: '90vw',
+                    width: '420px',
+                    maxWidth: '88vw',
                     display: 'flex',
                     justifyContent: 'center',
                   }}
@@ -211,42 +219,45 @@ export default function VerifiedPurohits() {
                         width: '100%',
                         maxWidth: '480px',
                         minHeight: { xs: 'auto', md: '220px' },
-                        borderRadius: { xs: '24px', md: '41.71px' },
+                        borderRadius: { xs: '28px', md: '36px' },
                         background: '#FFF',
-                        border: '1.35px solid rgba(20,20,20,.15)',
+                        border: '1.35px solid rgba(20,20,20,.12)',
                         boxShadow: isActive
-                          ? '0px 12px 35px rgba(0,0,0,.08)'
-                          : 'none',
+                          ? '0px 14px 40px rgba(0,0,0,.1)'
+                          : '0px 4px 16px rgba(0,0,0,.04)',
                         display: 'flex',
                         flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: { xs: 'center', sm: 'flex-start' },
-                        padding: { xs: '20px 16px', sm: '24px 24px', md: '28px 32px' },
-                        gap: { xs: '16px', md: '24px' },
-                        transition: '.35s',
+                        alignItems: 'center',
+                        padding: { xs: '24px 20px', sm: '24px 24px', md: '28px 32px' },
+                        gap: { xs: '16px', sm: '20px', md: '24px' },
+                        transition: 'transform .35s ease, box-shadow .35s ease, opacity .35s ease',
                         transform: isActive
                           ? 'scale(1)'
-                          : 'scale(.9)',
-                        opacity: isActive ? 1 : 0.8,
+                          : 'scale(.92)',
+                        opacity: isActive ? 1 : 0.75,
                         zIndex: isActive ? 2 : 1,
                         position: 'relative',
                       }}
                     >
-                      {/* Left Section */}
+                      {/* Left Section (Avatar + Rating) */}
                       <Box
                         sx={{
-                          width: { xs: '100px', sm: '165px' },
+                          width: { xs: '100%', sm: '130px' },
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
+                          justifyContent: 'center',
                           flexShrink: 0,
                         }}
                       >
                         <Box
                           sx={{
-                            width: { xs: '90px', sm: '130px' },
-                            height: { xs: '90px', sm: '130px' },
+                            width: { xs: '96px', sm: '120px' },
+                            height: { xs: '96px', sm: '120px' },
                             borderRadius: '50%',
-                            bgcolor: '#D9D9D9',
+                            bgcolor: '#F5F5F5',
+                            border: '3px solid #FFF',
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
                             position: 'relative',
                             display: 'flex',
                             alignItems: 'center',
@@ -262,7 +273,6 @@ export default function VerifiedPurohits() {
                               width: '100%',
                               height: '100%',
                               objectFit: 'cover',
-                              borderRadius: '50%',
                             }}
                           />
                         </Box>
@@ -272,22 +282,23 @@ export default function VerifiedPurohits() {
                             sx={{
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '6px',
-                              mt: '12px',
+                              justifyContent: 'center',
+                              gap: '4px',
+                              mt: '10px',
                             }}
                           >
                             <StarIcon
                               sx={{
-                                color: '#FFC107',
-                                fontSize: '20px',
+                                color: '#FFB300',
+                                fontSize: '18px',
                               }}
                             />
                             <Typography
                               sx={{
-                                fontFamily: 'DM Sans',
+                                fontFamily: '"DM Sans", sans-serif',
                                 fontWeight: 700,
-                                fontSize: '18px',
-                                color: '#222',
+                                fontSize: '16px',
+                                color: '#1A1A1A',
                               }}
                             >
                               {item.rating}
@@ -296,7 +307,7 @@ export default function VerifiedPurohits() {
                                 sx={{
                                   ml: 0.5,
                                   fontWeight: 400,
-                                  fontSize: '18px',
+                                  fontSize: '14px',
                                   color: '#666',
                                 }}
                               >
@@ -307,26 +318,30 @@ export default function VerifiedPurohits() {
                         )}
                       </Box>
 
-                      {/* Right Section */}
+                      {/* Right Section (Details & Action) */}
                       <Box
                         sx={{
                           flex: 1,
+                          width: '100%',
                           display: 'flex',
                           flexDirection: 'column',
+                          alignItems: { xs: 'center', sm: 'flex-start' },
+                          textAlign: { xs: 'center', sm: 'left' },
                           justifyContent: 'space-between',
                           height: '100%',
                           minWidth: 0,
                         }}
                       >
-                        <Box>
+                        <Box sx={{ width: '100%' }}>
                           <Typography
                             sx={{
                               fontFamily: '"DM Sans", sans-serif',
                               fontWeight: 700,
-                              fontSize: { xs: '16px', sm: '18px', md: '20px' },
-                              lineHeight: '1.2',
+                              fontSize: { xs: '18px', sm: '18px', md: '20px' },
+                              lineHeight: '1.25',
                               color: '#1A1A1A',
                               mb: '12px',
+                              textAlign: { xs: 'center', sm: 'left' },
                               textTransform: 'capitalize',
                             }}
                           >
@@ -337,7 +352,9 @@ export default function VerifiedPurohits() {
                             sx={{
                               display: 'flex',
                               flexDirection: 'column',
-                              gap: '10px',
+                              alignItems: { xs: 'center', sm: 'flex-start' },
+                              gap: '8px',
+                              width: '100%',
                             }}
                           >
                             {item.languages && (
@@ -345,23 +362,24 @@ export default function VerifiedPurohits() {
                                 sx={{
                                   display: 'flex',
                                   alignItems: 'center',
-                                  gap: '10px',
+                                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                                  gap: '8px',
+                                  width: '100%',
                                 }}
                               >
                                 <TranslateIcon
                                   sx={{
                                     fontSize: '16px',
-                                    color: '#707070',
+                                    color: '#FF6200',
                                     flexShrink: 0,
                                   }}
                                 />
                                 <Typography
                                   sx={{
                                     fontFamily: '"DM Sans", sans-serif',
-                                    fontWeight: 600,
-                                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
-                                    lineHeight: '1.3',
-                                    color: '#444',
+                                    fontWeight: 500,
+                                    fontSize: { xs: '13px', sm: '13px', md: '14px' },
+                                    color: '#4A4A4A',
                                   }}
                                 >
                                   {item.languages}
@@ -374,23 +392,24 @@ export default function VerifiedPurohits() {
                                 sx={{
                                   display: 'flex',
                                   alignItems: 'center',
-                                  gap: '10px',
+                                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                                  gap: '8px',
+                                  width: '100%',
                                 }}
                               >
                                 <PersonOutlinedIcon
                                   sx={{
                                     fontSize: '16px',
-                                    color: '#707070',
+                                    color: '#FF6200',
                                     flexShrink: 0,
                                   }}
                                 />
                                 <Typography
                                   sx={{
                                     fontFamily: '"DM Sans", sans-serif',
-                                    fontWeight: 600,
-                                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
-                                    lineHeight: '1.3',
-                                    color: '#444',
+                                    fontWeight: 500,
+                                    fontSize: { xs: '13px', sm: '13px', md: '14px' },
+                                    color: '#4A4A4A',
                                   }}
                                 >
                                   {item.experience}
@@ -403,23 +422,24 @@ export default function VerifiedPurohits() {
                                 sx={{
                                   display: 'flex',
                                   alignItems: 'center',
-                                  gap: '10px',
+                                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                                  gap: '8px',
+                                  width: '100%',
                                 }}
                               >
                                 <WorkspacePremiumOutlinedIcon
                                   sx={{
                                     fontSize: '16px',
-                                    color: '#707070',
+                                    color: '#FF6200',
                                     flexShrink: 0,
                                   }}
                                 />
                                 <Typography
                                   sx={{
                                     fontFamily: '"DM Sans", sans-serif',
-                                    fontWeight: 600,
-                                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
-                                    lineHeight: '1.3',
-                                    color: '#444',
+                                    fontWeight: 500,
+                                    fontSize: { xs: '13px', sm: '13px', md: '14px' },
+                                    color: '#4A4A4A',
                                   }}
                                 >
                                   {item.speciality}
@@ -432,29 +452,30 @@ export default function VerifiedPurohits() {
                         <Box
                           sx={{
                             display: 'flex',
-                            justifyContent: 'flex-end',
-                            pt: '18px',
+                            justifyContent: { xs: 'center', sm: 'flex-end' },
+                            width: '100%',
+                            pt: { xs: '16px', sm: '18px' },
                           }}
                         >
                           <Button
                             variant="contained"
                             onClick={() => router.push('/sign-in')}
                             sx={{
-                              width: { xs: '110px', md: '135px' },
-                              height: { xs: '38px', md: '44px' },
-                              borderRadius: '41.71px',
+                              width: { xs: '120px', md: '135px' },
+                              height: { xs: '38px', md: '42px' },
+                              borderRadius: '31px',
                               background: '#FF6200',
                               color: '#FFFFFF',
                               textTransform: 'none',
                               fontFamily: '"DM Sans", sans-serif',
                               fontWeight: 600,
-                              fontSize: { xs: '14px', md: '16px' },
+                              fontSize: { xs: '14px', md: '15px' },
                               lineHeight: 'normal',
                               letterSpacing: '-0.01em',
-                              boxShadow: '0px 4px 12px rgba(255,98,0,.35)',
+                              boxShadow: '0px 4px 14px rgba(255,98,0,.35)',
                               '&:hover': {
-                                background: '#F05A00',
-                                boxShadow: '0px 4px 12px rgba(255,98,0,.35)',
+                                background: '#E65800',
+                                boxShadow: '0px 6px 18px rgba(255,98,0,.45)',
                               },
                             }}
                           >

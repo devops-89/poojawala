@@ -188,9 +188,8 @@ export default function ServicesLayout() {
             sx={{
               position: "sticky",
               top: 0,
-              height: "100vh",
+              height: "100%",
               width: "100%",
-              overflow: "hidden",
             }}
           >
             {/* Left Chakra */}

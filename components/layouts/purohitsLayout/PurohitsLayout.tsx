@@ -3,7 +3,7 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 
 import PurohitGrid from "./PurohitGrid";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -73,6 +73,12 @@ export default function PurohitsLayout() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeFilters, setActiveFilters] = useState<any>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && !window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
   return (
     <Box
       sx={{
@@ -80,7 +86,6 @@ export default function PurohitsLayout() {
         minHeight: "100vh",
         pb: 10,
         position: "relative",
-        overflowX: "hidden",
       }}
     >
       {/* Hero Section */}
@@ -97,8 +102,7 @@ export default function PurohitsLayout() {
           backgroundRepeat: "no-repeat",
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
-          pt: 12,
+          pt: 4,
           pb: 8,
           mb: 8,
         }}
@@ -261,9 +265,8 @@ export default function PurohitsLayout() {
             sx={{
               position: "sticky",
               top: 0,
-              height: "100vh",
+              height: "100%",
               width: "100%",
-              overflow: "hidden",
             }}
           >
             {/* Left Chakra */}

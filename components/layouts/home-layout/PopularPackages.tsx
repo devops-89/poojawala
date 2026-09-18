@@ -159,8 +159,12 @@ export default function PopularPackages() {
           </Box>
         ) : (
         <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ justifyContent: 'center' }}>
-          {displayPackages.map((pkg) => (
-            <Grid size={{ xs: 6, sm: 4, md: 2.4 }} key={pkg.id}>
+          {displayPackages.map((pkg, index) => (
+            <Grid 
+              size={{ xs: 6, sm: 4, md: 2.4 }} 
+              key={pkg.id}
+              sx={{ display: { xs: index >= 2 ? 'none' : 'block', sm: 'block' } }}
+            >
               <Card sx={{ 
                 width: '100%',
                 maxWidth: '100%',

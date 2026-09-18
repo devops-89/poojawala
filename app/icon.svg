@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Outer Red Lotus Petals -->
+    <linearGradient id="lotusRedLeft" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#990000" />
+      <stop offset="60%" stop-color="#E50000" />
+      <stop offset="100%" stop-color="#FF5500" />
+    </linearGradient>
+
+    <linearGradient id="lotusRedRight" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#990000" />
+      <stop offset="60%" stop-color="#E50000" />
+      <stop offset="100%" stop-color="#FF5500" />
+    </linearGradient>
+
+    <!-- Inner Gold Lotus Petals -->
+    <linearGradient id="lotusGold" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#DD6600" />
+      <stop offset="50%" stop-color="#FF9900" />
+      <stop offset="100%" stop-color="#FFD700" />
+    </linearGradient>
+
+    <!-- Mandap Arch -->
+    <linearGradient id="goldArch" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066" />
+      <stop offset="35%" stop-color="#FFB700" />
+      <stop offset="70%" stop-color="#F57C00" />
+      <stop offset="100%" stop-color="#B71C1C" />
+    </linearGradient>
+
+    <!-- Finial & Bell -->
+    <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E65100" />
+      <stop offset="30%" stop-color="#FFC107" />
+      <stop offset="50%" stop-color="#FFFFFF" />
+      <stop offset="70%" stop-color="#FFB300" />
+      <stop offset="100%" stop-color="#D84315" />
+    </linearGradient>
+
+    <!-- Diya Body -->
+    <linearGradient id="diyaBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#B25900" />
+      <stop offset="50%" stop-color="#662200" />
+      <stop offset="100%" stop-color="#330000" />
+    </linearGradient>
+
+    <!-- Diya Rim -->
+    <linearGradient id="diyaRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF9900" />
+      <stop offset="30%" stop-color="#FFE57F" />
+      <stop offset="50%" stop-color="#FFFFFF" />
+      <stop offset="70%" stop-color="#FFE57F" />
+      <stop offset="100%" stop-color="#FF9900" />
+    </linearGradient>
+
+    <!-- Flame -->
+    <linearGradient id="flameOuter" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#CC1100" />
+      <stop offset="40%" stop-color="#FF5500" />
+      <stop offset="75%" stop-color="#FFAA00" />
+      <stop offset="100%" stop-color="#FFF59D" />
+    </linearGradient>
+
+    <linearGradient id="flameInner" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#FF6600" />
+      <stop offset="60%" stop-color="#FFCC00" />
+      <stop offset="100%" stop-color="#FFFFFF" />
+    </linearGradient>
+  </defs>
+
+  <g id="poojawala-icon">
+    <!-- 1. OUTER RED LOTUS PETALS -->
+    <!-- Far Left Petal -->
+    <path d="M 225 400 C 120 430 25 365 30 270 C 30 270 105 315 180 320 C 200 322 215 330 225 400 Z" fill="url(#lotusRedLeft)" />
+    <!-- Lower Left Petal -->
+    <path d="M 240 430 C 150 470 50 430 40 335 C 80 380 150 395 240 430 Z" fill="url(#lotusRedLeft)" />
+
+    <!-- Far Right Petal -->
+    <path d="M 287 400 C 392 430 487 365 482 270 C 482 270 407 315 332 320 C 312 322 297 330 287 400 Z" fill="url(#lotusRedRight)" />
+    <!-- Lower Right Petal -->
+    <path d="M 272 430 C 362 470 462 430 472 335 C 432 380 362 395 272 430 Z" fill="url(#lotusRedRight)" />
+
+    <!-- Central Bottom Point -->
+    <path d="M 256 475 C 236 445 225 415 256 385 C 287 415 276 445 256 475 Z" fill="url(#lotusRedLeft)" />
+
+    <!-- 2. INNER GOLD LOTUS PETALS -->
+    <!-- Left Gold Petal -->
+    <path d="M 256 445 C 200 428 110 365 95 260 C 130 312 190 342 256 348 Z" fill="url(#lotusGold)" />
+    <!-- Right Gold Petal -->
+    <path d="M 256 445 C 312 428 402 365 417 260 C 382 312 322 342 256 348 Z" fill="url(#lotusGold)" />
+    <!-- Front Golden Center Petal -->
+    <path d="M 256 462 C 228 415 195 350 256 315 C 317 350 284 415 256 462 Z" fill="url(#lotusGold)" />
+
+    <!-- 3. GOLDEN MANDAP DOME ARCH -->
+    <path d="M 120 325 C 88 210 144 95 256 80 C 368 95 424 210 392 325 C 374 285 348 185 256 112 C 164 185 138 285 120 325 Z" fill="url(#goldArch)" />
+
+    <!-- 4. KALASH TOP FINIAL -->
+    <path d="M 220 86 C 220 74 292 74 292 86 C 292 96 220 96 220 86 Z" fill="url(#goldShine)" />
+    <path d="M 226 74 C 220 54 292 54 286 74 Z" fill="url(#goldShine)" />
+    <path d="M 234 54 C 234 44 278 44 278 54 Z" fill="url(#goldShine)" />
+    <path d="M 256 12 L 266 44 L 246 44 Z" fill="url(#goldShine)" />
+
+    <!-- 5. HANGING TEMPLE BELL -->
+    <line x1="256" y1="96" x2="256" y2="124" stroke="#FFC107" stroke-width="6" stroke-linecap="round" />
+    <circle cx="256" cy="126" r="6" fill="url(#goldShine)" />
+    <path d="M 242 132 C 242 132 238 154 230 162 C 226 166 286 166 282 162 C 274 154 270 132 270 132 Z" fill="url(#goldShine)" />
+    <ellipse cx="256" cy="164" rx="25" ry="6" fill="url(#goldShine)" />
+    <circle cx="256" cy="173" r="5.5" fill="#331100" />
+
+    <!-- 6. DIYA BOWL -->
+    <path d="M 155 300 C 168 375 215 398 256 398 C 297 398 344 375 357 300 Z" fill="url(#diyaBody)" />
+    <ellipse cx="256" cy="300" rx="100" ry="26" fill="url(#diyaBody)" />
+    <ellipse cx="256" cy="297" rx="95" ry="21" fill="url(#diyaRimGrad)" />
+    <ellipse cx="256" cy="297" rx="84" ry="15" fill="#220500" />
+
+    <!-- 7. DIVINE FLAME -->
+    <path d="M 256 160 C 300 224 316 274 256 297 C 196 274 212 224 256 160 Z" fill="url(#flameOuter)" />
+    <path d="M 256 188 C 283 238 295 274 256 296 C 217 274 229 238 256 188 Z" fill="url(#flameInner)" />
+    <path d="M 256 225 C 270 255 276 280 256 295 C 236 280 242 255 256 225 Z" fill="#FFFFFF" />
+  </g>
+</svg>

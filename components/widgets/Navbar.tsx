@@ -47,7 +47,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box sx={{ borderBottom: "1px solid #eee", bgcolor: "#fff", py: 2 }}>
+      <Box sx={{ position: "sticky", top: 0, zIndex: 1100, borderBottom: "1px solid #eee", bgcolor: "#fff", py: 2, boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
         <Container
           maxWidth="lg"
           sx={{
