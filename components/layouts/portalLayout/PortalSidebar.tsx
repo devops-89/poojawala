@@ -188,7 +188,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
           >
             {profile?.firstName
               ? `${profile.firstName} ${profile.lastName || ""}`
-              : "Acharya V. Sharma"}
+              : (profile?.name || "Purohit")}
           </Typography>
           <Typography
             sx={{

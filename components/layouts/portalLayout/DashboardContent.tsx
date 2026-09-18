@@ -83,7 +83,7 @@ export default function DashboardContent() {
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Typography variant="h3" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: { xs: '24px', md: '32px' } }}>
-                Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : 'Acharya'}!
+                Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : (profile?.name || 'Purohit')}!
               </Typography>
               {profile?.status === 'APPROVED' && <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: 28 }} />}
             </Box>
