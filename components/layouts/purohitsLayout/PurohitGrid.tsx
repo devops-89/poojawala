@@ -32,34 +32,15 @@ export default function PurohitGrid() {
         }
 
         const formatted = fetchedPurohits.map((p: any) => {
-          // Calculate price and availability from services
-          let prices: number[] = [];
-          let hasOnline = false;
-          let hasOffline = false;
+          // Calculate availability from top-level fields and services
+          let hasOnline = p.isOnlineAvailable === true;
+          let hasOffline = p.isOfflineAvailable === true;
 
           if (p.purohitService && Array.isArray(p.purohitService)) {
             p.purohitService.forEach((s: any) => {
               if (s.isOnlineAvailable) hasOnline = true;
               if (s.isOfflineAvailable) hasOffline = true;
-              
-              if (s.isOnlinePrice && !isNaN(parseFloat(s.isOnlinePrice))) {
-                prices.push(parseFloat(s.isOnlinePrice));
-              }
-              if (s.isOfflinePrice && !isNaN(parseFloat(s.isOfflinePrice))) {
-                prices.push(parseFloat(s.isOfflinePrice));
-              }
             });
-          }
-
-          let priceStr = 'Price on Request';
-          if (prices.length > 0) {
-            const minPrice = Math.min(...prices);
-            const maxPrice = Math.max(...prices);
-            if (minPrice === maxPrice) {
-              priceStr = `₹${minPrice}`;
-            } else {
-              priceStr = `₹${minPrice} - ₹${maxPrice}`;
-            }
           }
 
           let availStr = 'Contact for details';
@@ -67,15 +48,24 @@ export default function PurohitGrid() {
           else if (hasOnline) availStr = 'Online';
           else if (hasOffline) availStr = 'Offline';
 
-          const languageStr = Array.isArray(p.languages) 
-            ? p.languages.join(', ') 
-            : (p.languages || 'Not specified');
+          let languageStr = 'Not specified';
+          if (Array.isArray(p.languages)) {
+            languageStr = p.languages.join(', ');
+          } else if (typeof p.languages === 'string') {
+            languageStr = p.languages.split(',').map((s: string) => s.trim()).filter(Boolean).join(', ');
+          }
+
+          let specStr = '';
+          if (Array.isArray(p.specialization)) {
+            specStr = p.specialization.join(', ');
+          } else if (typeof p.specialization === 'string') {
+            specStr = p.specialization.split(',').map((s: string) => s.trim()).filter(Boolean).join(', ');
+          }
 
           return {
             id: p.userId || p.id,
             title: `${p.purohitFirstName || ''} ${p.lastName || ''}`.trim() || p.username || 'Purohit',
             image: p.profileImage || '/images/purohits/pandit1.webp',
-            price: priceStr,
             category: p.qualification || 'Purohit',
             language: languageStr,
             experience: p.experienceYears ? `${p.experienceYears}+ Years` : '',
@@ -83,7 +73,7 @@ export default function PurohitGrid() {
             availability: availStr,
             duration: '', // Removed static duration
             bio: p.bio || '',
-            specialization: Array.isArray(p.specialization) ? p.specialization.join(', ') : (p.specialization || ''),
+            specialization: specStr,
           };
         });
 
@@ -162,14 +152,13 @@ export default function PurohitGrid() {
           <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666' }}>No purohits found matching your search.</Typography>
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
           {purohits.map(Purohit => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={Purohit.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={Purohit.id} sx={{ display: 'flex' }}>
               <PurohitCard
                 id={Purohit.id}
                 title={Purohit.title}
                 image={Purohit.image}
-                price={Purohit.price.toLocaleString('en-IN')}
                 category={Purohit.category}
                 language={Purohit.language}
                 experience={Purohit.experience}
@@ -179,8 +168,7 @@ export default function PurohitGrid() {
                 specialization={Purohit.specialization}
               />
             </Grid>
-
-        ))}
+          ))}
         </Grid>
       )}
       {/* Pagination */}

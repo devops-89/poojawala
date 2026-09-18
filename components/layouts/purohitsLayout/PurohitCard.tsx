@@ -30,6 +30,9 @@ export default function PurohitCard({ id, title, image, price, duration, categor
   return (
     <Card sx={{ 
       width: '100%',
+      height: '100%',
+      minHeight: '440px',
+      boxSizing: 'border-box',
       display: 'flex', 
       flexDirection: 'column',
       borderRadius: '16px',
@@ -121,17 +124,8 @@ export default function PurohitCard({ id, title, image, price, duration, categor
           </Box>
         </Box>
 
-        {/* Price & Action Area */}
-        <Box sx={{ width: '100%', mt: 'auto', borderTop: '1px solid #eee', pt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box sx={{ textAlign: 'left' }}>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#888', fontSize: '11px', mb: 0.2 }}>
-              Starting from
-            </Typography>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', fontSize: '18px', lineHeight: 1 }}>
-              {price}
-            </Typography>
-          </Box>
-
+        {/* Action Area (Price Removed) */}
+        <Box sx={{ width: '100%', mt: 'auto', borderTop: '1px solid #eee', pt: 2, display: 'flex', justifyContent: 'center' }}>
           <Button 
             variant="contained" 
             onClick={(e) => {
@@ -139,15 +133,15 @@ export default function PurohitCard({ id, title, image, price, duration, categor
               router.push('/sign-in');
             }}
             sx={{
+              width: '100%',
               background: '#FF6200',
               color: 'white',
               borderRadius: '31px',
               textTransform: 'none',
               fontWeight: 600,
-              px: 3,
               py: 1,
-              height: '36px',
-              fontSize: '13px',
+              height: '38px',
+              fontSize: '14px',
               boxShadow: 'none',
               '&:hover': {
                 background: '#E65800',

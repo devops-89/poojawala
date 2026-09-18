@@ -85,11 +85,19 @@ export default function ServiceCard({ title, image, description, price, duration
         {/* Price Box pushed to the bottom */}
         <Box sx={{ mt: 'auto', pt: 2 }}>
           <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: price && price.includes('-') ? '15px' : '18px', color: '#FF6200' }}>
-            {price && price !== '0' ? (
-              price.includes('-') 
-                ? `₹${Number(price.split(' - ')[0]).toLocaleString('en-IN')} - ₹${Number(price.split(' - ')[1]).toLocaleString('en-IN')}` 
-                : `₹${Number(price).toLocaleString('en-IN')}`
-            ) : ''}
+            {(() => {
+              if (!price || price === '0') return '';
+              if (price.includes('-')) {
+                const parts = price.split(' - ');
+                const p1 = Number(parts[0]);
+                const p2 = Number(parts[1]);
+                const p1Str = !isNaN(p1) ? p1.toLocaleString('en-IN') : parts[0];
+                const p2Str = !isNaN(p2) ? p2.toLocaleString('en-IN') : parts[1];
+                return `₹${p1Str} - ₹${p2Str}`;
+              }
+              const p = Number(price);
+              return !isNaN(p) ? `₹${p.toLocaleString('en-IN')}` : `₹${price}`;
+            })()}
           </Typography>
         </Box>
       </CardContent>
