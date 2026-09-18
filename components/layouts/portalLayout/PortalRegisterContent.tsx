@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useRouter, useSearchParams } from 'next/navigation';
+import NextLink from 'next/link';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
@@ -346,11 +347,16 @@ export default function PortalRegisterContent() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#FFFDF9' }}>
-      <Box sx={{ p: 3, textAlign: 'center', borderBottom: '1px solid #FFE0D0', bgcolor: 'white' }}>
-        <Typography variant="h4" sx={{ color: '#D32F2F', fontWeight: 800, fontFamily: 'var(--font-outfit), sans-serif' }}>
-          Poojawala
-        </Typography>
-        <Typography sx={{ color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 500 }}>
+      <Box sx={{ p: 2.5, textAlign: 'center', borderBottom: '1px solid #FFE0D0', bgcolor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <MuiLink component={NextLink} href="/" underline="none" sx={{ display: 'inline-flex', justifyContent: 'center' }}>
+          <Box
+            component="img"
+            src="/images/logo.png"
+            alt="Poojawala"
+            sx={{ height: { xs: '45px', md: '55px' }, objectFit: 'contain', mb: 0.5 }}
+          />
+        </MuiLink>
+        <Typography sx={{ color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 500, fontSize: '14px' }}>
           Purohit Partner Onboarding
         </Typography>
       </Box>

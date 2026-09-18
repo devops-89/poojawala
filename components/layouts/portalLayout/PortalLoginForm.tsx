@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Box, Container, Typography, Paper, TextField, Button, Divider, Snackbar, Alert, InputAdornment, IconButton } from '@mui/material';
+import { Box, Container, Typography, Paper, TextField, Button, Divider, Snackbar, Alert, InputAdornment, IconButton, Link as MuiLink } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import NextLink from 'next/link';
@@ -63,11 +63,16 @@ export default function PortalLoginForm() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#FFFDF9' }}>
       {/* Simple Header */}
-      <Box sx={{ p: 3, textAlign: 'center', borderBottom: '1px solid #FFE0D0', bgcolor: 'white' }}>
-        <Typography variant="h4" sx={{ color: '#D32F2F', fontWeight: 800, fontFamily: 'var(--font-outfit), sans-serif' }}>
-          Poojawala
-        </Typography>
-        <Typography sx={{ color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 500 }}>
+      <Box sx={{ p: 2.5, textAlign: 'center', borderBottom: '1px solid #FFE0D0', bgcolor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <MuiLink component={NextLink} href="/" underline="none" sx={{ display: 'inline-flex', justifyContent: 'center' }}>
+          <Box
+            component="img"
+            src="/images/logo.png"
+            alt="Poojawala"
+            sx={{ height: { xs: '45px', md: '55px' }, objectFit: 'contain', mb: 0.5 }}
+          />
+        </MuiLink>
+        <Typography sx={{ color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 500, fontSize: '14px' }}>
           Purohit Partner Portal
         </Typography>
       </Box>
