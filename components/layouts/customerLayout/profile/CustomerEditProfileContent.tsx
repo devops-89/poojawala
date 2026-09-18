@@ -249,6 +249,7 @@ function CustomerEditProfileContentInner() {
   const handleSaveAddress = async () => {
     try {
       const missingFields = [];
+      if (!addressData.addressLabel?.trim()) missingFields.push("Address Label");
       if (!addressData.fullAddress?.trim()) missingFields.push("Full Address");
       if (!addressData.city?.trim()) missingFields.push("City");
       if (!addressData.pincode?.trim()) missingFields.push("Pincode");
@@ -273,10 +274,16 @@ function CustomerEditProfileContentInner() {
       );
       setAddressModalOpen(false);
     } catch (error: any) {
-      showSnackbar(
-        error.response?.data?.message || "Failed to save address",
-        "error",
-      );
+      const errRes = error.response?.data;
+      let errMsg = "Failed to save address";
+      if (Array.isArray(errRes?.error) && errRes.error.length > 0) {
+        errMsg = errRes.error.join(", ");
+      } else if (typeof errRes?.error === "string") {
+        errMsg = errRes.error;
+      } else if (errRes?.message) {
+        errMsg = errRes.message;
+      }
+      showSnackbar(errMsg, "error");
     } finally {
       setSaving(false);
     }
@@ -821,7 +828,7 @@ function CustomerEditProfileContentInner() {
             <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
-                label="Address Label (e.g., Home, Office)"
+                label="Address Label (e.g., Home, Office) *"
                 value={addressData.addressLabel}
                 onChange={(e) =>
                   setAddressData({

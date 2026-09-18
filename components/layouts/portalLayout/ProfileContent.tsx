@@ -211,6 +211,7 @@ export default function ProfileContent() {
 
   const handleSaveAddress = async () => {
     const missing = [];
+    if (!addressForm.addressLabel?.trim()) missing.push('Address Label');
     if (!addressForm.fullAddress?.trim()) missing.push('Full Address');
     if (!addressForm.city?.trim()) missing.push('City');
     if (!addressForm.pincode?.trim()) missing.push('Pincode');
