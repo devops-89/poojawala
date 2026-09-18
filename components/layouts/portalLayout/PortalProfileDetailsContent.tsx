@@ -48,8 +48,19 @@ export default function PortalProfileDetailsContent() {
   }
 
   const { profile, bankAccounts, purohitServices, serviceAreas } = profileData;
-  const languages = profile?.languages ? (Array.isArray(profile.languages) ? profile.languages : profile.languages.split(',')).map((l: string) => l.trim()) : [];
-  const specializations = profile?.specializations ? (Array.isArray(profile.specializations) ? profile.specializations : profile.specializations.split(',')).map((s: string) => s.trim()) : [];
+  const rawLangs = profile?.languages;
+  const languages = Array.isArray(rawLangs)
+    ? rawLangs.map((l: any) => String(l).trim()).filter(Boolean)
+    : typeof rawLangs === 'string'
+    ? rawLangs.split(',').map((l: string) => l.trim()).filter(Boolean)
+    : [];
+
+  const rawSpecs = profile?.specializations || profile?.specialization;
+  const specializations = Array.isArray(rawSpecs)
+    ? rawSpecs.map((s: any) => String(s).trim()).filter(Boolean)
+    : typeof rawSpecs === 'string'
+    ? rawSpecs.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : [];
 
   return (
     <Box>

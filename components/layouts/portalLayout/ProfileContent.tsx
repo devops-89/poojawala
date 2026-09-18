@@ -116,8 +116,23 @@ export default function ProfileContent() {
         const p = profile.profile;
         setBio(p.bio || '');
         setCity(p.city || '');
-        setLanguages(p.languages ? p.languages.split(',').map((l: string) => l.trim()) : []);
-        setSpecializations(p.specializations ? p.specializations.split(',').map((s: string) => s.trim()) : []);
+
+        const rawLangs = p.languages;
+        const parsedLangs = Array.isArray(rawLangs)
+          ? rawLangs.map((l: any) => String(l).trim()).filter(Boolean)
+          : typeof rawLangs === 'string'
+          ? rawLangs.split(',').map((l: string) => l.trim()).filter(Boolean)
+          : [];
+        setLanguages(parsedLangs);
+
+        const rawSpecs = p.specializations || p.specialization;
+        const parsedSpecs = Array.isArray(rawSpecs)
+          ? rawSpecs.map((s: any) => String(s).trim()).filter(Boolean)
+          : typeof rawSpecs === 'string'
+          ? rawSpecs.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : [];
+        setSpecializations(parsedSpecs);
+
         setQualification(p.qualification || '');
         setExperienceYears(p.experienceYears ? p.experienceYears.toString() : '');
         setIsOnlineAvailable(p.isOnlineAvailable ?? true);
@@ -128,7 +143,19 @@ export default function ProfileContent() {
       setUsername(profile.username || '');
       setEmail(profile.email || '');
       setPhone(profile.phone || '');
-      setDob(profile.dob ? new Date(profile.dob).toISOString().split('T')[0] : '');
+
+      let formattedDob = '';
+      if (profile.dob) {
+        try {
+          const d = new Date(profile.dob);
+          if (!isNaN(d.getTime())) {
+            formattedDob = d.toISOString().split('T')[0];
+          }
+        } catch (e) {
+          formattedDob = '';
+        }
+      }
+      setDob(formattedDob);
       setBirthPlace(profile.birthPlace || '');
       setProfileImageUrl(profile.profileImage || null);
       setServiceAreas(profile.serviceAreas || []);
