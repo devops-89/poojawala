@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as Yup from "yup";
 
+import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
+
 const validationSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
@@ -217,6 +219,7 @@ export default function SignInContent() {
                 >
                   {({ isSubmitting, touched, errors }) => (
                     <Box component={Form}>
+                      <FormikValidationSnackbar />
                       <Field name="email">
                         {({ field, meta }: any) => (
                           <TextField

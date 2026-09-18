@@ -57,6 +57,23 @@ export default function AdminLoginForm() {
     },
   });
 
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
+      formik.setTouched(
+        Object.keys(errors).reduce((acc: any, key: string) => {
+          acc[key] = true;
+          return acc;
+        }, {})
+      );
+      const firstMsg = Object.values(errors)[0] as string || 'Please fill in all mandatory fields';
+      showSnackbar(firstMsg, 'error');
+    } else {
+      formik.handleSubmit(e);
+    }
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#F4F6F8', p: 2 }}>
       <Paper elevation={0} sx={{ p: { xs: 4, md: 6 }, maxWidth: 450, width: '100%', borderRadius: '24px', border: '1px solid #eee', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
@@ -73,7 +90,7 @@ export default function AdminLoginForm() {
           </Typography>
         </Box>
 
-        <form onSubmit={formik.handleSubmit} noValidate>
+        <form onSubmit={handleFormSubmit} noValidate>
           <TextField
             fullWidth 
             id="email"

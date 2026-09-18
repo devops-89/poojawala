@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { forgotPasswordAPI } from '@/api/authControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
+
 const validationSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email address').required('Email is required'),
 });
@@ -78,6 +80,7 @@ export default function ForgotPasswordContent() {
               >
                 {({ isSubmitting, touched, errors }) => (
                   <Box component={Form}>
+                    <FormikValidationSnackbar />
                     <Field name="email">
                       {({ field, meta }: any) => (
                         <TextField

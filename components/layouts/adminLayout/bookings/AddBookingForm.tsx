@@ -15,6 +15,7 @@ import { getCustomersListAPI, createCustomerByAdminAPI, getAvailablePurohitsForB
 import { getServicesAPI } from '@/api/serviceControllers';
 import { createBookingByAdminAPI } from '@/api/bookingControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -238,6 +239,7 @@ export default function AddBookingForm() {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <FormikProvider value={formik}>
+        <FormikValidationSnackbar />
         <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 900, mx: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <Box>
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 2 }}>

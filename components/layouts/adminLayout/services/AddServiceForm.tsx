@@ -12,6 +12,7 @@ import * as Yup from 'yup';
 
 import { addServiceAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const validationSchema = Yup.object().shape({
@@ -118,14 +119,23 @@ export default function AddServiceForm() {
   const handleNext = async () => {
     const stepErrors = await formik.validateForm();
     let hasError = false;
+    let firstError = '';
 
     if (activeStep === 0) {
       formik.setFieldTouched('name', true);
       formik.setFieldTouched('description', true);
-      if (stepErrors.name || stepErrors.description) hasError = true;
+      if (stepErrors.name) {
+        hasError = true;
+        firstError = stepErrors.name as string;
+      } else if (stepErrors.description) {
+        hasError = true;
+        firstError = stepErrors.description as string;
+      }
     }
 
-    if (!hasError) {
+    if (hasError) {
+      showSnackbar(firstError || 'Please fill in all required fields', 'error');
+    } else {
       setActiveStep((prev) => prev + 1);
     }
   };
@@ -134,6 +144,7 @@ export default function AddServiceForm() {
 
   return (
     <FormikProvider value={formik}>
+      <FormikValidationSnackbar />
       <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 900, mx: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <Box>
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 2 }}>

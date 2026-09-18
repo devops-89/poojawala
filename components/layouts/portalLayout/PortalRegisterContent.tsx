@@ -345,6 +345,44 @@ export default function PortalRegisterContent() {
     { id: 'profilePhoto', title: 'Profile Photograph', desc: 'Optional' },
   ] as const;
 
+  const handleStepSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
+      const touchedObj: any = {};
+      const markTouched = (obj: any, prefix = '') => {
+        Object.keys(obj).forEach((key) => {
+          const fieldPath = prefix ? `${prefix}.${key}` : key;
+          if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+            markTouched(obj[key], fieldPath);
+          } else {
+            touchedObj[fieldPath] = true;
+          }
+        });
+      };
+      markTouched(errors);
+      formik.setTouched(touchedObj);
+
+      const extractErrors = (obj: any): string[] => {
+        let msgs: string[] = [];
+        Object.values(obj).forEach((val: any) => {
+          if (typeof val === 'string') {
+            msgs.push(val);
+          } else if (typeof val === 'object' && val !== null) {
+            msgs = msgs.concat(extractErrors(val));
+          }
+        });
+        return msgs;
+      };
+
+      const errorMsgs = extractErrors(errors);
+      const firstMsg = errorMsgs[0] || 'Please fill in all mandatory fields';
+      showSnackbar(firstMsg, 'error');
+    } else {
+      formik.handleSubmit(e);
+    }
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#FFFDF9' }}>
       <Box sx={{ p: 2.5, textAlign: 'center', borderBottom: '1px solid #FFE0D0', bgcolor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -371,7 +409,7 @@ export default function PortalRegisterContent() {
             ))}
           </Stepper>
 
-          <form onSubmit={formik.handleSubmit}>
+          <form onSubmit={handleStepSubmit}>
             {activeStep === 0 && (
               <Box>
                 <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, mb: 3 }}>

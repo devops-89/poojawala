@@ -50,7 +50,11 @@ export default function RaiseTicketModal() {
 
   const handleSubmit = async () => {
     if (!category || !subject || !description) {
-      showSnackbar('Please fill all mandatory fields', 'error');
+      const missing = [];
+      if (!category) missing.push('Category');
+      if (!subject) missing.push('Subject');
+      if (!description) missing.push('Description');
+      showSnackbar(`Please fill in required fields: ${missing.join(', ')}`, 'error');
       return;
     }
 

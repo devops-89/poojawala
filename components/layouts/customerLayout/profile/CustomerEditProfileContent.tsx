@@ -248,12 +248,16 @@ function CustomerEditProfileContentInner() {
 
   const handleSaveAddress = async () => {
     try {
-      if (
-        !addressData.fullAddress ||
-        !addressData.city ||
-        !addressData.pincode
-      ) {
-        showSnackbar("Please fill all required fields", "error");
+      const missingFields = [];
+      if (!addressData.fullAddress?.trim()) missingFields.push("Full Address");
+      if (!addressData.city?.trim()) missingFields.push("City");
+      if (!addressData.pincode?.trim()) missingFields.push("Pincode");
+
+      if (missingFields.length > 0) {
+        showSnackbar(
+          `Please fill in required fields: ${missingFields.join(", ")}`,
+          "error"
+        );
         return;
       }
       setSaving(true);

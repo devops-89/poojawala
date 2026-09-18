@@ -86,10 +86,27 @@ export default function AddPurohitForm() {
     }
   });
 
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = formik;
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
+      formik.setTouched(
+        Object.keys(errors).reduce((acc: any, key: string) => {
+          acc[key] = true;
+          return acc;
+        }, {})
+      );
+      const firstMsg = Object.values(errors)[0] as string || 'Please fill in all mandatory fields';
+      showSnackbar(firstMsg, 'error');
+    } else {
+      formik.handleSubmit(e);
+    }
+  };
+
+  const { values, errors, touched, handleChange, handleBlur } = formik;
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 900, mx: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <Box component="form" onSubmit={handleFormSubmit} sx={{ maxWidth: 900, mx: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
       <Box>
         <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 2 }}>
           <NextLink href="/admin/purohits" style={{ textDecoration: 'none', color: '#64748b', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: '14px' }}>

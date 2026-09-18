@@ -210,6 +210,16 @@ export default function ProfileContent() {
   };
 
   const handleSaveAddress = async () => {
+    const missing = [];
+    if (!addressForm.fullAddress?.trim()) missing.push('Full Address');
+    if (!addressForm.city?.trim()) missing.push('City');
+    if (!addressForm.pincode?.trim()) missing.push('Pincode');
+
+    if (missing.length > 0) {
+      showSnackbar(`Please fill in required fields: ${missing.join(', ')}`, 'error');
+      return;
+    }
+
     setSavingAddress(true);
     try {
       const payload = { ...addressForm };

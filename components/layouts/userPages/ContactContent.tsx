@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 import React, { useState } from 'react';
 import { submitContactFormAPI } from '@/api/userControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
+
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(2, 'Name must be at least 2 characters')
@@ -159,6 +161,7 @@ export default function ContactContent() {
                 >
                   {({ isSubmitting, touched, errors }) => (
                     <Box component={Form}>
+                      <FormikValidationSnackbar />
                       <Grid container spacing={3}>
                         <Grid size={{ xs: 12, md: 6 }}>
                           <Field 

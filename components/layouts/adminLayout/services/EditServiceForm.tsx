@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 
 import { getServiceByIdAPI, editServiceAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 import Image from 'next/image';
 
 const validationSchema = Yup.object().shape({
@@ -189,6 +190,7 @@ export default function EditServiceForm() {
 
   return (
     <FormikProvider value={formik}>
+      <FormikValidationSnackbar />
       <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 900, mx: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <Box>
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 2 }}>

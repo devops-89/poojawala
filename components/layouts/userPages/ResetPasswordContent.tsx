@@ -10,6 +10,8 @@ import { useState, useRef, useEffect } from 'react';
 import { resetPasswordAPI, resendOtpAPI } from '@/api/authControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
+
 const validationSchema = Yup.object().shape({
   otp: Yup.array()
     .of(Yup.string())
@@ -149,6 +151,7 @@ export default function ResetPasswordContent() {
               >
                 {({ isSubmitting, touched, errors, values, setFieldValue }) => (
                   <Box component={Form}>
+                    <FormikValidationSnackbar />
                     <Box sx={{ mb: 2 }}>
                       <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', mb: 1, fontSize: '14px' }}>
                         Enter your OTP

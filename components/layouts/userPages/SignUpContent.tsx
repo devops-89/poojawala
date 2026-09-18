@@ -11,6 +11,8 @@ import { useSnackbarStore } from '@/stores/snackbarStore';
 import { sendOtpAPI } from '@/api/userControllers';
 import { MuiTelInput } from 'mui-tel-input';
 
+import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
+
 const emailTldRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
 
 const today = new Date();
@@ -146,6 +148,7 @@ export default function SignUpContent() {
                 >
                   {({ isSubmitting }) => (
                     <Box component={Form}>
+                      <FormikValidationSnackbar />
                       <Grid container spacing={2}>
                         <Grid size={{ xs: 12, sm: 6 }}>
                           <Field name="firstName">
