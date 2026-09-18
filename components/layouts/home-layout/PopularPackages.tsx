@@ -185,81 +185,170 @@ export default function PopularPackages() {
             <CircularProgress sx={{ color: '#FF6200' }} />
           </Box>
         ) : (
-        <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ justifyContent: 'center' }}>
-          {displayPackages.map((pkg, index) => (
-            <Grid 
-              size={gridSize} 
-              key={pkg.id}
-              sx={{ display: { xs: (pkgCount > 2 && index >= 2) ? 'none' : 'block', sm: 'block' } }}
-            >
-              <Card sx={{ 
-                width: '100%',
-                maxWidth: cardMaxWidth,
-                height: '100%',
-                margin: '0 auto',
-                display: 'flex', 
-                flexDirection: 'column',
-                borderRadius: '41.71px',
-                boxShadow: 'none',
-                border: '1px solid rgba(20, 20, 20, 0.15)',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                overflow: 'hidden',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                }
-              }}>
-                <Box
-                  component="img"
-                  src={pkg.image}
-                  alt={pkg.title}
-                  sx={{ 
-                    height: imageHeight, 
-                    width: '100%', 
-                    objectFit: 'cover', 
-                    pt: 0, 
-                    px: 0, 
-                    pb: 0 
-                  }}
-                />
-                <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: pkgCount <= 2 ? 2 : 1, pb: '12px !important', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography gutterBottom component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306', color: '#1A1A1A', mb: 0.2 }}>
-                    {pkg.title}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', mb: 0.5, gap: 0.5 }}>
-                    <AccessTimeIcon sx={{ fontSize: '13px' }} />
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', lineHeight: '1.306' }}>{pkg.duration}</Typography>
-                  </Box>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 1, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306' }}>
-                    ₹ {pkg.price} <Typography component="span" sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontWeight: 400, fontSize: '11px' }}>onwards</Typography>
-                  </Typography>
-                  <Button 
-                    variant="contained" 
-                    onClick={() => router.push('/sign-in')}
-                    sx={{
-                      background: '#FF6200',
-                      color: 'white',
-                      borderRadius: '31px',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      px: 2,
-                      py: 1,
-                      minWidth: '101px',
-                      height: '34px',
-                      fontSize: '13px',
-                      boxShadow: 'none',
-                      '&:hover': {
-                        background: '#E65800',
-                        boxShadow: 'none',
-                      }
+        <Grid 
+          container 
+          spacing={{ xs: 2, sm: 3 }} 
+          sx={{ justifyContent: pkgCount <= 2 ? 'flex-start' : 'center' }}
+        >
+          {displayPackages.map((pkg, index) => {
+            if (pkgCount <= 2) {
+              /* Horizontal Layout for 1 or 2 Packages: Left Image, Right Details, Left-aligned */
+              return (
+                <Grid 
+                  size={{ xs: 12, sm: pkgCount === 1 ? 10 : 12, md: pkgCount === 1 ? 7 : 6 }} 
+                  key={pkg.id}
+                >
+                  <Card sx={{ 
+                    width: '100%',
+                    maxWidth: pkgCount === 1 ? '580px' : '540px',
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    borderRadius: '28px',
+                    boxShadow: 'none',
+                    border: '1px solid rgba(20, 20, 20, 0.15)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    overflow: 'hidden',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    }
+                  }}>
+                    <Box
+                      component="img"
+                      src={pkg.image}
+                      alt={pkg.title}
+                      sx={{ 
+                        width: { xs: '100%', sm: '210px', md: '240px' }, 
+                        height: { xs: '180px', sm: 'auto' }, 
+                        minHeight: { sm: '200px' },
+                        objectFit: 'cover', 
+                        flexShrink: 0
+                      }}
+                    />
+                    <CardContent sx={{ 
+                      flexGrow: 1, 
+                      p: { xs: 2.5, sm: 3 }, 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      justifyContent: 'center',
+                      alignItems: { xs: 'center', sm: 'flex-start' }, 
+                      textAlign: { xs: 'center', sm: 'left' } 
+                    }}>
+                      <Typography component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: { xs: '18px', sm: '22px' }, lineHeight: '1.25', color: '#1A1A1A', mb: 1 }}>
+                        {pkg.title}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: '#666', mb: 1.5, gap: 0.8 }}>
+                        <AccessTimeIcon sx={{ fontSize: '16px', color: '#FF6200' }} />
+                        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '14px', fontWeight: 500 }}>{pkg.duration}</Typography>
+                      </Box>
+                      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 2, fontSize: { xs: '18px', sm: '20px' } }}>
+                        ₹ {pkg.price} <Typography component="span" sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontWeight: 400, fontSize: '13px' }}>onwards</Typography>
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        onClick={() => router.push('/sign-in')}
+                        sx={{
+                          background: '#FF6200',
+                          color: 'white',
+                          borderRadius: '31px',
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          px: 3,
+                          py: 1,
+                          minWidth: '120px',
+                          height: '40px',
+                          fontSize: '14px',
+                          boxShadow: 'none',
+                          '&:hover': {
+                            background: '#E65800',
+                            boxShadow: 'none',
+                          }
+                        }}
+                      >
+                        Book Now
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            }
+
+            /* Vertical Layout for 3 or more Packages */
+            return (
+              <Grid 
+                size={gridSize} 
+                key={pkg.id}
+                sx={{ display: { xs: (pkgCount > 2 && index >= 2) ? 'none' : 'block', sm: 'block' } }}
+              >
+                <Card sx={{ 
+                  width: '100%',
+                  maxWidth: cardMaxWidth,
+                  height: '100%',
+                  margin: '0 auto',
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  borderRadius: '41.71px',
+                  boxShadow: 'none',
+                  border: '1px solid rgba(20, 20, 20, 0.15)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  overflow: 'hidden',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                  }
+                }}>
+                  <Box
+                    component="img"
+                    src={pkg.image}
+                    alt={pkg.title}
+                    sx={{ 
+                      height: imageHeight, 
+                      width: '100%', 
+                      objectFit: 'cover', 
+                      pt: 0, 
+                      px: 0, 
+                      pb: 0 
                     }}
-                  >
-                    Book Now
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                  />
+                  <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: pkgCount <= 2 ? 2 : 1, pb: '12px !important', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography gutterBottom component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306', color: '#1A1A1A', mb: 0.2 }}>
+                      {pkg.title}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', mb: 0.5, gap: 0.5 }}>
+                      <AccessTimeIcon sx={{ fontSize: '13px' }} />
+                      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', lineHeight: '1.306' }}>{pkg.duration}</Typography>
+                    </Box>
+                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 1, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306' }}>
+                      ₹ {pkg.price} <Typography component="span" sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontWeight: 400, fontSize: '11px' }}>onwards</Typography>
+                    </Typography>
+                    <Button 
+                      variant="contained" 
+                      onClick={() => router.push('/sign-in')}
+                      sx={{
+                        background: '#FF6200',
+                        color: 'white',
+                        borderRadius: '31px',
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        px: 2,
+                        py: 1,
+                        minWidth: '101px',
+                        height: '34px',
+                        fontSize: '13px',
+                        boxShadow: 'none',
+                        '&:hover': {
+                          background: '#E65800',
+                          boxShadow: 'none',
+                        }
+                      }}
+                    >
+                      Book Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
         )}
       </Container>

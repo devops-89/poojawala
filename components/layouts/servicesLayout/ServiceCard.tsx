@@ -78,13 +78,7 @@ export default function ServiceCard({ title, image, description, price, duration
         </Box>
         
         {/* Description */}
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#666', mb: 2,
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden',
-          minHeight: '39px' /* ensures consistent height for 2 lines */
-        }}>
+        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#666', mb: 2, lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
           {description || 'No description available for this service.'}
         </Typography>
 
