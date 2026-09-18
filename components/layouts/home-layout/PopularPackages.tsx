@@ -87,6 +87,33 @@ export default function PopularPackages() {
   }, []);
 
   const displayPackages = packages.length > 0 ? packages : fallbackPackages;
+  const pkgCount = displayPackages.length;
+
+  const getGridSize = (count: number) => {
+    if (count === 1) return { xs: 11, sm: 6, md: 3.8 };
+    if (count === 2) return { xs: 6, sm: 5, md: 3.5 };
+    if (count === 3) return { xs: 6, sm: 4, md: 3.5 };
+    if (count === 4) return { xs: 6, sm: 4, md: 3 };
+    return { xs: 6, sm: 4, md: 2.4 };
+  };
+
+  const getCardMaxWidth = (count: number) => {
+    if (count === 1) return '340px';
+    if (count === 2) return '300px';
+    if (count === 3) return '280px';
+    if (count === 4) return '260px';
+    return '100%';
+  };
+
+  const getImageHeight = (count: number) => {
+    if (count === 1) return '160px';
+    if (count === 2) return '150px';
+    return '125px';
+  };
+
+  const gridSize = getGridSize(pkgCount);
+  const cardMaxWidth = getCardMaxWidth(pkgCount);
+  const imageHeight = getImageHeight(pkgCount);
 
   return (
     <Box sx={{ py: 8, bgcolor: '#fff' }}>
@@ -161,13 +188,13 @@ export default function PopularPackages() {
         <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ justifyContent: 'center' }}>
           {displayPackages.map((pkg, index) => (
             <Grid 
-              size={{ xs: 6, sm: 4, md: 2.4 }} 
+              size={gridSize} 
               key={pkg.id}
-              sx={{ display: { xs: index >= 2 ? 'none' : 'block', sm: 'block' } }}
+              sx={{ display: { xs: (pkgCount > 2 && index >= 2) ? 'none' : 'block', sm: 'block' } }}
             >
               <Card sx={{ 
                 width: '100%',
-                maxWidth: '100%',
+                maxWidth: cardMaxWidth,
                 height: '100%',
                 margin: '0 auto',
                 display: 'flex', 
@@ -187,7 +214,7 @@ export default function PopularPackages() {
                   src={pkg.image}
                   alt={pkg.title}
                   sx={{ 
-                    height: '125px', 
+                    height: imageHeight, 
                     width: '100%', 
                     objectFit: 'cover', 
                     pt: 0, 
@@ -195,37 +222,37 @@ export default function PopularPackages() {
                     pb: 0 
                   }}
                 />
-                <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 1, pb: '12px !important', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography gutterBottom component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '16px', lineHeight: '1.306', color: '#1A1A1A', mb: 0.2 }}>
+                <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: pkgCount <= 2 ? 2 : 1, pb: '12px !important', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <Typography gutterBottom component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306', color: '#1A1A1A', mb: 0.2 }}>
                     {pkg.title}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', mb: 0.5, gap: 0.5 }}>
                     <AccessTimeIcon sx={{ fontSize: '13px' }} />
                     <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', lineHeight: '1.306' }}>{pkg.duration}</Typography>
                   </Box>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 1, fontSize: '16px', lineHeight: '1.306' }}>
+                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 1, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306' }}>
                     ₹ {pkg.price} <Typography component="span" sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontWeight: 400, fontSize: '11px' }}>onwards</Typography>
                   </Typography>
-                    <Button 
-                      variant="contained" 
-                      onClick={() => router.push('/sign-in')}
-                      sx={{
-                        background: '#FF6200',
-                        color: 'white',
-                        borderRadius: '31px',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        px: 2,
-                        py: 1,
-                        minWidth: '101px',
-                        height: '34px',
-                        fontSize: '13px',
+                  <Button 
+                    variant="contained" 
+                    onClick={() => router.push('/sign-in')}
+                    sx={{
+                      background: '#FF6200',
+                      color: 'white',
+                      borderRadius: '31px',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      px: 2,
+                      py: 1,
+                      minWidth: '101px',
+                      height: '34px',
+                      fontSize: '13px',
+                      boxShadow: 'none',
+                      '&:hover': {
+                        background: '#E65800',
                         boxShadow: 'none',
-                        '&:hover': {
-                          background: '#E65800',
-                          boxShadow: 'none',
-                        }
-                      }}
+                      }
+                    }}
                   >
                     Book Now
                   </Button>
