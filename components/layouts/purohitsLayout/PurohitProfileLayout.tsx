@@ -81,35 +81,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
           borderBottom: '1px solid #FFE0D0'
         }}
       >
-        {/* Decorative Chakras */}
-        <Box 
-          component="img"
-          src="/images/home/chakra.webp"
-          alt="Chakra Decor Left"
-          sx={{
-            position: 'absolute',
-            top: -100,
-            left: -100,
-            width: '400px',
-            opacity: 0.15,
-            pointerEvents: 'none',
-            zIndex: 0
-          }}
-        />
-        <Box 
-          component="img"
-          src="/images/home/chakraright.webp"
-          alt="Chakra Decor Right"
-          sx={{
-            position: 'absolute',
-            top: -100,
-            right: -100,
-            width: '400px',
-            opacity: 0.15,
-            pointerEvents: 'none',
-            zIndex: 0
-          }}
-        />
+
 
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', gap: 4 }}>

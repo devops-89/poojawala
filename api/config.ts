@@ -1,4 +1,4 @@
-import axios, { InternalAxiosRequestConfig, AxiosInstance, AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { SERVER_ENDPOINTS } from "./serverConstant";
 
 const authSecuredApi = axios.create({
@@ -74,7 +74,7 @@ paymentSecuredApi.interceptors.request.use(
   }
 );
 
-export { authPublicApi, authSecuredApi, userSecuredApi, userPublicApi, paymentSecuredApi };
+export { authPublicApi, authSecuredApi, paymentSecuredApi, userPublicApi, userSecuredApi };
 
 let isRefreshing = false;
 

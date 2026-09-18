@@ -28,8 +28,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
   const router = useRouter();
   
   return (
-    <Link href={`/purohits/${id}`} style={{ textDecoration: 'none' }}>
-      <Card sx={{ 
+    <Card sx={{ 
       width: '100%',
       display: 'flex', 
       flexDirection: 'column',
@@ -161,6 +160,5 @@ export default function PurohitCard({ id, title, image, price, duration, categor
         </Box>
       </CardContent>
     </Card>
-    </Link>
   );
 }

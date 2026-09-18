@@ -107,35 +107,7 @@ export default function PurohitsLayout() {
           mb: 8,
         }}
       >
-        {/* Decorative Chakras */}
-        <Box
-          component="img"
-          src="/images/home/chakra.webp"
-          alt="Chakra Decor Left"
-          sx={{
-            position: "absolute",
-            top: -100,
-            left: -100,
-            width: "400px",
-            opacity: 0.15,
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
-        <Box
-          component="img"
-          src="/images/home/chakraright.webp"
-          alt="Chakra Decor Right"
-          sx={{
-            position: "absolute",
-            top: -100,
-            right: -100,
-            width: "400px",
-            opacity: 0.15,
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
+
 
         <Container
           maxWidth="lg"
@@ -250,58 +222,8 @@ export default function PurohitsLayout() {
         </Container>
       </Box>
 
-      {/* Main Content Area Below Hero (Sticky container) */}
+      {/* Main Content Area Below Hero */}
       <Box sx={{ position: "relative" }}>
-        {/* Sticky Background Decorations */}
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        >
-          <Box
-            sx={{
-              position: "sticky",
-              top: 0,
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            {/* Left Chakra */}
-            <Box
-              component="img"
-              src="/images/home/chakra.webp"
-              alt="Chakra Decor Left"
-              sx={{
-                position: "absolute",
-                left: 0,
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-                width: { xs: "400px", md: "700px" },
-                height: { xs: "400px", md: "700px" },
-                objectFit: "contain",
-              }}
-            />
-
-            {/* Right Chakra */}
-            <Box
-              component="img"
-              src="/images/home/chakraright.webp"
-              alt="Chakra Decor Right"
-              sx={{
-                position: "absolute",
-                right: 0,
-                top: "50%",
-                transform: "translate(50%, -50%)",
-                width: { xs: "400px", md: "700px" },
-                height: { xs: "400px", md: "700px" },
-                objectFit: "contain",
-              }}
-            />
-          </Box>
-        </Box>
 
         {/* Main Content */}
         <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>

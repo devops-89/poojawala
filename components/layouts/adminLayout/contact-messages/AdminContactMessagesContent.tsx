@@ -34,7 +34,9 @@ export default function AdminContactMessagesContent() {
   const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
 
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [statusToChange, setStatusToChange] = useState<{ id: number, status: string } | null>(null);
+  const [statusToChange, setStatusToChange] = useState<{ id: number; status: string; messageObj?: any } | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [statusUpdating, setStatusUpdating] = useState(false);
 
   useEffect(() => {
     fetchMessages();
@@ -73,18 +75,26 @@ export default function AdminContactMessagesContent() {
 
   const handleStatusChange = async () => {
     if (!statusToChange) return;
+    setStatusUpdating(true);
     try {
-      const res = await updateContactMessageStatusAPI(statusToChange.id, statusToChange.status);
+      const res = await updateContactMessageStatusAPI(
+        statusToChange.id,
+        statusToChange.status,
+        statusToChange.status === 'READ' ? replyText : undefined
+      );
       if (res.success) {
-        showSnackbar('Status updated successfully', 'success');
+        showSnackbar(res.message || 'Contact message status updated successfully', 'success');
         fetchMessages();
+        setStatusModalOpen(false);
+        setReplyText('');
       } else {
-        showSnackbar('Failed to update status', 'error');
+        showSnackbar(res.message || 'Failed to update status', 'error');
       }
-    } catch (error) {
-      showSnackbar('Error updating status', 'error');
+    } catch (error: any) {
+      showSnackbar(error?.response?.data?.message || error?.message || 'Error updating status', 'error');
+    } finally {
+      setStatusUpdating(false);
     }
-    setStatusModalOpen(false);
   };
 
   const handleDelete = async () => {
@@ -184,7 +194,12 @@ export default function AdminContactMessagesContent() {
                   <TableCell>
                     <Select
                       value={msg.status || 'DRAFT'}
-                      onChange={(e) => { setStatusToChange({ id: msg.id, status: e.target.value }); setStatusModalOpen(true); }}
+                      onChange={(e) => {
+                        const newStatus = e.target.value;
+                        setStatusToChange({ id: msg.id, status: newStatus, messageObj: msg });
+                        setReplyText('');
+                        setStatusModalOpen(true);
+                      }}
                       size="small"
                       sx={{
                         fontFamily: 'var(--font-outfit), sans-serif',
@@ -271,17 +286,60 @@ export default function AdminContactMessagesContent() {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={statusModalOpen} onClose={() => setStatusModalOpen(false)} sx={{ '& .MuiDialog-paper': { borderRadius: '16px' } }}>
-        <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>Change Status</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>
-            Are you sure you want to change the status of this message to <b>{statusToChange?.status}</b>?
-          </Typography>
+      <Dialog open={statusModalOpen} onClose={() => setStatusModalOpen(false)} maxWidth="sm" fullWidth sx={{ '& .MuiDialog-paper': { borderRadius: '16px' } }}>
+        <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', borderBottom: '1px solid #e2e8f0', pb: 2 }}>
+          {statusToChange?.status === 'READ' ? 'Update Message Status to READ' : 'Change Status'}
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          {statusToChange?.messageObj && (
+            <Box sx={{ mb: 2.5, p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
+                {statusToChange.messageObj.name} ({statusToChange.messageObj.email})
+              </Typography>
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', fontSize: '0.85rem', mt: 0.5 }}>
+                <b>Subject:</b> {statusToChange.messageObj.subject}
+              </Typography>
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#475569', fontSize: '0.85rem', mt: 1, whiteSpace: 'pre-wrap' }}>
+                "{statusToChange.messageObj.message}"
+              </Typography>
+            </Box>
+          )}
+
+          {statusToChange?.status === 'READ' ? (
+            <Box>
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1e293b', mb: 1, fontSize: '0.9rem' }}>
+                Reply / Note Message
+              </Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                placeholder="Write reply or note message here..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    fontFamily: 'var(--font-outfit), sans-serif'
+                  }
+                }}
+              />
+            </Box>
+          ) : (
+            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>
+              Are you sure you want to change the status of this message to <b>{statusToChange?.status}</b>?
+            </Typography>
+          )}
         </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
           <Button onClick={() => setStatusModalOpen(false)} sx={{ color: '#64748b', fontWeight: 600 }}>Cancel</Button>
-          <Button onClick={handleStatusChange} variant="contained" sx={{ bgcolor: '#FF6200', color: 'white', '&:hover': { bgcolor: '#E65800' }, boxShadow: 'none' }}>
-            Confirm Update
+          <Button 
+            onClick={handleStatusChange} 
+            disabled={statusUpdating}
+            variant="contained" 
+            sx={{ bgcolor: '#FF6200', color: 'white', '&:hover': { bgcolor: '#E65800' }, boxShadow: 'none', borderRadius: '8px', px: 3 }}
+          >
+            {statusUpdating ? 'Submitting...' : 'Submit'}
           </Button>
         </DialogActions>
       </Dialog>

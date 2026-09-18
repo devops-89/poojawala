@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { getMeAPI } from '@/api/authControllers';
+import { create } from 'zustand';
 
 interface UserState {
   profile: any | null;

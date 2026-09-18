@@ -32,10 +32,16 @@ export const getContactMessageByIdAPI = async (id: string | number) => {
 
 export const updateContactMessageStatusAPI = async (
   id: string | number,
-  status: string
+  status: string,
+  message?: string
 ) => {
   try {
-    const response = await userSecuredApi.patch(`/contact-us/${id}/status`, { status });
+    const payload: any = { status };
+    if (message) {
+      payload.message = message;
+      payload.replyMessage = message;
+    }
+    const response = await userSecuredApi.patch(`/contact-us/${id}/status`, payload);
     return response.data;
   } catch (error) {
     throw error;

@@ -98,8 +98,31 @@ export default function Navbar() {
             })}
           </Box>
 
-          {/* Desktop Sign In + Mobile Hamburger */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {/* Desktop Buttons + Mobile Hamburger */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Button
+              component={NextLink}
+              href="/purohit"
+              variant="outlined"
+              sx={{
+                display: { xs: "none", md: "inline-flex" },
+                borderColor: "#FF6200",
+                color: "#FF6200",
+                borderRadius: "30px",
+                textTransform: "none",
+                fontWeight: 600,
+                px: 2.5,
+                py: 0.8,
+                fontSize: "14px",
+                "&:hover": {
+                  borderColor: "#E65800",
+                  bgcolor: "#FFF0E6",
+                  color: "#E65800",
+                },
+              }}
+            >
+              Register as Purohit
+            </Button>
             <Button
               component={NextLink}
               href="/sign-in"
@@ -110,7 +133,10 @@ export default function Navbar() {
                 color: "white",
                 borderRadius: "30px",
                 textTransform: "none",
+                fontWeight: 600,
                 px: 3,
+                py: 0.8,
+                fontSize: "14px",
                 "&:hover": { background: "#F05A00" },
               }}
             >
@@ -204,8 +230,8 @@ export default function Navbar() {
           })}
         </List>
 
-        {/* Sign In Button — right below links */}
-        <Box sx={{ px: 2, pt: 1 }}>
+        {/* Action Buttons — right below links */}
+        <Box sx={{ px: 2, pt: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
           <Button
             component={NextLink}
             href="/sign-in"
@@ -217,13 +243,36 @@ export default function Navbar() {
               color: "white",
               borderRadius: "30px",
               textTransform: "none",
-              py: 1.5,
+              py: 1.2,
               fontWeight: 600,
-              fontSize: "16px",
+              fontSize: "15px",
               "&:hover": { background: "#F05A00" },
             }}
           >
             Sign In
+          </Button>
+          <Button
+            component={NextLink}
+            href="/purohit"
+            variant="outlined"
+            fullWidth
+            onClick={handleDrawerToggle}
+            sx={{
+              borderColor: "#FF6200",
+              color: "#FF6200",
+              borderRadius: "30px",
+              textTransform: "none",
+              py: 1.2,
+              fontWeight: 600,
+              fontSize: "15px",
+              "&:hover": {
+                borderColor: "#E65800",
+                bgcolor: "#FFF0E6",
+                color: "#E65800",
+              },
+            }}
+          >
+            Register as Purohit
           </Button>
         </Box>
       </Drawer>
