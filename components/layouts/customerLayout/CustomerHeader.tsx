@@ -59,9 +59,6 @@ export default function CustomerHeader({ mobileOpen, setMobileOpen }: CustomerHe
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap sx={{ display: { md: 'none' }, color: '#FF6200', fontWeight: 800, fontFamily: 'var(--font-outfit), sans-serif' }}>
-            Customer Portal
-          </Typography>
         </Box>
         
         <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
