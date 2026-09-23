@@ -32,7 +32,7 @@ export default function ServiceCard({ title, image, description, price, duration
       }
     }}>
       {/* Left Image Area */}
-      <Box sx={{ width: { xs: '100%', sm: '200px' }, flexShrink: 0, position: 'relative' }}>
+      <Box sx={{ width: { xs: '100%', sm: '200px' }, flexShrink: 0, position: 'relative', bgcolor: '#FFF8F2' }}>
         <Box
           component="img"
           src={image}
@@ -40,8 +40,8 @@ export default function ServiceCard({ title, image, description, price, duration
           sx={{ 
             height: '100%', 
             width: '100%', 
-            minHeight: { xs: '180px', sm: '100%' },
-            objectFit: 'cover',
+            minHeight: { xs: '200px', sm: '100%' },
+            objectFit: { xs: 'contain', sm: 'cover' },
           }}
         />
         {availability && availability.toLowerCase() !== 'all' && (

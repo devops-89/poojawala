@@ -248,7 +248,24 @@ export default function AdminPurohitsContent() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {purohit.status === 'No Profile' ? (
+                        {purohit.status === 'Approved' || purohit.status === 'Rejected' ? (
+                          <Box
+                            sx={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              bgcolor: statusStyle.bg,
+                              color: statusStyle.text,
+                              fontWeight: 600,
+                              fontFamily: 'var(--font-outfit), sans-serif',
+                              borderRadius: '6px',
+                              px: 1.5,
+                              py: 0.5,
+                              fontSize: '0.85rem',
+                            }}
+                          >
+                            {purohit.status}
+                          </Box>
+                        ) : purohit.status === 'No Profile' ? (
                           <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.85rem' }}>No Profile</Typography>
                         ) : (
                           <Select

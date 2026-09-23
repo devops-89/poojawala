@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Switch, DialogContentText, InputAdornment, Pagination, Card, CardContent, Divider } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Chip, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Switch, DialogContentText, InputAdornment, Pagination, Card, CardContent, Divider } from '@mui/material';
 import { getPurohitServicesAPI, updatePurohitServiceAPI, deletePurohitServiceAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useRouter } from 'next/navigation';
@@ -9,7 +9,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -261,11 +260,6 @@ export default function PurohitMyServicesContent() {
                     <Chip label={`${ps.durationMinutes} mins`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif' }} />
                   </TableCell>
                   <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                    <Tooltip title="View Details">
-                      <IconButton size="small" sx={{ color: '#0ea5e9' }} onClick={() => router.push(`/purohit/my-services/${ps.id}`)}>
-                        <VisibilityIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
                     <Tooltip title="Edit">
                       <IconButton size="small" sx={{ color: '#64748b' }} onClick={() => handleEditClick(ps)}>
                         <EditIcon fontSize="small" />
@@ -282,6 +276,28 @@ export default function PurohitMyServicesContent() {
             )}
           </TableBody>
         </Table>
+        {totalItems > 0 && (
+          <TablePagination
+            component="div"
+            count={totalItems}
+            page={page - 1}
+            onPageChange={(e, newPage) => setPage(newPage + 1)}
+            rowsPerPage={limit}
+            onRowsPerPageChange={(e) => {
+              setLimit(parseInt(e.target.value, 10));
+              setPage(1);
+            }}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            sx={{
+              borderTop: '1px solid #f1f5f9',
+              fontFamily: 'var(--font-outfit), sans-serif',
+              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                fontFamily: 'var(--font-outfit), sans-serif',
+                color: '#64748b'
+              }
+            }}
+          />
+        )}
       </TableContainer>
       </Box>
 
@@ -320,9 +336,6 @@ export default function PurohitMyServicesContent() {
                 )}
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                <Button size="small" variant="outlined" onClick={() => router.push(`/purohit/my-services/${ps.id}`)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600 }}>
-                  View
-                </Button>
                 <Button size="small" variant="outlined" color="primary" onClick={() => handleEditClick(ps)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600 }}>
                   Edit
                 </Button>
@@ -335,25 +348,11 @@ export default function PurohitMyServicesContent() {
         )}
       </Box>
 
-      {totalItems > 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3, borderTop: '1px solid #e2e8f0' }}>
-          <Pagination
-            count={Math.ceil(totalItems / limit)}
-            page={page}
-            onChange={(e, v) => setPage(v)}
-            sx={{ 
-              '& .MuiPaginationItem-root': { fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600 },
-              '& .Mui-selected': { bgcolor: '#FF6200 !important', color: 'white' }
-            }}
-          />
-        </Box>
-      )}
-
       {/* Edit Service Dialog */}
       <Dialog 
         open={Boolean(editingService)} 
         onClose={handleCloseEditDialog}
-        sx={{ '& .MuiDialog-paper': { borderRadius: '16px', minWidth: 400, p: 1 } }}
+        sx={{ '& .MuiDialog-paper': { borderRadius: '16px', width: { xs: 'calc(100% - 32px)', sm: '450px' }, maxWidth: '100%', m: { xs: 2, sm: 'auto' }, p: { xs: 0.5, sm: 1 } } }}
       >
         <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
           Edit {editingService?.service?.name}
@@ -444,7 +443,7 @@ export default function PurohitMyServicesContent() {
       <Dialog
         open={Boolean(serviceToDelete)}
         onClose={handleCloseDeleteDialog}
-        sx={{ '& .MuiDialog-paper': { borderRadius: '16px', minWidth: 400, p: 1 } }}
+        sx={{ '& .MuiDialog-paper': { borderRadius: '16px', width: { xs: 'calc(100% - 32px)', sm: '420px' }, maxWidth: '100%', m: { xs: 2, sm: 'auto' }, p: { xs: 0.5, sm: 1 } } }}
       >
         <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
           Remove Service

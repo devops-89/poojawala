@@ -173,24 +173,43 @@ export default function AdminUsersContent() {
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Select
-                        value={row.status || 'ACTIVE'}
-                        size="small"
-                        onChange={(e) => handleStatusChange(row.userId || row.id, e.target.value)}
-                        sx={{ 
-                          minWidth: 110,
-                          height: 32,
-                          fontSize: '0.875rem',
-                          fontWeight: 600,
-                          bgcolor: (row.status || 'ACTIVE') === 'ACTIVE' ? '#E8F5E9' : '#FFEBEE',
-                          color: (row.status || 'ACTIVE') === 'ACTIVE' ? '#2E7D32' : '#C62828',
-                          '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                          '& .MuiSelect-select': { py: 0.5 }
-                        }}
-                      >
-                        <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-                        <MenuItem value="BLOCKED">BLOCKED</MenuItem>
-                      </Select>
+                      {row.status === 'BLOCKED' ? (
+                        <Box
+                          sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            bgcolor: '#FFEBEE',
+                            color: '#C62828',
+                            fontWeight: 600,
+                            fontFamily: 'var(--font-outfit), sans-serif',
+                            borderRadius: '6px',
+                            px: 1.5,
+                            py: 0.5,
+                            fontSize: '0.85rem',
+                          }}
+                        >
+                          BLOCKED
+                        </Box>
+                      ) : (
+                        <Select
+                          value={row.status || 'ACTIVE'}
+                          size="small"
+                          onChange={(e) => handleStatusChange(row.userId || row.id, e.target.value)}
+                          sx={{ 
+                            minWidth: 110,
+                            height: 32,
+                            fontSize: '0.875rem',
+                            fontWeight: 600,
+                            bgcolor: '#E8F5E9',
+                            color: '#2E7D32',
+                            '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                            '& .MuiSelect-select': { py: 0.5 }
+                          }}
+                        >
+                          <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+                          <MenuItem value="BLOCKED">BLOCKED</MenuItem>
+                        </Select>
+                      )}
                     </TableCell>
                   </TableRow>
                 );

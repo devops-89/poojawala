@@ -1,13 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, TextField, Button, Grid, Switch, FormControlLabel, Breadcrumbs, Divider, Stepper, Step, StepLabel, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, TextField, Button, Grid, Switch, FormControlLabel, Breadcrumbs, Divider, Stepper, Step, StepLabel, CircularProgress, IconButton, Autocomplete } from '@mui/material';
 import NextLink from 'next/link';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import { useRouter, useParams } from 'next/navigation';
-import { useFormik, FormikProvider } from 'formik';
+import { useFormik, FormikProvider, FieldArray } from 'formik';
 import * as Yup from 'yup';
+import { State, City } from 'country-state-city';
 
 import { getServiceByIdAPI, editServiceAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
@@ -71,6 +74,9 @@ export default function EditServiceForm() {
       isUpcomingFestival: false,
       festivalStartDate: '',
       festivalEndDate: '',
+      benefits: [] as Array<{ title: string; description: string }>,
+      cities: [] as Array<{ name: string; state: string }>,
+      languages: [] as Array<{ name: string }>,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -93,6 +99,21 @@ export default function EditServiceForm() {
         if (values.isUpcomingFestival) {
           formData.append('festivalStartDate', new Date(values.festivalStartDate).toISOString());
           formData.append('festivalEndDate', new Date(values.festivalEndDate).toISOString());
+        }
+
+        const validBenefits = values.benefits.filter((b) => b.title && b.title.trim());
+        if (validBenefits.length > 0) {
+          formData.append('benefits', JSON.stringify(validBenefits));
+        }
+
+        const validCities = values.cities.filter((c) => c.name && c.name.trim());
+        if (validCities.length > 0) {
+          formData.append('cities', JSON.stringify(validCities));
+        }
+
+        const validLanguages = values.languages.filter((l) => l.name && l.name.trim());
+        if (validLanguages.length > 0) {
+          formData.append('languages', JSON.stringify(validLanguages.map((l) => ({ name: l.name.trim() }))));
         }
         
         const slug = values.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -140,6 +161,9 @@ export default function EditServiceForm() {
             isUpcomingFestival: service.isUpcomingFestival ?? false,
             festivalStartDate: service.festivalStartDate ? new Date(service.festivalStartDate).toISOString().slice(0, 16) : '',
             festivalEndDate: service.festivalEndDate ? new Date(service.festivalEndDate).toISOString().slice(0, 16) : '',
+            benefits: Array.isArray(service.benefits) ? service.benefits : [],
+            cities: Array.isArray(service.cities) ? service.cities : [],
+            languages: Array.isArray(service.languages) ? service.languages.map((l: any) => ({ name: typeof l === 'string' ? l : l.name || '' })) : [],
           };
           formik.resetForm({ values: newValues });
           setOriginalValues(newValues);
@@ -257,6 +281,245 @@ export default function EditServiceForm() {
                     error={touched.description && Boolean(errors.description)} helperText={touched.description && errors.description}
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
                   />
+                </Grid>
+
+                {/* Benefits Section */}
+                <Grid size={{ xs: 12 }}>
+                  <FieldArray name="benefits">
+                    {({ push, remove }) => (
+                      <Box sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 3, bgcolor: '#f8fafc' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: values.benefits.length > 0 ? 2 : 0 }}>
+                          <Box>
+                            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1e293b' }}>
+                              Service Benefits
+                            </Typography>
+                            <Typography sx={{ fontSize: '0.85rem', color: '#64748b' }}>
+                              Add key highlights and benefits of this ritual.
+                            </Typography>
+                          </Box>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<AddIcon />}
+                            onClick={() => push({ title: '', description: '' })}
+                            sx={{
+                              borderColor: '#FF6200',
+                              color: '#FF6200',
+                              textTransform: 'none',
+                              borderRadius: '8px',
+                              fontWeight: 600,
+                              '&:hover': { borderColor: '#E65800', bgcolor: '#fff7ed' }
+                            }}
+                          >
+                            Add Benefit
+                          </Button>
+                        </Box>
+
+                        {values.benefits.map((benefit: any, index: number) => (
+                          <Box key={`benefit-${index}`} sx={{ mt: 2, p: 2.5, bgcolor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                              <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: '#1e293b', fontFamily: 'var(--font-outfit), sans-serif' }}>
+                                Benefit: {index + 1}
+                              </Typography>
+                              <IconButton onClick={() => remove(index)} size="small" sx={{ color: '#ef4444', '&:hover': { bgcolor: '#fee2e2' } }}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Box>
+                            
+                            <Grid container spacing={2}>
+                              <Grid size={{ xs: 12 }}>
+                                <TextField
+                                  fullWidth
+                                  size="small"
+                                  name={`benefits.${index}.title`}
+                                  label="Benefit Title"
+                                  placeholder="e.g. Traditional Hanuman Puja"
+                                  value={benefit.title}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+                                />
+                              </Grid>
+                              <Grid size={{ xs: 12 }}>
+                                <TextField
+                                  fullWidth
+                                  multiline
+                                  rows={2}
+                                  size="small"
+                                  name={`benefits.${index}.description`}
+                                  label="Benefit Description"
+                                  placeholder="e.g. Performed according to traditional Vedic practices with Sankalp and Mantras."
+                                  value={benefit.description}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        ))}
+                      </Box>
+                    )}
+                  </FieldArray>
+                </Grid>
+
+                {/* Cities Section */}
+                <Grid size={{ xs: 12 }}>
+                  <FieldArray name="cities">
+                    {({ push, remove }) => (
+                      <Box sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 3, bgcolor: '#f8fafc' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: values.cities.length > 0 ? 2 : 0 }}>
+                          <Box>
+                            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1e293b' }}>
+                              Service Cities
+                            </Typography>
+                            <Typography sx={{ fontSize: '0.85rem', color: '#64748b' }}>
+                              Specify cities and states where this service is available.
+                            </Typography>
+                          </Box>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<AddIcon />}
+                            onClick={() => push({ name: '', state: '' })}
+                            sx={{
+                              borderColor: '#FF6200',
+                              color: '#FF6200',
+                              textTransform: 'none',
+                              borderRadius: '8px',
+                              fontWeight: 600,
+                              '&:hover': { borderColor: '#E65800', bgcolor: '#fff7ed' }
+                            }}
+                          >
+                            Add City
+                          </Button>
+                        </Box>
+
+                        {values.cities.map((city: any, index: number) => {
+                          const indianStates = State.getStatesOfCountry("IN") || [];
+                          const currentState = indianStates.find(
+                            (s) => s.name?.toLowerCase() === (city?.state || "").toLowerCase()
+                          );
+                          const cityOptions = currentState
+                            ? (City.getCitiesOfState("IN", currentState.isoCode) || []).map((c) => c.name)
+                            : (City.getCitiesOfCountry("IN") || []).slice(0, 100).map((c) => c.name);
+
+                          return (
+                            <Box key={`city-${index}`} sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 2, p: 2, bgcolor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                              <Grid container spacing={2} sx={{ flex: 1 }}>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                  <Autocomplete
+                                    freeSolo
+                                    forcePopupIcon={true}
+                                    options={indianStates.map((s) => s.name)}
+                                    value={city.state || ""}
+                                    onChange={(_, newValue) => {
+                                      formik.setFieldValue(`cities.${index}.state`, newValue || "");
+                                    }}
+                                    onInputChange={(_, newInputValue) => {
+                                      formik.setFieldValue(`cities.${index}.state`, newInputValue || "");
+                                    }}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        size="small"
+                                        label="State Name"
+                                        placeholder="Select or type State (e.g. Uttar Pradesh)"
+                                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+                                      />
+                                    )}
+                                  />
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                  <Autocomplete
+                                    freeSolo
+                                    forcePopupIcon={true}
+                                    options={cityOptions}
+                                    value={city.name || ""}
+                                    onChange={(_, newValue) => {
+                                      formik.setFieldValue(`cities.${index}.name`, newValue || "");
+                                    }}
+                                    onInputChange={(_, newInputValue) => {
+                                      formik.setFieldValue(`cities.${index}.name`, newInputValue || "");
+                                    }}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        size="small"
+                                        label="City Name"
+                                        placeholder="Select or type City (e.g. Ghaziabad)"
+                                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+                                      />
+                                    )}
+                                  />
+                                </Grid>
+                              </Grid>
+                              <IconButton onClick={() => remove(index)} sx={{ color: '#ef4444', '&:hover': { bgcolor: '#fee2e2' } }}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    )}
+                  </FieldArray>
+                </Grid>
+
+                {/* Languages Section */}
+                <Grid size={{ xs: 12 }}>
+                  <FieldArray name="languages">
+                    {({ push, remove }) => (
+                      <Box sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 3, bgcolor: '#f8fafc' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: values.languages.length > 0 ? 2 : 0 }}>
+                          <Box>
+                            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1e293b' }}>
+                              Languages
+                            </Typography>
+                            <Typography sx={{ fontSize: '0.85rem', color: '#64748b' }}>
+                              Add languages supported for this ritual (Name only).
+                            </Typography>
+                          </Box>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<AddIcon />}
+                            onClick={() => push({ name: '' })}
+                            sx={{
+                              borderColor: '#FF6200',
+                              color: '#FF6200',
+                              textTransform: 'none',
+                              borderRadius: '8px',
+                              fontWeight: 600,
+                              '&:hover': { borderColor: '#E65800', bgcolor: '#fff7ed' }
+                            }}
+                          >
+                            Add Language
+                          </Button>
+                        </Box>
+
+                        {values.languages.map((lang: any, index: number) => (
+                          <Box key={`lang-${index}`} sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 2, p: 2, bgcolor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                            <Box sx={{ flex: 1 }}>
+                              <TextField
+                                fullWidth
+                                size="small"
+                                name={`languages.${index}.name`}
+                                label="Language Name"
+                                placeholder="e.g. Hindi, Sanskrit, English"
+                                value={lang.name}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+                              />
+                            </Box>
+                            <IconButton onClick={() => remove(index)} sx={{ color: '#ef4444', '&:hover': { bgcolor: '#fee2e2' } }}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ))}
+                      </Box>
+                    )}
+                  </FieldArray>
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, mb: 1, color: '#1e293b' }}>Availability Settings & Status</Typography>

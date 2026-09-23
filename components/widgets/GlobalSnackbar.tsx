@@ -19,13 +19,14 @@ export default function GlobalSnackbar() {
       open={open}
       autoHideDuration={5000}
       onClose={handleClose}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       sx={{
-        bottom: { xs: 16, sm: 24 },
-        left: { xs: 16, sm: 'auto' },
+        bottom: { xs: 20, sm: 24 },
         right: { xs: 16, sm: 24 },
-        width: { xs: 'calc(100% - 32px)', sm: 'auto' },
-        maxWidth: { xs: 'calc(100% - 32px)', sm: '420px' },
+        left: 'auto !important',
+        transform: 'none !important',
+        width: 'auto',
+        maxWidth: 'calc(100vw - 32px)',
         zIndex: 9999,
       }}
     >
@@ -34,18 +35,27 @@ export default function GlobalSnackbar() {
         severity={severity}
         variant="filled"
         sx={{
-          width: '100%',
+          width: 'auto',
+          maxWidth: '100%',
           color: '#ffffff',
           borderRadius: '12px',
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)',
-          px: 2,
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+          px: 2.5,
           py: 1,
           fontWeight: 600,
           fontFamily: 'var(--font-inter), sans-serif',
           display: 'flex',
           alignItems: 'center',
           '& .MuiAlert-icon': {
-            fontSize: '22px',
+            fontSize: '20px',
+            mr: 1,
+          },
+          '& .MuiAlert-message': {
+            p: 0,
+          },
+          '& .MuiAlert-action': {
+            ml: 1.5,
+            p: 0,
           },
         }}
       >

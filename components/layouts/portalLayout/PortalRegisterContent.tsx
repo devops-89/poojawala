@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Box, Container, Typography, Stepper, Step, StepLabel, Paper, Button, TextField, IconButton, Dialog, Select, MenuItem, InputLabel, FormControl, OutlinedInput, Checkbox, ListItemText, FormControlLabel, InputAdornment, RadioGroup, Radio, Link as MuiLink } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
@@ -385,18 +386,40 @@ export default function PortalRegisterContent() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#FFFDF9' }}>
-      <Box sx={{ p: 2.5, textAlign: 'center', borderBottom: '1px solid #FFE0D0', bgcolor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <MuiLink component={NextLink} href="/" underline="none" sx={{ display: 'inline-flex', justifyContent: 'center' }}>
+      <Box sx={{ p: 2.5, px: { xs: 2, md: 4 }, borderBottom: '1px solid #FFE0D0', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <MuiLink component={NextLink} href="/" underline="none" sx={{ display: 'inline-flex', alignItems: 'center' }}>
           <Box
             component="img"
             src="/images/logo.png"
             alt="Poojawala"
-            sx={{ height: { xs: '45px', md: '55px' }, objectFit: 'contain', mb: 0.5 }}
+            sx={{ height: { xs: '40px', md: '50px' }, objectFit: 'contain' }}
           />
         </MuiLink>
-        <Typography sx={{ color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 500, fontSize: '14px' }}>
+        
+        <Typography sx={{ color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: { xs: '13px', md: '15px' }, display: { xs: 'none', sm: 'block' } }}>
           Purohit Partner Onboarding
         </Typography>
+
+        <Button
+          component={NextLink}
+          href="/"
+          startIcon={<ArrowBackIcon />}
+          sx={{
+            color: '#475569',
+            borderColor: '#FFE0D0',
+            borderRadius: '25px',
+            px: 2.5,
+            py: 0.75,
+            fontFamily: 'var(--font-outfit), sans-serif',
+            fontWeight: 600,
+            fontSize: '0.85rem',
+            textTransform: 'none',
+            border: '1px solid #FFE0D0',
+            '&:hover': { bgcolor: '#FFF0E6', color: '#FF6200', borderColor: '#FF6200' },
+          }}
+        >
+          Go to Website
+        </Button>
       </Box>
 
       <Container maxWidth="md" sx={{ py: 8, flexGrow: 1 }}>

@@ -4,9 +4,11 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventNoteIcon from "@mui/icons-material/EventNote";
+import LocalMallIcon from "@mui/icons-material/LocalMall";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PaymentIcon from "@mui/icons-material/Payment";
 import PersonIcon from "@mui/icons-material/Person";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import {
   Avatar,
@@ -57,9 +59,19 @@ export default function CustomerSidebar({
     { text: "Dashboard", icon: <DashboardIcon />, path: "/customer/dashboard" },
     { text: "Services", icon: <EventNoteIcon />, path: "/customer/services" },
     {
+      text: "Pooja Products",
+      icon: <ShoppingBagIcon />,
+      path: "/customer/products",
+    },
+    {
       text: "My Bookings",
       icon: <EventNoteIcon />,
       path: "/customer/bookings",
+    },
+    {
+      text: "My Orders",
+      icon: <LocalMallIcon />,
+      path: "/customer/orders",
     },
     { text: "My Payments", icon: <PaymentIcon />, path: "/customer/payments" },
     {

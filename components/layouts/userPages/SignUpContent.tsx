@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useRouter } from 'next/navigation';
@@ -374,6 +375,34 @@ export default function SignUpContent() {
                       >
                         {isSubmitting ? 'Signing Up...' : 'Sign Up'}
                       </Button>
+
+                      <Box sx={{ mt: 2 }}>
+                        <Button
+                          component={Link}
+                          href="/"
+                          fullWidth
+                          variant="outlined"
+                          startIcon={<ArrowBackIcon />}
+                          sx={{
+                            py: 1.2,
+                            borderRadius: '31px',
+                            borderColor: '#FFE0D0',
+                            color: '#475569',
+                            fontFamily: '"DM Sans", sans-serif',
+                            fontWeight: 600,
+                            fontSize: '15px',
+                            textTransform: 'none',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              bgcolor: '#FFF0E6',
+                              color: '#FF6200',
+                              borderColor: '#FF6200',
+                            },
+                          }}
+                        >
+                          Go to Website
+                        </Button>
+                      </Box>
                     </Box>
                   )}
                 </Formik>

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Paper, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -76,6 +77,7 @@ export default function AdminLoginForm() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#F4F6F8', p: 2 }}>
+      
       <Paper elevation={0} sx={{ p: { xs: 4, md: 6 }, maxWidth: 450, width: '100%', borderRadius: '24px', border: '1px solid #eee', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
         
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 5 }}>
@@ -199,6 +201,34 @@ export default function AdminLoginForm() {
           >
             {isLoading ? 'Logging in...' : 'Secure Login'}
           </Button>
+
+          <Box sx={{ mt: 2 }}>
+            <Button
+              component={NextLink}
+              href="/"
+              fullWidth
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              sx={{
+                py: 1.2,
+                borderRadius: '30px',
+                borderColor: '#e2e8f0',
+                color: '#475569',
+                fontFamily: 'var(--font-outfit), sans-serif',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                textTransform: 'none',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: '#FFF0E6',
+                  color: '#FF6200',
+                  borderColor: '#FF6200',
+                },
+              }}
+            >
+              Go to Website
+            </Button>
+          </Box>
         </form>
 
       </Paper>

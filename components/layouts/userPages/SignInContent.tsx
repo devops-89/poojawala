@@ -1,6 +1,7 @@
 "use client";
 import { getMeAPI, loginAPI } from "@/api/authControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
@@ -356,6 +357,34 @@ export default function SignInContent() {
                       >
                         {isSubmitting ? "Signing In..." : "Sign In"}
                       </Button>
+
+                      <Box sx={{ mt: 2 }}>
+                        <Button
+                          component={Link}
+                          href="/"
+                          fullWidth
+                          variant="outlined"
+                          startIcon={<ArrowBackIcon />}
+                          sx={{
+                            py: 1.2,
+                            borderRadius: "31px",
+                            borderColor: "#FFE0D0",
+                            color: "#475569",
+                            fontFamily: '"DM Sans", sans-serif',
+                            fontWeight: 600,
+                            fontSize: "15px",
+                            textTransform: "none",
+                            transition: "all 0.2s ease",
+                            "&:hover": {
+                              bgcolor: "#FFF0E6",
+                              color: "#FF6200",
+                              borderColor: "#FF6200",
+                            },
+                          }}
+                        >
+                          Go to Website
+                        </Button>
+                      </Box>
                     </Box>
                   )}
                 </Formik>

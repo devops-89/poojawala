@@ -74,6 +74,7 @@ export default function ProfileContent() {
     streetName: '',
     fullAddress: '',
     city: '',
+    state: '',
     pincode: '',
     isDefault: false,
     latitude: '',
@@ -214,6 +215,7 @@ export default function ProfileContent() {
     if (!addressForm.addressLabel?.trim()) missing.push('Address Label');
     if (!addressForm.fullAddress?.trim()) missing.push('Full Address');
     if (!addressForm.city?.trim()) missing.push('City');
+    if (!addressForm.state?.trim()) missing.push('State');
     if (!addressForm.pincode?.trim()) missing.push('Pincode');
 
     if (missing.length > 0) {
@@ -235,7 +237,7 @@ export default function ProfileContent() {
           setServiceAreas(serviceAreas.map(a => a.id === selectedAddressId ? updatedArea : a));
           setAddressModalOpen(false);
           setSelectedAddressId(null);
-          setAddressForm({ addressLabel: '', streetName: '', fullAddress: '', city: '', pincode: '', isDefault: false, latitude: '', longitude: '', serviceRadiusKm: 10 });
+          setAddressForm({ addressLabel: '', streetName: '', fullAddress: '', city: '', state: '', pincode: '', isDefault: false, latitude: '', longitude: '', serviceRadiusKm: 10 });
         }
       } else {
         const res = await addServiceAreaAPI(payload);
@@ -244,7 +246,7 @@ export default function ProfileContent() {
           const newArea = res.data?.data || res.data;
           setServiceAreas([...serviceAreas, newArea]);
           setAddressModalOpen(false);
-          setAddressForm({ addressLabel: '', streetName: '', fullAddress: '', city: '', pincode: '', isDefault: false, latitude: '', longitude: '', serviceRadiusKm: 10 });
+          setAddressForm({ addressLabel: '', streetName: '', fullAddress: '', city: '', state: '', pincode: '', isDefault: false, latitude: '', longitude: '', serviceRadiusKm: 10 });
         }
       }
     } catch (error) {
@@ -262,6 +264,7 @@ export default function ProfileContent() {
       streetName: area.streetName || '',
       fullAddress: area.fullAddress || '',
       city: area.city || '',
+      state: area.state || '',
       pincode: area.pincode || '',
       isDefault: area.isDefault || false,
       latitude: area.latitude || '',
@@ -312,6 +315,7 @@ export default function ProfileContent() {
             const data = await response.json();
             if (data && data.address) {
               const city = data.address.city || data.address.town || data.address.village || data.address.state_district || '';
+              const state = data.address.state || '';
               const pincode = data.address.postcode || '';
               const streetName = data.address.road || data.address.suburb || '';
               const fullAddress = data.display_name || '';
@@ -319,6 +323,7 @@ export default function ProfileContent() {
               addressUpdates = {
                 ...addressUpdates,
                 city,
+                state,
                 pincode,
                 streetName,
                 fullAddress
@@ -553,7 +558,7 @@ export default function ProfileContent() {
               <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: '20px' }}>Service Area</Typography>
               <Button onClick={() => {
                 setSelectedAddressId(null);
-                setAddressForm({ addressLabel: '', streetName: '', fullAddress: '', city: '', pincode: '', isDefault: false, latitude: '', longitude: '', serviceRadiusKm: 10 });
+                setAddressForm({ addressLabel: '', streetName: '', fullAddress: '', city: '', state: '', pincode: '', isDefault: false, latitude: '', longitude: '', serviceRadiusKm: 10 });
                 setAddressModalOpen(true);
               }} variant="outlined" sx={{ color: '#FF6200', borderColor: '#FF6200', textTransform: 'none', borderRadius: '8px', '&:hover': { borderColor: '#F05A00', bgcolor: '#FFF0E6' } }}>
                 Add New Address
@@ -587,7 +592,7 @@ export default function ProfileContent() {
                         {area.fullAddress}
                       </Typography>
                       <Typography sx={{ color: '#64748b', fontSize: '13px', pl: 3.5, mt: 0.5 }}>
-                        {area.city} - {area.pincode}
+                        {area.city}{area.state ? `, ${area.state}` : ''} - {area.pincode}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -652,10 +657,13 @@ export default function ProfileContent() {
                   <Grid size={{xs:12}}>
                     <TextField fullWidth multiline rows={2} label="Full Address" value={addressForm.fullAddress} onChange={(e) => setAddressForm({...addressForm, fullAddress: e.target.value})} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
                   </Grid>
-                  <Grid size={{xs:12,sm:6}}>
+                  <Grid size={{xs:12,sm:4}}>
                     <TextField fullWidth label="City" value={addressForm.city} onChange={(e) => setAddressForm({...addressForm, city: e.target.value})} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
                   </Grid>
-                  <Grid size={{xs:12, sm:6}}>
+                  <Grid size={{xs:12,sm:4}}>
+                    <TextField fullWidth label="State" value={addressForm.state} onChange={(e) => setAddressForm({...addressForm, state: e.target.value})} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+                  </Grid>
+                  <Grid size={{xs:12,sm:4}}>
                     <TextField fullWidth label="Pincode" value={addressForm.pincode} onChange={(e) => setAddressForm({...addressForm, pincode: e.target.value})} variant="outlined" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
                   </Grid>
                   <Grid size={{xs:12}}>

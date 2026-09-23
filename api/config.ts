@@ -4,6 +4,9 @@ import { SERVER_ENDPOINTS } from "./serverConstant";
 const authSecuredApi = axios.create({
   baseURL: SERVER_ENDPOINTS.AUTH_BASEURL,
   withCredentials: true,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
 });
 
 authSecuredApi.interceptors.request.use(
@@ -25,11 +28,17 @@ authSecuredApi.interceptors.request.use(
 const authPublicApi = axios.create({
   baseURL: SERVER_ENDPOINTS.AUTH_BASEURL,
   withCredentials: true,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
 });
 
 const userSecuredApi = axios.create({
   baseURL: SERVER_ENDPOINTS.USER_BASEURL,
   withCredentials: true,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
 });
 
 userSecuredApi.interceptors.request.use(
@@ -51,11 +60,17 @@ userSecuredApi.interceptors.request.use(
 const userPublicApi = axios.create({
   baseURL: SERVER_ENDPOINTS.USER_BASEURL,
   withCredentials: true,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
 });
 
 const paymentSecuredApi = axios.create({
   baseURL: SERVER_ENDPOINTS.PAYMENT_BASEURL,
   withCredentials: true,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
 });
 
 paymentSecuredApi.interceptors.request.use(

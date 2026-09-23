@@ -14,6 +14,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import {
   Box,
   Collapse,
@@ -64,33 +65,34 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   };
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/admin/dashboard" },
-    { text: "Bookings", icon: <EventNoteIcon />, path: "/admin/bookings" },
+    { text: "Dashboard", icon: <DashboardIcon fontSize="small" />, path: "/admin/dashboard" },
+    { text: "Bookings", icon: <EventNoteIcon fontSize="small" />, path: "/admin/bookings" },
     {
       text: "Purohits",
-      icon: <SupervisorAccountIcon />,
+      icon: <SupervisorAccountIcon fontSize="small" />,
       path: "/admin/purohits",
     },
-    { text: "Customers", icon: <GroupsIcon />, path: "/admin/users" },
-    { text: "Services", icon: <BookOnlineIcon />, path: "/admin/services" },
+    { text: "Customers", icon: <GroupsIcon fontSize="small" />, path: "/admin/users" },
+    { text: "Services", icon: <BookOnlineIcon fontSize="small" />, path: "/admin/services" },
+    { text: "Products", icon: <ShoppingBagIcon fontSize="small" />, path: "/admin/products" },
     {
       text: "Finance",
-      icon: <LocalAtmIcon />,
+      icon: <LocalAtmIcon fontSize="small" />,
       path: "/admin/finance",
       children: [
         { text: "Booking Settlements", path: "/admin/finance/bookings" },
         { text: "Purohit Payouts", path: "/admin/finance/payouts" },
       ],
     },
-    { text: "Reviews", icon: <StarBorderIcon />, path: "/admin/reviews" },
+    { text: "Reviews", icon: <StarBorderIcon fontSize="small" />, path: "/admin/reviews" },
     {
       text: "Complaints",
-      icon: <ReportProblemIcon />,
+      icon: <ReportProblemIcon fontSize="small" />,
       path: "/admin/complaints",
     },
     {
       text: "Contact Msgs",
-      icon: <EmailIcon />,
+      icon: <EmailIcon fontSize="small" />,
       path: "/admin/contact-messages",
     },
   ];
@@ -117,7 +119,8 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
         sx={{
           flex: 1,
           overflowY: "auto",
-          p: 2,
+          px: 2,
+          py: 2,
           "&::-webkit-scrollbar": { display: "none" },
           msOverflowStyle: "none",
           scrollbarWidth: "none",
@@ -126,7 +129,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
         <List
           sx={{
             p: 0,
-            "& .MuiListItemButton-root": { mb: 0.5, borderRadius: "12px" },
+            "& .MuiListItemButton-root": { mb: 0.75, borderRadius: "12px" },
           }}
         >
           {menuItems.map((item: any) => {
@@ -143,14 +146,18 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                     <ListItemButton
                       onClick={() => toggleExpand(item.path)}
                       sx={{
+                        py: 1.2,
+                        px: 2,
                         backgroundColor: active ? "#FFF0E6" : "transparent",
                         color: active ? "#FF6200" : "#475569",
+                        transition: "all 0.15s ease-in-out",
                         "&:hover": {
-                          backgroundColor: active ? "#FFF0E6" : "#FAFAFA",
+                          backgroundColor: active ? "#FFF0E6" : "#f8fafc",
+                          color: active ? "#FF6200" : "#1e293b",
                         },
                       }}
                     >
-                      <ListItemIcon sx={{ minWidth: 40, color: "inherit" }}>
+                      <ListItemIcon sx={{ minWidth: 38, color: "inherit", display: "flex", alignItems: "center" }}>
                         {item.icon}
                       </ListItemIcon>
                       <ListItemText
@@ -159,8 +166,9 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                           <Typography
                             sx={{
                               fontFamily: "var(--font-outfit), sans-serif",
-                              fontWeight: active ? 600 : 500,
+                              fontWeight: active ? 700 : 500,
                               fontSize: "0.95rem",
+                              lineHeight: 1.2,
                             }}
                           >
                             {item.text}
@@ -181,14 +189,18 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                       href={item.path}
                       onClick={onLinkClick}
                       sx={{
+                        py: 1.2,
+                        px: 2,
                         backgroundColor: active ? "#FFF0E6" : "transparent",
                         color: active ? "#FF6200" : "#475569",
+                        transition: "all 0.15s ease-in-out",
                         "&:hover": {
-                          backgroundColor: active ? "#FFF0E6" : "#FAFAFA",
+                          backgroundColor: active ? "#FFF0E6" : "#f8fafc",
+                          color: active ? "#FF6200" : "#1e293b",
                         },
                       }}
                     >
-                      <ListItemIcon sx={{ minWidth: 40, color: "inherit" }}>
+                      <ListItemIcon sx={{ minWidth: 38, color: "inherit", display: "flex", alignItems: "center" }}>
                         {item.icon}
                       </ListItemIcon>
                       <ListItemText
@@ -197,8 +209,9 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                           <Typography
                             sx={{
                               fontFamily: "var(--font-outfit), sans-serif",
-                              fontWeight: active ? 600 : 500,
+                              fontWeight: active ? 700 : 500,
                               fontSize: "0.95rem",
+                              lineHeight: 1.2,
                             }}
                           >
                             {item.text}
@@ -214,7 +227,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                     <List
                       component="div"
                       disablePadding
-                      sx={{ pl: 2.5, mt: 0.5, mb: 1 }}
+                      sx={{ pl: 2, mt: 0.5, mb: 1 }}
                     >
                       <Box sx={{ borderLeft: "2px solid #FFF0E6", pl: 1 }}>
                         {item.children?.map((child: any) => {
@@ -240,7 +253,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                                   "&:hover": {
                                     backgroundColor: childActive
                                       ? "#E65800"
-                                      : "#FAFAFA",
+                                      : "#f8fafc",
                                     color: childActive ? "#ffffff" : "#FF6200",
                                   },
                                 }}
@@ -275,20 +288,20 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       </Box>
 
       {/* Profile Section */}
-      <Box sx={{ p: 2, borderTop: "1px solid #e2e8f0" }}>
+      <Box sx={{ p: 2, borderTop: "1px solid #e2e8f0", bgcolor: "#ffffff" }}>
         <Box
           onClick={handleProfileClick}
           sx={{
             display: "flex",
             alignItems: "center",
             gap: 1.5,
-            px: 1,
-            py: 1,
+            px: 1.5,
+            py: 1.25,
             borderRadius: "12px",
             cursor: "pointer",
-            transition: "background-color 0.2s",
+            transition: "background-color 0.2s ease-in-out",
             "&:hover": {
-              backgroundColor: "#f1f5f9",
+              backgroundColor: "#f8fafc",
             },
           }}
         >
@@ -302,10 +315,11 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
               color: "white",
               alignItems: "center",
               justifyContent: "center",
-              fontWeight: 600,
-              fontSize: "1rem",
+              fontWeight: 700,
+              fontSize: "0.95rem",
               flexShrink: 0,
               fontFamily: "var(--font-outfit), sans-serif",
+              boxShadow: "0 2px 8px rgba(255, 98, 0, 0.25)",
             }}
           >
             SA
@@ -314,9 +328,10 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
             <Typography
               sx={{
                 fontFamily: "var(--font-outfit), sans-serif",
-                fontWeight: 600,
+                fontWeight: 700,
                 fontSize: "0.9rem",
                 color: "#1e293b",
+                lineHeight: 1.2,
               }}
               noWrap
             >
@@ -326,7 +341,9 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
               sx={{
                 fontFamily: "var(--font-outfit), sans-serif",
                 fontSize: "0.75rem",
+                fontWeight: 500,
                 color: "#64748b",
+                mt: 0.25,
               }}
             >
               System Control
@@ -398,11 +415,11 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       >
         <Box
           sx={{
-            height: 80,
-            px: 2.5,
+            height: { xs: 64, sm: 80 },
+            px: 3,
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
+            alignItems: "center",
+            justifyContent: "flex-start",
             borderBottom: "1px solid #e2e8f0",
           }}
         >
@@ -410,7 +427,12 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             component="img"
             src="/images/logo.png"
             alt="Poojawala"
-            sx={{ height: { xs: "40px", md: "60px" }, objectFit: "contain" }}
+            sx={{
+              height: { xs: "36px", sm: "44px" },
+              maxWidth: "180px",
+              objectFit: "contain",
+              objectPosition: "left center",
+            }}
           />
         </Box>
         <SidebarContent />
@@ -437,27 +459,25 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       >
         <Box
           sx={{
+            height: { xs: 64, sm: 80 },
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             px: 3,
-            py: 3,
             borderBottom: "1px solid #e2e8f0",
           }}
         >
-          <Box>
-            <Typography
-              variant="h5"
-              sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
-                fontWeight: 800,
-                color: "#FF6200",
-                lineHeight: 1.2,
-              }}
-            >
-              Poojawala
-            </Typography>
-          </Box>
+          <Box
+            component="img"
+            src="/images/logo.png"
+            alt="Poojawala"
+            sx={{
+              height: { xs: "36px", sm: "44px" },
+              maxWidth: "160px",
+              objectFit: "contain",
+              objectPosition: "left center",
+            }}
+          />
           <IconButton
             onClick={onClose}
             sx={{ color: "#FF6200", "&:hover": { backgroundColor: "#FFF0E6" } }}

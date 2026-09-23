@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, Grid, Chip, Breadcrumbs, Divider, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, Grid, Chip, Breadcrumbs, Button, CircularProgress, Divider } from '@mui/material';
 import NextLink from 'next/link';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,18 +8,32 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import WifiIcon from '@mui/icons-material/Wifi';
 import WifiOffIcon from '@mui/icons-material/WifiOff';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CelebrationIcon from '@mui/icons-material/Celebration';
 import EventIcon from '@mui/icons-material/Event';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
-import StarIcon from '@mui/icons-material/Star';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import PercentIcon from '@mui/icons-material/Percent';
+import LanguageIcon from '@mui/icons-material/Language';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import { useParams } from 'next/navigation';
 import { getServiceByIdAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import Image from 'next/image';
 
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='8' fill='%23e2e8f0'/%3E%3Cpath d='M16 30 Q24 18 32 30' stroke='%2394a3b8' stroke-width='2' fill='none'/%3E%3Ccircle cx='20' cy='22' r='3' fill='%2394a3b8'/%3E%3C/svg%3E";
+
+const parseJsonIfNeeded = (val: any) => {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  return [];
+};
 
 export default function AdminServiceDetailsContent() {
   const params = useParams();
@@ -46,7 +60,7 @@ export default function AdminServiceDetailsContent() {
     if (params.id) {
       fetchServiceDetails();
     }
-  }, [params.id]);
+  }, [params.id, showSnackbar]);
 
   if (loading) {
     return (
@@ -66,6 +80,14 @@ export default function AdminServiceDetailsContent() {
       </Box>
     );
   }
+
+  const benefitsList = parseJsonIfNeeded(service.benefits);
+  const citiesList = parseJsonIfNeeded(service.cities);
+  const languagesList = parseJsonIfNeeded(service.languages);
+  const languagesText = languagesList
+    .map((lang: any) => typeof lang === 'string' ? lang : (lang.name || lang.code || ''))
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -112,10 +134,13 @@ export default function AdminServiceDetailsContent() {
             <Image src={service.iconDownloadurl || service.iconUrl || PLACEHOLDER} alt={service.name} fill style={{ objectFit: 'cover' }} unoptimized={true} />
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1, flexWrap: 'wrap' }}>
-              <Typography variant="h3" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', fontSize: { xs: '1.75rem', md: '2.25rem' } }}>
-                {service.name}
-              </Typography>
+            {/* Service Title */}
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', fontSize: { xs: '1.75rem', md: '2.25rem' }, mb: 1.5 }}>
+              {service.name}
+            </Typography>
+
+            {/* Badges below Title */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5, flexWrap: 'wrap' }}>
               <Chip 
                 label={service.isActive ? "Active" : "Inactive"} 
                 sx={{ 
@@ -151,16 +176,106 @@ export default function AdminServiceDetailsContent() {
                 }} 
               />
             </Box>
-            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#475569', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: '800px' }}>
-              {service.description}
-            </Typography>
+
+            {/* Languages as comma-separated text */}
+            {languagesText && (
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', fontSize: '0.95rem', fontWeight: 600 }}>
+                <Box component="span" sx={{ color: '#1e293b', fontWeight: 700, mr: 0.5 }}>
+                  {languagesList.length === 1 ? 'Language:' : 'Languages:'}
+                </Box>
+                {languagesText}
+              </Typography>
+            )}
           </Box>
         </Box>
       </Paper>
 
-      {/* Main Content Grid */}
+      {/* Description & Benefits Combined Card */}
+      {(service.description || benefitsList.length > 0) && (
+        <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+          {/* Description Section */}
+          {service.description && (
+            <Box sx={{ mb: benefitsList.length > 0 ? 4 : 0 }}>
+              <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box component="span" sx={{ width: 8, height: 24, bgcolor: '#FF6200', borderRadius: 4, display: 'inline-block' }} />
+                Description
+              </Typography>
+              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#475569', fontSize: '1.05rem', lineHeight: 1.7 }}>
+                {service.description}
+              </Typography>
+            </Box>
+          )}
+
+          {service.description && benefitsList.length > 0 && (
+            <Divider sx={{ my: 3.5 }} />
+          )}
+
+          {/* Benefits Points Section */}
+          {benefitsList.length > 0 && (
+            <Box>
+              <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 2.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box component="span" sx={{ width: 8, height: 24, bgcolor: '#FF6200', borderRadius: 4, display: 'inline-block' }} />
+                Benefits
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {benefitsList.map((benefit: any, index: number) => (
+                  <Box key={`benefit-point-${index}`} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                    <Box sx={{ color: '#FF6200', mt: 0.5, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                      <CheckCircleOutlinedIcon fontSize="small" />
+                    </Box>
+                    <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#334155', fontSize: '1rem', lineHeight: 1.6 }}>
+                      {benefit.title && (
+                        <Box component="span" sx={{ fontWeight: 700, color: '#1e293b', mr: 1 }}>
+                          {benefit.title}:
+                        </Box>
+                      )}
+                      {benefit.description || ''}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+        </Paper>
+      )}
+
+      {/* Cities Card */}
+      {citiesList.length > 0 && (
+        <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+          <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box component="span" sx={{ width: 8, height: 24, bgcolor: '#FF6200', borderRadius: 4, display: 'inline-block' }} />
+            {citiesList.length === 1 ? 'City' : 'Cities'}
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+            {citiesList.map((city: any, idx: number) => {
+              const label = typeof city === 'string' 
+                ? city 
+                : `${city.name}${city.state ? `, ${city.state}` : ''}`;
+              return (
+                <Chip
+                  key={`city-chip-${idx}`}
+                  icon={<LocationOnIcon style={{ color: '#FF6200', fontSize: '1.1rem' }} />}
+                  label={label}
+                  sx={{
+                    bgcolor: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    fontWeight: 600,
+                    color: '#334155',
+                    py: 2,
+                    px: 1,
+                    fontFamily: 'var(--font-outfit), sans-serif',
+                  }}
+                />
+              );
+            })}
+          </Box>
+        </Paper>
+      )}
+
+      {/* Main Content Grid: Specifications & Pricing */}
       <Grid container spacing={4}>
-        {/* Left Column - Core Info & Performance Stats */}
+        {/* Left Column - Specifications & Availability */}
         <Grid size={{ xs: 12, md: 8 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white', height: '100%' }}>
             <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>

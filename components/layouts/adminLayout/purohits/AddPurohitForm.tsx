@@ -21,7 +21,6 @@ const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(twentyYearsAgo.getM
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required').trim(),
   lastName: Yup.string().required('Last name is required').trim(),
-  username: Yup.string().required('Username is required').trim(),
   email: Yup.string().email('Invalid email format').nullable(),
   mobileNumber: Yup.string().required('Mobile Number is required').test('is-valid-tel', 'Invalid phone number', function (value) {
     if (!value) return false;
@@ -44,7 +43,6 @@ export default function AddPurohitForm() {
     initialValues: {
       firstName: '',
       lastName: '',
-      username: '',
       email: '',
       mobileNumber: '',
       countryCode: '+91',
@@ -59,7 +57,6 @@ export default function AddPurohitForm() {
         const payload: any = {
           firstName: values.firstName,
           lastName: values.lastName,
-          username: values.username,
           password: values.password,
         };
         
@@ -126,6 +123,7 @@ export default function AddPurohitForm() {
 
       <Paper elevation={0} sx={{ p: 4, borderRadius: '16px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
         <Grid container spacing={4}>
+          {/* Row 1: First Name & Last Name */}
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
               fullWidth name="firstName" label="First Name" variant="outlined" 
@@ -142,14 +140,8 @@ export default function AddPurohitForm() {
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <TextField 
-              fullWidth name="username" label="Username" variant="outlined" 
-              value={values.username} onChange={handleChange} onBlur={handleBlur}
-              error={touched.username && Boolean(errors.username)} helperText={touched.username && errors.username}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
-            />
-          </Grid>
+
+          {/* Row 2: Mobile Number & Date of Birth */}
           <Grid size={{ xs: 12, md: 6 }}>
             <MuiTelInput 
               fullWidth 
@@ -169,15 +161,25 @@ export default function AddPurohitForm() {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
+              fullWidth name="dob" label="Date of Birth" type="date" variant="outlined" 
+              value={values.dob} onChange={handleChange} onBlur={handleBlur} 
+              error={touched.dob && Boolean(errors.dob)} helperText={touched.dob && errors.dob as string} 
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
+              slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }} 
+            />
+          </Grid>
+
+          {/* Row 3: Email Address (Full Width) */}
+          <Grid size={{ xs: 12 }}>
+            <TextField 
               fullWidth name="email" label="Email Address" variant="outlined" type="email"
               value={values.email} onChange={handleChange} onBlur={handleBlur}
               error={touched.email && Boolean(errors.email)} helperText={touched.email && errors.email}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth name="dob" label="Date of Birth" type="date" variant="outlined" value={values.dob} onChange={handleChange} onBlur={handleBlur} error={touched.dob && Boolean(errors.dob)} helperText={touched.dob && errors.dob as string} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }} />
-          </Grid>
+
+          {/* Row 4: Password & Confirm Password */}
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
               fullWidth name="password" label="Password" variant="outlined" type={showPassword ? 'text' : 'password'}

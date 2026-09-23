@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import CustomerServicesContent from '@/components/layouts/customerLayout/services/CustomerServicesContent';
+import ServicesPage from '@/components/layouts/customerLayout/services';
 
 export default function CustomerServicesPage() {
-  return <CustomerServicesContent />;
+  return <ServicesPage />;
 }
 
 export const metadata: Metadata = {

@@ -143,7 +143,9 @@ export const getAllServicesAPI = async (
   page: number = 1,
   limit: number = 10,
   search: string = "",
-  isActive?: boolean
+  isActive?: boolean,
+  city?: string,
+  state?: string
 ) => {
   try {
     const params = new URLSearchParams();
@@ -151,6 +153,8 @@ export const getAllServicesAPI = async (
     if (limit) params.append('limit', String(limit));
     if (search) params.append('search', search);
     if (isActive !== undefined) params.append('isActive', String(isActive));
+    if (city && city !== 'All') params.append('city', city);
+    if (state && state !== 'All') params.append('state', state);
 
     const response = await userPublicApi.get('/service/', { params });
     return response.data;

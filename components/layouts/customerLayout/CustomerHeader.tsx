@@ -1,9 +1,12 @@
 'use client';
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Box, Badge, Menu, MenuItem, ListItemText, Alert } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Box, Badge, Menu, MenuItem, ListItemText, Alert, Tooltip } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { getCartAPI } from '@/api/cartControllers';
 import { useSocketStore } from '@/stores/socketStore';
+import { useCartStore } from '@/stores/cartStore';
 
 interface CustomerHeaderProps {
   mobileOpen: boolean;
@@ -12,8 +15,23 @@ interface CustomerHeaderProps {
 
 export default function CustomerHeader({ mobileOpen, setMobileOpen }: CustomerHeaderProps) {
   const { unreadCount, notifications, clearNotifications } = useSocketStore();
+  const openCart = useCartStore((state) => state.openCart);
+  const fetchCartFromApi = useCartStore((state) => state.fetchCartFromApi);
+  const items = useCartStore((state) => state.items);
+  const totalItemsCount = useCartStore((state) => state.totalItemsCount);
+
+  // Compute reactive badge count
+  const cartTotalItems =
+    totalItemsCount > 0
+      ? totalItemsCount
+      : items.reduce((total, item) => total + item.quantity, 0);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [transientAlert, setTransientAlert] = React.useState({ show: false, msg: '' });
+
+  React.useEffect(() => {
+    fetchCartFromApi();
+  }, [fetchCartFromApi]);
 
   React.useEffect(() => {
     if (notifications.length > 0) {
@@ -61,12 +79,43 @@ export default function CustomerHeader({ mobileOpen, setMobileOpen }: CustomerHe
           </IconButton>
         </Box>
         
-        <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-          <IconButton onClick={handleOpenNotif} sx={{ color: '#64748b', bgcolor: '#f8fafc', '&:hover': { bgcolor: '#f1f5f9' } }}>
-            <Badge badgeContent={unreadCount} color="error" invisible={unreadCount === 0} sx={{ '& .MuiBadge-badge': { bgcolor: '#FF6200', color: 'white' } }}>
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, position: 'relative' }}>
+          {/* Cart Icon Button */}
+          <Tooltip title="View Cart">
+            <IconButton
+              onClick={openCart}
+              sx={{
+                color: '#64748b',
+                bgcolor: '#f8fafc',
+                '&:hover': { bgcolor: '#f1f5f9', color: '#C84B16' },
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <Badge
+                badgeContent={cartTotalItems}
+                color="error"
+                invisible={cartTotalItems === 0}
+                sx={{
+                  '& .MuiBadge-badge': {
+                    bgcolor: '#C84B16',
+                    color: 'white',
+                    fontWeight: 700,
+                  },
+                }}
+              >
+                <ShoppingCartOutlinedIcon />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+
+          {/* Notifications Icon Button */}
+          <Tooltip title="Notifications">
+            <IconButton onClick={handleOpenNotif} sx={{ color: '#64748b', bgcolor: '#f8fafc', '&:hover': { bgcolor: '#f1f5f9' } }}>
+              <Badge badgeContent={unreadCount} color="error" invisible={unreadCount === 0} sx={{ '& .MuiBadge-badge': { bgcolor: '#FF6200', color: 'white' } }}>
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </Tooltip>
 
           {transientAlert.show && (
             <Box sx={{ position: 'absolute', top: '100%', right: 0, mt: 1, width: 300, zIndex: 1200 }}>

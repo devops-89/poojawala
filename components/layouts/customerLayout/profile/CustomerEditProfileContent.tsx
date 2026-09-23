@@ -7,6 +7,7 @@ import {
 } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
+import AddAddressModal from "@/components/widgets/AddAddressModal";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -90,6 +91,7 @@ function CustomerEditProfileContentInner() {
     fullAddress: "",
     addressLabel: "Home",
     city: "",
+    state: "",
     pincode: "",
     latitude: "",
     longitude: "",
@@ -195,6 +197,7 @@ function CustomerEditProfileContentInner() {
                 addressObj.village ||
                 addressObj.state_district ||
                 "",
+              state: addressObj.state || "",
               pincode: addressObj.postcode || "",
             };
           }
@@ -225,6 +228,7 @@ function CustomerEditProfileContentInner() {
         fullAddress: address.fullAddress || "",
         addressLabel: address.addressLabel || "",
         city: address.city || "",
+        state: address.state || "",
         pincode: address.pincode || "",
         latitude: address.latitude || "0",
         longitude: address.longitude || "0",
@@ -237,6 +241,7 @@ function CustomerEditProfileContentInner() {
         fullAddress: "",
         addressLabel: "",
         city: "",
+        state: "",
         pincode: "",
         latitude: "0",
         longitude: "0",
@@ -252,6 +257,7 @@ function CustomerEditProfileContentInner() {
       if (!addressData.addressLabel?.trim()) missingFields.push("Address Label");
       if (!addressData.fullAddress?.trim()) missingFields.push("Full Address");
       if (!addressData.city?.trim()) missingFields.push("City");
+      if (!addressData.state?.trim()) missingFields.push("State");
       if (!addressData.pincode?.trim()) missingFields.push("Pincode");
 
       if (missingFields.length > 0) {
@@ -692,7 +698,7 @@ function CustomerEditProfileContentInner() {
                               >
                                 {address.fullAddress}
                               </Typography>
-                              <Box sx={{ display: "flex", gap: 2 }}>
+                              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                                 <Typography
                                   sx={{
                                     fontFamily: '"DM Sans", sans-serif',
@@ -710,6 +716,25 @@ function CustomerEditProfileContentInner() {
                                     {address.city}
                                   </span>
                                 </Typography>
+                                {address.state && (
+                                  <Typography
+                                    sx={{
+                                      fontFamily: '"DM Sans", sans-serif',
+                                      color: "#64748b",
+                                      fontSize: "0.875rem",
+                                    }}
+                                  >
+                                    State:{" "}
+                                    <span
+                                      style={{
+                                        color: "#1e293b",
+                                        fontWeight: 500,
+                                      }}
+                                    >
+                                      {address.state}
+                                    </span>
+                                  </Typography>
+                                )}
                                 <Typography
                                   sx={{
                                     fontFamily: '"DM Sans", sans-serif',
@@ -775,196 +800,13 @@ function CustomerEditProfileContentInner() {
         </Grid>
       </Grid>
 
-      {/* ADDRESS MODAL */}
-      <Dialog
+      {/* REUSABLE ADDRESS MODAL */}
+      <AddAddressModal
         open={addressModalOpen}
         onClose={() => setAddressModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        sx={{
-          "& .MuiDialog-paper": { borderRadius: "20px" },
-          "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-            borderColor: "#FF6200",
-          },
-          "& .MuiInputLabel-root.Mui-focused": { color: "#FF6200" },
-        }}
-      >
-        <DialogTitle
-          sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, pb: 1 }}
-        >
-          {selectedAddressId ? "Edit Address" : "Add New Address"}
-        </DialogTitle>
-        <DialogContent dividers>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={fetchCurrentLocation}
-            disabled={isFetchingLocation}
-            startIcon={
-              isFetchingLocation ? (
-                <CircularProgress size={16} />
-              ) : (
-                <MyLocationIcon />
-              )
-            }
-            sx={{
-              mb: 3,
-              py: 1.5,
-              color: "#388e3c",
-              borderColor: "#c8e6c9",
-              bgcolor: "#e8f5e9",
-              "&:hover": { bgcolor: "#c8e6c9", borderColor: "#a5d6a7" },
-              textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "12px",
-              fontFamily: '"DM Sans", sans-serif',
-            }}
-          >
-            {isFetchingLocation
-              ? "Locating..."
-              : "Use Current Location Coordinates"}
-          </Button>
-          <Grid container spacing={2} sx={{ pt: 1 }}>
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                fullWidth
-                label="Address Label (e.g., Home, Office) *"
-                value={addressData.addressLabel}
-                onChange={(e) =>
-                  setAddressData({
-                    ...addressData,
-                    addressLabel: e.target.value,
-                  })
-                }
-                variant="outlined"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={2}
-                label="Full Address *"
-                value={addressData.fullAddress}
-                onChange={(e) =>
-                  setAddressData({
-                    ...addressData,
-                    fullAddress: e.target.value,
-                  })
-                }
-                variant="outlined"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label="City *"
-                value={addressData.city}
-                onChange={(e) =>
-                  setAddressData({ ...addressData, city: e.target.value })
-                }
-                variant="outlined"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label="Pincode *"
-                value={addressData.pincode}
-                onChange={(e) =>
-                  setAddressData({ ...addressData, pincode: e.target.value })
-                }
-                variant="outlined"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={addressData.isDefault}
-                    onChange={(e) =>
-                      setAddressData({
-                        ...addressData,
-                        isDefault: e.target.checked,
-                      })
-                    }
-                    sx={{
-                      color: "#FF6200",
-                      "&.Mui-checked": { color: "#FF6200" },
-                    }}
-                  />
-                }
-                label={
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif' }}>
-                    Set as default address
-                  </Typography>
-                }
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label="Latitude (Optional)"
-                value={addressData.latitude}
-                onChange={(e) =>
-                  setAddressData({ ...addressData, latitude: e.target.value })
-                }
-                variant="outlined"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label="Longitude (Optional)"
-                value={addressData.longitude}
-                onChange={(e) =>
-                  setAddressData({ ...addressData, longitude: e.target.value })
-                }
-                variant="outlined"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 2 }}>
-          <Button
-            onClick={() => setAddressModalOpen(false)}
-            sx={{
-              color: "#64748b",
-              fontFamily: '"DM Sans", sans-serif',
-              fontWeight: 600,
-            }}
-          >
-            Cancel
-          </Button>
-          <Box
-            component="button"
-            onClick={handleSaveAddress}
-            disabled={saving}
-            sx={{
-              bgcolor: "#FF6200 !important",
-              color: "white !important",
-              fontFamily: '"DM Sans", sans-serif',
-              fontWeight: 600,
-              border: "none",
-              cursor: saving ? "not-allowed" : "pointer",
-              px: 2.5,
-              py: 1,
-              borderRadius: "6px",
-              transition: "background-color 0.2s",
-              opacity: saving ? 0.7 : 1,
-              "&:hover": { bgcolor: "#ea580c !important" },
-            }}
-          >
-            {saving ? "Saving..." : "Save Address"}
-          </Box>
-        </DialogActions>
-      </Dialog>
+        initialData={addresses.find((a) => a.id === selectedAddressId) || null}
+        onSuccess={() => fetchProfile(true)}
+      />
 
       {/* DELETE CONFIRMATION MODAL */}
       <Dialog

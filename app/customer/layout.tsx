@@ -4,6 +4,7 @@ import { Box, Drawer } from '@mui/material';
 import CustomerSidebar from '@/components/layouts/customerLayout/CustomerSidebar';
 import CustomerHeader from '@/components/layouts/customerLayout/CustomerHeader';
 import SocketProvider from '@/components/providers/SocketProvider';
+import CustomerCartDrawer from '@/components/widgets/CustomerCartDrawer';
 import RaiseTicketModal from '@/components/widgets/RaiseTicketModal';
 
 const drawerWidth = 260;
@@ -54,6 +55,7 @@ export default function CustomerDashboardLayout({ children }: { children: React.
         {children}
       </Box>
       <RaiseTicketModal />
+      <CustomerCartDrawer />
     </Box>
     </SocketProvider>
   );
