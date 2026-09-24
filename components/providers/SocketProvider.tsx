@@ -98,7 +98,15 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       triggerRefresh();
     });
 
-    // 3. Admin Assignment Events
+    // 3. Admin & Order Events
+    socket.on('order:new', () => triggerRefresh());
+    socket.on('order_updated', () => triggerRefresh());
+    socket.on('order_status_updated', () => triggerRefresh());
+    socket.on('order:status-change', () => triggerRefresh());
+    socket.on('order:created', () => triggerRefresh());
+    socket.on('order:cancelled', () => triggerRefresh());
+    socket.on('payment:success', () => triggerRefresh());
+
     socket.on('booking_assigned_by_admin', (data) => {
       triggerRefresh();
     });

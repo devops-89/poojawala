@@ -1,19 +1,38 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Box, Paper, Typography, Button, Pagination, Grid, Skeleton } from "@mui/material";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { useRouter } from "next/navigation";
-import { getCustomerOrdersAPI } from "@/api/orderControllers";
 import { addToCartAPI } from "@/api/cartControllers";
+import { getCustomerOrdersAPI } from "@/api/orderControllers";
+import {
+  downloadOrderInvoiceAPI,
+  payOrderPaymentAPI,
+} from "@/api/paymentControllers";
 import { useCartStore } from "@/stores/cartStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import CustomerOrdersHero from "./CustomerOrdersHero";
-import CustomerOrdersFilterPills, { OrderStatusFilter } from "./CustomerOrdersFilterPills";
-import CustomerOrdersCard, { CustomerOrder } from "./CustomerOrdersCard";
+import { useSocketStore } from "@/stores/socketStore";
+import {
+  ORDER_PAYMENT_METHOD,
+  ORDER_PAYMENT_STATUS,
+  ORDER_STATUS,
+} from "@/utils/enums";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import {
+  Box,
+  Button,
+  Grid,
+  Pagination,
+  Paper,
+  Skeleton,
+  Typography,
+} from "@mui/material";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import CustomerOrderDetailsModal from "./CustomerOrderDetailsModal";
-import CustomerOrdersTrackingSteps from "./CustomerOrdersTrackingSteps";
 import CustomerOrdersBannerCTA from "./CustomerOrdersBannerCTA";
-import { ORDER_STATUS, ORDER_PAYMENT_METHOD, ORDER_PAYMENT_STATUS } from "@/utils/enums";
+import CustomerOrdersCard, { CustomerOrder } from "./CustomerOrdersCard";
+import CustomerOrdersFilterPills, {
+  OrderStatusFilter,
+} from "./CustomerOrdersFilterPills";
+import CustomerOrdersHero from "./CustomerOrdersHero";
+import CustomerOrdersTrackingSteps from "./CustomerOrdersTrackingSteps";
 
 const formatApiOrder = (raw: any): CustomerOrder => {
   const items = Array.isArray(raw.items)
@@ -34,7 +53,7 @@ const formatApiOrder = (raw: any): CustomerOrder => {
               it.product?.price ||
               it.unitPrice ||
               it.price ||
-              it.totalAmount
+              it.totalAmount,
           ) || 0,
         image:
           it.productImageSnapshot ||
@@ -110,11 +129,24 @@ const formatApiOrder = (raw: any): CustomerOrder => {
     paymentMethodStr = `${rawPaymentMethod} Payment`;
   }
 
-  const rawOrderStatus = (raw.orderStatus || raw.status || ORDER_STATUS.CONFIRMED).toString().toUpperCase();
-  const rawPaymentStatus = (raw.paymentStatus || raw.payment?.status || ORDER_PAYMENT_STATUS.PENDING).toString().toUpperCase();
+  const rawOrderStatus = (
+    raw.orderStatus ||
+    raw.status ||
+    ORDER_STATUS.CONFIRMED
+  )
+    .toString()
+    .toUpperCase();
+  const rawPaymentStatus = (
+    raw.paymentStatus ||
+    raw.payment?.status ||
+    ORDER_PAYMENT_STATUS.PENDING
+  )
+    .toString()
+    .toUpperCase();
 
   return {
     id: String(raw.id || raw.orderId || raw.orderNumber),
+    rawId: raw.id || raw.orderId,
     orderNumber: raw.orderNumber || `#PW-${raw.id || "20261004"}`,
     orderDate: orderDateFormatted,
     categoryTag: raw.categoryTag || "POOJA SAMAGRI",
@@ -122,7 +154,11 @@ const formatApiOrder = (raw: any): CustomerOrder => {
     orderStatus: rawOrderStatus,
     paymentStatus: rawPaymentStatus,
     totalAmount: Number(raw.totalAmount || raw.subtotal || raw.amount) || 0,
-    deliveredDate: raw.deliveredDate || (rawOrderStatus === ORDER_STATUS.DELIVERED ? orderDateFormatted : undefined),
+    deliveredDate:
+      raw.deliveredDate ||
+      (rawOrderStatus === ORDER_STATUS.DELIVERED
+        ? orderDateFormatted
+        : undefined),
     deliveryAddress,
     paymentMethod: paymentMethodStr,
     items,
@@ -140,18 +176,24 @@ export default function CustomerOrdersContent() {
   const [serverTotalPages, setServerTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>("ALL");
-  const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(
+    null,
+  );
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
   const itemsPerPage = 6;
 
-  const fetchOrders = async (targetPage = page, targetFilter = activeFilter) => {
+  const fetchOrders = async (
+    targetPage = page,
+    targetFilter = activeFilter,
+  ) => {
     setLoading(true);
     try {
       const res = await getCustomerOrdersAPI(
         targetPage,
         itemsPerPage,
-        targetFilter !== "ALL" ? targetFilter : undefined
+        targetFilter !== "ALL" ? targetFilter : undefined,
       );
 
       let rawList: any[] = [];
@@ -163,8 +205,12 @@ export default function CustomerOrdersContent() {
       if (payload) {
         if (Array.isArray(payload.orders)) {
           rawList = payload.orders;
-          totalCount = typeof payload.total === "number" ? payload.total : rawList.length;
-          totalPg = typeof payload.totalPages === "number" ? payload.totalPages : Math.ceil(totalCount / itemsPerPage) || 1;
+          totalCount =
+            typeof payload.total === "number" ? payload.total : rawList.length;
+          totalPg =
+            typeof payload.totalPages === "number"
+              ? payload.totalPages
+              : Math.ceil(totalCount / itemsPerPage) || 1;
         } else if (Array.isArray(payload)) {
           rawList = payload;
           totalCount = rawList.length;
@@ -187,19 +233,8 @@ export default function CustomerOrdersContent() {
   };
 
   useEffect(() => {
-    fetchOrders(1, activeFilter);
-  }, []);
-
-  // Compute counts for filter pills
-  const counts: Record<string, number> = {
-    all: totalOrders || orders.length,
-    confirmed: orders.filter((o) => o.orderStatus === ORDER_STATUS.CONFIRMED).length,
-    processing: orders.filter((o) => o.orderStatus === ORDER_STATUS.PROCESSING).length,
-    shipped: orders.filter((o) => o.orderStatus === ORDER_STATUS.SHIPPED).length,
-    out_for_delivery: orders.filter((o) => o.orderStatus === ORDER_STATUS.OUT_FOR_DELIVERY).length,
-    delivered: orders.filter((o) => o.orderStatus === ORDER_STATUS.DELIVERED).length,
-    cancelled: orders.filter((o) => o.orderStatus === ORDER_STATUS.CANCELLED).length,
-  };
+    fetchOrders(page, activeFilter);
+  }, [page, activeFilter, refreshTrigger]);
 
   // Filter orders by active status
   const filteredOrders = orders.filter((order) => {
@@ -233,6 +268,91 @@ export default function CustomerOrdersContent() {
     setDetailsModalOpen(true);
   };
 
+  const [downloadingInvoiceId, setDownloadingInvoiceId] = useState<
+    string | number | null
+  >(null);
+
+  const handleDownloadInvoice = async (order: CustomerOrder) => {
+    const targetId = order.rawId || order.id.replace(/^(ORD-|#PW-|#)/i, "");
+    setDownloadingInvoiceId(order.id);
+    try {
+      showSnackbar(`Downloading invoice for ${order.orderNumber}...`, "info");
+      const blobData = await downloadOrderInvoiceAPI(targetId);
+
+      const blob = new Blob([blobData], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `Invoice_${order.orderNumber || `ORD-${order.id}`}.pdf`,
+      );
+      document.body.appendChild(link);
+      link.click();
+      if (link.parentNode) link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      showSnackbar("Invoice downloaded successfully!", "success");
+    } catch (err: any) {
+      console.error("Failed to download order invoice via API:", err);
+      showSnackbar(
+        err?.message ||
+          err?.response?.data?.message ||
+          "Failed to download invoice.",
+        "error",
+      );
+    } finally {
+      setDownloadingInvoiceId(null);
+    }
+  };
+
+  const [payingOrderId, setPayingOrderId] = useState<string | number | null>(
+    null,
+  );
+
+  const handlePayOrder = async (orderToPay: CustomerOrder) => {
+    const targetId =
+      orderToPay.rawId || orderToPay.id.replace(/^(ORD-|#PW-|#)/i, "");
+    setPayingOrderId(orderToPay.id);
+    try {
+      showSnackbar(`Initiating payment for ${orderToPay.id}...`, "info");
+      const res = await payOrderPaymentAPI(targetId);
+
+      const redirectUrl =
+        res?.data?.data?.paymentUrl ||
+        res?.data?.paymentUrl ||
+        res?.paymentUrl ||
+        res?.data?.data?.url ||
+        res?.data?.url ||
+        res?.url ||
+        res?.data?.data?.checkoutUrl ||
+        res?.data?.checkoutUrl ||
+        res?.data?.data?.paymentLink ||
+        res?.data?.paymentLink;
+
+      if (redirectUrl) {
+        showSnackbar("Redirecting to payment gateway...", "success");
+        window.location.href = redirectUrl;
+      } else {
+        showSnackbar(
+          res?.message || "Payment request processed successfully!",
+          "success",
+        );
+        fetchOrders(page, activeFilter);
+      }
+    } catch (err: any) {
+      console.error("Failed to complete order payment:", err);
+      showSnackbar(
+        err?.message ||
+          err?.response?.data?.message ||
+          "Failed to process payment. Please try again.",
+        "error",
+      );
+    } finally {
+      setPayingOrderId(null);
+    }
+  };
+
   const handleReorder = async (order: CustomerOrder) => {
     try {
       showSnackbar(`Reordering items from ${order.orderNumber}...`, "info");
@@ -243,7 +363,7 @@ export default function CustomerOrdersContent() {
           const targetProductId = item.productId ?? item.id;
           const targetQty = Number(item.quantity) || 1;
           return addToCartAPI(targetProductId, targetQty);
-        })
+        }),
       );
 
       // Sync Zustand Cart Store with exact productId and quantity
@@ -259,13 +379,18 @@ export default function CustomerOrdersContent() {
         });
       });
 
-      showSnackbar(`Successfully reordered ${order.items.length} items from ${order.orderNumber}!`, "success");
+      showSnackbar(
+        `Successfully reordered ${order.items.length} items from ORD-${order.id}!`,
+        "success",
+      );
       openCartDrawer();
     } catch (err: any) {
       console.error("Failed to reorder items via cart API:", err);
       showSnackbar(
-        err?.response?.data?.message || err?.message || "Failed to reorder items. Please try again.",
-        "error"
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to reorder items. Please try again.",
+        "error",
       );
     }
   };
@@ -292,7 +417,6 @@ export default function CustomerOrdersContent() {
         <CustomerOrdersFilterPills
           activeFilter={activeFilter}
           onFilterChange={handleFilterChange}
-          counts={counts}
         />
 
         {/* 3. ORDERS LIST / CARDS COMPONENT (MAX 6 PER PAGE) */}
@@ -346,7 +470,10 @@ export default function CustomerOrdersContent() {
                 mb: 1,
               }}
             >
-              No orders found {activeFilter !== "ALL" ? `in "${activeFilter.toLowerCase()}"` : ""}
+              No orders found{" "}
+              {activeFilter !== "ALL"
+                ? `in "${activeFilter.toLowerCase()}"`
+                : ""}
             </Typography>
             <Typography
               sx={{
@@ -356,7 +483,8 @@ export default function CustomerOrdersContent() {
                 mb: 3,
               }}
             >
-              Explore our authentic pooja samagri and sacred ritual items to place a new order.
+              Explore our authentic pooja samagri and sacred ritual items to
+              place a new order.
             </Typography>
             <Button
               onClick={() => router.push("/customer/products")}
@@ -385,6 +513,10 @@ export default function CustomerOrdersContent() {
                     order={order}
                     onViewDetails={handleViewDetails}
                     onReorder={handleReorder}
+                    onPayOrder={handlePayOrder}
+                    onDownloadInvoice={handleDownloadInvoice}
+                    isPaying={payingOrderId === order.id}
+                    isDownloadingInvoice={downloadingInvoiceId === order.id}
                   />
                 </Grid>
               ))}
@@ -441,7 +573,8 @@ export default function CustomerOrdersContent() {
                   fontWeight: 600,
                 }}
               >
-                Page {page} of {totalPagesCount} ({totalOrders || orders.length} Total Orders)
+                Page {page} of {totalPagesCount} ({totalOrders || orders.length}{" "}
+                Total Orders)
               </Typography>
             </Box>
           </>
@@ -460,6 +593,8 @@ export default function CustomerOrdersContent() {
         order={selectedOrder}
         onClose={() => setDetailsModalOpen(false)}
         onReorder={handleReorder}
+        onPayOrder={handlePayOrder}
+        isPaying={selectedOrder ? payingOrderId === selectedOrder.id : false}
       />
     </Box>
   );

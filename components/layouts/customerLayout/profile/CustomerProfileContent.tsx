@@ -1,6 +1,7 @@
 'use client';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'next/navigation';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import BadgeIcon from '@mui/icons-material/Badge';
 import CakeIcon from '@mui/icons-material/Cake';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -10,6 +11,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import {
   Avatar,
@@ -202,8 +204,31 @@ export default function CustomerProfileContent() {
                   </Typography>
                 </Box>
               </Grid>
+              <Grid size={{xs:12,md:6}}>
+                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <AutoAwesomeIcon sx={{ fontSize: 16, color: '#64748b' }} />
+                    <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#64748b', fontFamily: '"DM Sans", sans-serif' }}>RASHI</Typography>
+                  </Box>
+                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: '#1e293b', fontFamily: '"DM Sans", sans-serif', textTransform: 'capitalize' }}>
+                    {profile.rashi || '-'}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={{xs:12,md:6}}>
+                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <SelfImprovementIcon sx={{ fontSize: 16, color: '#64748b' }} />
+                    <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#64748b', fontFamily: '"DM Sans", sans-serif' }}>GOTRA</Typography>
+                  </Box>
+                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: '#1e293b', fontFamily: '"DM Sans", sans-serif', textTransform: 'capitalize' }}>
+                    {profile.gotra || '-'}
+                  </Typography>
+                </Box>
+              </Grid>
             </Grid>
           </Paper>
+
 
           <Paper elevation={0} sx={{ p: 4, borderRadius: '16px', border: '1px solid #e2e8f0' }}>
             <Typography variant="h6" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#0f172a', mb: 3 }}>

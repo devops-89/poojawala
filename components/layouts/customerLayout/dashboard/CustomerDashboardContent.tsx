@@ -9,6 +9,8 @@ import { getCustomerBookingsAPI } from '@/api/bookingControllers';
 import { useLoaderStore } from '@/stores/loaderStore';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
+import { useSocketStore } from '@/stores/socketStore';
+
 const getStatusColor = (status: string) => {
   switch (status?.toUpperCase()) {
     case 'COMPLETED': return { bg: '#d1fae5', text: '#059669' };
@@ -32,6 +34,7 @@ export default function CustomerDashboardContent() {
   const router = useRouter();
   const { showLoader, hideLoader } = useLoaderStore();
   const { showSnackbar } = useSnackbarStore();
+  const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
 
   const tabsList = ['All Bookings', 'Pending', 'Accepted', 'Enroute', 'Arrived', 'Ongoing', 'Completed', 'Cancelled'];
 
@@ -58,7 +61,7 @@ export default function CustomerDashboardContent() {
       }
     };
     fetchBookings();
-  }, [page, rowsPerPage, tabValue]);
+  }, [page, rowsPerPage, tabValue, refreshTrigger]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);

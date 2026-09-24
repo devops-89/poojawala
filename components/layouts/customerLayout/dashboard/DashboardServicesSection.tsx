@@ -4,7 +4,6 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
-import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import TranslateIcon from "@mui/icons-material/Translate";
 import {
   Box,
@@ -58,7 +57,7 @@ export default function DashboardServicesSection({
               color: "#1e293b",
             }}
           >
-            Sacred Puja Services
+            Sacred Pooja Services
           </Typography>
           <Box
             sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.3 }}
@@ -174,9 +173,10 @@ export default function DashboardServicesSection({
                   maxWidth: 680,
                 }}
               >
-                We are actively onboarding verified purohits in {userLocation.city},{" "}
-                {userLocation.state}. In the meantime, you can explore available
-                services across regions or request custom puja arrangements!
+                We are actively onboarding verified purohits in{" "}
+                {userLocation.city}, {userLocation.state}. In the meantime, you
+                can explore available services across regions or request custom
+                pooja arrangements!
               </Typography>
             </Box>
           </Box>
@@ -340,7 +340,7 @@ export default function DashboardServicesSection({
                         }}
                       >
                         {item.description ||
-                          "Authentic Vedic puja ritual performed by verified purohits."}
+                          "Authentic Vedic pooja ritual performed by verified purohits."}
                       </Typography>
 
                       {/* Info badges */}

@@ -449,7 +449,7 @@ export default function PurohitMyServicesContent() {
           Remove Service
         </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#475569' }}>
+          <DialogContentText component="div" sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#475569' }}>
             Are you sure you want to remove <strong>{serviceToDelete?.service?.name}</strong> from your profile? This action cannot be undone.
           </DialogContentText>
         </DialogContent>

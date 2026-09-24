@@ -31,6 +31,8 @@ interface CustomerOrderDetailsModalProps {
   order: CustomerOrder | null;
   onClose: () => void;
   onReorder: (order: CustomerOrder) => void;
+  onPayOrder?: (order: CustomerOrder) => void;
+  isPaying?: boolean;
 }
 
 export default function CustomerOrderDetailsModal({
@@ -38,6 +40,8 @@ export default function CustomerOrderDetailsModal({
   order,
   onClose,
   onReorder,
+  onPayOrder,
+  isPaying = false,
 }: CustomerOrderDetailsModalProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [details, setDetails] = useState<any | null>(null);
@@ -201,9 +205,8 @@ export default function CustomerOrderDetailsModal({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          pb: 1.5,
-          pt: { xs: 2, sm: 2.5 },
-          px: { xs: 2, sm: 3.5 },
+          py: { xs: 2, sm: 2.5 },
+          px: { xs: 2.5, sm: 4 },
           bgcolor: "#FAF4EE",
           borderBottom: "1px solid #EADCCF",
         }}
@@ -251,8 +254,9 @@ export default function CustomerOrderDetailsModal({
       {/* MODAL CONTENT */}
       <DialogContent
         sx={{
-          px: { xs: 2, sm: 3.5 },
-          py: { xs: 2, sm: 3 },
+          px: { xs: 2.5, sm: 4 },
+          pt: { xs: 3, sm: 3.5 },
+          pb: { xs: 2.5, sm: 3.5 },
           overflowY: "auto",
         }}
       >
@@ -272,6 +276,7 @@ export default function CustomerOrderDetailsModal({
                 borderRadius: "16px",
                 border: "1px solid #EADCCF",
                 mb: 3,
+                mt: 0.5,
                 display: "flex",
                 flexDirection: { xs: "column", sm: "row" },
                 justifyContent: "space-between",
@@ -716,27 +721,54 @@ export default function CustomerOrderDetailsModal({
           Close
         </Button>
 
-        <Button
-          onClick={() => {
-            onClose();
-            onReorder(order);
-          }}
-          variant="contained"
-          sx={{
-            width: { xs: "100%", sm: "auto" },
-            bgcolor: "#C84B16",
-            color: "white",
-            fontWeight: 700,
-            borderRadius: "10px",
-            px: 3.5,
-            py: 1,
-            textTransform: "none",
-            boxShadow: "0 4px 12px rgba(200, 75, 22, 0.25)",
-            "&:hover": { bgcolor: "#B84A17" },
-          }}
-        >
-          Reorder Sacred Items
-        </Button>
+        <Box sx={{ display: "flex", gap: 1.5, width: { xs: "100%", sm: "auto" }, flexWrap: "wrap", ml: "auto" }}>
+          {(rawPaymentStatus.includes("PENDING") || rawOrderStatus === "PENDING_PAYMENT") && (
+            <Button
+              onClick={() => {
+                if (onPayOrder) onPayOrder(order);
+              }}
+              disabled={isPaying}
+              variant="contained"
+              startIcon={<PaymentOutlinedIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                bgcolor: "#2E7D32",
+                color: "white",
+                fontWeight: 700,
+                borderRadius: "10px",
+                px: 3,
+                py: 1,
+                textTransform: "none",
+                boxShadow: "0 4px 12px rgba(46, 125, 50, 0.25)",
+                "&:hover": { bgcolor: "#1B5E20" },
+              }}
+            >
+              {isPaying ? "Processing..." : "Complete Payment"}
+            </Button>
+          )}
+
+          <Button
+            onClick={() => {
+              onClose();
+              onReorder(order);
+            }}
+            variant="contained"
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              bgcolor: "#C84B16",
+              color: "white",
+              fontWeight: 700,
+              borderRadius: "10px",
+              px: 3.5,
+              py: 1,
+              textTransform: "none",
+              boxShadow: "0 4px 12px rgba(200, 75, 22, 0.25)",
+              "&:hover": { bgcolor: "#B84A17" },
+            }}
+          >
+            Reorder Sacred Items
+          </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );

@@ -5,35 +5,33 @@ import {
   getAllProductsAPI,
   updateProductStatusAPI,
 } from "@/api/productControllers";
+import AdminDataTable, {
+  Column,
+} from "@/components/layouts/adminLayout/common/AdminDataTable";
+import AdminPageHeader from "@/components/layouts/adminLayout/common/AdminPageHeader";
+import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
+import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
+import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography,
-} from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
-import ProductDeleteDialog from "./widgets/ProductDeleteDialog";
-import ProductFilterHeader from "./widgets/ProductFilterHeader";
-import ProductsHeader from "./widgets/ProductsHeader";
-import ProductStatusDialog from "./widgets/ProductStatusDialog";
-import ProductTableRow from "./widgets/ProductTableRow";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
+import NextLink from "next/link";
+import { useCallback, useEffect, useState } from "react";
+
+const STATUS_TABS = [
+  { id: "All", label: "All Products" },
+  { id: "Available", label: "Available" },
+  { id: "Unavailable", label: "Unavailable" },
+];
 
 export default function AdminProductsContent() {
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
@@ -47,7 +45,6 @@ export default function AdminProductsContent() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      setErrorMsg(null);
 
       let isActiveParam: boolean | undefined = undefined;
       if (statusFilter === "Available") isActiveParam = true;
@@ -58,7 +55,7 @@ export default function AdminProductsContent() {
         rowsPerPage,
         searchValue,
         undefined,
-        isActiveParam
+        isActiveParam,
       );
 
       let rawList: any[] = [];
@@ -78,12 +75,6 @@ export default function AdminProductsContent() {
               res.data.total ||
               res.data.pagination?.total ||
               res.data.data.length;
-          } else if (res.data.products && Array.isArray(res.data.products)) {
-            rawList = res.data.products;
-            total =
-              res.data.total ||
-              res.data.pagination?.total ||
-              res.data.products.length;
           }
         }
       }
@@ -92,12 +83,10 @@ export default function AdminProductsContent() {
       setTotalCount(total || rawList.length);
     } catch (err: any) {
       console.error("Failed to fetch products", err);
-      const apiMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Failed to fetch products list";
-      setErrorMsg(apiMessage);
-      showSnackbar(apiMessage, "error");
+      showSnackbar(
+        err?.response?.data?.message || "Failed to fetch products",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -109,27 +98,6 @@ export default function AdminProductsContent() {
     }, 400);
     return () => clearTimeout(timer);
   }, [fetchProducts]);
-
-  const handleStatusFilterChange = (status: string) => {
-    setStatusFilter(status);
-    setPage(0);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
-    setPage(0);
-  };
-
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const handleStatusChangeConfirm = async () => {
     if (!statusChangeTarget) return;
@@ -154,11 +122,7 @@ export default function AdminProductsContent() {
         );
       }
     } catch (error: any) {
-      console.error(error);
-      showSnackbar(
-        error?.response?.data?.message || "Error updating product status",
-        "error",
-      );
+      showSnackbar("Error updating product status", "error");
     } finally {
       setStatusChangeTarget(null);
     }
@@ -175,278 +139,226 @@ export default function AdminProductsContent() {
         showSnackbar(res?.message || "Failed to delete product", "error");
       }
     } catch (error: any) {
-      console.error(error);
-      showSnackbar(
-        error?.response?.data?.message || "Error deleting product",
-        "error",
-      );
+      showSnackbar("Error deleting product", "error");
     } finally {
       setDeleteTarget(null);
     }
   };
 
-  const filteredProducts = products.filter((item) => {
-    if (statusFilter === "Available" && item.isActive === false) return false;
-    if (statusFilter === "Unavailable" && item.isActive !== false) return false;
-    if (searchValue.trim() && item.name) {
-      return item.name.toLowerCase().includes(searchValue.toLowerCase().trim());
-    }
-    return true;
-  });
+  const columns: Column<any>[] = [
+    {
+      id: "id",
+      label: "ID",
+      render: (product) => (
+        <Typography
+          sx={{
+            fontWeight: 700,
+            color: "#FF6200",
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontSize: "0.85rem",
+          }}
+        >
+          P-{product.id}
+        </Typography>
+      ),
+    },
+    {
+      id: "product",
+      label: "PRODUCT",
+      render: (product) => {
+        const imageSrc =
+          product.productImage ||
+          product.imageUrl ||
+          product.image ||
+          "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&w=100&q=80";
+        return (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Avatar
+              src={imageSrc}
+              variant="rounded"
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "8px",
+                bgcolor: "#fff7ed",
+              }}
+            />
+            <Box>
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  color: "#1e293b",
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontSize: "0.95rem",
+                }}
+              >
+                {product.name}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#64748b",
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontSize: "0.8rem",
+                }}
+              >
+                {product.category?.name || "Samagri Product"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      id: "price",
+      label: "PRICE",
+      render: (product) => (
+        <Typography
+          sx={{
+            fontWeight: 700,
+            color: "#1e293b",
+            fontFamily: "var(--font-outfit), sans-serif",
+          }}
+        >
+          ₹{product.price}
+        </Typography>
+      ),
+    },
+    {
+      id: "stock",
+      label: "QUANTITY & UNIT",
+      render: (product) => (
+        <Typography
+          sx={{
+            color: "#475569",
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontWeight: 500,
+            fontSize: "0.9rem",
+          }}
+        >
+          {product.stockQuantity ?? product.quantity ?? 1}{" "}
+          {product.unit || "item"}
+        </Typography>
+      ),
+    },
+    {
+      id: "status",
+      label: "STATUS",
+      render: (product) => {
+        const isAct = product.isActive !== false;
+        return (
+          <AdminStatusSelect
+            value={isAct ? "Available" : "Unavailable"}
+            options={[
+              { value: "Available", label: "Available" },
+              { value: "Unavailable", label: "Unavailable" },
+            ]}
+            onChange={(val) =>
+              setStatusChangeTarget({
+                product,
+                isActive: val === "Available",
+              })
+            }
+          />
+        );
+      },
+    },
+    {
+      id: "actions",
+      label: "ACTIONS",
+      align: "center",
+      render: (product) => (
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+          <IconButton
+            component={NextLink}
+            href={`/admin/products/${product.id}`}
+            sx={{
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
+            }}
+          >
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            component={NextLink}
+            href={`/admin/products/edit/${product.id}`}
+            sx={{
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            onClick={() => setDeleteTarget(product.id)}
+            sx={{
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      {/* Header */}
-      <ProductsHeader />
-
-      {/* Table Container */}
-      <Paper
-        elevation={0}
-        sx={{
-          border: "1px solid #e2e8f0",
-          borderRadius: "16px",
-          overflow: "hidden",
-          bgcolor: "white",
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <AdminPageHeader
+        title="Product Catalog"
+        subtitle="Manage sacred items, pooja samagri, and product inventory"
+        searchPlaceholder="Search products..."
+        searchValue={searchValue}
+        onSearchChange={(val) => {
+          setSearchValue(val);
+          setPage(0);
         }}
-      >
-        {/* Filters & Search Header */}
-        <ProductFilterHeader
-          statusFilter={statusFilter}
-          onStatusFilterChange={handleStatusFilterChange}
-          searchValue={searchValue}
-          onSearchChange={handleSearchChange}
-        />
-
-        {/* Products Table */}
-        <TableContainer>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead sx={{ bgcolor: "#f8fafc" }}>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    color: "#475569",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  ID
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    color: "#475569",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  Product
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    color: "#475569",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  Price
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    color: "#475569",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  Quantity & Unit
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    color: "#475569",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    color: "#475569",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 2,
-                      }}
-                    >
-                      <CircularProgress sx={{ color: "#FF6200" }} size={36} />
-                      <Typography
-                        sx={{
-                          color: "#64748b",
-                          fontFamily: "var(--font-outfit), sans-serif",
-                          fontWeight: 500,
-                        }}
-                      >
-                        Loading products data...
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ) : errorMsg ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 1.5,
-                        maxWidth: 500,
-                        mx: "auto",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          color: "#ef4444",
-                          fontFamily: "var(--font-outfit), sans-serif",
-                          fontWeight: 700,
-                          fontSize: "1.1rem",
-                        }}
-                      >
-                        Error Fetching Products
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "#64748b",
-                          fontFamily: "var(--font-outfit), sans-serif",
-                          fontSize: "0.9rem",
-                          textAlign: "center",
-                          bgcolor: "#fef2f2",
-                          p: 2,
-                          borderRadius: "8px",
-                          border: "1px solid #fee2e2",
-                        }}
-                      >
-                        {errorMsg}
-                      </Typography>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={fetchProducts}
-                        sx={{
-                          mt: 1,
-                          borderColor: "#FF6200",
-                          color: "#FF6200",
-                          borderRadius: "8px",
-                          fontWeight: 600,
-                        }}
-                      >
-                        Try Refreshing
-                      </Button>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ) : filteredProducts.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 1.5,
-                      }}
-                    >
-                      <ShoppingBagIcon
-                        sx={{ fontSize: 48, color: "#cbd5e1" }}
-                      />
-                      <Typography
-                        sx={{
-                          color: "#334155",
-                          fontFamily: "var(--font-outfit), sans-serif",
-                          fontWeight: 700,
-                          fontSize: "1.1rem",
-                        }}
-                      >
-                        No Products Found
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "#64748b",
-                          fontFamily: "var(--font-outfit), sans-serif",
-                          fontSize: "0.9rem",
-                        }}
-                      >
-                        No product matching your criteria was found.
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredProducts.map((product: any, idx: number) => (
-                  <ProductTableRow
-                    key={`product-row-${product.id || idx}`}
-                    product={product}
-                    onStatusSelect={setStatusChangeTarget}
-                    onDeleteClick={setDeleteTarget}
-                  />
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* Pagination */}
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          component="div"
-          count={totalCount}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            borderTop: "1px solid #e2e8f0",
-            fontFamily: "var(--font-outfit), sans-serif",
-            "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
-              {
-                fontFamily: "var(--font-outfit), sans-serif",
-                color: "#64748b",
-              },
-          }}
-        />
-      </Paper>
-
-      {/* Status Change Confirmation Dialog */}
-      <ProductStatusDialog
-        target={statusChangeTarget}
-        onClose={() => setStatusChangeTarget(null)}
-        onConfirm={handleStatusChangeConfirm}
+        actionButtonText="Add Product"
+        actionButtonHref="/admin/products/add"
+        actionButtonIcon={<AddIcon />}
       />
 
-      {/* Delete Confirmation Dialog */}
-      <ProductDeleteDialog
-        targetId={deleteTarget}
+      <AdminDataTable
+        columns={columns}
+        data={products}
+        isLoading={loading}
+        totalCount={totalCount}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={setPage}
+        onRowsPerPageChange={(newRows) => {
+          setRowsPerPage(newRows);
+          setPage(0);
+        }}
+        tabs={STATUS_TABS}
+        activeTab={statusFilter}
+        onTabChange={(tab) => {
+          setStatusFilter(tab);
+          setPage(0);
+        }}
+        keyExtractor={(product) => product.id}
+        emptyMessage="No products found matching your criteria."
+      />
+
+      <ConfirmDeleteDialog
+        open={Boolean(deleteTarget)}
+        title="Confirm Product Deletion"
+        itemName={products.find((p) => p.id === deleteTarget)?.name}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
+      />
+
+      <ConfirmStatusDialog
+        open={Boolean(statusChangeTarget)}
+        title="Change Product Availability"
+        itemName={statusChangeTarget?.product?.name}
+        newStatus={statusChangeTarget?.isActive ? "Available" : "Unavailable"}
+        onClose={() => setStatusChangeTarget(null)}
+        onConfirm={handleStatusChangeConfirm}
       />
     </Box>
   );

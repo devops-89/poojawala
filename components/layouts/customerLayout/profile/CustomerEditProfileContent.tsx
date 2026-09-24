@@ -5,14 +5,13 @@ import {
   updateCustomerAddressAPI,
   updateProfileAPI,
 } from "@/api/userControllers";
+import AddAddressModal from "@/components/widgets/AddAddressModal";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
-import AddAddressModal from "@/components/widgets/AddAddressModal";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import MyLocationIcon from "@mui/icons-material/MyLocation";
 import PersonIcon from "@mui/icons-material/Person";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import {
@@ -21,14 +20,12 @@ import {
   Button,
   Card,
   CardContent,
-  Checkbox,
   Chip,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
   Grid,
   IconButton,
   Paper,
@@ -41,7 +38,7 @@ import React, { Suspense, useEffect, useState } from "react";
 const maxDobDate = (() => {
   const d = new Date();
   d.setFullYear(d.getFullYear() - 15);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 })();
 
 const TABS = [
@@ -74,6 +71,8 @@ function CustomerEditProfileContentInner() {
 
   const [dob, setDob] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
+  const [rashi, setRashi] = useState("");
+  const [gotra, setGotra] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string>("");
 
@@ -120,6 +119,8 @@ function CustomerEditProfileContentInner() {
       setLastName(profile.lastName || "");
       setDob(profile.dob ? profile.dob.split("T")[0] : "");
       setBirthPlace(profile.birthPlace || "");
+      setRashi(profile.rashi || "");
+      setGotra(profile.gotra || "");
       setPreviewImage(profile.profileImage || "");
       setAddresses(profile.addresses || []);
     }
@@ -145,6 +146,8 @@ function CustomerEditProfileContentInner() {
       formData.append("lastName", lastName);
       if (dob) formData.append("dob", dob);
       formData.append("birthPlace", birthPlace);
+      formData.append("rashi", rashi);
+      formData.append("gotra", gotra);
       if (profileImage) {
         formData.append("profileImage", profileImage);
       }
@@ -254,7 +257,8 @@ function CustomerEditProfileContentInner() {
   const handleSaveAddress = async () => {
     try {
       const missingFields = [];
-      if (!addressData.addressLabel?.trim()) missingFields.push("Address Label");
+      if (!addressData.addressLabel?.trim())
+        missingFields.push("Address Label");
       if (!addressData.fullAddress?.trim()) missingFields.push("Full Address");
       if (!addressData.city?.trim()) missingFields.push("City");
       if (!addressData.state?.trim()) missingFields.push("State");
@@ -263,7 +267,7 @@ function CustomerEditProfileContentInner() {
       if (missingFields.length > 0) {
         showSnackbar(
           `Please fill in required fields: ${missingFields.join(", ")}`,
-          "error"
+          "error",
         );
         return;
       }
@@ -520,7 +524,10 @@ function CustomerEditProfileContentInner() {
                       fullWidth
                       type="date"
                       label="Date of Birth"
-                      slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: maxDobDate } }}
+                      slotProps={{
+                        inputLabel: { shrink: true },
+                        htmlInput: { max: maxDobDate },
+                      }}
                       value={dob}
                       onChange={(e) => setDob(e.target.value)}
                     />
@@ -531,6 +538,22 @@ function CustomerEditProfileContentInner() {
                       label="Birth Place"
                       value={birthPlace}
                       onChange={(e) => setBirthPlace(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <TextField
+                      fullWidth
+                      label="Rashi"
+                      value={rashi}
+                      onChange={(e) => setRashi(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <TextField
+                      fullWidth
+                      label="Gotra"
+                      value={gotra}
+                      onChange={(e) => setGotra(e.target.value)}
                     />
                   </Grid>
                 </Grid>
@@ -698,7 +721,13 @@ function CustomerEditProfileContentInner() {
                               >
                                 {address.fullAddress}
                               </Typography>
-                              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  gap: 2,
+                                  flexWrap: "wrap",
+                                }}
+                              >
                                 <Typography
                                   sx={{
                                     fontFamily: '"DM Sans", sans-serif',

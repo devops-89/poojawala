@@ -1,37 +1,23 @@
 "use client";
+
 import {
   deleteServiceAPI,
   getServicesAPI,
   updateServiceStatusAPI,
 } from "@/api/serviceControllers";
+import AdminDataTable, {
+  Column,
+} from "@/components/layouts/adminLayout/common/AdminDataTable";
+import AdminPageHeader from "@/components/layouts/adminLayout/common/AdminPageHeader";
+import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
 import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
 import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Paper,
-  Select,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Tabs,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -48,7 +34,6 @@ const STATUS_TABS = [
 export default function AdminServicesContent() {
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
-  const [focused, setFocused] = useState(false);
 
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -75,7 +60,7 @@ export default function AdminServicesContent() {
         undefined,
         undefined,
         undefined,
-        isActiveParam,
+        isActiveParam
       );
       if (res.success && res.data?.data) {
         setServices(res.data.data);
@@ -100,7 +85,7 @@ export default function AdminServicesContent() {
     try {
       const res = await updateServiceStatusAPI(
         statusChangeTarget.service.id,
-        statusChangeTarget.isActive,
+        statusChangeTarget.isActive
       );
       if (res.success) {
         showSnackbar("Status updated successfully", "success");
@@ -108,8 +93,8 @@ export default function AdminServicesContent() {
           services.map((s) =>
             s.id === statusChangeTarget.service.id
               ? { ...s, isActive: statusChangeTarget.isActive }
-              : s,
-          ),
+              : s
+          )
         );
       } else {
         showSnackbar(res.message || "Failed to update status", "error");
@@ -134,457 +119,223 @@ export default function AdminServicesContent() {
       } catch (error: any) {
         showSnackbar(
           error.response?.data?.message || "Error deleting service",
-          "error",
+          "error"
         );
       }
     }
     setDeleteTarget(null);
   };
 
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      {/* Page Header */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          alignItems: { sm: "center" },
-          justifyContent: "space-between",
-          gap: 2,
-        }}
-      >
-        <Box>
-          <Typography
-            variant="h4"
-            sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              fontWeight: 800,
-              color: "#1e293b",
-            }}
-          >
-            Services
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              color: "#64748b",
-              mt: 0.5,
-            }}
-          >
-            Manage categories and services
-          </Typography>
-        </Box>
-        <Button
-          component={NextLink}
-          href="/admin/services/add"
-          variant="contained"
-          sx={{
-            background: "#FF6200",
-            color: "white",
-            textTransform: "none",
-            borderRadius: "12px",
-            fontWeight: 600,
-            py: 1.5,
-            px: 3,
-            boxShadow: "none",
-            "&:hover": { background: "#E65800", boxShadow: "none" },
-            alignSelf: { xs: "flex-start", sm: "auto" },
-          }}
-          startIcon={<AddIcon />}
-        >
-          Create Service
-        </Button>
-      </Box>
+  const columns: Column<any>[] = [
+    {
+      id: "details",
+      label: "SERVICE DETAILS",
+      render: (service) => {
+        const title = service.name || "Untitled Service";
+        const catName =
+          service.category?.name ||
+          (typeof service.category === "string" ? service.category : "Puja");
+        const imageSrc =
+          service.iconDownloadurl ||
+          service.iconDownloadUrl ||
+          service.iconUrl ||
+          service.image ||
+          service.imageUrl ||
+          PLACEHOLDER;
 
-      {/* Table Area */}
-      <Paper
-        elevation={0}
-        sx={{
-          border: "1px solid #e2e8f0",
-          borderRadius: "12px",
-          overflow: "hidden",
-          bgcolor: "white",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: { xs: "stretch", md: "center" },
-            justifyContent: "space-between",
-            borderBottom: "1px solid #e2e8f0",
-            px: 2,
-            py: 1,
-            gap: 2,
-          }}
-        >
-          <Tabs
-            value={statusFilter}
-            onChange={(_, newValue) => setStatusFilter(newValue)}
-            sx={{
-              minHeight: 48,
-              "& .MuiTabs-indicator": {
-                backgroundColor: "#FF6200",
-                height: 3,
-                borderRadius: "3px 3px 0 0",
-              },
-            }}
-          >
-            {STATUS_TABS.map((tab) => (
-              <Tab
-                key={tab.id}
-                value={tab.id}
-                label={tab.label}
-                sx={{
-                  minHeight: 48,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: "0.875rem",
-                  fontFamily: "var(--font-outfit), sans-serif",
-                  color: "#64748b",
-                  "&.Mui-selected": { color: "#FF6200 !important" },
-                }}
+        return (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box
+              sx={{
+                width: 48,
+                height: 48,
+                borderRadius: "8px",
+                overflow: "hidden",
+                bgcolor: "#f1f5f9",
+                flexShrink: 0,
+                position: "relative",
+              }}
+            >
+              <Image
+                src={imageSrc}
+                alt={title}
+                fill
+                sizes="48px"
+                style={{ objectFit: "cover" }}
+                unoptimized
               />
-            ))}
-          </Tabs>
-
-          <TextField
-            placeholder="Search services..."
-            size="small"
-            variant="outlined"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon
-                      style={{
-                        color: focused ? "#FF6200" : "#94a3b8",
-                        transition: "color 0.2s ease",
-                      }}
-                    />
-                  </InputAdornment>
-                ),
-              },
-            }}
-            sx={{
-              width: { xs: "100%", sm: 280, md: 320 },
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "12px",
-                height: 40,
-                backgroundColor: "#fff",
-                transition: "box-shadow 0.2s ease, border-color 0.2s ease",
-                "& fieldset": { borderColor: "#cbd5e1" },
-                "&:hover fieldset": { borderColor: "#FF6200" },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#FF6200",
-                  borderWidth: "1.5px",
-                },
-                "&.Mui-focused": { boxShadow: "0 0 0 3px rgba(255,98,0,0.12)" },
-              },
-              "& .MuiInputBase-input": {
-                fontFamily: "var(--font-outfit), sans-serif",
-                fontSize: "0.875rem",
-              },
-            }}
-          />
-        </Box>
-
-        <TableContainer>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead sx={{ backgroundColor: "#f8fafc" }}>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    fontSize: "0.8rem",
-                    color: "#64748b",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Service Details
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    fontSize: "0.8rem",
-                    color: "#64748b",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Price
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    fontSize: "0.8rem",
-                    color: "#64748b",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Bookings
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    fontSize: "0.8rem",
-                    color: "#64748b",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  align="right"
-                  sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    fontWeight: 700,
-                    fontSize: "0.8rem",
-                    color: "#64748b",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    align="center"
-                    sx={{
-                      py: 4,
-                      fontFamily: "var(--font-outfit), sans-serif",
-                      color: "#64748b",
-                    }}
-                  >
-                    Loading services...
-                  </TableCell>
-                </TableRow>
-              ) : services.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    align="center"
-                    sx={{
-                      py: 4,
-                      fontFamily: "var(--font-outfit), sans-serif",
-                      color: "#64748b",
-                    }}
-                  >
-                    No services found matching the criteria.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                services.map((service, idx) => (
-                  <TableRow
-                    key={service.id || `service-${idx}`}
-                    hover
-                    sx={{ "&:last-child td": { borderBottom: 0 } }}
-                  >
-                    <TableCell sx={{ py: 2 }}>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                      >
-                        <Box
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            position: "relative",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <Image
-                            src={
-                              service.iconDownloadurl ||
-                              service.iconUrl ||
-                              PLACEHOLDER
-                            }
-                            alt={service.name || "Service Icon"}
-                            fill
-                            style={{ objectFit: "cover" }}
-                            unoptimized={true}
-                          />
-                        </Box>
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
-                              fontWeight: 600,
-                              color: "#1e293b",
-                              fontSize: "0.95rem",
-                            }}
-                          >
-                            {service.name}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
-                              color: "#64748b",
-                              fontSize: "0.8rem",
-                            }}
-                          >
-                            Duration: {service.durationMinutes} Mins
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
-                        fontWeight: 700,
-                        color: "#0f172a",
-                      }}
-                    >
-                      ₹{service.minPrice} - ₹{service.maxPrice}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
-                        color: "#64748b",
-                      }}
-                    >
-                      {service.totalBookings ?? service.bookings ?? 0}
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        size="small"
-                        value={service.isActive ? "active" : "inactive"}
-                        onChange={(e) => {
-                          const isActive = e.target.value === "active";
-                          setStatusChangeTarget({ service, isActive });
-                        }}
-                        sx={{
-                          fontSize: "0.875rem",
-                          fontWeight: 600,
-                          fontFamily: "var(--font-outfit), sans-serif",
-                          height: 32,
-                          borderRadius: "8px",
-                          color: service.isActive ? "#059669" : "#94a3b8",
-                          bgcolor: service.isActive ? "#d1fae5" : "#f1f5f9",
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            border: "none",
-                          },
-                          "&:hover": {
-                            bgcolor: service.isActive ? "#a7f3d0" : "#e2e8f0",
-                          },
-                          "& .MuiSelect-icon": {
-                            color: service.isActive ? "#059669" : "#94a3b8",
-                          },
-                        }}
-                      >
-                        <MenuItem
-                          value="active"
-                          sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
-                            fontSize: "0.875rem",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Active
-                        </MenuItem>
-                        <MenuItem
-                          value="inactive"
-                          sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
-                            fontSize: "0.875rem",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Inactive
-                        </MenuItem>
-                      </Select>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          gap: 1,
-                        }}
-                      >
-                        <IconButton
-                          component={NextLink}
-                          href={`/admin/services/${service.id}`}
-                          sx={{
-                            color: "#64748b",
-                            bgcolor: "#f8fafc",
-                            "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-                          }}
-                        >
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          component={NextLink}
-                          href={`/admin/services/edit/${service.id}`}
-                          sx={{
-                            color: "#64748b",
-                            bgcolor: "#f8fafc",
-                            "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
-                          }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => setDeleteTarget(service.id)}
-                          sx={{
-                            color: "#64748b",
-                            bgcolor: "#f8fafc",
-                            "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={totalCount}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
+            </Box>
+            <Box>
+              <Typography
+                sx={{
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
+                  color: "#1e293b",
+                }}
+              >
+                {title}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontSize: "0.8rem",
+                  color: "#64748b",
+                }}
+              >
+                Category: {catName}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      id: "price",
+      label: "PRICE",
+      render: (service) => (
+        <Typography
           sx={{
-            borderTop: "1px solid #e2e8f0",
-            ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows":
-              { fontFamily: "var(--font-outfit), sans-serif" },
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            color: "#1e293b",
           }}
-        />
-      </Paper>
+        >
+          ₹{service.minPrice ?? 0} - ₹{service.maxPrice ?? 0}
+        </Typography>
+      ),
+    },
+    {
+      id: "bookings",
+      label: "BOOKINGS",
+      render: (service) => (
+        <Typography
+          sx={{
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            color: "#64748b",
+          }}
+        >
+          {service.totalBookings || service._count?.bookings || 0} Bookings
+        </Typography>
+      ),
+    },
+    {
+      id: "status",
+      label: "STATUS",
+      render: (service) => {
+        const isAct = service.isActive ?? true;
+        return (
+          <AdminStatusSelect
+            value={isAct ? "Active" : "Inactive"}
+            options={[
+              { value: "Active", label: "Active" },
+              { value: "Inactive", label: "Inactive" },
+            ]}
+            onChange={(val) =>
+              setStatusChangeTarget({
+                service,
+                isActive: val === "Active",
+              })
+            }
+          />
+        );
+      },
+    },
+    {
+      id: "actions",
+      label: "ACTIONS",
+      align: "right",
+      render: (service) => (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+          <IconButton
+            component={NextLink}
+            href={`/admin/services/${service.id}`}
+            sx={{
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
+            }}
+          >
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            component={NextLink}
+            href={`/admin/services/edit/${service.id}`}
+            sx={{
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            onClick={() => setDeleteTarget(service.id)}
+            sx={{
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
 
-      {/* Delete Confirmation Modal */}
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <AdminPageHeader
+        title="Services"
+        subtitle="Manage categories and services"
+        searchPlaceholder="Search services..."
+        searchValue={searchValue}
+        onSearchChange={(val) => {
+          setSearchValue(val);
+          setPage(0);
+        }}
+        actionButtonText="Create Service"
+        actionButtonHref="/admin/services/add"
+        actionButtonIcon={<AddIcon />}
+      />
+
+      <AdminDataTable
+        columns={columns}
+        data={services}
+        isLoading={loading}
+        totalCount={totalCount}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={setPage}
+        onRowsPerPageChange={(newRows) => {
+          setRowsPerPage(newRows);
+          setPage(0);
+        }}
+        tabs={STATUS_TABS}
+        activeTab={statusFilter}
+        onTabChange={(tab) => {
+          setStatusFilter(tab);
+          setPage(0);
+        }}
+        keyExtractor={(service) => service.id}
+        emptyMessage="No services found matching your criteria."
+      />
+
       <ConfirmDeleteDialog
         open={Boolean(deleteTarget)}
-        title="Confirm Deletion"
-        customMessage="Are you sure you want to delete this service? This action cannot be undone and will permanently remove it from the platform."
+        title="Confirm Service Deletion"
+        itemName={services.find((s) => s.id === deleteTarget)?.name}
         onClose={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
       />
 
-      {/* Status Change Confirmation Modal */}
       <ConfirmStatusDialog
         open={Boolean(statusChangeTarget)}
-        title="Change Status"
+        title="Change Service Status"
         itemName={statusChangeTarget?.service?.name}
         newStatus={statusChangeTarget?.isActive ? "Active" : "Inactive"}
         onClose={() => setStatusChangeTarget(null)}

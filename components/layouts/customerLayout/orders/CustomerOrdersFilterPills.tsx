@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
-import { Box, Button } from "@mui/material";
 import { ORDER_STATUS } from "@/utils/enums";
+import { Box, Button } from "@mui/material";
 
 export type OrderStatusFilter =
   | "ALL"
@@ -15,28 +14,25 @@ export type OrderStatusFilter =
 interface FilterPillOption {
   key: OrderStatusFilter;
   label: string;
-  count: number;
 }
 
 interface CustomerOrdersFilterPillsProps {
   activeFilter: OrderStatusFilter;
   onFilterChange: (filter: OrderStatusFilter) => void;
-  counts: Record<string, number>;
 }
 
 export default function CustomerOrdersFilterPills({
   activeFilter,
   onFilterChange,
-  counts,
 }: CustomerOrdersFilterPillsProps) {
   const filters: FilterPillOption[] = [
-    { key: "ALL", label: "All Orders", count: counts.all || 0 },
-    { key: ORDER_STATUS.CONFIRMED, label: "Confirmed", count: counts.confirmed || 0 },
-    { key: ORDER_STATUS.PROCESSING, label: "Processing", count: counts.processing || 0 },
-    { key: ORDER_STATUS.SHIPPED, label: "Shipped", count: counts.shipped || 0 },
-    { key: ORDER_STATUS.OUT_FOR_DELIVERY, label: "Out For Delivery", count: counts.out_for_delivery || 0 },
-    { key: ORDER_STATUS.DELIVERED, label: "Delivered", count: counts.delivered || 0 },
-    { key: ORDER_STATUS.CANCELLED, label: "Cancelled", count: counts.cancelled || 0 },
+    { key: "ALL", label: "All Orders" },
+    { key: ORDER_STATUS.CONFIRMED, label: "Confirmed" },
+    { key: ORDER_STATUS.PROCESSING, label: "Processing" },
+    { key: ORDER_STATUS.SHIPPED, label: "Shipped" },
+    { key: ORDER_STATUS.OUT_FOR_DELIVERY, label: "Out For Delivery" },
+    { key: ORDER_STATUS.DELIVERED, label: "Delivered" },
+    { key: ORDER_STATUS.CANCELLED, label: "Cancelled" },
   ];
 
   return (
@@ -86,22 +82,6 @@ export default function CustomerOrdersFilterPills({
             }}
           >
             <span>{tab.label}</span>
-            <Box
-              component="span"
-              sx={{
-                bgcolor: isActive ? "rgba(255, 255, 255, 0.25)" : "#F0E2D6",
-                color: isActive ? "white" : "#64534A",
-                px: 0.9,
-                py: 0.2,
-                borderRadius: "12px",
-                fontSize: "11.5px",
-                fontWeight: 800,
-                minWidth: 18,
-                textAlign: "center",
-              }}
-            >
-              {tab.count}
-            </Box>
           </Button>
         );
       })}

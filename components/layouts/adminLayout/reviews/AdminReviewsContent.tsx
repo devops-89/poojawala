@@ -1,21 +1,45 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Select, MenuItem, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Rating, TablePagination, CircularProgress } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { getAllReviewsAPI, getReviewByBookingIdAPI, updateReviewStatusAPI, deleteReviewAPI } from '@/api/userControllers';
-import { useSnackbarStore } from '@/stores/snackbarStore';
+import {
+  deleteReviewAPI,
+  getAllReviewsAPI,
+  getReviewByBookingIdAPI,
+  updateReviewStatusAPI,
+} from "@/api/userControllers";
+import AdminDataTable, {
+  Column,
+} from "@/components/layouts/adminLayout/common/AdminDataTable";
+import AdminPageHeader from "@/components/layouts/adminLayout/common/AdminPageHeader";
+import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
+import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
+import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
+import { useSnackbarStore } from "@/stores/snackbarStore";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  Rating,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 
 const STATUS_TABS = [
-  { id: 'All', label: 'All Reviews' },
-  { id: 'Published', label: 'Published' },
-  { id: 'Draft', label: 'Draft' },
+  { id: "All", label: "All Reviews" },
+  { id: "Published", label: "Published" },
+  { id: "Draft", label: "Draft" },
 ];
 
 export default function AdminReviewsContent() {
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState("All");
   const [selectedReview, setSelectedReview] = useState<any>(null);
 
   const [page, setPage] = useState(0);
@@ -23,6 +47,13 @@ export default function AdminReviewsContent() {
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [statusChangeTarget, setStatusChangeTarget] = useState<{
+    reviewId: string;
+    bookingId: number;
+    newStatus: string;
+  } | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,369 +68,280 @@ export default function AdminReviewsContent() {
       setLoading(true);
       const response = await getAllReviewsAPI(status);
       if (response?.success && response?.data?.data) {
-        setReviews(response.data.data.map((r: any) => ({
-          ...r,
-          id: `B-${r.bookingId}`,
-          bookingId: r.bookingId,
-          customer: r.customer ? `${r.customer.firstName || ''} ${r.customer.lastName || ''}`.trim() : 'Unknown',
-          service: r.service?.name || 'Unknown',
-          purohit: r.purohit ? `${r.purohit.firstName || ''} ${r.purohit.lastName || ''}`.trim() : 'Unknown',
-          status: r.reviewStatus ? (r.reviewStatus.toLowerCase() === 'published' ? 'Published' : 'Draft') : 'Draft',
-          customerRating: parseFloat(r.customerRating) || 0,
-          customerComment: r.customerReview || '',
-          purohitRating: parseFloat(r.purohitRating) || 0,
-          purohitComment: r.purohitReview || ''
-        })));
+        setReviews(
+          response.data.data.map((r: any) => ({
+            ...r,
+            id: `B-${r.bookingId}`,
+            bookingId: r.bookingId,
+            customer: r.customer
+              ? `${r.customer.firstName || ""} ${r.customer.lastName || ""}`.trim()
+              : "Unknown",
+            service: r.service?.name || "Unknown",
+            purohit: r.purohit
+              ? `${r.purohit.firstName || ""} ${r.purohit.lastName || ""}`.trim()
+              : "Unknown",
+            status: r.reviewStatus
+              ? r.reviewStatus.toLowerCase() === "published"
+                ? "Published"
+                : "Draft"
+              : "Draft",
+            customerRating: parseFloat(r.customerRating) || 0,
+            customerComment: r.customerReview || "",
+            purohitRating: parseFloat(r.purohitRating) || 0,
+            purohitComment: r.purohitReview || "",
+          }))
+        );
       }
     } catch (error) {
-      console.error('Failed to fetch reviews:', error);
-      showSnackbar('Failed to fetch reviews', 'error');
+      console.error("Failed to fetch reviews:", error);
+      showSnackbar("Failed to fetch reviews", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredReviews = reviews.filter(r => {
-    if (statusFilter !== 'All' && r.status !== statusFilter) return false;
-    return true;
-  });
-
-  const handleStatusChange = async (id: string, bookingId: string | number, newStatus: string) => {
+  const confirmStatusChange = async () => {
+    if (!statusChangeTarget) return;
+    setIsUpdatingStatus(true);
     try {
-      const response = await updateReviewStatusAPI(bookingId, newStatus.toUpperCase());
+      const response = await updateReviewStatusAPI(
+        statusChangeTarget.bookingId,
+        statusChangeTarget.newStatus.toUpperCase()
+      );
       if (response?.success) {
-        setReviews(reviews.map(r => r.id === id ? { ...r, status: newStatus } : r));
-        showSnackbar('Review status updated successfully', 'success');
-      } else {
-        showSnackbar('Failed to update review status', 'error');
+        showSnackbar(
+          `Review status updated to ${statusChangeTarget.newStatus}`,
+          "success"
+        );
+        setReviews((prev) =>
+          prev.map((r) =>
+            r.id === statusChangeTarget.reviewId
+              ? { ...r, status: statusChangeTarget.newStatus }
+              : r
+          )
+        );
       }
     } catch (error) {
-      console.error('Failed to update review status:', error);
-      showSnackbar('Failed to update review status', 'error');
+      showSnackbar("Error updating review status", "error");
+    } finally {
+      setIsUpdatingStatus(false);
+      setStatusChangeTarget(null);
     }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!reviewToDelete) return;
+  const handleViewReview = async (reviewItem: any) => {
+    setIsModalLoading(true);
     try {
-      setIsDeleting(true);
-      const response = await deleteReviewAPI(reviewToDelete.bookingId);
-      if (response?.success) {
-        setReviews(reviews.filter(r => r.id !== reviewToDelete.id));
-        showSnackbar('Review deleted successfully', 'success');
+      const response = await getReviewByBookingIdAPI(reviewItem.bookingId);
+      if (response?.success && response?.data) {
+        const r = response.data;
+        setSelectedReview({
+          id: `B-${r.bookingId}`,
+          bookingId: r.bookingId,
+          customer: r.customer ? `${r.customer.firstName || ""} ${r.customer.lastName || ""}`.trim() : "Unknown",
+          service: r.service?.name || "Unknown",
+          purohit: r.purohit ? `${r.purohit.firstName || ""} ${r.purohit.lastName || ""}`.trim() : "Unknown",
+          status: r.reviewStatus ? (r.reviewStatus.toLowerCase() === "published" ? "Published" : "Draft") : "Draft",
+          customerRating: parseFloat(r.customerRating) || 0,
+          customerComment: r.customerReview || "No review left",
+          purohitRating: parseFloat(r.purohitRating) || 0,
+          purohitComment: r.purohitReview || "No review left",
+        });
       } else {
-        showSnackbar('Failed to delete review', 'error');
+        setSelectedReview(reviewItem);
       }
     } catch (error) {
-      console.error('Failed to delete review:', error);
-      showSnackbar('Failed to delete review', 'error');
+      setSelectedReview(reviewItem);
+    } finally {
+      setIsModalLoading(false);
+    }
+  };
+
+  const confirmDeleteReview = async () => {
+    if (!reviewToDelete) return;
+    setIsDeleting(true);
+    try {
+      const response = await deleteReviewAPI(reviewToDelete.bookingId);
+      if (response?.success) {
+        showSnackbar("Review deleted successfully", "success");
+        setReviews((prev) => prev.filter((r) => r.bookingId !== reviewToDelete.bookingId));
+      }
+    } catch (error: any) {
+      showSnackbar(error.response?.data?.message || "Error deleting review", "error");
     } finally {
       setIsDeleting(false);
       setReviewToDelete(null);
     }
   };
 
-  const handleViewReview = async (item: any) => {
-    setSelectedReview({ id: item.id, service: item.service }); // Show initial info immediately
-    setIsModalLoading(true);
-    try {
-      const response = await getReviewByBookingIdAPI(item.bookingId);
-      if (response?.success && response?.data) {
-        const r = response.data;
-        setSelectedReview({
-          id: `B-${r.bookingId}`,
-          bookingId: r.bookingId,
-          service: r.service?.name || item.service, 
-          customer: r.customer ? `${r.customer.firstName || ''} ${r.customer.lastName || ''}`.trim() : 'Unknown',
-          purohit: r.purohit ? `${r.purohit.firstName || ''} ${r.purohit.lastName || ''}`.trim() : 'Unknown',
-          status: r.reviewStatus ? (r.reviewStatus.toLowerCase() === 'published' ? 'Published' : 'Draft') : 'Draft',
-          customerRating: parseFloat(r.customerRating) || 0,
-          customerComment: r.customerReview || '',
-          purohitRating: parseFloat(r.purohitRating) || 0,
-          purohitComment: r.purohitReview || ''
-        });
-      } else {
-        showSnackbar('Failed to fetch review details', 'error');
-        setSelectedReview(null);
-      }
-    } catch (error) {
-      console.error('Failed to fetch review details:', error);
-      showSnackbar('Failed to fetch review details', 'error');
-      setSelectedReview(null);
-    } finally {
-      setIsModalLoading(false);
-    }
-  };
+  const filteredReviews = reviews.filter((item) => {
+    if (statusFilter === "Published") return item.status === "Published";
+    if (statusFilter === "Draft") return item.status === "Draft";
+    return true;
+  });
 
-  const getStatusStyle = (status: string) => {
-    if (status === 'Published') return { bg: '#d1fae5', text: '#059669' };
-    return { bg: '#fef3c7', text: '#d97706' };
-  };
+  const columns: Column<any>[] = [
+    {
+      id: "id",
+      label: "BOOKING ID",
+      render: (item) => (
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+          {item.id}
+        </Typography>
+      ),
+    },
+    {
+      id: "customer",
+      label: "CUSTOMER",
+      render: (item) => (
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+          {item.customer}
+        </Typography>
+      ),
+    },
+    {
+      id: "service",
+      label: "SERVICE",
+      render: (item) => (
+        <Typography sx={{ color: "#64748b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.85rem" }}>
+          {item.service}
+        </Typography>
+      ),
+    },
+    {
+      id: "purohit",
+      label: "PUROHIT",
+      render: (item) => (
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+          {item.purohit}
+        </Typography>
+      ),
+    },
+    {
+      id: "status",
+      label: "STATUS",
+      render: (item) => (
+        <AdminStatusSelect
+          value={item.status}
+          options={[
+            { value: "Draft", label: "DRAFT" },
+            { value: "Published", label: "PUBLISHED" },
+          ]}
+          onChange={(newStatus) =>
+            setStatusChangeTarget({
+              reviewId: item.id,
+              bookingId: item.bookingId,
+              newStatus,
+            })
+          }
+        />
+      ),
+    },
+    {
+      id: "actions",
+      label: "ACTIONS",
+      align: "center",
+      render: (item) => (
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+          <IconButton onClick={() => handleViewReview(item)} sx={{ color: "#10b981", "&:hover": { bgcolor: "#d1fae5" } }}>
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+          <IconButton onClick={() => setReviewToDelete(item)} sx={{ color: "#ef4444", "&:hover": { bgcolor: "#fee2e2" } }}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
+
+  const paginatedData = filteredReviews.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      {/* Page Header */}
-      <Box>
-        <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
-          Reviews & Ratings
-        </Typography>
-        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', mt: 0.5 }}>
-          Manage customer feedback and ratings
-        </Typography>
-      </Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <AdminPageHeader
+        title="Service Reviews"
+        subtitle="Manage feedback, ratings, and publication status for completed bookings"
+      />
 
-      {/* Tabs and Table */}
-      <Paper elevation={0} sx={{ borderRadius: '16px', border: '1px solid #e2e8f0', bgcolor: 'white', overflow: 'hidden' }}>
-        <Tabs 
-          value={statusFilter} 
-          onChange={(_, val) => setStatusFilter(val)}
-          sx={{ 
-            px: 2, pt: 1, borderBottom: '1px solid #e2e8f0',
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200' },
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, color: '#64748b', minWidth: 100, fontFamily: 'var(--font-outfit), sans-serif' },
-            '& .MuiTab-root.Mui-selected': { color: '#FF6200' },
-          }}
-        >
-          {STATUS_TABS.map(tab => (
-            <Tab key={tab.id} label={tab.label} value={tab.id} />
-          ))}
-        </Tabs>
+      <AdminDataTable
+        columns={columns}
+        data={paginatedData}
+        isLoading={loading}
+        totalCount={filteredReviews.length}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={setPage}
+        onRowsPerPageChange={(newRows) => {
+          setRowsPerPage(newRows);
+          setPage(0);
+        }}
+        tabs={STATUS_TABS}
+        activeTab={statusFilter}
+        onTabChange={(tab) => {
+          setStatusFilter(tab);
+          setPage(0);
+        }}
+        keyExtractor={(item) => item.id}
+        emptyMessage="No reviews found matching your criteria."
+      />
 
-        <TableContainer>
-          <Table sx={{ minWidth: 1000 }}>
-            <TableHead>
-              <TableRow sx={{ bgcolor: '#f8fafc' }}>
-                <TableCell sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem', py: 2 }}>BOOKING ID</TableCell>
-                <TableCell sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>CUSTOMER</TableCell>
-                <TableCell sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>SERVICE</TableCell>
-                <TableCell sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>PUROHIT</TableCell>
-                <TableCell sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>STATUS</TableCell>
-                <TableCell align="center" sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>ACTIONS</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
-                    <CircularProgress sx={{ color: '#FF6200' }} />
-                  </TableCell>
-                </TableRow>
-              ) : filteredReviews.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 5, color: '#64748b' }}>
-                    No reviews found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredReviews.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item: any) => {
-                  const statusStyle = getStatusStyle(item.status);
-
-                return (
-                  <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: '#f8fafc' }, transition: 'background-color 0.2s' }}>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.9rem' }}>
-                        {item.id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.9rem' }}>
-                        {item.customer}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ color: '#64748b', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.85rem' }}>
-                        {item.service}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.9rem' }}>
-                        {item.purohit}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        size="small"
-                        value={item.status}
-                        onChange={(e) => handleStatusChange(item.id, item.bookingId, e.target.value)}
-                        sx={{
-                          bgcolor: statusStyle.bg,
-                          color: statusStyle.text,
-                          fontWeight: 700,
-                          fontFamily: 'var(--font-outfit), sans-serif',
-                          borderRadius: '6px',
-                          textTransform: 'uppercase',
-                          '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                          '& .MuiSelect-select': { py: 0.5, px: 1.5, fontSize: '0.8rem' },
-                          '& .MuiSvgIcon-root': { color: statusStyle.text }
-                        }}
-                      >
-                        <MenuItem value="Draft" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.85rem', fontWeight: 600 }}>DRAFT</MenuItem>
-                        <MenuItem value="Published" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.85rem', fontWeight: 600 }}>PUBLISHED</MenuItem>
-                      </Select>
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton onClick={() => handleViewReview(item)} sx={{ color: '#10b981', '&:hover': { bgcolor: '#d1fae5' } }}>
-                        <VisibilityIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton onClick={() => setReviewToDelete(item)} sx={{ color: '#ef4444', '&:hover': { bgcolor: '#fee2e2' }, ml: 1 }}>
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              }))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredReviews.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          sx={{ borderTop: '1px solid #e2e8f0', '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': { fontFamily: 'var(--font-outfit), sans-serif' } }}
-        />
-      </Paper>
-
-      {/* Review Details Modal */}
-      <Dialog 
-        open={Boolean(selectedReview)} 
-        onClose={() => setSelectedReview(null)}
-        maxWidth="md"
-        fullWidth
-        sx={{ '& .MuiDialog-paper': { borderRadius: '16px', p: 1 } }}
-      >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pb: 1 }}>
-          <Box>
-            <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
-              Review Details
-            </Typography>
-            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', fontSize: '0.9rem', mt: 0.5 }}>
-              Booking ID: <Typography component="span" sx={{ fontWeight: 700, color: '#1e293b' }}>{selectedReview?.id}</Typography> | Service: <Typography component="span" sx={{ fontWeight: 700, color: '#FF6200' }}>{selectedReview?.service}</Typography>
-            </Typography>
-          </Box>
-          <IconButton onClick={() => setSelectedReview(null)} size="small" sx={{ color: '#FF6200' }}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ mt: 1 }}>
-          {isModalLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
-              <CircularProgress sx={{ color: '#FF6200' }} />
-            </Box>
-          ) : (
-            <Grid container spacing={3}>
-              {/* Customer Review Card */}
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Paper variant="outlined" sx={{ p: 3, borderRadius: '12px', borderColor: '#e2e8f0', height: '100%' }}>
-                  <Typography sx={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 700, mb: 2, textTransform: 'uppercase', fontFamily: 'var(--font-outfit), sans-serif' }}>
-                    CUSTOMER REVIEW - {selectedReview?.customer?.toUpperCase() || 'UNKNOWN'}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <Rating value={selectedReview?.customerRating || 0} readOnly size="small" sx={{ color: '#f59e0b' }} />
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.85rem' }}>
-                      {selectedReview?.customerRating}/5
-                    </Typography>
-                  </Box>
-                  <Typography sx={{ color: '#475569', fontStyle: 'italic', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.9rem' }}>
-                    "{selectedReview?.customerComment}"
-                  </Typography>
-                </Paper>
-              </Grid>
-
-              {/* Purohit Review Card */}
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Paper variant="outlined" sx={{ p: 3, borderRadius: '12px', borderColor: '#e2e8f0', height: '100%' }}>
-                  <Typography sx={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 700, mb: 2, textTransform: 'uppercase', fontFamily: 'var(--font-outfit), sans-serif' }}>
-                    PUROHIT REVIEW - {selectedReview?.purohit?.toUpperCase() || 'UNKNOWN'}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <Rating value={selectedReview?.purohitRating || 0} readOnly size="small" sx={{ color: '#f59e0b' }} />
-                    <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.85rem' }}>
-                      {selectedReview?.purohitRating}/5
-                    </Typography>
-                  </Box>
-                  <Typography sx={{ color: '#475569', fontStyle: 'italic', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.9rem' }}>
-                    "{selectedReview?.purohitComment}"
-                  </Typography>
-                </Paper>
-              </Grid>
-            </Grid>
-          )}
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button 
-            onClick={() => setSelectedReview(null)} 
-            variant="contained" 
-            sx={{ 
-              textTransform: 'none', 
-              borderRadius: '8px', 
-              fontWeight: 600, 
-              fontFamily: 'var(--font-outfit), sans-serif', 
-              boxShadow: 'none', 
-              color: 'white',
-              background: '#FF6200 !important', 
-              '&:hover': { background: '#E65800 !important', boxShadow: 'none' } 
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Delete Confirmation Modal */}
-      <Dialog
+      <ConfirmDeleteDialog
         open={Boolean(reviewToDelete)}
+        title="Confirm Delete Review"
+        itemName={reviewToDelete ? `Review for ${reviewToDelete.id}` : undefined}
         onClose={() => setReviewToDelete(null)}
-        maxWidth="xs"
-        fullWidth
-        sx={{ '& .MuiDialog-paper': { borderRadius: '16px', p: 1 } }}
-      >
-        <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
-          Delete Review
-        </DialogTitle>
-        <DialogContent>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>
-            Are you sure you want to delete this review? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button 
-            onClick={() => setReviewToDelete(null)}
-            disabled={isDeleting}
-            sx={{ 
-              textTransform: 'none', 
-              fontWeight: 600, 
-              color: '#64748b',
-              fontFamily: 'var(--font-outfit), sans-serif',
-              mr: 1
-            }}
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleDeleteConfirm}
-            variant="contained" 
-            disabled={isDeleting}
-            sx={{ 
-              textTransform: 'none', 
-              borderRadius: '8px', 
-              fontWeight: 600, 
-              fontFamily: 'var(--font-outfit), sans-serif', 
-              boxShadow: 'none', 
-              color: 'white',
-              background: '#ef4444 !important', 
-              '&:hover': { background: '#dc2626 !important', boxShadow: 'none' } 
-            }}
-          >
-            {isDeleting ? 'Deleting...' : 'Delete'}
-          </Button>
-        </DialogActions>
+        onConfirm={confirmDeleteReview}
+        loading={isDeleting}
+      />
+
+      <ConfirmStatusDialog
+        open={Boolean(statusChangeTarget)}
+        title="Confirm Review Status Change"
+        itemName={statusChangeTarget ? `Review for ${statusChangeTarget.reviewId}` : undefined}
+        newStatus={statusChangeTarget?.newStatus}
+        onClose={() => setStatusChangeTarget(null)}
+        onConfirm={confirmStatusChange}
+        loading={isUpdatingStatus}
+      />
+
+      <Dialog open={Boolean(selectedReview) || isModalLoading} onClose={() => setSelectedReview(null)} maxWidth="md" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1 } }}>
+        {isModalLoading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress sx={{ color: "#FF6200" }} />
+          </Box>
+        ) : selectedReview ? (
+          <>
+            <DialogTitle sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span>Review Details ({selectedReview.id})</span>
+              <IconButton onClick={() => setSelectedReview(null)}><CloseIcon /></IconButton>
+            </DialogTitle>
+            <DialogContent dividers sx={{ py: 3 }}>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", mb: 1 }}>
+                    Customer Review ({selectedReview.customer})
+                  </Typography>
+                  <Rating value={selectedReview.customerRating} readOnly precision={0.5} />
+                  <Typography sx={{ color: "#334155", fontFamily: "var(--font-outfit), sans-serif", mt: 1, whiteSpace: "pre-wrap" }}>
+                    &quot;{selectedReview.customerComment || "No comment provided."}&quot;
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", mb: 1 }}>
+                    Purohit Review ({selectedReview.purohit})
+                  </Typography>
+                  <Rating value={selectedReview.purohitRating} readOnly precision={0.5} />
+                  <Typography sx={{ color: "#334155", fontFamily: "var(--font-outfit), sans-serif", mt: 1, whiteSpace: "pre-wrap" }}>
+                    &quot;{selectedReview.purohitComment || "No comment provided."}&quot;
+                  </Typography>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions sx={{ p: 2 }}>
+              <Button onClick={() => setSelectedReview(null)} variant="contained" sx={{ bgcolor: "#FF6200", color: "white", borderRadius: "8px", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: "#E65800" } }}>Close</Button>
+            </DialogActions>
+          </>
+        ) : null}
       </Dialog>
     </Box>
   );

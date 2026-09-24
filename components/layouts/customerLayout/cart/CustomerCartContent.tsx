@@ -469,6 +469,7 @@ export default function CustomerCartContent() {
 
         <DialogContent>
           <DialogContentText
+            component="div"
             sx={{
               fontFamily: '"DM Sans", sans-serif',
               color: "#64534A",

@@ -14,11 +14,14 @@ import BookingSummaryCard from './BookingSummaryCard';
 import PurohitReviewCard from './PurohitReviewCard';
 import ServiceDetailsCard from './ServiceDetailsCard';
 
+import { useSocketStore } from '@/stores/socketStore';
+
 export default function CustomerBookingDetailsContent({ bookingId }: { bookingId: string | number }) {
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { showSnackbar } = useSnackbarStore();
+  const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
 
   useEffect(() => {
     if (!bookingId) return;
@@ -39,7 +42,7 @@ export default function CustomerBookingDetailsContent({ bookingId }: { bookingId
       }
     };
     fetchDetails();
-  }, [bookingId]);
+  }, [bookingId, refreshTrigger]);
 
   const fetchDetails = async () => {
     if (!bookingId) return;

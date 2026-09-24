@@ -1,11 +1,22 @@
 "use client";
-import React from "react";
-import { Box, Typography, Button, Paper, Chip } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
-import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import { downloadOrderInvoiceAPI } from "@/api/paymentControllers";
+import { ORDER_PAYMENT_STATUS, ORDER_STATUS } from "@/utils/enums";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { ORDER_STATUS, ORDER_PAYMENT_STATUS } from "@/utils/enums";
+import CheckIcon from "@mui/icons-material/Check";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 export interface OrderItem {
   id: string | number;
@@ -18,6 +29,7 @@ export interface OrderItem {
 
 export interface CustomerOrder {
   id: string;
+  rawId?: string | number;
   orderNumber: string;
   orderDate: string;
   categoryTag?: string;
@@ -35,12 +47,20 @@ interface CustomerOrdersCardProps {
   order: CustomerOrder;
   onViewDetails: (order: CustomerOrder) => void;
   onReorder: (order: CustomerOrder) => void;
+  onDownloadInvoice?: (order: CustomerOrder) => void;
+  onPayOrder?: (order: CustomerOrder) => void;
+  isPaying?: boolean;
+  isDownloadingInvoice?: boolean;
 }
 
 export default function CustomerOrdersCard({
   order,
   onViewDetails,
   onReorder,
+  onDownloadInvoice,
+  onPayOrder,
+  isPaying = false,
+  isDownloadingInvoice = false,
 }: CustomerOrdersCardProps) {
   // Order Status Config Helper with distinct colors per status
   const getStatusChipConfig = (status: string) => {
@@ -219,7 +239,9 @@ export default function CustomerOrdersCard({
       case ORDER_STATUS.PENDING_PAYMENT:
         return (
           <>
-            <AutorenewIcon sx={{ fontSize: 18, color: "#F57F17", flexShrink: 0 }} />
+            <AutorenewIcon
+              sx={{ fontSize: 18, color: "#F57F17", flexShrink: 0 }}
+            />
             <Typography
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
@@ -237,7 +259,9 @@ export default function CustomerOrdersCard({
       case ORDER_STATUS.SHIPPED:
         return (
           <>
-            <LocalShippingOutlinedIcon sx={{ fontSize: 18, color: "#7B1FA2" }} />
+            <LocalShippingOutlinedIcon
+              sx={{ fontSize: 18, color: "#7B1FA2" }}
+            />
             <Typography
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
@@ -254,7 +278,9 @@ export default function CustomerOrdersCard({
       case ORDER_STATUS.OUT_FOR_DELIVERY:
         return (
           <>
-            <LocalShippingOutlinedIcon sx={{ fontSize: 18, color: "#00838F" }} />
+            <LocalShippingOutlinedIcon
+              sx={{ fontSize: 18, color: "#00838F" }}
+            />
             <Typography
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
@@ -389,7 +415,14 @@ export default function CustomerOrdersCard({
         }}
       >
         {/* Left Side: Order Number + Order Status Chip + Payment Status Chip */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, flexWrap: "wrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.2,
+            flexWrap: "wrap",
+          }}
+        >
           <Typography
             sx={{
               fontFamily: '"Georgia", "Times New Roman", serif',
@@ -398,7 +431,7 @@ export default function CustomerOrdersCard({
               fontSize: { xs: "15px", sm: "17px" },
             }}
           >
-            {order.orderNumber}
+            ORD-{order.id}
           </Typography>
 
           {/* Order Status Chip */}
@@ -606,7 +639,15 @@ export default function CustomerOrdersCard({
         }}
       >
         {/* Left Footer: Dynamic Status Note based on orderStatus */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flex: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            minWidth: 0,
+            py: 0.5,
+          }}
+        >
           {renderFooterStatusNote()}
         </Box>
 
@@ -616,11 +657,65 @@ export default function CustomerOrdersCard({
             display: "flex",
             alignItems: "center",
             gap: 1,
-            width: { xs: "100%", sm: "auto" },
-            flexShrink: 0,
             ml: { sm: "auto" },
+            flexWrap: "wrap",
           }}
         >
+          {/* Invoice Icon Button */}
+          <Tooltip title="Download / Print Invoice">
+            <IconButton
+              size="small"
+              disabled={isDownloadingInvoice}
+              onClick={async () => {
+                if (onDownloadInvoice) {
+                  onDownloadInvoice(order);
+                } else {
+                  try {
+                    const targetId =
+                      order.rawId || order.id.replace(/^(ORD-|#PW-|#)/i, "");
+                    const blobData = await downloadOrderInvoiceAPI(targetId);
+                    const blob = new Blob([blobData], {
+                      type: "application/pdf",
+                    });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute(
+                      "download",
+                      `Invoice_${order.orderNumber || `ORD-${order.id}`}.pdf`,
+                    );
+                    document.body.appendChild(link);
+                    link.click();
+                    if (link.parentNode) link.parentNode.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                  } catch (err) {
+                    console.error("Failed to download invoice via API:", err);
+                  }
+                }
+              }}
+              sx={{
+                color: "#C84B16",
+                bgcolor: "#FFF0E6",
+                borderColor: "#FFE0D0",
+                borderStyle: "solid",
+                borderWidth: "1px",
+                borderRadius: "10px",
+                p: 0.7,
+                "&:hover": {
+                  bgcolor: "#C84B16",
+                  color: "white",
+                  borderColor: "#C84B16",
+                },
+              }}
+            >
+              {isDownloadingInvoice ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : (
+                <ReceiptLongIcon sx={{ fontSize: 18 }} />
+              )}
+            </IconButton>
+          </Tooltip>
+
           <Button
             size="small"
             onClick={() => onViewDetails(order)}
@@ -649,31 +744,69 @@ export default function CustomerOrdersCard({
             View Details
           </Button>
 
-          <Button
-            size="small"
-            onClick={() => onReorder(order)}
-            variant="contained"
-            sx={{
-              flex: { xs: 1, sm: "none" },
-              bgcolor: "#C84B16",
-              color: "white",
-              borderRadius: "10px",
-              px: { xs: 1.5, sm: 2 },
-              py: 0.6,
-              fontFamily: '"DM Sans", sans-serif',
-              fontWeight: 700,
-              fontSize: { xs: "12px", sm: "13px" },
-              whiteSpace: "nowrap",
-              textTransform: "none",
-              boxShadow: "0 4px 12px rgba(200, 75, 22, 0.25)",
-              "&:hover": {
-                bgcolor: "#B84A17",
-                boxShadow: "0 6px 16px rgba(200, 75, 22, 0.35)",
-              },
-            }}
-          >
-            Reorder
-          </Button>
+          {(order.paymentStatus || "").toUpperCase().includes("PENDING") ||
+          (order.orderStatus || order.status || "").toUpperCase() ===
+            "PENDING_PAYMENT" ? (
+            <Button
+              size="small"
+              onClick={() => onPayOrder && onPayOrder(order)}
+              disabled={isPaying}
+              variant="contained"
+              startIcon={
+                isPaying ? (
+                  <CircularProgress size={14} color="inherit" />
+                ) : (
+                  <PaymentOutlinedIcon sx={{ fontSize: 16 }} />
+                )
+              }
+              sx={{
+                flex: { xs: 1, sm: "none" },
+                bgcolor: "#2E7D32",
+                color: "white",
+                borderRadius: "10px",
+                px: { xs: 1.5, sm: 2 },
+                py: 0.6,
+                fontFamily: '"DM Sans", sans-serif',
+                fontWeight: 700,
+                fontSize: { xs: "12px", sm: "13px" },
+                whiteSpace: "nowrap",
+                textTransform: "none",
+                boxShadow: "0 4px 12px rgba(46, 125, 50, 0.25)",
+                "&:hover": {
+                  bgcolor: "#1B5E20",
+                  boxShadow: "0 6px 16px rgba(46, 125, 50, 0.35)",
+                },
+              }}
+            >
+              {isPaying ? "Processing..." : "Complete Payment"}
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              onClick={() => onReorder(order)}
+              variant="contained"
+              sx={{
+                flex: { xs: 1, sm: "none" },
+                bgcolor: "#C84B16",
+                color: "white",
+                borderRadius: "10px",
+                px: { xs: 1.5, sm: 2 },
+                py: 0.6,
+                fontFamily: '"DM Sans", sans-serif',
+                fontWeight: 700,
+                fontSize: { xs: "12px", sm: "13px" },
+                whiteSpace: "nowrap",
+                textTransform: "none",
+                boxShadow: "0 4px 12px rgba(200, 75, 22, 0.25)",
+                "&:hover": {
+                  bgcolor: "#B84A17",
+                  boxShadow: "0 6px 16px rgba(200, 75, 22, 0.35)",
+                },
+              }}
+            >
+              Reorder
+            </Button>
+          )}
         </Box>
       </Box>
     </Paper>

@@ -15,6 +15,7 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import {
   Box,
   Collapse,
@@ -75,6 +76,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
     { text: "Customers", icon: <GroupsIcon fontSize="small" />, path: "/admin/users" },
     { text: "Services", icon: <BookOnlineIcon fontSize="small" />, path: "/admin/services" },
     { text: "Products", icon: <ShoppingBagIcon fontSize="small" />, path: "/admin/products" },
+    { text: "Product Orders", icon: <LocalShippingIcon fontSize="small" />, path: "/admin/orders" },
     {
       text: "Finance",
       icon: <LocalAtmIcon fontSize="small" />,

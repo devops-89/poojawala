@@ -457,9 +457,27 @@ export default function AddBookingForm() {
               <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, mb: 1, color: '#1e293b' }}>Select Purohit</Typography>
               <Autocomplete
                 options={purohits}
-                disabled={!values.bookingMode || !values.customerId || !values.serviceId}
-                getOptionLabel={(option) => `${option.firstName} ${option.lastName || ''} (${option.phone || option.email})`}
-                value={purohits.find(p => p.id === Number(values.purohitId)) || null}
+                isOptionEqualToValue={(option: any, val: any) => option?.id === val?.id}
+                getOptionLabel={(option: any) => {
+                  if (!option) return "";
+                  const fName = option.firstName || option.user?.firstName || "";
+                  const lName = option.lastName || option.user?.lastName || "";
+                  const contact = option.phone || option.user?.phone || option.email || option.user?.email || "";
+                  const name = `${fName} ${lName}`.trim() || `Purohit #${option.id}`;
+                  return contact ? `${name} (${contact})` : name;
+                }}
+                renderOption={(props, option: any) => {
+                  const fName = option.firstName || option.user?.firstName || "";
+                  const lName = option.lastName || option.user?.lastName || "";
+                  const contact = option.phone || option.user?.phone || option.email || option.user?.email || "";
+                  const name = `${fName} ${lName}`.trim() || `Purohit #${option.id}`;
+                  const label = contact ? `${name} (${contact})` : name;
+                  return (
+                    <li {...props} key={option.id}>
+                      {label}
+                    </li>
+                  );
+                }}
                 filterOptions={(x) => x}
                 onInputChange={(_, newInputValue, reason) => {
                   if (reason === 'input' || reason === 'clear') {

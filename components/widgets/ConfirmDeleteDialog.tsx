@@ -55,6 +55,7 @@ export default function ConfirmDeleteDialog({
       </DialogTitle>
       <DialogContent>
         <DialogContentText
+          component="div"
           sx={{
             fontFamily: "var(--font-outfit), sans-serif",
             color: "#475569",

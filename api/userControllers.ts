@@ -55,7 +55,9 @@ export const getPurohitsAPI = async (
   limit: number = 10,
   search?: string,
   verificationStatus?: string,
-  status?: string
+  status?: string,
+  city?: string,
+  serviceId?: number | string
 ) => {
   try {
     const params = new URLSearchParams({
@@ -66,6 +68,8 @@ export const getPurohitsAPI = async (
     if (search) params.append('search', search);
     if (verificationStatus) params.append('verificationStatus', verificationStatus);
     if (status) params.append('status', status);
+    if (city) params.append('city', city);
+    if (serviceId) params.append('serviceId', serviceId.toString());
 
     const response = await userSecuredApi.get(`/users/get?${params.toString()}`);
     return response.data;

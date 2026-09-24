@@ -48,3 +48,32 @@ export const downloadInvoiceAPI = async (bookingId: string | number) => {
     throw error?.response?.data || error.message;
   }
 };
+
+export const downloadOrderInvoiceAPI = async (orderId: string | number) => {
+  try {
+    const route = `/payments/order/${orderId}/invoice`;
+    const res = await paymentSecuredApi.get(route, { responseType: 'blob' });
+    return res.data;
+  } catch (error: any) {
+    throw error?.response?.data || error.message;
+  }
+};
+
+export const payOrderPaymentAPI = async (orderId: string | number) => {
+  try {
+    const route = `/payments/order/${orderId}/pay`;
+    try {
+      const res = await paymentSecuredApi.post(route);
+      return res.data;
+    } catch (err: any) {
+      if (err?.response?.status === 405) {
+        const res = await paymentSecuredApi.get(route);
+        return res.data;
+      }
+      throw err;
+    }
+  } catch (error: any) {
+    throw error?.response?.data || error.message || error;
+  }
+};
+

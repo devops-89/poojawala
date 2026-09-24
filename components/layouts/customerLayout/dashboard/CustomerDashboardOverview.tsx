@@ -61,8 +61,9 @@ export default function CustomerDashboardOverview() {
     // 1. Fetch Dashboard Stats
     getCustomerDashboardStatsAPI()
       .then((res) => {
-        if (res?.data) {
-          setStatsData(res.data);
+        const payload = res?.data?.data || res?.data || res;
+        if (payload) {
+          setStatsData(payload);
         }
       })
       .catch(console.error);
@@ -138,16 +139,24 @@ export default function CustomerDashboardOverview() {
       .catch(console.error);
   }, []);
 
+  const totalBookingsCount = Number(statsData?.totalBookings || 0);
+  const totalOrdersCount = Number(
+    statsData?.totalOrderCount ?? statsData?.totalOrders ?? 0,
+  );
+  const hasUserActivity = totalBookingsCount > 0 || totalOrdersCount > 0;
+
   return (
     <Box>
       {/* Profile Hero Card */}
       <DashboardHeroProfile profile={profile} />
 
-      {/* Stats Cards */}
-      <DashboardStatsGrid statsData={statsData} />
+      {/* Stats Cards (Shown only if user has at least 1 booking or order) */}
+      {hasUserActivity && <DashboardStatsGrid statsData={statsData} />}
 
-      {/* Recent Bookings Section */}
-      <DashboardRecentBookings recentBookings={recentBookings} />
+      {/* Recent Bookings Section (Shown only if user has activity and bookings) */}
+      {hasUserActivity && recentBookings.length > 0 && (
+        <DashboardRecentBookings recentBookings={recentBookings} />
+      )}
 
       {/* Sacred Puja Services (Max 3) */}
       <DashboardServicesSection
