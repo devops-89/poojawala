@@ -166,7 +166,7 @@ export default function ServiceDetailsCtaBanner({
                   lineHeight: 1,
                 }}
               >
-                {citiesCount || 4}
+                {citiesCount > 0 ? citiesCount : "All"}
               </Typography>
               <Typography
                 sx={{
@@ -178,7 +178,7 @@ export default function ServiceDetailsCtaBanner({
                   mt: 1,
                 }}
               >
-                CITIES SERVED
+                {citiesCount > 0 ? "CITIES SERVED" : "GLOBAL COVERAGE"}
               </Typography>
             </Box>
           </Box>

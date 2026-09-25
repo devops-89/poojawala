@@ -140,7 +140,7 @@ export default function CustomerServiceDetailsContent() {
           .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
           .filter(Boolean)
           .join(", ")
-      : "All Cities (Pan-India)";
+      : "";
 
   const formattedLanguages =
     languagesList.length > 0

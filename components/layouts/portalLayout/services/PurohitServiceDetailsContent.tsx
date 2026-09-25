@@ -159,7 +159,7 @@ export default function PurohitServiceDetailsContent() {
     citiesList
       .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
       .filter(Boolean)
-      .join(", ") || "All Cities (Pan-India)";
+      .join(", ");
 
   const formattedLanguages =
     languagesList
