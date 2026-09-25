@@ -1,51 +1,24 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Box, Button, Card, CardContent, CardMedia, Container, Grid, Link, Typography, CircularProgress } from '@mui/material';
-import { getServicesAPI } from '@/api/serviceControllers';
+"use client";
 
-const fallbackPackages = [
-  {
-    id: 1,
-    title: 'Griha Pravesh',
-    duration: '2-3 hrs',
-    price: '3,999',
-    image: '/images/home/poojaPackages/grahpravesh.webp'
-  },
-  {
-    id: 2,
-    title: 'Satyanarayan Puja',
-    duration: '2-3 hrs',
-    price: '3,999',
-    image: '/images/home/poojaPackages/satyanarayan.webp'
-  },
-  {
-    id: 3,
-    title: 'Ganesh Puja',
-    duration: '2-3 hrs',
-    price: '3,999',
-    image: '/images/home/poojaPackages/ganesh.webp'
-  },
-  {
-    id: 4,
-    title: 'Havan/Yagya',
-    duration: '2-3 hrs',
-    price: '3,999',
-    image: '/images/home/poojaPackages/havan.webp'
-  },
-  {
-    id: 5,
-    title: 'Laxmi Puja',
-    duration: '2-3 hrs',
-    price: '3,999',
-    image: '/images/home/poojaPackages/laxmi.webp'
-  }
-];
+import { getServicesAPI } from "@/api/serviceControllers";
+import EmptyStateCard from "@/components/widgets/EmptyStateCard";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
+import CheckIcon from "@mui/icons-material/Check";
+import {
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const formatDuration = (mins: number) => {
-  if (!mins) return '2-3 hrs';
+  if (!mins) return "2-3 hrs";
   const hrs = Math.floor(mins / 60);
   if (hrs > 0) {
     if (mins % 60 === 0) return `${hrs} hrs`;
@@ -62,23 +35,74 @@ export default function PopularPackages() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await getServicesAPI(1, 10, '', undefined, undefined, undefined, true); // Fetch active services
-        if (response?.success && response?.data?.data && Array.isArray(response.data.data)) {
-          const activeOnly = response.data.data.filter((item: any) => item.isActive !== false);
-          const apiPackages = activeOnly.slice(0, 5).map((item: any) => ({
-            id: item.id,
-            title: item.name,
-            duration: formatDuration(item.durationMinutes),
-            price: item.minPrice ? Math.floor(parseFloat(item.minPrice)).toLocaleString('en-IN') : '3,999',
-            image: item.iconDownloadurl || item.iconUrl || '/images/home/poojaPackages/satyanarayan.webp'
-          }));
-          setPackages(apiPackages.length > 0 ? apiPackages : fallbackPackages);
+        const response = await getServicesAPI(
+          1,
+          10,
+          "",
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        if (
+          response?.success &&
+          response?.data?.data &&
+          Array.isArray(response.data.data)
+        ) {
+          const activeOnly = response.data.data.filter(
+            (item: any) => item.isActive !== false,
+          );
+          const apiPackages = activeOnly.map((item: any) => {
+            const defaultFeatures = [
+              "Auspicious muhurat selection",
+              "Experienced & Verified Purohit",
+              "Full Vedic mantra recitation",
+              "Customized ritual & archana",
+            ];
+            const rawFeatures =
+              item.benefits || item.features || item.highlights;
+            let features = defaultFeatures;
+            if (Array.isArray(rawFeatures) && rawFeatures.length > 0) {
+              features = rawFeatures;
+            } else if (
+              typeof rawFeatures === "string" &&
+              rawFeatures.length > 0
+            ) {
+              features = rawFeatures
+                .split(",")
+                .map((s: string) => s.trim())
+                .filter(Boolean);
+            }
+
+            return {
+              id: item.id,
+              title: item.name,
+              subtitle:
+                item.shortDescription ||
+                (item.description
+                  ? item.description.length > 85
+                    ? item.description.substring(0, 85) + "..."
+                    : item.description
+                  : "Divine Vedic ritual for health & peace"),
+              duration: formatDuration(item.durationMinutes),
+              price: item.minPrice
+                ? Math.floor(parseFloat(item.minPrice)).toLocaleString("en-IN")
+                : "0",
+              unit: "/ ceremony",
+              image:
+                item.iconDownloadurl ||
+                item.iconUrl ||
+                "/images/home/poojaPackages/satyanarayan.webp",
+              features: features.slice(0, 4),
+            };
+          });
+          setPackages(apiPackages);
         } else {
-          setPackages(fallbackPackages);
+          setPackages([]);
         }
       } catch (error) {
         console.error("Failed to fetch popular packages:", error);
-        setPackages(fallbackPackages);
+        setPackages([]);
       } finally {
         setLoading(false);
       }
@@ -86,270 +110,326 @@ export default function PopularPackages() {
     fetchServices();
   }, []);
 
-  const displayPackages = packages.length > 0 ? packages : fallbackPackages;
-  const pkgCount = displayPackages.length;
-
-  const getGridSize = (count: number) => {
-    if (count === 1) return { xs: 11, sm: 6, md: 3.8 };
-    if (count === 2) return { xs: 6, sm: 5, md: 3.5 };
-    if (count === 3) return { xs: 6, sm: 4, md: 3.5 };
-    if (count === 4) return { xs: 6, sm: 4, md: 3 };
-    return { xs: 6, sm: 4, md: 2.4 };
-  };
-
-  const getCardMaxWidth = (count: number) => {
-    if (count === 1) return '340px';
-    if (count === 2) return '300px';
-    if (count === 3) return '280px';
-    if (count === 4) return '260px';
-    return '100%';
-  };
-
-  const getImageHeight = (count: number) => {
-    if (count === 1) return '160px';
-    if (count === 2) return '150px';
-    return '125px';
-  };
-
-  const gridSize = getGridSize(pkgCount);
-  const cardMaxWidth = getCardMaxWidth(pkgCount);
-  const imageHeight = getImageHeight(pkgCount);
-
   return (
-    <Box sx={{ py: 8, bgcolor: '#fff' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: "#FFF" }}>
       <Container maxWidth="lg">
         {/* Header Section */}
-        <Box sx={{ textAlign: 'center', mb: 6, position: 'relative' }}>
-          <Typography variant="h3" component="h2" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: { xs: '28px', sm: '36px', md: '48px' }, color: '#1A1A1A', mb: 2 }}>
+        <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
+          <Typography
+            variant="h3"
+            component="h2"
+            sx={{
+              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontWeight: 700,
+              fontSize: { xs: "28px", sm: "36px", md: "44px" },
+              color: "#1A1A1A",
+              mb: 1.5,
+            }}
+          >
             Popular Pooja Packages
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center',pb:5 }}>
-            <Box 
+          <Box sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
+            <Box
               component="img"
               src="/images/home/poojaPackages/dhanush.webp"
               alt="Decorative Arch"
-              sx={{ width: { xs: '90%', sm: '80%', md: '750px' }, height: { xs: 'auto', md: '47px' }, maxWidth: '100%', objectFit: 'contain'}}
+              sx={{
+                width: { xs: "90%", sm: "80%", md: "650px" },
+                height: { xs: "auto", md: "40px" },
+                maxWidth: "100%",
+                objectFit: "contain",
+              }}
             />
           </Box>
-          <Box sx={{ position: 'absolute', right: 0, bottom: 0, display: { xs: 'none', md: 'block' } }}>
-            <Button 
+          {packages.length > 0 && (
+            <Box
+              sx={{
+                position: "absolute",
+                right: 0,
+                bottom: 10,
+                display: { xs: "none", md: "block" },
+              }}
+            >
+              <Button
+                endIcon={<ArrowForwardIcon fontSize="small" />}
+                onClick={() => router.push("/services")}
+                sx={{
+                  color: "#D32F2F",
+                  background: "transparent",
+                  borderRadius: "31px",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  px: 3,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    background: "#FF6200",
+                    color: "#FFFFFF",
+                  },
+                }}
+              >
+                View all
+              </Button>
+            </Box>
+          )}
+        </Box>
+
+        {/* Mobile View All Link */}
+        {packages.length > 0 && (
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              justifyContent: "flex-end",
+              mb: 3,
+            }}
+          >
+            <Button
               endIcon={<ArrowForwardIcon fontSize="small" />}
-              onClick={() => router.push('/services')}
-              sx={{ 
-                color: '#D32F2F', 
-                background: 'transparent',
-                border: 'none',
-                borderRadius: '31px',
-                textTransform: 'none',
+              onClick={() => router.push("/services")}
+              sx={{
+                color: "#D32F2F",
+                background: "transparent",
+                borderRadius: "31px",
+                textTransform: "none",
                 fontWeight: 600,
-                px: 3,
-                transition: 'all 0.3s ease', 
-                '&:hover': { 
-                  background: '#FF6200',
-                  color: '#FFFFFF',
-                } 
+                px: 2,
+                "&:hover": {
+                  background: "#FF6200",
+                  color: "#FFFFFF",
+                },
               }}
             >
               View all
             </Button>
           </Box>
-        </Box>
+        )}
 
-        {/* Mobile View All Link */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end', mb: 3 }}>
-          <Button 
-            endIcon={<ArrowForwardIcon fontSize="small" />}
-            onClick={() => router.push('/services')}
-            sx={{ 
-              color: '#D32F2F', 
-              background: 'transparent',
-              border: 'none',
-              borderRadius: '31px',
-              textTransform: 'none',
-              fontWeight: 600,
-              px: 3,
-              transition: 'all 0.3s ease', 
-              '&:hover': { 
-                background: '#FF6200',
-                color: '#FFFFFF',
-              } 
-            }}
-          >
-            View all
-          </Button>
-        </Box>
-
-        {/* Packages Grid */}
+        {/* Packages Grid / Loading / Empty Notification State */}
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
-            <CircularProgress sx={{ color: '#FF6200' }} />
+          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+            <CircularProgress sx={{ color: "#FF6200" }} />
           </Box>
+        ) : packages.length === 0 ? (
+          <EmptyStateCard
+            icon={<AutoAwesomeOutlinedIcon sx={{ fontSize: 32 }} />}
+            title="No Pooja Packages Available"
+            description="Currently, there are no active pooja packages available. Check back soon or request a custom ceremony!"
+            actionText="Request Custom Pooja"
+            actionHref="/sign-in"
+          />
         ) : (
-        <Grid 
-          container 
-          spacing={{ xs: 2, sm: 3 }} 
-          sx={{ justifyContent: pkgCount <= 2 ? 'flex-start' : 'center' }}
-        >
-          {displayPackages.map((pkg, index) => {
-            if (pkgCount <= 2) {
-              /* Horizontal Layout for 1 or 2 Packages: Left Image, Right Details, Left-aligned */
-              return (
-                <Grid 
-                  size={{ xs: 12, sm: pkgCount === 1 ? 10 : 12, md: pkgCount === 1 ? 7 : 6 }} 
-                  key={pkg.id}
+          <Grid
+            container
+            spacing={{ xs: 3, sm: 3, md: 3.5 }}
+            sx={{ justifyContent: "center" }}
+          >
+            {packages.map((pkg) => (
+              <Grid
+                key={pkg.id}
+                size={{ xs: 12, sm: 6, md: packages.length === 3 ? 4 : 3 }}
+              >
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    borderRadius: "24px",
+                    border: "1.5px solid #EFE6D5",
+                    bgcolor: "#FFFFFF",
+                    overflow: "hidden",
+                    transition:
+                      "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
+                    "&:hover": {
+                      transform: "translateY(-6px)",
+                      boxShadow: "0 12px 32px rgba(184, 134, 11, 0.12)",
+                      borderColor: "#D4B076",
+                    },
+                  }}
                 >
-                  <Card sx={{ 
-                    width: '100%',
-                    maxWidth: pkgCount === 1 ? '580px' : '540px',
-                    display: 'flex', 
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    borderRadius: '28px',
-                    boxShadow: 'none',
-                    border: '1px solid rgba(20, 20, 20, 0.15)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    overflow: 'hidden',
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                    }
-                  }}>
+                  {/* Card Header Section */}
+                  <Box
+                    sx={{
+                      bgcolor: "#FAF4E8",
+                      p: { xs: 2.5, sm: 3 },
+                      borderBottom: "1px solid #EFE6D5",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
                     <Box
                       component="img"
                       src={pkg.image}
                       alt={pkg.title}
-                      sx={{ 
-                        width: { xs: '100%', sm: '210px', md: '240px' }, 
-                        height: { xs: '180px', sm: 'auto' }, 
-                        minHeight: { sm: '200px' },
-                        objectFit: 'cover', 
-                        flexShrink: 0
+                      sx={{
+                        width: "100%",
+                        height: "150px",
+                        objectFit: "contain",
+                        borderRadius: "12px",
+                        mb: 2,
                       }}
                     />
-                    <CardContent sx={{ 
-                      flexGrow: 1, 
-                      p: { xs: 2.5, sm: 3 }, 
-                      display: 'flex', 
-                      flexDirection: 'column', 
-                      justifyContent: 'center',
-                      alignItems: { xs: 'center', sm: 'flex-start' }, 
-                      textAlign: { xs: 'center', sm: 'left' } 
-                    }}>
-                      <Typography component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: { xs: '18px', sm: '22px' }, lineHeight: '1.25', color: '#1A1A1A', mb: 1 }}>
-                        {pkg.title}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', color: '#666', mb: 1.5, gap: 0.8 }}>
-                        <AccessTimeIcon sx={{ fontSize: '16px', color: '#FF6200' }} />
-                        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '14px', fontWeight: 500 }}>{pkg.duration}</Typography>
-                      </Box>
-                      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 2, fontSize: { xs: '18px', sm: '20px' } }}>
-                        ₹ {pkg.price} <Typography component="span" sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontWeight: 400, fontSize: '13px' }}>onwards</Typography>
-                      </Typography>
-                      <Button 
-                        variant="contained" 
-                        onClick={() => router.push('/sign-in')}
-                        sx={{
-                          background: '#FF6200',
-                          color: 'white',
-                          borderRadius: '31px',
-                          textTransform: 'none',
-                          fontWeight: 600,
-                          px: 3,
-                          py: 1,
-                          minWidth: '120px',
-                          height: '40px',
-                          fontSize: '14px',
-                          boxShadow: 'none',
-                          '&:hover': {
-                            background: '#E65800',
-                            boxShadow: 'none',
-                          }
-                        }}
-                      >
-                        Book Now
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            }
-
-            /* Vertical Layout for 3 or more Packages */
-            return (
-              <Grid 
-                size={gridSize} 
-                key={pkg.id}
-                sx={{ display: { xs: (pkgCount > 2 && index >= 2) ? 'none' : 'block', sm: 'block' } }}
-              >
-                <Card sx={{ 
-                  width: '100%',
-                  maxWidth: cardMaxWidth,
-                  height: '100%',
-                  margin: '0 auto',
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  borderRadius: '41.71px',
-                  boxShadow: 'none',
-                  border: '1px solid rgba(20, 20, 20, 0.15)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  overflow: 'hidden',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                  }
-                }}>
-                  <Box
-                    component="img"
-                    src={pkg.image}
-                    alt={pkg.title}
-                    sx={{ 
-                      height: imageHeight, 
-                      width: '100%', 
-                      objectFit: 'cover', 
-                      pt: 0, 
-                      px: 0, 
-                      pb: 0 
-                    }}
-                  />
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: pkgCount <= 2 ? 2 : 1, pb: '12px !important', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <Typography gutterBottom component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306', color: '#1A1A1A', mb: 0.2 }}>
-                      {pkg.title}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', mb: 0.5, gap: 0.5 }}>
-                      <AccessTimeIcon sx={{ fontSize: '13px' }} />
-                      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', lineHeight: '1.306' }}>{pkg.duration}</Typography>
-                    </Box>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', mb: 1, fontSize: pkgCount <= 2 ? '18px' : '16px', lineHeight: '1.306' }}>
-                      ₹ {pkg.price} <Typography component="span" sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontWeight: 400, fontSize: '11px' }}>onwards</Typography>
-                    </Typography>
-                    <Button 
-                      variant="contained" 
-                      onClick={() => router.push('/sign-in')}
+                    <Typography
+                      component="h3"
                       sx={{
-                        background: '#FF6200',
-                        color: 'white',
-                        borderRadius: '31px',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        px: 2,
-                        py: 1,
-                        minWidth: '101px',
-                        height: '34px',
-                        fontSize: '13px',
-                        boxShadow: 'none',
-                        '&:hover': {
-                          background: '#E65800',
-                          boxShadow: 'none',
-                        }
+                        fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                        fontWeight: 700,
+                        fontSize: { xs: "20px", sm: "22px" },
+                        color: "#2C1810",
+                        textAlign: "center",
+                        lineHeight: 1.25,
                       }}
                     >
-                      Book Now
+                      {pkg.title}
+                    </Typography>
+                    {pkg.subtitle && (
+                      <Typography
+                        sx={{
+                          fontStyle: "italic",
+                          fontFamily:
+                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontSize: "13px",
+                          color: "#7A624E",
+                          mt: 0.8,
+                          textAlign: "center",
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {pkg.subtitle}
+                      </Typography>
+                    )}
+                  </Box>
+
+                  {/* Card Body Section */}
+                  <Box
+                    sx={{
+                      p: { xs: 2.5, sm: 3 },
+                      flexGrow: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      bgcolor: "#FFFDF9",
+                    }}
+                  >
+                    <Box>
+                      {/* Starting From Label */}
+                      <Typography
+                        sx={{
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          letterSpacing: "0.08em",
+                          color: "#B8860B",
+                          textTransform: "uppercase",
+                          mb: 0.5,
+                        }}
+                      >
+                        STARTING FROM
+                      </Typography>
+
+                      {/* Price Display */}
+                      <Box
+                        sx={{ display: "flex", alignItems: "baseline", mb: 2 }}
+                      >
+                        <Typography
+                          sx={{
+                            fontFamily:
+                              'var(--font-outfit), "DM Sans", sans-serif',
+                            fontWeight: 800,
+                            fontSize: { xs: "26px", sm: "28px" },
+                            color: "#2C1810",
+                          }}
+                        >
+                          ₹{pkg.price}
+                        </Typography>
+                        <Typography
+                          component="span"
+                          sx={{
+                            fontFamily:
+                              'var(--font-outfit), "DM Sans", sans-serif',
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            color: "#8C6D53",
+                            ml: 1,
+                          }}
+                        >
+                          {pkg.unit || "onwards"}
+                        </Typography>
+                      </Box>
+
+                      {/* Features List */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1.3,
+                          mb: 3,
+                        }}
+                      >
+                        {pkg.features.map((feat: string, fIdx: number) => (
+                          <Box
+                            key={fIdx}
+                            sx={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: 1.2,
+                            }}
+                          >
+                            <CheckIcon
+                              sx={{
+                                fontSize: "18px",
+                                color: "#B8860B",
+                                mt: "2px",
+                                flexShrink: 0,
+                              }}
+                            />
+                            <Typography
+                              sx={{
+                                fontFamily:
+                                  'var(--font-outfit), "DM Sans", sans-serif',
+                                fontSize: "13.5px",
+                                fontWeight: 500,
+                                color: "#4A3B32",
+                                lineHeight: 1.4,
+                              }}
+                            >
+                              {feat}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+
+                    {/* Book Now Button */}
+                    <Button
+                      variant="outlined"
+                      onClick={() => router.push("/sign-in")}
+                      sx={{
+                        width: "100%",
+                        border: "1.5px solid #C88A2E",
+                        color: "#B37820",
+                        bgcolor: "#FFFBF5",
+                        borderRadius: "14px",
+                        py: 1.2,
+                        fontSize: "15px",
+                        fontWeight: 700,
+                        fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                        textTransform: "none",
+                        transition: "all 0.25s ease-in-out",
+                        "&:hover": {
+                          bgcolor: "#FF6200",
+                          color: "#FFFFFF",
+                          borderColor: "#FF6200",
+                          boxShadow: "0 6px 18px rgba(255, 98, 0, 0.25)",
+                        },
+                      }}
+                    >
+                      Book This Pooja
                     </Button>
-                  </CardContent>
+                  </Box>
                 </Card>
               </Grid>
-            );
-          })}
-        </Grid>
+            ))}
+          </Grid>
         )}
       </Container>
     </Box>

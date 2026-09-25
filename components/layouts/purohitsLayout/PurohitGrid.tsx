@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import PurohitCard from './PurohitCard';
 
 import { getPublicPurohitsListAPI } from '@/api/userControllers';
+import EmptyStateCard from '@/components/widgets/EmptyStateCard';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 
 export default function PurohitGrid() {
   const [purohits, setPurohits] = useState<any[]>([]);
@@ -148,9 +150,11 @@ export default function PurohitGrid() {
           <CircularProgress sx={{ color: '#FF6200' }} />
         </Box>
       ) : purohits.length === 0 ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666' }}>No purohits found matching your search.</Typography>
-        </Box>
+        <EmptyStateCard
+          icon={<PersonOutlinedIcon sx={{ fontSize: 32 }} />}
+          title="No Purohits Found"
+          description="No verified purohits were found matching your search term. Try searching for another name or language!"
+        />
       ) : (
         <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
           {purohits.map(Purohit => (

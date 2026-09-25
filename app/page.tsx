@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Features from "@/components/layouts/home-layout/Features";
 import HeroSection from "@/components/layouts/home-layout/HeroSection";
 import PopularPackages from "@/components/layouts/home-layout/PopularPackages";
+import PoojaProcessSection from "@/components/layouts/home-layout/PoojaProcessSection";
 import Testimonials from "@/components/layouts/home-layout/Testimonials";
 import UpcomingFestivals from "@/components/layouts/home-layout/UpcomingFestivals";
 import VerifiedPurohits from "@/components/layouts/home-layout/VerifiedPurohits";
@@ -14,6 +15,7 @@ export default function Home() {
       <HeroSection />
       <Features />
       <PopularPackages />
+      <PoojaProcessSection />
       <VerifiedPurohits />
       <UpcomingFestivals />
       <Testimonials />

@@ -1,5 +1,6 @@
-'use client';
 import { getServicesAPI } from '@/api/serviceControllers';
+import EmptyStateCard from '@/components/widgets/EmptyStateCard';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { Box, Grid, MenuItem, Pagination, Select, Typography, CircularProgress } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import ServiceCard from './ServiceCard';
@@ -190,25 +191,33 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
       </Box>
 
       {/* List Content */}
-      <Grid container spacing={3}>
-        {paginatedServices.map(service => (
-          <Grid size={{ xs: 12, md: 6 }} key={service.id}>
-            <ServiceCard
-              key={service.id}
-              title={service.title}
-              image={service.image}
-              description={service.description}
-              price={service.price}
-              duration={service.duration}
-              category={service.category}
-              language={service.language}
-              experience={service.experience + (service.experience !== 'all' ? '+ Years' : '')}
-              rating={service.rating}
-              availability={service.availability}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {paginatedServices.length === 0 ? (
+        <EmptyStateCard
+          icon={<AutoAwesomeOutlinedIcon sx={{ fontSize: 32 }} />}
+          title="No Services Found"
+          description="No pooja services are currently available matching your search or filters. Try adjusting your search query or filters!"
+        />
+      ) : (
+        <Grid container spacing={3}>
+          {paginatedServices.map(service => (
+            <Grid size={{ xs: 12, md: 6 }} key={service.id}>
+              <ServiceCard
+                key={service.id}
+                title={service.title}
+                image={service.image}
+                description={service.description}
+                price={service.price}
+                duration={service.duration}
+                category={service.category}
+                language={service.language}
+                experience={service.experience + (service.experience !== 'all' ? '+ Years' : '')}
+                rating={service.rating}
+                availability={service.availability}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

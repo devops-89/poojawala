@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 import StarIcon from '@mui/icons-material/Star';
 import { Avatar, Box, Container, Typography, CircularProgress } from '@mui/material';
 import 'swiper/css';
@@ -8,41 +9,7 @@ import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { getAllReviewsAPI } from '@/api/userControllers';
-
-const fallbackTestimonials = [
-  {
-    id: 1,
-    text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
-    name: 'Neha Sharma',
-    location: 'Mumbai',
-    image: '/images/home/usericon.webp',
-    rating: 5
-  },
-  {
-    id: 2,
-    text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
-    name: 'Neha Sharma',
-    location: 'Mumbai',
-    image: '/images/home/usericon.webp',
-    rating: 5
-  },
-  {
-    id: 3,
-    text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
-    name: 'Neha Sharma',
-    location: 'Mumbai',
-    image: '/images/home/usericon.webp',
-    rating: 5
-  },
-  {
-    id: 4,
-    text: '"Pandit ji arrived on time and the puja was performed so beautifully. Everything was well organized. Highly recommended!"',
-    name: 'Neha Sharma',
-    location: 'Mumbai',
-    image: '/images/home/usericon.webp',
-    rating: 5
-  }
-];
+import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 
 export default function Testimonials() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -61,13 +28,13 @@ export default function Testimonials() {
             image: item.customer?.profileImage || '/images/home/usericon.webp',
             rating: Math.round(parseFloat(item.customerRating || '5'))
           }));
-          setReviews(apiReviews.length > 0 ? apiReviews : fallbackTestimonials);
+          setReviews(apiReviews);
         } else {
-          setReviews(fallbackTestimonials);
+          setReviews([]);
         }
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
-        setReviews(fallbackTestimonials);
+        setReviews([]);
       } finally {
         setLoading(false);
       }
@@ -76,9 +43,12 @@ export default function Testimonials() {
     fetchReviews();
   }, []);
 
-  const displayReviews = reviews.length > 0 
-    ? [...reviews, ...reviews, ...reviews, ...reviews] 
-    : [...fallbackTestimonials, ...fallbackTestimonials];
+  const displayReviews =
+    reviews.length > 0
+      ? reviews.length < 4
+        ? [...reviews, ...reviews, ...reviews, ...reviews]
+        : reviews
+      : [];
 
   return (
     <Box sx={{ py: 10, bgcolor: '#ffffff', overflow: 'hidden',pt:4}}>
@@ -114,6 +84,14 @@ export default function Testimonials() {
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
           <CircularProgress sx={{ color: '#CC2E2E' }} />
         </Box>
+      ) : reviews.length === 0 ? (
+        <EmptyStateCard
+          icon={<RateReviewOutlinedIcon sx={{ fontSize: 32 }} />}
+          title="No Customer Reviews Yet"
+          description="Every review reflects our commitment to trust & tradition. Be the first to share your sacred experience!"
+          actionText="Book a Pooja"
+          actionHref="/sign-in"
+        />
       ) : (
         <Container maxWidth="xl">
           <Box
