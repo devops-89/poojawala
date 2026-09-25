@@ -4,7 +4,7 @@ import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, Ta
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import EventIcon from '@mui/icons-material/Event';
 import DownloadIcon from '@mui/icons-material/Download';
-import { getMyPaymentsAPI, downloadInvoiceAPI } from '@/api/paymentControllers';
+import { getMyPaymentsAPI, downloadInvoiceAPI, downloadOrderInvoiceAPI } from '@/api/paymentControllers';
 import { useLoaderStore } from '@/stores/loaderStore';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
@@ -61,27 +61,42 @@ export default function CustomerPaymentsContent() {
     setPage(0);
   };
 
-  const handleDownloadInvoice = async (bookingId: number) => {
-    if (!bookingId) {
-      showSnackbar('Invoice not available', 'error');
-      return;
-    }
+  const handleDownloadInvoice = async (row: any) => {
+    const isProductPayment = row.paymentType === 'PRODUCT_PAYMENT' || !row.bookingId;
+    const downloadId = row.id;
+
     try {
-      setDownloadingId(bookingId);
-      const blobData = await downloadInvoiceAPI(bookingId);
-      
-      const url = window.URL.createObjectURL(new Blob([blobData]));
+      setDownloadingId(downloadId);
+      showSnackbar('Downloading invoice...', 'info');
+
+      let blobData;
+      let filename = `Invoice_P-${row.id}.pdf`;
+
+      if (isProductPayment) {
+        const orderId = row.orderId || row.id;
+        blobData = await downloadOrderInvoiceAPI(orderId);
+        filename = `Invoice_Order_${orderId}.pdf`;
+      } else {
+        blobData = await downloadInvoiceAPI(row.bookingId);
+        filename = `Invoice_Booking_B-${row.bookingId}.pdf`;
+      }
+
+      const url = window.URL.createObjectURL(new Blob([blobData], { type: 'application/pdf' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Invoice_B-${bookingId}.pdf`);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       if (link.parentNode) link.parentNode.removeChild(link);
-      
+      window.URL.revokeObjectURL(url);
+
       showSnackbar('Invoice downloaded successfully', 'success');
-    } catch (error) {
-      console.error(error);
-      showSnackbar('Failed to download invoice', 'error');
+    } catch (error: any) {
+      console.error('Failed to download invoice:', error);
+      showSnackbar(
+        error?.message || error?.response?.data?.message || 'Failed to download invoice',
+        'error'
+      );
     } finally {
       setDownloadingId(null);
     }
@@ -103,9 +118,8 @@ export default function CustomerPaymentsContent() {
             <Table sx={{ minWidth: 800 }}>
               <TableHead sx={{ bgcolor: '#f8fafc' }}>
                 <TableRow>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Payment ID</TableCell>
+                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>ID</TableCell>
                   <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Type</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking ID</TableCell>
                   <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Method</TableCell>
                   <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Date</TableCell>
                   <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
@@ -116,13 +130,13 @@ export default function CustomerPaymentsContent() {
               <TableBody>
                 {payments.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center" sx={{ py: 8, fontFamily: '"DM Sans", sans-serif', color: '#64748b' }}>
+                    <TableCell colSpan={7} align="center" sx={{ py: 8, fontFamily: '"DM Sans", sans-serif', color: '#64748b' }}>
                       No payments found.
                     </TableCell>
                   </TableRow>
                 ) : (
                   payments.map((row) => {
-                    const amt = row.amount;
+                    const amt = row.customerPaidAmount || row.amount;
                     const displayAmt = (amt && Number(amt) > 0) ? `₹${amt}` : '-';
                     const dateToShow = row.paidAt || row.createdAt;
                     
@@ -131,9 +145,6 @@ export default function CustomerPaymentsContent() {
                         <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b' }}>P-{row.id}</TableCell>
                         <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#334155' }}>
                           {row.paymentType ? row.paymentType.replace(/_/g, ' ') : 'N/A'}
-                        </TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#475569' }}>
-                          {row.bookingId ? `B-${row.bookingId}` : 'N/A'}
                         </TableCell>
                         <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#475569' }}>
                           {row.paymentMethod || 'N/A'}
@@ -161,13 +172,11 @@ export default function CustomerPaymentsContent() {
                           })()}
                         </TableCell>
                         <TableCell align="center">
-                          {row.bookingId ? (
-                            <Tooltip title="Download Invoice">
-                              <IconButton onClick={() => handleDownloadInvoice(row.bookingId)} size="small" disabled={downloadingId === row.bookingId} sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
-                                {downloadingId === row.bookingId ? <CircularProgress size={20} sx={{ color: '#FF6200' }} /> : <DownloadIcon fontSize="small" />}
-                              </IconButton>
-                            </Tooltip>
-                          ) : '-'}
+                          <Tooltip title="Download Invoice">
+                            <IconButton onClick={() => handleDownloadInvoice(row)} size="small" disabled={downloadingId === row.id} sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                              {downloadingId === row.id ? <CircularProgress size={20} sx={{ color: '#FF6200' }} /> : <DownloadIcon fontSize="small" />}
+                            </IconButton>
+                          </Tooltip>
                         </TableCell>
                       </TableRow>
                     );
@@ -205,7 +214,7 @@ export default function CustomerPaymentsContent() {
         ) : (
           payments.map((row) => {
             const statusLabel = row.status ? row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase() : 'Pending';
-            const amt = row.amount;
+            const amt = row.customerPaidAmount || row.amount;
             const displayAmt = (amt && Number(amt) > 0) ? `₹${amt}` : '-';
             const dateToShow = row.paidAt || row.createdAt;
             
@@ -238,17 +247,6 @@ export default function CustomerPaymentsContent() {
                 </Typography>
                 
                 <Divider sx={{ mb: 1.5, borderColor: '#f1f5f9' }} />
-                
-                {row.bookingId && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Booking ID:</Typography>
-                    </Box>
-                    <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>
-                      B-{row.bookingId}
-                    </Typography>
-                  </Box>
-                )}
 
                 {row.paymentMethod && (
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
@@ -281,15 +279,13 @@ export default function CustomerPaymentsContent() {
                   </Typography>
                 </Box>
 
-                {row.bookingId && (
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
-                    <Tooltip title="Download Invoice">
-                      <IconButton onClick={() => handleDownloadInvoice(row.bookingId)} size="small" disabled={downloadingId === row.bookingId} sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
-                        {downloadingId === row.bookingId ? <CircularProgress size={20} sx={{ color: '#FF6200' }} /> : <DownloadIcon fontSize="small" />}
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                )}
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                  <Tooltip title="Download Invoice">
+                    <IconButton onClick={() => handleDownloadInvoice(row)} size="small" disabled={downloadingId === row.id} sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                      {downloadingId === row.id ? <CircularProgress size={20} sx={{ color: '#FF6200' }} /> : <DownloadIcon fontSize="small" />}
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </Card>
             );
           })
