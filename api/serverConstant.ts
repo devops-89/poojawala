@@ -1,7 +1,7 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 const getSocketUrl = () => {
-  const rawUrl = process.env.NEXT_PUBLIC_SOCKET_URI || process.env.NEXT_PUBLIC_SOCKET_URL || "https://poojawala.com";
+  const rawUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "https://poojawala.com";
   try {
     return new URL(rawUrl).origin;
   } catch (e) {
