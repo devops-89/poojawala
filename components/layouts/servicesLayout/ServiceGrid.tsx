@@ -198,21 +198,17 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
           description="No pooja services are currently available matching your search or filters. Try adjusting your search query or filters!"
         />
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
           {paginatedServices.map(service => (
-            <Grid size={{ xs: 12, md: 6 }} key={service.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={service.id} sx={{ display: 'flex' }}>
               <ServiceCard
-                key={service.id}
+                id={service.id}
                 title={service.title}
                 image={service.image}
                 description={service.description}
                 price={service.price}
                 duration={service.duration}
                 category={service.category}
-                language={service.language}
-                experience={service.experience + (service.experience !== 'all' ? '+ Years' : '')}
-                rating={service.rating}
-                availability={service.availability}
               />
             </Grid>
           ))}

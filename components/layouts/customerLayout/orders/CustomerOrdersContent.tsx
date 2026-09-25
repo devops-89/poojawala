@@ -153,7 +153,14 @@ const formatApiOrder = (raw: any): CustomerOrder => {
     status: rawOrderStatus,
     orderStatus: rawOrderStatus,
     paymentStatus: rawPaymentStatus,
-    totalAmount: Number(raw.totalAmount || raw.subtotal || raw.amount) || 0,
+    totalAmount:
+      Number(
+        raw.payment?.customerPaidAmount ||
+          raw.customerPaidAmount ||
+          raw.totalAmount ||
+          raw.subtotal ||
+          raw.amount,
+      ) || 0,
     deliveredDate:
       raw.deliveredDate ||
       (rawOrderStatus === ORDER_STATUS.DELIVERED

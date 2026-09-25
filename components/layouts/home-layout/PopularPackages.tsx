@@ -4,7 +4,6 @@ import { getServicesAPI } from "@/api/serviceControllers";
 import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
-import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
   Button,
@@ -53,37 +52,13 @@ export default function PopularPackages() {
             (item: any) => item.isActive !== false,
           );
           const apiPackages = activeOnly.map((item: any) => {
-            const defaultFeatures = [
-              "Auspicious muhurat selection",
-              "Experienced & Verified Purohit",
-              "Full Vedic mantra recitation",
-              "Customized ritual & archana",
-            ];
-            const rawFeatures =
-              item.benefits || item.features || item.highlights;
-            let features = defaultFeatures;
-            if (Array.isArray(rawFeatures) && rawFeatures.length > 0) {
-              features = rawFeatures;
-            } else if (
-              typeof rawFeatures === "string" &&
-              rawFeatures.length > 0
-            ) {
-              features = rawFeatures
-                .split(",")
-                .map((s: string) => s.trim())
-                .filter(Boolean);
-            }
-
             return {
               id: item.id,
               title: item.name,
-              subtitle:
+              description:
+                item.description ||
                 item.shortDescription ||
-                (item.description
-                  ? item.description.length > 85
-                    ? item.description.substring(0, 85) + "..."
-                    : item.description
-                  : "Divine Vedic ritual for health & peace"),
+                "Traditional Vedic pooja performed by an experienced Purohit.",
               duration: formatDuration(item.durationMinutes),
               price: item.minPrice
                 ? Math.floor(parseFloat(item.minPrice)).toLocaleString("en-IN")
@@ -93,7 +68,6 @@ export default function PopularPackages() {
                 item.iconDownloadurl ||
                 item.iconUrl ||
                 "/images/home/poojaPackages/satyanarayan.webp",
-              features: features.slice(0, 4),
             };
           });
           setPackages(apiPackages);
@@ -220,12 +194,13 @@ export default function PopularPackages() {
           <Grid
             container
             spacing={{ xs: 3, sm: 3, md: 3.5 }}
-            sx={{ justifyContent: "center" }}
+            sx={{ justifyContent: "center", alignItems: "stretch" }}
           >
             {packages.map((pkg) => (
               <Grid
                 key={pkg.id}
                 size={{ xs: 12, sm: 6, md: packages.length === 3 ? 4 : 3 }}
+                sx={{ display: "flex" }}
               >
                 <Card
                   elevation={0}
@@ -282,22 +257,6 @@ export default function PopularPackages() {
                     >
                       {pkg.title}
                     </Typography>
-                    {pkg.subtitle && (
-                      <Typography
-                        sx={{
-                          fontStyle: "italic",
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
-                          fontSize: "13px",
-                          color: "#7A624E",
-                          mt: 0.8,
-                          textAlign: "center",
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {pkg.subtitle}
-                      </Typography>
-                    )}
                   </Box>
 
                   {/* Card Body Section */}
@@ -356,47 +315,20 @@ export default function PopularPackages() {
                         </Typography>
                       </Box>
 
-                      {/* Features List */}
-                      <Box
+                      {/* Service Description replacing static points */}
+                      <Typography
                         sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 1.3,
+                          fontFamily:
+                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontSize: "13.5px",
+                          color: "#5C4A40",
+                          lineHeight: 1.65,
                           mb: 3,
+                          whiteSpace: "pre-wrap",
                         }}
                       >
-                        {pkg.features.map((feat: string, fIdx: number) => (
-                          <Box
-                            key={fIdx}
-                            sx={{
-                              display: "flex",
-                              alignItems: "flex-start",
-                              gap: 1.2,
-                            }}
-                          >
-                            <CheckIcon
-                              sx={{
-                                fontSize: "18px",
-                                color: "#B8860B",
-                                mt: "2px",
-                                flexShrink: 0,
-                              }}
-                            />
-                            <Typography
-                              sx={{
-                                fontFamily:
-                                  'var(--font-outfit), "DM Sans", sans-serif',
-                                fontSize: "13.5px",
-                                fontWeight: 500,
-                                color: "#4A3B32",
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              {feat}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
+                        {pkg.description}
+                      </Typography>
                     </Box>
 
                     {/* Book Now Button */}
