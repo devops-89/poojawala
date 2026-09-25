@@ -204,6 +204,7 @@ export default function PopularPackages() {
               >
                 <Card
                   elevation={0}
+                  onClick={() => router.push("/services")}
                   sx={{
                     height: "100%",
                     display: "flex",
@@ -212,6 +213,7 @@ export default function PopularPackages() {
                     border: "1.5px solid #EFE6D5",
                     bgcolor: "#FFFFFF",
                     overflow: "hidden",
+                    cursor: "pointer",
                     transition:
                       "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
                     "&:hover": {
@@ -315,16 +317,20 @@ export default function PopularPackages() {
                         </Typography>
                       </Box>
 
-                      {/* Service Description replacing static points */}
+                      {/* Service Description truncated to 3 lines */}
                       <Typography
                         sx={{
                           fontFamily:
                             'var(--font-outfit), "DM Sans", sans-serif',
                           fontSize: "13.5px",
                           color: "#5C4A40",
-                          lineHeight: 1.65,
+                          lineHeight: 1.6,
                           mb: 3,
-                          whiteSpace: "pre-wrap",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         {pkg.description}
@@ -334,7 +340,10 @@ export default function PopularPackages() {
                     {/* Book Now Button */}
                     <Button
                       variant="outlined"
-                      onClick={() => router.push("/sign-in")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push("/services");
+                      }}
                       sx={{
                         width: "100%",
                         border: "1.5px solid #C88A2E",
