@@ -143,31 +143,30 @@ export default function ServiceDetailsHeroSection({
             >
               <LocationOnIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
               <span>
-                {formattedCities ||
-                  (service.requiresVenue
-                    ? "Venue Required"
-                    : "Location Available")}
+                {formattedCities || "Global Pooja (All Cities & States)"}
               </span>
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                px: 2,
-                py: 0.85,
-                bgcolor: "#FFFBF7",
-                border: "1px solid #E4D5C7",
-                borderRadius: "8px",
-                fontSize: "13px",
-                fontWeight: 600,
-                color: "#5C4A40",
-              }}
-            >
-              <LanguageIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
-              <span>{formattedLanguages}</span>
-            </Box>
+            {formattedLanguages ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.75,
+                  px: 2,
+                  py: 0.85,
+                  bgcolor: "#FFFBF7",
+                  border: "1px solid #E4D5C7",
+                  borderRadius: "8px",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#5C4A40",
+                }}
+              >
+                <LanguageIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
+                <span>{formattedLanguages}</span>
+              </Box>
+            ) : null}
           </Box>
 
           {/* Price Section */}

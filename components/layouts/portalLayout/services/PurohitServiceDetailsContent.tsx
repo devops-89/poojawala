@@ -151,45 +151,21 @@ export default function PurohitServiceDetailsContent() {
     return [];
   };
 
-  const DEFAULT_BENEFITS = [
-    {
-      title: "Traditional Vedic Rituals",
-      description:
-        "Performed according to authentic Vedic practices without shortcuts.",
-    },
-    {
-      title: "Mantra Chanting & Sankalp",
-      description:
-        "Complete recitation of holy verses with personalized Sankalp.",
-    },
-    {
-      title: "Experienced Purohit Guidance",
-      description:
-        "Guide devotees seamlessly through every step of the ceremony.",
-    },
-    {
-      title: "Complete Pooja Guidance",
-      description:
-        "The Purohit guides devotees through every required ritual step by step.",
-    },
-  ];
-
   const citiesList = parseJsonList(service.cities);
-  const rawBenefits = parseJsonList(service.benefits);
-  const benefitsList = rawBenefits.length > 0 ? rawBenefits : DEFAULT_BENEFITS;
+  const benefitsList = parseJsonList(service.benefits);
   const languagesList = parseJsonList(service.languages);
 
   const formattedCities =
     citiesList
       .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
       .filter(Boolean)
-      .join(", ") || "All Major NCR Cities";
+      .join(", ") || "All Cities (Pan-India)";
 
   const formattedLanguages =
     languagesList
       .map((l: any) => (typeof l === "string" ? l : l?.name || ""))
       .filter(Boolean)
-      .join(" · ") || "Hindi · Sanskrit · English";
+      .join(" · ") || "";
 
   const durationText = service.durationMinutes
     ? service.durationMinutes >= 60
@@ -250,13 +226,7 @@ export default function PurohitServiceDetailsContent() {
     return "";
   };
 
-  const DEFAULT_CITIES = [
-    { name: "Ghaziabad", state: "Uttar Pradesh" },
-    { name: "Noida", state: "Uttar Pradesh" },
-    { name: "Delhi", state: "Delhi" },
-    { name: "Greater Noida", state: "Uttar Pradesh" },
-  ];
-  const displayCities = citiesList.length > 0 ? citiesList : DEFAULT_CITIES;
+  const displayCities = citiesList;
 
   const purohitFaqItems = [
     {

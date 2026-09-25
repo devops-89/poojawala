@@ -10,6 +10,10 @@ interface Props {
 }
 
 export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
+  if (!benefitsList || benefitsList.length === 0) {
+    return null;
+  }
+
   const cardIcons = [
     <SpaIcon key="1" sx={{ color: "#C84B16", fontSize: 20 }} />,
     <MenuBookIcon key="2" sx={{ color: "#C84B16", fontSize: 20 }} />,

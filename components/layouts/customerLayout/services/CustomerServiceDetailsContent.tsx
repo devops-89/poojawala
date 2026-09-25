@@ -130,39 +130,25 @@ export default function CustomerServiceDetailsContent() {
     return [];
   };
 
-  const DEFAULT_BENEFITS = [
-    {
-      title: "Traditional Hanuman Pooja",
-      description: "Performed according to authentic Vedic practices without shortcuts or modern substitutions.",
-    },
-    {
-      title: "Hanuman Chalisa Path",
-      description: "Devotional recitation of the full Hanuman Chalisa as an integral part of the pooja ceremony.",
-    },
-    {
-      title: "Experienced Purohit",
-      description: "Conducted by a Purohit with deep familiarity in Vedic ritual tradition and festival-specific practices.",
-    },
-    {
-      title: "Complete Pooja Guidance",
-      description: "The Purohit guides devotees through every required ritual, offering, and mantra — step by step.",
-    },
-  ];
-
   const citiesList = parseJsonList(service.cities);
-  const rawBenefits = parseJsonList(service.benefits);
-  const benefitsList = rawBenefits.length > 0 ? rawBenefits : DEFAULT_BENEFITS;
+  const benefitsList = parseJsonList(service.benefits);
   const languagesList = parseJsonList(service.languages);
 
-  const formattedCities = citiesList
-    .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
-    .filter(Boolean)
-    .join(", ");
+  const formattedCities =
+    citiesList.length > 0
+      ? citiesList
+          .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
+          .filter(Boolean)
+          .join(", ")
+      : "All Cities (Pan-India)";
 
-  const formattedLanguages = languagesList
-    .map((l: any) => (typeof l === "string" ? l : l?.name || ""))
-    .filter(Boolean)
-    .join(" · ") || "Hindi · Sanskrit · English";
+  const formattedLanguages =
+    languagesList.length > 0
+      ? languagesList
+          .map((l: any) => (typeof l === "string" ? l : l?.name || ""))
+          .filter(Boolean)
+          .join(" · ")
+      : "";
 
   const durationText = service.durationMinutes
     ? service.durationMinutes >= 60
@@ -221,13 +207,7 @@ export default function CustomerServiceDetailsContent() {
     return "";
   };
 
-  const DEFAULT_CITIES = [
-    { name: "Ghaziabad", state: "Uttar Pradesh" },
-    { name: "Noida", state: "Uttar Pradesh" },
-    { name: "Delhi", state: "Delhi" },
-    { name: "Greater Noida", state: "Uttar Pradesh" },
-  ];
-  const displayCities = citiesList.length > 0 ? citiesList : DEFAULT_CITIES;
+  const displayCities = citiesList;
 
   return (
     <Box sx={{ pb: 6 }}>

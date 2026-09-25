@@ -1,5 +1,5 @@
-"use client";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PublicIcon from "@mui/icons-material/Public";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 
 interface Props {
@@ -19,6 +19,8 @@ export default function ServiceDetailsInfoGrid({
   displayCities,
   getFormattedFestivalDate,
 }: Props) {
+  const isGlobalPooja = !displayCities || displayCities.length === 0;
+
   return (
     <Box sx={{ py: 3, mb: 4 }}>
       <Grid container spacing={5} sx={{ alignItems: "stretch" }}>
@@ -141,7 +143,12 @@ export default function ServiceDetailsInfoGrid({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  borderBottom: "1px solid #EADCCF",
+                  borderBottom:
+                    languagesList && languagesList.length > 0
+                      ? "1px solid #EADCCF"
+                      : service.isUpcomingFestival
+                        ? "1px solid #EADCCF"
+                        : "none",
                 }}
               >
                 <Typography
@@ -168,50 +175,52 @@ export default function ServiceDetailsInfoGrid({
                 </Typography>
               </Box>
 
-              {/* LANGUAGES */}
-              <Box
-                sx={{
-                  p: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  borderBottom: service.isUpcomingFestival ? "1px solid #EADCCF" : "none",
-                }}
-              >
-                <Typography
+              {/* LANGUAGES (Rendered ONLY if languagesList is non-empty) */}
+              {languagesList && languagesList.length > 0 && (
+                <Box
                   sx={{
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    letterSpacing: "1px",
-                    color: "#64534A",
-                    textTransform: "uppercase",
+                    p: 2.5,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderBottom: service.isUpcomingFestival ? "1px solid #EADCCF" : "none",
                   }}
                 >
-                  LANGUAGES
-                </Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {languagesList.map((langItem: any, idx: number) => {
-                    const langName = typeof langItem === "string" ? langItem : langItem?.name || "";
-                    if (!langName) return null;
-                    return (
-                      <Box
-                        key={idx}
-                        sx={{
-                          bgcolor: "#F9EBE0",
-                          color: "#C84B16",
-                          px: 1.5,
-                          py: 0.5,
-                          borderRadius: "6px",
-                          fontWeight: 600,
-                          fontSize: "13px",
-                        }}
-                      >
-                        {langName}
-                      </Box>
-                    );
-                  })}
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      letterSpacing: "1px",
+                      color: "#64534A",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    LANGUAGES
+                  </Typography>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {languagesList.map((langItem: any, idx: number) => {
+                      const langName = typeof langItem === "string" ? langItem : langItem?.name || "";
+                      if (!langName) return null;
+                      return (
+                        <Box
+                          key={idx}
+                          sx={{
+                            bgcolor: "#F9EBE0",
+                            color: "#C84B16",
+                            px: 1.5,
+                            py: 0.5,
+                            borderRadius: "6px",
+                            fontWeight: 600,
+                            fontSize: "13px",
+                          }}
+                        >
+                          {langName}
+                        </Box>
+                      );
+                    })}
+                  </Box>
                 </Box>
-              </Box>
+              )}
 
               {/* FESTIVAL DATE (Rendered ONLY if service.isUpcomingFestival === true) */}
               {service.isUpcomingFestival && (
@@ -279,7 +288,7 @@ export default function ServiceDetailsInfoGrid({
               alignItems: "flex-end",
             }}
           >
-            Available in these cities
+            {isGlobalPooja ? "Available in All Cities" : "Available in these cities"}
           </Typography>
 
           <Paper
@@ -309,50 +318,90 @@ export default function ServiceDetailsInfoGrid({
               </Typography>
             </Box>
 
-            {/* Cities Grid */}
-            <Grid container spacing={2}>
-              {displayCities.map((cityObj: any, idx: number) => {
-                const cityName = typeof cityObj === "string" ? cityObj : cityObj?.name || "";
-                const stateName = (typeof cityObj === "object" && cityObj?.state ? cityObj.state : "UTTAR PRADESH").toUpperCase();
+            {/* Cities Grid or Global Pooja Card */}
+            {isGlobalPooja ? (
+              <Paper
+                elevation={0}
+                sx={{
+                  bgcolor: "#FFFBF7",
+                  border: "1px solid #EADCCF",
+                  borderRadius: "12px",
+                  p: 3,
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 1.5,
+                  my: "auto",
+                }}
+              >
+                <PublicIcon sx={{ color: "#C84B16", fontSize: 36 }} />
+                <Typography
+                  sx={{
+                    fontFamily: '"DM Sans", sans-serif',
+                    fontWeight: 800,
+                    color: "#2C1810",
+                    fontSize: "16px",
+                  }}
+                >
+                  Global Pooja (All Cities & States)
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: '"DM Sans", sans-serif',
+                    fontSize: "13.5px",
+                    color: "#64534A",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  This sacred pooja service is available nationwide across all cities and states in India for at-home booking.
+                </Typography>
+              </Paper>
+            ) : (
+              <Grid container spacing={2}>
+                {displayCities.map((cityObj: any, idx: number) => {
+                  const cityName = typeof cityObj === "string" ? cityObj : cityObj?.name || "";
+                  const stateName = (typeof cityObj === "object" && cityObj?.state ? cityObj.state : "INDIA").toUpperCase();
 
-                if (!cityName) return null;
+                  if (!cityName) return null;
 
-                return (
-                  <Grid size={{ xs: 12, sm: 6 }} key={idx}>
-                    <Paper
-                      elevation={0}
-                      sx={{
-                        bgcolor: "#FFFBF7",
-                        border: "1px solid #EADCCF",
-                        borderRadius: "12px",
-                        p: 2,
-                      }}
-                    >
-                      <Typography
+                  return (
+                    <Grid size={{ xs: 12, sm: 6 }} key={idx}>
+                      <Paper
+                        elevation={0}
                         sx={{
-                          fontWeight: 800,
-                          color: "#2C1810",
-                          fontSize: "15px",
+                          bgcolor: "#FFFBF7",
+                          border: "1px solid #EADCCF",
+                          borderRadius: "12px",
+                          p: 2,
                         }}
                       >
-                        {cityName}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "11px",
-                          fontWeight: 700,
-                          letterSpacing: "0.8px",
-                          color: "#8C7A70",
-                          mt: 0.5,
-                        }}
-                      >
-                        {stateName}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                );
-              })}
-            </Grid>
+                        <Typography
+                          sx={{
+                            fontWeight: 800,
+                            color: "#2C1810",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {cityName}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            letterSpacing: "0.8px",
+                            color: "#8C7A70",
+                            mt: 0.5,
+                          }}
+                        >
+                          {stateName}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            )}
           </Paper>
         </Grid>
       </Grid>
