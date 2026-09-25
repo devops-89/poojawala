@@ -1,9 +1,10 @@
 "use client";
 
-import { getPurohitByIdAPI } from "@/api/userControllers";
+import { getPurohitByIdAPI, updatePurohitVerificationAPI } from "@/api/userControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
 import PurohitProfileCard from "@/components/layouts/adminLayout/purohits/components/PurohitProfileCard";
 import PurohitSideInfoCard from "@/components/layouts/adminLayout/purohits/components/PurohitSideInfoCard";
+import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import {
   Box,
@@ -13,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   Grid,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useParams } from "next/navigation";
@@ -23,6 +25,9 @@ export default function AdminPurohitDetailsContent() {
   const [purohit, setPurohit] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [previewDocUrl, setPreviewDocUrl] = useState<string | null>(null);
+  const [newStatusTarget, setNewStatusTarget] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
   useEffect(() => {
@@ -49,6 +54,44 @@ export default function AdminPurohitDetailsContent() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const confirmStatusChange = async () => {
+    if (!newStatusTarget || !purohit) return;
+    setIsSubmitting(true);
+    try {
+      const backendStatus =
+        newStatusTarget === "Approved"
+          ? "APPROVED"
+          : newStatusTarget === "Rejected"
+            ? "REJECTED"
+            : "PENDING";
+      const reason =
+        backendStatus === "REJECTED" ? rejectionReason : undefined;
+
+      const res = await updatePurohitVerificationAPI(
+        purohit.id,
+        backendStatus,
+        reason
+      );
+      if (res.success) {
+        showSnackbar("Purohit status updated successfully", "success");
+        setRejectionReason("");
+        if (params.id) {
+          fetchPurohitDetails(params.id as string);
+        }
+      } else {
+        showSnackbar(res.message || "Failed to update status", "error");
+      }
+    } catch (error: any) {
+      showSnackbar(
+        error.response?.data?.message || "Error updating status",
+        "error"
+      );
+    } finally {
+      setIsSubmitting(false);
+      setNewStatusTarget(null);
     }
   };
 
@@ -102,6 +145,10 @@ export default function AdminPurohitDetailsContent() {
     statusLabel = "Rejected";
   }
 
+  const purohitName =
+    `${purohit.firstName || ""} ${purohit.lastName || ""}`.trim() ||
+    purohit.username;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <AdminDetailsHeader
@@ -120,6 +167,7 @@ export default function AdminPurohitDetailsContent() {
             statusLabel={statusLabel}
             statusColor={statusColor}
             onPreviewDoc={(url) => setPreviewDocUrl(url)}
+            onStatusChange={(status) => setNewStatusTarget(status)}
           />
         </Grid>
 
@@ -173,6 +221,40 @@ export default function AdminPurohitDetailsContent() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ConfirmStatusDialog
+        open={Boolean(newStatusTarget)}
+        title="Change Verification Status"
+        itemName={purohitName}
+        newStatus={newStatusTarget || undefined}
+        customMessage={
+          newStatusTarget === "Rejected" ? (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 1 }}>
+              <Typography sx={{ color: "#475569", fontFamily: "var(--font-outfit), sans-serif" }}>
+                Please provide a rejection reason for <strong>{purohitName}</strong>:
+              </Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label="Rejection Reason"
+                placeholder="e.g. Invalid documents uploaded"
+                variant="outlined"
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+              />
+            </Box>
+          ) : undefined
+        }
+        onClose={() => {
+          setNewStatusTarget(null);
+          setRejectionReason("");
+        }}
+        onConfirm={confirmStatusChange}
+        loading={isSubmitting}
+      />
     </Box>
   );
 }
+

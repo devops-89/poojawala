@@ -1,5 +1,6 @@
 "use client";
 
+import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
 import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -22,6 +23,7 @@ export interface PurohitProfileCardProps {
   statusLabel: string;
   statusColor: { bg: string; text: string };
   onPreviewDoc: (url: string) => void;
+  onStatusChange?: (newStatus: string) => void;
 }
 
 export default function PurohitProfileCard({
@@ -30,6 +32,7 @@ export default function PurohitProfileCard({
   statusLabel,
   statusColor,
   onPreviewDoc,
+  onStatusChange,
 }: PurohitProfileCardProps) {
   const fullName =
     `${purohit.firstName || ""} ${purohit.lastName || ""}`.trim() ||
@@ -103,16 +106,44 @@ export default function PurohitProfileCard({
         </Avatar>
         <Box sx={{ flex: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
-            <Chip
-              label={statusLabel}
-              sx={{
-                bgcolor: statusColor.bg,
-                color: statusColor.text,
-                fontWeight: 700,
-                fontFamily: "var(--font-outfit), sans-serif",
-                borderRadius: "8px",
-              }}
-            />
+            {onStatusChange ? (
+              <AdminStatusSelect
+                value={statusLabel}
+                options={
+                  statusLabel === "Approved"
+                    ? [
+                        { value: "Approved", label: "Approved" },
+                        { value: "Rejected", label: "Rejected" },
+                      ]
+                    : statusLabel === "Rejected"
+                    ? [
+                        { value: "Rejected", label: "Rejected" },
+                        { value: "Approved", label: "Approved" },
+                      ]
+                    : [
+                        { value: "Pending Approval", label: "Pending Approval" },
+                        { value: "Approved", label: "Approved" },
+                        { value: "Rejected", label: "Rejected" },
+                      ]
+                }
+                onChange={(newStatus) => {
+                  if (newStatus !== statusLabel) {
+                    onStatusChange(newStatus);
+                  }
+                }}
+              />
+            ) : (
+              <Chip
+                label={statusLabel}
+                sx={{
+                  bgcolor: statusColor.bg,
+                  color: statusColor.text,
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                }}
+              />
+            )}
           </Box>
           <Typography
             variant="h5"

@@ -200,22 +200,36 @@ export default function AdminPurohitsContent() {
     {
       id: "status",
       label: "STATUS",
-      render: (purohit) =>
-        purohit.status === "Approved" || purohit.status === "Rejected" ? (
-          <AdminStatusSelect value={purohit.status} readOnly />
-        ) : (
+      render: (purohit) => {
+        const options =
+          purohit.status === "Approved"
+            ? [
+                { value: "Approved", label: "Approved" },
+                { value: "Rejected", label: "Rejected" },
+              ]
+            : purohit.status === "Rejected"
+            ? [
+                { value: "Rejected", label: "Rejected" },
+                { value: "Approved", label: "Approved" },
+              ]
+            : [
+                { value: "Pending Approval", label: "Pending Approval" },
+                { value: "Approved", label: "Approved" },
+                { value: "Rejected", label: "Rejected" },
+              ];
+
+        return (
           <AdminStatusSelect
             value={purohit.status}
-            options={[
-              { value: "Pending Approval", label: "Pending Approval" },
-              { value: "Approved", label: "Approved" },
-              { value: "Rejected", label: "Rejected" },
-            ]}
-            onChange={(newStatus) =>
-              setStatusChangeTarget({ purohit, newStatus })
-            }
+            options={options}
+            onChange={(newStatus) => {
+              if (newStatus !== purohit.status) {
+                setStatusChangeTarget({ purohit, newStatus });
+              }
+            }}
           />
-        ),
+        );
+      },
     },
     {
       id: "phone",
@@ -329,7 +343,10 @@ export default function AdminPurohitsContent() {
             </Box>
           ) : undefined
         }
-        onClose={() => setStatusChangeTarget(null)}
+        onClose={() => {
+          setStatusChangeTarget(null);
+          setRejectionReason("");
+        }}
         onConfirm={confirmStatusChange}
         loading={isSubmitting}
       />
