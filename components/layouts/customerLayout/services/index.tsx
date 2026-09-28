@@ -179,12 +179,14 @@ export const ServicesPage = () => {
 
         const resData = res.data?.data || res.data || res;
         const paymentUrl =
+          resData?.payment?.paymentUrl ||
+          resData?.paymentUrl ||
           resData?.razorpayPaymentLinkId ||
           resData?.paymentLink ||
           resData?.razorpayPaymentLink ||
-          resData?.paymentUrl ||
           resData?.short_url ||
-          res?.razorpayPaymentLinkId;
+          res?.data?.payment?.paymentUrl ||
+          res?.payment?.paymentUrl;
 
         if (
           paymentUrl &&
