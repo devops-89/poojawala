@@ -2,11 +2,7 @@ import { userPublicApi, userSecuredApi } from "./config";
 
 export const addServiceAPI = async (formData: FormData) => {
   try {
-    const response = await userSecuredApi.post("/service", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await userSecuredApi.post("/service", formData);
     return response.data;
   } catch (error) {
     throw error;
@@ -102,11 +98,7 @@ export const getServiceByIdAPI = async (id: string | number) => {
 
 export const editServiceAPI = async (id: string | number, formData: FormData) => {
   try {
-    const response = await userSecuredApi.patch(`/service/${id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await userSecuredApi.patch(`/service/${id}`, formData);
     return response.data;
   } catch (error) {
     throw error;

@@ -209,8 +209,7 @@ export default function PurohitMyServicesContent() {
           <TableHead sx={{ bgcolor: '#FAFAFA' }}>
             <TableRow>
               <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#333' }}>Service Name</TableCell>
-              <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#333' }}>Online Mode</TableCell>
-              <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#333' }}>Offline Mode</TableCell>
+              <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#333' }}>Service Payout</TableCell>
               <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#333' }}>Duration (Mins)</TableCell>
               <TableCell align="right" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#333' }}>Actions</TableCell>
             </TableRow>
@@ -218,7 +217,7 @@ export default function PurohitMyServicesContent() {
           <TableBody>
             {filteredServices.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
                   <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999' }}>
                     {services.length === 0 
                       ? "You haven't added any services yet. Go to \"Add Services\" to add some!"
@@ -233,38 +232,14 @@ export default function PurohitMyServicesContent() {
                     {ps.service?.name || 'Unknown Service'}
                   </TableCell>
                   <TableCell>
-                    {ps.isOnline ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CheckCircleIcon sx={{ color: '#2E7D32', fontSize: 18 }} />
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', fontWeight: 600, color: '#2E7D32' }}>
-                          ₹{ps.onlinePrice}
-                        </Typography>
-                      </Box>
-                    ) : (
-                      <CancelIcon sx={{ color: '#ccc', fontSize: 18 }} />
-                    )}
+                    <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '15px', fontWeight: 800, color: '#16a34a' }}>
+                      ₹{ps.purohitPayoutAmount ?? 0}
+                    </Typography>
                   </TableCell>
                   <TableCell>
-                    {ps.isOffline ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CheckCircleIcon sx={{ color: '#2E7D32', fontSize: 18 }} />
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', fontWeight: 600, color: '#2E7D32' }}>
-                          ₹{ps.offlinePrice}
-                        </Typography>
-                      </Box>
-                    ) : (
-                      <CancelIcon sx={{ color: '#ccc', fontSize: 18 }} />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Chip label={`${ps.durationMinutes} mins`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif' }} />
+                    <Chip label={`${ps.durationMinutes || ps.service?.durationMinutes || 60} mins`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif' }} />
                   </TableCell>
                   <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                    <Tooltip title="Edit">
-                      <IconButton size="small" sx={{ color: '#64748b' }} onClick={() => handleEditClick(ps)}>
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
                     <Tooltip title="Remove">
                       <IconButton size="small" sx={{ color: '#ef4444' }} onClick={() => handleDeleteClick(ps)}>
                         <DeleteIcon fontSize="small" />
@@ -316,29 +291,14 @@ export default function PurohitMyServicesContent() {
                 <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
                   {ps.service?.name || 'Unknown Service'}
                 </Typography>
-                <Chip label={`${ps.durationMinutes} mins`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 600 }} />
+                <Chip label={`${ps.durationMinutes || ps.service?.durationMinutes || 60} mins`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 600 }} />
               </Box>
               <Divider sx={{ mb: 1.5, borderColor: '#f1f5f9' }} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Online:</Typography>
-                {ps.isOnline ? (
-                  <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#2E7D32' }}>₹{ps.onlinePrice}</Typography>
-                ) : (
-                  <CancelIcon sx={{ color: '#ccc', fontSize: 16 }} />
-                )}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+                <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Service Payout:</Typography>
+                <Typography sx={{ fontSize: '16px', fontWeight: 800, color: '#16a34a' }}>₹{ps.purohitPayoutAmount ?? 0}</Typography>
               </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Offline:</Typography>
-                {ps.isOffline ? (
-                  <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#2E7D32' }}>₹{ps.offlinePrice}</Typography>
-                ) : (
-                  <CancelIcon sx={{ color: '#ccc', fontSize: 16 }} />
-                )}
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                <Button size="small" variant="outlined" color="primary" onClick={() => handleEditClick(ps)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600 }}>
-                  Edit
-                </Button>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button size="small" variant="outlined" color="error" onClick={() => handleDeleteClick(ps)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600 }}>
                   Delete
                 </Button>

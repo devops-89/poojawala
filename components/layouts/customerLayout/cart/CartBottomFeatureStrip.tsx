@@ -9,6 +9,7 @@ export default function CartBottomFeatureStrip() {
     <Box
       sx={{
         mt: 8,
+        mb: -4,
         width: "100vw",
         position: "relative",
         left: "50%",
@@ -24,7 +25,7 @@ export default function CartBottomFeatureStrip() {
     >
       <Box
         sx={{
-          maxWidth: 1180,
+          maxWidth: 1200,
           mx: "auto",
           display: "flex",
           justifyContent: "space-between",

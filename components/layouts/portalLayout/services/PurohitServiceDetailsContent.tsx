@@ -130,12 +130,19 @@ export default function PurohitServiceDetailsContent() {
     );
   }
 
+  const purohitPayout =
+    service?.purohitPayoutAmount && Number(service.purohitPayoutAmount) > 0
+      ? Number(service.purohitPayoutAmount)
+      : service?.agreedPrice && Number(service.agreedPrice) > 0
+      ? Number(service.agreedPrice)
+      : service?.plans?.basic?.price
+      ? Number(service.plans.basic.price)
+      : service?.priceWithoutSamagri ?? service?.minPrice ?? null;
+
   const priceDisplay =
-    service?.minPrice && service?.maxPrice
-      ? `₹${Number(service.minPrice).toLocaleString("en-IN")} - ₹${Number(service.maxPrice).toLocaleString("en-IN")}`
-      : service?.minPrice
-        ? `₹${Number(service.minPrice).toLocaleString("en-IN")}`
-        : "Price on request";
+    purohitPayout != null && Number(purohitPayout) > 0
+      ? `₹${Number(purohitPayout).toLocaleString("en-IN")}`
+      : "Price on request";
 
   const parseJsonList = (val: any) => {
     if (!val) return [];
@@ -271,6 +278,7 @@ export default function PurohitServiceDetailsContent() {
         formattedCities={formattedCities}
         formattedLanguages={formattedLanguages}
         priceDisplay={priceDisplay}
+        priceLabel="PUROHIT PAYOUT"
         heroImage={heroImage}
         onOpenBooking={handleScrollToAddForm}
         ctaText={isAlreadyAdded ? "Already Added to Profile" : "Add to My Services"}

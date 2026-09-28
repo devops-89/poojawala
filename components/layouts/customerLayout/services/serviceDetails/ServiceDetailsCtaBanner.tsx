@@ -35,11 +35,13 @@ export default function ServiceDetailsCtaBanner({
   }
 
   // Format short price for stat line (e.g. ₹2,100)
-  const shortPrice = service?.minPrice
-    ? `₹${Number(service.minPrice).toLocaleString("en-IN")}`
-    : service?.price || service?.basePrice
-      ? `₹${Number(service.price || service.basePrice).toLocaleString("en-IN")}`
-      : priceDisplay;
+  const shortPrice = service?.priceWithoutSamagri != null
+    ? `₹${Number(service.priceWithoutSamagri).toLocaleString("en-IN")}`
+    : service?.minPrice
+      ? `₹${Number(service.minPrice).toLocaleString("en-IN")}`
+      : service?.price || service?.basePrice
+        ? `₹${Number(service.price || service.basePrice).toLocaleString("en-IN")}`
+        : priceDisplay;
 
   return (
     <Paper

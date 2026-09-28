@@ -2,10 +2,10 @@
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
-import ServiceCitiesCard from "@/components/layouts/adminLayout/services/components/ServiceCitiesCard";
-import ServiceDescriptionCard from "@/components/layouts/adminLayout/services/components/ServiceDescriptionCard";
-import ServiceHeaderCard from "@/components/layouts/adminLayout/services/components/ServiceHeaderCard";
-import ServiceSpecsPricingCard from "@/components/layouts/adminLayout/services/components/ServiceSpecsPricingCard";
+import ServiceCitiesCard from "@/components/layouts/adminLayout/services/ServiceCitiesCard";
+import ServiceDescriptionCard from "@/components/layouts/adminLayout/services/ServiceDescriptionCard";
+import ServiceHeaderCard from "@/components/layouts/adminLayout/services/ServiceHeaderCard";
+import ServiceSpecsPricingCard from "@/components/layouts/adminLayout/services/ServiceSpecsPricingCard";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import EditIcon from "@mui/icons-material/Edit";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";

@@ -60,7 +60,7 @@ export default function AdminServicesContent() {
         undefined,
         undefined,
         undefined,
-        isActiveParam
+        isActiveParam,
       );
       if (res.success && res.data?.data) {
         setServices(res.data.data);
@@ -85,7 +85,7 @@ export default function AdminServicesContent() {
     try {
       const res = await updateServiceStatusAPI(
         statusChangeTarget.service.id,
-        statusChangeTarget.isActive
+        statusChangeTarget.isActive,
       );
       if (res.success) {
         showSnackbar("Status updated successfully", "success");
@@ -93,8 +93,8 @@ export default function AdminServicesContent() {
           services.map((s) =>
             s.id === statusChangeTarget.service.id
               ? { ...s, isActive: statusChangeTarget.isActive }
-              : s
-          )
+              : s,
+          ),
         );
       } else {
         showSnackbar(res.message || "Failed to update status", "error");
@@ -119,7 +119,7 @@ export default function AdminServicesContent() {
       } catch (error: any) {
         showSnackbar(
           error.response?.data?.message || "Error deleting service",
-          "error"
+          "error",
         );
       }
     }
@@ -176,15 +176,6 @@ export default function AdminServicesContent() {
               >
                 {title}
               </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
-                  fontSize: "0.8rem",
-                  color: "#64748b",
-                }}
-              >
-                Category: {catName}
-              </Typography>
             </Box>
           </Box>
         );
@@ -193,18 +184,38 @@ export default function AdminServicesContent() {
     {
       id: "price",
       label: "PRICE",
-      render: (service) => (
-        <Typography
-          sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
-            fontWeight: 700,
-            fontSize: "0.95rem",
-            color: "#1e293b",
-          }}
-        >
-          ₹{service.minPrice ?? 0} - ₹{service.maxPrice ?? 0}
-        </Typography>
-      ),
+      render: (service) => {
+        const minP =
+          service.plans?.basic?.price ??
+          service.priceWithoutSamagri ??
+          service.minPrice;
+        const maxP =
+          service.plans?.standard?.price ??
+          service.priceWithSamagri ??
+          service.maxPrice;
+
+        let priceDisplay = "₹0";
+        if (minP != null && maxP != null && minP !== maxP) {
+          priceDisplay = `₹${minP} - ₹${maxP}`;
+        } else if (minP != null) {
+          priceDisplay = `₹${minP}`;
+        } else if (maxP != null) {
+          priceDisplay = `₹${maxP}`;
+        }
+
+        return (
+          <Typography
+            sx={{
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              color: "#1e293b",
+            }}
+          >
+            {priceDisplay}
+          </Typography>
+        );
+      },
     },
     {
       id: "bookings",

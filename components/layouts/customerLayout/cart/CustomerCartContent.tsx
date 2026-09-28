@@ -284,18 +284,13 @@ export default function CustomerCartContent() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#FAF4EE",
+        bgcolor: "#ffffff",
         color: "#2C1810",
-        m: { xs: -2, sm: -3, md: -5 },
-        mt: { xs: -2, sm: -3, md: -5 },
-        mb: { xs: -2, sm: -3, md: -5 },
-        pt: { xs: 4, md: 5 },
+        pt: { xs: 3, md: 4 },
         pb: 0,
-        px: { xs: 2, sm: 4, md: 6 },
-        overflow: "hidden",
       }}
     >
-      <Box sx={{ maxWidth: 1180, mx: "auto" }}>
+      <Box sx={{ maxWidth: 1200, mx: "auto", px: { xs: 2, sm: 4, md: 6 } }}>
         {/* Header Section */}
         <CartHeader />
 

@@ -5,11 +5,15 @@ import {
   Button,
   CircularProgress,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   Grid,
   IconButton,
   InputLabel,
   MenuItem,
   Modal,
+  Radio,
+  RadioGroup,
   Select,
   TextField,
   Typography,
@@ -22,8 +26,9 @@ interface CustomerServicesBookingModalProps {
     scheduledAt: string;
     specialInstructions: string;
     bookingMode: string;
+    paymentOption: string;
     language: string;
-    members: number | string;
+    plan?: string;
   };
   setBookingForm: (form: any) => void;
   onSubmit: () => void;
@@ -107,7 +112,7 @@ export default function CustomerServicesBookingModal({
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormControl fullWidth>
               <InputLabel>Booking Mode</InputLabel>
               <Select
@@ -138,21 +143,81 @@ export default function CustomerServicesBookingModal({
               }
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              type="number"
-              label="Number of Members"
-              value={bookingForm.members}
-              onChange={(e) =>
-                setBookingForm({
-                  ...bookingForm,
-                  members:
-                    e.target.value === "" ? "" : Number(e.target.value),
-                })
-              }
-              slotProps={{ htmlInput: { min: 1 } }}
-            />
+          <Grid size={{ xs: 12 }}>
+            <FormControl component="fieldset">
+              <FormLabel
+                component="legend"
+                sx={{
+                  fontFamily: '"DM Sans", sans-serif',
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  color: "#2C1810",
+                  mb: 0.5,
+                  "&.Mui-focused": { color: "#FF6200" },
+                }}
+              >
+                Payment Option
+              </FormLabel>
+              <RadioGroup
+                row
+                name="paymentOption"
+                value={bookingForm.paymentOption || "TOKEN"}
+                onChange={(e) =>
+                  setBookingForm({
+                    ...bookingForm,
+                    paymentOption: e.target.value,
+                  })
+                }
+              >
+                <FormControlLabel
+                  value="TOKEN"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "#FF6200",
+                        "&.Mui-checked": { color: "#FF6200" },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      sx={{
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        color: "#2C1810",
+                      }}
+                    >
+                      Token Amount
+                    </Typography>
+                  }
+                  sx={{ mr: 3 }}
+                />
+                <FormControlLabel
+                  value="FULL"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "#FF6200",
+                        "&.Mui-checked": { color: "#FF6200" },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      sx={{
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        color: "#2C1810",
+                      }}
+                    >
+                      Full Payment
+                    </Typography>
+                  }
+                />
+              </RadioGroup>
+            </FormControl>
           </Grid>
           <Grid size={{ xs: 12 }}>
             <TextField
@@ -198,3 +263,4 @@ export default function CustomerServicesBookingModal({
     </Modal>
   );
 }
+

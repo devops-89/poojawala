@@ -76,8 +76,8 @@ export default function BookingServiceCard({
             Price Range
           </Typography>
           <Typography sx={{ color: "#475569", fontWeight: 600 }}>
-            ₹{booking.service?.minPrice || "0.00"} - ₹
-            {booking.service?.maxPrice || "0.00"}
+            ₹{booking.service?.priceWithoutSamagri ?? booking.service?.minPrice ?? "0.00"} - ₹
+            {booking.service?.priceWithSamagri ?? booking.service?.maxPrice ?? "0.00"}
           </Typography>
         </Box>
       </Box>

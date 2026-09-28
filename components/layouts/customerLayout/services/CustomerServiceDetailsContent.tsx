@@ -107,14 +107,23 @@ export default function CustomerServiceDetailsContent() {
     );
   }
 
+  const minP =
+    service?.plans?.basic?.price ??
+    service?.priceWithoutSamagri ??
+    service?.minPrice ??
+    service?.price ??
+    service?.basePrice;
+  const maxP =
+    service?.plans?.standard?.price ??
+    service?.priceWithSamagri ??
+    service?.maxPrice;
+
   const priceDisplay =
-    service?.minPrice && service?.maxPrice
-      ? `₹${Number(service.minPrice).toLocaleString("en-IN")} - ₹${Number(service.maxPrice).toLocaleString("en-IN")}`
-      : service?.minPrice
-        ? `₹${Number(service.minPrice).toLocaleString("en-IN")}`
-        : service?.price || service?.basePrice
-          ? `₹${Number(service.price || service.basePrice).toLocaleString("en-IN")}`
-          : "Price on request";
+    minP != null && maxP != null && minP !== maxP
+      ? `₹${Number(minP).toLocaleString("en-IN")} - ₹${Number(maxP).toLocaleString("en-IN")}`
+      : minP != null
+        ? `₹${Number(minP).toLocaleString("en-IN")}`
+        : "Price on request";
 
   const parseJsonList = (val: any) => {
     if (!val) return [];
@@ -251,7 +260,10 @@ export default function CustomerServiceDetailsContent() {
       />
 
       {/* Inline Booking Form Section */}
-      <ServiceDetailsBookingForm serviceId={Number(params.id)} />
+      <ServiceDetailsBookingForm
+        serviceId={Number(params.id)}
+        service={service}
+      />
 
       {/* Puja Samagri Add-on Section */}
       <ServiceDetailsPujaSamagri serviceName={service.name || service.title} />

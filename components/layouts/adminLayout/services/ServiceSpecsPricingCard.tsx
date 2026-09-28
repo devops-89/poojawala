@@ -461,13 +461,13 @@ export default function ServiceSpecsPricingCard({
               <Typography
                 sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
               >
-                Minimum Price
+                Basic Plan Price
               </Typography>
             </Box>
             <Typography
               sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
             >
-              ₹{service.minPrice}
+              ₹{service.plans?.basic?.price ?? service.priceWithoutSamagri ?? service.minPrice ?? 0}
             </Typography>
           </Box>
 
@@ -498,13 +498,50 @@ export default function ServiceSpecsPricingCard({
               <Typography
                 sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
               >
-                Maximum Price
+                Standard Plan Price
               </Typography>
             </Box>
             <Typography
               sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
             >
-              ₹{service.maxPrice}
+              ₹{service.plans?.standard?.price ?? service.priceWithSamagri ?? service.maxPrice ?? 0}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              p: 2,
+              bgcolor: "#f8fafc",
+              borderRadius: "12px",
+              mb: 2,
+              border: "1px solid #f1f5f9",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Box
+                sx={{
+                  p: 1,
+                  bgcolor: "#FFF0E6",
+                  borderRadius: "8px",
+                  color: "#FF6200",
+                  display: "flex",
+                }}
+              >
+                <PercentIcon fontSize="small" />
+              </Box>
+              <Typography
+                sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
+              >
+                Token Percentage
+              </Typography>
+            </Box>
+            <Typography
+              sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
+            >
+              {service.tokenPercentage ? `${service.tokenPercentage}%` : "N/A"}
             </Typography>
           </Box>
 

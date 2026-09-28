@@ -12,6 +12,7 @@ interface Props {
   formattedCities: string;
   formattedLanguages: string;
   priceDisplay: string;
+  priceLabel?: string;
   heroImage: string;
   onOpenBooking: () => void;
   ctaText?: string;
@@ -24,6 +25,7 @@ export default function ServiceDetailsHeroSection({
   formattedCities,
   formattedLanguages,
   priceDisplay,
+  priceLabel,
   heroImage,
   onOpenBooking,
   ctaText,
@@ -181,7 +183,7 @@ export default function ServiceDetailsHeroSection({
                 mb: 0.5,
               }}
             >
-              STARTING FROM
+              {priceLabel || "STARTING FROM"}
             </Typography>
             <Typography
               variant="h3"

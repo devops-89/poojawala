@@ -2,43 +2,23 @@
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { getMeAPI } from '@/api/authControllers';
 import { getCustomerBookingsAPI } from '@/api/bookingControllers';
 import { getAllServicesAPI } from '@/api/serviceControllers';
-import {
-  getCustomerAddressesAPI,
-  getCustomerDashboardStatsAPI,
-} from '@/api/userControllers';
 
 import ServiceDetailsPujaSamagri from '../services/serviceDetails/ServiceDetailsPujaSamagri';
-import DashboardHeroProfile from './DashboardHeroProfile';
 import DashboardRecentBookings from './DashboardRecentBookings';
 import DashboardServicesSection from './DashboardServicesSection';
-import DashboardStatsGrid from './DashboardStatsGrid';
 
 export default function CustomerDashboardOverview() {
-  const [statsData, setStatsData] = useState<any>({
-    totalBookings: 0,
-    pendingBookings: 0,
-    completedBookings: 0,
-  });
-  const [profile, setProfile] = useState<any>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [loadingServices, setLoadingServices] = useState<boolean>(true);
-  const [userLocation, setUserLocation] = useState<{
-    city: string;
-    state: string;
-  }>({
-    city: 'Noida',
-    state: 'Uttar Pradesh',
-  });
 
-  const fetchServicesData = async (userCity: string, userState: string) => {
+  const fetchServicesData = async () => {
     setLoadingServices(true);
     try {
-      // Max 3 services requested
-      const res = await getAllServicesAPI(1, 3, '', true, userCity, userState);
+      // Fetch max 3 active services without city/state filter
+      const res = await getAllServicesAPI(1, 3, '', true);
       let list: any[] = [];
       const payload = res?.data || res;
       if (Array.isArray(payload?.services)) {
@@ -58,78 +38,10 @@ export default function CustomerDashboardOverview() {
   };
 
   useEffect(() => {
-    // 1. Fetch Dashboard Stats
-    getCustomerDashboardStatsAPI()
-      .then((res) => {
-        const payload = res?.data?.data || res?.data || res;
-        if (payload) {
-          setStatsData(payload);
-        }
-      })
-      .catch(console.error);
+    // 1. Fetch Services
+    fetchServicesData();
 
-    // 2. Fetch User Profile & Location for Services
-    getMeAPI()
-      .then(async (res) => {
-        const userObj = res?.data || res;
-        if (userObj) {
-          setProfile(userObj);
-        }
-
-        const extractAddressList = (resObj: any) => {
-          if (!resObj) return [];
-          if (Array.isArray(resObj)) return resObj;
-          if (Array.isArray(resObj?.data?.data)) return resObj.data.data;
-          if (Array.isArray(resObj?.data?.addresses)) return resObj.data.addresses;
-          if (Array.isArray(resObj?.data)) return resObj.data;
-          if (Array.isArray(resObj?.addresses)) return resObj.addresses;
-          return [];
-        };
-
-        const findDefaultAddress = (list: any[]) => {
-          if (!Array.isArray(list) || list.length === 0) return null;
-          const found = list.find(
-            (a: any) =>
-              a?.isDefault === true ||
-              a?.isdefault === true ||
-              a?.is_default === true ||
-              String(a?.isDefault).toLowerCase() === 'true' ||
-              String(a?.isdefault).toLowerCase() === 'true' ||
-              String(a?.is_default).toLowerCase() === 'true' ||
-              a?.isDefault === 1 ||
-              a?.isdefault === 1 ||
-              a?.is_default === 1
-          );
-          return found || list[0];
-        };
-
-        let addresses: any[] = [];
-        try {
-          const addrRes = await getCustomerAddressesAPI();
-          addresses = extractAddressList(addrRes);
-        } catch (e) {
-          console.error('Failed to fetch customer addresses:', e);
-        }
-
-        if (addresses.length === 0 && userObj) {
-          addresses = extractAddressList(userObj);
-        }
-
-        const defaultAddr = findDefaultAddress(addresses);
-
-        let city = defaultAddr?.city || userObj?.city || userObj?.address?.city || '';
-        let state = defaultAddr?.state || userObj?.state || userObj?.address?.state || '';
-
-        const finalCity = city || 'Noida';
-        const finalState = state || 'Uttar Pradesh';
-        setUserLocation({ city: finalCity, state: finalState });
-        fetchServicesData(finalCity, finalState);
-      })
-      .catch(() => {
-        fetchServicesData('Noida', 'Uttar Pradesh');
-      });
-
-    // 3. Fetch Recent Bookings
+    // 2. Fetch Recent Bookings
     getCustomerBookingsAPI()
       .then((res) => {
         if (res?.data?.bookings) {
@@ -139,22 +51,10 @@ export default function CustomerDashboardOverview() {
       .catch(console.error);
   }, []);
 
-  const totalBookingsCount = Number(statsData?.totalBookings || 0);
-  const totalOrdersCount = Number(
-    statsData?.totalOrderCount ?? statsData?.totalOrders ?? 0,
-  );
-  const hasUserActivity = totalBookingsCount > 0 || totalOrdersCount > 0;
-
   return (
     <Box>
-      {/* Profile Hero Card */}
-      <DashboardHeroProfile profile={profile} />
-
-      {/* Stats Cards (Shown only if user has at least 1 booking or order) */}
-      {hasUserActivity && <DashboardStatsGrid statsData={statsData} />}
-
-      {/* Recent Bookings Section (Shown only if user has activity and bookings) */}
-      {hasUserActivity && recentBookings.length > 0 && (
+      {/* Recent Bookings Section (Shown if user has recent bookings) */}
+      {recentBookings.length > 0 && (
         <DashboardRecentBookings recentBookings={recentBookings} />
       )}
 
@@ -162,7 +62,6 @@ export default function CustomerDashboardOverview() {
       <DashboardServicesSection
         services={services}
         loadingServices={loadingServices}
-        userLocation={userLocation}
       />
 
       {/* Pooja Samagri & Products (Max 3) */}

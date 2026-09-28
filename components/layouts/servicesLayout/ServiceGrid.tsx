@@ -1,4 +1,4 @@
-import { getServicesAPI } from '@/api/serviceControllers';
+import { getAllServicesAPI, getServicesAPI } from '@/api/serviceControllers';
 import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { Box, Grid, MenuItem, Pagination, Select, Typography, CircularProgress } from '@mui/material';
@@ -9,9 +9,17 @@ interface ServiceGridProps {
   activeCategory: string;
   activeFilters?: any;
   searchQuery?: string;
+  selectedState?: string;
+  selectedCity?: string;
 }
 
-export default function ServiceGrid({ activeCategory, activeFilters, searchQuery }: ServiceGridProps) {
+export default function ServiceGrid({
+  activeCategory,
+  activeFilters,
+  searchQuery,
+  selectedState,
+  selectedCity,
+}: ServiceGridProps) {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -25,8 +33,23 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
     const fetchServices = async () => {
       try {
         setLoading(true);
-        // Using getServicesAPI from serviceControllers with isActive = true
-        const response = await getServicesAPI(1, 100, searchQuery || "", undefined, undefined, undefined, true);
+        const cityParam =
+          selectedCity && selectedCity !== 'All' && selectedCity !== 'All Cities'
+            ? selectedCity
+            : undefined;
+        const stateParam =
+          selectedState && selectedState !== 'All' && selectedState !== 'All States'
+            ? selectedState
+            : undefined;
+
+        const response = await getAllServicesAPI(
+          1,
+          100,
+          searchQuery || "",
+          true,
+          cityParam,
+          stateParam
+        );
         
         // Postman showed nested data for some endpoints, trying to handle that safely.
         let fetchedServices = [];
@@ -56,9 +79,9 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
           category: s.category?.name || s.category || 'All',
           description: s.description || '',
           duration: s.durationMinutes ? `${Math.round(s.durationMinutes/60)} hr` : (s.duration || '1 hr'),
-          price: (s.minPrice && s.maxPrice) ? `${s.minPrice} - ${s.maxPrice}` : (s.minPrice?.toString() || s.basePrice?.toString() || s.price?.toString() || '0'),
-          image: s.iconDownloadurl  || '/images/home/poojaPackages/satyanarayan.webp',
-          language: s.language || 'all', // Changed to 'all' so language filter doesn't hide it if filter is on
+          price: (s.priceWithoutSamagri != null && s.priceWithSamagri != null) ? `${s.priceWithoutSamagri} - ${s.priceWithSamagri}` : (s.minPrice && s.maxPrice) ? `${s.minPrice} - ${s.maxPrice}` : ((s.priceWithoutSamagri ?? s.minPrice)?.toString() || s.basePrice?.toString() || s.price?.toString() || '0'),
+          image: s.iconDownloadurl || s.iconUrl || s.imageUrl || '/images/home/poojaPackages/satyanarayan.webp',
+          language: s.language || 'all',
           experience: s.experience || 'all',
           location: s.location || 'all',
           availability: s.availability || s.serviceMode || 'All',
@@ -75,7 +98,7 @@ export default function ServiceGrid({ activeCategory, activeFilters, searchQuery
     };
     
     fetchServices();
-  }, [searchQuery]);
+  }, [searchQuery, selectedState, selectedCity]);
 
   // Reset page to 1 when category changes and scroll to top
   useEffect(() => {

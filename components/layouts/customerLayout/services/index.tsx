@@ -40,14 +40,14 @@ export const ServicesPage = () => {
     scheduledAt: string;
     specialInstructions: string;
     bookingMode: string;
+    paymentOption: string;
     language: string;
-    members: number | string;
   }>({
     scheduledAt: "",
     specialInstructions: "",
     bookingMode: "OFFLINE",
+    paymentOption: "TOKEN",
     language: "Hindi",
-    members: 1,
   });
 
   useEffect(() => {
@@ -127,8 +127,8 @@ export const ServicesPage = () => {
       scheduledAt: "",
       specialInstructions: "",
       bookingMode: "OFFLINE",
+      paymentOption: "TOKEN",
       language: "Hindi",
-      members: 1,
     });
   };
 
@@ -160,22 +160,41 @@ export const ServicesPage = () => {
       }
 
       const payload = {
-        serviceId: selectedServiceId,
-        customerAddressId: customerAddressId,
+        serviceId: Number(selectedServiceId),
         scheduledAt: new Date(bookingForm.scheduledAt).toISOString(),
-        specialInstructions: bookingForm.specialInstructions,
-        bookingMode: bookingForm.bookingMode,
+        customerAddressId: customerAddressId ? Number(customerAddressId) : null,
+        specialInstructions: bookingForm.specialInstructions || "",
+        plan: "BASIC",
+        paymentOption: bookingForm.paymentOption || "TOKEN",
+        bookingMode: bookingForm.bookingMode || "OFFLINE",
         customFields: {
-          language: bookingForm.language,
-          members: Number(bookingForm.members),
+          language: bookingForm.language || "Hindi",
         },
       };
 
       const res = await customerCreateBookingAPI(payload);
-      if (res.success || res.statusCode === 201) {
+      if (res.success || res.statusCode === 201 || res.statusCode === 200) {
         showSnackbar("Booking request created successfully!", "success");
         handleCloseBooking();
-        router.push("/customer/bookings");
+
+        const resData = res.data?.data || res.data || res;
+        const paymentUrl =
+          resData?.razorpayPaymentLinkId ||
+          resData?.paymentLink ||
+          resData?.razorpayPaymentLink ||
+          resData?.paymentUrl ||
+          resData?.short_url ||
+          res?.razorpayPaymentLinkId;
+
+        if (
+          paymentUrl &&
+          typeof paymentUrl === "string" &&
+          (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://"))
+        ) {
+          window.location.href = paymentUrl;
+        } else {
+          router.push("/customer/bookings");
+        }
       }
     } catch (error: any) {
       console.error("Booking failed:", error);

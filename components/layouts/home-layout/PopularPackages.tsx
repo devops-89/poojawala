@@ -60,9 +60,11 @@ export default function PopularPackages() {
                 item.shortDescription ||
                 "Traditional Vedic pooja performed by an experienced Purohit.",
               duration: formatDuration(item.durationMinutes),
-              price: item.minPrice
-                ? Math.floor(parseFloat(item.minPrice)).toLocaleString("en-IN")
-                : "0",
+              price: item.priceWithoutSamagri != null
+                ? Math.floor(parseFloat(item.priceWithoutSamagri)).toLocaleString("en-IN")
+                : item.minPrice
+                  ? Math.floor(parseFloat(item.minPrice)).toLocaleString("en-IN")
+                  : "0",
               unit: "/ ceremony",
               image:
                 item.iconDownloadurl ||

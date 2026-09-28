@@ -15,11 +15,12 @@ import {
   Pagination,
 } from '@mui/material';
 import { getAllServicesAPI, getPurohitServicesAPI } from '@/api/serviceControllers';
-import { getCustomerAddressesAPI } from '@/api/userControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'next/navigation';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { City, State } from 'country-state-city';
+import CustomerServicesFilters from '@/components/layouts/customerLayout/services/CustomerServicesFilters';
 
 export default function PurohitServicesContent() {
   const router = useRouter();
@@ -28,59 +29,39 @@ export default function PurohitServicesContent() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedCity, setSelectedCity] = useState<string>("All");
+  const [selectedState, setSelectedState] = useState<string>("All");
+
   const { showSnackbar } = useSnackbarStore();
   const { fetchProfile } = useUserStore();
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      if (searchTerm !== debouncedSearch) {
+        setPage(1);
+      }
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const fetchServices = async () => {
     try {
       setLoading(true);
 
-      // Get Purohit's profile and default service area for city and state filters
       const profileRes = await fetchProfile();
       const currentProfile = profileRes || useUserStore.getState().profile;
       const userObj = currentProfile?.data || currentProfile;
 
-      // Extract serviceAreas (or addresses fallback)
-      let serviceAreas: any[] =
-        userObj?.serviceAreas ||
-        currentProfile?.serviceAreas ||
-        userObj?.addresses ||
-        currentProfile?.addresses ||
-        userObj?.user?.addresses ||
-        [];
-
-      if (!serviceAreas || serviceAreas.length === 0) {
-        try {
-          const addrRes = await getCustomerAddressesAPI();
-          const d = addrRes?.data || addrRes;
-          if (Array.isArray(d)) {
-            serviceAreas = d;
-          } else if (d?.data && Array.isArray(d.data)) {
-            serviceAreas = d.data;
-          }
-        } catch (err) {
-          console.error("Error fetching service areas / addresses:", err);
-        }
-      }
-
-      let purohitCity = "";
-      let purohitState = "";
-      if (serviceAreas && serviceAreas.length > 0) {
-        const defaultArea =
-          serviceAreas.find((sa: any) => sa.isDefault === true || sa.isDefault === "true") || serviceAreas[0];
-        if (defaultArea?.city) purohitCity = String(defaultArea.city).trim();
-        if (defaultArea?.state) purohitState = String(defaultArea.state).trim();
-      }
-
-      if (!purohitCity) {
-        purohitCity = userObj?.city || userObj?.profile?.city || userObj?.purohitProfile?.city || "";
-      }
-      if (!purohitState) {
-        purohitState = userObj?.state || userObj?.profile?.state || userObj?.purohitProfile?.state || "";
-      }
+      const cityParam =
+        selectedCity && selectedCity !== "All" ? selectedCity : undefined;
+      const stateParam =
+        selectedState && selectedState !== "All" ? selectedState : undefined;
 
       const [res, myRes] = await Promise.all([
-        getAllServicesAPI(page, 6, "", true, purohitCity, purohitState),
+        getAllServicesAPI(page, 6, debouncedSearch, true, cityParam, stateParam),
         getPurohitServicesAPI(1, 100)
       ]);
       
@@ -115,7 +96,7 @@ export default function PurohitServicesContent() {
 
   useEffect(() => {
     fetchServices();
-  }, [page]);
+  }, [page, debouncedSearch, selectedCity, selectedState]);
 
   const handleCardClick = (serviceId: number, isAlreadyAdded: boolean) => {
     if (isAlreadyAdded) {
@@ -125,13 +106,23 @@ export default function PurohitServicesContent() {
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-        <CircularProgress sx={{ color: '#FF6200' }} />
-      </Box>
-    );
-  }
+  // Indian States & Cities calculation
+  const indianStates = State.getStatesOfCountry("IN") || [];
+  const stateOptions = indianStates.map((s) => s.name).sort();
+
+  const selectedStateObj =
+    selectedState && selectedState !== "All"
+      ? indianStates.find(
+          (s) =>
+            s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+        )
+      : null;
+
+  const rawCities = selectedStateObj
+    ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
+    : City.getCitiesOfCountry("IN") || [];
+
+  const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -160,16 +151,40 @@ export default function PurohitServicesContent() {
         </Box>
       </Box>
 
-      <Grid container spacing={3}>
-        {services.length === 0 ? (
-          <Grid size={{ xs: 12 }}>
-            <Paper sx={{ p: 4, textAlign: 'center', borderRadius: '16px' }}>
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>
-                No services available at the moment.
-              </Typography>
-            </Paper>
-          </Grid>
-        ) : (
+      {/* Search & State/City Filters */}
+      <CustomerServicesFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        stateOptions={stateOptions}
+        selectedState={selectedState}
+        onStateChange={(val) => {
+          setSelectedState(val);
+          setSelectedCity("All");
+          setPage(1);
+        }}
+        cityOptions={cityOptions}
+        selectedCity={selectedCity}
+        onCityChange={(val) => {
+          setSelectedCity(val);
+          setPage(1);
+        }}
+      />
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+          <CircularProgress sx={{ color: '#FF6200' }} />
+        </Box>
+      ) : (
+        <Grid container spacing={3}>
+          {services.length === 0 ? (
+            <Grid size={{ xs: 12 }}>
+              <Paper sx={{ p: 4, textAlign: 'center', borderRadius: '16px' }}>
+                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>
+                  No services available at the moment.
+                </Typography>
+              </Paper>
+            </Grid>
+          ) : (
           services.map((service: any) => {
             const isAlreadyAdded = myServiceIds.includes(service.id);
             return (
@@ -307,7 +322,7 @@ export default function PurohitServicesContent() {
                       }}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        {/* Price */}
+                        {/* Payout / Price */}
                         <Box>
                           <Typography
                             sx={{
@@ -319,7 +334,7 @@ export default function PurohitServicesContent() {
                               letterSpacing: '0.5px',
                             }}
                           >
-                            Price Range
+                            Purohit Payout
                           </Typography>
                           <Typography
                             sx={{
@@ -329,7 +344,11 @@ export default function PurohitServicesContent() {
                               fontSize: '0.95rem',
                             }}
                           >
-                            ₹{service.minPrice} - ₹{service.maxPrice}
+                            {service.purohitPayoutAmount && Number(service.purohitPayoutAmount) > 0
+                              ? `₹${service.purohitPayoutAmount}`
+                              : service.plans?.basic?.price
+                              ? `₹${service.plans.basic.price}`
+                              : `₹${service.minPrice ?? service.priceWithoutSamagri ?? 0}`}
                           </Typography>
                         </Box>
 
@@ -406,6 +425,7 @@ export default function PurohitServicesContent() {
           })
         )}
       </Grid>
+      )}
 
       {totalPages > 0 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>

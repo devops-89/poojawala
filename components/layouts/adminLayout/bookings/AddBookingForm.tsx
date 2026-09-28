@@ -525,9 +525,8 @@ export default function AddBookingForm() {
             {values.serviceId && values.purohitId && (() => {
               const purohitService = availableServices.find((ps: any) => (ps.serviceId || ps.service?.id) === Number(values.serviceId));
               if (!purohitService || !purohitService.service) return null;
-              
               const selectedService = purohitService.service;
-              const displayPrice = purohitService.customPrice || purohitService.price || selectedService.minPrice || 0;
+              const displayPrice = purohitService.customPrice || purohitService.price || selectedService.priceWithoutSamagri || selectedService.minPrice || 0;
               const displayDuration = purohitService.durationMinutes || selectedService.durationMinutes || 60;
               const imageSrc = selectedService.iconDownloadurl || selectedService.iconUrl || selectedService.coverImage;
 
@@ -556,7 +555,11 @@ export default function AddBookingForm() {
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: 'right' }}>
-                      {selectedService.minPrice && selectedService.maxPrice ? (
+                      {(selectedService.priceWithoutSamagri != null && selectedService.priceWithSamagri != null) ? (
+                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#10b981', fontSize: '1.2rem' }}>
+                          ₹{selectedService.priceWithoutSamagri} - ₹{selectedService.priceWithSamagri}
+                        </Typography>
+                      ) : selectedService.minPrice && selectedService.maxPrice ? (
                         <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#10b981', fontSize: '1.2rem' }}>
                           ₹{selectedService.minPrice} - ₹{selectedService.maxPrice}
                         </Typography>

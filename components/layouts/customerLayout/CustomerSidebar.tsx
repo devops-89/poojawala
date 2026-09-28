@@ -4,12 +4,9 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventNoteIcon from "@mui/icons-material/EventNote";
-import LocalMallIcon from "@mui/icons-material/LocalMall";
 import LogoutIcon from "@mui/icons-material/Logout";
-import PaymentIcon from "@mui/icons-material/Payment";
 import PersonIcon from "@mui/icons-material/Person";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import {
   Avatar,
   Box,
@@ -62,22 +59,6 @@ export default function CustomerSidebar({
       text: "Pooja Products",
       icon: <ShoppingBagIcon />,
       path: "/customer/products",
-    },
-    {
-      text: "My Bookings",
-      icon: <EventNoteIcon />,
-      path: "/customer/bookings",
-    },
-    {
-      text: "My Orders",
-      icon: <LocalMallIcon />,
-      path: "/customer/orders",
-    },
-    { text: "My Payments", icon: <PaymentIcon />, path: "/customer/payments" },
-    {
-      text: "Get Support",
-      icon: <SupportAgentIcon />,
-      path: "/customer/get-support",
     },
   ];
 

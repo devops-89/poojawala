@@ -24,13 +24,12 @@ import { useRouter } from "next/navigation";
 interface DashboardServicesSectionProps {
   services: any[];
   loadingServices: boolean;
-  userLocation: { city: string; state: string };
+  userLocation?: { city: string; state: string };
 }
 
 export default function DashboardServicesSection({
   services,
   loadingServices,
-  userLocation,
 }: DashboardServicesSectionProps) {
   const router = useRouter();
 
@@ -48,33 +47,16 @@ export default function DashboardServicesSection({
           mb: 3,
         }}
       >
-        <Box>
-          <Typography
-            variant="h5"
-            sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              fontWeight: 800,
-              color: "#1e293b",
-            }}
-          >
-            Sacred Pooja Services
-          </Typography>
-          <Box
-            sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.3 }}
-          >
-            <LocationOnIcon sx={{ color: "#FF6200", fontSize: 16 }} />
-            <Typography
-              sx={{
-                fontFamily: '"DM Sans", sans-serif',
-                color: "#64748b",
-                fontSize: "13.5px",
-                fontWeight: 600,
-              }}
-            >
-              Available in {userLocation.city}, {userLocation.state}
-            </Typography>
-          </Box>
-        </Box>
+        <Typography
+          variant="h5"
+          sx={{
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontWeight: 800,
+            color: "#1e293b",
+          }}
+        >
+          Sacred Pooja Services
+        </Typography>
 
         <Button
           component={NextLink}
@@ -150,7 +132,7 @@ export default function DashboardServicesSection({
                     fontSize: "18px",
                   }}
                 >
-                  No Services Listed in {userLocation.city} Yet
+                  No Services Available Yet
                 </Typography>
                 <Chip
                   label="Notice"
@@ -173,10 +155,7 @@ export default function DashboardServicesSection({
                   maxWidth: 680,
                 }}
               >
-                We are actively onboarding verified purohits in{" "}
-                {userLocation.city}, {userLocation.state}. In the meantime, you
-                can explore available services across regions or request custom
-                pooja arrangements!
+                We are actively onboarding verified purohits and adding new pooja services. Explore available services across regions or request custom pooja arrangements!
               </Typography>
             </Box>
           </Box>
@@ -205,8 +184,8 @@ export default function DashboardServicesSection({
         <Grid container spacing={3}>
           {displayServices.map((item) => {
             const isSingle = count === 1;
-            const minP = item.minPrice || item.price || item.basePrice || 0;
-            const maxP = item.maxPrice;
+            const minP = item.priceWithoutSamagri ?? item.minPrice ?? item.price ?? item.basePrice ?? 0;
+            const maxP = item.priceWithSamagri ?? item.maxPrice;
             const priceDisplay =
               maxP && Number(maxP) > Number(minP)
                 ? `₹${Number(minP).toLocaleString("en-IN")} - ₹${Number(maxP).toLocaleString("en-IN")}`

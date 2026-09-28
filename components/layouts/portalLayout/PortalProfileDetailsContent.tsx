@@ -317,30 +317,80 @@ export default function PortalProfileDetailsContent() {
 
             {purohitServices && purohitServices.length > 0 ? (
               <Grid container spacing={2}>
-                {purohitServices.map((serviceItem: any) => (
-                  <Grid size={{ xs: 12, sm: 6 }} key={serviceItem.id}>
-                    <Box sx={{ p: 2, borderRadius: '12px', border: '1px solid #eee', bgcolor: '#fafafa' }}>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 1 }}>
-                        {serviceItem.service?.name}
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                        {serviceItem.isOnline && (
-                          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '13px', color: '#666' }}>
-                            <strong style={{ color: '#333' }}>Online:</strong> ₹{serviceItem.onlinePrice}
-                          </Typography>
-                        )}
-                        {serviceItem.isOffline && (
-                          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '13px', color: '#666' }}>
-                            <strong style={{ color: '#333' }}>Offline:</strong> ₹{serviceItem.offlinePrice}
-                          </Typography>
-                        )}
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '13px', color: '#666' }}>
-                          <strong style={{ color: '#333' }}>Duration:</strong> {serviceItem.durationMinutes} mins
+                {purohitServices.map((serviceItem: any) => {
+                  const payout =
+                    serviceItem.purohitPayoutAmount ??
+                    serviceItem.service?.purohitPayoutAmount ??
+                    (serviceItem.offlinePrice ||
+                      serviceItem.onlinePrice ||
+                      serviceItem.service?.plans?.basic?.price ||
+                      serviceItem.service?.minPrice);
+                  const duration =
+                    serviceItem.durationMinutes ||
+                    serviceItem.service?.durationMinutes;
+
+                  return (
+                    <Grid
+                      size={{ xs: 12, sm: 6 }}
+                      key={serviceItem.id}
+                      sx={{ display: "flex" }}
+                    >
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          justify: "space-between",
+                          p: 2,
+                          borderRadius: "12px",
+                          border: "1px solid #eee",
+                          bgcolor: "#fafafa",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontWeight: 700,
+                            color: "#1A1A1A",
+                            mb: 1,
+                          }}
+                        >
+                          {serviceItem.service?.name}
                         </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 2,
+                            alignItems: "center",
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontSize: "13px",
+                              color: "#666",
+                            }}
+                          >
+                            <strong style={{ color: "#333" }}>Payout:</strong>{" "}
+                            {payout ? `₹${payout}` : "N/A"}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontSize: "13px",
+                              color: "#666",
+                            }}
+                          >
+                            <strong style={{ color: "#333" }}>Duration:</strong>{" "}
+                            {duration ? `${duration} mins` : "N/A"}
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
-                  </Grid>
-                ))}
+                    </Grid>
+                  );
+                })}
               </Grid>
             ) : (
               <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px' }}>No services added yet.</Typography>

@@ -5,15 +5,13 @@ import {
   Box,
   Button,
   CircularProgress,
-  FormControlLabel,
   Grid,
   Paper,
-  Switch,
-  TextField,
   Typography,
   Chip,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AddIcon from "@mui/icons-material/Add";
 import { addPurohitServiceAPI } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useRouter } from "next/navigation";
@@ -31,54 +29,14 @@ export default function PurohitServiceDetailsAddForm({
 }: Props) {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
-
-  const [onlinePrice, setOnlinePrice] = useState(
-    service?.minPrice ? String(service.minPrice) : ""
-  );
-  const [offlinePrice, setOfflinePrice] = useState(
-    service?.minPrice ? String(service.minPrice) : ""
-  );
-  const [isOnline, setIsOnline] = useState(true);
-  const [isOffline, setIsOffline] = useState(true);
-  const [durationMinutes, setDurationMinutes] = useState(
-    service?.durationMinutes ? String(service.durationMinutes) : "60"
-  );
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!durationMinutes) {
-      showSnackbar("Please enter service duration", "error");
-      return;
-    }
-
-    if (isOnline && !onlinePrice) {
-      showSnackbar("Please enter online price", "error");
-      return;
-    }
-    if (isOffline && !offlinePrice) {
-      showSnackbar("Please enter offline price", "error");
-      return;
-    }
-    if (!isOnline && !isOffline) {
-      showSnackbar(
-        "At least one ceremony mode (online/offline) must be supported",
-        "error"
-      );
-      return;
-    }
-
+  const handleAddService = async () => {
     try {
       setSubmitting(true);
       const payload = [
         {
           serviceId: service.id,
-          onlinePrice: isOnline ? Number(onlinePrice) : null,
-          offlinePrice: isOffline ? Number(offlinePrice) : null,
-          isOnline,
-          isOffline,
-          durationMinutes: Number(durationMinutes),
         },
       ];
 
@@ -99,6 +57,15 @@ export default function PurohitServiceDetailsAddForm({
     }
   };
 
+  const defaultPriceDisplay =
+    service?.priceWithoutSamagri != null && service?.priceWithSamagri != null
+      ? `₹${Number(service.priceWithoutSamagri).toLocaleString("en-IN")} - ₹${Number(service.priceWithSamagri).toLocaleString("en-IN")}`
+      : service?.priceWithoutSamagri != null
+        ? `₹${Number(service.priceWithoutSamagri).toLocaleString("en-IN")}`
+        : service?.minPrice
+          ? `₹${Number(service.minPrice).toLocaleString("en-IN")}`
+          : "Standard Pricing";
+
   return (
     <Paper
       id="purohit-add-form-section"
@@ -113,9 +80,9 @@ export default function PurohitServiceDetailsAddForm({
         scrollMarginTop: "100px",
       }}
     >
-      <Grid container spacing={5} sx={{ alignItems: "flex-start" }}>
+      <Grid container spacing={5} sx={{ alignItems: "center" }}>
         {/* Left Column: Heading & Description */}
-        <Grid size={{ xs: 12, md: 5 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Typography
             sx={{
               fontSize: "12px",
@@ -135,14 +102,14 @@ export default function PurohitServiceDetailsAddForm({
               fontFamily: '"Georgia", "Times New Roman", serif',
               fontWeight: 800,
               color: "#2C1810",
-              fontSize: { xs: "28px", sm: "36px", md: "40px" },
+              fontSize: { xs: "26px", sm: "32px", md: "36px" },
               lineHeight: 1.2,
-              mb: 2.5,
+              mb: 2,
             }}
           >
             {isAlreadyAdded
               ? "Service Active in Profile"
-              : `Configure ${service.name}`}
+              : `Add ${service.name} to Profile`}
           </Typography>
 
           <Typography
@@ -151,17 +118,17 @@ export default function PurohitServiceDetailsAddForm({
               color: "#64534A",
               fontSize: "15px",
               lineHeight: 1.7,
-              maxWidth: 440,
+              maxWidth: 480,
             }}
           >
             {isAlreadyAdded
               ? "This service is currently listed and active under your purohit account. Customers in your default service area can book you directly."
-              : "Specify your pricing, supported ceremony modes, and duration to list this service under your purohit account."}
+              : "Click the confirm button below to instantly add this service to your purohit profile and start accepting booking requests."}
           </Typography>
         </Grid>
 
-        {/* Right Column: Form or Status Box */}
-        <Grid size={{ xs: 12, md: 7 }}>
+        {/* Right Column: Status Box or Confirm Action */}
+        <Grid size={{ xs: 12, md: 6 }}>
           {isAlreadyAdded ? (
             <Box
               sx={{
@@ -196,7 +163,7 @@ export default function PurohitServiceDetailsAddForm({
                   fontSize: "14px",
                 }}
               >
-                You can manage your pricing, availability, and active status for this service from your services dashboard.
+                You can manage your availability and active status for this service from your services dashboard.
               </Typography>
               <Button
                 variant="contained"
@@ -218,164 +185,98 @@ export default function PurohitServiceDetailsAddForm({
             </Box>
           ) : (
             <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+              sx={{
+                p: { xs: 3, sm: 4 },
+                bgcolor: "#FFFFFF",
+                borderRadius: "20px",
+                border: "1px solid #EADCCF",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2.5,
+              }}
             >
-              {/* Row 1: Online / Offline Mode Switches */}
               <Box
                 sx={{
-                  p: 2.5,
-                  bgcolor: "#FFFFFF",
-                  borderRadius: "12px",
-                  border: "1px solid #EADCCF",
                   display: "flex",
-                  gap: 3,
-                  flexWrap: "wrap",
+                  justifyContent: "space-between",
                   alignItems: "center",
+                  pb: 2,
+                  borderBottom: "1px dashed #EADCCF",
                 }}
               >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isOnline}
-                      onChange={(e) => setIsOnline(e.target.checked)}
-                      sx={{
-                        "& .MuiSwitch-switchBase.Mui-checked": { color: "#C84B16" },
-                        "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                          backgroundColor: "#C84B16",
-                        },
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography
-                      sx={{
-                        fontFamily: '"DM Sans", sans-serif',
-                        fontWeight: 700,
-                        fontSize: "14px",
-                        color: "#2C1810",
-                      }}
-                    >
-                      Supports Online Ceremony
-                    </Typography>
-                  }
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isOffline}
-                      onChange={(e) => setIsOffline(e.target.checked)}
-                      sx={{
-                        "& .MuiSwitch-switchBase.Mui-checked": { color: "#C84B16" },
-                        "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                          backgroundColor: "#C84B16",
-                        },
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography
-                      sx={{
-                        fontFamily: '"DM Sans", sans-serif',
-                        fontWeight: 700,
-                        fontSize: "14px",
-                        color: "#2C1810",
-                      }}
-                    >
-                      Supports Offline Ceremony
-                    </Typography>
-                  }
-                />
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "#94a3b8",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    ESTIMATED PRICE
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 800,
+                      color: "#FF6200",
+                      fontSize: "18px",
+                      fontFamily: '"DM Sans", sans-serif',
+                    }}
+                  >
+                    {defaultPriceDisplay}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ textAlign: "right" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "#94a3b8",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    DURATION
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 800,
+                      color: "#1e293b",
+                      fontSize: "18px",
+                      fontFamily: '"DM Sans", sans-serif',
+                    }}
+                  >
+                    {service?.durationMinutes || 60} mins
+                  </Typography>
+                </Box>
               </Box>
 
-              {/* Row 2: Prices */}
-              <Grid container spacing={2}>
-                {isOnline && (
-                  <Grid size={{ xs: 12, sm: isOffline ? 6 : 12 }}>
-                    <TextField
-                      fullWidth
-                      label="Online Price (₹)"
-                      type="number"
-                      value={onlinePrice}
-                      onChange={(e) => setOnlinePrice(e.target.value)}
-                      helperText={`Suggested range: ₹${service?.minPrice || 0} - ₹${service?.maxPrice || 0}`}
-                      sx={{
-                        bgcolor: "#FFFBF7",
-                        borderRadius: "10px",
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: '"DM Sans", sans-serif',
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontFamily: '"DM Sans", sans-serif',
-                          color: "#64534A",
-                        },
-                      }}
-                    />
-                  </Grid>
-                )}
-
-                {isOffline && (
-                  <Grid size={{ xs: 12, sm: isOnline ? 6 : 12 }}>
-                    <TextField
-                      fullWidth
-                      label="Offline Price (₹)"
-                      type="number"
-                      value={offlinePrice}
-                      onChange={(e) => setOfflinePrice(e.target.value)}
-                      helperText={`Suggested range: ₹${service?.minPrice || 0} - ₹${service?.maxPrice || 0}`}
-                      sx={{
-                        bgcolor: "#FFFBF7",
-                        borderRadius: "10px",
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: '"DM Sans", sans-serif',
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontFamily: '"DM Sans", sans-serif',
-                          color: "#64534A",
-                        },
-                      }}
-                    />
-                  </Grid>
-                )}
-              </Grid>
-
-              {/* Row 3: Duration */}
-              <TextField
-                fullWidth
-                label="Duration (Minutes)"
-                type="number"
-                value={durationMinutes}
-                onChange={(e) => setDurationMinutes(e.target.value)}
-                helperText={`Standard duration: ${service?.durationMinutes || 60} minutes`}
-                required
+              <Typography
                 sx={{
-                  bgcolor: "#FFFBF7",
-                  borderRadius: "10px",
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                    fontFamily: '"DM Sans", sans-serif',
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontFamily: '"DM Sans", sans-serif',
-                    color: "#64534A",
-                  },
+                  fontFamily: '"DM Sans", sans-serif',
+                  color: "#64534A",
+                  fontSize: "13.5px",
+                  lineHeight: 1.6,
                 }}
-              />
+              >
+                By adding this service, it will immediately show under your active services.
+              </Typography>
 
-              {/* Submit Button */}
               <Button
-                type="submit"
                 variant="contained"
-                disabled={submitting || (!isOnline && !isOffline) || !durationMinutes}
+                onClick={handleAddService}
+                disabled={submitting}
+                startIcon={
+                  !submitting ? <AddIcon sx={{ color: "#FFFFFF !important" }} /> : null
+                }
                 sx={{
                   bgcolor: "#C84B16 !important",
                   color: "#FFFFFF !important",
                   fontWeight: 800,
                   fontSize: "16px",
-                  py: 1.8,
+                  py: 1.6,
                   borderRadius: "30px",
                   textTransform: "none",
                   fontFamily: '"DM Sans", sans-serif',
