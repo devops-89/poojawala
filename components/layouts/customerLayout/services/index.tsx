@@ -6,7 +6,7 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { Box, CircularProgress, Grid, Pagination } from "@mui/material";
 import { City, State } from "country-state-city";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CustomerServiceCard from "./CustomerServiceCard";
 import CustomerServicesBookingModal from "./CustomerServicesBookingModal";
@@ -16,6 +16,7 @@ import CustomerServicesHeader from "./CustomerServicesHeader";
 
 export const ServicesPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -52,6 +53,19 @@ export const ServicesPage = () => {
 
   useEffect(() => {
     let isMounted = true;
+
+    const urlState = searchParams.get("state");
+    const urlCity = searchParams.get("city");
+    const urlSearch = searchParams.get("search");
+
+    if (urlState || urlCity || urlSearch) {
+      if (urlState) setSelectedState(urlState);
+      if (urlCity) setSelectedCity(urlCity);
+      if (urlSearch) setSearchTerm(urlSearch);
+      setIsInitialized(true);
+      return;
+    }
+
     const initLocation = async () => {
       const extractAddressList = (resObj: any) => {
         if (!resObj) return [];
@@ -113,7 +127,7 @@ export const ServicesPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [fetchProfile]);
+  }, [fetchProfile, searchParams]);
 
   const handleOpenBooking = (serviceId: number) => {
     setSelectedServiceId(serviceId);

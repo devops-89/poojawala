@@ -9,6 +9,8 @@ import ServiceDetailsPujaSamagri from '../services/serviceDetails/ServiceDetails
 import DashboardRecentBookings from './DashboardRecentBookings';
 import DashboardServicesSection from './DashboardServicesSection';
 
+import CustomerDashboardHero from './CustomerDashboardHero';
+
 export default function CustomerDashboardOverview() {
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
@@ -53,6 +55,9 @@ export default function CustomerDashboardOverview() {
 
   return (
     <Box>
+      {/* Hero Section */}
+      <CustomerDashboardHero />
+
       {/* Recent Bookings Section (Shown if user has recent bookings) */}
       {recentBookings.length > 0 && (
         <DashboardRecentBookings recentBookings={recentBookings} />
