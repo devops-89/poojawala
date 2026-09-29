@@ -1,5 +1,8 @@
-'use client';
+"use client";
 
+import { useUserStore } from "@/stores/userStore";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Autocomplete,
   Box,
@@ -10,13 +13,10 @@ import {
   Paper,
   TextField,
   Typography,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { City, State } from 'country-state-city';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useUserStore } from '@/stores/userStore';
+} from "@mui/material";
+import { City, State } from "country-state-city";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function CustomerDashboardHero() {
   const router = useRouter();
@@ -32,44 +32,45 @@ export default function CustomerDashboardHero() {
   // Extract user first name or full name from profile
   const rawFirstName =
     profile?.firstName ||
-    profile?.name?.split(' ')[0] ||
+    profile?.name?.split(" ")[0] ||
     profile?.user?.firstName ||
-    profile?.user?.name?.split(' ')[0] ||
-    '';
+    profile?.user?.name?.split(" ")[0] ||
+    "";
 
-  const displayName = rawFirstName ? `${rawFirstName.toUpperCase()}` : 'USER';
+  const displayName = rawFirstName ? `${rawFirstName.toUpperCase()}` : "USER";
 
   // State Options from country-state-city
-  const indianStates = State.getStatesOfCountry('IN') || [];
+  const indianStates = State.getStatesOfCountry("IN") || [];
   const stateOptions = indianStates.map((s) => s.name).sort();
 
   // Selected State Object for ISO Code
   const selectedStateObj = selectedState
     ? indianStates.find(
-        (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+        (s) =>
+          s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
       )
     : null;
 
   // City Options for selected state (or all cities if no state selected)
   const rawCities = selectedStateObj
-    ? City.getCitiesOfState('IN', selectedStateObj.isoCode) || []
-    : City.getCitiesOfCountry('IN') || [];
+    ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
+    : City.getCitiesOfCountry("IN") || [];
 
   const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (selectedState && selectedState !== 'All') {
-      params.append('state', selectedState);
+    if (selectedState && selectedState !== "All") {
+      params.append("state", selectedState);
     }
-    if (selectedCity && selectedCity !== 'All') {
-      params.append('city', selectedCity);
+    if (selectedCity && selectedCity !== "All") {
+      params.append("city", selectedCity);
     }
 
     const queryString = params.toString();
     const targetUrl = queryString
       ? `/customer/services?${queryString}`
-      : '/customer/services';
+      : "/customer/services";
 
     router.push(targetUrl);
   };
@@ -77,17 +78,17 @@ export default function CustomerDashboardHero() {
   return (
     <Box
       sx={{
-        width: '100%',
+        width: "100%",
         py: { xs: 3, md: 5 },
         px: { xs: 2, sm: 3, md: 4 },
         mb: 4,
-        borderRadius: '24px',
-        background: 'linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%)',
-        border: '1px solid #FFEBE0',
-        boxShadow: '0 4px 20px rgba(255, 98, 0, 0.04)',
+        borderRadius: "24px",
+        background: "linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%)",
+        border: "1px solid #FFEBE0",
+        boxShadow: "0 4px 20px rgba(255, 98, 0, 0.04)",
       }}
     >
-      <Grid container spacing={4} sx={{ alignItems: 'center' }}>
+      <Grid container spacing={4} sx={{ alignItems: "center" }}>
         {/* Left Column: Greeting & Main Heading */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Box sx={{ pr: { md: 2 } }}>
@@ -96,12 +97,12 @@ export default function CustomerDashboardHero() {
               sx={{
                 fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
                 fontWeight: 800,
-                fontSize: { xs: '13px', md: '15px' },
-                color: '#FF6200',
-                letterSpacing: '1.5px',
-                textTransform: 'uppercase',
+                fontSize: { xs: "13px", md: "15px" },
+                color: "#FF6200",
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
                 mb: 1.5,
-                display: 'inline-block',
+                display: "inline-block",
               }}
             >
               NAMASTE, {displayName} JI
@@ -113,17 +114,17 @@ export default function CustomerDashboardHero() {
               sx={{
                 fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
                 fontWeight: 800,
-                color: '#1E293B',
-                fontSize: { xs: '2.1rem', sm: '2.7rem', md: '3.2rem' },
+                color: "#1E293B",
+                fontSize: { xs: "2.1rem", sm: "2.7rem", md: "3.2rem" },
                 lineHeight: 1.15,
-                letterSpacing: '-0.02em',
+                letterSpacing: "-0.02em",
                 mb: 2.5,
               }}
             >
-              Book sacred{' '}
-              <Box component="span" sx={{ color: '#FF6200' }}>
+              Book sacred{" "}
+              <Box component="span" sx={{ color: "#FF6200" }}>
                 pooja services
-              </Box>{' '}
+              </Box>{" "}
               near you
             </Typography>
 
@@ -131,11 +132,11 @@ export default function CustomerDashboardHero() {
             <Typography
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
-                color: '#64748B',
-                fontSize: { xs: '15px', md: '17px' },
+                color: "#64748B",
+                fontSize: { xs: "15px", md: "17px" },
                 lineHeight: 1.6,
                 fontWeight: 400,
-                maxWidth: '540px',
+                maxWidth: "540px",
               }}
             >
               Find experienced pandits, authentic samagri, and auspicious
@@ -150,10 +151,10 @@ export default function CustomerDashboardHero() {
             elevation={0}
             sx={{
               p: { xs: 3, sm: 4 },
-              borderRadius: '24px',
-              bgcolor: '#FFFDFB',
-              border: '1px solid #FFE4D6',
-              boxShadow: '0 12px 35px rgba(255, 98, 0, 0.08)',
+              borderRadius: "24px",
+              bgcolor: "#FFFDFB",
+              border: "1px solid #FFE4D6",
+              boxShadow: "0 12px 35px rgba(255, 98, 0, 0.08)",
             }}
           >
             {/* Card Header */}
@@ -162,8 +163,8 @@ export default function CustomerDashboardHero() {
               sx={{
                 fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
                 fontWeight: 800,
-                color: '#1E293B',
-                fontSize: { xs: '20px', md: '24px' },
+                color: "#1E293B",
+                fontSize: { xs: "20px", md: "24px" },
                 mb: 0.5,
               }}
             >
@@ -172,8 +173,8 @@ export default function CustomerDashboardHero() {
             <Typography
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
-                color: '#64748B',
-                fontSize: '14px',
+                color: "#64748B",
+                fontSize: "14px",
                 mb: 3,
               }}
             >
@@ -187,7 +188,7 @@ export default function CustomerDashboardHero() {
                 e.preventDefault();
                 handleSearch();
               }}
-              sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+              sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
             >
               {/* State & City Selector Row */}
               <Grid container spacing={2}>
@@ -195,11 +196,11 @@ export default function CustomerDashboardHero() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography
                     sx={{
-                      fontSize: '12px',
+                      fontSize: "12px",
                       fontWeight: 700,
-                      color: '#475569',
-                      letterSpacing: '0.5px',
-                      textTransform: 'uppercase',
+                      color: "#475569",
+                      letterSpacing: "0.5px",
+                      textTransform: "uppercase",
                       mb: 0.8,
                     }}
                   >
@@ -211,7 +212,7 @@ export default function CustomerDashboardHero() {
                       value={selectedState}
                       onChange={(_, newValue) => {
                         setSelectedState(newValue);
-                        setSelectedCity(null); // Reset city when state changes
+                        setSelectedCity(null);
                       }}
                       renderInput={(params: any) => (
                         <TextField
@@ -223,7 +224,7 @@ export default function CustomerDashboardHero() {
                               <>
                                 <InputAdornment position="start">
                                   <LocationOnIcon
-                                    sx={{ color: '#FF6200', fontSize: 20 }}
+                                    sx={{ color: "#FF6200", fontSize: 20 }}
                                   />
                                 </InputAdornment>
                                 {params.InputProps?.startAdornment}
@@ -231,14 +232,16 @@ export default function CustomerDashboardHero() {
                             ),
                           }}
                           sx={{
-                            bgcolor: '#FFFFFF',
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: '12px',
+                            bgcolor: "#FFFFFF",
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "12px",
                               fontFamily: '"DM Sans", sans-serif',
-                              fontSize: '14px',
-                              '& fieldset': { borderColor: '#E2E8F0' },
-                              '&:hover fieldset': { borderColor: '#FF6200' },
-                              '&.Mui-focused fieldset': { borderColor: '#FF6200' },
+                              fontSize: "14px",
+                              "& fieldset": { borderColor: "#E2E8F0" },
+                              "&:hover fieldset": { borderColor: "#FF6200" },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#FF6200",
+                              },
                             },
                           }}
                         />
@@ -251,11 +254,11 @@ export default function CustomerDashboardHero() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography
                     sx={{
-                      fontSize: '12px',
+                      fontSize: "12px",
                       fontWeight: 700,
-                      color: '#475569',
-                      letterSpacing: '0.5px',
-                      textTransform: 'uppercase',
+                      color: "#475569",
+                      letterSpacing: "0.5px",
+                      textTransform: "uppercase",
                       mb: 0.8,
                     }}
                   >
@@ -276,7 +279,7 @@ export default function CustomerDashboardHero() {
                               <>
                                 <InputAdornment position="start">
                                   <LocationOnIcon
-                                    sx={{ color: '#FF6200', fontSize: 20 }}
+                                    sx={{ color: "#FF6200", fontSize: 20 }}
                                   />
                                 </InputAdornment>
                                 {params.InputProps?.startAdornment}
@@ -284,14 +287,16 @@ export default function CustomerDashboardHero() {
                             ),
                           }}
                           sx={{
-                            bgcolor: '#FFFFFF',
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: '12px',
+                            bgcolor: "#FFFFFF",
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "12px",
                               fontFamily: '"DM Sans", sans-serif',
-                              fontSize: '14px',
-                              '& fieldset': { borderColor: '#E2E8F0' },
-                              '&:hover fieldset': { borderColor: '#FF6200' },
-                              '&.Mui-focused fieldset': { borderColor: '#FF6200' },
+                              fontSize: "14px",
+                              "& fieldset": { borderColor: "#E2E8F0" },
+                              "&:hover fieldset": { borderColor: "#FF6200" },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#FF6200",
+                              },
                             },
                           }}
                         />
@@ -309,17 +314,17 @@ export default function CustomerDashboardHero() {
                 sx={{
                   mt: 1,
                   py: 1.6,
-                  borderRadius: '12px',
-                  bgcolor: '#FF6200',
-                  color: '#FFFFFF',
+                  borderRadius: "12px",
+                  bgcolor: "#FF6200",
+                  color: "#FFFFFF",
                   fontFamily: '"DM Sans", sans-serif',
                   fontWeight: 700,
-                  fontSize: '16px',
-                  textTransform: 'none',
-                  boxShadow: '0 8px 20px rgba(255, 98, 0, 0.25)',
-                  '&:hover': {
-                    bgcolor: '#E55800',
-                    boxShadow: '0 10px 25px rgba(255, 98, 0, 0.35)',
+                  fontSize: "16px",
+                  textTransform: "none",
+                  boxShadow: "0 8px 20px rgba(255, 98, 0, 0.25)",
+                  "&:hover": {
+                    bgcolor: "#E55800",
+                    boxShadow: "0 10px 25px rgba(255, 98, 0, 0.35)",
                   },
                 }}
               >

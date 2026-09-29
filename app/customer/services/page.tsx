@@ -1,8 +1,13 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import ServicesPage from '@/components/layouts/customerLayout/services';
 
 export default function CustomerServicesPage() {
-  return <ServicesPage />;
+  return (
+    <Suspense fallback={null}>
+      <ServicesPage />
+    </Suspense>
+  );
 }
 
 export const metadata: Metadata = {
