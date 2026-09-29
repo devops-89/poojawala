@@ -4,10 +4,10 @@ import {
   getBookingDetailsAPI,
   initiateManualPayoutAPI,
 } from "@/api/bookingControllers";
-import BookingCustomerCard from "@/components/layouts/adminLayout/bookings/components/BookingCustomerCard";
-import BookingPaymentMatrix from "@/components/layouts/adminLayout/bookings/components/BookingPaymentMatrix";
-import BookingPurohitCard from "@/components/layouts/adminLayout/bookings/components/BookingPurohitCard";
-import BookingServiceCard from "@/components/layouts/adminLayout/bookings/components/BookingServiceCard";
+import BookingCustomerCard from "@/components/layouts/adminLayout/bookings/BookingCustomerCard";
+import BookingPaymentMatrix from "@/components/layouts/adminLayout/bookings/BookingPaymentMatrix";
+import BookingPurohitCard from "@/components/layouts/adminLayout/bookings/BookingPurohitCard";
+import BookingServiceCard from "@/components/layouts/adminLayout/bookings/BookingServiceCard";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
 import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
 import { useSnackbarStore } from "@/stores/snackbarStore";

@@ -56,7 +56,8 @@ export const getServicesAPI = async (
   minPrice?: string,
   maxPrice?: string,
   isActive?: boolean,
-  isUpcomingFestival?: boolean
+  isUpcomingFestival?: boolean,
+  city?: string
 ) => {
   try {
     const params = new URLSearchParams();
@@ -79,6 +80,9 @@ export const getServicesAPI = async (
     }
     if (isUpcomingFestival !== undefined) {
       params.append('isUpcomingFestival', String(isUpcomingFestival));
+    }
+    if (city && city !== 'All') {
+      params.append('city', city);
     }
     const response = await userPublicApi.get(`/service`, { params });
     return response.data;
