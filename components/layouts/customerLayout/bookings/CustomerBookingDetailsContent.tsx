@@ -4,7 +4,7 @@ import {
   getBookingDetailsAPI,
   rescheduleBookingAPI,
 } from "@/api/bookingControllers";
-import { getPaymentLinkAPI } from "@/api/paymentControllers";
+import { getPaymentLinkAPI, settleBookingPaymentAPI } from "@/api/paymentControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useTicketModalStore } from "@/stores/ticketModalStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -88,12 +88,45 @@ export default function CustomerBookingDetailsContent({
   const handleCompletePayment = async () => {
     setIsRedirectingPayment(true);
     try {
-      const callbackUrl = "https://poojawala.com/customer/bookings";
-      const res = await getPaymentLinkAPI(bookingId, callbackUrl);
-      if (res.success && res.data?.paymentUrl) {
-        window.location.href = res.data.paymentUrl;
+      const paymentStatusStr = booking?.paymentStatus?.toUpperCase() || "";
+      let paymentUrl: string | null = null;
+
+      if (paymentStatusStr === "PARTIAL" || paymentStatusStr === "PARTIALLY_PAID") {
+        const res = await settleBookingPaymentAPI(bookingId);
+        const resData = res?.data?.data || res?.data || res;
+        paymentUrl =
+          resData?.paymentUrl ||
+          resData?.short_url ||
+          resData?.paymentLink ||
+          resData?.razorpayPaymentLinkId ||
+          resData?.razorpayPaymentLink ||
+          resData?.url ||
+          res?.paymentUrl ||
+          res?.short_url ||
+          (typeof res === "string" ? res : null);
       } else {
-        showSnackbar(res.message || "Failed to generate payment link", "error");
+        const callbackUrl = "https://poojawala.com/customer/bookings";
+        const res = await getPaymentLinkAPI(bookingId, callbackUrl);
+        const resData = res?.data?.data || res?.data || res;
+        paymentUrl =
+          resData?.paymentUrl ||
+          resData?.short_url ||
+          resData?.paymentLink ||
+          resData?.razorpayPaymentLinkId ||
+          resData?.razorpayPaymentLink ||
+          resData?.url ||
+          res?.paymentUrl ||
+          res?.short_url;
+      }
+
+      if (
+        paymentUrl &&
+        typeof paymentUrl === "string" &&
+        (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://"))
+      ) {
+        window.location.href = paymentUrl;
+      } else {
+        showSnackbar("Failed to generate payment link", "error");
         setIsRedirectingPayment(false);
       }
     } catch (error: any) {
@@ -257,10 +290,12 @@ export default function CustomerBookingDetailsContent({
     : "Pending";
 
   const isActive = statusStr === "PENDING" || statusStr === "ACCEPTED";
+  const paymentStatusStr = booking.paymentStatus?.toUpperCase() || "";
   const isPaymentPending =
     statusStr !== "CANCELLED" &&
-    booking.paymentStatus !== "SUCCESS" &&
-    booking.paymentStatus !== "PAID";
+    paymentStatusStr !== "SUCCESS" &&
+    paymentStatusStr !== "PAID" &&
+    paymentStatusStr !== "COMPLETED";
 
   return (
     <Box sx={{ maxWidth: "1100px", mx: "auto", pb: 8 }}>

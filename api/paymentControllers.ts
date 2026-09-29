@@ -39,6 +39,32 @@ export const getPaymentLinkAPI = async (bookingId: string | number, callbackUrl:
   }
 };
 
+export const settleBookingPaymentAPI = async (bookingId: string | number) => {
+  try {
+    let res;
+    try {
+      res = await paymentSecuredApi.post(`/bookings/${bookingId}/settle`);
+    } catch (err: any) {
+      if (err?.response?.status === 404 || err?.response?.status === 405) {
+        try {
+          res = await paymentSecuredApi.post(`/payments/bookings/${bookingId}/settle`);
+        } catch (err2: any) {
+          if (err2?.response?.status === 404 || err2?.response?.status === 405) {
+            res = await paymentSecuredApi.get(`/bookings/${bookingId}/settle`);
+          } else {
+            throw err2;
+          }
+        }
+      } else {
+        throw err;
+      }
+    }
+    return res.data;
+  } catch (error: any) {
+    throw error?.response?.data || error.message || error;
+  }
+};
+
 export const downloadInvoiceAPI = async (bookingId: string | number) => {
   try {
     const route = `/payments/booking/${bookingId}/invoice`;
