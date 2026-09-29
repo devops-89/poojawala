@@ -141,7 +141,31 @@ export const getAllServicesAPI = async (
   search: string = "",
   isActive?: boolean,
   city?: string,
-  state?: string
+  state?: string,
+  categoryId?: string | number
+) => {
+  try {
+    const params: Record<string, any> = {};
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    if (search && search.trim()) params.search = search.trim();
+    if (isActive !== undefined) params.isActive = isActive;
+    if (city && city !== 'All' && city !== 'All Cities') params.city = city;
+    if (state && state !== 'All' && state !== 'All States') params.state = state;
+    if (categoryId && categoryId !== 'All') params.categoryId = categoryId;
+
+    const response = await userPublicApi.get('/service', { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getServiceCategoriesAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  search: string = "",
+  isActive?: boolean
 ) => {
   try {
     const params = new URLSearchParams();
@@ -149,10 +173,45 @@ export const getAllServicesAPI = async (
     if (limit) params.append('limit', String(limit));
     if (search) params.append('search', search);
     if (isActive !== undefined) params.append('isActive', String(isActive));
-    if (city && city !== 'All') params.append('city', city);
-    if (state && state !== 'All') params.append('state', state);
 
-    const response = await userPublicApi.get('/service/', { params });
+    const response = await userPublicApi.get('/service/categories', { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getServiceCategoryByIdAPI = async (id: string | number) => {
+  try {
+    const response = await userPublicApi.get(`/service/categories/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createServiceCategoryAPI = async (data: any) => {
+  try {
+    const response = await userSecuredApi.post('/service/categories', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const updateServiceCategoryAPI = async (id: string | number, data: any) => {
+  try {
+    const response = await userSecuredApi.patch(`/service/categories/${id}`, data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteServiceCategoryAPI = async (id: string | number) => {
+  try {
+    const response = await userSecuredApi.delete(`/service/categories/${id}`);
     return response.data;
   } catch (error) {
     throw error;

@@ -184,8 +184,28 @@ export default function DashboardServicesSection({
         <Grid container spacing={3}>
           {displayServices.map((item) => {
             const isSingle = count === 1;
-            const minP = item.priceWithoutSamagri ?? item.minPrice ?? item.price ?? item.basePrice ?? 0;
-            const maxP = item.priceWithSamagri ?? item.maxPrice;
+            let minP: number | null = item.minPrice != null ? Number(item.minPrice) : null;
+            let maxP: number | null = item.maxPrice != null ? Number(item.maxPrice) : null;
+
+            if ((minP == null || isNaN(minP)) && item.plans && typeof item.plans === "object") {
+              const prices: number[] = [];
+              const planList = Array.isArray(item.plans) ? item.plans : Object.values(item.plans);
+              planList.forEach((p: any) => {
+                if (p && p.price != null && !isNaN(Number(p.price))) {
+                  prices.push(Number(p.price));
+                }
+              });
+              if (prices.length > 0) {
+                minP = Math.min(...prices);
+                maxP = Math.max(...prices);
+              }
+            }
+
+            if (minP == null || isNaN(minP)) {
+              minP = item.priceWithoutSamagri != null ? Number(item.priceWithoutSamagri) : (item.price ?? item.basePrice ?? 0);
+              maxP = item.priceWithSamagri != null ? Number(item.priceWithSamagri) : null;
+            }
+
             const priceDisplay =
               maxP && Number(maxP) > Number(minP)
                 ? `₹${Number(minP).toLocaleString("en-IN")} - ₹${Number(maxP).toLocaleString("en-IN")}`

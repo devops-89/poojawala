@@ -4,10 +4,15 @@ import { useCartStore } from "@/stores/cartStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
 import { useUserStore } from "@/stores/userStore";
+import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import {
   Alert,
   AppBar,
@@ -15,7 +20,11 @@ import {
   Badge,
   Box,
   Divider,
+  Drawer,
   IconButton,
+  List,
+  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -40,12 +49,13 @@ export default function CustomerHeader() {
   const items = useCartStore((state) => state.items);
   const totalItemsCount = useCartStore((state) => state.totalItemsCount);
 
+  // Mobile Drawer State
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   // Notifications menu anchor
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
   // User profile menu anchor
-  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(
-    null,
-  );
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
 
   const [transientAlert, setTransientAlert] = useState({
     show: false,
@@ -106,10 +116,10 @@ export default function CustomerHeader() {
     }
   };
 
-  const navItems = [
-    { label: "Dashboard", path: "/customer/dashboard" },
-    { label: "Services", path: "/customer/services" },
-    { label: "Pooja Products", path: "/customer/products" },
+  const mainNavItems = [
+    { label: "Dashboard", path: "/customer/dashboard", icon: <HomeIcon /> },
+    { label: "Services", path: "/customer/services", icon: <StorefrontIcon /> },
+    { label: "Pooja Products", path: "/customer/products", icon: <ShoppingBagIcon /> },
   ];
 
   return (
@@ -122,7 +132,7 @@ export default function CustomerHeader() {
         top: 0,
         bgcolor: "white",
         borderBottom: "1px solid #e2e8f0",
-        height: "80px",
+        height: { xs: "60px", md: "80px" },
         justifyContent: "center",
         zIndex: 1100,
       }}
@@ -131,12 +141,25 @@ export default function CustomerHeader() {
         sx={{
           justifyContent: "space-between",
           alignItems: "center",
-          minHeight: "80px !important",
-          px: { xs: 2, sm: 4, md: 6 },
+          minHeight: { xs: "60px !important", md: "80px !important" },
+          px: { xs: 2, sm: 3, md: 6 },
         }}
       >
-        {/* Left: Logo */}
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* Left: Mobile Hamburger & Logo */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={() => setMobileOpen(true)}
+            sx={{
+              display: { md: "none" },
+              color: "#1e293b",
+            }}
+          >
+            <MenuIcon fontSize="medium" />
+          </IconButton>
+
           <NextLink
             href="/customer/dashboard"
             style={{
@@ -150,7 +173,7 @@ export default function CustomerHeader() {
               src="/images/logo.png"
               alt="Poojawala"
               sx={{
-                height: { xs: "36px", md: "52px" },
+                height: { xs: "34px", sm: "42px", md: "52px" },
                 objectFit: "contain",
                 cursor: "pointer",
               }}
@@ -158,15 +181,15 @@ export default function CustomerHeader() {
           </NextLink>
         </Box>
 
-        {/* Center: Navigation Links */}
+        {/* Center: Desktop Navigation Links (Hidden on Mobile) */}
         <Box
           sx={{
-            display: "flex",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
-            gap: { xs: 1, sm: 2, md: 3 },
+            gap: { sm: 2, md: 3 },
           }}
         >
-          {navItems.map((item) => {
+          {mainNavItems.map((item) => {
             const isActive = pathname === item.path;
             return (
               <Typography
@@ -201,7 +224,7 @@ export default function CustomerHeader() {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: { xs: 1, sm: 1.5 },
+            gap: { xs: 0.5, sm: 1.5 },
             position: "relative",
           }}
         >
@@ -212,6 +235,7 @@ export default function CustomerHeader() {
               sx={{
                 color: "#64748b",
                 bgcolor: "#f8fafc",
+                p: { xs: 1, sm: 1.2 },
                 "&:hover": { bgcolor: "#f1f5f9", color: "#FF6200" },
                 transition: "all 0.2s ease",
               }}
@@ -228,7 +252,7 @@ export default function CustomerHeader() {
                   },
                 }}
               >
-                <ShoppingCartOutlinedIcon />
+                <ShoppingCartOutlinedIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
               </Badge>
             </IconButton>
           </Tooltip>
@@ -240,6 +264,7 @@ export default function CustomerHeader() {
               sx={{
                 color: "#64748b",
                 bgcolor: "#f8fafc",
+                p: { xs: 1, sm: 1.2 },
                 "&:hover": { bgcolor: "#f1f5f9", color: "#FF6200" },
               }}
             >
@@ -251,19 +276,19 @@ export default function CustomerHeader() {
                   "& .MuiBadge-badge": { bgcolor: "#FF6200", color: "white" },
                 }}
               >
-                <NotificationsIcon />
+                <NotificationsIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
               </Badge>
             </IconButton>
           </Tooltip>
 
           {/* User Avatar Circle */}
           <Tooltip title="Account Options">
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: 0.5 }}>
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: { xs: 0, sm: 0.5 } }}>
               <Avatar
                 src={profile?.profileImage || profile?.avatar || undefined}
                 sx={{
-                  width: 40,
-                  height: 40,
+                  width: { xs: 34, sm: 40 },
+                  height: { xs: 34, sm: 40 },
                   bgcolor: "#FF6200",
                   boxShadow: "0 2px 8px rgba(255, 98, 0, 0.25)",
                   cursor: "pointer",
@@ -273,7 +298,7 @@ export default function CustomerHeader() {
                 }}
               >
                 {!profile?.profileImage && !profile?.avatar && (
-                  <PersonIcon sx={{ fontSize: 24, color: "white" }} />
+                  <PersonIcon sx={{ fontSize: { xs: 20, sm: 24 }, color: "white" }} />
                 )}
               </Avatar>
             </IconButton>
@@ -287,7 +312,7 @@ export default function CustomerHeader() {
                 top: "100%",
                 right: 0,
                 mt: 1,
-                width: 300,
+                width: { xs: 260, sm: 300 },
                 zIndex: 1200,
               }}
             >
@@ -312,7 +337,7 @@ export default function CustomerHeader() {
             slotProps={{
               paper: {
                 sx: {
-                  width: 320,
+                  width: { xs: 280, sm: 320 },
                   maxHeight: 400,
                   mt: 1.5,
                   borderRadius: "12px",
@@ -481,6 +506,84 @@ export default function CustomerHeader() {
           </Menu>
         </Box>
       </Toolbar>
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        sx={{
+          display: { md: "none" },
+          "& .MuiDrawer-paper": {
+            width: 260,
+            boxSizing: "border-box",
+            bgcolor: "#ffffff",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderBottom: "1px solid #f1f5f9",
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/logo.png"
+            alt="Poojawala"
+            sx={{ height: "36px", objectFit: "contain" }}
+          />
+          <IconButton onClick={() => setMobileOpen(false)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <List sx={{ px: 1.5, py: 2 }}>
+          {mainNavItems.map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  component={NextLink}
+                  href={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  sx={{
+                    borderRadius: "10px",
+                    bgcolor: isActive ? "#FFF0E6" : "transparent",
+                    color: isActive ? "#FF6200" : "#475569",
+                    "&:hover": {
+                      bgcolor: isActive ? "#FFF0E6" : "#f8fafc",
+                      color: "#FF6200",
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{ color: isActive ? "#FF6200" : "#64748b", minWidth: 38 }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.label}
+                    slotProps={{
+                      primary: {
+                        sx: {
+                          fontWeight: isActive ? 700 : 500,
+                          fontSize: "0.95rem",
+                          fontFamily:
+                            'var(--font-outfit), "DM Sans", sans-serif',
+                        },
+                      },
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Drawer>
     </AppBar>
   );
 }

@@ -79,16 +79,16 @@ export default function CustomerDashboardHero() {
     <Box
       sx={{
         width: "100%",
-        py: { xs: 3, md: 5 },
+        py: { xs: 2, md: 5 },
         px: { xs: 2, sm: 3, md: 4 },
-        mb: 4,
+        mb: { xs: 2.5, md: 4 },
         borderRadius: "24px",
         background: "linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%)",
         border: "1px solid #FFEBE0",
         boxShadow: "0 4px 20px rgba(255, 98, 0, 0.04)",
       }}
     >
-      <Grid container spacing={4} sx={{ alignItems: "center" }}>
+      <Grid container spacing={{ xs: 2, md: 4 }} sx={{ alignItems: "center" }}>
         {/* Left Column: Greeting & Main Heading */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Box sx={{ pr: { md: 2 } }}>
@@ -97,11 +97,11 @@ export default function CustomerDashboardHero() {
               sx={{
                 fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
                 fontWeight: 800,
-                fontSize: { xs: "13px", md: "15px" },
+                fontSize: { xs: "12px", md: "15px" },
                 color: "#FF6200",
                 letterSpacing: "1.5px",
                 textTransform: "uppercase",
-                mb: 1.5,
+                mb: 0.8,
                 display: "inline-block",
               }}
             >
@@ -115,10 +115,10 @@ export default function CustomerDashboardHero() {
                 fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
                 fontWeight: 800,
                 color: "#1E293B",
-                fontSize: { xs: "2.1rem", sm: "2.7rem", md: "3.2rem" },
+                fontSize: { xs: "1.5rem", sm: "2.3rem", md: "3.2rem" },
                 lineHeight: 1.15,
                 letterSpacing: "-0.02em",
-                mb: 2.5,
+                mb: { xs: 1.5, md: 2.5 },
               }}
             >
               Book sacred{" "}
@@ -133,8 +133,8 @@ export default function CustomerDashboardHero() {
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
                 color: "#64748B",
-                fontSize: { xs: "15px", md: "17px" },
-                lineHeight: 1.6,
+                fontSize: { xs: "13px", md: "17px" },
+                lineHeight: 1.5,
                 fontWeight: 400,
                 maxWidth: "540px",
               }}
@@ -150,7 +150,7 @@ export default function CustomerDashboardHero() {
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 3, sm: 4 },
+              p: { xs: 2, sm: 4 },
               borderRadius: "24px",
               bgcolor: "#FFFDFB",
               border: "1px solid #FFE4D6",
@@ -214,38 +214,43 @@ export default function CustomerDashboardHero() {
                         setSelectedState(newValue);
                         setSelectedCity(null);
                       }}
-                      renderInput={(params: any) => (
-                        <TextField
-                          {...params}
-                          placeholder="Select State"
-                          InputProps={{
-                            ...params.InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <LocationOnIcon
-                                    sx={{ color: "#FF6200", fontSize: 20 }}
-                                  />
-                                </InputAdornment>
-                                {params.InputProps?.startAdornment}
-                              </>
-                            ),
-                          }}
-                          sx={{
-                            bgcolor: "#FFFFFF",
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: "12px",
-                              fontFamily: '"DM Sans", sans-serif',
-                              fontSize: "14px",
-                              "& fieldset": { borderColor: "#E2E8F0" },
-                              "&:hover fieldset": { borderColor: "#FF6200" },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#FF6200",
+                      renderInput={(params: any) => {
+                        const { InputProps, ...paramsWithoutInputProps } = params;
+                        return (
+                          <TextField
+                            {...paramsWithoutInputProps}
+                            placeholder="Select State"
+                            slotProps={{
+                              input: {
+                                ...InputProps,
+                                startAdornment: (
+                                  <>
+                                    <InputAdornment position="start">
+                                      <LocationOnIcon
+                                        sx={{ color: "#FF6200", fontSize: 20 }}
+                                      />
+                                    </InputAdornment>
+                                    {InputProps?.startAdornment}
+                                  </>
+                                ),
                               },
-                            },
-                          }}
-                        />
-                      )}
+                            }}
+                            sx={{
+                              bgcolor: "#FFFFFF",
+                              "& .MuiOutlinedInput-root": {
+                                borderRadius: "12px",
+                                fontFamily: '"DM Sans", sans-serif',
+                                fontSize: "14px",
+                                "& fieldset": { borderColor: "#E2E8F0" },
+                                "&:hover fieldset": { borderColor: "#FF6200" },
+                                "&.Mui-focused fieldset": {
+                                  borderColor: "#FF6200",
+                                },
+                              },
+                            }}
+                          />
+                        );
+                      }}
                     />
                   </FormControl>
                 </Grid>
@@ -269,38 +274,43 @@ export default function CustomerDashboardHero() {
                       options={cityOptions}
                       value={selectedCity}
                       onChange={(_, newValue) => setSelectedCity(newValue)}
-                      renderInput={(params: any) => (
-                        <TextField
-                          {...params}
-                          placeholder="Select City"
-                          InputProps={{
-                            ...params.InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <LocationOnIcon
-                                    sx={{ color: "#FF6200", fontSize: 20 }}
-                                  />
-                                </InputAdornment>
-                                {params.InputProps?.startAdornment}
-                              </>
-                            ),
-                          }}
-                          sx={{
-                            bgcolor: "#FFFFFF",
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: "12px",
-                              fontFamily: '"DM Sans", sans-serif',
-                              fontSize: "14px",
-                              "& fieldset": { borderColor: "#E2E8F0" },
-                              "&:hover fieldset": { borderColor: "#FF6200" },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#FF6200",
+                      renderInput={(params: any) => {
+                        const { InputProps, ...paramsWithoutInputProps } = params;
+                        return (
+                          <TextField
+                            {...paramsWithoutInputProps}
+                            placeholder="Select City"
+                            slotProps={{
+                              input: {
+                                ...InputProps,
+                                startAdornment: (
+                                  <>
+                                    <InputAdornment position="start">
+                                      <LocationOnIcon
+                                        sx={{ color: "#FF6200", fontSize: 20 }}
+                                      />
+                                    </InputAdornment>
+                                    {InputProps?.startAdornment}
+                                  </>
+                                ),
                               },
-                            },
-                          }}
-                        />
-                      )}
+                            }}
+                            sx={{
+                              bgcolor: "#FFFFFF",
+                              "& .MuiOutlinedInput-root": {
+                                borderRadius: "12px",
+                                fontFamily: '"DM Sans", sans-serif',
+                                fontSize: "14px",
+                                "& fieldset": { borderColor: "#E2E8F0" },
+                                "&:hover fieldset": { borderColor: "#FF6200" },
+                                "&.Mui-focused fieldset": {
+                                  borderColor: "#FF6200",
+                                },
+                              },
+                            }}
+                          />
+                        );
+                      }}
                     />
                   </FormControl>
                 </Grid>

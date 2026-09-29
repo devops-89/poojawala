@@ -25,6 +25,7 @@ export const ServicesPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [userDefaultCity, setUserDefaultCity] = useState<string>("");
   const [userDefaultState, setUserDefaultState] = useState<string>("");
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -320,19 +321,17 @@ export const ServicesPage = () => {
     )
       return true;
 
-    const matchState =
-      !selectedState ||
-      selectedState === "All" ||
-      service.cities.some((c: any) => {
-        const stateName = (typeof c === "string" ? "" : c.state || "")
-          .toLowerCase()
-          .trim();
-        return !stateName || stateName === selectedState.toLowerCase().trim();
-      });
+    const matchCategory =
+      !selectedCategory ||
+      selectedCategory === "All" ||
+      selectedCategory === "All Categories" ||
+      service.category?.name?.toLowerCase().trim() === selectedCategory.toLowerCase().trim() ||
+      (typeof service.category === "string" && service.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim());
 
     const matchCity =
       !selectedCity ||
       selectedCity === "All" ||
+      selectedCity === "All Cities" ||
       service.cities.some((c: any) => {
         const cityName = (typeof c === "string" ? c : c.name || "")
           .toLowerCase()
@@ -340,7 +339,7 @@ export const ServicesPage = () => {
         return cityName === selectedCity.toLowerCase().trim();
       });
 
-    return matchState && matchCity;
+    return matchCategory && matchCity;
   });
 
   return (
@@ -355,6 +354,11 @@ export const ServicesPage = () => {
         onStateChange={(val) => {
           setSelectedState(val);
           setSelectedCity("All");
+          setPage(1);
+        }}
+        selectedCategory={selectedCategory}
+        onCategoryChange={(val) => {
+          setSelectedCategory(val);
           setPage(1);
         }}
         cityOptions={cityOptions}

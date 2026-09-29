@@ -1,17 +1,28 @@
 "use client";
 
-import { Grid, TextField, Typography } from "@mui/material";
-import React from "react";
+import { getServiceCategoriesAPI } from "@/api/serviceControllers";
+import {
+  FormControl,
+  FormHelperText,
+  Grid,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 interface ServiceBasicFieldsProps {
   values: {
     name: string;
     description: string;
+    categoryId?: string | number;
   };
   errors: Record<string, any>;
   touched: Record<string, any>;
-  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-  handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  handleChange: any;
+  handleBlur: any;
+  setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
 export default function ServiceBasicFields({
@@ -20,7 +31,34 @@ export default function ServiceBasicFields({
   touched,
   handleChange,
   handleBlur,
+  setFieldValue,
 }: ServiceBasicFieldsProps) {
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await getServiceCategoriesAPI(1, 100, "", true);
+        let list: any[] = [];
+        if (res) {
+          if (Array.isArray(res)) list = res;
+          else if (res.data) {
+            if (Array.isArray(res.data.data)) list = res.data.data;
+            else if (Array.isArray(res.data)) list = res.data;
+            else if (Array.isArray(res.data.categories)) list = res.data.categories;
+          } else if (res.categories && Array.isArray(res.categories)) {
+            list = res.categories;
+          }
+        }
+        const activeOnly = list.filter((c: any) => c.isActive !== false);
+        setCategories(activeOnly);
+      } catch (err) {
+        console.error("Failed to load categories for dropdown", err);
+      }
+    };
+    fetchCats();
+  }, []);
+
   return (
     <>
       <Grid size={{ xs: 12 }}>
@@ -48,6 +86,53 @@ export default function ServiceBasicFields({
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}
         />
+      </Grid>
+
+      <Grid size={{ xs: 12 }}>
+        <Typography
+          sx={{
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontWeight: 700,
+            mb: 1,
+            color: "#1e293b",
+          }}
+        >
+          Select Category *
+        </Typography>
+        <FormControl
+          fullWidth
+          error={touched.categoryId && Boolean(errors.categoryId)}
+        >
+          <Select
+            name="categoryId"
+            value={values.categoryId || ""}
+            onChange={(e: any) => {
+              if (setFieldValue) {
+                setFieldValue("categoryId", e.target.value);
+              } else {
+                handleChange(e);
+              }
+            }}
+            onBlur={handleBlur}
+            displayEmpty
+            sx={{
+              borderRadius: "12px",
+              fontFamily: "var(--font-outfit), sans-serif",
+            }}
+          >
+            <MenuItem value="" disabled>
+              <em>Select Service Category</em>
+            </MenuItem>
+            {categories.map((cat: any) => (
+              <MenuItem key={cat.id || cat._id} value={cat.id || cat._id}>
+                {cat.name || cat.title}
+              </MenuItem>
+            ))}
+          </Select>
+          {touched.categoryId && errors.categoryId && (
+            <FormHelperText>{errors.categoryId}</FormHelperText>
+          )}
+        </FormControl>
       </Grid>
 
       <Grid size={{ xs: 12 }}>

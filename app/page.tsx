@@ -7,6 +7,7 @@ import Testimonials from "@/components/layouts/home-layout/Testimonials";
 import UpcomingFestivals from "@/components/layouts/home-layout/UpcomingFestivals";
 import VerifiedPurohits from "@/components/layouts/home-layout/VerifiedPurohits";
 import WhyPoojawala from "@/components/layouts/home-layout/WhyPoojawala";
+import WelcomeLocationModal from "@/components/widgets/WelcomeLocationModal";
 import { Box } from '@mui/material';
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
       <UpcomingFestivals />
       <Testimonials />
       <WhyPoojawala />
-      {/* Search overlay placeholder (can be implemented later) */}
+      <WelcomeLocationModal />
     </Box>
   );
 }

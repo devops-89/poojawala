@@ -34,6 +34,7 @@ import ServicePricingFields from "./ServicePricingFields";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Service name is required"),
+  categoryId: Yup.string().required("Category is required"),
   description: Yup.string()
     .required("Description is required")
     .min(10, "Description must be at least 10 characters"),
@@ -98,6 +99,7 @@ export default function AddServiceForm() {
   const formik = useFormik({
     initialValues: {
       name: "",
+      categoryId: "",
       description: "",
       tokenPercentage: "30.00",
       basicPrice: "",
@@ -133,6 +135,9 @@ export default function AddServiceForm() {
       try {
         const formData = new FormData();
         formData.append("name", values.name);
+        if (values.categoryId) {
+          formData.append("categoryId", String(values.categoryId));
+        }
         formData.append("description", values.description);
         formData.append("tokenPercentage", String(values.tokenPercentage));
         formData.append(
@@ -274,7 +279,7 @@ export default function AddServiceForm() {
 
   const handleNext = async () => {
     if (activeStep === 0) {
-      const step0Fields = ["name", "description"];
+      const step0Fields = ["name", "categoryId", "description"];
       const step0Errors = await formik.validateForm();
 
       const hasStep0Errors = step0Fields.some(

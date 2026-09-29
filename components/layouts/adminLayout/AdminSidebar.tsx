@@ -1,6 +1,7 @@
 "use client";
 import { logoutAPI } from "@/api/authControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import CategoryIcon from "@mui/icons-material/Category";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CloseIcon from "@mui/icons-material/Close";
@@ -74,6 +75,11 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       path: "/admin/purohits",
     },
     { text: "Customers", icon: <GroupsIcon fontSize="small" />, path: "/admin/users" },
+    {
+      text: "Service Categories",
+      icon: <CategoryIcon fontSize="small" />,
+      path: "/admin/service-categories",
+    },
     { text: "Services", icon: <BookOnlineIcon fontSize="small" />, path: "/admin/services" },
     { text: "Products", icon: <ShoppingBagIcon fontSize="small" />, path: "/admin/products" },
     { text: "Product Orders", icon: <LocalShippingIcon fontSize="small" />, path: "/admin/orders" },

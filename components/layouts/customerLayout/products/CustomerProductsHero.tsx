@@ -17,13 +17,13 @@ export default function CustomerProductsHero() {
         bgcolor: "#23150D",
         color: "white",
         borderRadius: "24px",
-        p: { xs: 3, sm: 5, md: 6 },
-        mb: 6,
+        p: { xs: 2.5, sm: 4, md: 6 },
+        mb: { xs: 3, md: 6 },
         overflow: "hidden",
         position: "relative",
       }}
     >
-      <Grid container spacing={5} sx={{ alignItems: "center" }}>
+      <Grid container spacing={{ xs: 2, md: 5 }} sx={{ alignItems: "center" }}>
         {/* Left Content Area */}
         <Grid size={{ xs: 12, md: 6 }}>
           {/* Subtitle / Tag */}
@@ -34,7 +34,7 @@ export default function CustomerProductsHero() {
               letterSpacing: "1.5px",
               color: "#D9531E",
               textTransform: "uppercase",
-              mb: 1.5,
+              mb: 1,
             }}
           >
             POOJAS FOR EVERY OCCASION
@@ -46,10 +46,10 @@ export default function CustomerProductsHero() {
             sx={{
               fontFamily: '"Georgia", "Times New Roman", serif',
               fontWeight: 800,
-              fontSize: { xs: "32px", sm: "44px", md: "52px" },
+              fontSize: { xs: "24px", sm: "36px", md: "52px" },
               lineHeight: 1.15,
               color: "#FFFFFF",
-              mb: 2.5,
+              mb: 1.5,
             }}
           >
             Everything sacred,{" "}
@@ -72,10 +72,10 @@ export default function CustomerProductsHero() {
             sx={{
               fontFamily: '"DM Sans", sans-serif',
               color: "#C5B7AE",
-              fontSize: "15px",
-              lineHeight: 1.7,
+              fontSize: { xs: "13px", md: "15px" },
+              lineHeight: 1.5,
               maxWidth: 480,
-              mb: 4,
+              mb: { xs: 2.5, md: 4 },
             }}
           >
             Pure, authentic pooja samagri — from diyas and dhoop to complete
@@ -88,7 +88,7 @@ export default function CustomerProductsHero() {
               display: "flex",
               flexWrap: "wrap",
               gap: 2,
-              mb: 5,
+              mb: { xs: 2, md: 5 },
             }}
           >
             <Button
@@ -98,11 +98,11 @@ export default function CustomerProductsHero() {
               sx={{
                 bgcolor: "#C84B16",
                 color: "white",
-                px: 3.5,
-                py: 1.4,
+                px: 3,
+                py: 1,
                 borderRadius: "8px",
                 fontWeight: 700,
-                fontSize: "14px",
+                fontSize: "13px",
                 textTransform: "none",
                 boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
                 "&:hover": {
@@ -122,7 +122,7 @@ export default function CustomerProductsHero() {
             sx={{
               position: "relative",
               width: "100%",
-              height: { xs: 260, sm: 340, md: 380 },
+              height: { xs: 180, sm: 280, md: 380 },
               borderRadius: "20px",
               overflow: "hidden",
               boxShadow: "0 15px 35px rgba(0, 0, 0, 0.4)",

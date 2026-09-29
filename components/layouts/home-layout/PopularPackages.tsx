@@ -36,7 +36,7 @@ export default function PopularPackages() {
       try {
         const response = await getServicesAPI(
           1,
-          10,
+          4,
           "",
           undefined,
           undefined,
@@ -52,6 +52,39 @@ export default function PopularPackages() {
             (item: any) => item.isActive !== false,
           );
           const apiPackages = activeOnly.map((item: any) => {
+            let minP: number | null = item.minPrice != null ? Number(item.minPrice) : null;
+            let maxP: number | null = item.maxPrice != null ? Number(item.maxPrice) : null;
+
+            if ((minP == null || isNaN(minP)) && item.plans && typeof item.plans === "object") {
+              const prices: number[] = [];
+              const planList = Array.isArray(item.plans) ? item.plans : Object.values(item.plans);
+              planList.forEach((p: any) => {
+                if (p && p.price != null && !isNaN(Number(p.price))) {
+                  prices.push(Number(p.price));
+                }
+              });
+              if (prices.length > 0) {
+                minP = Math.min(...prices);
+                maxP = Math.max(...prices);
+              }
+            }
+
+            let priceStr = "Price on Request";
+            if (minP != null && !isNaN(minP)) {
+              if (maxP != null && !isNaN(maxP) && maxP > minP) {
+                priceStr = `₹${minP.toLocaleString("en-IN")} - ₹${maxP.toLocaleString("en-IN")}`;
+              } else {
+                priceStr = `₹${minP.toLocaleString("en-IN")}`;
+              }
+            } else if (item.priceWithoutSamagri != null) {
+              const p1 = Number(item.priceWithoutSamagri);
+              if (item.priceWithSamagri != null && Number(item.priceWithSamagri) > p1) {
+                priceStr = `₹${p1.toLocaleString("en-IN")} - ₹${Number(item.priceWithSamagri).toLocaleString("en-IN")}`;
+              } else {
+                priceStr = `₹${p1.toLocaleString("en-IN")}`;
+              }
+            }
+
             return {
               id: item.id,
               title: item.name,
@@ -60,11 +93,7 @@ export default function PopularPackages() {
                 item.shortDescription ||
                 "Traditional Vedic pooja performed by an experienced Purohit.",
               duration: formatDuration(item.durationMinutes),
-              price: item.priceWithoutSamagri != null
-                ? Math.floor(parseFloat(item.priceWithoutSamagri)).toLocaleString("en-IN")
-                : item.minPrice
-                  ? Math.floor(parseFloat(item.minPrice)).toLocaleString("en-IN")
-                  : "0",
+              price: priceStr,
               unit: "/ ceremony",
               image:
                 item.iconDownloadurl ||
@@ -72,7 +101,7 @@ export default function PopularPackages() {
                 "/images/home/poojaPackages/satyanarayan.webp",
             };
           });
-          setPackages(apiPackages);
+          setPackages(apiPackages.slice(0, 4));
         } else {
           setPackages([]);
         }
@@ -253,10 +282,14 @@ export default function PopularPackages() {
                       sx={{
                         fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
                         fontWeight: 700,
-                        fontSize: { xs: "20px", sm: "22px" },
+                        fontSize: { xs: "17px", sm: "18px" },
                         color: "#2C1810",
                         textAlign: "center",
-                        lineHeight: 1.25,
+                        lineHeight: 1.3,
+                        minHeight: "44px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       {pkg.title}
@@ -286,36 +319,43 @@ export default function PopularPackages() {
                           mb: 0.5,
                         }}
                       >
-                        STARTING FROM
+                        {pkg.price.includes("-") ? "PRICE RANGE" : "STARTING FROM"}
                       </Typography>
 
                       {/* Price Display */}
                       <Box
-                        sx={{ display: "flex", alignItems: "baseline", mb: 2 }}
+                        sx={{
+                          display: "flex",
+                          alignItems: "baseline",
+                          flexWrap: "wrap",
+                          gap: 0.5,
+                          mb: 2,
+                        }}
                       >
                         <Typography
                           sx={{
                             fontFamily:
                               'var(--font-outfit), "DM Sans", sans-serif',
                             fontWeight: 800,
-                            fontSize: { xs: "26px", sm: "28px" },
+                            fontSize: pkg.price.length > 12 ? { xs: "17px", sm: "18px" } : { xs: "22px", sm: "24px" },
                             color: "#2C1810",
+                            lineHeight: 1.2,
                           }}
                         >
-                          ₹{pkg.price}
+                          {pkg.price.startsWith("₹") || pkg.price.startsWith("Price") ? pkg.price : `₹${pkg.price}`}
                         </Typography>
                         <Typography
                           component="span"
                           sx={{
                             fontFamily:
                               'var(--font-outfit), "DM Sans", sans-serif',
-                            fontSize: "13px",
+                            fontSize: "12px",
                             fontWeight: 500,
                             color: "#8C6D53",
-                            ml: 1,
+                            whiteSpace: "nowrap",
                           }}
                         >
-                          {pkg.unit || "onwards"}
+                          {pkg.unit || "/ ceremony"}
                         </Typography>
                       </Box>
 

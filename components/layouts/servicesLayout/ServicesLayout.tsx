@@ -1,30 +1,37 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Box, Container, Grid } from "@mui/material";
-import { City, State } from "country-state-city";
+import { City } from "country-state-city";
 import CustomerServicesFilters from "../customerLayout/services/CustomerServicesFilters";
 import ServiceGrid from "./ServiceGrid";
 
 export default function ServicesLayout() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const searchParams = useSearchParams();
+  const cityParam = searchParams.get("city");
+  const categoryParam = searchParams.get("category");
+
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedState, setSelectedState] = useState<string>("All");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("All Categories");
   const [selectedCity, setSelectedCity] = useState<string>("All");
 
-  const indianStates = State.getStatesOfCountry("IN");
-  const stateOptions = indianStates.map((s) => s.name);
+  useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategoryName(categoryParam);
+    }
+    if (cityParam) {
+      setSelectedCity(cityParam);
+    }
+  }, [categoryParam, cityParam]);
 
-  const selectedStateObj = indianStates.find(
-    (s) => s.name.toLowerCase() === selectedState.toLowerCase()
-  );
-  const cityOptions = selectedStateObj
-    ? City.getCitiesOfState("IN", selectedStateObj.isoCode).map((c) => c.name)
-    : [];
+  const rawCities = City.getCitiesOfCountry("IN") || [];
+  const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
 
-  const handleStateChange = (newState: string) => {
-    setSelectedState(newState);
-    setSelectedCity("All");
+  const handleCategoryChange = (catId: string, catName: string) => {
+    setSelectedCategoryId(catId);
+    setSelectedCategoryName(catName);
   };
 
   const handleCityChange = (newCity: string) => {
@@ -44,19 +51,19 @@ export default function ServicesLayout() {
       <Box
         sx={{
           width: "100%",
-          minHeight: { xs: "360px", md: "480px" },
+          minHeight: { xs: "320px", md: "480px" },
           backgroundImage: {
-            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.85) 0%, rgba(255, 253, 249, 0.6) 55%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-            md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.1) 50%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)"
+            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.95) 0%, rgba(255, 253, 249, 0.82) 45%, rgba(255, 253, 249, 0.1) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.85) 35%, rgba(255, 253, 249, 0.1) 65%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)"
           },
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           display: "flex",
           flexDirection: "column",
-          pt: 4,
-          pb: 6,
-          mb: 6,
+          pt: { xs: 2.5, md: 4 },
+          pb: { xs: 3.5, md: 6 },
+          mb: { xs: 4, md: 6 },
         }}
       >
         <Container
@@ -70,9 +77,9 @@ export default function ServicesLayout() {
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 800,
-                color: "#1A1A1A",
+                color: "#0f172a",
                 mb: 1.5,
-                fontSize: { xs: "2rem", md: "42px" },
+                fontSize: { xs: "1.6rem", md: "42px" },
                 letterSpacing: "-0.03em",
               }}
             >
@@ -82,11 +89,11 @@ export default function ServicesLayout() {
               component="p"
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
-                color: "#475569",
-                fontWeight: 500,
+                color: "#0f172a",
+                fontWeight: 600,
                 mb: 3,
-                fontSize: "16px",
-                lineHeight: "1.6",
+                fontSize: { xs: "14px", md: "16px" },
+                lineHeight: "1.5",
                 maxWidth: "520px",
               }}
             >
@@ -100,7 +107,7 @@ export default function ServicesLayout() {
 
       {/* Main Content Area Below Hero */}
       <Box sx={{ position: "relative" }}>
-        {/* Search & State/City Filters Bar */}
+        {/* Search, Category & City Filters Bar */}
         <Container
           maxWidth="lg"
           sx={{ position: "relative", zIndex: 1, mb: 4 }}
@@ -108,9 +115,8 @@ export default function ServicesLayout() {
           <CustomerServicesFilters
             searchTerm={searchQuery}
             onSearchChange={setSearchQuery}
-            stateOptions={stateOptions}
-            selectedState={selectedState}
-            onStateChange={handleStateChange}
+            selectedCategory={selectedCategoryName}
+            onCategoryChange={handleCategoryChange}
             cityOptions={cityOptions}
             selectedCity={selectedCity}
             onCityChange={handleCityChange}
@@ -122,10 +128,10 @@ export default function ServicesLayout() {
           <Grid container spacing={4}>
             <Grid size={{ xs: 12 }}>
               <ServiceGrid
-                activeCategory={activeCategory}
+                activeCategory={selectedCategoryName}
+                selectedCategoryId={selectedCategoryId}
                 activeFilters={activeFilters}
                 searchQuery={searchQuery}
-                selectedState={selectedState}
                 selectedCity={selectedCity}
               />
             </Grid>

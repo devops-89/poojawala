@@ -28,8 +28,8 @@ export default function CustomerDashboardLayout({
           component="main"
           sx={{
             flexGrow: 1,
-            p: { xs: 2, sm: 3, md: 4 },
-            mt: "80px",
+            p: { xs: 1.5, sm: 3, md: 4 },
+            mt: { xs: "60px", md: "80px" },
             width: "100%",
             maxWidth: 1200,
             mx: "auto",

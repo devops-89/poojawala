@@ -1,33 +1,38 @@
-import { getAllServicesAPI, getServicesAPI } from '@/api/serviceControllers';
+import { getAllServicesAPI } from '@/api/serviceControllers';
 import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
-import { Box, Grid, MenuItem, Pagination, Select, Typography, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Grid, Pagination, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import ServiceCard from './ServiceCard';
 
 interface ServiceGridProps {
   activeCategory: string;
+  selectedCategoryId?: string | number;
   activeFilters?: any;
   searchQuery?: string;
-  selectedState?: string;
   selectedCity?: string;
 }
 
 export default function ServiceGrid({
   activeCategory,
+  selectedCategoryId,
   activeFilters,
   searchQuery,
-  selectedState,
   selectedCity,
 }: ServiceGridProps) {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState('popular');
-  const [location, setLocation] = useState('all');
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 6;
   const gridTopRef = useRef<HTMLDivElement>(null);
   const mountTime = useRef(Date.now());
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, selectedCity, selectedCategoryId, activeCategory]);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -37,24 +42,20 @@ export default function ServiceGrid({
           selectedCity && selectedCity !== 'All' && selectedCity !== 'All Cities'
             ? selectedCity
             : undefined;
-        const stateParam =
-          selectedState && selectedState !== 'All' && selectedState !== 'All States'
-            ? selectedState
-            : undefined;
 
         const response = await getAllServicesAPI(
-          1,
-          100,
+          page,
+          itemsPerPage,
           searchQuery || "",
           true,
           cityParam,
-          stateParam
+          undefined,
+          selectedCategoryId || undefined
         );
-        
-        // Postman showed nested data for some endpoints, trying to handle that safely.
+
         let fetchedServices = [];
         const rawData = response;
-        
+
         if (Array.isArray(rawData)) {
           fetchedServices = rawData;
         } else if (rawData?.data && Array.isArray(rawData.data)) {
@@ -69,25 +70,64 @@ export default function ServiceGrid({
           fetchedServices = rawData.data.services;
         }
 
-        // Filter only active services (isActive: true)
+        const pagination = rawData?.data?.pagination || rawData?.pagination || rawData?.data || {};
+        const total = pagination?.total || pagination?.totalCount || rawData?.total || fetchedServices.length;
+        const calcTotalPages = pagination?.totalPages || pagination?.pageCount || Math.ceil(total / itemsPerPage) || 1;
+
+        setTotalCount(total);
+        setTotalPages(calcTotalPages);
+
         const activeOnly = fetchedServices.filter((s: any) => s.isActive !== false);
 
-        // Map the backend data to match the UI requirements
-        const formattedServices = activeOnly.map((s: any) => ({
-          id: s.id || s._id,
-          title: s.name || s.title || 'Service',
-          category: s.category?.name || s.category || 'All',
-          description: s.description || '',
-          duration: s.durationMinutes ? `${Math.round(s.durationMinutes/60)} hr` : (s.duration || '1 hr'),
-          price: (s.priceWithoutSamagri != null && s.priceWithSamagri != null) ? `${s.priceWithoutSamagri} - ${s.priceWithSamagri}` : (s.minPrice && s.maxPrice) ? `${s.minPrice} - ${s.maxPrice}` : ((s.priceWithoutSamagri ?? s.minPrice)?.toString() || s.basePrice?.toString() || s.price?.toString() || '0'),
-          image: s.iconDownloadurl || s.iconUrl || s.imageUrl || '/images/home/poojaPackages/satyanarayan.webp',
-          language: s.language || 'all',
-          experience: s.experience || 'all',
-          location: s.location || 'all',
-          availability: s.availability || s.serviceMode || 'All',
-          rituals: s.rituals || 'all'
-        }));
-        
+        const formattedServices = activeOnly.map((s: any) => {
+          let minP: number | null = s.minPrice != null ? Number(s.minPrice) : null;
+          let maxP: number | null = s.maxPrice != null ? Number(s.maxPrice) : null;
+
+          if ((minP == null || isNaN(minP)) && s.plans && typeof s.plans === "object") {
+            const prices: number[] = [];
+            const planList = Array.isArray(s.plans) ? s.plans : Object.values(s.plans);
+            planList.forEach((p: any) => {
+              if (p && p.price != null && !isNaN(Number(p.price))) {
+                prices.push(Number(p.price));
+              }
+            });
+            if (prices.length > 0) {
+              minP = Math.min(...prices);
+              maxP = Math.max(...prices);
+            }
+          }
+
+          let computedPriceStr = '0';
+          if (minP != null && !isNaN(minP)) {
+            if (maxP != null && !isNaN(maxP) && maxP > minP) {
+              computedPriceStr = `${minP} - ${maxP}`;
+            } else {
+              computedPriceStr = `${minP}`;
+            }
+          } else if (s.priceWithoutSamagri != null && s.priceWithSamagri != null) {
+            computedPriceStr = `${s.priceWithoutSamagri} - ${s.priceWithSamagri}`;
+          } else if (s.priceWithoutSamagri != null) {
+            computedPriceStr = `${s.priceWithoutSamagri}`;
+          } else if (s.basePrice != null || s.price != null) {
+            computedPriceStr = `${s.basePrice ?? s.price}`;
+          }
+
+          return {
+            id: s.id || s._id,
+            title: s.name || s.title || 'Service',
+            categoryId: s.categoryId || s.category?.id || (typeof s.category === "object" ? s.category?.id : ""),
+            category: s.category?.name || (typeof s.category === "string" ? s.category : "") || 'All',
+            description: s.description || '',
+            duration: s.durationMinutes ? `${Math.round(s.durationMinutes / 60)} hr` : (s.duration || '1 hr'),
+            price: computedPriceStr,
+            image: s.iconDownloadurl || s.iconUrl || s.imageUrl || '/images/home/poojaPackages/satyanarayan.webp',
+            language: s.language || 'all',
+            experience: s.experience || 'all',
+            location: s.location || 'all',
+            availability: s.availability || s.serviceMode || 'All',
+            rituals: s.rituals || 'all'
+          };
+        });
 
         setServices(formattedServices.length > 0 ? formattedServices : []);
       } catch (error) {
@@ -96,94 +136,12 @@ export default function ServiceGrid({
         setLoading(false);
       }
     };
-    
+
     fetchServices();
-  }, [searchQuery, selectedState, selectedCity]);
-
-  // Reset page to 1 when category changes and scroll to top
-  useEffect(() => {
-    setPage(1);
-    
-    // Prevent scrolling during the initial page load (including React StrictMode double mounts)
-    if (Date.now() - mountTime.current < 1500) {
-      return;
-    }
-
-    if (gridTopRef.current) {
-      // Offset by ~100px so it clears the sticky navbar
-      const y = gridTopRef.current.getBoundingClientRect().top + window.scrollY - 120;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  }, [activeCategory, activeFilters, location]);
-
-  const filteredServices = activeCategory === 'All' 
-    ? services 
-    : services.filter(service => {
-        if (activeCategory === 'Home Puja & Grah Pravesh') {
-          return service.category === 'Home Puja' || service.category === 'Grah Pravesh';
-        }
-        return service.category === activeCategory;
-      });
-
-  // Apply Sidebar Filters
-  let completelyFiltered = filteredServices;
-  if (activeFilters) {
-    completelyFiltered = completelyFiltered.filter(service => {
-      // 1. Price
-      const priceStr = service.price ? service.price.toString().replace(/,/g, '') : '0';
-      const price = parseFloat(priceStr);
-      if (!isNaN(price) && (price < activeFilters.priceRange[0] || price > activeFilters.priceRange[1])) {
-        // TEMPORARY: Don't return false so we can see all data
-        // return false; 
-      }
-      
-      // 2. Language
-      if (activeFilters.language !== 'all' && service.language !== activeFilters.language) {
-        // return false;
-      }
-      
-      // 3. Experience
-      if (activeFilters.experience !== 'all' && service.experience !== activeFilters.experience) {
-        // return false;
-      }
-
-      // 5. Rituals
-      if (activeFilters.rituals !== 'all' && service.rituals !== activeFilters.rituals) {
-        // return false;
-      }
-
-      // 6. Availability
-      if (activeFilters.availability !== 'All' && service.availability !== activeFilters.availability) {
-        // return false;
-      }
-
-      return true;
-    });
-  }
-
-  if (location !== 'all') {
-    // completelyFiltered = completelyFiltered.filter(service => service.location === location);
-  }
-
-  // Apply Sorting
-  const sortedServices = [...completelyFiltered].sort((a, b) => {
-    const priceA = parseInt(a.price.replace(/,/g, ''));
-    const priceB = parseInt(b.price.replace(/,/g, ''));
-    
-    if (sortBy === 'price_low') {
-      return priceA - priceB;
-    } else if (sortBy === 'price_high') {
-      return priceB - priceA;
-    }
-    return 0;
-  });
-
-  const totalPages = Math.ceil(sortedServices.length / itemsPerPage);
-  const paginatedServices = sortedServices.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  }, [page, searchQuery, selectedCity, selectedCategoryId]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    // Also scroll to top on pagination change
     if (gridTopRef.current) {
       const y = gridTopRef.current.getBoundingClientRect().top + window.scrollY - 120;
       window.scrollTo({ top: y, behavior: 'smooth' });
@@ -207,22 +165,21 @@ export default function ServiceGrid({
             Top Services for You
           </Typography>
           <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#666' }}>
-            {sortedServices.length} services available
+            {totalCount || services.length} services available
           </Typography>
         </Box>
-
       </Box>
 
       {/* List Content */}
-      {paginatedServices.length === 0 ? (
+      {services.length === 0 ? (
         <EmptyStateCard
           icon={<AutoAwesomeOutlinedIcon sx={{ fontSize: 32 }} />}
           title="No Services Found"
-          description="No pooja services are currently available matching your search or filters. Try adjusting your search query or filters!"
+          description="No pooja services are currently available matching your search or selected category/city filter. Try adjusting your filters!"
         />
       ) : (
         <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
-          {paginatedServices.map(service => (
+          {services.map(service => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={service.id} sx={{ display: 'flex' }}>
               <ServiceCard
                 id={service.id}
@@ -241,11 +198,11 @@ export default function ServiceGrid({
       {/* Pagination */}
       {totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <Pagination 
-            count={totalPages} 
+          <Pagination
+            count={totalPages}
             page={page}
             onChange={handlePageChange}
-            shape="rounded" 
+            shape="rounded"
             sx={{
               '& .MuiPaginationItem-root': {
                 fontFamily: '"DM Sans", sans-serif',
