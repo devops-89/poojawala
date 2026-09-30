@@ -368,10 +368,11 @@ export default function PortalRegisterContent() {
   const handlePortalResendOtp = async () => {
     if (resendTimer > 0) return;
     try {
-      await resendOtpAPI({
+      await sendOtpAPI({
         phone: formik.values.mobileNumber,
         email: formik.values.email,
-        otpType: "USER_REGISTRATION",
+        role: "PUROHIT",
+        countryCode: formik.values.countryCode,
       });
       showSnackbar("OTP resent successfully!", "success");
       setResendTimer(30);
