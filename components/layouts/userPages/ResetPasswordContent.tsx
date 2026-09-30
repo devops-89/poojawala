@@ -61,16 +61,42 @@ export default function ResetPasswordContent() {
   };
 
   const handleOtpChange = (idx: number, value: string, setFieldValue: any, values: any) => {
-    if (value && !/^\d+$/.test(value)) return;
-    
+    const cleanVal = value.replace(/\D/g, '');
+    if (value !== '' && !cleanVal) return;
+
+    if (cleanVal.length > 1) {
+      const digits = cleanVal.slice(0, 6);
+      const newOtp = [...values.otp];
+      for (let i = 0; i < digits.length && (idx + i) < 6; i++) {
+        newOtp[idx + i] = digits[i];
+      }
+      setFieldValue('otp', newOtp);
+      const nextFocus = Math.min(5, idx + digits.length - 1);
+      otpRefs.current[nextFocus]?.focus();
+      return;
+    }
+
     const newOtp = [...values.otp];
-    const char = value.slice(-1); 
+    const char = cleanVal.slice(-1); 
     newOtp[idx] = char;
     setFieldValue('otp', newOtp);
 
     if (char && idx < 5) {
       otpRefs.current[idx + 1]?.focus();
     }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLDivElement>, setFieldValue: any, values: any) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pastedText) return;
+    const newOtp = [...values.otp];
+    for (let i = 0; i < pastedText.length; i++) {
+      newOtp[i] = pastedText[i];
+    }
+    setFieldValue('otp', newOtp);
+    const nextFocus = Math.min(5, pastedText.length - 1);
+    otpRefs.current[nextFocus]?.focus();
   };
 
   const handleOtpKeyDown = (idx: number, e: React.KeyboardEvent<HTMLDivElement>, values: any) => {
@@ -164,8 +190,9 @@ export default function ResetPasswordContent() {
                             value={val}
                             onChange={(e) => handleOtpChange(idx, e.target.value, setFieldValue, values)}
                             onKeyDown={(e) => handleOtpKeyDown(idx, e, values)}
+                            onPaste={(e) => handleOtpPaste(e, setFieldValue, values)}
                             inputRef={(el) => { otpRefs.current[idx] = el; }}
-                            slotProps={{ htmlInput: { maxLength: 1 } }}
+                            slotProps={{ htmlInput: { maxLength: 6 } }}
                             error={touched.otp && !!errors.otp}
                             sx={{ '& input': { textAlign: 'center', fontSize: '20px', fontWeight: 700, p: 1.5 }, '& .MuiOutlinedInput-root': { borderRadius: '8px' } }} 
                           />
