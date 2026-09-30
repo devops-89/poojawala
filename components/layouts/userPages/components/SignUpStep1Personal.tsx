@@ -17,10 +17,10 @@ const today = new Date();
 const fifteenYearsAgo = new Date(
   today.getFullYear() - 15,
   today.getMonth(),
-  today.getDate(),
+  today.getDate()
 );
 const maxDobDate = `${fifteenYearsAgo.getFullYear()}-${String(
-  fifteenYearsAgo.getMonth() + 1,
+  fifteenYearsAgo.getMonth() + 1
 ).padStart(2, "0")}-${String(fifteenYearsAgo.getDate()).padStart(2, "0")}`;
 
 export interface SignUpStep1PersonalProps {
@@ -29,17 +29,24 @@ export interface SignUpStep1PersonalProps {
 
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    fontFamily: '"DM Sans", sans-serif',
-    borderRadius: "10px",
-    fontSize: "0.875rem",
+    fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+    borderRadius: "12px",
+    fontSize: "0.9rem",
+    bgcolor: "#FFFDF9",
+    "&:hover fieldset": {
+      borderColor: "#FF9100",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#FF6200",
+    },
   },
   "& .MuiInputLabel-root": {
-    fontFamily: '"DM Sans", sans-serif',
+    fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
     fontSize: "0.875rem",
   },
   "& .MuiFormHelperText-root": {
     fontSize: "0.75rem",
-    margin: "2px 0 -4px 0",
+    margin: "3px 0 -3px 0",
   },
 };
 
@@ -50,7 +57,7 @@ export default function SignUpStep1Personal({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <Grid container spacing={1.25}>
+    <Grid container spacing={2.25}>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="firstName">
           {({ field, meta }: any) => (
@@ -107,6 +114,8 @@ export default function SignUpStep1Personal({
           {({ field, form, meta }: any) => (
             <MuiTelInput
               fullWidth
+              disableDropdown
+              onlyCountries={['IN']}
               size="small"
               label="Phone Number *"
               name="phone"
@@ -135,7 +144,11 @@ export default function SignUpStep1Personal({
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
-              sx={inputStyles}
+              sx={{
+                ...inputStyles,
+                '& .MuiTelInput-IconButton': { pointerEvents: 'none', cursor: 'default' },
+                '& .MuiTelInput-Button': { pointerEvents: 'none', cursor: 'default' },
+              }}
             />
           )}
         </Field>
@@ -297,18 +310,18 @@ export default function SignUpStep1Personal({
           onClick={onNext}
           variant="contained"
           sx={{
-            mt: 0.5,
-            background: "#FF6200",
+            mt: 1,
+            background: "linear-gradient(135deg, #FF6200 0%, #F05A00 100%)",
             color: "white",
-            py: 1,
-            borderRadius: "24px",
+            py: 1.25,
+            borderRadius: "30px",
             textTransform: "none",
             fontWeight: 700,
             fontSize: "15px",
-            boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+            boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
             "&:hover": {
-              background: "#E65800",
-              boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
+              background: "linear-gradient(135deg, #E65800 0%, #D04F00 100%)",
+              boxShadow: "0 8px 25px rgba(255, 98, 0, 0.4)",
             },
           }}
         >

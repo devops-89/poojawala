@@ -17,26 +17,26 @@ export default function SignUpStepperHeader({
   onStep2Click,
 }: SignUpStepperHeaderProps) {
   return (
-    <Box sx={{ mb: 1.5 }}>
+    <Box sx={{ mb: 2.5 }}>
       <Typography
-        variant="h6"
+        variant="h5"
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
-          fontWeight: 800,
+          fontFamily: "var(--font-outfit), sans-serif",
+          fontWeight: 700,
           color: "#1A1A1A",
-          fontSize: "1.25rem",
+          fontSize: { xs: "1.25rem", md: "1.45rem" },
           lineHeight: 1.2,
-          mb: 0.25,
+          mb: 0.5,
         }}
       >
         Create an Account
       </Typography>
       <Typography
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: "var(--font-outfit), sans-serif",
           color: "#666",
-          mb: 1.5,
-          fontSize: "0.825rem",
+          mb: 2,
+          fontSize: "0.85rem",
         }}
       >
         Step {currentStep} of 2:{" "}
@@ -52,9 +52,9 @@ export default function SignUpStepperHeader({
           alignItems: "center",
           gap: 1.5,
           p: 0.75,
-          bgcolor: "#FFF0E6",
-          borderRadius: "10px",
-          mb: 1.5,
+          bgcolor: "#FFFDF9",
+          border: "1px solid #FFE0D0",
+          borderRadius: "14px",
         }}
       >
         <Box
@@ -64,22 +64,29 @@ export default function SignUpStepperHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 0.75,
+            gap: 1,
             cursor: "pointer",
-            py: 0.75,
-            px: 1,
-            borderRadius: "8px",
+            py: 1,
+            px: 1.5,
+            borderRadius: "10px",
             bgcolor: currentStep === 1 ? "#FF6200" : "transparent",
-            color: currentStep === 1 ? "#fff" : "#FF6200",
-            transition: "all 0.2s",
+            color: currentStep === 1 ? "#fff" : "#666",
+            boxShadow:
+              currentStep === 1
+                ? "0 4px 12px rgba(255, 98, 0, 0.25)"
+                : "none",
+            transition: "all 0.25s ease",
+            "&:hover": {
+              bgcolor: currentStep === 1 ? "#F05A00" : "#FFF0E6",
+            },
           }}
         >
-          <PersonIcon sx={{ fontSize: 18 }} />
+          <PersonIcon sx={{ fontSize: 19 }} />
           <Typography
             sx={{
               fontWeight: 700,
-              fontSize: "0.825rem",
-              fontFamily: '"DM Sans", sans-serif',
+              fontSize: "0.85rem",
+              fontFamily: "var(--font-outfit), sans-serif",
             }}
           >
             1. Personal Details
@@ -93,22 +100,29 @@ export default function SignUpStepperHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 0.75,
+            gap: 1,
             cursor: "pointer",
-            py: 0.75,
-            px: 1,
-            borderRadius: "8px",
+            py: 1,
+            px: 1.5,
+            borderRadius: "10px",
             bgcolor: currentStep === 2 ? "#FF6200" : "transparent",
-            color: currentStep === 2 ? "#fff" : "#FF6200",
-            transition: "all 0.2s",
+            color: currentStep === 2 ? "#fff" : "#666",
+            boxShadow:
+              currentStep === 2
+                ? "0 4px 12px rgba(255, 98, 0, 0.25)"
+                : "none",
+            transition: "all 0.25s ease",
+            "&:hover": {
+              bgcolor: currentStep === 2 ? "#F05A00" : "#FFF0E6",
+            },
           }}
         >
-          <LocationOnIcon sx={{ fontSize: 18 }} />
+          <LocationOnIcon sx={{ fontSize: 19 }} />
           <Typography
             sx={{
               fontWeight: 700,
-              fontSize: "0.825rem",
-              fontFamily: '"DM Sans", sans-serif',
+              fontSize: "0.85rem",
+              fontFamily: "var(--font-outfit), sans-serif",
             }}
           >
             2. Address Details
@@ -118,4 +132,3 @@ export default function SignUpStepperHeader({
     </Box>
   );
 }
-

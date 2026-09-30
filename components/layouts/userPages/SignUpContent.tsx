@@ -7,8 +7,7 @@ import SignUpStep2Address from "@/components/layouts/userPages/components/SignUp
 import SignUpStepperHeader from "@/components/layouts/userPages/components/SignUpStepperHeader";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -149,9 +148,12 @@ export default function SignUpContent() {
         minHeight: "100vh",
         bgcolor: "#FFFDF9",
         display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
         position: "relative",
         overflow: "hidden",
+        py: { xs: 3, md: 5 },
       }}
     >
       {/* Background Decor */}
@@ -164,7 +166,7 @@ export default function SignUpContent() {
           top: -150,
           left: -150,
           width: "500px",
-          opacity: 0.5,
+          opacity: 0.4,
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -178,7 +180,7 @@ export default function SignUpContent() {
           bottom: -150,
           right: -150,
           width: "500px",
-          opacity: 0.5,
+          opacity: 0.4,
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -189,7 +191,6 @@ export default function SignUpContent() {
         sx={{
           position: "relative",
           zIndex: 1,
-          py: { xs: 2, md: 2 },
           px: { xs: 2, md: 3 },
         }}
       >
@@ -203,9 +204,9 @@ export default function SignUpContent() {
               sx={{
                 display: "flex",
                 flexDirection: { xs: "column", md: "row" },
-                borderRadius: "20px",
+                borderRadius: "24px",
                 overflow: "hidden",
-                boxShadow: "0 15px 45px rgba(0,0,0,0.08)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
                 border: "1px solid #FFE0D0",
               }}
             >
@@ -215,8 +216,8 @@ export default function SignUpContent() {
               {/* Right Side Form */}
               <Box
                 sx={{
-                  flex: 1.4,
-                  p: { xs: 2.5, md: 3.5 },
+                  flex: 1.5,
+                  p: { xs: 3, md: 4 },
                   bgcolor: "#fff",
                   display: "flex",
                   flexDirection: "column",
@@ -325,45 +326,17 @@ export default function SignUpContent() {
                           onBack={() => setCurrentStep(1)}
                         />
                       )}
-
-                      <Box sx={{ mt: 1.5 }}>
-                        <Button
-                          component={Link}
-                          href="/"
-                          fullWidth
-                          variant="outlined"
-                          startIcon={<ArrowBackIcon fontSize="small" />}
-                          sx={{
-                            py: 0.75,
-                            borderRadius: "24px",
-                            borderColor: "#FFE0D0",
-                            color: "#475569",
-                            fontFamily: '"DM Sans", sans-serif',
-                            fontWeight: 600,
-                            fontSize: "13px",
-                            textTransform: "none",
-                            transition: "all 0.2s ease",
-                            "&:hover": {
-                              bgcolor: "#FFF0E6",
-                              color: "#FF6200",
-                              borderColor: "#FF6200",
-                            },
-                          }}
-                        >
-                          Go to Website
-                        </Button>
-                      </Box>
                     </Box>
                   )}
                 </Formik>
 
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: "var(--font-outfit), sans-serif",
                     color: "#666",
                     textAlign: "center",
-                    mt: 1.5,
-                    fontSize: "13px",
+                    mt: 2.5,
+                    fontSize: "13.5px",
                   }}
                 >
                   Already have an account?{" "}
@@ -386,4 +359,3 @@ export default function SignUpContent() {
     </Box>
   );
 }
-
