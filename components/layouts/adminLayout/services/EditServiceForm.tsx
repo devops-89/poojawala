@@ -106,17 +106,19 @@ export default function EditServiceForm() {
       name: "",
       categoryId: "",
       description: "",
-      tokenPercentage: "30.00",
+      tokenPercentage: "40.00",
       basicPrice: "",
       basicFeatures: [{ key: "", value: "" }] as Array<{
         key: string;
         value: string;
       }>,
+      basicPurohitCarryItems: [] as string[],
       standardPrice: "",
       standardFeatures: [{ key: "", value: "" }] as Array<{
         key: string;
         value: string;
       }>,
+      standardPurohitCarryItems: [] as string[],
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
@@ -154,54 +156,34 @@ export default function EditServiceForm() {
         );
         formData.append("durationMinutes", String(values.durationMinutes));
 
-        const basicPlanObj: Record<string, any> = {
-          price: Number(values.basicPrice),
-        };
-
+        // Append plans nested form data
+        formData.append("plans[basic][price]", String(values.basicPrice));
         values.basicFeatures.forEach((item: any) => {
-          const k = item.key?.trim();
+          const k = (typeof item === "string" ? item : item?.key)?.trim();
           if (!k) return;
-          const v = item.value?.trim();
-          if (v === "false") {
-            basicPlanObj[k] = false;
-          } else if (v === "true" || v === "") {
-            basicPlanObj[k] = true;
-          } else if (!isNaN(Number(v)) && v !== "") {
-            basicPlanObj[k] = Number(v);
-          } else {
-            basicPlanObj[k] = v;
-          }
+          formData.append(`plans[basic][features][${k}]`, "true");
         });
 
-        const standardPlanObj: Record<string, any> = {
-          price: Number(values.standardPrice),
-        };
-
+        formData.append("plans[standard][price]", String(values.standardPrice));
         values.standardFeatures.forEach((item: any) => {
-          const k = item.key?.trim();
+          const k = (typeof item === "string" ? item : item?.key)?.trim();
           if (!k) return;
-          const v = item.value?.trim();
-          if (v === "false") {
-            standardPlanObj[k] = false;
-          } else if (v === "true" || v === "") {
-            standardPlanObj[k] = true;
-          } else if (!isNaN(Number(v)) && v !== "") {
-            standardPlanObj[k] = Number(v);
-          } else {
-            standardPlanObj[k] = v;
-          }
+          formData.append(`plans[standard][features][${k}]`, "true");
         });
 
-        const plansObj = {
-          basic: basicPlanObj,
-          standard: standardPlanObj,
-        };
+        // 3. Purohit Carry Items
+        const validBasicCarry = (values.basicPurohitCarryItems || [])
+          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+          .filter(Boolean);
+        const validStandardCarry = (values.standardPurohitCarryItems || [])
+          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+          .filter(Boolean);
 
-        Object.entries(basicPlanObj).forEach(([k, v]) => {
-          formData.append(`plans[basic][${k}]`, String(v));
+        validBasicCarry.forEach((item, index) => {
+          formData.append(`purohitCarryItems[basic][${index}]`, item);
         });
-        Object.entries(standardPlanObj).forEach(([k, v]) => {
-          formData.append(`plans[standard][${k}]`, String(v));
+        validStandardCarry.forEach((item, index) => {
+          formData.append(`purohitCarryItems[standard][${index}]`, item);
         });
 
         formData.append(
@@ -300,36 +282,83 @@ export default function EditServiceForm() {
             service.priceWithoutSamagri ??
             service.minPrice ??
             "";
+
           let standardPrice =
             service.plans?.standard?.price ??
             service.priceWithSamagri ??
             service.maxPrice ??
             "";
 
+          // Unroll features
           let basicFeatList: Array<{ key: string; value: string }> = [];
-          if (
-            service.plans?.basic &&
-            typeof service.plans.basic === "object"
-          ) {
-            basicFeatList = Object.entries(service.plans.basic)
-              .filter(([k]) => k !== "price" && k !== "bulletPoints")
-              .map(([k, v]) => ({ key: k, value: String(v) }));
+          const rawBasicFeatures =
+            service.plans?.basic?.features ||
+            (typeof service.plans?.basic === "object"
+              ? service.plans.basic
+              : null);
+
+          if (rawBasicFeatures && typeof rawBasicFeatures === "object") {
+            basicFeatList = Object.entries(rawBasicFeatures)
+              .filter(
+                ([k]) =>
+                  k !== "price" &&
+                  k !== "tokenAmount" &&
+                  k !== "basicPurohitPayoutAmount" &&
+                  k !== "standardPurohitPayoutAmount" &&
+                  k !== "purohitPayoutAmount" &&
+                  k !== "features" &&
+                  k !== "bulletPoints",
+              )
+              .map(([k, v]) => ({
+                key: k,
+                value: typeof v === "object" ? JSON.stringify(v) : String(v),
+              }));
           }
           if (basicFeatList.length === 0) {
             basicFeatList = [{ key: "", value: "" }];
           }
 
           let standardFeatList: Array<{ key: string; value: string }> = [];
-          if (
-            service.plans?.standard &&
-            typeof service.plans.standard === "object"
-          ) {
-            standardFeatList = Object.entries(service.plans.standard)
-              .filter(([k]) => k !== "price" && k !== "bulletPoints")
-              .map(([k, v]) => ({ key: k, value: String(v) }));
+          const rawStandardFeatures =
+            service.plans?.standard?.features ||
+            (typeof service.plans?.standard === "object"
+              ? service.plans.standard
+              : null);
+
+          if (rawStandardFeatures && typeof rawStandardFeatures === "object") {
+            standardFeatList = Object.entries(rawStandardFeatures)
+              .filter(
+                ([k]) =>
+                  k !== "price" &&
+                  k !== "tokenAmount" &&
+                  k !== "basicPurohitPayoutAmount" &&
+                  k !== "standardPurohitPayoutAmount" &&
+                  k !== "purohitPayoutAmount" &&
+                  k !== "features" &&
+                  k !== "bulletPoints",
+              )
+              .map(([k, v]) => ({
+                key: k,
+                value: typeof v === "object" ? JSON.stringify(v) : String(v),
+              }));
           }
           if (standardFeatList.length === 0) {
             standardFeatList = [{ key: "", value: "" }];
+          }
+
+          // Unroll purohitCarryItems
+          let basicPurohitCarryItems: string[] = [];
+          let standardPurohitCarryItems: string[] = [];
+          if (
+            service.purohitCarryItems &&
+            typeof service.purohitCarryItems === "object"
+          ) {
+            if (Array.isArray(service.purohitCarryItems.basic)) {
+              basicPurohitCarryItems = service.purohitCarryItems.basic;
+            }
+            if (Array.isArray(service.purohitCarryItems.standard)) {
+              standardPurohitCarryItems = service.purohitCarryItems.standard;
+            }
           }
 
           const newValues = {
@@ -337,14 +366,18 @@ export default function EditServiceForm() {
             categoryId:
               service.categoryId ||
               service.category?.id ||
-              (typeof service.category === "object" ? service.category?.id : "") ||
+              (typeof service.category === "object"
+                ? service.category?.id
+                : "") ||
               "",
             description: service.description || "",
-            tokenPercentage: service.tokenPercentage ?? "30.00",
+            tokenPercentage: service.tokenPercentage ?? "40.00",
             basicPrice: basicPrice,
             basicFeatures: basicFeatList,
+            basicPurohitCarryItems: basicPurohitCarryItems,
             standardPrice: standardPrice,
             standardFeatures: standardFeatList,
+            standardPurohitCarryItems: standardPurohitCarryItems,
             commissionPercentage: service.commissionPercentage || "",
             durationMinutes: service.durationMinutes || "",
             requiresVenue: service.requiresVenue ?? false,
@@ -568,14 +601,24 @@ export default function EditServiceForm() {
           </Box>
 
           <Divider sx={{ my: 4 }} />
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
-            >
-              Back
-            </Button>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: activeStep === 0 ? "flex-end" : "space-between",
+            }}
+          >
+            {activeStep > 0 && (
+              <Button
+                onClick={handleBack}
+                sx={{
+                  color: "#64748b",
+                  textTransform: "none",
+                  fontWeight: 600,
+                }}
+              >
+                Back
+              </Button>
+            )}
             {activeStep === steps.length - 1 ? (
               <Button
                 key="submit-btn"

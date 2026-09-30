@@ -101,19 +101,37 @@ export default function AddServiceForm() {
       name: "",
       categoryId: "",
       description: "",
-      tokenPercentage: "30.00",
+      tokenPercentage: "40.00",
       basicPrice: "",
       basicFeatures: [
-        { key: "kalashaSthapana", value: "true" },
-        { key: "lakshmiPuja", value: "true" },
+        { key: "kalashSthapana", value: "true" },
+        { key: "durgaPuja", value: "true" },
         { key: "pujaSamagri", value: "Basic" },
       ] as Array<{ key: string; value: string }>,
+      basicPurohitCarryItems: [
+        "Ganapati Idol",
+        "Puja Aasan",
+        "Puja Thali",
+        "Kalash",
+        "Roli",
+        "Moli",
+        "Havan Samagri",
+      ] as string[],
       standardPrice: "",
       standardFeatures: [
-        { key: "kalashaSthapana", value: "true" },
-        { key: "lakshmiPuja", value: "true" },
+        { key: "kalashSthapana", value: "true" },
+        { key: "durgaPuja", value: "true" },
         { key: "pujaSamagri", value: "Complete" },
       ] as Array<{ key: string; value: string }>,
+      standardPurohitCarryItems: [
+        "Ganapati Idol",
+        "Premium Puja Aasan",
+        "Premium Puja Thali",
+        "Kalash",
+        "Navagraha Puja Items",
+        "Havan Kund",
+        "Premium Puja Decorations",
+      ] as string[],
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
@@ -146,54 +164,34 @@ export default function AddServiceForm() {
         );
         formData.append("durationMinutes", String(values.durationMinutes));
 
-        const basicPlanObj: Record<string, any> = {
-          price: Number(values.basicPrice),
-        };
-
+        // Append plans nested form data
+        formData.append("plans[basic][price]", String(values.basicPrice));
         values.basicFeatures.forEach((item: any) => {
-          const k = item.key?.trim();
+          const k = (typeof item === "string" ? item : item?.key)?.trim();
           if (!k) return;
-          const v = item.value?.trim();
-          if (v === "false") {
-            basicPlanObj[k] = false;
-          } else if (v === "true" || v === "") {
-            basicPlanObj[k] = true;
-          } else if (!isNaN(Number(v)) && v !== "") {
-            basicPlanObj[k] = Number(v);
-          } else {
-            basicPlanObj[k] = v;
-          }
+          formData.append(`plans[basic][features][${k}]`, "true");
         });
 
-        const standardPlanObj: Record<string, any> = {
-          price: Number(values.standardPrice),
-        };
-
+        formData.append("plans[standard][price]", String(values.standardPrice));
         values.standardFeatures.forEach((item: any) => {
-          const k = item.key?.trim();
+          const k = (typeof item === "string" ? item : item?.key)?.trim();
           if (!k) return;
-          const v = item.value?.trim();
-          if (v === "false") {
-            standardPlanObj[k] = false;
-          } else if (v === "true" || v === "") {
-            standardPlanObj[k] = true;
-          } else if (!isNaN(Number(v)) && v !== "") {
-            standardPlanObj[k] = Number(v);
-          } else {
-            standardPlanObj[k] = v;
-          }
+          formData.append(`plans[standard][features][${k}]`, "true");
         });
 
-        const plansObj = {
-          basic: basicPlanObj,
-          standard: standardPlanObj,
-        };
+        // 3. Purohit Carry Items
+        const validBasicCarry = (values.basicPurohitCarryItems || [])
+          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+          .filter(Boolean);
+        const validStandardCarry = (values.standardPurohitCarryItems || [])
+          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+          .filter(Boolean);
 
-        Object.entries(basicPlanObj).forEach(([k, v]) => {
-          formData.append(`plans[basic][${k}]`, String(v));
+        validBasicCarry.forEach((item, index) => {
+          formData.append(`purohitCarryItems[basic][${index}]`, item);
         });
-        Object.entries(standardPlanObj).forEach(([k, v]) => {
-          formData.append(`plans[standard][${k}]`, String(v));
+        validStandardCarry.forEach((item, index) => {
+          formData.append(`purohitCarryItems[standard][${index}]`, item);
         });
 
         formData.append(
@@ -440,14 +438,24 @@ export default function AddServiceForm() {
           </Box>
 
           <Divider sx={{ my: 4 }} />
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
-            >
-              Back
-            </Button>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: activeStep === 0 ? "flex-end" : "space-between",
+            }}
+          >
+            {activeStep > 0 && (
+              <Button
+                onClick={handleBack}
+                sx={{
+                  color: "#64748b",
+                  textTransform: "none",
+                  fontWeight: 600,
+                }}
+              >
+                Back
+              </Button>
+            )}
             {activeStep === steps.length - 1 ? (
               <Button
                 key="submit-btn"

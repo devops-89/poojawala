@@ -31,6 +31,7 @@ interface BookingActiveCardProps {
     location: string;
     price: string;
     status: string;
+    plan?: string;
     originalData?: any;
   };
   statuses: string[];
@@ -60,6 +61,10 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
     [BOOKING_STATUS.ACCEPTED, BOOKING_STATUS.ENROUTE] as string[]
   ).includes(job.status?.toUpperCase() || "");
 
+  const rawPlan = (job.plan || job.originalData?.plan || "").toString().toUpperCase();
+  const isStandard = rawPlan.includes("STANDARD");
+  const planLabel = rawPlan ? (isStandard ? "STANDARD PLAN" : "BASIC PLAN") : null;
+
   return (
     <Paper
       sx={{
@@ -88,6 +93,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
               alignItems: "center",
               gap: 1.5,
               mb: 0.5,
+              flexWrap: "wrap",
             }}
           >
             <Typography
@@ -100,6 +106,21 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
             >
               {job.ritual}
             </Typography>
+            {planLabel && (
+              <Chip
+                label={planLabel}
+                size="small"
+                sx={{
+                  bgcolor: isStandard ? "#F0FDF4" : "#FFF8F5",
+                  color: isStandard ? "#16A34A" : "#FF6200",
+                  border: isStandard ? "1px solid #BBF7D0" : "1px solid #FFD8C2",
+                  fontWeight: 700,
+                  fontSize: "11px",
+                  height: "22px",
+                  borderRadius: "6px",
+                }}
+              />
+            )}
             <Chip
               label={
                 job.status

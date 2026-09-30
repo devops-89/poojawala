@@ -16,6 +16,19 @@ interface AddBookingServiceSectionProps {
   setFieldValue: any;
 }
 
+const formatFeatureKey = (key: string) => {
+  if (key.includes(' ')) {
+    return key
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
+
 export default function AddBookingServiceSection({
   allServices,
   values,
@@ -232,23 +245,63 @@ export default function AddBookingServiceSection({
 
                     {/* Features List */}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
-                      {Object.entries(planData || {}).map(([key, val]) => {
-                        if (
-                          key === 'price' ||
-                          key === 'tokenAmount' ||
-                          val === false ||
-                          val === 'false' ||
-                          val === null ||
-                          val === undefined
-                        )
-                          return null;
+                      {(() => {
+                        const targetFeaturesObj =
+                          planData?.features && typeof planData.features === 'object'
+                            ? planData.features
+                            : planData || {};
 
-                        const isBoolTrue = val === true || val === 'true';
-                        const label = key
-                          .replace(/([A-Z])/g, ' $1')
-                          .replace(/^./, (str) => str.toUpperCase());
+                        const featureEntries = Object.entries(targetFeaturesObj).filter(
+                          ([key, val]) => {
+                            const lowerKey = key.toLowerCase();
+                            if (
+                              lowerKey === 'price' ||
+                              lowerKey === 'tokenamount' ||
+                              lowerKey === 'features' ||
+                              lowerKey.includes('payout') ||
+                              val === false ||
+                              val === 'false' ||
+                              val === null ||
+                              val === undefined
+                            ) {
+                              return false;
+                            }
+                            if (typeof val === 'object') return false;
+                            return true;
+                          }
+                        );
 
-                        if (isBoolTrue) {
+                        return featureEntries.map(([key, val]) => {
+                          const isBoolTrue = val === true || val === 'true';
+                          const label = formatFeatureKey(key);
+
+                          if (isBoolTrue) {
+                            return (
+                              <Box
+                                key={key}
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 1,
+                                }}
+                              >
+                                <CheckIcon
+                                  sx={{ color: '#10b981', fontSize: 18 }}
+                                />
+                                <Typography
+                                  sx={{
+                                    fontSize: '13px',
+                                    color: '#334155',
+                                    fontWeight: 600,
+                                    fontFamily: 'var(--font-outfit), sans-serif',
+                                  }}
+                                >
+                                  {label}
+                                </Typography>
+                              </Box>
+                            );
+                          }
+
                           return (
                             <Box
                               key={key}
@@ -264,46 +317,21 @@ export default function AddBookingServiceSection({
                               <Typography
                                 sx={{
                                   fontSize: '13px',
-                                  color: '#334155',
-                                  fontWeight: 600,
+                                  color: '#475569',
                                   fontFamily: 'var(--font-outfit), sans-serif',
                                 }}
                               >
-                                {label}
+                                <span style={{ color: '#64748b' }}>
+                                  {label}:
+                                </span>{' '}
+                                <strong style={{ color: '#0f172a' }}>
+                                  {String(val)}
+                                </strong>
                               </Typography>
                             </Box>
                           );
-                        }
-
-                        return (
-                          <Box
-                            key={key}
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 1,
-                            }}
-                          >
-                            <CheckIcon
-                              sx={{ color: '#10b981', fontSize: 18 }}
-                            />
-                            <Typography
-                              sx={{
-                                fontSize: '13px',
-                                color: '#475569',
-                                fontFamily: 'var(--font-outfit), sans-serif',
-                              }}
-                            >
-                              <span style={{ color: '#64748b' }}>
-                                {label}:
-                              </span>{' '}
-                              <strong style={{ color: '#0f172a' }}>
-                                {String(val)}
-                              </strong>
-                            </Typography>
-                          </Box>
-                        );
-                      })}
+                        });
+                      })()}
                     </Box>
                   </Box>
 

@@ -1,404 +1,111 @@
 "use client";
 
-import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
-import EventIcon from "@mui/icons-material/Event";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PercentIcon from "@mui/icons-material/Percent";
-import WifiIcon from "@mui/icons-material/Wifi";
-import WifiOffIcon from "@mui/icons-material/WifiOff";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import React from "react";
+import ServicePlanCard from "./ServicePlanCard";
+import ServicePricingSummaryCard from "./ServicePricingSummaryCard";
+import ServiceSpecsAvailabilityCard from "./ServiceSpecsAvailabilityCard";
 
 export interface ServiceSpecsPricingCardProps {
   service: any;
 }
 
+const formatFeatureName = (key: string) => {
+  if (!key) return "";
+  if (key.includes(" ")) return key;
+  const result = key.replace(/([A-Z])/g, " $1");
+  return result.charAt(0).toUpperCase() + result.slice(1);
+};
+
 export default function ServiceSpecsPricingCard({
   service,
 }: ServiceSpecsPricingCardProps) {
+  // Extract Basic Plan details
+  const basicPrice =
+    service.plans?.basic?.price ?? service.priceWithoutSamagri ?? service.minPrice ?? 0;
+  const basicTokenAmount =
+    service.plans?.basic?.tokenAmount ||
+    Math.round(Number(basicPrice) * (Number(service.tokenPercentage || 40) / 100));
+  const basicPayoutAmount =
+    service.plans?.basic?.basicPurohitPayoutAmount ??
+    service.plans?.basic?.purohitPayoutAmount ??
+    Math.round(
+      Number(basicPrice) * (1 - Number(service.commissionPercentage || 10) / 100)
+    );
+
+  const rawBasicFeatures =
+    service.plans?.basic?.features ||
+    (typeof service.plans?.basic === "object" ? service.plans.basic : {});
+  const basicFeatureList =
+    typeof rawBasicFeatures === "object" && rawBasicFeatures !== null
+      ? Object.keys(rawBasicFeatures).filter(
+          (k) =>
+            k !== "price" &&
+            k !== "tokenAmount" &&
+            k !== "basicPurohitPayoutAmount" &&
+            k !== "standardPurohitPayoutAmount" &&
+            k !== "purohitPayoutAmount" &&
+            k !== "features" &&
+            k !== "bulletPoints"
+        )
+      : [];
+
+  // Extract Standard Plan details
+  const standardPrice =
+    service.plans?.standard?.price ?? service.priceWithSamagri ?? service.maxPrice ?? 0;
+  const standardTokenAmount =
+    service.plans?.standard?.tokenAmount ||
+    Math.round(Number(standardPrice) * (Number(service.tokenPercentage || 40) / 100));
+  const standardPayoutAmount =
+    service.plans?.standard?.standardPurohitPayoutAmount ??
+    service.plans?.standard?.purohitPayoutAmount ??
+    Math.round(
+      Number(standardPrice) * (1 - Number(service.commissionPercentage || 10) / 100)
+    );
+
+  const rawStandardFeatures =
+    service.plans?.standard?.features ||
+    (typeof service.plans?.standard === "object" ? service.plans.standard : {});
+  const standardFeatureList =
+    typeof rawStandardFeatures === "object" && rawStandardFeatures !== null
+      ? Object.keys(rawStandardFeatures).filter(
+          (k) =>
+            k !== "price" &&
+            k !== "tokenAmount" &&
+            k !== "basicPurohitPayoutAmount" &&
+            k !== "standardPurohitPayoutAmount" &&
+            k !== "purohitPayoutAmount" &&
+            k !== "features" &&
+            k !== "bulletPoints"
+        )
+      : [];
+
+  // Carry items
+  const basicCarryItems: string[] = Array.isArray(service.purohitCarryItems?.basic)
+    ? service.purohitCarryItems.basic
+    : [];
+  const standardCarryItems: string[] = Array.isArray(service.purohitCarryItems?.standard)
+    ? service.purohitCarryItems.standard
+    : [];
+
   return (
     <Grid container spacing={4}>
       {/* Specifications & Availability */}
       <Grid size={{ xs: 12, md: 8 }}>
-        <Paper
-          elevation={0}
-          sx={{
-            p: 4,
-            borderRadius: "24px",
-            border: "1px solid #e2e8f0",
-            bgcolor: "white",
-            height: "100%",
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              fontWeight: 800,
-              color: "#1e293b",
-              mb: 3,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Box
-              component="span"
-              sx={{
-                width: 8,
-                height: 24,
-                bgcolor: "#FF6200",
-                borderRadius: 4,
-                display: "inline-block",
-              }}
-            />
-            Specifications & Availability
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: "#f8fafc",
-                  borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    borderColor: service.requiresVenue ? "#3b82f6" : "#94a3b8",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
-                    bgcolor: "#fff",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    p: 1.5,
-                    bgcolor: service.requiresVenue ? "#dbeafe" : "#f1f5f9",
-                    borderRadius: "12px",
-                    color: service.requiresVenue ? "#3b82f6" : "#64748b",
-                    display: "flex",
-                  }}
-                >
-                  <LocationOnIcon />
-                </Box>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: "0.9rem",
-                      color: "#64748b",
-                      fontWeight: 600,
-                      mb: 0.5,
-                    }}
-                  >
-                    Requires Venue
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      color: service.requiresVenue ? "#3b82f6" : "#64748b",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {service.requiresVenue ? "Yes, Required" : "Not Required"}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-
-            {/* Total Bookings */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: "#f8fafc",
-                  borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    borderColor: "#10b981",
-                    boxShadow: "0 4px 20px rgba(16,185,129,0.05)",
-                    bgcolor: "#fff",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    p: 1.5,
-                    bgcolor: "#d1fae5",
-                    borderRadius: "12px",
-                    color: "#10b981",
-                    display: "flex",
-                  }}
-                >
-                  <ConfirmationNumberIcon />
-                </Box>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: "0.9rem",
-                      color: "#64748b",
-                      fontWeight: 600,
-                      mb: 0.5,
-                    }}
-                  >
-                    Total Bookings
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      color: "#10b981",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {service.totalBookings ?? service.bookings ?? 0}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-
-            {/* Online Purohits */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: "#f8fafc",
-                  borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    borderColor: "#0284c7",
-                    boxShadow: "0 4px 20px rgba(2,132,199,0.05)",
-                    bgcolor: "#fff",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    p: 1.5,
-                    bgcolor: "#e0f2fe",
-                    borderRadius: "12px",
-                    color: "#0284c7",
-                    display: "flex",
-                  }}
-                >
-                  <WifiIcon />
-                </Box>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: "0.9rem",
-                      color: "#64748b",
-                      fontWeight: 600,
-                      mb: 0.5,
-                    }}
-                  >
-                    Online Purohits
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      color: "#0284c7",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {service.onlinepurohitCount ?? 0}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-
-            {/* Offline Purohits */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: "#f8fafc",
-                  borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    borderColor: "#9333ea",
-                    boxShadow: "0 4px 20px rgba(147,51,234,0.05)",
-                    bgcolor: "#fff",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    p: 1.5,
-                    bgcolor: "#f3e8ff",
-                    borderRadius: "12px",
-                    color: "#9333ea",
-                    display: "flex",
-                  }}
-                >
-                  <WifiOffIcon />
-                </Box>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: "0.9rem",
-                      color: "#64748b",
-                      fontWeight: 600,
-                      mb: 0.5,
-                    }}
-                  >
-                    Offline Purohits
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      color: "#9333ea",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {service.offlinepurohitCount ?? 0}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-
-            {service.isUpcomingFestival && (
-              <>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Box
-                    sx={{
-                      p: 3,
-                      bgcolor: "#f8fafc",
-                      borderRadius: "16px",
-                      border: "1px solid #e2e8f0",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 2,
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        borderColor: "#8b5cf6",
-                        boxShadow: "0 4px 20px rgba(139,92,246,0.05)",
-                        bgcolor: "#fff",
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        p: 1.5,
-                        bgcolor: "#ede9fe",
-                        borderRadius: "12px",
-                        color: "#8b5cf6",
-                        display: "flex",
-                      }}
-                    >
-                      <EventIcon />
-                    </Box>
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: "0.9rem",
-                          color: "#64748b",
-                          fontWeight: 600,
-                          mb: 0.5,
-                        }}
-                      >
-                        Festival Start
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontWeight: 800,
-                          color: "#1e293b",
-                          fontSize: "1rem",
-                        }}
-                      >
-                        {service.festivalStartDate
-                          ? new Date(
-                              service.festivalStartDate
-                            ).toLocaleString("en-US", {
-                              dateStyle: "medium",
-                              timeStyle: "short",
-                            })
-                          : "N/A"}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Box
-                    sx={{
-                      p: 3,
-                      bgcolor: "#f8fafc",
-                      borderRadius: "16px",
-                      border: "1px solid #e2e8f0",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 2,
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        borderColor: "#8b5cf6",
-                        boxShadow: "0 4px 20px rgba(139,92,246,0.05)",
-                        bgcolor: "#fff",
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        p: 1.5,
-                        bgcolor: "#ede9fe",
-                        borderRadius: "12px",
-                        color: "#8b5cf6",
-                        display: "flex",
-                      }}
-                    >
-                      <EventIcon />
-                    </Box>
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: "0.9rem",
-                          color: "#64748b",
-                          fontWeight: 600,
-                          mb: 0.5,
-                        }}
-                      >
-                        Festival End
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontWeight: 800,
-                          color: "#1e293b",
-                          fontSize: "1rem",
-                        }}
-                      >
-                        {service.festivalEndDate
-                          ? new Date(
-                              service.festivalEndDate
-                            ).toLocaleString("en-US", {
-                              dateStyle: "medium",
-                              timeStyle: "short",
-                            })
-                          : "N/A"}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-              </>
-            )}
-          </Grid>
-        </Paper>
+        <ServiceSpecsAvailabilityCard service={service} />
       </Grid>
 
-      {/* Pricing Details */}
+      {/* Pricing Details Summary */}
       <Grid size={{ xs: 12, md: 4 }}>
+        <ServicePricingSummaryCard
+          service={service}
+          basicPrice={basicPrice}
+          standardPrice={standardPrice}
+        />
+      </Grid>
+
+      {/* Detailed Service Plans & Purohit Carry Items */}
+      <Grid size={{ xs: 12 }}>
         <Paper
           elevation={0}
           sx={{
@@ -406,7 +113,6 @@ export default function ServiceSpecsPricingCard({
             borderRadius: "24px",
             border: "1px solid #e2e8f0",
             bgcolor: "white",
-            height: "100%",
           }}
         >
           <Typography
@@ -431,155 +137,40 @@ export default function ServiceSpecsPricingCard({
                 display: "inline-block",
               }}
             />
-            Pricing Details
+            Service Plans & Purohit Carry Items
           </Typography>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
-              bgcolor: "#f8fafc",
-              borderRadius: "12px",
-              mb: 2,
-              border: "1px solid #f1f5f9",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box
-                sx={{
-                  p: 1,
-                  bgcolor: "#FFF0E6",
-                  borderRadius: "8px",
-                  color: "#FF6200",
-                  display: "flex",
-                }}
-              >
-                <CurrencyRupeeIcon fontSize="small" />
-              </Box>
-              <Typography
-                sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
-              >
-                Basic Plan Price
-              </Typography>
-            </Box>
-            <Typography
-              sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
-            >
-              ₹{service.plans?.basic?.price ?? service.priceWithoutSamagri ?? service.minPrice ?? 0}
-            </Typography>
-          </Box>
+          <Grid container spacing={3}>
+            {/* Basic Plan Box */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <ServicePlanCard
+                planType="basic"
+                planBadgeLabel="BASIC PLAN"
+                planTitle="Basic Ritual Package"
+                price={basicPrice}
+                tokenAmount={basicTokenAmount}
+                purohitPayoutAmount={basicPayoutAmount}
+                featureList={basicFeatureList}
+                carryItems={basicCarryItems}
+                formatFeatureName={formatFeatureName}
+              />
+            </Grid>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
-              bgcolor: "#f8fafc",
-              borderRadius: "12px",
-              mb: 2,
-              border: "1px solid #f1f5f9",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box
-                sx={{
-                  p: 1,
-                  bgcolor: "#FFF0E6",
-                  borderRadius: "8px",
-                  color: "#FF6200",
-                  display: "flex",
-                }}
-              >
-                <CurrencyRupeeIcon fontSize="small" />
-              </Box>
-              <Typography
-                sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
-              >
-                Standard Plan Price
-              </Typography>
-            </Box>
-            <Typography
-              sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
-            >
-              ₹{service.plans?.standard?.price ?? service.priceWithSamagri ?? service.maxPrice ?? 0}
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
-              bgcolor: "#f8fafc",
-              borderRadius: "12px",
-              mb: 2,
-              border: "1px solid #f1f5f9",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box
-                sx={{
-                  p: 1,
-                  bgcolor: "#FFF0E6",
-                  borderRadius: "8px",
-                  color: "#FF6200",
-                  display: "flex",
-                }}
-              >
-                <PercentIcon fontSize="small" />
-              </Box>
-              <Typography
-                sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
-              >
-                Token Percentage
-              </Typography>
-            </Box>
-            <Typography
-              sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
-            >
-              {service.tokenPercentage ? `${service.tokenPercentage}%` : "N/A"}
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
-              bgcolor: "#f8fafc",
-              borderRadius: "12px",
-              border: "1px solid #f1f5f9",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box
-                sx={{
-                  p: 1,
-                  bgcolor: "#FFF0E6",
-                  borderRadius: "8px",
-                  color: "#FF6200",
-                  display: "flex",
-                }}
-              >
-                <PercentIcon fontSize="small" />
-              </Box>
-              <Typography
-                sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}
-              >
-                Commission
-              </Typography>
-            </Box>
-            <Typography
-              sx={{ fontWeight: 800, color: "#1e293b", fontSize: "1.1rem" }}
-            >
-              {service.commissionPercentage}%
-            </Typography>
-          </Box>
+            {/* Standard Plan Box */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <ServicePlanCard
+                planType="standard"
+                planBadgeLabel="STANDARD PLAN"
+                planTitle="Standard Complete Package"
+                price={standardPrice}
+                tokenAmount={standardTokenAmount}
+                purohitPayoutAmount={standardPayoutAmount}
+                featureList={standardFeatureList}
+                carryItems={standardCarryItems}
+                formatFeatureName={formatFeatureName}
+              />
+            </Grid>
+          </Grid>
         </Paper>
       </Grid>
     </Grid>

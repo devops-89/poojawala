@@ -28,16 +28,14 @@ export default function ServiceCard({
   const router = useRouter();
   const { profile } = useUserStore();
 
-  const handleBookNow = () => {
-    const hasToken =
-      typeof window !== "undefined" &&
-      (!!localStorage.getItem("accessToken") ||
-        !!localStorage.getItem("token"));
-    if ((profile || hasToken) && id) {
-      router.push(`/customer/services/${id}`);
-    } else {
-      router.push("/sign-in");
-    }
+  const handleCardClick = (e?: React.MouseEvent) => {
+    if (!id) return;
+    router.push(`/services/${id}`);
+  };
+
+  const handleBookNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleCardClick();
   };
 
   const formattedPrice = (() => {
@@ -57,6 +55,7 @@ export default function ServiceCard({
   return (
     <Card
       elevation={0}
+      onClick={handleCardClick}
       sx={{
         width: '100%',
         height: '100%',
@@ -66,6 +65,7 @@ export default function ServiceCard({
         border: '1.5px solid #EFE6D5',
         bgcolor: '#FFFFFF',
         overflow: 'hidden',
+        cursor: 'pointer',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
         '&:hover': {
           transform: 'translateY(-6px)',

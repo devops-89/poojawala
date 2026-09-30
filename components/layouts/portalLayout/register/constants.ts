@@ -103,13 +103,48 @@ export const validationSchema = [
       .string()
       .matches(/^[0-9]{12}$/, 'Aadhaar Number must be exactly 12 digits')
       .required('Aadhaar Number is required'),
-    languages: yup.array().min(1, 'Select at least one language'),
-    specializations: yup.array().min(1, 'Select at least one specialization'),
+    languages: yup
+      .array()
+      .of(yup.string())
+      .min(1, 'Select at least one language')
+      .test(
+        'valid-languages',
+        'Only predefined languages are allowed',
+        (values) =>
+          !values || values.every((lang) => LANGUAGES.includes(lang || ''))
+      ),
+    specializations: yup
+      .array()
+      .of(yup.string())
+      .min(1, 'Select at least one specialization')
+      .test(
+        'valid-specializations',
+        'Only predefined specializations are allowed',
+        (values) =>
+          !values || values.every((spec) => SPECIALIZATIONS.includes(spec || ''))
+      ),
+    isOnlineAvailable: yup.boolean(),
+    isOfflineAvailable: yup.boolean().test(
+      'at-least-one-availability',
+      'Select at least one availability mode (Online or Offline)',
+      function () {
+        const { isOnlineAvailable, isOfflineAvailable } = this.parent;
+        return Boolean(isOnlineAvailable || isOfflineAvailable);
+      }
+    ),
   }),
   yup.object({
     paymentMethod: yup.string().required(),
-    upiId: yup.string().test('is-upi', 'UPI ID is required', function (val) {
-      return this.parent.paymentMethod === 'UPI' ? !!val : true;
+    upiId: yup.string().test('is-upi', 'Invalid UPI ID', function (val) {
+      if (this.parent.paymentMethod !== 'UPI') return true;
+      if (!val) return this.createError({ message: 'UPI ID is required' });
+      const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+      if (!upiRegex.test(val.trim())) {
+        return this.createError({
+          message: 'Please enter a valid UPI ID (e.g. 9876543210@ybl or user@upi)',
+        });
+      }
+      return true;
     }),
     bankName: yup
       .string()
@@ -133,13 +168,29 @@ export const validationSchema = [
       }),
     accountNumber: yup
       .string()
-      .test('is-bank', 'Account Number is required', function (val) {
-        return this.parent.paymentMethod === 'BANK' ? !!val : true;
+      .test('is-bank-account', 'Invalid Account Number', function (val) {
+        if (this.parent.paymentMethod !== 'BANK') return true;
+        if (!val) return this.createError({ message: 'Account Number is required' });
+        const accountNumberRegex = /^[0-9]{9,18}$/;
+        if (!accountNumberRegex.test(val.trim())) {
+          return this.createError({
+            message: 'Account Number must be between 9 and 18 digits (numbers only)',
+          });
+        }
+        return true;
       }),
     ifscCode: yup
       .string()
-      .test('is-bank', 'IFSC Code is required', function (val) {
-        return this.parent.paymentMethod === 'BANK' ? !!val : true;
+      .test('is-ifsc', 'Invalid IFSC Code', function (val) {
+        if (this.parent.paymentMethod !== 'BANK') return true;
+        if (!val) return this.createError({ message: 'IFSC Code is required' });
+        const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+        if (!ifscRegex.test(val.trim().toUpperCase())) {
+          return this.createError({
+            message: 'Please enter a valid 11-character IFSC Code (e.g. SBIN0001234)',
+          });
+        }
+        return true;
       }),
   }),
   yup.object({

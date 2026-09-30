@@ -1,20 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import { addPurohitServiceAPI } from "@/api/serviceControllers";
+import { useSnackbarStore } from "@/stores/snackbarStore";
+import { getPurohitPayoutRange } from "@/utils/payoutHelper";
+import AddIcon from "@mui/icons-material/Add";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   Grid,
   Paper,
   Typography,
-  Chip,
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import AddIcon from "@mui/icons-material/Add";
-import { addPurohitServiceAPI } from "@/api/serviceControllers";
-import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
   service: any;
@@ -50,21 +51,14 @@ export default function PurohitServiceDetailsAddForm({
     } catch (error: any) {
       showSnackbar(
         error.response?.data?.message || "Error adding service",
-        "error"
+        "error",
       );
     } finally {
       setSubmitting(false);
     }
   };
 
-  const defaultPriceDisplay =
-    service?.priceWithoutSamagri != null && service?.priceWithSamagri != null
-      ? `₹${Number(service.priceWithoutSamagri).toLocaleString("en-IN")} - ₹${Number(service.priceWithSamagri).toLocaleString("en-IN")}`
-      : service?.priceWithoutSamagri != null
-        ? `₹${Number(service.priceWithoutSamagri).toLocaleString("en-IN")}`
-        : service?.minPrice
-          ? `₹${Number(service.minPrice).toLocaleString("en-IN")}`
-          : "Standard Pricing";
+  const defaultPriceDisplay = getPurohitPayoutRange(service);
 
   return (
     <Paper
@@ -163,7 +157,8 @@ export default function PurohitServiceDetailsAddForm({
                   fontSize: "14px",
                 }}
               >
-                You can manage your availability and active status for this service from your services dashboard.
+                You can manage your availability and active status for this
+                service from your services dashboard.
               </Typography>
               <Button
                 variant="contained"
@@ -214,12 +209,12 @@ export default function PurohitServiceDetailsAddForm({
                       letterSpacing: "0.5px",
                     }}
                   >
-                    ESTIMATED PRICE
+                    ESTIMATED PAYOUT
                   </Typography>
                   <Typography
                     sx={{
                       fontWeight: 800,
-                      color: "#FF6200",
+                      color: "#16a34a",
                       fontSize: "18px",
                       fontFamily: '"DM Sans", sans-serif',
                     }}
@@ -253,23 +248,14 @@ export default function PurohitServiceDetailsAddForm({
                 </Box>
               </Box>
 
-              <Typography
-                sx={{
-                  fontFamily: '"DM Sans", sans-serif',
-                  color: "#64534A",
-                  fontSize: "13.5px",
-                  lineHeight: 1.6,
-                }}
-              >
-                By adding this service, it will immediately show under your active services.
-              </Typography>
-
               <Button
                 variant="contained"
                 onClick={handleAddService}
                 disabled={submitting}
                 startIcon={
-                  !submitting ? <AddIcon sx={{ color: "#FFFFFF !important" }} /> : null
+                  !submitting ? (
+                    <AddIcon sx={{ color: "#FFFFFF !important" }} />
+                  ) : null
                 }
                 sx={{
                   bgcolor: "#C84B16 !important",

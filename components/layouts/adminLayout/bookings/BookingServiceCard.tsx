@@ -1,7 +1,9 @@
 "use client";
 
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import TranslateIcon from "@mui/icons-material/Translate";
 import { Box, Card, Chip, Divider, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import React from "react";
@@ -9,6 +11,19 @@ import React from "react";
 export interface BookingServiceCardProps {
   booking: any;
 }
+
+const formatFeatureKey = (key: string) => {
+  if (key.includes(" ")) {
+    return key
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
 
 export default function BookingServiceCard({
   booking,
@@ -25,6 +40,31 @@ export default function BookingServiceCard({
     plans["standard"] ||
     {};
 
+  // Unroll features object if nested inside planData.features or directly on planData
+  const rawFeatures =
+    planData?.features && typeof planData.features === "object"
+      ? planData.features
+      : planData;
+
+  const featureEntries: [string, any][] = Object.entries(rawFeatures).filter(
+    ([key, val]) => {
+      if (
+        key === "price" ||
+        key === "tokenAmount" ||
+        key === "purohitPayoutAmount" ||
+        key === "features" ||
+        val === false ||
+        val === "false" ||
+        val === null ||
+        val === undefined
+      ) {
+        return false;
+      }
+      if (typeof val === "object") return false;
+      return true;
+    }
+  );
+
   const displayPrice =
     booking?.finalAmount ||
     booking?.servicePrice ||
@@ -33,6 +73,10 @@ export default function BookingServiceCard({
     service?.priceWithoutSamagri ||
     service?.minPrice ||
     0;
+
+  const languagesList = Array.isArray(service?.languages)
+    ? service.languages.map((l: any) => l.name || l.code || l).join(", ")
+    : "";
 
   return (
     <Card
@@ -97,7 +141,7 @@ export default function BookingServiceCard({
         <Box
           sx={{
             display: "flex",
-            justify: "space-between",
+            justifyContent: "space-between",
             alignItems: "flex-start",
             flexWrap: "wrap",
             gap: 2,
@@ -139,6 +183,37 @@ export default function BookingServiceCard({
                 {service.description}
               </Typography>
             )}
+
+            {/* Quick Metadata: Duration & Languages */}
+            {(service.durationMinutes || languagesList) && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 2,
+                  mt: 2,
+                  pt: 1.5,
+                  borderTop: "1px dashed #f1f5f9",
+                }}
+              >
+                {service.durationMinutes && (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <AccessTimeIcon sx={{ fontSize: 16, color: "#64748b" }} />
+                    <Typography sx={{ fontSize: "0.85rem", color: "#475569", fontWeight: 500 }}>
+                      {service.durationMinutes} Mins ({Math.round(service.durationMinutes / 60)} hrs)
+                    </Typography>
+                  </Box>
+                )}
+                {languagesList && (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <TranslateIcon sx={{ fontSize: 16, color: "#64748b" }} />
+                    <Typography sx={{ fontSize: "0.85rem", color: "#475569", fontWeight: 500 }}>
+                      {languagesList}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            )}
           </Box>
 
           <Box sx={{ textAlign: "right" }}>
@@ -168,7 +243,7 @@ export default function BookingServiceCard({
         </Box>
 
         {/* Plan Features / Points */}
-        {Object.keys(planData).length > 0 && (
+        {featureEntries.length > 0 && (
           <>
             <Divider sx={{ my: 1, opacity: 0.6 }} />
 
@@ -187,21 +262,9 @@ export default function BookingServiceCard({
               </Typography>
 
               <Grid container spacing={1.5}>
-                {Object.entries(planData).map(([key, val]) => {
-                  if (
-                    key === "price" ||
-                    key === "tokenAmount" ||
-                    val === false ||
-                    val === "false" ||
-                    val === null ||
-                    val === undefined
-                  )
-                    return null;
-
+                {featureEntries.map(([key, val]) => {
                   const isBoolTrue = val === true || val === "true";
-                  const label = key
-                    .replace(/([A-Z])/g, " $1")
-                    .replace(/^./, (str) => str.toUpperCase());
+                  const label = formatFeatureKey(key);
 
                   return (
                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={key}>
@@ -254,3 +317,5 @@ export default function BookingServiceCard({
     </Card>
   );
 }
+
+

@@ -9,6 +9,7 @@ import {
   Checkbox,
   FormControlLabel,
   Chip,
+  FormHelperText,
   AutocompleteRenderGetTagProps,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -210,12 +211,14 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12, sm: 6 }}>
           <CustomAutocomplete
             multiple
-            freeSolo
             forcePopupIcon
             options={LANGUAGES}
             value={formik.values.languages || []}
             onChange={(_: any, newValue: any) => {
-              formik.setFieldValue('languages', newValue || []);
+              const validOnly = (newValue || []).filter((l: string) =>
+                LANGUAGES.includes(l)
+              );
+              formik.setFieldValue('languages', validOnly);
             }}
             renderTags={(value: readonly string[], getTagProps: AutocompleteRenderGetTagProps) =>
               value.map((option: string, index: number) => {
@@ -238,7 +241,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 name="languages"
                 label="Languages *"
                 variant="outlined"
-                placeholder="Select or type custom language"
+                placeholder="Select languages"
                 error={
                   formik.touched.languages && Boolean(formik.errors.languages)
                 }
@@ -256,12 +259,14 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12, sm: 6 }}>
           <CustomAutocomplete
             multiple
-            freeSolo
             forcePopupIcon
             options={SPECIALIZATIONS}
             value={formik.values.specializations || []}
             onChange={(_: any, newValue: any) => {
-              formik.setFieldValue('specializations', newValue || []);
+              const validOnly = (newValue || []).filter((s: string) =>
+                SPECIALIZATIONS.includes(s)
+              );
+              formik.setFieldValue('specializations', validOnly);
             }}
             renderTags={(value: readonly string[], getTagProps: AutocompleteRenderGetTagProps) =>
               value.map((option: string, index: number) => {
@@ -284,7 +289,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 name="specializations"
                 label="Specializations *"
                 variant="outlined"
-                placeholder="Select or type custom specialization"
+                placeholder="Select specializations"
                 error={
                   formik.touched.specializations &&
                   Boolean(formik.errors.specializations)
@@ -318,28 +323,53 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
 
         {/* Availability */}
         <Grid size={{ xs: 12 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={Boolean(formik.values.isOnlineAvailable)}
-                onChange={formik.handleChange}
-                name="isOnlineAvailable"
-                sx={{ color: '#FF6200', '&.Mui-checked': { color: '#FF6200' } }}
-              />
-            }
-            label="Available for Online Pooja"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={Boolean(formik.values.isOfflineAvailable)}
-                onChange={formik.handleChange}
-                name="isOfflineAvailable"
-                sx={{ color: '#FF6200', '&.Mui-checked': { color: '#FF6200' } }}
-              />
-            }
-            label="Available for Offline Pooja"
-          />
+          <Typography
+            sx={{
+              fontSize: '14px',
+              fontWeight: 600,
+              color:
+                !formik.values.isOnlineAvailable &&
+                !formik.values.isOfflineAvailable &&
+                (formik.submitCount > 0 || Boolean(formik.errors.isOfflineAvailable))
+                  ? '#d32f2f'
+                  : '#333',
+              mb: 0.5,
+            }}
+          >
+            Service Availability *
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(formik.values.isOnlineAvailable)}
+                  onChange={formik.handleChange}
+                  name="isOnlineAvailable"
+                  sx={{ color: '#FF6200', '&.Mui-checked': { color: '#FF6200' } }}
+                />
+              }
+              label="Available for Online Pooja"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(formik.values.isOfflineAvailable)}
+                  onChange={formik.handleChange}
+                  name="isOfflineAvailable"
+                  sx={{ color: '#FF6200', '&.Mui-checked': { color: '#FF6200' } }}
+                />
+              }
+              label="Available for Offline Pooja"
+            />
+          </Box>
+          {!formik.values.isOnlineAvailable &&
+            !formik.values.isOfflineAvailable &&
+            (formik.submitCount > 0 || Boolean(formik.errors.isOfflineAvailable)) && (
+              <FormHelperText error sx={{ ml: 0, mt: 0.5 }}>
+                {(formik.errors.isOfflineAvailable as string) ||
+                  'Select at least one availability mode (Online or Offline)'}
+              </FormHelperText>
+            )}
         </Grid>
       </Grid>
     </Box>

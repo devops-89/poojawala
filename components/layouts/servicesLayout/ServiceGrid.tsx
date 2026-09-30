@@ -70,14 +70,30 @@ export default function ServiceGrid({
           fetchedServices = rawData.data.services;
         }
 
+        let activeOnly = fetchedServices.filter((s: any) => s.isActive !== false);
+
+        if (selectedCategoryId && selectedCategoryId !== 'All' && selectedCategoryId !== '') {
+          activeOnly = activeOnly.filter((s: any) => {
+            const sCatId = s.categoryId || s.category?.id || (typeof s.category === "object" ? s.category?.id : "");
+            return String(sCatId) === String(selectedCategoryId);
+          });
+        } else if (activeCategory && activeCategory !== 'All' && activeCategory !== 'All Categories') {
+          activeOnly = activeOnly.filter((s: any) => {
+            const catName = s.category?.name || (typeof s.category === "string" ? s.category : "");
+            return catName.toLowerCase() === activeCategory.toLowerCase();
+          });
+        }
+
         const pagination = rawData?.data?.pagination || rawData?.pagination || rawData?.data || {};
-        const total = pagination?.total || pagination?.totalCount || rawData?.total || fetchedServices.length;
-        const calcTotalPages = pagination?.totalPages || pagination?.pageCount || Math.ceil(total / itemsPerPage) || 1;
+        const total = (selectedCategoryId || (activeCategory && activeCategory !== 'All Categories'))
+          ? activeOnly.length
+          : (pagination?.total || pagination?.totalCount || rawData?.total || activeOnly.length);
+        const calcTotalPages = (selectedCategoryId || (activeCategory && activeCategory !== 'All Categories'))
+          ? (Math.ceil(total / itemsPerPage) || 1)
+          : (pagination?.totalPages || pagination?.pageCount || Math.ceil(total / itemsPerPage) || 1);
 
         setTotalCount(total);
         setTotalPages(calcTotalPages);
-
-        const activeOnly = fetchedServices.filter((s: any) => s.isActive !== false);
 
         const formattedServices = activeOnly.map((s: any) => {
           let minP: number | null = s.minPrice != null ? Number(s.minPrice) : null;

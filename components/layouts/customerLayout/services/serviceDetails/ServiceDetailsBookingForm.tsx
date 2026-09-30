@@ -33,10 +33,19 @@ interface Props {
 }
 
 const formatFeatureKey = (key: string, value: any): string | null => {
-  if (key === "price" || key === "tokenAmount") return null;
+  const lowerKey = key.toLowerCase();
+  if (
+    lowerKey === "price" ||
+    lowerKey === "tokenamount" ||
+    lowerKey === "features" ||
+    lowerKey.includes("payout")
+  ) {
+    return null;
+  }
   if (value === false || value === "false" || value == null) return null;
+  if (typeof value === "object") return null;
 
-  if (typeof value === "boolean" || value === "true") {
+  if (typeof value === "boolean" || value === "true" || value === true) {
     const formatMap: Record<string, string> = {
       kalashSthapana: "Kalash Sthapana",
       durgaSaptashatiPath: "Durga Saptashati Path",
@@ -54,16 +63,38 @@ const formatFeatureKey = (key: string, value: any): string | null => {
       kumkumArchana: "Kumkum Archana",
       varalakshmiVratam: "Varalakshmi Vratam",
       ashtalakshmiArchana: "Ashtalakshmi Archana",
+      vastuShanti: "Vastu Shanti",
+      ganapatiPuja: "Ganapati Puja",
+      navagrahaPuja: "Navagraha Puja",
+      grihaPraveshAarti: "Griha Pravesh Aarti",
+      vastuMantraChanting: "Vastu Mantra Chanting",
+      specialPrasad: "Special Prasad",
+      premiumFlowerArrangement: "Premium Flower Arrangement",
     };
     if (formatMap[key]) return formatMap[key];
+
+    if (key.includes(" ")) {
+      return key
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+
     return key
       .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase());
+      .replace(/^./, (str) => str.toUpperCase())
+      .trim();
   }
 
-  const keyLabel = key
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase());
+  const keyLabel = key.includes(" ")
+    ? key
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    : key
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase())
+        .trim();
 
   // If value is a number: Show Key first, then Value
   if (typeof value === "number") {
@@ -275,8 +306,13 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               const planTitle =
                 planKey === "basic" ? "Basic Plan" : "Standard Plan";
 
+              const targetObj =
+                plan.features && typeof plan.features === "object"
+                  ? plan.features
+                  : plan;
+
               const features: string[] = [];
-              Object.entries(plan).forEach(([k, v]) => {
+              Object.entries(targetObj).forEach(([k, v]) => {
                 const formatted = formatFeatureKey(k, v);
                 if (formatted) features.push(formatted);
               });

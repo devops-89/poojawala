@@ -17,6 +17,7 @@ import {
 import { getAllServicesAPI, getPurohitServicesAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
+import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { useRouter } from 'next/navigation';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { City, State } from 'country-state-city';
@@ -98,12 +99,8 @@ export default function PurohitServicesContent() {
     fetchServices();
   }, [page, debouncedSearch, selectedCity, selectedState]);
 
-  const handleCardClick = (serviceId: number, isAlreadyAdded: boolean) => {
-    if (isAlreadyAdded) {
-      router.push(`/purohit/services/${serviceId}`);
-    } else {
-      router.push(`/purohit/services/${serviceId}#purohit-add-form-section`);
-    }
+  const handleCardClick = (serviceId: number, _isAlreadyAdded?: boolean) => {
+    router.push(`/purohit/services/${serviceId}`);
   };
 
   // Indian States & Cities calculation
@@ -344,11 +341,7 @@ export default function PurohitServicesContent() {
                               fontSize: '0.95rem',
                             }}
                           >
-                            {service.purohitPayoutAmount && Number(service.purohitPayoutAmount) > 0
-                              ? `₹${service.purohitPayoutAmount}`
-                              : service.plans?.basic?.price
-                              ? `₹${service.plans.basic.price}`
-                              : `₹${service.minPrice ?? service.priceWithoutSamagri ?? 0}`}
+                            {getPurohitPayoutRange(service)}
                           </Typography>
                         </Box>
 

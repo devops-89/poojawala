@@ -19,6 +19,7 @@ interface BookingNewRequestCardProps {
     duration: string;
     urgency?: string;
     price: string;
+    plan?: string;
     originalData?: any;
   };
   onRespond: (bookingId: number | string, action: "ACCEPT" | "DISMISS") => void;
@@ -29,6 +30,9 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
   onRespond,
 }) => {
   const bookingId = req.originalData?.id || req.id;
+  const rawPlan = (req.plan || req.originalData?.plan || "").toString().toUpperCase();
+  const isStandard = rawPlan.includes("STANDARD");
+  const planLabel = rawPlan ? (isStandard ? "STANDARD PLAN" : "BASIC PLAN") : null;
 
   return (
     <Paper
@@ -56,6 +60,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
               alignItems: "center",
               gap: 1.5,
               mb: 0.5,
+              flexWrap: "wrap",
             }}
           >
             <Typography
@@ -68,6 +73,21 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             >
               {req.ritual}
             </Typography>
+            {planLabel && (
+              <Chip
+                label={planLabel}
+                size="small"
+                sx={{
+                  bgcolor: isStandard ? "#F0FDF4" : "#FFF8F5",
+                  color: isStandard ? "#16A34A" : "#FF6200",
+                  border: isStandard ? "1px solid #BBF7D0" : "1px solid #FFD8C2",
+                  fontWeight: 700,
+                  fontSize: "11px",
+                  height: "22px",
+                  borderRadius: "6px",
+                }}
+              />
+            )}
             {req.urgency === "High" && (
               <Chip
                 label="High Urgency"

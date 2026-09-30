@@ -583,38 +583,39 @@ export default function PortalRegisterContent() {
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: 'space-between',
+                justifyContent: activeStep === 0 ? 'flex-end' : 'space-between',
                 alignItems: 'center',
                 width: '100%',
                 mt: 6,
               }}
             >
-              <Button
-                disabled={
-                  activeStep === 0 ||
-                  isSendingOtp ||
-                  isVerifyingOtp ||
-                  isSubmittingForm
-                }
-                onClick={handleBack}
-                type="button"
-                sx={{
-                  background: '#FF6200',
-                  color: 'white',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  borderRadius: '30px',
-                  px: 4,
-                  boxShadow: 'none',
-                  '&:hover': { background: '#F05A00', boxShadow: 'none' },
-                  '&.Mui-disabled': {
-                    background: '#FFE0D0',
-                    color: '#FFA07A',
-                  },
-                }}
-              >
-                Back
-              </Button>
+              {activeStep > 0 && (
+                <Button
+                  disabled={
+                    isSendingOtp ||
+                    isVerifyingOtp ||
+                    isSubmittingForm
+                  }
+                  onClick={handleBack}
+                  type="button"
+                  sx={{
+                    background: '#FF6200',
+                    color: 'white',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    borderRadius: '30px',
+                    px: 4,
+                    boxShadow: 'none',
+                    '&:hover': { background: '#F05A00', boxShadow: 'none' },
+                    '&.Mui-disabled': {
+                      background: '#FFE0D0',
+                      color: '#FFA07A',
+                    },
+                  }}
+                >
+                  Back
+                </Button>
+              )}
               <Button
                 type="submit"
                 disabled={isSendingOtp || isVerifyingOtp || isSubmittingForm}

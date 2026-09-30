@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Chip, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Switch, DialogContentText, InputAdornment, Pagination, Card, CardContent, Divider } from '@mui/material';
 import { getPurohitServicesAPI, updatePurohitServiceAPI, deletePurohitServiceAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { useRouter } from 'next/navigation';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -233,7 +234,7 @@ export default function PurohitMyServicesContent() {
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '15px', fontWeight: 800, color: '#16a34a' }}>
-                      ₹{ps.purohitPayoutAmount ?? 0}
+                      {getPurohitPayoutRange(ps)}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -296,7 +297,7 @@ export default function PurohitMyServicesContent() {
               <Divider sx={{ mb: 1.5, borderColor: '#f1f5f9' }} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
                 <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Service Payout:</Typography>
-                <Typography sx={{ fontSize: '16px', fontWeight: 800, color: '#16a34a' }}>₹{ps.purohitPayoutAmount ?? 0}</Typography>
+                <Typography sx={{ fontSize: '16px', fontWeight: 800, color: '#16a34a' }}>{getPurohitPayoutRange(ps)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button size="small" variant="outlined" color="error" onClick={() => handleDeleteClick(ps)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600 }}>

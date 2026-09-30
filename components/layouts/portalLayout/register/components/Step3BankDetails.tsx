@@ -81,7 +81,9 @@ export default function Step3BankDetails({ formik }: Step3Props) {
               label="UPI ID (e.g. 9876543210@ybl) *"
               variant="outlined"
               value={formik.values.upiId}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                formik.setFieldValue('upiId', e.target.value.trim());
+              }}
               error={formik.touched.upiId && Boolean(formik.errors.upiId)}
               helperText={formik.touched.upiId && (formik.errors.upiId as string)}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
@@ -131,7 +133,10 @@ export default function Step3BankDetails({ formik }: Step3Props) {
               label="Account Number *"
               variant="outlined"
               value={formik.values.accountNumber}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 18);
+                formik.setFieldValue('accountNumber', val);
+              }}
               error={
                 formik.touched.accountNumber &&
                 Boolean(formik.errors.accountNumber)
@@ -150,7 +155,10 @@ export default function Step3BankDetails({ formik }: Step3Props) {
               label="IFSC Code *"
               variant="outlined"
               value={formik.values.ifscCode}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 11);
+                formik.setFieldValue('ifscCode', val);
+              }}
               error={formik.touched.ifscCode && Boolean(formik.errors.ifscCode)}
               helperText={
                 formik.touched.ifscCode && (formik.errors.ifscCode as string)

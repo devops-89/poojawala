@@ -16,14 +16,15 @@ import {
 } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
+import { getPurohitPayoutRange } from "@/utils/payoutHelper";
 
 import ServiceDetailsBreadcrumbs from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsBreadcrumbs";
 import ServiceDetailsFaqSection from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsFaqSection";
 import ServiceDetailsHeroSection from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsHeroSection";
-import ServiceDetailsIncludedSection from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsIncludedSection";
 import ServiceDetailsInfoGrid from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsInfoGrid";
 
 import PurohitServiceDetailsAddForm from "./PurohitServiceDetailsAddForm";
+import PurohitServicePlansSection from "./PurohitServicePlansSection";
 
 const DEFAULT_BANNER =
   "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80";
@@ -53,7 +54,12 @@ export default function PurohitServiceDetailsContent() {
 
       if (res.success) {
         let rawData = res.data;
-        while (rawData && rawData.data && typeof rawData.data === 'object' && !rawData.id) {
+        while (
+          rawData &&
+          rawData.data &&
+          typeof rawData.data === "object" &&
+          !rawData.id
+        ) {
           rawData = rawData.data;
         }
         setService(rawData);
@@ -130,19 +136,7 @@ export default function PurohitServiceDetailsContent() {
     );
   }
 
-  const purohitPayout =
-    service?.purohitPayoutAmount && Number(service.purohitPayoutAmount) > 0
-      ? Number(service.purohitPayoutAmount)
-      : service?.agreedPrice && Number(service.agreedPrice) > 0
-      ? Number(service.agreedPrice)
-      : service?.plans?.basic?.price
-      ? Number(service.plans.basic.price)
-      : service?.priceWithoutSamagri ?? service?.minPrice ?? null;
-
-  const priceDisplay =
-    purohitPayout != null && Number(purohitPayout) > 0
-      ? `₹${Number(purohitPayout).toLocaleString("en-IN")}`
-      : "Price on request";
+  const priceDisplay = getPurohitPayoutRange(service);
 
   const parseJsonList = (val: any) => {
     if (!val) return [];
@@ -162,11 +156,10 @@ export default function PurohitServiceDetailsContent() {
   const benefitsList = parseJsonList(service.benefits);
   const languagesList = parseJsonList(service.languages);
 
-  const formattedCities =
-    citiesList
-      .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
-      .filter(Boolean)
-      .join(", ");
+  const formattedCities = citiesList
+    .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
+    .filter(Boolean)
+    .join(", ");
 
   const formattedLanguages =
     languagesList
@@ -249,12 +242,6 @@ export default function PurohitServiceDetailsContent() {
         "Customers located within your registered default service area city will be able to see your profile and send booking requests for this ceremony.",
     },
     {
-      id: "panel3",
-      question: "How do payouts work after completing a ceremony?",
-      answer:
-        "Once you complete a booked ceremony and mark it as completed, your earnings are processed directly to your registered bank account or UPI ID according to the platform commission rate.",
-    },
-    {
       id: "panel4",
       question: "Can I update or pause this service later?",
       answer:
@@ -281,12 +268,14 @@ export default function PurohitServiceDetailsContent() {
         priceLabel="PUROHIT PAYOUT"
         heroImage={heroImage}
         onOpenBooking={handleScrollToAddForm}
-        ctaText={isAlreadyAdded ? "Already Added to Profile" : "Add to My Services"}
+        ctaText={
+          isAlreadyAdded ? "Already Added to Profile" : "Add to My Services"
+        }
         isAlreadyAdded={isAlreadyAdded}
       />
 
-      {/* 3. What's Included Section (Reused) */}
-      <ServiceDetailsIncludedSection benefitsList={benefitsList} />
+      {/* 3. Service Plans & Purohit Carry Items Section */}
+      <PurohitServicePlansSection service={service} />
 
       {/* 4. Service Details & Service Areas Section (Reused, Venue displays Customer Location) */}
       <ServiceDetailsInfoGrid

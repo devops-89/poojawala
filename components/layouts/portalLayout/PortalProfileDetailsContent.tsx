@@ -15,6 +15,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import { useUserStore } from '@/stores/userStore';
+import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 
 export default function PortalProfileDetailsContent() {
   const { profile: profileData, fetchProfile } = useUserStore();
@@ -374,7 +375,7 @@ export default function PortalProfileDetailsContent() {
                             }}
                           >
                             <strong style={{ color: "#333" }}>Payout:</strong>{" "}
-                            {payout ? `₹${payout}` : "N/A"}
+                            {getPurohitPayoutRange(serviceItem)}
                           </Typography>
                           <Typography
                             sx={{

@@ -10,21 +10,31 @@ export default function ServicesLayout() {
   const searchParams = useSearchParams();
   const cityParam = searchParams.get("city");
   const categoryParam = searchParams.get("category");
+  const categoryIdParam = searchParams.get("categoryId");
 
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("All Categories");
-  const [selectedCity, setSelectedCity] = useState<string>("All");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    categoryIdParam || ""
+  );
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
+    categoryParam || "All Categories"
+  );
+  const [selectedCity, setSelectedCity] = useState<string>(
+    cityParam || "All"
+  );
 
   useEffect(() => {
+    if (categoryIdParam) {
+      setSelectedCategoryId(categoryIdParam);
+    }
     if (categoryParam) {
       setSelectedCategoryName(categoryParam);
     }
     if (cityParam) {
       setSelectedCity(cityParam);
     }
-  }, [categoryParam, cityParam]);
+  }, [categoryParam, categoryIdParam, cityParam]);
 
   const rawCities = City.getCitiesOfCountry("IN") || [];
   const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();

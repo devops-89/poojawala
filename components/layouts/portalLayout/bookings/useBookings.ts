@@ -422,6 +422,7 @@ export function useBookings() {
               : "N/A",
             urgency: "Normal",
             price: getPriceDisplay(booking),
+            plan: booking.plan,
             originalData: booking,
           }));
           setNewRequests(mappedBookings);
@@ -482,6 +483,7 @@ export function useBookings() {
               : "N/A",
             price: getPriceDisplay(booking),
             status: activeStatus.toUpperCase(),
+            plan: booking.plan,
             originalData: booking,
           }));
           setActiveBookings(mappedBookings);
