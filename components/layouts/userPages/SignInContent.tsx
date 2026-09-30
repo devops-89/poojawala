@@ -198,7 +198,14 @@ export default function SignInContent() {
                           if (role === "CUSTOMER") {
                             router.push("/customer/dashboard");
                           } else if (role === "PUROHIT") {
-                            router.push("/purohit/dashboard");
+                            if (
+                              userObj?.isAdminCreated ||
+                              userObj?.is_admin_created
+                            ) {
+                              router.push("/purohit/register?step=2");
+                            } else {
+                              router.push("/purohit/dashboard");
+                            }
                           } else if (role === "ADMIN" || role === "SUPERADMIN") {
                             router.push("/admin/dashboard");
                           } else {
