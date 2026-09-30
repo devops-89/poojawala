@@ -122,7 +122,7 @@ export default function ServiceCitiesFields({
                           <TextField
                             {...params}
                             size="small"
-                            label="State"
+                            label="State *"
                             placeholder="Select or type State (e.g. Uttar Pradesh)"
                             sx={{
                               "& .MuiOutlinedInput-root": {
@@ -152,7 +152,7 @@ export default function ServiceCitiesFields({
                           <TextField
                             {...params}
                             size="small"
-                            label="City"
+                            label="City *"
                             placeholder="Select or type City (e.g. Ghaziabad)"
                             sx={{
                               "& .MuiOutlinedInput-root": {

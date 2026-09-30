@@ -333,7 +333,7 @@ export default function AdminPurohitsContent() {
                 fullWidth
                 multiline
                 rows={3}
-                label="Rejection Reason"
+                label="Rejection Reason *"
                 placeholder="e.g. Invalid documents uploaded"
                 variant="outlined"
                 value={rejectionReason}

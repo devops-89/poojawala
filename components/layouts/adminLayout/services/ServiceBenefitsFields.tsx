@@ -117,7 +117,7 @@ export default function ServiceBenefitsFields({
                       fullWidth
                       size="small"
                       name={`benefits.${index}.title`}
-                      label="Title"
+                      label="Title *"
                       placeholder="e.g. Traditional Vedic Rituals"
                       value={benefit.title}
                       onChange={handleChange}
@@ -134,7 +134,7 @@ export default function ServiceBenefitsFields({
                       rows={2}
                       size="small"
                       name={`benefits.${index}.description`}
-                      label="Description"
+                      label="Description *"
                       placeholder="e.g. Performed according to traditional Vedic practices with Sankalp and Mantras."
                       value={benefit.description}
                       onChange={handleChange}

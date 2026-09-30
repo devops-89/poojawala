@@ -483,7 +483,7 @@ export default function AdminBookingsContent() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Select Purohit"
+                  label="Select Purohit *"
                   sx={{ fontFamily: "var(--font-outfit), sans-serif" }}
                 />
               )}

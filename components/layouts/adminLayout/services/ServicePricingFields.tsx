@@ -43,10 +43,17 @@ export default function ServicePricingFields({
           variant="outlined"
           type="number"
           value={values.tokenPercentage}
-          onChange={handleChange}
+          onChange={(e: any) => {
+            if (Number(e.target.value) < 0) return;
+            handleChange(e as any);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
           onBlur={handleBlur}
           error={touched.tokenPercentage && Boolean(errors.tokenPercentage)}
           helperText={touched.tokenPercentage && errors.tokenPercentage}
+          slotProps={{ htmlInput: { min: 0 } }}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}
@@ -72,7 +79,13 @@ export default function ServicePricingFields({
           variant="outlined"
           type="number"
           value={values.commissionPercentage}
-          onChange={handleChange}
+          onChange={(e: any) => {
+            if (Number(e.target.value) < 0) return;
+            handleChange(e as any);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
           onBlur={handleBlur}
           error={
             touched.commissionPercentage &&
@@ -81,6 +94,7 @@ export default function ServicePricingFields({
           helperText={
             touched.commissionPercentage && errors.commissionPercentage
           }
+          slotProps={{ htmlInput: { min: 0 } }}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}
@@ -106,10 +120,17 @@ export default function ServicePricingFields({
           variant="outlined"
           type="number"
           value={values.durationMinutes}
-          onChange={handleChange}
+          onChange={(e: any) => {
+            if (Number(e.target.value) < 0) return;
+            handleChange(e as any);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
           onBlur={handleBlur}
           error={touched.durationMinutes && Boolean(errors.durationMinutes)}
           helperText={touched.durationMinutes && errors.durationMinutes}
+          slotProps={{ htmlInput: { min: 0 } }}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}

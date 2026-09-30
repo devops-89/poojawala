@@ -48,10 +48,17 @@ export default function ProductBasicFields() {
           placeholder="e.g. 1450.00"
           variant="outlined"
           value={values.price}
-          onChange={handleChange}
+          onChange={(e: any) => {
+            if (Number(e.target.value) < 0) return;
+            handleChange(e as any);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
           onBlur={handleBlur}
           error={touched.price && Boolean(errors.price)}
           helperText={touched.price && errors.price}
+          slotProps={{ htmlInput: { min: 0 } }}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
       </Grid>
@@ -95,10 +102,17 @@ export default function ProductBasicFields() {
           placeholder="e.g. 10"
           variant="outlined"
           value={values.quantity}
-          onChange={handleChange}
+          onChange={(e: any) => {
+            if (Number(e.target.value) < 0) return;
+            handleChange(e as any);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
           onBlur={handleBlur}
           error={touched.quantity && Boolean(errors.quantity)}
           helperText={touched.quantity && errors.quantity}
+          slotProps={{ htmlInput: { min: 0 } }}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
       </Grid>

@@ -91,7 +91,7 @@ export default function ServiceLanguagesFields({
                     fullWidth
                     size="small"
                     name={`languages.${index}.name`}
-                    label="Language"
+                    label="Language *"
                     placeholder="e.g. Hindi, Sanskrit, English"
                     value={lang.name}
                     onChange={handleChange}

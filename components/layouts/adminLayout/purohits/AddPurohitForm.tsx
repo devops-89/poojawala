@@ -22,11 +22,9 @@ const validationSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required').trim(),
   lastName: Yup.string().required('Last name is required').trim(),
   email: Yup.string().email('Invalid email format').nullable(),
-  mobileNumber: Yup.string().required('Mobile Number is required').test('is-valid-tel', 'Invalid phone number', function (value) {
-    if (!value) return false;
-    const combined = this.parent.countryCode ? this.parent.countryCode + value : value;
-    return matchIsValidTel(combined);
-  }),
+  mobileNumber: Yup.string()
+    .required('Mobile Number is required')
+    .matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
   dob: Yup.date().max(twentyYearsAgo, 'Date of birth must be at least 20 years ago').required('Date of Birth is required'),
   password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters').trim(),
   confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match').required('Confirm Password is required'),
@@ -126,7 +124,7 @@ export default function AddPurohitForm() {
           {/* Row 1: First Name & Last Name */}
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
-              fullWidth name="firstName" label="First Name" variant="outlined" 
+              fullWidth name="firstName" label="First Name *" variant="outlined" 
               value={values.firstName} onChange={handleChange} onBlur={handleBlur}
               error={touched.firstName && Boolean(errors.firstName)} helperText={touched.firstName && errors.firstName}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
@@ -134,7 +132,7 @@ export default function AddPurohitForm() {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
-              fullWidth name="lastName" label="Last Name" variant="outlined" 
+              fullWidth name="lastName" label="Last Name *" variant="outlined" 
               value={values.lastName} onChange={handleChange} onBlur={handleBlur}
               error={touched.lastName && Boolean(errors.lastName)} helperText={touched.lastName && errors.lastName}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
@@ -146,22 +144,36 @@ export default function AddPurohitForm() {
             <MuiTelInput 
               fullWidth 
               name="mobileNumber" 
-              label="Mobile Number" 
+              label="Mobile Number *" 
               variant="outlined" 
               defaultCountry="IN"
+              onlyCountries={['IN']}
+              disableDropdown
               value={values.countryCode ? values.countryCode + values.mobileNumber : values.mobileNumber} 
               onChange={(newValue, info) => {
-                formik.setFieldValue('countryCode', '+' + (info.countryCallingCode || '91'));
-                formik.setFieldValue('mobileNumber', info.nationalNumber || '');
+                const natNum = (info.nationalNumber || '').replace(/\D/g, '').slice(0, 10);
+                formik.setFieldValue('countryCode', '+91');
+                formik.setFieldValue('mobileNumber', natNum);
               }} 
+              onKeyDown={(e) => {
+                if (values.mobileNumber && values.mobileNumber.length >= 10) {
+                  if (
+                    !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'].includes(e.key) &&
+                    !e.ctrlKey &&
+                    !e.metaKey
+                  ) {
+                    e.preventDefault();
+                  }
+                }
+              }}
               error={touched.mobileNumber && Boolean(errors.mobileNumber)} 
-              helperText={touched.mobileNumber && errors.mobileNumber as string} 
+              helperText={touched.mobileNumber && (errors.mobileNumber as string)} 
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
-              fullWidth name="dob" label="Date of Birth" type="date" variant="outlined" 
+              fullWidth name="dob" label="Date of Birth *" type="date" variant="outlined" 
               value={values.dob} onChange={handleChange} onBlur={handleBlur} 
               error={touched.dob && Boolean(errors.dob)} helperText={touched.dob && errors.dob as string} 
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
@@ -172,7 +184,7 @@ export default function AddPurohitForm() {
           {/* Row 3: Email Address (Full Width) */}
           <Grid size={{ xs: 12 }}>
             <TextField 
-              fullWidth name="email" label="Email Address" variant="outlined" type="email"
+              fullWidth name="email" label="Email Address *" variant="outlined" type="email"
               value={values.email} onChange={handleChange} onBlur={handleBlur}
               error={touched.email && Boolean(errors.email)} helperText={touched.email && errors.email}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
@@ -182,7 +194,7 @@ export default function AddPurohitForm() {
           {/* Row 4: Password & Confirm Password */}
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
-              fullWidth name="password" label="Password" variant="outlined" type={showPassword ? 'text' : 'password'}
+              fullWidth name="password" label="Password *" variant="outlined" type={showPassword ? 'text' : 'password'}
               value={values.password} onChange={handleChange} onBlur={handleBlur}
               error={touched.password && Boolean(errors.password)} helperText={touched.password && errors.password as string}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 
@@ -191,7 +203,7 @@ export default function AddPurohitForm() {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
-              fullWidth name="confirmPassword" label="Confirm Password" variant="outlined" type={showConfirmPassword ? 'text' : 'password'}
+              fullWidth name="confirmPassword" label="Confirm Password *" variant="outlined" type={showConfirmPassword ? 'text' : 'password'}
               value={values.confirmPassword} onChange={handleChange} onBlur={handleBlur}
               error={touched.confirmPassword && Boolean(errors.confirmPassword)} helperText={touched.confirmPassword && errors.confirmPassword as string}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} 

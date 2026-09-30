@@ -120,7 +120,7 @@ export default function AddBookingPurohitSection({
             color: '#1e293b',
           }}
         >
-          Booking Date & Time
+          Booking Date & Time *
         </Typography>
         <DateTimePicker
           value={values.bookingDate ? moment(values.bookingDate) : null}

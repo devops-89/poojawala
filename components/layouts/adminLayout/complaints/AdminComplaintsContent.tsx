@@ -289,7 +289,7 @@ export default function AdminComplaintsContent() {
                 fullWidth
                 multiline
                 rows={3}
-                label="Resolution Notes (Required)"
+                label="Resolution Notes (Required) *"
                 variant="outlined"
                 value={adminRemark}
                 onChange={(e) => setAdminRemark(e.target.value)}

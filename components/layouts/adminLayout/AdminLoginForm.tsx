@@ -97,7 +97,7 @@ export default function AdminLoginForm() {
             fullWidth 
             id="email"
             name="email"
-            label="Admin Email" 
+            label="Admin Email *" 
             variant="outlined" 
             margin="normal"
             type="email"
@@ -127,7 +127,7 @@ export default function AdminLoginForm() {
             fullWidth 
             id="password"
             name="password"
-            label="Password" 
+            label="Password *" 
             type={showPassword ? 'text' : 'password'}
             variant="outlined" 
             margin="normal"

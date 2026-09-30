@@ -336,7 +336,7 @@ export default function CategoryModal({
           /* Add & Edit Mode Form */
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
             <TextField
-              label="Category Name"
+              label="Category Name *"
               placeholder="e.g. Festival Poojas"
               fullWidth
               value={nameInput}

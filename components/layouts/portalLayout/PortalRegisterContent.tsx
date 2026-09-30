@@ -1,36 +1,39 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import { getMeAPI, resendOtpAPI } from "@/api/authControllers";
+import {
+  registerPurohitAPI,
+  sendOtpAPI,
+  verifyOtpAPI,
+} from "@/api/userControllers";
+import { useSnackbarStore } from "@/stores/snackbarStore";
 import {
   Box,
+  Button,
   Container,
   Paper,
-  Stepper,
   Step,
   StepLabel,
-  Button,
-} from '@mui/material';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useFormik } from 'formik';
-import { sendOtpAPI, verifyOtpAPI, registerPurohitAPI } from '@/api/userControllers';
-import { resendOtpAPI, getMeAPI } from '@/api/authControllers';
-import { useSnackbarStore } from '@/stores/snackbarStore';
+  Stepper,
+} from "@mui/material";
+import { useFormik } from "formik";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 
-import { steps, validationSchema } from './register/constants';
-import RegisterHeader from './register/components/RegisterHeader';
-import Step0BasicDetails from './register/components/Step0BasicDetails';
-import Step1OtpVerification from './register/components/Step1OtpVerification';
-import Step2PurohitProfile from './register/components/Step2PurohitProfile';
-import Step3BankDetails from './register/components/Step3BankDetails';
-import Step4DocumentUpload from './register/components/Step4DocumentUpload';
-import DocumentPreviewDialog from './register/components/DocumentPreviewDialog';
-import { maxDobDate } from './register/constants';
+import DocumentPreviewDialog from "./register/components/DocumentPreviewDialog";
+import RegisterHeader from "./register/components/RegisterHeader";
+import Step0BasicDetails from "./register/components/Step0BasicDetails";
+import Step1OtpVerification from "./register/components/Step1OtpVerification";
+import Step2PurohitProfile from "./register/components/Step2PurohitProfile";
+import Step3BankDetails from "./register/components/Step3BankDetails";
+import Step4DocumentUpload from "./register/components/Step4DocumentUpload";
+import { maxDobDate, steps, validationSchema } from "./register/constants";
 
-const DRAFT_STORAGE_KEY = 'purohit_register_draft';
+const DRAFT_STORAGE_KEY = "purohit_register_draft";
 
 export default function PortalRegisterContent() {
   const searchParams = useSearchParams();
-  const initialStep = parseInt(searchParams.get('step') || '0', 10);
+  const initialStep = parseInt(searchParams.get("step") || "0", 10);
   const isAdminFlow = initialStep === 2;
   const [activeStep, setActiveStep] = useState(initialStep);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
@@ -53,30 +56,30 @@ export default function PortalRegisterContent() {
 
   const formik = useFormik({
     initialValues: {
-      fullName: '',
-      countryCode: '+91',
-      mobileNumber: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      dob: '',
-      otp: ['', '', '', '', '', ''],
-      bio: '',
-      qualification: '',
-      experienceYears: '',
-      aadhaarNumber: '',
-      state: '',
-      city: '',
+      fullName: "",
+      countryCode: "+91",
+      mobileNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      dob: "",
+      otp: ["", "", "", "", "", ""],
+      bio: "",
+      qualification: "",
+      experienceYears: "",
+      aadhaarNumber: "",
+      state: "",
+      city: "",
       languages: [],
       specializations: [],
       isOnlineAvailable: true,
       isOfflineAvailable: true,
-      paymentMethod: 'BANK',
-      upiId: '',
-      bankName: '',
-      accountName: '',
-      accountNumber: '',
-      ifscCode: '',
+      paymentMethod: "BANK",
+      upiId: "",
+      bankName: "",
+      accountName: "",
+      accountNumber: "",
+      ifscCode: "",
       documents: {
         identityDoc: null,
         certificate: null,
@@ -97,20 +100,20 @@ export default function PortalRegisterContent() {
           const res = await sendOtpAPI({
             phone: values.mobileNumber,
             email: values.email,
-            role: 'PUROHIT',
+            role: "PUROHIT",
             countryCode: values.countryCode,
           });
           if (res.success || res.message) {
-            showSnackbar('OTP sent successfully!', 'success');
+            showSnackbar("OTP sent successfully!", "success");
             setActiveStep(1);
             formik.setTouched({});
           }
         } catch (error: any) {
           const errorMsg = error.response?.data?.message;
           const displayMsg = Array.isArray(errorMsg)
-            ? errorMsg.join(', ')
-            : errorMsg || 'Failed to send OTP';
-          showSnackbar(displayMsg, 'error');
+            ? errorMsg.join(", ")
+            : errorMsg || "Failed to send OTP";
+          showSnackbar(displayMsg, "error");
         } finally {
           setIsSendingOtp(false);
         }
@@ -120,9 +123,9 @@ export default function PortalRegisterContent() {
       if (activeStep === 1) {
         setIsVerifyingOtp(true);
         try {
-          const otpStr = values.otp.join('');
+          const otpStr = values.otp.join("");
           if (otpStr.length < 6) {
-            showSnackbar('Please enter 6-digit OTP', 'error');
+            showSnackbar("Please enter 6-digit OTP", "error");
             setIsVerifyingOtp(false);
             return;
           }
@@ -130,11 +133,11 @@ export default function PortalRegisterContent() {
             phone: values.mobileNumber,
             email: values.email,
             otp: otpStr,
-            role: 'PUROHIT',
+            role: "PUROHIT",
             countryCode: values.countryCode,
           });
           if (res.success || res.message) {
-            showSnackbar('OTP Verified successfully!', 'success');
+            showSnackbar("OTP Verified successfully!", "success");
             setIsOtpVerified(true);
             setActiveStep(2);
             formik.setTouched({});
@@ -142,9 +145,9 @@ export default function PortalRegisterContent() {
         } catch (error: any) {
           const errorMsg = error.response?.data?.message;
           const displayMsg = Array.isArray(errorMsg)
-            ? errorMsg.join(', ')
-            : errorMsg || 'Invalid OTP';
-          showSnackbar(displayMsg, 'error');
+            ? errorMsg.join(", ")
+            : errorMsg || "Invalid OTP";
+          showSnackbar(displayMsg, "error");
         } finally {
           setIsVerifyingOtp(false);
         }
@@ -157,75 +160,75 @@ export default function PortalRegisterContent() {
           const fd = new FormData();
           if (!isAdminFlow) {
             const nameParts = values.fullName.trim().split(/\s+/);
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ');
+            const firstName = nameParts[0] || "";
+            const lastName = nameParts.slice(1).join(" ");
 
-            fd.append('firstName', firstName);
-            fd.append('lastName', lastName);
-            fd.append('phone', values.mobileNumber);
-            fd.append('countryCode', values.countryCode);
-            fd.append('email', values.email);
-            fd.append('password', values.password);
-            fd.append('confirmPassword', values.confirmPassword);
-            fd.append('dob', values.dob);
+            fd.append("firstName", firstName);
+            fd.append("lastName", lastName);
+            fd.append("phone", values.mobileNumber);
+            fd.append("countryCode", values.countryCode);
+            fd.append("email", values.email);
+            fd.append("password", values.password);
+            fd.append("confirmPassword", values.confirmPassword);
+            fd.append("dob", values.dob);
           }
 
-          fd.append('bio', values.bio);
-          fd.append('qualification', values.qualification);
-          fd.append('experienceYears', values.experienceYears.toString());
-          fd.append('aadhaarNumber', values.aadhaarNumber);
-          fd.append('state', values.state);
-          fd.append('city', values.city);
+          fd.append("bio", values.bio);
+          fd.append("qualification", values.qualification);
+          fd.append("experienceYears", values.experienceYears.toString());
+          fd.append("aadhaarNumber", values.aadhaarNumber);
+          fd.append("state", values.state);
+          fd.append("city", values.city);
 
           if (isAdminFlow) {
-            const userStr = sessionStorage.getItem('user');
+            const userStr = sessionStorage.getItem("user");
             if (userStr) {
               try {
                 const userObj = JSON.parse(userStr);
                 if (userObj.id) {
-                  fd.append('id', userObj.id.toString());
+                  fd.append("id", userObj.id.toString());
                 }
               } catch (e) {
-                console.error('Error parsing user from session storage', e);
+                console.error("Error parsing user from session storage", e);
               }
             }
           }
 
-          values.languages.forEach((l) => fd.append('languages', l as never));
+          values.languages.forEach((l) => fd.append("languages", l as never));
           values.specializations.forEach((s) =>
-            fd.append('specializations', s as never)
+            fd.append("specializations", s as never),
           );
 
           fd.append(
-            'isOnlineAvailable',
-            values.isOnlineAvailable ? 'true' : 'false'
+            "isOnlineAvailable",
+            values.isOnlineAvailable ? "true" : "false",
           );
           fd.append(
-            'isOfflineAvailable',
-            values.isOfflineAvailable ? 'true' : 'false'
+            "isOfflineAvailable",
+            values.isOfflineAvailable ? "true" : "false",
           );
 
-          fd.append('paymentMethod', values.paymentMethod);
-          if (values.paymentMethod === 'UPI') {
-            fd.append('upiId', values.upiId);
+          fd.append("paymentMethod", values.paymentMethod);
+          if (values.paymentMethod === "UPI") {
+            fd.append("upiId", values.upiId);
           } else {
-            fd.append('accountHolderName', values.accountName);
-            fd.append('accountNumber', values.accountNumber);
-            fd.append('ifscCode', values.ifscCode);
-            fd.append('bankName', values.bankName);
+            fd.append("accountHolderName", values.accountName);
+            fd.append("accountNumber", values.accountNumber);
+            fd.append("ifscCode", values.ifscCode);
+            fd.append("bankName", values.bankName);
           }
 
           if (values.documents.identityDoc)
-            fd.append('aadhaarDoc', values.documents.identityDoc);
+            fd.append("aadhaarDoc", values.documents.identityDoc);
           if (values.documents.certificate)
-            fd.append('certificate', values.documents.certificate);
+            fd.append("certificate", values.documents.certificate);
           if (values.documents.templeAffiliationProof)
             fd.append(
-              'templeAffiliationProof',
-              values.documents.templeAffiliationProof
+              "templeAffiliationProof",
+              values.documents.templeAffiliationProof,
             );
           if (values.documents.profilePhoto)
-            fd.append('profileImage', values.documents.profilePhoto);
+            fd.append("profileImage", values.documents.profilePhoto);
 
           const res = await registerPurohitAPI(fd);
           if (res.success || res.message) {
@@ -234,34 +237,34 @@ export default function PortalRegisterContent() {
             try {
               const meResponse = await getMeAPI(token);
               sessionStorage.setItem(
-                'user',
+                "user",
                 JSON.stringify(
                   meResponse?.user ||
                     meResponse?.data ||
                     meResponse ||
-                    res.user
-                )
+                    res.user,
+                ),
               );
             } catch (e) {
-              sessionStorage.setItem('user', JSON.stringify(res.user));
+              sessionStorage.setItem("user", JSON.stringify(res.user));
             }
             if (res.csrfToken) {
-              sessionStorage.setItem('csrfToken', res.csrfToken);
+              sessionStorage.setItem("csrfToken", res.csrfToken);
             }
             try {
               localStorage.removeItem(DRAFT_STORAGE_KEY);
             } catch (e) {
-              console.error('Failed to remove draft', e);
+              console.error("Failed to remove draft", e);
             }
-            showSnackbar('Registration successful!', 'success');
-            router.push('/purohit/dashboard');
+            showSnackbar("Registration successful!", "success");
+            router.push("/purohit/dashboard");
           }
         } catch (error: any) {
           const errorMsg = error.response?.data?.message;
           const displayMsg = Array.isArray(errorMsg)
-            ? errorMsg.join(', ')
-            : errorMsg || 'Registration failed';
-          showSnackbar(displayMsg, 'error');
+            ? errorMsg.join(", ")
+            : errorMsg || "Registration failed";
+          showSnackbar(displayMsg, "error");
         } finally {
           setIsSubmittingForm(false);
         }
@@ -282,7 +285,7 @@ export default function PortalRegisterContent() {
           formik.setValues({
             ...formik.initialValues,
             ...parsed.values,
-            otp: parsed.values.otp || ['', '', '', '', '', ''],
+            otp: parsed.values.otp || ["", "", "", "", "", ""],
             documents: {
               identityDoc: null,
               certificate: null,
@@ -291,10 +294,10 @@ export default function PortalRegisterContent() {
             },
           });
         }
-        if (typeof parsed.isOtpVerified === 'boolean') {
+        if (typeof parsed.isOtpVerified === "boolean") {
           setIsOtpVerified(parsed.isOtpVerified);
         }
-        if (typeof parsed.activeStep === 'number' && !isAdminFlow) {
+        if (typeof parsed.activeStep === "number" && !isAdminFlow) {
           let restoredStep = parsed.activeStep;
           if (restoredStep === 1 && parsed.isOtpVerified) {
             restoredStep = 2;
@@ -303,7 +306,7 @@ export default function PortalRegisterContent() {
         }
       }
     } catch (e) {
-      console.error('Failed to restore draft from localStorage', e);
+      console.error("Failed to restore draft from localStorage", e);
     } finally {
       setIsRestored(true);
     }
@@ -345,7 +348,7 @@ export default function PortalRegisterContent() {
       };
       localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
     } catch (e) {
-      console.error('Failed to save draft to localStorage', e);
+      console.error("Failed to save draft to localStorage", e);
     }
   }, [formik.values, activeStep, isOtpVerified, isRestored]);
 
@@ -368,15 +371,14 @@ export default function PortalRegisterContent() {
       await resendOtpAPI({
         phone: formik.values.mobileNumber,
         email: formik.values.email,
-        otpType: 'REGISTER',
-        countryCode: formik.values.countryCode,
+        otpType: "RESEND_OTP",
       });
-      showSnackbar('OTP resent successfully!', 'success');
+      showSnackbar("OTP resent successfully!", "success");
       setResendTimer(30);
     } catch (err: any) {
       showSnackbar(
-        err.response?.data?.message || 'Failed to resend OTP',
-        'error'
+        err.response?.data?.message || "Failed to resend OTP",
+        "error",
       );
     }
   };
@@ -406,11 +408,11 @@ export default function PortalRegisterContent() {
     const errors = await formik.validateForm();
     if (Object.keys(errors).length > 0) {
       const touchedObj: any = {};
-      const markTouched = (obj: any, prefix = '') => {
+      const markTouched = (obj: any, prefix = "") => {
         Object.keys(obj).forEach((key) => {
           const fieldPath = prefix ? `${prefix}.${key}` : key;
           if (
-            typeof obj[key] === 'object' &&
+            typeof obj[key] === "object" &&
             obj[key] !== null &&
             !Array.isArray(obj[key])
           ) {
@@ -426,9 +428,9 @@ export default function PortalRegisterContent() {
       const extractErrors = (obj: any): string[] => {
         let msgs: string[] = [];
         Object.values(obj).forEach((val: any) => {
-          if (typeof val === 'string') {
+          if (typeof val === "string") {
             msgs.push(val);
-          } else if (typeof val === 'object' && val !== null) {
+          } else if (typeof val === "object" && val !== null) {
             msgs = msgs.concat(extractErrors(val));
           }
         });
@@ -437,8 +439,8 @@ export default function PortalRegisterContent() {
 
       const errorMsgs = extractErrors(errors);
       showSnackbar(
-        errorMsgs[0] || 'Please fill in mandatory fields in current step',
-        'error'
+        errorMsgs[0] || "Please fill in mandatory fields in current step",
+        "error",
       );
       return;
     }
@@ -456,11 +458,11 @@ export default function PortalRegisterContent() {
     const errors = await formik.validateForm();
     if (Object.keys(errors).length > 0) {
       const touchedObj: any = {};
-      const markTouched = (obj: any, prefix = '') => {
+      const markTouched = (obj: any, prefix = "") => {
         Object.keys(obj).forEach((key) => {
           const fieldPath = prefix ? `${prefix}.${key}` : key;
           if (
-            typeof obj[key] === 'object' &&
+            typeof obj[key] === "object" &&
             obj[key] !== null &&
             !Array.isArray(obj[key])
           ) {
@@ -476,9 +478,9 @@ export default function PortalRegisterContent() {
       const extractErrors = (obj: any): string[] => {
         let msgs: string[] = [];
         Object.values(obj).forEach((val: any) => {
-          if (typeof val === 'string') {
+          if (typeof val === "string") {
             msgs.push(val);
-          } else if (typeof val === 'object' && val !== null) {
+          } else if (typeof val === "object" && val !== null) {
             msgs = msgs.concat(extractErrors(val));
           }
         });
@@ -486,8 +488,8 @@ export default function PortalRegisterContent() {
       };
 
       const errorMsgs = extractErrors(errors);
-      const firstMsg = errorMsgs[0] || 'Please fill in all mandatory fields';
-      showSnackbar(firstMsg, 'error');
+      const firstMsg = errorMsgs[0] || "Please fill in all mandatory fields";
+      showSnackbar(firstMsg, "error");
     } else {
       formik.handleSubmit(e);
     }
@@ -496,10 +498,10 @@ export default function PortalRegisterContent() {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: '#FFFDF9',
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "#FFFDF9",
       }}
     >
       <RegisterHeader />
@@ -508,9 +510,9 @@ export default function PortalRegisterContent() {
         <Paper
           sx={{
             p: { xs: 3, md: 5 },
-            borderRadius: '24px',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
-            border: '1px solid #eee',
+            borderRadius: "24px",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.06)",
+            border: "1px solid #eee",
           }}
         >
           <Stepper
@@ -518,9 +520,9 @@ export default function PortalRegisterContent() {
             alternativeLabel
             sx={{
               mb: 6,
-              '& .MuiStepIcon-root.Mui-active': { color: '#FF6200' },
-              '& .MuiStepIcon-root.Mui-completed': { color: '#FF6200' },
-              '& .MuiStep-root': { cursor: 'pointer' },
+              "& .MuiStepIcon-root.Mui-active": { color: "#FF6200" },
+              "& .MuiStepIcon-root.Mui-completed": { color: "#FF6200" },
+              "& .MuiStep-root": { cursor: "pointer" },
             }}
           >
             {(isAdminFlow ? steps.slice(2) : steps).map((label, index) => {
@@ -529,15 +531,15 @@ export default function PortalRegisterContent() {
                 <Step
                   key={label}
                   onClick={() => handleStepClick(stepIdx)}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{ cursor: "pointer" }}
                 >
                   <StepLabel
                     sx={{
-                      cursor: 'pointer',
-                      '& .MuiStepLabel-label': {
-                        fontFamily: 'var(--font-outfit), sans-serif',
+                      cursor: "pointer",
+                      "& .MuiStepLabel-label": {
+                        fontFamily: "var(--font-outfit), sans-serif",
                         fontWeight: 600,
-                        cursor: 'pointer',
+                        cursor: "pointer",
                       },
                     }}
                   >
@@ -582,34 +584,30 @@ export default function PortalRegisterContent() {
 
             <Box
               sx={{
-                display: 'flex',
-                justifyContent: activeStep === 0 ? 'flex-end' : 'space-between',
-                alignItems: 'center',
-                width: '100%',
+                display: "flex",
+                justifyContent: activeStep === 0 ? "flex-end" : "space-between",
+                alignItems: "center",
+                width: "100%",
                 mt: 6,
               }}
             >
               {activeStep > 0 && (
                 <Button
-                  disabled={
-                    isSendingOtp ||
-                    isVerifyingOtp ||
-                    isSubmittingForm
-                  }
+                  disabled={isSendingOtp || isVerifyingOtp || isSubmittingForm}
                   onClick={handleBack}
                   type="button"
                   sx={{
-                    background: '#FF6200',
-                    color: 'white',
-                    textTransform: 'none',
+                    background: "#FF6200",
+                    color: "white",
+                    textTransform: "none",
                     fontWeight: 600,
-                    borderRadius: '30px',
+                    borderRadius: "30px",
                     px: 4,
-                    boxShadow: 'none',
-                    '&:hover': { background: '#F05A00', boxShadow: 'none' },
-                    '&.Mui-disabled': {
-                      background: '#FFE0D0',
-                      color: '#FFA07A',
+                    boxShadow: "none",
+                    "&:hover": { background: "#F05A00", boxShadow: "none" },
+                    "&.Mui-disabled": {
+                      background: "#FFE0D0",
+                      color: "#FFA07A",
                     },
                   }}
                 >
@@ -620,35 +618,35 @@ export default function PortalRegisterContent() {
                 type="submit"
                 disabled={isSendingOtp || isVerifyingOtp || isSubmittingForm}
                 sx={{
-                  background: '#FF6200',
-                  color: 'white',
-                  textTransform: 'none',
+                  background: "#FF6200",
+                  color: "white",
+                  textTransform: "none",
                   fontWeight: 600,
-                  borderRadius: '30px',
+                  borderRadius: "30px",
                   px: 4,
-                  boxShadow: 'none',
-                  '&:hover': { background: '#F05A00', boxShadow: 'none' },
-                  '&.Mui-disabled': {
-                    background: '#FFE0D0',
-                    color: '#FFA07A',
+                  boxShadow: "none",
+                  "&:hover": { background: "#F05A00", boxShadow: "none" },
+                  "&.Mui-disabled": {
+                    background: "#FFE0D0",
+                    color: "#FFA07A",
                   },
                 }}
               >
                 {activeStep === steps.length - 1
                   ? isSubmittingForm
-                    ? 'Submitting...'
-                    : 'Submit Registration'
+                    ? "Submitting..."
+                    : "Submit Registration"
                   : activeStep === 0
-                  ? isOtpVerified
-                    ? 'Next Step'
-                    : isSendingOtp
-                    ? 'Sending OTP...'
-                    : 'Next Step'
-                  : activeStep === 1
-                  ? isVerifyingOtp
-                    ? 'Verifying...'
-                    : 'Verify OTP'
-                  : 'Next Step'}
+                    ? isOtpVerified
+                      ? "Next Step"
+                      : isSendingOtp
+                        ? "Sending OTP..."
+                        : "Next Step"
+                    : activeStep === 1
+                      ? isVerifyingOtp
+                        ? "Verifying..."
+                        : "Verify OTP"
+                      : "Next Step"}
               </Button>
             </Box>
           </form>

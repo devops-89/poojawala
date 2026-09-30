@@ -148,7 +148,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Full Name"
+                label="Full Name *"
                 name="newCustomerName"
                 variant="outlined"
                 value={values.newCustomerName}
@@ -171,10 +171,12 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <MuiTelInput
                 fullWidth
-                label="Mobile Number"
+                label="Mobile Number *"
                 name="newCustomerMobile"
                 variant="outlined"
                 defaultCountry="IN"
+                onlyCountries={['IN']}
+                disableDropdown
                 value={
                   values.newCustomerMobile
                     ? '+91' + values.newCustomerMobile
@@ -221,7 +223,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Email"
+                label="Email *"
                 name="newCustomerEmail"
                 variant="outlined"
                 value={values.newCustomerEmail}
@@ -245,7 +247,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Password"
+                label="Password *"
                 name="newCustomerPassword"
                 type={showPassword ? 'text' : 'password'}
                 variant="outlined"
@@ -285,7 +287,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Address"
+                label="Address *"
                 name="newCustomerAddress"
                 variant="outlined"
                 value={values.newCustomerAddress}
@@ -310,7 +312,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="City"
+                label="City *"
                 name="newCustomerCity"
                 variant="outlined"
                 value={values.newCustomerCity}

@@ -505,12 +505,12 @@ export default function AddBookingForm() {
                     color: '#1e293b',
                   }}
                 >
-                  Booking Mode
+                  Booking Mode *
                 </Typography>
                 <TextField
                   fullWidth
                   select
-                  label="Select Booking Mode"
+                  label="Select Booking Mode *"
                   name="bookingMode"
                   variant="outlined"
                   value={values.bookingMode}
@@ -558,12 +558,12 @@ export default function AddBookingForm() {
                     color: '#1e293b',
                   }}
                 >
-                  Select Service
+                  Select Service *
                 </Typography>
                 <TextField
                   fullWidth
                   select
-                  label="Select Service"
+                  label="Select Service *"
                   name="serviceId"
                   variant="outlined"
                   value={values.serviceId}
