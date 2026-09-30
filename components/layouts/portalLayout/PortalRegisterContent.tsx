@@ -371,7 +371,7 @@ export default function PortalRegisterContent() {
       await resendOtpAPI({
         phone: formik.values.mobileNumber,
         email: formik.values.email,
-        otpType: "RESEND_OTP",
+        otpType: "USER_REGISTRATION",
       });
       showSnackbar("OTP resent successfully!", "success");
       setResendTimer(30);
