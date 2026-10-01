@@ -21,29 +21,20 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
   const { values, setFieldValue, errors, touched } = formik;
   const serviceArea = values.serviceArea || {};
 
-  const initialGeoData = useMemo(
-    () => ({
-      addressLabel: serviceArea.addressLabel || "Primary Service Area",
-      fullAddress: serviceArea.fullAddress || "",
-      city: serviceArea.city || values.city || "",
-      state: serviceArea.state || values.state || "",
-      pincode: serviceArea.pincode || "",
-      latitude: serviceArea.latitude || "0",
-      longitude: serviceArea.longitude || "0",
+  const initialGeoDataRef = React.useRef<any>(null);
+  if (!initialGeoDataRef.current) {
+    const sa = values.serviceArea || {};
+    initialGeoDataRef.current = {
+      addressLabel: sa.addressLabel || "Primary Service Area",
+      fullAddress: sa.fullAddress || "",
+      city: sa.city || values.city || "",
+      state: sa.state || values.state || "",
+      pincode: sa.pincode || "",
+      latitude: sa.latitude || "0",
+      longitude: sa.longitude || "0",
       isDefault: true,
-    }),
-    [
-      serviceArea.addressLabel,
-      serviceArea.fullAddress,
-      serviceArea.city,
-      serviceArea.state,
-      serviceArea.pincode,
-      serviceArea.latitude,
-      serviceArea.longitude,
-      values.city,
-      values.state,
-    ]
-  );
+    };
+  }
 
   const {
     addressData,
@@ -57,38 +48,39 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
     handlePincodeChange,
     handleAddressInputChange,
     handleAddressInputBlur,
-  } = useAddressGeocoding(true, initialGeoData);
+  } = useAddressGeocoding(true, initialGeoDataRef.current);
 
   // Keep Formik values synced with Geocoding Hook state
   useEffect(() => {
-    const cur = values.serviceArea || {};
     const newLat = Number(addressData.latitude) || 0;
     const newLng = Number(addressData.longitude) || 0;
 
-    if (
-      cur.addressLabel === (addressData.addressLabel || "Primary Service Area") &&
-      cur.fullAddress === addressData.fullAddress &&
-      cur.city === addressData.city &&
-      cur.state === addressData.state &&
-      cur.pincode === addressData.pincode &&
-      Number(cur.latitude || 0) === newLat &&
-      Number(cur.longitude || 0) === newLng
-    ) {
-      return;
-    }
-
-    setFieldValue("serviceArea", {
-      ...cur,
-      addressLabel: addressData.addressLabel || "Primary Service Area",
-      fullAddress: addressData.fullAddress,
-      city: addressData.city,
-      state: addressData.state,
-      pincode: addressData.pincode,
-      latitude: newLat,
-      longitude: newLng,
-      serviceRadiusKm: Number(cur.serviceRadiusKm || 15),
+    setFieldValue("serviceArea", (prev: any) => {
+      const cur = prev || {};
+      if (
+        cur.addressLabel === (addressData.addressLabel || "Primary Service Area") &&
+        cur.fullAddress === addressData.fullAddress &&
+        cur.city === addressData.city &&
+        cur.state === addressData.state &&
+        cur.pincode === addressData.pincode &&
+        Number(cur.latitude || 0) === newLat &&
+        Number(cur.longitude || 0) === newLng
+      ) {
+        return cur;
+      }
+      return {
+        ...cur,
+        addressLabel: addressData.addressLabel || "Primary Service Area",
+        fullAddress: addressData.fullAddress,
+        city: addressData.city,
+        state: addressData.state,
+        pincode: addressData.pincode,
+        latitude: newLat,
+        longitude: newLng,
+        serviceRadiusKm: Number(cur.serviceRadiusKm || 15),
+      };
     });
-  }, [addressData, values.serviceArea, setFieldValue]);
+  }, [addressData, setFieldValue]);
 
   const serviceAreaErrors = errors.serviceArea || {};
   const serviceAreaTouched = touched.serviceArea || {};

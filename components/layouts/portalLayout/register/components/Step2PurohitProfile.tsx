@@ -32,16 +32,16 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
 
   // Dynamically filter cities based on selected state
   const cityOptions = useMemo(() => {
+    if (!formik.values.state) return [];
     const states = State.getStatesOfCountry('IN') || [];
     const selectedStateObj = states.find(
-      (s) => s?.name?.toLowerCase() === (formik.values.state || '').toLowerCase()
+      (s) => s?.name?.toLowerCase().trim() === (formik.values.state || '').toLowerCase().trim()
     );
     if (selectedStateObj && selectedStateObj.isoCode) {
       const cities = City.getCitiesOfState('IN', selectedStateObj.isoCode) || [];
-      return cities.map((c) => c.name);
+      return Array.from(new Set(cities.map((c) => c.name))).sort((a, b) => a.localeCompare(b));
     }
-    const allCities = City.getCitiesOfCountry('IN') || [];
-    return allCities.map((c) => c.name);
+    return [];
   }, [formik.values.state]);
 
   return (
@@ -95,6 +95,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
           <Autocomplete
             freeSolo
             forcePopupIcon
+            disabled={!formik.values.state}
             options={cityOptions}
             value={formik.values.city || ''}
             onChange={(_, newValue) => {
@@ -111,9 +112,16 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 fullWidth
                 name="city"
                 label="City *"
+                placeholder={!formik.values.state ? 'Select State first' : 'Select or type City'}
                 variant="outlined"
                 error={formik.touched.city && Boolean(formik.errors.city)}
-                helperText={formik.touched.city && (formik.errors.city as string)}
+                helperText={
+                  formik.touched.city
+                    ? (formik.errors.city as string)
+                    : !formik.values.state
+                    ? 'Select state to enable city selection'
+                    : undefined
+                }
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
               />
             )}

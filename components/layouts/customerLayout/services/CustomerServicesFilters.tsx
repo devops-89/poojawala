@@ -192,6 +192,7 @@ export default function CustomerServicesFilters({
       <Grid size={filterGridSize}>
         <Autocomplete
           openOnFocus
+          disabled={!selectedState || selectedState === "All"}
           options={["All Cities", ...cityOptions]}
           value={
             selectedCity && selectedCity !== "All"
@@ -207,9 +208,18 @@ export default function CustomerServicesFilters({
             <TextField
               {...params}
               label="Filter by City"
-              placeholder="Select or type City"
+              placeholder={
+                !selectedState || selectedState === "All"
+                  ? "Select State first"
+                  : "Select or type City"
+              }
               variant="outlined"
               autoComplete="off"
+              helperText={
+                !selectedState || selectedState === "All"
+                  ? "Select state to enable city filter"
+                  : undefined
+              }
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "12px",

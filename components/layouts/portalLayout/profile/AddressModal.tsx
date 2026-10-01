@@ -66,36 +66,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
     handleAddressInputBlur,
   } = useAddressGeocoding(open, addressForm);
 
-  // Sync geocoding hook state back to parent addressForm
-  useEffect(() => {
-    if (!open) return;
-    setAddressForm((prev: any) => {
-      if (!prev) return prev;
-      if (
-        prev.addressLabel === addressData.addressLabel &&
-        prev.fullAddress === addressData.fullAddress &&
-        prev.city === addressData.city &&
-        prev.state === addressData.state &&
-        prev.pincode === addressData.pincode &&
-        prev.latitude === addressData.latitude &&
-        prev.longitude === addressData.longitude &&
-        prev.isDefault === addressData.isDefault
-      ) {
-        return prev;
-      }
-      return {
-        ...prev,
-        addressLabel: addressData.addressLabel,
-        fullAddress: addressData.fullAddress,
-        city: addressData.city,
-        state: addressData.state,
-        pincode: addressData.pincode,
-        latitude: addressData.latitude,
-        longitude: addressData.longitude,
-        isDefault: addressData.isDefault,
-      };
-    });
-  }, [open, addressData, setAddressForm]);
+  // Sync address form when user clicks Save Location instead of continuous useEffect loop
 
   return (
     <Dialog
@@ -304,7 +275,20 @@ export const AddressModal: React.FC<AddressModalProps> = ({
           Cancel
         </Button>
         <Button
-          onClick={onSaveAddress}
+          onClick={() => {
+            setAddressForm((prev: any) => ({
+              ...prev,
+              addressLabel: addressData.addressLabel,
+              fullAddress: addressData.fullAddress,
+              city: addressData.city,
+              state: addressData.state,
+              pincode: addressData.pincode,
+              latitude: addressData.latitude,
+              longitude: addressData.longitude,
+              isDefault: addressData.isDefault,
+            }));
+            onSaveAddress();
+          }}
           disabled={savingAddress}
           sx={{
             bgcolor: "#FF6200 !important",

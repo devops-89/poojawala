@@ -1,7 +1,14 @@
-if (typeof window !== "undefined" && typeof (Array.prototype as any).toSorted !== "function") {
-  (Array.prototype as any).toSorted = function (compareFn?: (a: any, b: any) => number) {
-    return Array.from(this).sort(compareFn);
-  };
+if (typeof window !== "undefined") {
+  if (typeof (String.prototype as any).sort !== "function") {
+    (String.prototype as any).sort = function () {
+      return this;
+    };
+  }
+  if (typeof (Array.prototype as any).toSorted !== "function") {
+    (Array.prototype as any).toSorted = function (compareFn?: (a: any, b: any) => number) {
+      return Array.from(this).sort(compareFn);
+    };
+  }
 }
 
 import Navbar from "@/components/widgets/Navbar";

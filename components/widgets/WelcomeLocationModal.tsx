@@ -259,6 +259,7 @@ export default function WelcomeLocationModal() {
                 <Autocomplete
                   openOnFocus
                   forcePopupIcon
+                  disabled={!selectedState}
                   options={cityOptions}
                   value={selectedCity}
                   onChange={(_, newValue) => setSelectedCity(newValue)}
@@ -287,8 +288,9 @@ export default function WelcomeLocationModal() {
                     return (
                       <TextField
                         {...updatedParams}
-                        placeholder="Select City"
+                        placeholder={!selectedState ? "Select State first" : "Select City"}
                         autoComplete="off"
+                        helperText={!selectedState ? "Select state to enable city selection" : undefined}
                         sx={{
                           bgcolor: "#FFFFFF",
                           "& .MuiOutlinedInput-root": {
