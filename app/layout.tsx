@@ -1,3 +1,9 @@
+if (typeof window !== "undefined" && typeof (Array.prototype as any).toSorted !== "function") {
+  (Array.prototype as any).toSorted = function (compareFn?: (a: any, b: any) => number) {
+    return Array.from(this).sort(compareFn);
+  };
+}
+
 import Navbar from "@/components/widgets/Navbar";
 import Footer from "@/components/widgets/Footer";
 import ThemeRegistry from "@/theme/ThemeRegistry";
