@@ -41,19 +41,6 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     }
   }, []);
 
-  const initialDataKey = initialData
-    ? JSON.stringify({
-        id: initialData.id,
-        fullAddress: initialData.fullAddress || initialData.addressLine1 || "",
-        addressLabel: initialData.addressLabel || "Home",
-        city: initialData.city || "",
-        state: initialData.state || "",
-        pincode: initialData.pincode || initialData.zipCode || "",
-        latitude: initialData.latitude ? String(initialData.latitude) : "0",
-        longitude: initialData.longitude ? String(initialData.longitude) : "0",
-      })
-    : "";
-
   // Initialize or update Map when Dialog opens
   useEffect(() => {
     if (!open) {
@@ -102,7 +89,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     return () => {
       clearTimeout(timer);
     };
-  }, [open, initialDataKey]);
+  }, [open, initialData?.id]);
 
   const initMap = () => {
     if (!mapContainerRef.current) return;
