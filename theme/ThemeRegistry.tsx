@@ -1,11 +1,15 @@
 "use client";
 
-if (typeof window !== "undefined" && typeof Array.prototype.toSorted !== "function") {
-  (Array.prototype as any).toSorted = function (compareFn?: (a: any, b: any) => number) {
+if (
+  typeof window !== "undefined" &&
+  typeof Array.prototype.toSorted !== "function"
+) {
+  (Array.prototype as any).toSorted = function (
+    compareFn?: (a: any, b: any) => number,
+  ) {
     return Array.from(this).sort(compareFn);
   };
 }
-
 import { refreshTokenAPI } from "@/api/authControllers";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import CssBaseline from "@mui/material/CssBaseline";
