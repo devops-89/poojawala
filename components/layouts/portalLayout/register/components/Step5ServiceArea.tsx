@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import AddressLocationButton from "@/components/widgets/addressModal/AddressLocationButton";
 import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPreview";
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
@@ -20,6 +20,30 @@ interface Step5ServiceAreaProps {
 export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
   const { values, setFieldValue, errors, touched } = formik;
   const serviceArea = values.serviceArea || {};
+
+  const initialGeoData = useMemo(
+    () => ({
+      addressLabel: serviceArea.addressLabel || "Primary Service Area",
+      fullAddress: serviceArea.fullAddress || "",
+      city: serviceArea.city || values.city || "",
+      state: serviceArea.state || values.state || "",
+      pincode: serviceArea.pincode || "",
+      latitude: serviceArea.latitude || "0",
+      longitude: serviceArea.longitude || "0",
+      isDefault: true,
+    }),
+    [
+      serviceArea.addressLabel,
+      serviceArea.fullAddress,
+      serviceArea.city,
+      serviceArea.state,
+      serviceArea.pincode,
+      serviceArea.latitude,
+      serviceArea.longitude,
+      values.city,
+      values.state,
+    ]
+  );
 
   const {
     addressData,
@@ -33,31 +57,38 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
     handlePincodeChange,
     handleAddressInputChange,
     handleAddressInputBlur,
-  } = useAddressGeocoding(true, {
-    addressLabel: serviceArea.addressLabel || "Primary Service Area",
-    fullAddress: serviceArea.fullAddress || "",
-    city: serviceArea.city || values.city || "",
-    state: serviceArea.state || values.state || "",
-    pincode: serviceArea.pincode || "",
-    latitude: serviceArea.latitude || "0",
-    longitude: serviceArea.longitude || "0",
-    isDefault: true,
-  });
+  } = useAddressGeocoding(true, initialGeoData);
 
   // Keep Formik values synced with Geocoding Hook state
   useEffect(() => {
+    const cur = values.serviceArea || {};
+    const newLat = Number(addressData.latitude) || 0;
+    const newLng = Number(addressData.longitude) || 0;
+
+    if (
+      cur.addressLabel === (addressData.addressLabel || "Primary Service Area") &&
+      cur.fullAddress === addressData.fullAddress &&
+      cur.city === addressData.city &&
+      cur.state === addressData.state &&
+      cur.pincode === addressData.pincode &&
+      Number(cur.latitude || 0) === newLat &&
+      Number(cur.longitude || 0) === newLng
+    ) {
+      return;
+    }
+
     setFieldValue("serviceArea", {
-      ...serviceArea,
+      ...cur,
       addressLabel: addressData.addressLabel || "Primary Service Area",
       fullAddress: addressData.fullAddress,
       city: addressData.city,
       state: addressData.state,
       pincode: addressData.pincode,
-      latitude: Number(addressData.latitude) || 0,
-      longitude: Number(addressData.longitude) || 0,
-      serviceRadiusKm: Number(serviceArea.serviceRadiusKm || 15),
+      latitude: newLat,
+      longitude: newLng,
+      serviceRadiusKm: Number(cur.serviceRadiusKm || 15),
     });
-  }, [addressData]);
+  }, [addressData, values.serviceArea, setFieldValue]);
 
   const serviceAreaErrors = errors.serviceArea || {};
   const serviceAreaTouched = touched.serviceArea || {};
