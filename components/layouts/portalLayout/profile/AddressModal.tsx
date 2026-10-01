@@ -213,10 +213,10 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                   mt: 1,
                 }}
               >
-                Service Radius: {addressForm.serviceRadiusKm} km
+                Service Radius: {Number(addressForm.serviceRadiusKm) || 10} km
               </Typography>
               <Slider
-                value={addressForm.serviceRadiusKm}
+                value={Number(addressForm.serviceRadiusKm) || 10}
                 onChange={(_, val) =>
                   setAddressForm((prev: any) => ({
                     ...prev,

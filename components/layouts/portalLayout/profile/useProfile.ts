@@ -303,7 +303,7 @@ export function useProfile() {
       isDefault: area.isDefault || false,
       latitude: area.latitude || "",
       longitude: area.longitude || "",
-      serviceRadiusKm: area.serviceRadiusKm || 10,
+      serviceRadiusKm: Number(area.serviceRadiusKm) || 10,
     });
     setAddressModalOpen(true);
   };

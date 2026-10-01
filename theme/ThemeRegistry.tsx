@@ -1,18 +1,14 @@
 "use client";
 
-if (typeof window !== "undefined") {
-  if (typeof (String.prototype as any).sort !== "function") {
-    (String.prototype as any).sort = function () {
-      return this;
-    };
-  }
-  if (typeof (Array.prototype as any).toSorted !== "function") {
-    (Array.prototype as any).toSorted = function (
-      compareFn?: (a: any, b: any) => number,
-    ) {
-      return Array.from(this).sort(compareFn);
-    };
-  }
+if (
+  typeof window !== "undefined" &&
+  typeof Array.prototype.toSorted !== "function"
+) {
+  (Array.prototype as any).toSorted = function (
+    compareFn?: (a: any, b: any) => number,
+  ) {
+    return Array.from(this).sort(compareFn);
+  };
 }
 import { refreshTokenAPI } from "@/api/authControllers";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
