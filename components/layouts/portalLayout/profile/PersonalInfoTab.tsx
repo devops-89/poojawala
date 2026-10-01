@@ -8,10 +8,10 @@ import {
   Button,
   Grid,
   IconButton,
+  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
-import { MuiTelInput } from "mui-tel-input";
 import React from "react";
 
 interface PersonalInfoTabProps {
@@ -176,12 +176,24 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <MuiTelInput
+          <TextField
             fullWidth
             label="Mobile Number"
-            value={phone}
+            value={phone ? phone.replace(/^\+91\s*/, "") : ""}
             disabled
-            defaultCountry="IN"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment
+                    position="start"
+                    sx={{ gap: 0.8, color: "#1e293b", fontWeight: 600 }}
+                  >
+                    <span style={{ fontSize: "1.25rem", lineHeight: 1 }}>🇮🇳</span>
+                    <span style={{ fontSize: "0.95rem", color: "#334155" }}>+91</span>
+                  </InputAdornment>
+                ),
+              },
+            }}
             helperText="Mobile number cannot be changed"
           />
         </Grid>
