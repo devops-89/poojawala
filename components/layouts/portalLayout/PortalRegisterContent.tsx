@@ -252,6 +252,7 @@ export default function PortalRegisterContent() {
               sessionStorage.setItem("csrfToken", res.csrfToken);
             }
             try {
+              sessionStorage.removeItem(DRAFT_STORAGE_KEY);
               localStorage.removeItem(DRAFT_STORAGE_KEY);
             } catch (e) {
               console.error("Failed to remove draft", e);
@@ -275,10 +276,12 @@ export default function PortalRegisterContent() {
     },
   });
 
-  // Restore draft state from localStorage on mount
+  // Restore draft state from sessionStorage on mount (cleared when tab is closed)
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+
+      const saved = sessionStorage.getItem(DRAFT_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.values) {
@@ -306,13 +309,13 @@ export default function PortalRegisterContent() {
         }
       }
     } catch (e) {
-      console.error("Failed to restore draft from localStorage", e);
+      console.error("Failed to restore draft from sessionStorage", e);
     } finally {
       setIsRestored(true);
     }
   }, []);
 
-  // Save state to localStorage whenever formik values or activeStep change
+  // Save state to sessionStorage whenever formik values or activeStep change
   useEffect(() => {
     if (!isRestored) return;
     try {
@@ -346,9 +349,9 @@ export default function PortalRegisterContent() {
         activeStep,
         isOtpVerified,
       };
-      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
     } catch (e) {
-      console.error("Failed to save draft to localStorage", e);
+      console.error("Failed to save draft to sessionStorage", e);
     }
   }, [formik.values, activeStep, isOtpVerified, isRestored]);
 
