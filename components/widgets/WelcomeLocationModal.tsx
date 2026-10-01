@@ -28,20 +28,26 @@ export default function WelcomeLocationModal() {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   // States & Cities Data
-  const indianStates = State.getStatesOfCountry("IN") || [];
-  const stateOptions = indianStates.map((s) => s.name).sort();
+  const indianStates = React.useMemo(() => State.getStatesOfCountry("IN") || [], []);
 
-  const selectedStateObj = selectedState
-    ? indianStates.find(
-        (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
-      )
-    : null;
+  const stateOptions = React.useMemo(() => {
+    return indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b));
+  }, [indianStates]);
 
-  const rawCities = selectedStateObj
-    ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
-    : City.getCitiesOfCountry("IN") || [];
+  const selectedStateObj = React.useMemo(() => {
+    if (!selectedState) return null;
+    return indianStates.find(
+      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+    );
+  }, [selectedState, indianStates]);
 
-  const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
+  const cityOptions = React.useMemo(() => {
+    const rawCities = selectedStateObj
+      ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
+      : [];
+    const names = rawCities.map((c) => c.name);
+    return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
+  }, [selectedStateObj]);
 
   useEffect(() => {
     // Only run on home route '/'

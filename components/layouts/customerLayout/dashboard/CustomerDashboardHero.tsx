@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { City, State } from "country-state-city";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function CustomerDashboardHero() {
   const router = useRouter();
@@ -40,23 +40,28 @@ export default function CustomerDashboardHero() {
   const displayName = rawFirstName ? `${rawFirstName.toUpperCase()}` : "USER";
 
   // State Options from country-state-city
-  const indianStates = State.getStatesOfCountry("IN") || [];
-  const stateOptions = indianStates.map((s) => s.name).sort();
+  const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
+  const stateOptions = useMemo(
+    () => indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b)),
+    [indianStates]
+  );
 
   // Selected State Object for ISO Code
-  const selectedStateObj = selectedState
-    ? indianStates.find(
-        (s) =>
-          s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
-      )
-    : null;
+  const selectedStateObj = useMemo(() => {
+    if (!selectedState || selectedState === "All") return null;
+    return indianStates.find(
+      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+    );
+  }, [selectedState, indianStates]);
 
-  // City Options for selected state (or all cities if no state selected)
-  const rawCities = selectedStateObj
-    ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
-    : City.getCitiesOfCountry("IN") || [];
-
-  const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
+  // City Options for selected state
+  const cityOptions = useMemo(() => {
+    const rawCities = selectedStateObj
+      ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
+      : [];
+    const names = rawCities.map((c) => c.name);
+    return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
+  }, [selectedStateObj]);
 
   const handleSearch = () => {
     const params = new URLSearchParams();

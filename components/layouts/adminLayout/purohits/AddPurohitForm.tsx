@@ -238,7 +238,6 @@ export default function AddPurohitForm() {
               label="Mobile Number *"
               variant="outlined"
               defaultCountry="IN"
-              onlyCountries={["IN"]}
               disableDropdown
               value={
                 values.countryCode

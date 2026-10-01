@@ -7,7 +7,7 @@ import { useUserStore } from "@/stores/userStore";
 import { Box, CircularProgress, Grid, Pagination } from "@mui/material";
 import { City, State } from "country-state-city";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CustomerServiceCard from "./CustomerServiceCard";
 import CustomerServicesBookingModal from "./CustomerServicesBookingModal";
 import CustomerServicesEmptyState from "./CustomerServicesEmptyState";
@@ -292,25 +292,28 @@ export const ServicesPage = () => {
   }, [page, debouncedSearch, selectedCity, selectedState, isInitialized]);
 
   // All Indian States from country-state-city
-  const indianStates = State.getStatesOfCountry("IN") || [];
-  const stateOptions = indianStates.map((s) => s.name).sort();
+  const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
+  const stateOptions = useMemo(
+    () => indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b)),
+    [indianStates]
+  );
 
   // Selected State object
-  const selectedStateObj =
-    selectedState && selectedState !== "All"
-      ? indianStates.find(
-          (s) =>
-            s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
-        )
-      : null;
+  const selectedStateObj = useMemo(() => {
+    if (!selectedState || selectedState === "All") return null;
+    return indianStates.find(
+      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+    );
+  }, [selectedState, indianStates]);
 
-  // City options for the selected state (or all country cities if no state selected)
-  const rawCities = selectedStateObj
-    ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
-    : City.getCitiesOfCountry("IN") || [];
-
-  // Deduplicate and sort city names
-  const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
+  // City options for the selected state
+  const cityOptions = useMemo(() => {
+    const rawCities = selectedStateObj
+      ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
+      : [];
+    const names = rawCities.map((c) => c.name);
+    return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
+  }, [selectedStateObj]);
 
   // Secondary safety filter on services by selected state and city
   const filteredServices = services.filter((service: any) => {
