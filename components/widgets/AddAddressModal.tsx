@@ -167,12 +167,38 @@ export default function AddAddressModal({
 
     setSaving(true);
     try {
+      const payload: any = {
+        venueType: addressData.venueType || "HOME",
+        fullAddress: addressData.fullAddress,
+        addressLabel: addressData.addressLabel,
+        city: addressData.city,
+        state: addressData.state,
+        pincode: addressData.pincode,
+        isDefault: Boolean(addressData.isDefault),
+      };
+
+      if (
+        addressData.latitude &&
+        addressData.latitude !== "0" &&
+        addressData.latitude.trim() !== ""
+      ) {
+        payload.latitude = addressData.latitude;
+      }
+
+      if (
+        addressData.longitude &&
+        addressData.longitude !== "0" &&
+        addressData.longitude.trim() !== ""
+      ) {
+        payload.longitude = addressData.longitude;
+      }
+
       let result = null;
       if (addressData.id) {
-        result = await updateCustomerAddressAPI(addressData.id, addressData);
+        result = await updateCustomerAddressAPI(addressData.id, payload);
         showSnackbar("Address updated successfully", "success");
       } else {
-        result = await addCustomerAddressAPI(addressData);
+        result = await addCustomerAddressAPI(payload);
         showSnackbar("Address added successfully", "success");
       }
       onSuccess(result?.data || result);

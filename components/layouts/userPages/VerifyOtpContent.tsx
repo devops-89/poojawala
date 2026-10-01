@@ -119,8 +119,15 @@ export default function VerifyOtpContent() {
         // Register user
         showLoader('Creating your account...');
         const formData = new FormData();
-        Object.keys(signupData).forEach(key => {
-          formData.append(key, signupData[key]);
+        Object.keys(signupData).forEach((key) => {
+          if (key === "latitude" || key === "longitude") {
+            const val = signupData[key];
+            if (val && val !== "0" && String(val).trim() !== "") {
+              formData.append(key, val);
+            }
+          } else {
+            formData.append(key, signupData[key]);
+          }
         });
         
         const registerRes = await registerPurohitAPI(formData); // This hits /users/register which works for both roles

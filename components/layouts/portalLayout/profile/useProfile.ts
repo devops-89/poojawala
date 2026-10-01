@@ -209,8 +209,8 @@ export function useProfile() {
     setSavingAddress(true);
     try {
       const payload = { ...addressForm };
-      if (!payload.latitude) delete (payload as any).latitude;
-      if (!payload.longitude) delete (payload as any).longitude;
+      if (!payload.latitude || payload.latitude === "0" || String(payload.latitude).trim() === "") delete (payload as any).latitude;
+      if (!payload.longitude || payload.longitude === "0" || String(payload.longitude).trim() === "") delete (payload as any).longitude;
 
       if (selectedAddressId) {
         const res = await updateServiceAreaAPI(selectedAddressId, payload);

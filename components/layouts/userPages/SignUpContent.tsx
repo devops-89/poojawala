@@ -137,8 +137,8 @@ export default function SignUpContent() {
     city: "",
     state: "",
     pincode: "",
-    latitude: "0",
-    longitude: "0",
+    latitude: "",
+    longitude: "",
     isDefault: true,
   };
 
