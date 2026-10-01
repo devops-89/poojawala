@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { State, City } from "country-state-city";
 import CustomerServicesFilters from "../customerLayout/services/CustomerServicesFilters";
 import ServiceGrid from "./ServiceGrid";
@@ -78,14 +78,14 @@ export default function ServicesLayout() {
         position: "relative",
       }}
     >
-      {/* Hero Section */}
+      {/* Hero Section matching Homepage & Purohits page */}
       <Box
         sx={{
           width: "100%",
-          minHeight: { xs: "320px", md: "480px" },
+          minHeight: { xs: "380px", sm: "480px", md: "777px" },
           backgroundImage: {
             xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.95) 0%, rgba(255, 253, 249, 0.82) 45%, rgba(255, 253, 249, 0.1) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-            md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.85) 35%, rgba(255, 253, 249, 0.1) 65%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)"
+            md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.85) 35%, rgba(255, 253, 249, 0.1) 65%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
           },
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -93,44 +93,118 @@ export default function ServicesLayout() {
           display: "flex",
           flexDirection: "column",
           pt: { xs: 2.5, md: 4 },
-          pb: { xs: 3.5, md: 6 },
-          mb: { xs: 4, md: 6 },
+          pb: { xs: 3.5, md: 8 },
+          mb: { xs: 4, md: 8 },
         }}
       >
         <Container
           maxWidth="lg"
-          sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+            zIndex: 1,
+          }}
         >
           {/* Content */}
-          <Box sx={{ maxWidth: "600px", my: "auto" }}>
-            <Box
+          <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
+            <Typography
+              variant="h2"
               component="h1"
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
-                fontWeight: 800,
+                fontWeight: 700,
                 color: "#0f172a",
                 mb: 1.5,
-                fontSize: { xs: "1.6rem", md: "42px" },
-                letterSpacing: "-0.03em",
+                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
+                letterSpacing: "-0.04em",
               }}
             >
               Explore Our Services
-            </Box>
-            <Box
-              component="p"
+            </Typography>
+            <Typography
+              variant="body1"
               sx={{
                 fontFamily: '"DM Sans", sans-serif',
                 color: "#0f172a",
                 fontWeight: 600,
-                mb: 3,
-                fontSize: { xs: "14px", md: "16px" },
-                lineHeight: "1.5",
-                maxWidth: "520px",
+                mb: { xs: 2.5, md: 4 },
+                fontSize: { xs: "14px", sm: "15px", md: "18px" },
+                lineHeight: "1.45",
+                maxWidth: "500px",
+                letterSpacing: "0em",
               }}
             >
               Discover and book verified Pandits and Purohits for a wide range
               of religious ceremonies, tailored to your language and local
               traditions.
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                gap: { xs: 1, md: 2 },
+                flexWrap: "wrap",
+                "&:has(.talk-to:hover) .book-now": {
+                  background: "transparent",
+                  color: "#FF6200",
+                  borderColor: "#FF6200",
+                  border: "2px solid #FF6200",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              <Button
+                className="book-now"
+                variant="contained"
+                href="#services-filters"
+                sx={{
+                  background: "#FF6200",
+                  border: "2px solid #FF6200",
+                  color: "#fff",
+                  px: { xs: 2.5, md: 4 },
+                  py: { xs: 0.8, md: 1.5 },
+                  borderRadius: "30px",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  fontSize: { xs: "0.8rem", md: "1rem" },
+                  boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    background: "#F05A00",
+                    borderColor: "#F05A00",
+                    boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
+                  },
+                }}
+              >
+                Book Now
+              </Button>
+              <Button
+                className="talk-to"
+                variant="outlined"
+                href="/purohit/register"
+                sx={{
+                  borderColor: "#1A1A1A",
+                  color: "#1A1A1A",
+                  px: { xs: 2.5, md: 4 },
+                  py: { xs: 0.8, md: 1.5 },
+                  borderRadius: "30px",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  fontSize: { xs: "0.8rem", md: "1rem" },
+                  borderWidth: "2px",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    borderColor: "#FF6200",
+                    background: "#FF6200",
+                    color: "#FFFFFF",
+                    borderWidth: "2px",
+                  },
+                }}
+              >
+                Register as Purohit
+              </Button>
             </Box>
           </Box>
         </Container>
@@ -140,6 +214,7 @@ export default function ServicesLayout() {
       <Box sx={{ position: "relative" }}>
         {/* Search, Category & City Filters Bar */}
         <Container
+          id="services-filters"
           maxWidth="lg"
           sx={{ position: "relative", zIndex: 1, mb: 4 }}
         >
