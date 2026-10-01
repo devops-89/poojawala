@@ -135,6 +135,7 @@ export default function CustomerCartDrawer() {
 
   return (
     <Drawer
+      disableScrollLock
       anchor="right"
       open={isOpen}
       onClose={closeCart}

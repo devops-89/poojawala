@@ -81,6 +81,7 @@ export default function PortalHeader({ mobileOpen, setMobileOpen }: PortalHeader
           )}
           
           <Menu
+            disableScrollLock
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleCloseNotif}

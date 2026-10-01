@@ -335,30 +335,6 @@ export default function AddAddressModal({
               }
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              label="Latitude (Optional)"
-              value={addressData.latitude}
-              onChange={(e) =>
-                setAddressData({ ...addressData, latitude: e.target.value })
-              }
-              variant="outlined"
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              label="Longitude (Optional)"
-              value={addressData.longitude}
-              onChange={(e) =>
-                setAddressData({ ...addressData, longitude: e.target.value })
-              }
-              variant="outlined"
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-            />
-          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions sx={{ p: 3, pt: 2 }}>

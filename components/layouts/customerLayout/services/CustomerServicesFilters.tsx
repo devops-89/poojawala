@@ -80,10 +80,16 @@ export default function CustomerServicesFilters({
   const catsToUse = categoryOptions && categoryOptions.length > 0 ? categoryOptions : internalCategories;
   const categoryNames = ["All Categories", ...catsToUse.map((c) => c.name)];
 
+  const filterCount =
+    (stateOptions && onStateChange ? 1 : 0) +
+    (onCategoryChange ? 1 : 0) +
+    1; // City is always present
+  const filterGridSize = filterCount === 3 ? { xs: 12, sm: 4 } : filterCount === 2 ? { xs: 12, sm: 6 } : { xs: 12 };
+
   return (
     <Grid container spacing={2} sx={{ mb: 4 }}>
-      {/* Search Input */}
-      <Grid size={{ xs: 12, md: 4 }}>
+      {/* Search Input - Full Width */}
+      <Grid size={{ xs: 12 }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -109,7 +115,7 @@ export default function CustomerServicesFilters({
 
       {/* State Filter (Rendered if stateOptions & onStateChange are passed) */}
       {stateOptions && onStateChange && (
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={filterGridSize}>
           <Autocomplete
             options={["All States", ...stateOptions]}
             value={
@@ -143,7 +149,7 @@ export default function CustomerServicesFilters({
 
       {/* Category Filter (Rendered if onCategoryChange is passed) */}
       {onCategoryChange && (
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={filterGridSize}>
           <Autocomplete
             options={categoryNames}
             value={selectedCategory || "All Categories"}
@@ -179,7 +185,7 @@ export default function CustomerServicesFilters({
       )}
 
       {/* City Filter */}
-      <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+      <Grid size={filterGridSize}>
         <Autocomplete
           options={["All Cities", ...cityOptions]}
           value={

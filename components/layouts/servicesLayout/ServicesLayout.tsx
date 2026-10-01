@@ -2,18 +2,22 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Box, Container, Grid } from "@mui/material";
-import { City } from "country-state-city";
+import { State, City } from "country-state-city";
 import CustomerServicesFilters from "../customerLayout/services/CustomerServicesFilters";
 import ServiceGrid from "./ServiceGrid";
 
 export default function ServicesLayout() {
   const searchParams = useSearchParams();
+  const stateParam = searchParams.get("state");
   const cityParam = searchParams.get("city");
   const categoryParam = searchParams.get("category");
   const categoryIdParam = searchParams.get("categoryId");
 
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedState, setSelectedState] = useState<string>(
+    stateParam || "All"
+  );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     categoryIdParam || ""
   );
@@ -25,6 +29,9 @@ export default function ServicesLayout() {
   );
 
   useEffect(() => {
+    if (stateParam) {
+      setSelectedState(stateParam);
+    }
     if (categoryIdParam) {
       setSelectedCategoryId(categoryIdParam);
     }
@@ -34,9 +41,23 @@ export default function ServicesLayout() {
     if (cityParam) {
       setSelectedCity(cityParam);
     }
-  }, [categoryParam, categoryIdParam, cityParam]);
+  }, [stateParam, categoryParam, categoryIdParam, cityParam]);
 
-  const rawCities = City.getCitiesOfCountry("IN") || [];
+  const indianStates = State.getStatesOfCountry("IN") || [];
+  const stateOptions = indianStates.map((s) => s.name).sort();
+
+  const selectedStateObj =
+    selectedState && selectedState !== "All"
+      ? indianStates.find(
+          (s) =>
+            s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+        )
+      : null;
+
+  const rawCities = selectedStateObj
+    ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
+    : City.getCitiesOfCountry("IN") || [];
+
   const cityOptions = Array.from(new Set(rawCities.map((c) => c.name))).sort();
 
   const handleCategoryChange = (catId: string, catName: string) => {
@@ -125,6 +146,12 @@ export default function ServicesLayout() {
           <CustomerServicesFilters
             searchTerm={searchQuery}
             onSearchChange={setSearchQuery}
+            stateOptions={stateOptions}
+            selectedState={selectedState}
+            onStateChange={(newVal) => {
+              setSelectedState(newVal);
+              setSelectedCity("All");
+            }}
             selectedCategory={selectedCategoryName}
             onCategoryChange={handleCategoryChange}
             cityOptions={cityOptions}

@@ -10,6 +10,31 @@ const theme = createTheme({
     }
   },
   components: {
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
+    MuiPopover: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
+    MuiModal: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
+    MuiDialog: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
+    MuiDrawer: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

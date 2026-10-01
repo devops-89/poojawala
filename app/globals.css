@@ -5,15 +5,21 @@ html {
   margin: 0;
   box-sizing: border-box;
   overflow-x: hidden;
+  overflow-y: scroll;
   scroll-behavior: smooth;
 }
 
 body {
-  padding: 0;
+  padding: 0 !important;
+  padding-right: 0 !important;
   margin: 0;
   box-sizing: border-box;
   background-color: #FFFDF9;
   color: #2D2926;
+}
+
+.MuiAppBar-root {
+  padding-right: 0px !important;
 }
 
 *, *::before, *::after {

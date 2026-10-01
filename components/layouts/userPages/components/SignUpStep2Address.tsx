@@ -168,40 +168,6 @@ export default function SignUpStep2Address({
         </Field>
       </Grid>
 
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Field name="latitude">
-          {({ field, meta }: any) => (
-            <TextField
-              {...field}
-              fullWidth
-              size="small"
-              label="Latitude (Optional)"
-              variant="outlined"
-              error={meta.touched && !!meta.error}
-              helperText={meta.touched && meta.error}
-              sx={inputStyles}
-            />
-          )}
-        </Field>
-      </Grid>
-
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Field name="longitude">
-          {({ field, meta }: any) => (
-            <TextField
-              {...field}
-              fullWidth
-              size="small"
-              label="Longitude (Optional)"
-              variant="outlined"
-              error={meta.touched && !!meta.error}
-              helperText={meta.touched && meta.error}
-              sx={inputStyles}
-            />
-          )}
-        </Field>
-      </Grid>
-
       <Grid size={{ xs: 12 }}>
         <Field name="isDefault">
           {({ field }: any) => (
