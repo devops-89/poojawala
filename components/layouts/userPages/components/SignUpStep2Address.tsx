@@ -87,18 +87,6 @@ export default function SignUpStep2Address({
     const newLat = String(addressData.latitude || "0");
     const newLng = String(addressData.longitude || "0");
 
-    if (
-      values.addressLabel === (addressData.addressLabel || "Home") &&
-      values.fullAddress === addressData.fullAddress &&
-      values.city === addressData.city &&
-      values.state === addressData.state &&
-      values.pincode === addressData.pincode &&
-      String(values.latitude || "0") === newLat &&
-      String(values.longitude || "0") === newLng
-    ) {
-      return;
-    }
-
     setFieldValue("addressLabel", addressData.addressLabel || "Home");
     setFieldValue("fullAddress", addressData.fullAddress || "");
     setFieldValue("city", addressData.city || "");
@@ -106,7 +94,16 @@ export default function SignUpStep2Address({
     setFieldValue("pincode", addressData.pincode || "");
     setFieldValue("latitude", newLat);
     setFieldValue("longitude", newLng);
-  }, [addressData, values, setFieldValue]);
+  }, [
+    addressData.addressLabel,
+    addressData.fullAddress,
+    addressData.city,
+    addressData.state,
+    addressData.pincode,
+    addressData.latitude,
+    addressData.longitude,
+    setFieldValue,
+  ]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -183,7 +180,10 @@ export default function SignUpStep2Address({
             rows={2}
             label="Full Address *"
             value={addressData.fullAddress}
-            onChange={(e) => handleAddressInputChange(e.target.value)}
+            onChange={(e) => {
+              handleAddressInputChange(e.target.value);
+              setFieldValue("fullAddress", e.target.value);
+            }}
             onBlur={handleAddressInputBlur}
             variant="outlined"
             error={touched.fullAddress && Boolean(errors.fullAddress)}
