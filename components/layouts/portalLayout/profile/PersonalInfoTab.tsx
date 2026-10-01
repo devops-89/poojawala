@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { MuiTelInput } from "mui-tel-input";
+import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import React from "react";
 
 interface PersonalInfoTabProps {

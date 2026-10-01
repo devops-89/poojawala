@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useFormik } from "formik";
-import { MuiTelInput } from "mui-tel-input";
+import { MuiTelInput, matchIsValidTel } from "@/components/widgets/MuiTelInput";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

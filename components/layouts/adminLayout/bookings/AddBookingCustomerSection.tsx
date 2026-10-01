@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { MuiTelInput } from "mui-tel-input";
+import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 
 interface AddBookingCustomerSectionProps {
   showAddCustomer: boolean;

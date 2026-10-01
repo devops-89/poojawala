@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { FormikProps } from "formik";
-import { MuiTelInput } from "mui-tel-input";
+import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import React from "react";
 
 interface Step0Props {
