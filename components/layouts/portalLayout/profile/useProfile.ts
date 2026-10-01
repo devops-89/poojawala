@@ -51,7 +51,20 @@ export function useProfile() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<number | null>(null);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
-  const [addressForm, setAddressForm] = useState({
+  const [addressForm, setAddressForm] = useState<{
+    id?: number | null;
+    addressLabel: string;
+    streetName: string;
+    fullAddress: string;
+    city: string;
+    state: string;
+    pincode: string;
+    isDefault: boolean;
+    latitude: string;
+    longitude: string;
+    serviceRadiusKm: number;
+  }>({
+    id: null,
     addressLabel: "",
     streetName: "",
     fullAddress: "",
@@ -201,6 +214,16 @@ export function useProfile() {
     if (!addressForm.state?.trim()) missing.push("State");
     if (!addressForm.pincode?.trim()) missing.push("Pincode");
 
+    const finalStreetName =
+      addressForm.streetName?.trim() ||
+      addressForm.addressLabel?.trim() ||
+      addressForm.fullAddress?.split(",")[0]?.trim() ||
+      "Main Area";
+
+    if (finalStreetName.length < 2) {
+      missing.push("Street Name / Area");
+    }
+
     if (missing.length > 0) {
       showSnackbar(`Please fill in required fields: ${missing.join(", ")}`, "error");
       return;
@@ -208,7 +231,10 @@ export function useProfile() {
 
     setSavingAddress(true);
     try {
-      const payload = { ...addressForm };
+      const payload: any = {
+        ...addressForm,
+        streetName: finalStreetName,
+      };
       if (!payload.latitude || payload.latitude === "0" || String(payload.latitude).trim() === "") delete (payload as any).latitude;
       if (!payload.longitude || payload.longitude === "0" || String(payload.longitude).trim() === "") delete (payload as any).longitude;
 
@@ -221,6 +247,7 @@ export function useProfile() {
           setAddressModalOpen(false);
           setSelectedAddressId(null);
           setAddressForm({
+            id: null,
             addressLabel: "",
             streetName: "",
             fullAddress: "",
@@ -241,6 +268,7 @@ export function useProfile() {
           setServiceAreas([...serviceAreas, newArea]);
           setAddressModalOpen(false);
           setAddressForm({
+            id: null,
             addressLabel: "",
             streetName: "",
             fullAddress: "",
@@ -265,6 +293,7 @@ export function useProfile() {
   const handleEditClick = (area: any) => {
     setSelectedAddressId(area.id);
     setAddressForm({
+      id: area.id,
       addressLabel: area.addressLabel || "",
       streetName: area.streetName || "",
       fullAddress: area.fullAddress || "",

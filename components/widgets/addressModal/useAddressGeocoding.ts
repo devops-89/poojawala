@@ -41,7 +41,11 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     }
   }, []);
 
-  // Initialize or update Map when Dialog opens
+  const initialDataKey = initialData
+    ? `${initialData.id ?? ""}_${initialData.addressLabel || ""}_${initialData.fullAddress || initialData.addressLine1 || ""}_${initialData.city || ""}_${initialData.state || ""}_${initialData.pincode || initialData.zipCode || ""}_${initialData.latitude || ""}_${initialData.longitude || ""}`
+    : "";
+
+  // Initialize or update Map when Dialog opens or initialData changes
   useEffect(() => {
     if (!open) {
       if (mapInstanceRef.current) {
@@ -89,7 +93,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     return () => {
       clearTimeout(timer);
     };
-  }, [open, initialData?.id]);
+  }, [open, initialDataKey]);
 
   const initMap = () => {
     if (!mapContainerRef.current) return;

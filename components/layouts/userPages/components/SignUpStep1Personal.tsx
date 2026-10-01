@@ -17,10 +17,10 @@ const today = new Date();
 const fifteenYearsAgo = new Date(
   today.getFullYear() - 15,
   today.getMonth(),
-  today.getDate()
+  today.getDate(),
 );
 const maxDobDate = `${fifteenYearsAgo.getFullYear()}-${String(
-  fifteenYearsAgo.getMonth() + 1
+  fifteenYearsAgo.getMonth() + 1,
 ).padStart(2, "0")}-${String(fifteenYearsAgo.getDate()).padStart(2, "0")}`;
 
 export interface SignUpStep1PersonalProps {
@@ -115,7 +115,7 @@ export default function SignUpStep1Personal({
             <MuiTelInput
               fullWidth
               disableDropdown
-              onlyCountries={['IN']}
+              onlyCountries={["IN"]}
               size="small"
               label="Phone Number *"
               name="phone"
@@ -146,8 +146,14 @@ export default function SignUpStep1Personal({
               helperText={meta.touched && meta.error}
               sx={{
                 ...inputStyles,
-                '& .MuiTelInput-IconButton': { pointerEvents: 'none', cursor: 'default' },
-                '& .MuiTelInput-Button': { pointerEvents: 'none', cursor: 'default' },
+                "& .MuiTelInput-IconButton": {
+                  pointerEvents: "none",
+                  cursor: "default",
+                },
+                "& .MuiTelInput-Button": {
+                  pointerEvents: "none",
+                  cursor: "default",
+                },
               }}
             />
           )}

@@ -68,6 +68,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
 
   // Sync geocoding hook state back to parent addressForm
   useEffect(() => {
+    if (!open) return;
     setAddressForm((prev: any) => {
       if (!prev) return prev;
       if (
@@ -94,7 +95,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         isDefault: addressData.isDefault,
       };
     });
-  }, [addressData, setAddressForm]);
+  }, [open, addressData, setAddressForm]);
 
   return (
     <Dialog
@@ -187,7 +188,24 @@ export const AddressModal: React.FC<AddressModalProps> = ({
               </Typography>
             </Grid>
 
-            {/* ROW 3: CITY & STATE */}
+            {/* ROW 3: STREET NAME / AREA */}
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label="Street Name / Area / Landmark *"
+                value={addressForm.streetName || ""}
+                onChange={(e) =>
+                  setAddressForm((prev: any) => ({
+                    ...prev,
+                    streetName: e.target.value,
+                  }))
+                }
+                variant="outlined"
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+              />
+            </Grid>
+
+            {/* ROW 4: CITY & STATE */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth

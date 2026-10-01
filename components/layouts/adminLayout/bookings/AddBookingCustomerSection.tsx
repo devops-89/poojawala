@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   Autocomplete,
   Box,
@@ -11,10 +11,9 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from '@mui/material';
-import Grid from '@mui/material/Grid';
-import { MuiTelInput } from 'mui-tel-input';
-import React from 'react';
+} from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { MuiTelInput } from "mui-tel-input";
 
 interface AddBookingCustomerSectionProps {
   showAddCustomer: boolean;
@@ -53,44 +52,44 @@ export default function AddBookingCustomerSection({
     <Grid size={{ xs: 12 }}>
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           mb: 1,
         }}
       >
         <Typography
           sx={{
-            fontFamily: 'var(--font-outfit), sans-serif',
+            fontFamily: "var(--font-outfit), sans-serif",
             fontWeight: 700,
-            color: '#1e293b',
+            color: "#1e293b",
           }}
         >
-          {showAddCustomer ? 'Add New Customer' : 'Select Customer'}
+          {showAddCustomer ? "Add New Customer" : "Select Customer"}
         </Typography>
         <Button
           size="small"
           onClick={() => {
             const nextShow = !showAddCustomer;
             setShowAddCustomer(nextShow);
-            setFieldValue('isNewCustomer', nextShow);
-            setFieldValue('customerId', '');
+            setFieldValue("isNewCustomer", nextShow);
+            setFieldValue("customerId", "");
 
             // Clear input fields so form opens fresh every time
-            setFieldValue('newCustomerName', '');
-            setFieldValue('newCustomerMobile', '');
-            setFieldValue('newCustomerEmail', '');
-            setFieldValue('newCustomerAddress', '');
-            setFieldValue('newCustomerCity', '');
-            setFieldValue('newCustomerPassword', '');
+            setFieldValue("newCustomerName", "");
+            setFieldValue("newCustomerMobile", "");
+            setFieldValue("newCustomerEmail", "");
+            setFieldValue("newCustomerAddress", "");
+            setFieldValue("newCustomerCity", "");
+            setFieldValue("newCustomerPassword", "");
           }}
           sx={{
-            textTransform: 'none',
+            textTransform: "none",
             fontWeight: 600,
-            color: '#FF6200',
+            color: "#FF6200",
           }}
         >
-          {showAddCustomer ? 'Use Existing Customer' : '+ Add New Customer'}
+          {showAddCustomer ? "Use Existing Customer" : "+ Add New Customer"}
         </Button>
       </Box>
 
@@ -103,15 +102,15 @@ export default function AddBookingCustomerSection({
                 (a: any) =>
                   a.isDefault === true ||
                   a.isdefault === true ||
-                  a.is_default === true
+                  a.is_default === true,
               ) || option?.addresses?.[0];
             const cityInfo = defaultAddr?.city
               ? ` - ${defaultAddr.city}`
               : option?.city
-              ? ` - ${option.city}`
-              : '';
+                ? ` - ${option.city}`
+                : "";
             return `${option.firstName} ${
-              option.lastName || ''
+              option.lastName || ""
             } (${option.phone || option.email})${cityInfo}`;
           }}
           value={
@@ -119,14 +118,14 @@ export default function AddBookingCustomerSection({
           }
           filterOptions={(x) => x}
           onInputChange={(_, newInputValue, reason) => {
-            if (reason === 'input' || reason === 'clear') {
+            if (reason === "input" || reason === "clear") {
               setCustomerSearchText(newInputValue);
             }
           }}
           onChange={(_, newValue) => {
-            setFieldValue('customerId', newValue ? newValue.id : '');
-            setFieldValue('serviceId', '');
-            setFieldValue('purohitId', '');
+            setFieldValue("customerId", newValue ? newValue.id : "");
+            setFieldValue("serviceId", "");
+            setFieldValue("purohitId", "");
           }}
           renderInput={(params) => (
             <TextField
@@ -138,7 +137,7 @@ export default function AddBookingCustomerSection({
                 touched.customerId ? (errors.customerId as string) : undefined
               }
               sx={{
-                '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                "& .MuiOutlinedInput-root": { borderRadius: "12px" },
               }}
             />
           )}
@@ -148,9 +147,9 @@ export default function AddBookingCustomerSection({
           elevation={0}
           sx={{
             p: 3,
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            bgcolor: '#f8fafc',
+            border: "1px solid #e2e8f0",
+            borderRadius: "12px",
+            bgcolor: "#f8fafc",
           }}
         >
           <Grid container spacing={2}>
@@ -166,13 +165,11 @@ export default function AddBookingCustomerSection({
                 error={
                   touched.newCustomerName && Boolean(errors.newCustomerName)
                 }
-                helperText={
-                  touched.newCustomerName && errors.newCustomerName
-                }
+                helperText={touched.newCustomerName && errors.newCustomerName}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    bgcolor: 'white',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
                   },
                 }}
               />
@@ -184,17 +181,17 @@ export default function AddBookingCustomerSection({
                 name="newCustomerMobile"
                 variant="outlined"
                 defaultCountry="IN"
-                onlyCountries={['IN']}
+                onlyCountries={["IN"]}
                 disableDropdown
                 value={
                   values.newCustomerMobile
-                    ? '+91' + values.newCustomerMobile
-                    : ''
+                    ? "+91" + values.newCustomerMobile
+                    : ""
                 }
                 onChange={(newValue, info) => {
-                  const natNum = info.nationalNumber || '';
-                  const cleanNum = natNum.replace(/\D/g, '').slice(0, 10);
-                  setFieldValue('newCustomerMobile', cleanNum);
+                  const natNum = info.nationalNumber || "";
+                  const cleanNum = natNum.replace(/\D/g, "").slice(0, 10);
+                  setFieldValue("newCustomerMobile", cleanNum);
                 }}
                 onKeyDown={(e) => {
                   if (
@@ -203,11 +200,11 @@ export default function AddBookingCustomerSection({
                   ) {
                     if (
                       ![
-                        'Backspace',
-                        'Delete',
-                        'ArrowLeft',
-                        'ArrowRight',
-                        'Tab',
+                        "Backspace",
+                        "Delete",
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "Tab",
                       ].includes(e.key)
                     ) {
                       e.preventDefault();
@@ -222,9 +219,9 @@ export default function AddBookingCustomerSection({
                   (errors.newCustomerMobile as string)
                 }
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    bgcolor: 'white',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
                   },
                 }}
               />
@@ -246,9 +243,9 @@ export default function AddBookingCustomerSection({
                   (errors.newCustomerEmail as string)
                 }
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    bgcolor: 'white',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
                   },
                 }}
               />
@@ -258,7 +255,7 @@ export default function AddBookingCustomerSection({
                 fullWidth
                 label="Password *"
                 name="newCustomerPassword"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 variant="outlined"
                 value={values.newCustomerPassword}
                 onChange={handleChange}
@@ -286,9 +283,9 @@ export default function AddBookingCustomerSection({
                   },
                 }}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    bgcolor: 'white',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
                   },
                 }}
               />
@@ -311,9 +308,9 @@ export default function AddBookingCustomerSection({
                   (errors.newCustomerAddress as string)
                 }
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    bgcolor: 'white',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
                   },
                 }}
               />
@@ -331,13 +328,12 @@ export default function AddBookingCustomerSection({
                   touched.newCustomerCity && Boolean(errors.newCustomerCity)
                 }
                 helperText={
-                  touched.newCustomerCity &&
-                  (errors.newCustomerCity as string)
+                  touched.newCustomerCity && (errors.newCustomerCity as string)
                 }
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    bgcolor: 'white',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
                   },
                 }}
               />
@@ -346,8 +342,8 @@ export default function AddBookingCustomerSection({
           <Box
             sx={{
               mt: 3,
-              display: 'flex',
-              justifyContent: 'flex-end',
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
             <Button
@@ -355,16 +351,16 @@ export default function AddBookingCustomerSection({
               onClick={handleCreateCustomer}
               disabled={isCreatingCustomer}
               sx={{
-                bgcolor: '#FF6200',
-                color: 'white',
-                '&:hover': { bgcolor: '#E65800' },
-                borderRadius: '8px',
-                textTransform: 'none',
+                bgcolor: "#FF6200",
+                color: "white",
+                "&:hover": { bgcolor: "#E65800" },
+                borderRadius: "8px",
+                textTransform: "none",
                 fontWeight: 600,
-                boxShadow: 'none',
+                boxShadow: "none",
               }}
             >
-              {isCreatingCustomer ? 'Creating...' : 'Create Customer'}
+              {isCreatingCustomer ? "Creating..." : "Create Customer"}
             </Button>
           </Box>
         </Card>
