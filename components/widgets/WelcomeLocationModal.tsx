@@ -180,6 +180,8 @@ export default function WelcomeLocationModal() {
               </Typography>
               <FormControl fullWidth>
                 <Autocomplete
+                  openOnFocus
+                  forcePopupIcon
                   options={stateOptions}
                   value={selectedState}
                   onChange={(_, newValue) => {
@@ -191,40 +193,44 @@ export default function WelcomeLocationModal() {
                       sx: { zIndex: 1400 },
                     },
                   }}
-                  renderInput={(params: any) => (
-                    <TextField
-                      {...params}
-                      placeholder="Select State"
-                      slotProps={{
-                        input: {
-                          ...params.InputProps,
-                          startAdornment: (
-                            <>
-                              <InputAdornment position="start">
-                                <LocationOnIcon
-                                  sx={{ color: "#FF6200", fontSize: 18 }}
-                                />
-                              </InputAdornment>
-                              {params.InputProps?.startAdornment}
-                            </>
-                          ),
-                        },
-                      }}
-                      sx={{
-                        bgcolor: "#FFFFFF",
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "12px",
-                          fontFamily: '"DM Sans", sans-serif',
-                          fontSize: "14px",
-                          "& fieldset": { borderColor: "#E2E8F0" },
-                          "&:hover fieldset": { borderColor: "#FF6200" },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#FF6200",
+                  renderInput={(params: any) => {
+                    const updatedParams = {
+                      ...params,
+                      InputProps: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <>
+                            <InputAdornment position="start">
+                              <LocationOnIcon
+                                sx={{ color: "#FF6200", fontSize: 18 }}
+                              />
+                            </InputAdornment>
+                            {params.InputProps?.startAdornment}
+                          </>
+                        ),
+                      },
+                    };
+                    return (
+                      <TextField
+                        {...updatedParams}
+                        placeholder="Select State"
+                        autoComplete="off"
+                        sx={{
+                          bgcolor: "#FFFFFF",
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "12px",
+                            fontFamily: '"DM Sans", sans-serif',
+                            fontSize: "14px",
+                            "& fieldset": { borderColor: "#E2E8F0" },
+                            "&:hover fieldset": { borderColor: "#FF6200" },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#FF6200",
+                            },
                           },
-                        },
-                      }}
-                    />
-                  )}
+                        }}
+                      />
+                    );
+                  }}
                 />
               </FormControl>
             </Box>
@@ -245,6 +251,8 @@ export default function WelcomeLocationModal() {
               </Typography>
               <FormControl fullWidth>
                 <Autocomplete
+                  openOnFocus
+                  forcePopupIcon
                   options={cityOptions}
                   value={selectedCity}
                   onChange={(_, newValue) => setSelectedCity(newValue)}
@@ -253,40 +261,44 @@ export default function WelcomeLocationModal() {
                       sx: { zIndex: 1400 },
                     },
                   }}
-                  renderInput={(params: any) => (
-                    <TextField
-                      {...params}
-                      placeholder="Select City"
-                      slotProps={{
-                        input: {
-                          ...params.InputProps,
-                          startAdornment: (
-                            <>
-                              <InputAdornment position="start">
-                                <LocationOnIcon
-                                  sx={{ color: "#FF6200", fontSize: 18 }}
-                                />
-                              </InputAdornment>
-                              {params.InputProps?.startAdornment}
-                            </>
-                          ),
-                        },
-                      }}
-                      sx={{
-                        bgcolor: "#FFFFFF",
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "12px",
-                          fontFamily: '"DM Sans", sans-serif',
-                          fontSize: "14px",
-                          "& fieldset": { borderColor: "#E2E8F0" },
-                          "&:hover fieldset": { borderColor: "#FF6200" },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#FF6200",
+                  renderInput={(params: any) => {
+                    const updatedParams = {
+                      ...params,
+                      InputProps: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <>
+                            <InputAdornment position="start">
+                              <LocationOnIcon
+                                sx={{ color: "#FF6200", fontSize: 18 }}
+                              />
+                            </InputAdornment>
+                            {params.InputProps?.startAdornment}
+                          </>
+                        ),
+                      },
+                    };
+                    return (
+                      <TextField
+                        {...updatedParams}
+                        placeholder="Select City"
+                        autoComplete="off"
+                        sx={{
+                          bgcolor: "#FFFFFF",
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "12px",
+                            fontFamily: '"DM Sans", sans-serif',
+                            fontSize: "14px",
+                            "& fieldset": { borderColor: "#E2E8F0" },
+                            "&:hover fieldset": { borderColor: "#FF6200" },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#FF6200",
+                            },
                           },
-                        },
-                      }}
-                    />
-                  )}
+                        }}
+                      />
+                    );
+                  }}
                 />
               </FormControl>
             </Box>

@@ -117,6 +117,7 @@ export default function CustomerServicesFilters({
       {stateOptions && onStateChange && (
         <Grid size={filterGridSize}>
           <Autocomplete
+            openOnFocus
             options={["All States", ...stateOptions]}
             value={
               selectedState && selectedState !== "All"
@@ -134,6 +135,7 @@ export default function CustomerServicesFilters({
                 label="Filter by State"
                 placeholder="Select or type State"
                 variant="outlined"
+                autoComplete="off"
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -151,6 +153,7 @@ export default function CustomerServicesFilters({
       {onCategoryChange && (
         <Grid size={filterGridSize}>
           <Autocomplete
+            openOnFocus
             options={categoryNames}
             value={selectedCategory || "All Categories"}
             onChange={(_, newValue) => {
@@ -171,6 +174,7 @@ export default function CustomerServicesFilters({
                 label="Filter by Category"
                 placeholder="Select or type Category"
                 variant="outlined"
+                autoComplete="off"
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -187,6 +191,7 @@ export default function CustomerServicesFilters({
       {/* City Filter */}
       <Grid size={filterGridSize}>
         <Autocomplete
+          openOnFocus
           options={["All Cities", ...cityOptions]}
           value={
             selectedCity && selectedCity !== "All"
@@ -204,6 +209,7 @@ export default function CustomerServicesFilters({
               label="Filter by City"
               placeholder="Select or type City"
               variant="outlined"
+              autoComplete="off"
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "12px",
