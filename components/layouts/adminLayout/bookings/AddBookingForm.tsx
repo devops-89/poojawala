@@ -388,6 +388,14 @@ export default function AddBookingForm() {
         setFieldValue('customerId', newCustomer.id);
         setFieldValue('isNewCustomer', false);
         setShowAddCustomer(false);
+
+        // Clear new customer form inputs so they are fresh for next use
+        setFieldValue('newCustomerName', '');
+        setFieldValue('newCustomerMobile', '');
+        setFieldValue('newCustomerEmail', '');
+        setFieldValue('newCustomerAddress', '');
+        setFieldValue('newCustomerCity', '');
+        setFieldValue('newCustomerPassword', '');
       } else {
         showSnackbar(res.message || 'Failed to create customer', 'error');
       }

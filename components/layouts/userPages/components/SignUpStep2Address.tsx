@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Field } from "formik";
+import { Field, useFormikContext } from "formik";
 import React from "react";
 
 export interface SignUpStep2AddressProps {
@@ -43,6 +43,41 @@ export default function SignUpStep2Address({
   onFetchLocation,
   onBack,
 }: SignUpStep2AddressProps) {
+  const { setFieldValue, values } = useFormikContext<any>();
+
+  const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setFieldValue("pincode", val);
+
+    if (val.length === 6) {
+      try {
+        const postRes = await fetch(`https://api.postalpincode.in/pincode/${val}`);
+        if (postRes.ok) {
+          const postData = await postRes.json();
+          if (
+            Array.isArray(postData) &&
+            postData[0]?.Status === "Success" &&
+            Array.isArray(postData[0]?.PostOffice) &&
+            postData[0].PostOffice.length > 0
+          ) {
+            const po = postData[0].PostOffice[0];
+            const city = po.District || po.Block || po.Circle || "";
+            const state = po.State || "";
+            const area = po.Name || "";
+
+            if (city) setFieldValue("city", city);
+            if (state) setFieldValue("state", state);
+            if (!values.fullAddress?.trim()) {
+              setFieldValue("fullAddress", [area, city, state].filter(Boolean).join(", "));
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Sign up pincode lookup error:", err);
+      }
+    }
+  };
+
   return (
     <Grid container spacing={1.25}>
       {/* Use Current Location Button */}
@@ -81,7 +116,27 @@ export default function SignUpStep2Address({
         </Button>
       </Grid>
 
-      <Grid size={{ xs: 12 }}>
+      {/* ROW 1: PINCODE & ADDRESS LABEL IN 2-COLUMN GRID */}
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <Field name="pincode">
+          {({ field, meta }: any) => (
+            <TextField
+              {...field}
+              fullWidth
+              size="small"
+              label="Pincode *"
+              variant="outlined"
+              onChange={handlePincodeChange}
+              slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
+              error={meta.touched && !!meta.error}
+              helperText={meta.touched && meta.error}
+              sx={inputStyles}
+            />
+          )}
+        </Field>
+      </Grid>
+
+      <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="addressLabel">
           {({ field, meta }: any) => (
             <TextField
@@ -98,6 +153,7 @@ export default function SignUpStep2Address({
         </Field>
       </Grid>
 
+      {/* ROW 2: FULL ADDRESS */}
       <Grid size={{ xs: 12 }}>
         <Field name="fullAddress">
           {({ field, meta }: any) => (
@@ -117,7 +173,8 @@ export default function SignUpStep2Address({
         </Field>
       </Grid>
 
-      <Grid size={{ xs: 12, sm: 4 }}>
+      {/* ROW 3: CITY & STATE IN 2-COLUMN GRID */}
+      <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="city">
           {({ field, meta }: any) => (
             <TextField
@@ -134,7 +191,7 @@ export default function SignUpStep2Address({
         </Field>
       </Grid>
 
-      <Grid size={{ xs: 12, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="state">
           {({ field, meta }: any) => (
             <TextField
@@ -142,23 +199,6 @@ export default function SignUpStep2Address({
               fullWidth
               size="small"
               label="State *"
-              variant="outlined"
-              error={meta.touched && !!meta.error}
-              helperText={meta.touched && meta.error}
-              sx={inputStyles}
-            />
-          )}
-        </Field>
-      </Grid>
-
-      <Grid size={{ xs: 12, sm: 4 }}>
-        <Field name="pincode">
-          {({ field, meta }: any) => (
-            <TextField
-              {...field}
-              fullWidth
-              size="small"
-              label="Pincode *"
               variant="outlined"
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}

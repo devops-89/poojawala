@@ -6,6 +6,7 @@ export const steps = [
   'Purohit Profile',
   'Bank Details',
   'Document Upload',
+  'Service Area',
 ];
 
 export const LANGUAGES = [
@@ -199,6 +200,22 @@ export const validationSchema = [
       certificate: yup.mixed().nullable().notRequired(),
       templeAffiliationProof: yup.mixed().nullable().notRequired(),
       profilePhoto: yup.mixed().required('Profile Photograph is required'),
+    }),
+  }),
+  yup.object({
+    serviceArea: yup.object({
+      pincode: yup
+        .string()
+        .matches(/^[0-9]{6}$/, 'Pincode must be exactly 6 digits')
+        .required('Pincode is required'),
+      fullAddress: yup.string().required('Full Address is required'),
+      city: yup.string().required('City is required'),
+      state: yup.string().required('State is required'),
+      serviceRadiusKm: yup
+        .number()
+        .min(1, 'Service radius must be at least 1 km')
+        .max(100, 'Service radius cannot exceed 100 km')
+        .required('Service radius is required'),
     }),
   }),
 ];

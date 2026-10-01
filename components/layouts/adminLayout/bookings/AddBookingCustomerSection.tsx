@@ -71,9 +71,18 @@ export default function AddBookingCustomerSection({
         <Button
           size="small"
           onClick={() => {
-            setShowAddCustomer(!showAddCustomer);
-            setFieldValue('isNewCustomer', !showAddCustomer);
+            const nextShow = !showAddCustomer;
+            setShowAddCustomer(nextShow);
+            setFieldValue('isNewCustomer', nextShow);
             setFieldValue('customerId', '');
+
+            // Clear input fields so form opens fresh every time
+            setFieldValue('newCustomerName', '');
+            setFieldValue('newCustomerMobile', '');
+            setFieldValue('newCustomerEmail', '');
+            setFieldValue('newCustomerAddress', '');
+            setFieldValue('newCustomerCity', '');
+            setFieldValue('newCustomerPassword', '');
           }}
           sx={{
             textTransform: 'none',

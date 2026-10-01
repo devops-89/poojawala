@@ -27,6 +27,7 @@ import Step1OtpVerification from "./register/components/Step1OtpVerification";
 import Step2PurohitProfile from "./register/components/Step2PurohitProfile";
 import Step3BankDetails from "./register/components/Step3BankDetails";
 import Step4DocumentUpload from "./register/components/Step4DocumentUpload";
+import Step5ServiceArea from "./register/components/Step5ServiceArea";
 import { maxDobDate, steps, validationSchema } from "./register/constants";
 
 const DRAFT_STORAGE_KEY = "purohit_register_draft";
@@ -85,6 +86,17 @@ export default function PortalRegisterContent() {
         certificate: null,
         templeAffiliationProof: null,
         profilePhoto: null,
+      },
+      serviceArea: {
+        addressLabel: "Primary Service Area",
+        streetName: "",
+        fullAddress: "",
+        city: "",
+        state: "",
+        pincode: "",
+        latitude: 0,
+        longitude: 0,
+        serviceRadiusKm: 15,
       },
     },
     validationSchema: validationSchema[activeStep],
@@ -229,6 +241,22 @@ export default function PortalRegisterContent() {
             );
           if (values.documents.profilePhoto)
             fd.append("profileImage", values.documents.profilePhoto);
+
+          const sa = values.serviceArea || {};
+          const serviceAreaObj = {
+            addressLabel: sa.addressLabel || "Primary Service Area",
+            streetName: sa.streetName || "",
+            fullAddress: sa.fullAddress || "",
+            city: sa.city || values.city || "",
+            state: sa.state || values.state || "",
+            pincode: sa.pincode || "",
+            latitude: Number(sa.latitude) || 0,
+            longitude: Number(sa.longitude) || 0,
+            serviceRadiusKm: Number(sa.serviceRadiusKm || 15),
+          };
+
+          fd.append("serviceArea", JSON.stringify(serviceAreaObj));
+          fd.append("serviceRadiusKm", serviceAreaObj.serviceRadiusKm.toString());
 
           const res = await registerPurohitAPI(fd);
           if (res.success || res.message) {
@@ -585,6 +613,8 @@ export default function PortalRegisterContent() {
                 setPreviewFile={setPreviewFile}
               />
             )}
+
+            {activeStep === 5 && <Step5ServiceArea formik={formik} />}
 
             <Box
               sx={{
