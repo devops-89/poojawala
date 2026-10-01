@@ -1,6 +1,5 @@
 "use client";
 import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { AddressFormData, StatusMessage } from "./types";
 
@@ -30,6 +29,17 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const exactRef = useRef<boolean>(false);
   const addressDebounceRef = useRef<any>(null);
   const lastSearchedQueryRef = useRef<string>("");
+
+  // Dynamically load Mapbox CSS
+  useEffect(() => {
+    if (typeof document !== "undefined" && !document.getElementById("mapbox-css-cdn")) {
+      const link = document.createElement("link");
+      link.id = "mapbox-css-cdn";
+      link.rel = "stylesheet";
+      link.href = "https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css";
+      document.head.appendChild(link);
+    }
+  }, []);
 
   // Initialize or update Map when Dialog opens
   useEffect(() => {
