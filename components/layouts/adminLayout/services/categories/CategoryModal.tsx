@@ -4,8 +4,8 @@ import {
   createServiceCategoryAPI,
   updateServiceCategoryAPI,
 } from "@/api/serviceControllers";
-import CategoryImageUpload from "./CategoryImageUpload";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { convertImageToWebP } from "@/utils/imageHelper";
 import CategoryIcon from "@mui/icons-material/Category";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -20,11 +20,13 @@ import {
   Divider,
   Grid,
   IconButton,
+  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import CategoryImageUpload from "./CategoryImageUpload";
 
 export type CategoryModalMode = "add" | "edit" | "view";
 
@@ -47,6 +49,9 @@ export default function CategoryModal({
 }: CategoryModalProps) {
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
+  const [categoryType, setCategoryType] = useState<"SERVICE" | "PRODUCT">(
+    "SERVICE",
+  );
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreview, setIconPreview] = useState<string>("");
   const [saving, setSaving] = useState(false);
@@ -57,6 +62,7 @@ export default function CategoryModal({
       if (mode === "edit" || mode === "view") {
         setNameInput(category?.name || category?.title || "");
         setDescriptionInput(category?.description || category?.details || "");
+        setCategoryType(category?.categoryType || "SERVICE");
         setIconFile(null);
         setIconPreview(
           category?.iconDownloadurl ||
@@ -69,17 +75,19 @@ export default function CategoryModal({
         // Add mode reset
         setNameInput("");
         setDescriptionInput("");
+        setCategoryType("SERVICE");
         setIconFile(null);
         setIconPreview("");
       }
     }
   }, [open, mode, category]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setIconFile(file);
-      setIconPreview(URL.createObjectURL(file));
+      const webpFile = await convertImageToWebP(file);
+      setIconFile(webpFile);
+      setIconPreview(URL.createObjectURL(webpFile));
     }
   };
 
@@ -100,6 +108,7 @@ export default function CategoryModal({
       if (mode === "add") {
         const formData = new FormData();
         formData.append("name", nameInput.trim());
+        formData.append("categoryType", categoryType);
         if (descriptionInput.trim()) {
           formData.append("description", descriptionInput.trim());
         }
@@ -122,6 +131,7 @@ export default function CategoryModal({
         if (iconFile) {
           const formData = new FormData();
           formData.append("name", nameInput.trim());
+          formData.append("categoryType", categoryType);
           if (descriptionInput.trim()) {
             formData.append("description", descriptionInput.trim());
           }
@@ -131,6 +141,7 @@ export default function CategoryModal({
           data = {
             name: nameInput.trim(),
             description: descriptionInput.trim(),
+            categoryType: categoryType,
           };
         }
 
@@ -146,7 +157,8 @@ export default function CategoryModal({
     } catch (err: any) {
       console.error(err);
       showSnackbar(
-        err.response?.data?.message || `Error ${mode === "add" ? "creating" : "updating"} category`,
+        err.response?.data?.message ||
+          `Error ${mode === "add" ? "creating" : "updating"} category`,
         "error",
       );
     } finally {
@@ -155,8 +167,8 @@ export default function CategoryModal({
   };
 
   const getTitle = () => {
-    if (mode === "add") return "Add Service Category";
-    if (mode === "edit") return "Edit Service Category";
+    if (mode === "add") return "Add Category";
+    if (mode === "edit") return "Edit Category";
     return "Category Details";
   };
 
@@ -195,7 +207,9 @@ export default function CategoryModal({
               <CircularProgress sx={{ color: "#FF6200" }} />
             </Box>
           ) : category ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}
+            >
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Box
                   sx={{
@@ -305,6 +319,38 @@ export default function CategoryModal({
                   </Grid>
                 )}
 
+                <Grid size={{ xs: 6 }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    CATEGORY TYPE
+                  </Typography>
+                  <Chip
+                    label={category.categoryType || "SERVICE"}
+                    size="small"
+                    sx={{
+                      mt: 0.5,
+                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontWeight: 700,
+                      fontSize: "0.75rem",
+                      bgcolor:
+                        (category.categoryType || "SERVICE") === "SERVICE"
+                          ? "#e0f2fe"
+                          : "#fef3c7",
+                      color:
+                        (category.categoryType || "SERVICE") === "SERVICE"
+                          ? "#0369a1"
+                          : "#b45309",
+                      borderRadius: "6px",
+                    }}
+                  />
+                </Grid>
+
                 {category.createdAt && (
                   <Grid size={{ xs: 6 }}>
                     <Typography
@@ -334,7 +380,9 @@ export default function CategoryModal({
           ) : null
         ) : (
           /* Add & Edit Mode Form */
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}
+          >
             <TextField
               label="Category Name *"
               placeholder="e.g. Festival Poojas"
@@ -343,6 +391,20 @@ export default function CategoryModal({
               onChange={(e) => setNameInput(e.target.value)}
               slotProps={{ inputLabel: { shrink: true } }}
             />
+
+            <TextField
+              select
+              label="Category Type *"
+              fullWidth
+              value={categoryType}
+              onChange={(e) =>
+                setCategoryType(e.target.value as "SERVICE" | "PRODUCT")
+              }
+              slotProps={{ inputLabel: { shrink: true } }}
+            >
+              <MenuItem value="SERVICE">SERVICE</MenuItem>
+              <MenuItem value="PRODUCT">PRODUCT</MenuItem>
+            </TextField>
 
             <TextField
               label="Description"

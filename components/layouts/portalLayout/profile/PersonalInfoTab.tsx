@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
+import { convertImageToWebP } from "@/utils/imageHelper";
 import React from "react";
 
 interface PersonalInfoTabProps {
@@ -114,9 +115,12 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
               type="file"
               hidden
               accept="image/*"
-              onChange={(e) =>
-                e.target.files && setProfileImage(e.target.files[0])
-              }
+              onChange={async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                  const webpFile = await convertImageToWebP(e.target.files[0]);
+                  setProfileImage(webpFile);
+                }
+              }}
             />
           </IconButton>
         </Box>

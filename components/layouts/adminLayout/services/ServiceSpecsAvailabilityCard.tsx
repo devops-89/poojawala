@@ -6,7 +6,6 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import WifiIcon from "@mui/icons-material/Wifi";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import { Box, Grid, Paper, Typography } from "@mui/material";
-import React from "react";
 
 export interface ServiceSpecsAvailabilityCardProps {
   service: any;
@@ -324,7 +323,7 @@ export default function ServiceSpecsAvailabilityCard({
                           {
                             dateStyle: "medium",
                             timeStyle: "short",
-                          }
+                          },
                         )
                       : "N/A"}
                   </Typography>
@@ -385,7 +384,7 @@ export default function ServiceSpecsAvailabilityCard({
                           {
                             dateStyle: "medium",
                             timeStyle: "short",
-                          }
+                          },
                         )
                       : "N/A"}
                   </Typography>

@@ -19,6 +19,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { addComplaintAPI } from '@/api/bookingControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useTicketModalStore } from '@/stores/ticketModalStore';
+import { convertImageToWebP } from '@/utils/imageHelper';
 
 const CATEGORIES = [
   { value: 'SERVICE_NOT_PROVIDED', label: 'Service Not Provided' },
@@ -74,9 +75,10 @@ export default function RaiseTicketModal() {
         formData.append('linkedPaymentId', String(linkedPaymentId));
       }
       
-      evidence.forEach((file) => {
-        formData.append('evidence', file);
-      });
+      for (const file of evidence) {
+        const webpFile = await convertImageToWebP(file);
+        formData.append('evidence', webpFile);
+      }
 
       const res = await addComplaintAPI(formData);
       if (res.success) {

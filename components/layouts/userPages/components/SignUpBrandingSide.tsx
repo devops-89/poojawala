@@ -71,7 +71,7 @@ export default function SignUpBrandingSide() {
 
         <Box
           component="img"
-          src="/images/logo.png"
+          src="/images/logo.webp"
           alt="Poojawala Logo"
           sx={{
             height: { xs: "36px", md: "46px" },

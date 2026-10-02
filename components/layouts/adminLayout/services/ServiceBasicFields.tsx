@@ -38,7 +38,7 @@ export default function ServiceBasicFields({
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const res = await getServiceCategoriesAPI(1, 100, "", true);
+        const res = await getServiceCategoriesAPI(1, 100, "", true, "SERVICE");
         let list: any[] = [];
         if (res) {
           if (Array.isArray(res)) list = res;

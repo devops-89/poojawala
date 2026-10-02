@@ -43,6 +43,29 @@ export default function ServicesLayout() {
     }
   }, [stateParam, categoryParam, categoryIdParam, cityParam]);
 
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedState && selectedState !== "All" && selectedState !== "All States") {
+      params.set("state", selectedState);
+    }
+    if (selectedCity && selectedCity !== "All" && selectedCity !== "All Cities") {
+      params.set("city", selectedCity);
+    }
+    if (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories") {
+      params.set("categoryId", selectedCategoryId);
+    }
+    if (selectedCategoryName && selectedCategoryName !== "All Categories") {
+      params.set("category", selectedCategoryName);
+    }
+    if (searchQuery) {
+      params.set("search", searchQuery);
+    }
+
+    const queryStr = params.toString();
+    const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
+    window.history.replaceState(null, "", newUrl);
+  }, [selectedState, selectedCity, selectedCategoryId, selectedCategoryName, searchQuery]);
+
   const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
   const stateOptions = useMemo(
     () => indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b)),
@@ -248,6 +271,7 @@ export default function ServicesLayout() {
                 selectedCategoryId={selectedCategoryId}
                 activeFilters={activeFilters}
                 searchQuery={searchQuery}
+                selectedState={selectedState}
                 selectedCity={selectedCity}
               />
             </Grid>

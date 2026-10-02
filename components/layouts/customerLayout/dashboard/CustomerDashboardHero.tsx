@@ -43,14 +43,14 @@ export default function CustomerDashboardHero() {
   const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
   const stateOptions = useMemo(
     () => indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b)),
-    [indianStates]
+    [indianStates],
   );
 
   // Selected State Object for ISO Code
   const selectedStateObj = useMemo(() => {
     if (!selectedState || selectedState === "All") return null;
     return indianStates.find(
-      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
     );
   }, [selectedState, indianStates]);
 

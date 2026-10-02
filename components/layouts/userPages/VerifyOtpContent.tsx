@@ -50,10 +50,27 @@ export default function VerifyOtpContent() {
   };
 
   useEffect(() => {
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        if (userObj?.role === 'CUSTOMER') {
+          router.replace('/customer/dashboard');
+          return;
+        } else if (userObj?.role === 'PUROHIT') {
+          router.replace('/purohit/dashboard');
+          return;
+        } else if (userObj?.role === 'ADMIN' || userObj?.role === 'SUPERADMIN') {
+          router.replace('/admin/dashboard');
+          return;
+        }
+      } catch (e) {}
+    }
+
     const data = sessionStorage.getItem('signupData');
     if (!data) {
       showSnackbar('Session expired. Please sign up again.', 'error');
-      router.push('/sign-up');
+      router.replace('/sign-up');
     } else {
       setSignupData(JSON.parse(data));
     }
@@ -151,7 +168,7 @@ export default function VerifyOtpContent() {
           }
           
           showSnackbar('Account created successfully!', 'success');
-          router.push('/customer/dashboard');
+          router.replace('/customer/dashboard');
         } else {
           showSnackbar(registerRes.message || 'Failed to create account', 'error');
         }

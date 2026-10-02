@@ -49,6 +49,8 @@ export default function CustomerHeader() {
   const items = useCartStore((state) => state.items);
   const totalItemsCount = useCartStore((state) => state.totalItemsCount);
 
+  const [mounted, setMounted] = useState(false);
+
   // Mobile Drawer State
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -62,11 +64,18 @@ export default function CustomerHeader() {
     msg: "",
   });
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Compute reactive badge count
-  const cartTotalItems =
+  const rawCartTotalItems =
     totalItemsCount > 0
       ? totalItemsCount
       : items.reduce((total, item) => total + item.quantity, 0);
+
+  const cartTotalItems = mounted ? rawCartTotalItems : 0;
+  const displayUnreadCount = mounted ? unreadCount : 0;
 
   useEffect(() => {
     fetchProfile();
@@ -126,6 +135,7 @@ export default function CustomerHeader() {
     <AppBar
       position="fixed"
       elevation={0}
+      suppressHydrationWarning
       sx={{
         width: "100%",
         left: 0,
@@ -152,6 +162,7 @@ export default function CustomerHeader() {
             aria-label="open drawer"
             edge="start"
             onClick={() => setMobileOpen(true)}
+            suppressHydrationWarning
             sx={{
               display: { md: "none" },
               color: "#1e293b",
@@ -170,7 +181,7 @@ export default function CustomerHeader() {
           >
             <Box
               component="img"
-              src="/images/logo.png"
+              src="/images/logo.webp"
               alt="Poojawala"
               sx={{
                 height: { xs: "34px", sm: "42px", md: "52px" },
@@ -232,6 +243,7 @@ export default function CustomerHeader() {
           <Tooltip title="View Cart">
             <IconButton
               onClick={openCart}
+              suppressHydrationWarning
               sx={{
                 color: "#64748b",
                 bgcolor: "#f8fafc",
@@ -261,6 +273,7 @@ export default function CustomerHeader() {
           <Tooltip title="Notifications">
             <IconButton
               onClick={handleOpenNotif}
+              suppressHydrationWarning
               sx={{
                 color: "#64748b",
                 bgcolor: "#f8fafc",
@@ -269,9 +282,9 @@ export default function CustomerHeader() {
               }}
             >
               <Badge
-                badgeContent={unreadCount}
+                badgeContent={displayUnreadCount}
                 color="error"
-                invisible={unreadCount === 0}
+                invisible={displayUnreadCount === 0}
                 sx={{
                   "& .MuiBadge-badge": { bgcolor: "#FF6200", color: "white" },
                 }}
@@ -283,7 +296,7 @@ export default function CustomerHeader() {
 
           {/* User Avatar Circle */}
           <Tooltip title="Account Options">
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: { xs: 0, sm: 0.5 } }}>
+            <IconButton onClick={handleOpenUserMenu} suppressHydrationWarning sx={{ p: 0.5, ml: { xs: 0, sm: 0.5 } }}>
               <Avatar
                 src={profile?.profileImage || profile?.avatar || undefined}
                 sx={{
@@ -534,7 +547,7 @@ export default function CustomerHeader() {
         >
           <Box
             component="img"
-            src="/images/logo.png"
+            src="/images/logo.webp"
             alt="Poojawala"
             sx={{ height: "36px", objectFit: "contain" }}
           />

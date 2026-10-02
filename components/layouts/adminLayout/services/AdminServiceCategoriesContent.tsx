@@ -19,7 +19,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Chip, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import CategoryModal, { CategoryModalMode } from "./categories/CategoryModal";
@@ -276,6 +276,28 @@ export default function AdminServiceCategoriesContent() {
       },
     },
     {
+      id: "categoryType",
+      label: "CATEGORY TYPE",
+      render: (category) => {
+        const type = category.categoryType || "SERVICE";
+        const isService = type === "SERVICE";
+        return (
+          <Chip
+            label={type}
+            size="small"
+            sx={{
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontWeight: 700,
+              fontSize: "0.75rem",
+              bgcolor: isService ? "#e0f2fe" : "#fef3c7",
+              color: isService ? "#0369a1" : "#b45309",
+              borderRadius: "6px",
+            }}
+          />
+        );
+      },
+    },
+    {
       id: "status",
       label: "STATUS",
       render: (category) => {
@@ -341,8 +363,8 @@ export default function AdminServiceCategoriesContent() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <AdminPageHeader
-        title="Service Categories"
-        subtitle="Manage service categories and icons"
+        title="Categories"
+        subtitle="Manage service and product categories"
         searchPlaceholder="Search categories..."
         searchValue={searchValue}
         onSearchChange={(val) => {
@@ -373,7 +395,7 @@ export default function AdminServiceCategoriesContent() {
           setPage(0);
         }}
         keyExtractor={(category, index) => category.id || category._id || index}
-        emptyMessage="No service categories found matching your criteria."
+        emptyMessage="No categories found matching your criteria."
       />
 
       {/* Unified Reusable Category Modal */}

@@ -129,6 +129,19 @@ export default function ServiceHeaderCard({
                 border: "1px solid #ffedd5",
               }}
             />
+            {service.category?.name && (
+              <Chip
+                label={service.category.name}
+                sx={{
+                  bgcolor: "#e0f2fe",
+                  color: "#0369a1",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                  border: "1px solid #bae6fd",
+                }}
+              />
+            )}
           </Box>
 
           {languagesText && (

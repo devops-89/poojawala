@@ -236,8 +236,8 @@ export default function AdminProductsContent() {
             fontSize: "0.9rem",
           }}
         >
-          {product.stockQuantity ?? product.quantity ?? 1}{" "}
-          {product.unit || "item"}
+          {product.stockQuantity ?? product.quantity ?? 0}{" "}
+          {product.pricingUnit || product.unit || "Unit"}
         </Typography>
       ),
     },

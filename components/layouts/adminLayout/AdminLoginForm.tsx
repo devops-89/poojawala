@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button, Paper, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
@@ -28,6 +28,18 @@ export default function AdminLoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
+  useEffect(() => {
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || user.role === 'SUPERADMIN') {
+          router.replace('/admin/dashboard');
+        }
+      } catch (e) {}
+    }
+  }, [router]);
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -46,7 +58,7 @@ export default function AdminLoginForm() {
             sessionStorage.setItem('csrfToken', response.csrfToken);
           }
           showSnackbar('Admin login successful!', 'success');
-          setTimeout(() => router.push('/admin/dashboard'), 1000);
+          setTimeout(() => router.replace('/admin/dashboard'), 1000);
         } else {
           showSnackbar(response.message || 'Login failed', 'error');
         }

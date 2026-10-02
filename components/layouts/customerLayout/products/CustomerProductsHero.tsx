@@ -130,7 +130,7 @@ export default function CustomerProductsHero() {
           >
             <Box
               component="img"
-              src="/images/productsHero.png"
+              src="/images/productsHero.webp"
               alt="Sacred Puja Items"
               sx={{
                 width: "100%",

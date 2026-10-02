@@ -4,13 +4,44 @@ import SocketProvider from "@/components/providers/SocketProvider";
 import CustomerCartDrawer from "@/components/widgets/CustomerCartDrawer";
 import RaiseTicketModal from "@/components/widgets/RaiseTicketModal";
 import { Box } from "@mui/material";
-import React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 export default function CustomerDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const userStr = sessionStorage.getItem("user");
+    let isAuthorized = false;
+
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        if (userObj.role === "CUSTOMER") {
+          isAuthorized = true;
+        }
+      } catch (e) {}
+    }
+
+    if (!isAuthorized) {
+      router.replace("/sign-in");
+    } else {
+      // Lock back button to prevent navigating back to login/register pages
+      window.history.pushState(null, "", window.location.href);
+      const handlePopState = () => {
+        window.history.pushState(null, "", window.location.href);
+      };
+      window.addEventListener("popstate", handlePopState);
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+  }, [pathname, router]);
   return (
     <SocketProvider>
       <Box

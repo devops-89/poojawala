@@ -2,6 +2,7 @@ import { getAllServicesAPI } from '@/api/serviceControllers';
 import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { Box, CircularProgress, Grid, Pagination, Typography } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import ServiceCard from './ServiceCard';
 
@@ -10,6 +11,7 @@ interface ServiceGridProps {
   selectedCategoryId?: string | number;
   activeFilters?: any;
   searchQuery?: string;
+  selectedState?: string;
   selectedCity?: string;
 }
 
@@ -18,21 +20,41 @@ export default function ServiceGrid({
   selectedCategoryId,
   activeFilters,
   searchQuery,
+  selectedState,
   selectedCity,
 }: ServiceGridProps) {
+  const searchParams = useSearchParams();
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const urlPage = searchParams.get('page');
+    return urlPage && !isNaN(Number(urlPage)) ? Number(urlPage) : 1;
+  });
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 6;
   const gridTopRef = useRef<HTMLDivElement>(null);
-  const mountTime = useRef(Date.now());
+  const isInitialMount = useRef(true);
 
-  // Reset page to 1 when filters change
+  // Sync page to URL search params
   useEffect(() => {
+    const url = new URL(window.location.href);
+    if (page > 1) {
+      url.searchParams.set('page', String(page));
+    } else {
+      url.searchParams.delete('page');
+    }
+    window.history.replaceState(null, '', url.toString());
+  }, [page]);
+
+  // Reset page to 1 when filters change (except on initial mount)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     setPage(1);
-  }, [searchQuery, selectedCity, selectedCategoryId, activeCategory]);
+  }, [searchQuery, selectedState, selectedCity, selectedCategoryId, activeCategory]);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -42,6 +64,10 @@ export default function ServiceGrid({
           selectedCity && selectedCity !== 'All' && selectedCity !== 'All Cities'
             ? selectedCity
             : undefined;
+        const stateParam =
+          selectedState && selectedState !== 'All' && selectedState !== 'All States'
+            ? selectedState
+            : undefined;
 
         const response = await getAllServicesAPI(
           page,
@@ -49,7 +75,7 @@ export default function ServiceGrid({
           searchQuery || "",
           true,
           cityParam,
-          undefined,
+          stateParam,
           selectedCategoryId || undefined
         );
 
@@ -154,7 +180,7 @@ export default function ServiceGrid({
     };
 
     fetchServices();
-  }, [page, searchQuery, selectedCity, selectedCategoryId]);
+  }, [page, searchQuery, selectedState, selectedCity, selectedCategoryId]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);

@@ -165,7 +165,8 @@ export const getServiceCategoriesAPI = async (
   page: number = 1,
   limit: number = 10,
   search: string = "",
-  isActive?: boolean
+  isActive?: boolean,
+  categoryType?: string
 ) => {
   try {
     const params = new URLSearchParams();
@@ -173,6 +174,7 @@ export const getServiceCategoriesAPI = async (
     if (limit) params.append('limit', String(limit));
     if (search) params.append('search', search);
     if (isActive !== undefined) params.append('isActive', String(isActive));
+    if (categoryType) params.append('categoryType', categoryType);
 
     const response = await userPublicApi.get('/service/categories', { params });
     return response.data;

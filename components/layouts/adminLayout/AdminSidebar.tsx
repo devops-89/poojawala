@@ -76,7 +76,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
     },
     { text: "Customers", icon: <GroupsIcon fontSize="small" />, path: "/admin/users" },
     {
-      text: "Service Categories",
+      text: "Categories",
       icon: <CategoryIcon fontSize="small" />,
       path: "/admin/service-categories",
     },
@@ -433,7 +433,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         >
           <Box
             component="img"
-            src="/images/logo.png"
+            src="/images/logo.webp"
             alt="Poojawala"
             sx={{
               height: { xs: "36px", sm: "44px" },
@@ -477,7 +477,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         >
           <Box
             component="img"
-            src="/images/logo.png"
+            src="/images/logo.webp"
             alt="Poojawala"
             sx={{
               height: { xs: "36px", sm: "44px" },

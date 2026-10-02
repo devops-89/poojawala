@@ -98,7 +98,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
       >
         <Box
           component="img"
-          src="/images/logo.png"
+          src="/images/logo.webp"
           alt="Poojawala"
           sx={{ height: { xs: "40px", md: "60px" }, objectFit: "contain" }}
         />

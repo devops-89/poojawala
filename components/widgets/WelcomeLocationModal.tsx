@@ -13,7 +13,7 @@ import {
   InputAdornment,
   Paper,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { City, State } from "country-state-city";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,7 +28,10 @@ export default function WelcomeLocationModal() {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   // States & Cities Data
-  const indianStates = React.useMemo(() => State.getStatesOfCountry("IN") || [], []);
+  const indianStates = React.useMemo(
+    () => State.getStatesOfCountry("IN") || [],
+    [],
+  );
 
   const stateOptions = React.useMemo(() => {
     return indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b));
@@ -37,7 +40,7 @@ export default function WelcomeLocationModal() {
   const selectedStateObj = React.useMemo(() => {
     if (!selectedState) return null;
     return indianStates.find(
-      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
     );
   }, [selectedState, indianStates]);
 
@@ -53,7 +56,9 @@ export default function WelcomeLocationModal() {
     // Only run on home route '/'
     if (pathname !== "/") return;
 
-    const alreadyShown = sessionStorage.getItem("poojawala_welcome_modal_shown");
+    const alreadyShown = sessionStorage.getItem(
+      "poojawala_welcome_modal_shown",
+    );
     if (alreadyShown) return;
 
     // Trigger modal after 15 seconds (15000 ms)
@@ -136,7 +141,7 @@ export default function WelcomeLocationModal() {
         <Box sx={{ textCenter: "center", textAlign: "center", mb: 2 }}>
           <Box
             component="img"
-            src="/images/logo.png"
+            src="/images/logo.webp"
             alt="Poojawala"
             sx={{ height: 46, objectFit: "contain", mx: "auto", mb: 1.5 }}
           />
@@ -162,8 +167,8 @@ export default function WelcomeLocationModal() {
               mx: "auto",
             }}
           >
-            Your trusted platform for booking verified Pandits, authentic Samagri,
-            and divine ceremonies tailored to your region.
+            Your trusted platform for booking verified Pandits, authentic
+            Samagri, and divine ceremonies tailored to your region.
           </Typography>
         </Box>
 
@@ -288,9 +293,15 @@ export default function WelcomeLocationModal() {
                     return (
                       <TextField
                         {...updatedParams}
-                        placeholder={!selectedState ? "Select State first" : "Select City"}
+                        placeholder={
+                          !selectedState ? "Select State first" : "Select City"
+                        }
                         autoComplete="off"
-                        helperText={!selectedState ? "Select state to enable city selection" : undefined}
+                        helperText={
+                          !selectedState
+                            ? "Select state to enable city selection"
+                            : undefined
+                        }
                         sx={{
                           bgcolor: "#FFFFFF",
                           "& .MuiOutlinedInput-root": {

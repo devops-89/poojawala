@@ -14,21 +14,43 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const [mobileOpen, setMobileOpen] = useState(false);
 
   React.useEffect(() => {
-    if (pathname !== '/purohit' && pathname !== '/purohit/register') {
-      const userStr = sessionStorage.getItem('user');
-      let isAuthorized = false;
-      
-      if (userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          if (user.role === 'PUROHIT') {
-            isAuthorized = true;
-          }
-        } catch (e) {}
-      }
+    const userStr = sessionStorage.getItem('user');
+    let isAuthorized = false;
+    let userObj: any = null;
 
+    if (userStr) {
+      try {
+        userObj = JSON.parse(userStr);
+        if (userObj.role === 'PUROHIT') {
+          isAuthorized = true;
+        }
+      } catch (e) {}
+    }
+
+    if (pathname === '/purohit' || pathname === '/purohit/register') {
+      if (isAuthorized) {
+        if (userObj?.isAdminCreated || userObj?.is_admin_created) {
+          // If admin created, allow step 2 registration if on register route
+          if (pathname !== '/purohit/register') {
+            router.replace('/purohit/register?step=2');
+          }
+        } else {
+          router.replace('/purohit/dashboard');
+        }
+      }
+    } else {
       if (!isAuthorized) {
-        router.push('/purohit');
+        router.replace('/sign-in');
+      } else {
+        // Lock back button to prevent navigating back to login/registration pages
+        window.history.pushState(null, '', window.location.href);
+        const handlePopState = () => {
+          window.history.pushState(null, '', window.location.href);
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => {
+          window.removeEventListener('popstate', handlePopState);
+        };
       }
     }
   }, [pathname, router]);

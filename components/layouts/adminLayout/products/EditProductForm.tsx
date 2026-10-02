@@ -35,6 +35,7 @@ export default function EditProductForm() {
             price: data.price !== undefined ? String(data.price) : "",
             pricingUnit: data.pricingUnit || "PIECE",
             quantity: data.quantity !== undefined && data.quantity !== null ? String(data.quantity) : "0",
+            categoryId: data.categoryId || data.category?.id || "",
           });
           const imgUrl =
             data.imageUrl ||

@@ -51,7 +51,7 @@ export default function CustomerServicesFilters({
     if (onCategoryChange && (!categoryOptions || categoryOptions.length === 0)) {
       const fetchCats = async () => {
         try {
-          const res = await getServiceCategoriesAPI(1, 100, "", true);
+          const res = await getServiceCategoriesAPI(1, 100, "", true, "SERVICE");
           let list: any[] = [];
           if (res) {
             if (Array.isArray(res)) list = res;
@@ -79,6 +79,19 @@ export default function CustomerServicesFilters({
 
   const catsToUse = categoryOptions && categoryOptions.length > 0 ? categoryOptions : internalCategories;
   const categoryNames = ["All Categories", ...catsToUse.map((c) => c.name)];
+
+  const displayCategoryName = React.useMemo(() => {
+    if (!selectedCategory || selectedCategory === "All" || selectedCategory === "All Categories") {
+      return "All Categories";
+    }
+    const matchById = catsToUse.find((c) => String(c.id) === String(selectedCategory));
+    if (matchById) return matchById.name;
+
+    const matchByName = catsToUse.find((c) => c.name.toLowerCase() === selectedCategory.toLowerCase());
+    if (matchByName) return matchByName.name;
+
+    return selectedCategory;
+  }, [selectedCategory, catsToUse]);
 
   const filterCount =
     (stateOptions && onStateChange ? 1 : 0) +
@@ -155,7 +168,7 @@ export default function CustomerServicesFilters({
           <Autocomplete
             openOnFocus
             options={categoryNames}
-            value={selectedCategory || "All Categories"}
+            value={displayCategoryName}
             onChange={(_, newValue) => {
               if (!newValue || newValue === "All Categories") {
                 onCategoryChange("", "All Categories");

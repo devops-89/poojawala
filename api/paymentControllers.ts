@@ -67,8 +67,22 @@ export const settleBookingPaymentAPI = async (bookingId: string | number) => {
 
 export const downloadInvoiceAPI = async (bookingId: string | number) => {
   try {
-    const route = `/payments/booking/${bookingId}/invoice`;
-    const res = await paymentSecuredApi.get(route, { responseType: 'blob' });
+    const cleanId = String(bookingId).replace(/[^0-9]/g, '');
+    const idToUse = cleanId || bookingId;
+    let res;
+    try {
+      res = await paymentSecuredApi.get(`/payments/booking/${idToUse}/invoice`, { responseType: 'blob' });
+    } catch (err: any) {
+      if (err?.response?.status === 404 || err?.status === 404) {
+        try {
+          res = await paymentSecuredApi.get(`/payments/${idToUse}/invoice`, { responseType: 'blob' });
+        } catch (err2: any) {
+          res = await paymentSecuredApi.get(`/payments/order/${idToUse}/invoice`, { responseType: 'blob' });
+        }
+      } else {
+        throw err;
+      }
+    }
     return res.data;
   } catch (error: any) {
     throw error?.response?.data || error.message;
@@ -77,8 +91,9 @@ export const downloadInvoiceAPI = async (bookingId: string | number) => {
 
 export const downloadOrderInvoiceAPI = async (orderId: string | number) => {
   try {
-    const route = `/payments/order/${orderId}/invoice`;
-    const res = await paymentSecuredApi.get(route, { responseType: 'blob' });
+    const cleanId = String(orderId).replace(/[^0-9]/g, '');
+    const idToUse = cleanId || orderId;
+    let res = await paymentSecuredApi.get(`/payments/order/${idToUse}/invoice`, { responseType: 'blob' });
     return res.data;
   } catch (error: any) {
     throw error?.response?.data || error.message;

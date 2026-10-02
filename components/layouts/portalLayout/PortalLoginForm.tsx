@@ -87,7 +87,7 @@ export default function PortalLoginForm() {
         <MuiLink component={NextLink} href="/" underline="none" sx={{ display: 'inline-flex', justifyContent: 'center' }}>
           <Box
             component="img"
-            src="/images/logo.png"
+            src="/images/logo.webp"
             alt="Poojawala"
             sx={{ height: { xs: '45px', md: '55px' }, objectFit: 'contain', mb: 0.5 }}
           />

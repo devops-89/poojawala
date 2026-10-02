@@ -12,6 +12,7 @@ import {
 } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
+import { convertImageToWebP } from "@/utils/imageHelper";
 
 export function useProfile() {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
@@ -190,7 +191,10 @@ export function useProfile() {
       formData.append("isOnlineAvailable", isOnlineAvailable ? "true" : "false");
       formData.append("isOfflineAvailable", isOfflineAvailable ? "true" : "false");
 
-      if (profileImage) formData.append("profileImage", profileImage);
+      if (profileImage) {
+        const webpImage = await convertImageToWebP(profileImage);
+        formData.append("profileImage", webpImage);
+      }
 
       await updateProfileAPI(formData);
       showSnackbar("Profile updated successfully!", "success");

@@ -8,6 +8,7 @@ import {
 import AddAddressModal from "@/components/widgets/AddAddressModal";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
+import { convertImageToWebP } from "@/utils/imageHelper";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -126,15 +127,16 @@ function CustomerEditProfileContentInner() {
     }
   }, [profile]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        showSnackbar("Image size should be less than 2MB", "error");
+      if (file.size > 5 * 1024 * 1024) {
+        showSnackbar("Image size should be less than 5MB", "error");
         return;
       }
-      setProfileImage(file);
-      setPreviewImage(URL.createObjectURL(file));
+      const webpFile = await convertImageToWebP(file);
+      setProfileImage(webpFile);
+      setPreviewImage(URL.createObjectURL(webpFile));
     }
   };
 

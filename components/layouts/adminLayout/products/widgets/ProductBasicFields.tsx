@@ -1,9 +1,10 @@
 "use client";
 
 import { PRODUCT_PRICING_UNIT } from "@/api/productControllers";
-import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { getServiceCategoriesAPI } from "@/api/serviceControllers";
+import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const PRICING_UNITS = Object.values(PRODUCT_PRICING_UNIT);
 
@@ -13,11 +14,37 @@ interface FormValues {
   pricingUnit: string;
   quantity: string | number;
   description: string;
+  categoryId?: string | number;
 }
 
 export default function ProductBasicFields() {
   const { values, handleChange, handleBlur, touched, errors } =
     useFormikContext<FormValues>();
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await getServiceCategoriesAPI(1, 100, "", true, "PRODUCT");
+        let list: any[] = [];
+        if (res) {
+          if (Array.isArray(res)) list = res;
+          else if (res.data) {
+            if (Array.isArray(res.data.data)) list = res.data.data;
+            else if (Array.isArray(res.data)) list = res.data;
+            else if (Array.isArray(res.data.categories)) list = res.data.categories;
+          } else if (res.categories && Array.isArray(res.categories)) {
+            list = res.categories;
+          }
+        }
+        const activeOnly = list.filter((c: any) => c.isActive !== false);
+        setCategories(activeOnly);
+      } catch (err) {
+        console.error("Failed to load product categories for dropdown", err);
+      }
+    };
+    fetchCats();
+  }, []);
 
   return (
     <>
@@ -33,13 +60,48 @@ export default function ProductBasicFields() {
           onChange={handleChange}
           onBlur={handleBlur}
           error={touched.name && Boolean(errors.name)}
-          helperText={touched.name && errors.name}
+          helperText={touched.name && (errors.name as string)}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
       </Grid>
 
+      {/* Product Category */}
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FormControl fullWidth variant="outlined" error={touched.categoryId && Boolean(errors.categoryId)}>
+          <InputLabel id="product-category-label">Category *</InputLabel>
+          <Select
+            labelId="product-category-label"
+            label="Category *"
+            name="categoryId"
+            value={values.categoryId || ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            sx={{
+              borderRadius: "12px",
+              fontFamily: "var(--font-outfit), sans-serif",
+            }}
+          >
+            <MenuItem value="" disabled sx={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+              Select Product Category
+            </MenuItem>
+            {categories.map((cat) => (
+              <MenuItem
+                key={cat.id || cat._id}
+                value={cat.id || cat._id}
+                sx={{ fontFamily: "var(--font-outfit), sans-serif" }}
+              >
+                {cat.name || cat.title}
+              </MenuItem>
+            ))}
+          </Select>
+          {touched.categoryId && errors.categoryId && (
+            <FormHelperText>{errors.categoryId as string}</FormHelperText>
+          )}
+        </FormControl>
+      </Grid>
+
       {/* Price */}
-      <Grid size={{ xs: 12, md: 2 }}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <TextField
           fullWidth
           label="Price (₹) *"
@@ -57,14 +119,14 @@ export default function ProductBasicFields() {
           }}
           onBlur={handleBlur}
           error={touched.price && Boolean(errors.price)}
-          helperText={touched.price && errors.price}
+          helperText={touched.price && (errors.price as string)}
           slotProps={{ htmlInput: { min: 0 } }}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
       </Grid>
 
       {/* Pricing Unit */}
-      <Grid size={{ xs: 12, md: 2 }}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <FormControl fullWidth variant="outlined" error={touched.pricingUnit && Boolean(errors.pricingUnit)}>
           <InputLabel id="pricing-unit-label">Pricing Unit *</InputLabel>
           <Select
@@ -93,7 +155,7 @@ export default function ProductBasicFields() {
       </Grid>
 
       {/* Quantity */}
-      <Grid size={{ xs: 12, md: 2 }}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <TextField
           fullWidth
           label="Quantity *"
@@ -111,7 +173,7 @@ export default function ProductBasicFields() {
           }}
           onBlur={handleBlur}
           error={touched.quantity && Boolean(errors.quantity)}
-          helperText={touched.quantity && errors.quantity}
+          helperText={touched.quantity && (errors.quantity as string)}
           slotProps={{ htmlInput: { min: 0 } }}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />

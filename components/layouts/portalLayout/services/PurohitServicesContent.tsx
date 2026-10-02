@@ -18,22 +18,38 @@ import { getAllServicesAPI, getPurohitServicesAPI } from '@/api/serviceControlle
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { City, State } from 'country-state-city';
 import CustomerServicesFilters from '@/components/layouts/customerLayout/services/CustomerServicesFilters';
 
 export default function PurohitServicesContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [services, setServices] = useState<any[]>([]);
   const [myServiceIds, setMyServiceIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const p = searchParams.get('page');
+    return p && !isNaN(Number(p)) ? Number(p) : 1;
+  });
   const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [selectedCity, setSelectedCity] = useState<string>("All");
-  const [selectedState, setSelectedState] = useState<string>("All");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get('search') || "");
+  const [selectedCity, setSelectedCity] = useState<string>(searchParams.get('city') || "All");
+  const [selectedState, setSelectedState] = useState<string>(searchParams.get('state') || "All");
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', String(page));
+    if (selectedState && selectedState !== 'All') params.set('state', selectedState);
+    if (selectedCity && selectedCity !== 'All') params.set('city', selectedCity);
+    if (searchTerm) params.set('search', searchTerm);
+
+    const queryStr = params.toString();
+    const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
+    window.history.replaceState(null, '', newUrl);
+  }, [page, selectedState, selectedCity, searchTerm]);
 
   const { showSnackbar } = useSnackbarStore();
   const { fetchProfile } = useUserStore();

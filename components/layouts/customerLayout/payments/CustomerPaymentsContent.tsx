@@ -62,7 +62,9 @@ export default function CustomerPaymentsContent() {
   };
 
   const handleDownloadInvoice = async (row: any) => {
-    const isProductPayment = row.paymentType === 'PRODUCT_PAYMENT' || !row.bookingId;
+    const isProductPayment =
+      row.paymentType === 'PRODUCT_PAYMENT' ||
+      (!row.bookingId && !row.booking_id && !row.booking?.id);
     const downloadId = row.id;
 
     try {
@@ -72,13 +74,25 @@ export default function CustomerPaymentsContent() {
       let blobData;
       let filename = `Invoice_P-${row.id}.pdf`;
 
-      if (isProductPayment) {
-        const orderId = row.orderId || row.id;
-        blobData = await downloadOrderInvoiceAPI(orderId);
-        filename = `Invoice_Order_${orderId}.pdf`;
+      const targetOrderId = row.orderId || row.order_id || row.order?.id || row.order?.rawId;
+      const targetBookingId = row.bookingId || row.booking_id || row.booking?.id;
+
+      if (isProductPayment && targetOrderId) {
+        const cleanOrderId = String(targetOrderId).replace(/[^0-9]/g, '');
+        blobData = await downloadOrderInvoiceAPI(cleanOrderId || targetOrderId);
+        filename = `Invoice_Order_${cleanOrderId || targetOrderId}.pdf`;
+      } else if (!isProductPayment && targetBookingId) {
+        const cleanBookingId = String(targetBookingId).replace(/[^0-9]/g, '');
+        blobData = await downloadInvoiceAPI(cleanBookingId || targetBookingId);
+        filename = `Invoice_Booking_${cleanBookingId || targetBookingId}.pdf`;
       } else {
-        blobData = await downloadInvoiceAPI(row.bookingId);
-        filename = `Invoice_Booking_B-${row.bookingId}.pdf`;
+        const cleanId = String(row.id).replace(/[^0-9]/g, '');
+        try {
+          blobData = await downloadOrderInvoiceAPI(cleanId || row.id);
+        } catch (e) {
+          blobData = await downloadInvoiceAPI(cleanId || row.id);
+        }
+        filename = `Invoice_P-${row.id}.pdf`;
       }
 
       const url = window.URL.createObjectURL(new Blob([blobData], { type: 'application/pdf' }));

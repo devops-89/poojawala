@@ -90,6 +90,18 @@ export default function ProductHeaderCard({
                 borderRadius: "8px",
               }}
             />
+            {product.category?.name && (
+              <Chip
+                label={product.category.name}
+                sx={{
+                  bgcolor: "#e0f2fe",
+                  color: "#0369a1",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                }}
+              />
+            )}
           </Box>
           <Typography
             variant="h3"

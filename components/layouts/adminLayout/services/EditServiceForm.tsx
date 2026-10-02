@@ -33,6 +33,8 @@ import ServiceLanguagesFields from "./ServiceLanguagesFields";
 import ServicePlansTabConfig from "./ServicePlansTabConfig";
 import ServicePricingFields from "./ServicePricingFields";
 
+import { convertImageToWebP } from "@/utils/imageHelper";
+
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Service name is required"),
   categoryId: Yup.string().required("Category is required"),
@@ -93,11 +95,12 @@ export default function EditServiceForm() {
   const [isLoading, setIsLoading] = useState(true);
   const [originalValues, setOriginalValues] = useState<any>(null);
 
-  const handleIconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIconChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setIconFile(file);
-      setIconPreview(URL.createObjectURL(file));
+      const webpFile = await convertImageToWebP(file);
+      setIconFile(webpFile);
+      setIconPreview(URL.createObjectURL(webpFile));
     }
   };
 

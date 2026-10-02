@@ -11,21 +11,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   React.useEffect(() => {
-    if (pathname !== '/admin') {
-      const userStr = sessionStorage.getItem('user');
-      let isAuthorized = false;
-      
-      if (userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
-            isAuthorized = true;
-          }
-        } catch (e) {}
-      }
+    const userStr = sessionStorage.getItem('user');
+    let isAuthorized = false;
 
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || user.role === 'SUPERADMIN') {
+          isAuthorized = true;
+        }
+      } catch (e) {}
+    }
+
+    if (pathname === '/admin') {
+      if (isAuthorized) {
+        router.replace('/admin/dashboard');
+      }
+    } else {
       if (!isAuthorized) {
-        router.push('/admin');
+        router.replace('/admin');
+      } else {
+        // Prevent back button from going back to login page
+        window.history.pushState(null, '', window.location.href);
+        const handlePopState = () => {
+          window.history.pushState(null, '', window.location.href);
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => {
+          window.removeEventListener('popstate', handlePopState);
+        };
       }
     }
   }, [pathname, router]);

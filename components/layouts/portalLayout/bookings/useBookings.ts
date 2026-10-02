@@ -18,6 +18,7 @@ import { getPaymentLinkAPI } from "@/api/paymentControllers";
 import { useLoaderStore } from "@/stores/loaderStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
+import { convertImageToWebP } from "@/utils/imageHelper";
 
 export function useBookings() {
   const { showSnackbar } = useSnackbarStore();
@@ -126,9 +127,10 @@ export function useBookings() {
       formData.append("category", complaintCategory);
       formData.append("subject", complaintSubject);
       formData.append("description", complaintDescription);
-      complaintFiles.forEach((file) => {
-        formData.append("evidence", file);
-      });
+      for (const file of complaintFiles) {
+        const webpFile = await convertImageToWebP(file);
+        formData.append("evidence", webpFile);
+      }
 
       await addComplaintAPI(formData);
       showSnackbar("Complaint created successfully", "success");
@@ -154,11 +156,12 @@ export function useBookings() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setProofFile(file);
-      setProofPreview(URL.createObjectURL(file));
+      const webpFile = await convertImageToWebP(file);
+      setProofFile(webpFile);
+      setProofPreview(URL.createObjectURL(webpFile));
     }
   };
 
@@ -166,8 +169,9 @@ export function useBookings() {
     if (!proofJobId || !proofFile) return;
     setIsUploadingProof(true);
     try {
+      const webpFile = await convertImageToWebP(proofFile);
       const formData = new FormData();
-      formData.append("files", proofFile);
+      formData.append("files", webpFile);
       await uploadCompletionProofAPI(proofJobId, formData);
       showSnackbar("Completion proof uploaded successfully", "success");
       setProofFile(null);

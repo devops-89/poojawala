@@ -4,6 +4,7 @@ import { customerCreateBookingAPI } from "@/api/bookingControllers";
 import { getCustomerAddressesAPI } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
+import AddIcon from "@mui/icons-material/Add";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
@@ -24,6 +25,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import AddAddressModal from "@/components/widgets/AddAddressModal";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -116,6 +118,39 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
   const [selectedPlan, setSelectedPlan] = useState<string>("basic");
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<number | string>("");
+  const [addressModalOpen, setAddressModalOpen] = useState(false);
+
+  const handleAddressAdded = async (newAddrResponse?: any) => {
+    let addrList: any[] = [];
+    try {
+      const res = await getCustomerAddressesAPI();
+      if (res?.data?.data && Array.isArray(res.data.data)) addrList = res.data.data;
+      else if (res?.data && Array.isArray(res.data)) addrList = res.data;
+      else if (Array.isArray(res)) addrList = res;
+    } catch (e) {
+      console.error("Failed to fetch customer addresses after add:", e);
+    }
+
+    if (addrList.length === 0) {
+      await fetchProfile(true);
+      const userObj = profile?.data || profile;
+      if (userObj?.addresses && Array.isArray(userObj.addresses)) {
+        addrList = userObj.addresses;
+      }
+    }
+
+    setAddresses(addrList);
+
+    const createdId = newAddrResponse?.id || newAddrResponse?.data?.id;
+    if (createdId) {
+      setSelectedAddressId(createdId);
+    } else if (addrList.length > 0) {
+      const sorted = [...addrList].sort((a: any, b: any) => (Number(b.id) || 0) - (Number(a.id) || 0));
+      if (sorted[0]?.id) {
+        setSelectedAddressId(sorted[0].id);
+      }
+    }
+  };
 
   const [bookingForm, setBookingForm] = useState({
     scheduledDate: "",
@@ -623,82 +658,195 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               </Grid>
             </Grid>
 
-            {/* Row 3: Customer Address (Select Address) */}
-            {addresses.length > 0 && (
-              <FormControl fullWidth sx={{ bgcolor: "#FFFBF7", borderRadius: "10px" }}>
-                <InputLabel
-                  id="customer-address-label"
-                  sx={{
-                    fontFamily: '"DM Sans", sans-serif',
-                    color: "#64534A",
-                  }}
-                >
-                  Select Delivery / Pooja Address
-                </InputLabel>
-                <Select
-                  labelId="customer-address-label"
-                  label="Select Delivery / Pooja Address"
-                  value={selectedAddressId}
-                  onChange={(e) => setSelectedAddressId(e.target.value)}
-                  MenuProps={{
-                    slotProps: {
-                      paper: {
-                        sx: {
-                          maxHeight: 320,
-                          maxWidth: { xs: "90vw", sm: "600px" },
-                          borderRadius: "14px",
-                          boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+            {/* Row 3: Customer Address (Select Address & Add Address) */}
+            <Box sx={{ width: "100%" }}>
+              {addresses.length > 0 ? (
+                <Box sx={{ width: "100%" }}>
+                  {/* Top Right Responsive Add Address Button */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      mb: 1,
+                      width: "100%",
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      variant="contained"
+                      onClick={() => setAddressModalOpen(true)}
+                      startIcon={<AddIcon sx={{ fontSize: { xs: "16px", sm: "18px" } }} />}
+                      sx={{
+                        bgcolor: "#FF6200",
+                        color: "#ffffff",
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontWeight: 700,
+                        fontSize: { xs: "12px", sm: "13px" },
+                        textTransform: "none",
+                        px: { xs: 1.8, sm: 2.2 },
+                        py: { xs: 0.6, sm: 0.8 },
+                        borderRadius: "8px",
+                        boxShadow: "none",
+                        whiteSpace: "nowrap",
+                        "&:hover": {
+                          bgcolor: "#ea580c",
+                          boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
                         },
-                      },
-                    },
-                  }}
-                  sx={{
-                    borderRadius: "10px",
-                    fontFamily: '"DM Sans", sans-serif',
-                    "& .MuiSelect-select": {
-                      whiteSpace: "normal",
-                      wordBreak: "break-word",
-                      py: 1.5,
-                      lineHeight: 1.4,
-                    },
-                  }}
-                >
-                  {addresses.map((addr: any) => {
-                    const labelPrefix = addr.addressLabel ? `${addr.addressLabel}: ` : "";
-                    const displayAddress =
-                      addr.fullAddress ||
-                      [addr.addressLine1 || addr.street, addr.city, addr.state, addr.pincode || addr.postalCode]
-                        .filter(Boolean)
-                        .join(", ");
-                    const isDef =
-                      addr.isDefault === true ||
-                      String(addr.isDefault).toLowerCase() === "true" ||
-                      addr.isdefault === true ||
-                      addr.is_default === true;
+                      }}
+                    >
+                      Add Address
+                    </Button>
+                  </Box>
 
-                    return (
-                      <MenuItem
-                        key={addr.id}
-                        value={addr.id}
-                        sx={{
+                  {/* Full Width Select Dropdown */}
+                  <FormControl fullWidth sx={{ bgcolor: "#FFFBF7", borderRadius: "10px" }}>
+                    <InputLabel
+                      id="customer-address-label"
+                      sx={{
+                        fontFamily: '"DM Sans", sans-serif',
+                        color: "#64534A",
+                      }}
+                    >
+                      Select Delivery / Pooja Address
+                    </InputLabel>
+                    <Select
+                      labelId="customer-address-label"
+                      label="Select Delivery / Pooja Address"
+                      value={selectedAddressId}
+                      onChange={(e) => {
+                        if (e.target.value === "ADD_NEW") {
+                          setAddressModalOpen(true);
+                        } else {
+                          setSelectedAddressId(e.target.value);
+                        }
+                      }}
+                      MenuProps={{
+                        slotProps: {
+                          paper: {
+                            sx: {
+                              maxHeight: 320,
+                              maxWidth: { xs: "90vw", sm: "600px" },
+                              borderRadius: "14px",
+                              boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+                            },
+                          },
+                        },
+                      }}
+                      sx={{
+                        borderRadius: "10px",
+                        fontFamily: '"DM Sans", sans-serif',
+                        "& .MuiSelect-select": {
                           whiteSpace: "normal",
                           wordBreak: "break-word",
+                          py: 1.5,
+                          lineHeight: 1.4,
+                        },
+                      }}
+                    >
+                      {addresses.map((addr: any) => {
+                        const labelPrefix = addr.addressLabel ? `${addr.addressLabel}: ` : "";
+                        const displayAddress =
+                          addr.fullAddress ||
+                          [addr.addressLine1 || addr.street, addr.city, addr.state, addr.pincode || addr.postalCode]
+                            .filter(Boolean)
+                            .join(", ");
+                        const isDef =
+                          addr.isDefault === true ||
+                          String(addr.isDefault).toLowerCase() === "true" ||
+                          addr.isdefault === true ||
+                          addr.is_default === true;
+
+                        return (
+                          <MenuItem
+                            key={addr.id}
+                            value={addr.id}
+                            sx={{
+                              whiteSpace: "normal",
+                              wordBreak: "break-word",
+                              py: 1.5,
+                              px: 2,
+                              fontFamily: '"DM Sans", sans-serif',
+                              fontSize: "14px",
+                              lineHeight: 1.5,
+                              borderBottom: "1px solid #F5ECE3",
+                              "&:last-child": { borderBottom: "none" },
+                            }}
+                          >
+                            {labelPrefix}{displayAddress}{isDef ? " (Default)" : ""}
+                          </MenuItem>
+                        );
+                      })}
+                      <MenuItem
+                        value="ADD_NEW"
+                        sx={{
                           py: 1.5,
                           px: 2,
                           fontFamily: '"DM Sans", sans-serif',
                           fontSize: "14px",
-                          lineHeight: 1.5,
-                          borderBottom: "1px solid #F5ECE3",
-                          "&:last-child": { borderBottom: "none" },
+                          fontWeight: 700,
+                          color: "#FF6200",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          borderTop: "1px dashed #FF6200",
+                          bgcolor: "#FFF8F2",
+                          "&:hover": { bgcolor: "#FFEFE2" },
                         }}
                       >
-                        {labelPrefix}{displayAddress}{isDef ? " (Default)" : ""}
+                        <AddIcon sx={{ fontSize: "18px", color: "#FF6200" }} />
+                        + Add New Address
                       </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            )}
+                    </Select>
+                  </FormControl>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: "10px",
+                    border: "1px dashed #FF6200",
+                    bgcolor: "#FFFBF7",
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
+                    justifyContent: "space-between",
+                    gap: 1.5,
+                  }}
+                >
+                  <Box>
+                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: "14px", color: "#2C1810" }}>
+                      No Saved Address Found
+                    </Typography>
+                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: "13px", color: "#64534A" }}>
+                      Please add a delivery / pooja address to complete your booking.
+                    </Typography>
+                  </Box>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    onClick={() => setAddressModalOpen(true)}
+                    startIcon={<AddIcon />}
+                    sx={{
+                      bgcolor: "#FF6200 !important",
+                      color: "white !important",
+                      fontFamily: '"DM Sans", sans-serif',
+                      fontWeight: 700,
+                      fontSize: "13px",
+                      textTransform: "none",
+                      borderRadius: "8px",
+                      boxShadow: "none",
+                      px: 2,
+                      py: 0.8,
+                      whiteSpace: "nowrap",
+                      "&:hover": { bgcolor: "#ea580c !important" },
+                    }}
+                  >
+                    + Add Address
+                  </Button>
+                </Box>
+              )}
+            </Box>
 
             {/* Row 4: Payment Option (Radio buttons: TOKEN vs FULL) */}
             {(() => {
@@ -847,6 +995,13 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           </Box>
         </Grid>
       </Grid>
+
+      {/* REUSABLE ADD ADDRESS MODAL */}
+      <AddAddressModal
+        open={addressModalOpen}
+        onClose={() => setAddressModalOpen(false)}
+        onSuccess={handleAddressAdded}
+      />
     </Paper>
   );
 }

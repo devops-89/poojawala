@@ -11,7 +11,7 @@ import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 
 const emailTldRegex =
@@ -66,6 +66,23 @@ export default function SignUpContent() {
 
   const router = useRouter();
   const { showSnackbar } = useSnackbarStore();
+
+  useEffect(() => {
+    const userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        const role = userObj?.role;
+        if (role === "CUSTOMER") {
+          router.replace("/customer/dashboard");
+        } else if (role === "PUROHIT") {
+          router.replace("/purohit/dashboard");
+        } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+          router.replace("/admin/dashboard");
+        }
+      } catch (e) {}
+    }
+  }, [router]);
 
   const handleFetchCurrentLocation = (setFieldValue: any) => {
     if (!navigator.geolocation) {
@@ -242,7 +259,7 @@ export default function SignUpContent() {
                           JSON.stringify(values)
                         );
                         showSnackbar("OTP sent successfully!", "success");
-                        router.push("/verify-otp");
+                        router.replace("/verify-otp");
                       } else {
                         showSnackbar(
                           res.message || "Failed to send OTP",

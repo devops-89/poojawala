@@ -25,6 +25,8 @@ import ProductBasicFields from "./widgets/ProductBasicFields";
 import ProductDescriptionField from "./widgets/ProductDescriptionField";
 import ProductImageUpload from "./widgets/ProductImageUpload";
 
+import { convertImageToWebP } from "@/utils/imageHelper";
+
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Product name is required"),
   description: Yup.string().required("Description is required"),
@@ -35,6 +37,7 @@ const validationSchema = Yup.object().shape({
   quantity: Yup.number()
     .required("Quantity is required")
     .min(0, "Cannot be negative"),
+  categoryId: Yup.mixed().nullable(),
 });
 
 export interface ProductFormValues {
@@ -43,6 +46,7 @@ export interface ProductFormValues {
   price: string | number;
   pricingUnit: string;
   quantity: string | number;
+  categoryId?: string | number;
 }
 
 interface ProductFormProps {
@@ -61,6 +65,7 @@ export default function ProductForm({
     price: "",
     pricingUnit: PRODUCT_PRICING_UNIT.PIECE,
     quantity: "",
+    categoryId: "",
   },
   existingImageUrl = null,
   onSubmit,
@@ -87,6 +92,9 @@ export default function ProductForm({
         formData.append("price", String(values.price));
         formData.append("pricingUnit", values.pricingUnit);
         formData.append("quantity", String(values.quantity ?? 0));
+        if (values.categoryId) {
+          formData.append("categoryId", String(values.categoryId));
+        }
         formData.append("isActive", "true");
         if (imageFile) {
           formData.append("image", imageFile);
@@ -98,11 +106,12 @@ export default function ProductForm({
     },
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      const webpFile = await convertImageToWebP(file);
+      setImageFile(webpFile);
+      setImagePreview(URL.createObjectURL(webpFile));
     }
   };
 

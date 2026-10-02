@@ -20,7 +20,7 @@ import {
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
@@ -36,6 +36,27 @@ export default function SignInContent() {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        const role = userObj?.role;
+        if (role === "CUSTOMER") {
+          router.replace("/customer/dashboard");
+        } else if (role === "PUROHIT") {
+          if (userObj?.isAdminCreated || userObj?.is_admin_created) {
+            router.replace("/purohit/register?step=2");
+          } else {
+            router.replace("/purohit/dashboard");
+          }
+        } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+          router.replace("/admin/dashboard");
+        }
+      } catch (e) {}
+    }
+  }, [router]);
 
   return (
     <Box
@@ -196,20 +217,20 @@ export default function SignInContent() {
                         setTimeout(() => {
                           const role = userObj?.role || response?.user?.role;
                           if (role === "CUSTOMER") {
-                            router.push("/customer/dashboard");
+                            router.replace("/customer/dashboard");
                           } else if (role === "PUROHIT") {
                             if (
                               userObj?.isAdminCreated ||
                               userObj?.is_admin_created
                             ) {
-                              router.push("/purohit/register?step=2");
+                              router.replace("/purohit/register?step=2");
                             } else {
-                              router.push("/purohit/dashboard");
+                              router.replace("/purohit/dashboard");
                             }
-                          } else if (role === "ADMIN" || role === "SUPERADMIN") {
-                            router.push("/admin/dashboard");
+                          } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+                            router.replace("/admin/dashboard");
                           } else {
-                            router.push("/");
+                            router.replace("/");
                           }
                         }, 1000);
                       }

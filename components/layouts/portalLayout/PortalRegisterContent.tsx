@@ -7,6 +7,7 @@ import {
   verifyOtpAPI,
 } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { convertImageToWebP } from "@/utils/imageHelper";
 import {
   Box,
   Button,
@@ -231,16 +232,25 @@ export default function PortalRegisterContent() {
           }
 
           if (values.documents.identityDoc)
-            fd.append("aadhaarDoc", values.documents.identityDoc);
+            fd.append(
+              "aadhaarDoc",
+              await convertImageToWebP(values.documents.identityDoc),
+            );
           if (values.documents.certificate)
-            fd.append("certificate", values.documents.certificate);
+            fd.append(
+              "certificate",
+              await convertImageToWebP(values.documents.certificate),
+            );
           if (values.documents.templeAffiliationProof)
             fd.append(
               "templeAffiliationProof",
-              values.documents.templeAffiliationProof,
+              await convertImageToWebP(values.documents.templeAffiliationProof),
             );
           if (values.documents.profilePhoto)
-            fd.append("profileImage", values.documents.profilePhoto);
+            fd.append(
+              "profileImage",
+              await convertImageToWebP(values.documents.profilePhoto),
+            );
 
           const sa = values.serviceArea || {};
           const serviceAreaObj = {
@@ -286,7 +296,7 @@ export default function PortalRegisterContent() {
               console.error("Failed to remove draft", e);
             }
             showSnackbar("Registration successful!", "success");
-            router.push("/purohit/dashboard");
+            router.replace("/purohit/dashboard");
           }
         } catch (error: any) {
           const errorMsg = error.response?.data?.message;
@@ -306,6 +316,17 @@ export default function PortalRegisterContent() {
 
   // Restore draft state from sessionStorage on mount (cleared when tab is closed)
   useEffect(() => {
+    const userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        if (userObj.role === "PUROHIT" && !(userObj.isAdminCreated || userObj.is_admin_created)) {
+          router.replace("/purohit/dashboard");
+          return;
+        }
+      } catch (e) {}
+    }
+
     try {
       localStorage.removeItem(DRAFT_STORAGE_KEY);
 

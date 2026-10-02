@@ -1,5 +1,6 @@
 "use client";
 
+import CategoryIcon from "@mui/icons-material/Category";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import DescriptionIcon from "@mui/icons-material/Description";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -14,6 +15,7 @@ export interface ProductInfoCardProps {
 export default function ProductInfoCard({ product }: ProductInfoCardProps) {
   const price = product.price ?? product.minPrice ?? 0;
   const pricingUnit = product.pricingUnit || "N/A";
+  const categoryName = product.category?.name || "N/A";
 
   return (
     <Paper
@@ -34,6 +36,48 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
           flexWrap: { xs: "wrap", sm: "nowrap" },
         }}
       >
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            p: 2.5,
+            bgcolor: "#f8fafc",
+            borderRadius: "16px",
+            border: "1px solid #f1f5f9",
+          }}
+        >
+          <Box
+            sx={{
+              p: 1.5,
+              bgcolor: "#FFF0E6",
+              borderRadius: "12px",
+              color: "#FF6200",
+              display: "flex",
+            }}
+          >
+            <CategoryIcon />
+          </Box>
+          <Box>
+            <Typography
+              sx={{ color: "#64748b", fontWeight: 600, fontSize: "0.85rem" }}
+            >
+              Category
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 800,
+                color: "#1e293b",
+                fontSize: "1.1rem",
+                fontFamily: "var(--font-outfit), sans-serif",
+              }}
+            >
+              {categoryName}
+            </Typography>
+          </Box>
+        </Box>
+
         <Box
           sx={{
             flex: 1,

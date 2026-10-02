@@ -25,7 +25,8 @@ export const ServicesPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("All Categories");
   const [userDefaultCity, setUserDefaultCity] = useState<string>("");
   const [userDefaultState, setUserDefaultState] = useState<string>("");
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -58,11 +59,17 @@ export const ServicesPage = () => {
     const urlState = searchParams.get("state");
     const urlCity = searchParams.get("city");
     const urlSearch = searchParams.get("search");
+    const urlCategoryId = searchParams.get("categoryId");
+    const urlCategory = searchParams.get("category");
+    const urlPage = searchParams.get("page");
 
-    if (urlState || urlCity || urlSearch) {
+    if (urlState || urlCity || urlSearch || urlCategoryId || urlCategory || urlPage) {
       if (urlState) setSelectedState(urlState);
       if (urlCity) setSelectedCity(urlCity);
       if (urlSearch) setSearchTerm(urlSearch);
+      if (urlCategoryId) setSelectedCategoryId(urlCategoryId);
+      if (urlCategory) setSelectedCategoryName(urlCategory);
+      if (urlPage && !isNaN(Number(urlPage))) setPage(Number(urlPage));
       setIsInitialized(true);
       return;
     }
@@ -234,6 +241,32 @@ export const ServicesPage = () => {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
+  // Sync current filter state and page number to URL search parameters
+  useEffect(() => {
+    if (!isInitialized) return;
+    const params = new URLSearchParams();
+    if (page > 1) params.set("page", String(page));
+    if (selectedState && selectedState !== "All" && selectedState !== "All States") {
+      params.set("state", selectedState);
+    }
+    if (selectedCity && selectedCity !== "All" && selectedCity !== "All Cities") {
+      params.set("city", selectedCity);
+    }
+    if (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories") {
+      params.set("categoryId", selectedCategoryId);
+    }
+    if (selectedCategoryName && selectedCategoryName !== "All Categories") {
+      params.set("category", selectedCategoryName);
+    }
+    if (searchTerm) {
+      params.set("search", searchTerm);
+    }
+
+    const queryStr = params.toString();
+    const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
+    window.history.replaceState(null, "", newUrl);
+  }, [page, selectedState, selectedCity, selectedCategoryId, selectedCategoryName, searchTerm, isInitialized]);
+
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -241,9 +274,14 @@ export const ServicesPage = () => {
       setLoading(true);
       try {
         const cityParam =
-          selectedCity && selectedCity !== "All" ? selectedCity : undefined;
+          selectedCity && selectedCity !== "All" && selectedCity !== "All Cities" ? selectedCity : undefined;
         const stateParam =
-          selectedState && selectedState !== "All" ? selectedState : undefined;
+          selectedState && selectedState !== "All" && selectedState !== "All States" ? selectedState : undefined;
+        const catIdParam =
+          selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories"
+            ? selectedCategoryId
+            : undefined;
+
         const res = await getAllServicesAPI(
           page,
           6,
@@ -251,6 +289,7 @@ export const ServicesPage = () => {
           true,
           cityParam,
           stateParam,
+          catIdParam
         );
         let rawList: any[] = [];
         if (res.success) {
@@ -289,7 +328,7 @@ export const ServicesPage = () => {
       }
     };
     fetchServices();
-  }, [page, debouncedSearch, selectedCity, selectedState, isInitialized]);
+  }, [page, debouncedSearch, selectedCity, selectedState, selectedCategoryId, isInitialized]);
 
   // All Indian States from country-state-city
   const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
@@ -315,21 +354,24 @@ export const ServicesPage = () => {
     return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
   }, [selectedStateObj]);
 
-  // Secondary safety filter on services by selected state and city
+  // Secondary safety filter on services by selected state, city & category
   const filteredServices = services.filter((service: any) => {
+    const matchCategory =
+      !selectedCategoryId ||
+      selectedCategoryId === "All" ||
+      selectedCategoryId === "" ||
+      String(service.categoryId || service.category?.id || "") === String(selectedCategoryId) ||
+      (selectedCategoryName && selectedCategoryName !== "All Categories" && (
+        service.category?.name?.toLowerCase().trim() === selectedCategoryName.toLowerCase().trim() ||
+        (typeof service.category === "string" && service.category.toLowerCase().trim() === selectedCategoryName.toLowerCase().trim())
+      ));
+
     if (
       !service.cities ||
       !Array.isArray(service.cities) ||
       service.cities.length === 0
     )
-      return true;
-
-    const matchCategory =
-      !selectedCategory ||
-      selectedCategory === "All" ||
-      selectedCategory === "All Categories" ||
-      service.category?.name?.toLowerCase().trim() === selectedCategory.toLowerCase().trim() ||
-      (typeof service.category === "string" && service.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim());
+      return matchCategory;
 
     const matchCity =
       !selectedCity ||
@@ -359,9 +401,10 @@ export const ServicesPage = () => {
           setSelectedCity("All");
           setPage(1);
         }}
-        selectedCategory={selectedCategory}
-        onCategoryChange={(val) => {
-          setSelectedCategory(val);
+        selectedCategory={selectedCategoryName || selectedCategoryId}
+        onCategoryChange={(catId, catName) => {
+          setSelectedCategoryId(catId);
+          setSelectedCategoryName(catName);
           setPage(1);
         }}
         cityOptions={cityOptions}
