@@ -35,7 +35,7 @@ export default function ServiceCard({
 
   const handleBookNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-    handleCardClick();
+    router.push('/sign-up?from=book-now');
   };
 
   const formattedPrice = (() => {

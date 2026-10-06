@@ -14,14 +14,16 @@ export const getAllProductsAPI = async (
   limit: number = 10,
   search: string = "",
   category?: string,
-  isActive?: boolean | string
+  isActive?: boolean | string,
+  categoryId?: string | number
 ) => {
   try {
     const params = new URLSearchParams();
     if (page) params.append('page', String(page));
     if (limit) params.append('limit', String(limit));
     if (search) params.append('search', search);
-    if (category) params.append('category', category);
+    const catId = categoryId || category;
+    if (catId) params.append('categoryId', String(catId));
     if (isActive !== undefined && isActive !== null && isActive !== '') {
       params.append('isActive', String(isActive));
     }
@@ -34,7 +36,8 @@ export const getAllProductsAPI = async (
       if (page) params.append('page', String(page));
       if (limit) params.append('limit', String(limit));
       if (search) params.append('search', search);
-      if (category) params.append('category', category);
+      const catId = categoryId || category;
+      if (catId) params.append('categoryId', String(catId));
       if (isActive !== undefined && isActive !== null && isActive !== '') {
         params.append('isActive', String(isActive));
       }

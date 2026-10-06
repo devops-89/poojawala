@@ -344,7 +344,6 @@ export default function CustomerHeader() {
 
           {/* Notifications Menu */}
           <Menu
-            disableScrollLock
             anchorEl={notifAnchorEl}
             open={Boolean(notifAnchorEl)}
             onClose={handleCloseNotif}
@@ -434,7 +433,6 @@ export default function CustomerHeader() {
 
           {/* User Profile Menu */}
           <Menu
-            disableScrollLock
             anchorEl={userMenuAnchorEl}
             open={Boolean(userMenuAnchorEl)}
             onClose={handleCloseUserMenu}

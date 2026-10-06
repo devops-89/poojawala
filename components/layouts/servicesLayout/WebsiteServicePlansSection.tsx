@@ -70,7 +70,7 @@ export default function WebsiteServicePlansSection({
 
   const handleBookPlan = (planName: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    router.push(`/sign-in?serviceId=${service?.id}&plan=${planName}`);
+    router.push(`/sign-up?from=book-now&serviceId=${service?.id}&plan=${planName}`);
   };
 
   // If no plans exist in API, don't render section

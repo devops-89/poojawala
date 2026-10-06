@@ -1,17 +1,17 @@
 "use client";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import { Box, Button, Typography } from "@mui/material";
 import Link from "next/link";
-import React from "react";
-import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 
 export default function SignUpBrandingSide() {
   return (
     <Box
       sx={{
         flex: 0.9,
-        background: "linear-gradient(145deg, #1E0C06 0%, #3D1405 55%, #FF6200 100%)",
+        background:
+          "linear-gradient(145deg, #1E0C06 0%, #3D1405 55%, #FF6200 100%)",
         p: { xs: 3, md: 4.5 },
         display: "flex",
         flexDirection: "column",
@@ -31,7 +31,8 @@ export default function SignUpBrandingSide() {
           width: "250px",
           height: "250px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,145,0,0.25) 0%, rgba(255,98,0,0) 70%)",
+          background:
+            "radial-gradient(circle, rgba(255,145,0,0.25) 0%, rgba(255,98,0,0) 70%)",
           pointerEvents: "none",
         }}
       />
@@ -130,7 +131,8 @@ export default function SignUpBrandingSide() {
             mb: 3.5,
           }}
         >
-          Create an account to book authentic Pujas, track upcoming Anushthans, and consult with verified Pandits seamlessly.
+          Create an account to book authentic Pooja, track upcoming Anushthans,
+          and consult with verified Pandits seamlessly.
         </Typography>
 
         {/* Feature Highlights */}
@@ -140,8 +142,13 @@ export default function SignUpBrandingSide() {
             "Live & Instant Pooja Status Updates",
             "100% Sacred, Transparent & Secure",
           ].map((item, idx) => (
-            <Box key={idx} sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
-              <CheckCircleOutlinedIcon sx={{ color: "#FF9100", fontSize: 18 }} />
+            <Box
+              key={idx}
+              sx={{ display: "flex", alignItems: "center", gap: 1.25 }}
+            >
+              <CheckCircleOutlinedIcon
+                sx={{ color: "#FF9100", fontSize: 18 }}
+              />
               <Typography
                 sx={{
                   fontFamily: "var(--font-outfit), sans-serif",

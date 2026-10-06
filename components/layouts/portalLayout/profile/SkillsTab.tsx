@@ -22,6 +22,8 @@ import {
 interface SkillsTabProps {
   city: string;
   setCity: (val: string) => void;
+  state: string;
+  setState: (val: string) => void;
   qualification: string;
   setQualification: (val: string) => void;
   experienceYears: string;
@@ -43,6 +45,8 @@ interface SkillsTabProps {
 export const SkillsTab: React.FC<SkillsTabProps> = ({
   city,
   setCity,
+  state,
+  setState,
   qualification,
   setQualification,
   experienceYears,
@@ -73,6 +77,15 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
         Skills & Expertise
       </Typography>
       <Grid container spacing={3}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField
+            fullWidth
+            label="State"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            placeholder="e.g. Uttar Pradesh, Maharashtra"
+          />
+        </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth

@@ -185,7 +185,7 @@ export default function ServicesLayout() {
               <Button
                 className="book-now"
                 variant="contained"
-                href="#services-filters"
+                href="/sign-up?from=book-now"
                 sx={{
                   background: "#FF6200",
                   border: "2px solid #FF6200",

@@ -270,7 +270,7 @@ export default function UpcomingFestivals() {
                   </Typography>
                   <Button
                     variant="contained"
-                    onClick={() => router.push("/sign-in")}
+                    onClick={() => router.push("/sign-up?from=book-now")}
                     sx={{
                       background: "#FF6200",
                       color: "#FFFFFF",

@@ -54,7 +54,7 @@ export default function WebsiteServiceDetailsContent() {
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     } else {
-      router.push("/sign-in");
+      router.push("/sign-up?from=book-now");
     }
   };
 

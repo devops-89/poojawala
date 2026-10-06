@@ -168,7 +168,7 @@ export default function PurohitsLayout() {
               <Button
                 className="book-now"
                 variant="contained"
-                href="/purohits#top-purohits"
+                href="/sign-up?from=book-now"
                 sx={{
                   background: "#FF6200",
                   border: "2px solid #FF6200",

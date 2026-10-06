@@ -38,6 +38,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
     { name: "Purohits", href: "/purohits" },
+    { name: "Blogs", href: "/blogs" },
     { name: "Contact Us", href: "/contact" },
   ];
 

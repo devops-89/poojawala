@@ -36,7 +36,7 @@ interface AddressModalProps {
     serviceRadiusKm: number;
   };
   setAddressForm: React.Dispatch<React.SetStateAction<any>>;
-  onSaveAddress: () => void;
+  onSaveAddress: (updatedData?: any) => void;
   savingAddress: boolean;
   onFetchCurrentLocation: () => void;
   isFetchingLocation: boolean;
@@ -276,8 +276,8 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         </Button>
         <Button
           onClick={() => {
-            setAddressForm((prev: any) => ({
-              ...prev,
+            const updatedForm = {
+              ...addressForm,
               addressLabel: addressData.addressLabel,
               fullAddress: addressData.fullAddress,
               city: addressData.city,
@@ -286,8 +286,9 @@ export const AddressModal: React.FC<AddressModalProps> = ({
               latitude: addressData.latitude,
               longitude: addressData.longitude,
               isDefault: addressData.isDefault,
-            }));
-            onSaveAddress();
+            };
+            setAddressForm(updatedForm);
+            onSaveAddress(updatedForm);
           }}
           disabled={savingAddress}
           sx={{

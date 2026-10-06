@@ -38,12 +38,26 @@ export function useProfile() {
   const [birthPlace, setBirthPlace] = useState("");
   const [bio, setBio] = useState("");
   const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [languages, setLanguages] = useState<string[]>([]);
   const [specializations, setSpecializations] = useState<string[]>([]);
   const [qualification, setQualification] = useState("");
   const [experienceYears, setExperienceYears] = useState("");
   const [isOnlineAvailable, setIsOnlineAvailable] = useState(true);
   const [isOfflineAvailable, setIsOfflineAvailable] = useState(false);
+
+  // --- Documents & Registration Info State ---
+  const [aadhaarNumber, setAadhaarNumber] = useState("");
+  const [aadhaarDoc, setAadhaarDoc] = useState<File | null>(null);
+  const [aadhaarDocUrl, setAadhaarDocUrl] = useState<string | null>(null);
+  const [panDoc, setPanDoc] = useState<File | null>(null);
+  const [panDocUrl, setPanDocUrl] = useState<string | null>(null);
+  const [certificateDoc, setCertificateDoc] = useState<File | null>(null);
+  const [certificateUrl, setCertificateUrl] = useState<string | null>(null);
+  const [templeAffiliationProofDoc, setTempleAffiliationProofDoc] = useState<File | null>(null);
+  const [templeAffiliationProofUrl, setTempleAffiliationProofUrl] = useState<string | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
 
   // --- Service Areas State ---
   const [serviceAreas, setServiceAreas] = useState<any[]>([]);
@@ -107,32 +121,40 @@ export function useProfile() {
 
   useEffect(() => {
     if (profile) {
-      if (profile.profile) {
-        const p = profile.profile;
-        setBio(p.bio || "");
-        setCity(p.city || "");
+      const p = profile.profile || profile;
+      setBio(p.bio || profile.bio || "");
+      setCity(p.city || profile.city || "");
+      setState(p.state || profile.state || "");
 
-        const rawLangs = p.languages;
-        const parsedLangs = Array.isArray(rawLangs)
-          ? rawLangs.map((l: any) => String(l).trim()).filter(Boolean)
-          : typeof rawLangs === "string"
-          ? rawLangs.split(",").map((l: string) => l.trim()).filter(Boolean)
-          : [];
-        setLanguages(parsedLangs);
+      const rawLangs = p.languages || profile.languages;
+      const parsedLangs = Array.isArray(rawLangs)
+        ? rawLangs.map((l: any) => String(l).trim()).filter(Boolean)
+        : typeof rawLangs === "string"
+        ? rawLangs.split(",").map((l: string) => l.trim()).filter(Boolean)
+        : [];
+      setLanguages(parsedLangs);
 
-        const rawSpecs = p.specializations || p.specialization;
-        const parsedSpecs = Array.isArray(rawSpecs)
-          ? rawSpecs.map((s: any) => String(s).trim()).filter(Boolean)
-          : typeof rawSpecs === "string"
-          ? rawSpecs.split(",").map((s: string) => s.trim()).filter(Boolean)
-          : [];
-        setSpecializations(parsedSpecs);
+      const rawSpecs = p.specializations || p.specialization || profile.specializations;
+      const parsedSpecs = Array.isArray(rawSpecs)
+        ? rawSpecs.map((s: any) => String(s).trim()).filter(Boolean)
+        : typeof rawSpecs === "string"
+        ? rawSpecs.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [];
+      setSpecializations(parsedSpecs);
 
-        setQualification(p.qualification || "");
-        setExperienceYears(p.experienceYears ? p.experienceYears.toString() : "");
-        setIsOnlineAvailable(p.isOnlineAvailable ?? true);
-        setIsOfflineAvailable(p.isOfflineAvailable ?? false);
-      }
+      setQualification(p.qualification || profile.qualification || "");
+      setExperienceYears((p.experienceYears || profile.experienceYears) ? (p.experienceYears || profile.experienceYears).toString() : "");
+      setIsOnlineAvailable(p.isOnlineAvailable ?? profile.isOnlineAvailable ?? true);
+      setIsOfflineAvailable(p.isOfflineAvailable ?? profile.isOfflineAvailable ?? false);
+
+      setAadhaarNumber(p.aadhaarNumber || profile.aadhaarNumber || "");
+      setAadhaarDocUrl(p.aadhaarDocUrl || profile.aadhaarDocUrl || null);
+      setPanDocUrl(p.panDocUrl || profile.panDocUrl || null);
+      setCertificateUrl(p.certificateUrl || profile.certificateUrl || null);
+      setTempleAffiliationProofUrl(p.templeAffiliationProofUrl || profile.templeAffiliationProofUrl || null);
+      setVerificationStatus(p.verificationStatus || profile.verificationStatus || null);
+      setRejectionReason(p.rejectionReason || profile.rejectionReason || null);
+
       setFirstName(profile.firstName || "");
       setLastName(profile.lastName || "");
       setUsername(profile.username || "");
@@ -183,10 +205,12 @@ export function useProfile() {
       formData.append("birthPlace", birthPlace);
       formData.append("bio", bio);
       formData.append("city", city);
+      formData.append("state", state);
       formData.append("languages", languages.join(","));
       formData.append("specializations", specializations.join(","));
       formData.append("qualification", qualification);
       formData.append("experienceYears", experienceYears);
+      formData.append("aadhaarNumber", aadhaarNumber);
 
       formData.append("isOnlineAvailable", isOnlineAvailable ? "true" : "false");
       formData.append("isOfflineAvailable", isOfflineAvailable ? "true" : "false");
@@ -195,9 +219,30 @@ export function useProfile() {
         const webpImage = await convertImageToWebP(profileImage);
         formData.append("profileImage", webpImage);
       }
+      if (aadhaarDoc) {
+        const webpAadhaar = await convertImageToWebP(aadhaarDoc);
+        formData.append("aadhaarDoc", webpAadhaar);
+      }
+      if (panDoc) {
+        const webpPan = await convertImageToWebP(panDoc);
+        formData.append("panDoc", webpPan);
+      }
+      if (certificateDoc) {
+        const webpCert = await convertImageToWebP(certificateDoc);
+        formData.append("certificate", webpCert);
+      }
+      if (templeAffiliationProofDoc) {
+        const webpProof = await convertImageToWebP(templeAffiliationProofDoc);
+        formData.append("templeAffiliationProof", webpProof);
+      }
 
       await updateProfileAPI(formData);
       showSnackbar("Profile updated successfully!", "success");
+
+      setAadhaarDoc(null);
+      setPanDoc(null);
+      setCertificateDoc(null);
+      setTempleAffiliationProofDoc(null);
 
       setLoading(true);
       await fetchProfile(true);
@@ -210,18 +255,19 @@ export function useProfile() {
     }
   };
 
-  const handleSaveAddress = async () => {
+  const handleSaveAddress = async (overrideData?: any) => {
+    const targetData = overrideData || addressForm;
     const missing = [];
-    if (!addressForm.addressLabel?.trim()) missing.push("Address Label");
-    if (!addressForm.fullAddress?.trim()) missing.push("Full Address");
-    if (!addressForm.city?.trim()) missing.push("City");
-    if (!addressForm.state?.trim()) missing.push("State");
-    if (!addressForm.pincode?.trim()) missing.push("Pincode");
+    if (!targetData.addressLabel?.trim()) missing.push("Address Label");
+    if (!targetData.fullAddress?.trim()) missing.push("Full Address");
+    if (!targetData.city?.trim()) missing.push("City");
+    if (!targetData.state?.trim()) missing.push("State");
+    if (!targetData.pincode?.trim()) missing.push("Pincode");
 
     const finalStreetName =
-      addressForm.streetName?.trim() ||
-      addressForm.addressLabel?.trim() ||
-      addressForm.fullAddress?.split(",")[0]?.trim() ||
+      targetData.streetName?.trim() ||
+      targetData.addressLabel?.trim() ||
+      targetData.fullAddress?.split(",")[0]?.trim() ||
       "Main Area";
 
     if (finalStreetName.length < 2) {
@@ -236,7 +282,7 @@ export function useProfile() {
     setSavingAddress(true);
     try {
       const payload: any = {
-        ...addressForm,
+        ...targetData,
         streetName: finalStreetName,
       };
       if (!payload.latitude || payload.latitude === "0" || String(payload.latitude).trim() === "") delete (payload as any).latitude;
@@ -499,6 +545,7 @@ export function useProfile() {
     birthPlace, setBirthPlace,
     bio, setBio,
     city, setCity,
+    state, setState,
     languages, setLanguages,
     specializations, setSpecializations,
     qualification, setQualification,
@@ -507,6 +554,19 @@ export function useProfile() {
     isOfflineAvailable, setIsOfflineAvailable,
     profileImage, setProfileImage,
     profileImageUrl,
+
+    // Documents & Registration
+    aadhaarNumber, setAadhaarNumber,
+    aadhaarDoc, setAadhaarDoc,
+    aadhaarDocUrl,
+    panDoc, setPanDoc,
+    panDocUrl,
+    certificateDoc, setCertificateDoc,
+    certificateUrl,
+    templeAffiliationProofDoc, setTempleAffiliationProofDoc,
+    templeAffiliationProofUrl,
+    verificationStatus,
+    rejectionReason,
 
     // Service Areas
     serviceAreas,

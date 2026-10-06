@@ -364,7 +364,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                   <Button 
                     variant="contained" 
                     fullWidth
-                    onClick={() => router.push('/sign-in')}
+                    onClick={() => router.push('/sign-up?from=book-now')}
                     sx={{
                       background: '#FF6200',
                       color: 'white',

@@ -10,14 +10,18 @@ import { getMeAPI } from '@/api/authControllers';
 import { getActiveBookingAPI, getPayoutStatsAPI } from '@/api/bookingControllers';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
+import ErrorIcon from '@mui/icons-material/Error';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { Avatar, Card, CardContent, Divider } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardContent() {
+  const router = useRouter();
   const [statsData, setStatsData] = React.useState<any>({
     totalEarnings: 0,
     thisMonthEarnings: 0,
@@ -48,6 +52,17 @@ export default function DashboardContent() {
       }
     }).catch(console.error);
   }, []);
+
+  const verificationStatus =
+    profile?.profile?.verificationStatus ||
+    profile?.verificationStatus ||
+    "";
+  const rejReason =
+    profile?.profile?.rejectionReason ||
+    profile?.rejectionReason ||
+    "";
+  const isRejected =
+    verificationStatus === "REJECTED" || Boolean(rejReason);
 
   const stats = [
     { title: 'Total Earnings', value: `₹ ${statsData.totalEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/purohit/earnings' },
@@ -121,6 +136,107 @@ export default function DashboardContent() {
           }} 
         />
       </Paper>
+
+      {/* Verification Rejection Alert Card */}
+      {isRejected && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            mb: 4,
+            borderRadius: "20px",
+            bgcolor: "#FFF0F0",
+            border: "2px solid #FFD6D6",
+            boxShadow: "0 6px 24px rgba(211, 47, 47, 0.08)",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2.5, flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                bgcolor: "#FFE0E0",
+                color: "#D32F2F",
+                p: 1.5,
+                borderRadius: "14px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ErrorIcon sx={{ fontSize: 32 }} />
+            </Box>
+
+            <Box sx={{ flex: 1, minWidth: 260 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
+                <Typography
+                  sx={{
+                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontWeight: 800,
+                    fontSize: "18px",
+                    color: "#D32F2F",
+                  }}
+                >
+                  Verification Status: REJECTED
+                </Typography>
+                <Chip
+                  label="Action Required"
+                  color="error"
+                  size="small"
+                  sx={{ fontWeight: 700, borderRadius: "20px" }}
+                />
+              </Box>
+
+              {rejReason && (
+                <Typography
+                  sx={{
+                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    color: "#991B1B",
+                    mb: 1,
+                  }}
+                >
+                  Rejection Reason: {rejReason}
+                </Typography>
+              )}
+
+              <Typography
+                sx={{
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontSize: "14px",
+                  color: "#4B5563",
+                  lineHeight: 1.6,
+                  mb: 2,
+                }}
+              >
+                Note: Your profile verification was rejected by Admin. Please update your identity & verification documents in Profile Settings and confirm them so Admin can re-verify your account.
+              </Typography>
+
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  sessionStorage.setItem("profileActiveTab", "documents");
+                  router.push("/purohit/profile/edit");
+                }}
+                startIcon={<EditIcon />}
+                sx={{
+                  borderRadius: "10px",
+                  fontWeight: 700,
+                  textTransform: "none",
+                  px: 3,
+                  py: 1,
+                  boxShadow: "0 4px 14px rgba(211, 47, 47, 0.25)",
+                  "&:hover": {
+                    bgcolor: "#B91C1C",
+                  },
+                }}
+              >
+                Update Documents & Confirm
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
+      )}
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, idx) => (

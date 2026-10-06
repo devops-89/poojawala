@@ -244,7 +244,6 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
         {/* Notifications Dropdown Menu */}
         <Menu
-          disableScrollLock
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleCloseNotif}

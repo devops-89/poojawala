@@ -3,6 +3,7 @@
 import React from "react";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DescriptionIcon from "@mui/icons-material/Description";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PersonIcon from "@mui/icons-material/Person";
 import WorkIcon from "@mui/icons-material/Work";
@@ -24,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { AddressModal } from "./profile/AddressModal";
 import { BankDetailsTab } from "./profile/BankDetailsTab";
 import { BankModal } from "./profile/BankModal";
+import { DocumentsTab } from "./profile/DocumentsTab";
 import { PersonalInfoTab } from "./profile/PersonalInfoTab";
 import { ServiceAreaTab } from "./profile/ServiceAreaTab";
 import { SkillsTab } from "./profile/SkillsTab";
@@ -59,6 +61,11 @@ const TABS = [
   },
   { id: "skills", label: "Skills", icon: <WorkIcon sx={{ fontSize: 20 }} /> },
   {
+    id: "documents",
+    label: "Documents",
+    icon: <DescriptionIcon sx={{ fontSize: 20 }} />,
+  },
+  {
     id: "location",
     label: "Service Area",
     icon: <LocationOnIcon sx={{ fontSize: 20 }} />,
@@ -79,6 +86,23 @@ const maxDobDate = (() => {
 export default function ProfileContent() {
   const router = useRouter();
   const p = useProfile();
+
+  const isRejected =
+    p.verificationStatus === "REJECTED" ||
+    (p.rejectionReason !== null && p.rejectionReason !== "");
+
+  const visibleTabs = TABS.filter((tab) => {
+    if (tab.id === "documents") {
+      return isRejected;
+    }
+    return true;
+  });
+
+  React.useEffect(() => {
+    if (!isRejected && p.activeTab === "documents") {
+      p.setActiveTab("personal");
+    }
+  }, [isRejected, p]);
 
   if (p.loading) {
     return (
@@ -161,7 +185,7 @@ export default function ProfileContent() {
               "& .MuiTabs-indicator": { backgroundColor: "#FF6200" },
             }}
           >
-            {TABS.map((tab) => (
+            {visibleTabs.map((tab) => (
               <Tab
                 key={tab.id}
                 value={tab.id}
@@ -205,6 +229,8 @@ export default function ProfileContent() {
             <SkillsTab
               city={p.city}
               setCity={p.setCity}
+              state={p.state}
+              setState={p.setState}
               qualification={p.qualification}
               setQualification={p.setQualification}
               experienceYears={p.experienceYears}
@@ -221,6 +247,29 @@ export default function ProfileContent() {
               onSave={p.handleSaveProfile}
               availableLanguages={AVAILABLE_LANGUAGES}
               availableRituals={AVAILABLE_RITUALS}
+            />
+          )}
+
+          {p.activeTab === "documents" && (
+            <DocumentsTab
+              aadhaarNumber={p.aadhaarNumber}
+              setAadhaarNumber={p.setAadhaarNumber}
+              aadhaarDoc={p.aadhaarDoc}
+              setAadhaarDoc={p.setAadhaarDoc}
+              aadhaarDocUrl={p.aadhaarDocUrl}
+              panDoc={p.panDoc}
+              setPanDoc={p.setPanDoc}
+              panDocUrl={p.panDocUrl}
+              certificateDoc={p.certificateDoc}
+              setCertificateDoc={p.setCertificateDoc}
+              certificateUrl={p.certificateUrl}
+              templeAffiliationProofDoc={p.templeAffiliationProofDoc}
+              setTempleAffiliationProofDoc={p.setTempleAffiliationProofDoc}
+              templeAffiliationProofUrl={p.templeAffiliationProofUrl}
+              verificationStatus={p.verificationStatus}
+              rejectionReason={p.rejectionReason}
+              saving={p.saving}
+              onSave={p.handleSaveProfile}
             />
           )}
 

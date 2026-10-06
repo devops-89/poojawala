@@ -1,6 +1,7 @@
 "use client";
 import { addToCartAPI, deleteCartItemAPI } from "@/api/cartControllers";
 import { getAllProductsAPI } from "@/api/productControllers";
+import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import { useCartStore } from "@/stores/cartStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import CheckIcon from "@mui/icons-material/Check";
@@ -10,9 +11,12 @@ import {
   Box,
   Button,
   CardMedia,
+  FormControl,
   Grid,
   InputAdornment,
+  MenuItem,
   Paper,
+  Select,
   Skeleton,
   TextField,
   Typography,
@@ -28,6 +32,8 @@ interface ProductItem {
   price: number;
   image: string;
   unitString?: string;
+  categoryId?: number | string | null;
+  categoryName?: string;
 }
 
 export default function CustomerProductsContent() {
@@ -41,14 +47,45 @@ export default function CustomerProductsContent() {
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoriesList, setCategoriesList] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
   const selectedItemIds = cartItems.map((i) => i.productId || i.id);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getServiceCategoriesAPI(1, 100, "", true, "PRODUCT");
+        let list: any[] = [];
+        if (res) {
+          if (Array.isArray(res)) {
+            list = res;
+          } else if (res.data) {
+            if (Array.isArray(res.data)) {
+              list = res.data;
+            } else if (res.data.categories && Array.isArray(res.data.categories)) {
+              list = res.data.categories;
+            } else if (res.data.data && Array.isArray(res.data.data)) {
+              list = res.data.data;
+            }
+          } else if (res.categories && Array.isArray(res.categories)) {
+            list = res.categories;
+          }
+        }
+        setCategoriesList(list);
+      } catch (err) {
+        console.error("Failed to fetch product categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await getAllProductsAPI(1, 100, searchTerm, undefined, true);
+        const categoryIdParam = selectedCategory !== "ALL" ? selectedCategory : undefined;
+        const res = await getAllProductsAPI(1, 100, searchTerm, undefined, true, categoryIdParam);
         let rawList: any[] = [];
 
         if (res) {
@@ -66,7 +103,7 @@ export default function CustomerProductsContent() {
         }
 
         if (rawList && rawList.length > 0) {
-          const formatted: ProductItem[] = rawList.map((p: any, idx: number) => {
+          let formatted: ProductItem[] = rawList.map((p: any, idx: number) => {
             const img =
               p.imageUrl ||
               p.imageDownloadurl ||
@@ -88,21 +125,43 @@ export default function CustomerProductsContent() {
               formattedUnit = `${pQty} PACK`;
             }
 
+            const catObj = p.category;
+            const catName =
+              typeof catObj === "object" && catObj !== null
+                ? catObj.name
+                : typeof p.category === "string"
+                ? p.category
+                : p.categoryName || "";
+
+            const catId =
+              p.categoryId ||
+              (typeof catObj === "object" && catObj !== null ? catObj.id : null);
+
             return {
               id: String(p.id || idx + 1),
               title: p.name || p.title || `Sacred Product ${idx + 1}`,
               description:
                 p.description ||
                 p.shortDescription ||
-                p.category ||
                 "Pure authentic pooja item sourced directly with devotion.",
               price: Number(
                 p.salePrice || p.price || p.basePrice || p.minPrice || 0
               ),
               image: img,
               unitString: formattedUnit,
+              categoryId: catId,
+              categoryName: catName,
             };
           });
+
+          if (selectedCategory !== "ALL") {
+            formatted = formatted.filter(
+              (item) =>
+                String(item.categoryId) === String(selectedCategory) ||
+                item.categoryName?.toLowerCase() === selectedCategory.toLowerCase()
+            );
+          }
+
           setProducts(formatted);
         } else {
           setProducts([]);
@@ -120,7 +179,7 @@ export default function CustomerProductsContent() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchTerm, selectedCategory]);
 
   const toggleItem = async (item: ProductItem) => {
     const isSelected = selectedItemIds.includes(item.id);
@@ -169,9 +228,9 @@ export default function CustomerProductsContent() {
         sx={{
           mb: 4,
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
+          flexDirection: { xs: "column", md: "row" },
           justifyContent: "space-between",
-          alignItems: { xs: "stretch", sm: "center" },
+          alignItems: { xs: "stretch", md: "center" },
           gap: 2,
         }}
       >
@@ -200,30 +259,66 @@ export default function CustomerProductsContent() {
           </Typography>
         </Box>
 
-        <TextField
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          size="small"
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: "#8C786D" }} />
-                </InputAdornment>
-              ),
-            },
-          }}
+        <Box
           sx={{
-            width: { xs: "100%", sm: 280 },
-            bgcolor: "#FAF4EE",
-            borderRadius: "10px",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-              borderColor: "#EADCCF",
-            },
+            display: "flex",
+            gap: 1.5,
+            alignItems: "center",
+            flexDirection: { xs: "column", sm: "row" },
+            width: { xs: "100%", md: "auto" },
           }}
-        />
+        >
+          {/* Category Filter Dropdown */}
+          <FormControl size="small" sx={{ minWidth: 180, width: { xs: "100%", sm: 180 } }}>
+            <Select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              displayEmpty
+              sx={{
+                bgcolor: "#FAF4EE",
+                borderRadius: "10px",
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: "14px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#EADCCF",
+                },
+              }}
+            >
+              <MenuItem value="ALL">All Categories</MenuItem>
+              {categoriesList.map((cat: any) => (
+                <MenuItem key={cat.id} value={String(cat.id)}>
+                  {cat.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Search Bar */}
+          <TextField
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "#8C786D" }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{
+              width: { xs: "100%", sm: 240 },
+              bgcolor: "#FAF4EE",
+              borderRadius: "10px",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                borderColor: "#EADCCF",
+              },
+            }}
+          />
+        </Box>
       </Box>
 
       {/* Loading Skeleton */}
@@ -349,28 +444,61 @@ export default function CustomerProductsContent() {
                         objectFit: "cover",
                       }}
                     />
-                    {isAdded && (
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          top: 12,
-                          right: 12,
-                          bgcolor: "#C84B16",
-                          color: "white",
-                          borderRadius: "20px",
-                          px: 1.5,
-                          py: 0.5,
-                          fontSize: "12px",
-                          fontWeight: 700,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                        }}
-                      >
-                        <CheckIcon sx={{ fontSize: 14 }} /> Added
-                      </Box>
-                    )}
+                    {/* Top Right Badges */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-end",
+                        gap: 0.8,
+                        zIndex: 2,
+                      }}
+                    >
+                      {item.categoryName ? (
+                        <Box
+                          sx={{
+                            bgcolor: "rgba(255, 255, 255, 0.92)",
+                            backdropFilter: "blur(4px)",
+                            border: "1px solid #EADCCF",
+                            color: "#C84B16",
+                            borderRadius: "20px",
+                            px: 1.4,
+                            py: 0.4,
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            fontFamily: '"DM Sans", sans-serif',
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                          }}
+                        >
+                          {item.categoryName}
+                        </Box>
+                      ) : null}
+
+                      {isAdded && (
+                        <Box
+                          sx={{
+                            bgcolor: "#C84B16",
+                            color: "white",
+                            borderRadius: "20px",
+                            px: 1.4,
+                            py: 0.4,
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                          }}
+                        >
+                          <CheckIcon sx={{ fontSize: 13 }} /> Added
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
 
                   {/* Content */}

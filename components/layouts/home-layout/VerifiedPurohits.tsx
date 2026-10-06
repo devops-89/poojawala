@@ -481,7 +481,7 @@ export default function VerifiedPurohits() {
                         >
                           <Button
                             variant="contained"
-                            onClick={() => router.push("/sign-in")}
+                            onClick={() => router.push("/sign-up?from=book-now")}
                             sx={{
                               width: { xs: "120px", md: "135px" },
                               height: { xs: "38px", md: "42px" },

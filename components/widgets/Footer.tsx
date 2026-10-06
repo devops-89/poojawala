@@ -20,6 +20,7 @@ const quickLinks = [
   { name: "Home", href: "/" },
   { name: "Pooja Packages", href: "/services" },
   { name: "Purohits", href: "/purohits" },
+  { name: "Blogs & Articles", href: "/blogs" },
   { name: "Help Center", href: "/contact" },
 ];
 

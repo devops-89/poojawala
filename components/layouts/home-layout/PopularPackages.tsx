@@ -384,7 +384,7 @@ export default function PopularPackages() {
                       variant="outlined"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push("/services");
+                        router.push("/sign-up?from=book-now");
                       }}
                       sx={{
                         width: "100%",

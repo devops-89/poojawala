@@ -130,7 +130,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
             variant="contained" 
             onClick={(e) => {
               e.preventDefault();
-              router.push('/sign-in');
+              router.push('/sign-up?from=book-now');
             }}
             sx={{
               width: '100%',

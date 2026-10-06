@@ -46,6 +46,53 @@ interface BookingActiveCardProps {
   onComplaintClick: (jobId: number) => void;
 }
 
+export const checkBookingPaymentState = (booking: any) => {
+  if (!booking) {
+    return { isFullyPaid: false, isTokenPaid: false, shouldShowMakePayment: false };
+  }
+
+  const payments = Array.isArray(booking.payments) ? booking.payments : [];
+
+  const tokenPayment = payments.find(
+    (p: any) => p.remark === "BOOKING_TOKEN_PAYMENT" && p.status === "SUCCESS"
+  );
+  const settlementPayment = payments.find(
+    (p: any) => p.remark === "BOOKING_SETTLEMENT" && p.status === "SUCCESS"
+  );
+  const fullPayment = payments.find(
+    (p: any) => p.remark === "BOOKING_FULL_PAYMENT" && p.status === "SUCCESS"
+  );
+
+  const remainingAmt = Number(
+    booking.remainingAmount !== undefined && booking.remainingAmount !== null
+      ? booking.remainingAmount
+      : booking.finalAmount && booking.tokenAmount
+      ? Number(booking.finalAmount) - Number(booking.tokenAmount)
+      : 0
+  );
+
+  const isSettlementOrFullPaid = Boolean(settlementPayment) || Boolean(fullPayment);
+
+  const isFullyPaid =
+    booking.paymentStatus === "PAID" ||
+    remainingAmt === 0 ||
+    isSettlementOrFullPaid;
+
+  const isTokenPaid =
+    Boolean(tokenPayment) ||
+    booking.paymentType === "TOKEN" ||
+    Number(booking.tokenAmount) > 0 ||
+    Number(booking.paidAmount) > 0;
+
+  const shouldShowMakePayment = isTokenPaid && !isFullyPaid && remainingAmt > 0;
+
+  return {
+    isFullyPaid,
+    isTokenPaid,
+    shouldShowMakePayment,
+  };
+};
+
 export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
   job,
   statuses,
@@ -57,9 +104,14 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
   onComplaintClick,
 }) => {
   const jobId = job.originalData?.id || job.id;
-  const isStatusUpdatable = (
-    [BOOKING_STATUS.ACCEPTED, BOOKING_STATUS.ENROUTE] as string[]
-  ).includes(job.status?.toUpperCase() || "");
+  const rawData = job.originalData || job;
+  const { isFullyPaid, shouldShowMakePayment } = checkBookingPaymentState(rawData);
+
+  const statusUpper = job.status?.toUpperCase() || "";
+  const isStatusUpdatable =
+    statusUpper === BOOKING_STATUS.ACCEPTED ||
+    statusUpper === BOOKING_STATUS.ENROUTE ||
+    statusUpper === BOOKING_STATUS.ONGOING;
 
   const rawPlan = (job.plan || job.originalData?.plan || "").toString().toUpperCase();
   const isStandard = rawPlan.includes("STANDARD");
@@ -200,7 +252,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
               Verify OTP
             </Button>
           )}
-          {job.status?.toUpperCase() === BOOKING_STATUS.ONGOING && (
+          {job.status?.toUpperCase() === BOOKING_STATUS.ONGOING && shouldShowMakePayment && (
             <Button
               variant="contained"
               size="small"

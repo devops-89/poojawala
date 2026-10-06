@@ -1,8 +1,13 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import SignUpContent from '@/components/layouts/userPages/SignUpContent';
 
 export default function SignUpPage() {
-  return <SignUpContent />;
+  return (
+    <Suspense fallback={null}>
+      <SignUpContent />
+    </Suspense>
+  );
 }
 
 export const metadata: Metadata = {

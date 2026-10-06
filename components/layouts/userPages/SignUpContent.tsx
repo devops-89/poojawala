@@ -10,7 +10,7 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 
@@ -65,7 +65,15 @@ export default function SignUpContent() {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showSnackbar } = useSnackbarStore();
+
+  useEffect(() => {
+    const fromParam = searchParams?.get("from");
+    if (fromParam === "book-now" || fromParam === "booking") {
+      showSnackbar("For booking, you have to register yourself first.", "info");
+    }
+  }, [searchParams, showSnackbar]);
 
   useEffect(() => {
     const userStr = sessionStorage.getItem("user");

@@ -18,6 +18,7 @@ import { getPaymentLinkAPI } from "@/api/paymentControllers";
 import { useLoaderStore } from "@/stores/loaderStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
+import { checkBookingPaymentState } from "./BookingActiveCard";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
 export function useBookings() {
@@ -217,6 +218,24 @@ export function useBookings() {
       return;
     }
 
+    const targetJob = activeBookings.find(
+      (j) => (j.originalData?.id || j.id) === updatingJobId,
+    );
+    const rawData = targetJob?.originalData || targetJob;
+
+    if (newStatus.toUpperCase() === "COMPLETED") {
+      const { isFullyPaid } = checkBookingPaymentState(rawData);
+      if (!isFullyPaid) {
+        showSnackbar(
+          "Please complete full payment (settlement) before marking job as completed.",
+          "error",
+        );
+        setStatusMenuAnchorEl(null);
+        setUpdatingJobId(null);
+        return;
+      }
+    }
+
     try {
       showLoader(`Updating status to ${newStatus}...`);
       await updateBookingStatusAPI(updatingJobId, newStatus.toUpperCase());
@@ -230,9 +249,12 @@ export function useBookings() {
       setIsFetchingBookings(true);
       setActiveStatus(newStatus);
       showSnackbar(`Booking status updated to ${newStatus}`, "success");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating status:", error);
-      showSnackbar("Failed to update status", "error");
+      showSnackbar(
+        error?.response?.data?.message || "Failed to update status",
+        "error",
+      );
     } finally {
       hideLoader();
     }
