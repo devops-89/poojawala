@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { Box, Container, Grid, Typography } from "@mui/material";
+import { City, State } from "country-state-city";
 import { useSearchParams } from "next/navigation";
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
-import { State, City } from "country-state-city";
+import { useEffect, useMemo, useState } from "react";
 import CustomerServicesFilters from "../customerLayout/services/CustomerServicesFilters";
 import ServiceGrid from "./ServiceGrid";
 
@@ -16,17 +16,15 @@ export default function ServicesLayout() {
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState<string>(
-    stateParam || "All"
+    stateParam || "All",
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
-    categoryIdParam || ""
+    categoryIdParam || "",
   );
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
-    categoryParam || "All Categories"
+    categoryParam || "All Categories",
   );
-  const [selectedCity, setSelectedCity] = useState<string>(
-    cityParam || "All"
-  );
+  const [selectedCity, setSelectedCity] = useState<string>(cityParam || "All");
 
   useEffect(() => {
     if (stateParam) {
@@ -45,13 +43,25 @@ export default function ServicesLayout() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (selectedState && selectedState !== "All" && selectedState !== "All States") {
+    if (
+      selectedState &&
+      selectedState !== "All" &&
+      selectedState !== "All States"
+    ) {
       params.set("state", selectedState);
     }
-    if (selectedCity && selectedCity !== "All" && selectedCity !== "All Cities") {
+    if (
+      selectedCity &&
+      selectedCity !== "All" &&
+      selectedCity !== "All Cities"
+    ) {
       params.set("city", selectedCity);
     }
-    if (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories") {
+    if (
+      selectedCategoryId &&
+      selectedCategoryId !== "All" &&
+      selectedCategoryId !== "All Categories"
+    ) {
       params.set("categoryId", selectedCategoryId);
     }
     if (selectedCategoryName && selectedCategoryName !== "All Categories") {
@@ -62,20 +72,28 @@ export default function ServicesLayout() {
     }
 
     const queryStr = params.toString();
-    const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
+    const newUrl = queryStr
+      ? `${window.location.pathname}?${queryStr}`
+      : window.location.pathname;
     window.history.replaceState(null, "", newUrl);
-  }, [selectedState, selectedCity, selectedCategoryId, selectedCategoryName, searchQuery]);
+  }, [
+    selectedState,
+    selectedCity,
+    selectedCategoryId,
+    selectedCategoryName,
+    searchQuery,
+  ]);
 
   const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
   const stateOptions = useMemo(
     () => indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b)),
-    [indianStates]
+    [indianStates],
   );
 
   const selectedStateObj = useMemo(() => {
     if (!selectedState || selectedState === "All") return null;
     return indianStates.find(
-      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim()
+      (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
     );
   }, [selectedState, indianStates]);
 
@@ -111,8 +129,8 @@ export default function ServicesLayout() {
           width: "100%",
           minHeight: { xs: "380px", sm: "480px", md: "777px" },
           backgroundImage: {
-            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.95) 0%, rgba(255, 253, 249, 0.82) 45%, rgba(255, 253, 249, 0.1) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-            md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.85) 35%, rgba(255, 253, 249, 0.1) 65%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.6) 35%, rgba(255, 253, 249, 0.05) 70%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            md: "linear-gradient(90deg, rgba(255, 253, 249, 0.82) 0%, rgba(255, 253, 249, 0.45) 25%, rgba(255, 253, 249, 0.02) 50%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
           },
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -143,12 +161,28 @@ export default function ServicesLayout() {
                 fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 700,
                 color: "#0f172a",
-                mb: 1.5,
+                mb: 0.5,
                 fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
+                lineHeight: { xs: 1.15, md: 1.2 },
                 letterSpacing: "-0.04em",
               }}
             >
-              Explore Our Services
+              Explore Our
+            </Typography>
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontFamily: '"DM Sans", sans-serif',
+                fontWeight: 800,
+                color: "#D32F2F",
+                mb: { xs: 1.5, md: 3 },
+                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
+                lineHeight: { xs: 1.15, md: 1.2 },
+                letterSpacing: "-0.04em",
+              }}
+            >
+              Sacred Pooja Services
             </Typography>
             <Typography
               variant="body1"
@@ -156,8 +190,7 @@ export default function ServicesLayout() {
                 fontFamily: '"DM Sans", sans-serif',
                 color: "#0f172a",
                 fontWeight: 600,
-                mb: { xs: 2.5, md: 4 },
-                fontSize: { xs: "14px", sm: "15px", md: "18px" },
+                fontSize: { xs: "14px", sm: "15px", md: "16px" },
                 lineHeight: "1.45",
                 maxWidth: "500px",
                 letterSpacing: "0em",
@@ -167,72 +200,6 @@ export default function ServicesLayout() {
               of religious ceremonies, tailored to your language and local
               traditions.
             </Typography>
-
-            <Box
-              sx={{
-                display: "flex",
-                gap: { xs: 1, md: 2 },
-                flexWrap: "wrap",
-                "&:has(.talk-to:hover) .book-now": {
-                  background: "transparent",
-                  color: "#FF6200",
-                  borderColor: "#FF6200",
-                  border: "2px solid #FF6200",
-                  boxShadow: "none",
-                },
-              }}
-            >
-              <Button
-                className="book-now"
-                variant="contained"
-                href="/sign-up?from=book-now"
-                sx={{
-                  background: "#FF6200",
-                  border: "2px solid #FF6200",
-                  color: "#fff",
-                  px: { xs: 2.5, md: 4 },
-                  py: { xs: 0.8, md: 1.5 },
-                  borderRadius: "30px",
-                  fontWeight: 600,
-                  textTransform: "none",
-                  fontSize: { xs: "0.8rem", md: "1rem" },
-                  boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    background: "#F05A00",
-                    borderColor: "#F05A00",
-                    boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
-                  },
-                }}
-              >
-                Book Now
-              </Button>
-              <Button
-                className="talk-to"
-                variant="outlined"
-                href="/purohit/register"
-                sx={{
-                  borderColor: "#1A1A1A",
-                  color: "#1A1A1A",
-                  px: { xs: 2.5, md: 4 },
-                  py: { xs: 0.8, md: 1.5 },
-                  borderRadius: "30px",
-                  fontWeight: 600,
-                  textTransform: "none",
-                  fontSize: { xs: "0.8rem", md: "1rem" },
-                  borderWidth: "2px",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    borderColor: "#FF6200",
-                    background: "#FF6200",
-                    color: "#FFFFFF",
-                    borderWidth: "2px",
-                  },
-                }}
-              >
-                Register as Purohit
-              </Button>
-            </Box>
           </Box>
         </Container>
       </Box>

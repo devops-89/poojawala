@@ -1,4 +1,5 @@
 'use client';
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { 
@@ -24,8 +25,10 @@ import {
   Chip,
   CircularProgress,
   Grid,
-  TablePagination
+  TablePagination,
+  Breadcrumbs,
 } from '@mui/material';
+import Link from 'next/link';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
@@ -113,6 +116,12 @@ function ComplaintsTable() {
 
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
+      <AppBreadcrumbs
+        items={[
+          { label: "Dashboard", href: "/purohit/dashboard" },
+          { label: "Get Support" },
+        ]}
+      />
       <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3 }}>
         Support Complaints
       </Typography>

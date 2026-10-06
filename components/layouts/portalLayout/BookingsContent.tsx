@@ -1,4 +1,5 @@
 "use client";
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React from "react";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -51,12 +52,19 @@ export default function BookingsContent() {
 
   return (
     <Box>
+      <AppBreadcrumbs
+        items={[
+          { label: "Dashboard", href: "/purohit/dashboard" },
+          { label: "Bookings" },
+        ]}
+      />
+
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-start",
-          mb: 1,
+          mb: 4,
           flexWrap: "wrap",
           gap: 2,
         }}
@@ -77,41 +85,12 @@ export default function BookingsContent() {
             sx={{
               fontFamily: "var(--font-outfit), sans-serif",
               color: "#666",
-              mb: 2,
             }}
           >
             Manage your incoming requests and active jobs.
           </Typography>
         </Box>
       </Box>
-
-      <Breadcrumbs
-        separator={<NavigateNextIcon fontSize="small" />}
-        sx={{ mb: 4 }}
-      >
-        <NextLink
-          href="/purohit/dashboard"
-          style={{
-            textDecoration: "none",
-            color: "#666",
-            fontFamily: "var(--font-outfit), sans-serif",
-            fontWeight: 600,
-            fontSize: "14px",
-          }}
-        >
-          Dashboard
-        </NextLink>
-        <Typography
-          sx={{
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
-            fontWeight: 700,
-            fontSize: "14px",
-          }}
-        >
-          Bookings
-        </Typography>
-      </Breadcrumbs>
 
       {/* Job List Container */}
       <Paper

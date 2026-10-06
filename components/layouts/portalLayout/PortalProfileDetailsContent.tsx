@@ -1,4 +1,5 @@
 'use client';
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Grid, Avatar, Divider, Chip, Breadcrumbs, Button, CircularProgress, Dialog, DialogContent, IconButton } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -65,22 +66,20 @@ export default function PortalProfileDetailsContent() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: 4 }}>
         <Box>
+          <AppBreadcrumbs
+            items={[
+              { label: "Dashboard", href: "/purohit/dashboard" },
+              { label: "Profile" },
+            ]}
+          />
           <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
             My Profile
           </Typography>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', mb: 2 }}>
+          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666' }}>
             View your complete public profile and contact information.
           </Typography>
-          <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 4 }}>
-            <NextLink href="/purohit/dashboard" style={{ textDecoration: 'none', color: '#666', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: '14px' }}>
-              Dashboard
-            </NextLink>
-            <Typography sx={{ color: '#FF6200', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '14px' }}>
-              Profile
-            </Typography>
-          </Breadcrumbs>
         </Box>
         <NextLink href="/purohit/profile/edit" passHref>
           <Button 

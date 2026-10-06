@@ -1,4 +1,5 @@
 'use client';
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
@@ -13,13 +14,14 @@ import {
   Chip,
   CircularProgress,
   Pagination,
+  Breadcrumbs,
 } from '@mui/material';
+import Link from 'next/link';
 import { getAllServicesAPI, getPurohitServicesAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { useRouter, useSearchParams } from 'next/navigation';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { City, State } from 'country-state-city';
 import CustomerServicesFilters from '@/components/layouts/customerLayout/services/CustomerServicesFilters';
 
@@ -143,21 +145,14 @@ export default function PurohitServicesContent() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-        <Button
-          onClick={() => router.push('/purohit/my-services')}
-          sx={{ 
-            minWidth: 'auto', 
-            p: 1, 
-            color: '#64748b',
-            bgcolor: 'white',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            '&:hover': { bgcolor: '#f8fafc', color: '#1e293b' }
-          }}
-        >
-          <ArrowBackIcon />
-        </Button>
+      <Box>
+        <AppBreadcrumbs
+          items={[
+            { label: "Dashboard", href: "/purohit/dashboard" },
+            { label: "My Services", href: "/purohit/my-services" },
+            { label: "Available Services" },
+          ]}
+        />
         <Box>
           <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
             Available Services
@@ -247,7 +242,7 @@ export default function PurohitServicesContent() {
                       src={
                         service.iconDownloadurl ||
                         service.iconUrl ||
-                        'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80'
+                        '/images/home/poojaPackages/satyanarayan.webp'
                       }
                       alt={service.name}
                       sx={{

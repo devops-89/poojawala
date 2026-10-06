@@ -78,7 +78,7 @@ export default function WebsiteWhyPoojawalaSection() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Playfair Display", serif',
+              fontFamily: '"DM Sans", sans-serif',
               fontWeight: 800,
               fontSize: { xs: "28px", sm: "34px", md: "40px" },
               color: "#FFFFFF",

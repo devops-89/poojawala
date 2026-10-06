@@ -1,7 +1,9 @@
 'use client';
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Chip, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Switch, DialogContentText, InputAdornment, Pagination, Card, CardContent, Divider } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Chip, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Switch, DialogContentText, InputAdornment, Pagination, Card, CardContent, Divider, Breadcrumbs } from '@mui/material';
+import Link from 'next/link';
 import { getPurohitServicesAPI, updatePurohitServiceAPI, deletePurohitServiceAPI } from '@/api/serviceControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
@@ -156,12 +158,20 @@ export default function PurohitMyServicesContent() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <Box>
-        <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
-          My Services
-        </Typography>
-        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', mt: 0.5 }}>
-          View and manage the services you offer.
-        </Typography>
+        <AppBreadcrumbs
+          items={[
+            { label: "Dashboard", href: "/purohit/dashboard" },
+            { label: "My Services" },
+          ]}
+        />
+        <Box>
+          <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
+            My Services
+          </Typography>
+          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', mt: 0.5 }}>
+            View and manage the services you offer.
+          </Typography>
+        </Box>
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>

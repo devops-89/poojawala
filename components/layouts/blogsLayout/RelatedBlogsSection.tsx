@@ -26,8 +26,9 @@ const getBlogTitle = (blog: any) => {
 };
 
 const getBlogContentSnippet = (blog: any) => {
-  const text = blog.excerpt || blog.content || blog.body || blog.description || "";
-  if (!text) return "Explore sacred insights, Vedic procedures, and authentic Samagri guidelines for your puja.";
+  const rawText = blog.excerpt || blog.content || blog.body || blog.description || "";
+  if (!rawText) return "Explore sacred insights, Vedic procedures, and authentic Samagri guidelines for your puja.";
+  const text = rawText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
   return text.length > 130 ? text.slice(0, 130) + "..." : text;
 };
 

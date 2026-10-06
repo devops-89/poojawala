@@ -1,8 +1,10 @@
 'use client';
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import { getPaymentsAPI, getPayoutStatsAPI } from '@/api/bookingControllers';
 import {
   Box,
+  Breadcrumbs,
   Card,
   Pagination,
   Paper,
@@ -16,6 +18,7 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
 const getStatusColor = (status: string) => {
@@ -256,9 +259,35 @@ function TransactionsTable() {
 
 export default function EarningsContent() {
   return (
-    <div className="space-y-6">
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <Box>
+        <AppBreadcrumbs
+          items={[
+            { label: "Dashboard", href: "/purohit/dashboard" },
+            { label: "Payouts & Earnings" },
+          ]}
+        />
+        <Box>
+          <Typography
+            variant="h4"
+            sx={{
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontWeight: 800,
+              color: "#1e293b",
+            }}
+          >
+            Earnings & Payouts
+          </Typography>
+          <Typography
+            sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", mt: 0.5 }}
+          >
+            Track your completed booking payouts and transaction history.
+          </Typography>
+        </Box>
+      </Box>
+
       <StatsGrid />
       <TransactionsTable />
-    </div>
+    </Box>
   );
 }

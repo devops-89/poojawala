@@ -23,7 +23,8 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
   if (!blog) return null;
 
   const title = blog.title || blog.heading || blog.name || "Featured Sacred Article";
-  const text = blog.excerpt || blog.content || blog.body || blog.description || "";
+  const rawText = blog.excerpt || blog.content || blog.body || blog.description || "";
+  const text = rawText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
   const snippet = text.length > 280 ? text.slice(0, 280) + "..." : text;
 
   const categoryTag = (
@@ -166,14 +167,13 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                 href={`/blogs/${blog.id}`}
                 variant="h3"
                 sx={{
-                  fontFamily: '"Georgia", serif',
-                  fontStyle: "italic",
+                  fontFamily: '"DM Sans", sans-serif',
                   fontWeight: 700,
                   fontSize: { xs: "1.65rem", sm: "2.1rem", md: "2.4rem" },
                   lineHeight: 1.25,
                   color: "#0F172A",
                   textDecoration: "none",
-                  letterSpacing: "-0.01em",
+                  letterSpacing: "-0.02em",
                   transition: "color 0.2s ease",
                   "&:hover": { color: "#FF6200" },
                 }}

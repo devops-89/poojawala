@@ -211,7 +211,10 @@ export default function AdminOrderDetailsContent() {
       {/* Top Header */}
       <AdminDetailsHeader
         title={`Order ID: ORD-${order.id}`}
-        backHref="/admin/orders"
+        breadcrumbs={[
+          { label: "Product Orders", href: "/admin/orders" },
+          { label: "Order Details" },
+        ]}
         actionButton={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Typography

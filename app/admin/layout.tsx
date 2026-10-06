@@ -30,16 +30,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     } else {
       if (!isAuthorized) {
         router.replace('/admin');
-      } else {
-        // Prevent back button from going back to login page
-        window.history.pushState(null, '', window.location.href);
-        const handlePopState = () => {
-          window.history.pushState(null, '', window.location.href);
-        };
-        window.addEventListener('popstate', handlePopState);
-        return () => {
-          window.removeEventListener('popstate', handlePopState);
-        };
       }
     }
   }, [pathname, router]);

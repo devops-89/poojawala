@@ -98,7 +98,7 @@ export default function CustomerOrderDetailsModal({
         quantity: Number(it.quantity) || 1,
         price: Number(it.unitPriceSnapshot || it.product?.price || it.unitPrice || it.price) || 0,
         total: Number(it.totalAmount || (Number(it.unitPriceSnapshot || it.product?.price || 0) * Number(it.quantity || 1))) || 0,
-        image: it.productImageSnapshot || it.product?.imageUrl || it.productImage || it.image || "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&w=400&q=80",
+        image: it.productImageSnapshot || it.product?.imageUrl || it.productImage || it.image || "/images/productsHero.webp",
         pricingUnit: it.product?.pricingUnit || it.pricingUnit || "PIECE",
       }))
     : order.items;

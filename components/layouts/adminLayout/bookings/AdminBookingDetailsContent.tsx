@@ -114,7 +114,13 @@ export default function AdminBookingDetailsContent() {
         mx: "auto",
       }}
     >
-      <AdminDetailsHeader title="Booking Details" onBack={() => router.back()}>
+      <AdminDetailsHeader
+        title="Booking Details"
+        breadcrumbs={[
+          { label: "Bookings", href: "/admin/bookings" },
+          { label: "Booking Details" },
+        ]}
+      >
         <AdminStatusSelect value={booking.status || "PENDING"} readOnly />
         <Typography
           sx={{

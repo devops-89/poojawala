@@ -379,3 +379,8 @@ export const getAdminDashboardStatsAPI = async () => {
     throw error;
   }
 };
+
+export const updateUserByAdminAPI = async (id: string | number, data: any) => {
+  const response = await userSecuredApi.patch(`/users/admin/update/${id}`, data);
+  return response.data;
+};

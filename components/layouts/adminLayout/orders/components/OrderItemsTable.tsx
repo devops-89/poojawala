@@ -125,7 +125,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                 item.productImageSnapshot ||
                 item.product?.imageUrl ||
                 item.image ||
-                "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&w=400&q=80";
+                "/images/productsHero.webp";
 
               const price = Number(
                 item.unitPriceSnapshot ||

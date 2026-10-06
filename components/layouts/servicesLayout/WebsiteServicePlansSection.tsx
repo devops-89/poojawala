@@ -97,7 +97,7 @@ export default function WebsiteServicePlansSection({
         <Typography
           variant="h3"
           sx={{
-            fontFamily: '"Georgia", "Playfair Display", serif',
+            fontFamily: '"DM Sans", sans-serif',
             fontWeight: 800,
             fontSize: { xs: "28px", sm: "36px", md: "40px" },
             color: "#1A0B05",
@@ -162,7 +162,7 @@ export default function WebsiteServicePlansSection({
                 {/* Plan Name */}
                 <Typography
                   sx={{
-                    fontFamily: '"Georgia", "Playfair Display", serif',
+                    fontFamily: '"DM Sans", sans-serif',
                     fontWeight: 800,
                     fontSize: "26px",
                     color: "#1A0B05",
@@ -318,7 +318,7 @@ export default function WebsiteServicePlansSection({
                 {/* Plan Name */}
                 <Typography
                   sx={{
-                    fontFamily: '"Georgia", "Playfair Display", serif',
+                    fontFamily: '"DM Sans", sans-serif',
                     fontWeight: 800,
                     fontSize: "26px",
                     color: "#1A0B05",

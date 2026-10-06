@@ -111,7 +111,7 @@ export default function CustomerProductsContent() {
               p.bannerUrl ||
               p.bannerDownloadurl ||
               (Array.isArray(p.images) && p.images[0]) ||
-              "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80";
+              "/images/productsHero.webp";
 
             const pQty = p.quantity || p.packQuantity || p.qty;
             const pUnit = p.pricingUnit || p.unit;

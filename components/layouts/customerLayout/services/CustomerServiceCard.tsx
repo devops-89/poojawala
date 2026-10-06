@@ -60,7 +60,8 @@ export default function CustomerServiceCard({
     service?.bannerUrl ||
     service?.iconDownloadurl ||
     service?.iconUrl ||
-    "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80";
+    service?.image ||
+    "/images/home/poojaPackages/satyanarayan.webp";
 
   return (
     <Grid size={{ xs: 12, lg: 6 }} sx={{ display: "flex" }}>

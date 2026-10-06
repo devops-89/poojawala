@@ -19,6 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Avatar, Box, Chip, IconButton, Typography } from "@mui/material";
 import NextLink from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 const getAuthorName = (blog: any) => {
@@ -54,11 +55,11 @@ const getBlogTitle = (blog: any) => {
 };
 
 const getBlogDescription = (blog: any) => {
-  const descVal = blog.excerpt || blog.description || blog.shortDescription || blog.metaDescription || blog.slug;
+  const descVal = blog.excerpt || blog.description || blog.shortDescription || blog.content || blog.body || blog.metaDescription || blog.slug;
   if (!descVal) return "Sacred insights & Vedic rituals guide";
-  if (typeof descVal === "string") return descVal;
-  if (typeof descVal === "object") return descVal.text || descVal.description || "Sacred insights & Vedic rituals guide";
-  return String(descVal);
+  const raw = typeof descVal === "string" ? descVal : descVal.text || descVal.description || "";
+  const clean = raw.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+  return clean || "Sacred insights & Vedic rituals guide";
 };
 
 const STATUS_TABS = [
@@ -68,13 +69,84 @@ const STATUS_TABS = [
 ];
 
 export default function AdminBlogsContent() {
+  const searchParams = useSearchParams();
+
+  const getInitialState = () => {
+    const paramStatus = searchParams.get("status");
+    const paramPage = searchParams.get("page");
+    if (paramStatus || paramPage) {
+      return {
+        status: paramStatus || "All",
+        page: paramPage ? Math.max(0, parseInt(paramPage, 10) - 1) : 0,
+      };
+    }
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem("admin_blogs_state");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            status: parsed.status || "All",
+            page: typeof parsed.page === "number" ? parsed.page : 0,
+          };
+        }
+      } catch (e) {}
+    }
+    return { status: "All", page: 0 };
+  };
+
+  const initialState = getInitialState();
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState(initialState.status);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(initialState.page);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          "admin_blogs_state",
+          JSON.stringify({ status: statusFilter, page })
+        );
+      } catch (e) {}
+
+      const params = new URLSearchParams(window.location.search);
+      let changed = false;
+
+      if (statusFilter !== "All") {
+        if (params.get("status") !== statusFilter) {
+          params.set("status", statusFilter);
+          changed = true;
+        }
+      } else {
+        if (params.has("status")) {
+          params.delete("status");
+          changed = true;
+        }
+      }
+
+      if (page > 0) {
+        if (params.get("page") !== String(page + 1)) {
+          params.set("page", String(page + 1));
+          changed = true;
+        }
+      } else {
+        if (params.has("page")) {
+          params.delete("page");
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        const queryString = params.toString();
+        const newUrl = queryString ? `/admin/blogs?${queryString}` : `/admin/blogs`;
+        window.history.replaceState(null, "", newUrl);
+      }
+    }
+  }, [statusFilter, page]);
 
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<number | string | null>(null);

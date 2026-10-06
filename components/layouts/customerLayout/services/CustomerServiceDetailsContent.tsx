@@ -14,7 +14,7 @@ import ServiceDetailsIncludedSection from "./serviceDetails/ServiceDetailsInclud
 import ServiceDetailsInfoGrid from "./serviceDetails/ServiceDetailsInfoGrid";
 import ServiceDetailsPujaSamagri from "./serviceDetails/ServiceDetailsPujaSamagri";
 
-const DEFAULT_BANNER = "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80";
+const DEFAULT_BANNER = "/images/home/poojaPackages/satyanarayan.webp";
 
 export default function CustomerServiceDetailsContent() {
   const params = useParams();

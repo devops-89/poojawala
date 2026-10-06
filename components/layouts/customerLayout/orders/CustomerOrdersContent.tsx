@@ -23,7 +23,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CustomerOrderDetailsModal from "./CustomerOrderDetailsModal";
 import CustomerOrdersBannerCTA from "./CustomerOrdersBannerCTA";
@@ -61,7 +61,7 @@ const formatApiOrder = (raw: any): CustomerOrder => {
           it.productImage ||
           it.image ||
           it.imageUrl ||
-          "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&w=400&q=80",
+          "/images/productsHero.webp",
       }))
     : [];
 
@@ -174,22 +174,92 @@ const formatApiOrder = (raw: any): CustomerOrder => {
 
 export default function CustomerOrdersContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const addItemToCart = useCartStore((state) => state.addItem);
   const openCartDrawer = useCartStore((state) => state.openCart);
 
+  const getInitialState = () => {
+    const paramStatus = searchParams.get("status") as OrderStatusFilter | null;
+    const paramPage = searchParams.get("page");
+    if (paramStatus || paramPage) {
+      return {
+        status: (paramStatus || "ALL") as OrderStatusFilter,
+        page: paramPage ? Math.max(1, parseInt(paramPage, 10)) : 1,
+      };
+    }
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem("customer_orders_state");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            status: (parsed.status || "ALL") as OrderStatusFilter,
+            page: typeof parsed.page === "number" ? parsed.page : 1,
+          };
+        }
+      } catch (e) {}
+    }
+    return { status: "ALL" as OrderStatusFilter, page: 1 };
+  };
+
+  const initialState = getInitialState();
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [serverTotalPages, setServerTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>("ALL");
+  const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>(initialState.status);
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(
     null,
   );
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialState.page);
   const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
   const itemsPerPage = 6;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          "customer_orders_state",
+          JSON.stringify({ status: activeFilter, page })
+        );
+      } catch (e) {}
+
+      const params = new URLSearchParams(window.location.search);
+      let changed = false;
+
+      if (activeFilter !== "ALL") {
+        if (params.get("status") !== activeFilter) {
+          params.set("status", activeFilter);
+          changed = true;
+        }
+      } else {
+        if (params.has("status")) {
+          params.delete("status");
+          changed = true;
+        }
+      }
+
+      if (page > 1) {
+        if (params.get("page") !== String(page)) {
+          params.set("page", String(page));
+          changed = true;
+        }
+      } else {
+        if (params.has("page")) {
+          params.delete("page");
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        const queryString = params.toString();
+        const newUrl = queryString ? `/customer/orders?${queryString}` : `/customer/orders`;
+        window.history.replaceState(null, "", newUrl);
+      }
+    }
+  }, [activeFilter, page]);
 
   const fetchOrders = async (
     targetPage = page,

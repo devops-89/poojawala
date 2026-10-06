@@ -18,6 +18,7 @@ import { getPaymentLinkAPI } from "@/api/paymentControllers";
 import { useLoaderStore } from "@/stores/loaderStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
+import { getBookingPurohitPayoutDisplay } from "@/utils/payoutHelper";
 import { checkBookingPaymentState } from "./BookingActiveCard";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
@@ -409,18 +410,7 @@ export function useBookings() {
         const response = await getAvailableBookingsAPI();
         if (!isMounted) return;
         if (response?.data?.bookings) {
-          const getPriceDisplay = (booking: any) => {
-            if (booking.purohitPayoutAmount && Number(booking.purohitPayoutAmount) > 0)
-              return `₹${booking.purohitPayoutAmount}`;
-            if (booking.agreedPrice && Number(booking.agreedPrice) > 0)
-              return `₹${booking.agreedPrice}`;
-            const pWithout = booking.service?.priceWithoutSamagri ?? booking.service?.minPrice;
-            const pWith = booking.service?.priceWithSamagri ?? booking.service?.maxPrice;
-            if (pWithout != null && pWith != null) {
-              return `₹${Math.round(Number(pWithout))} - ₹${Math.round(Number(pWith))}`;
-            }
-            return "₹0";
-          };
+          const getPriceDisplay = (booking: any) => getBookingPurohitPayoutDisplay(booking);
 
           const mappedBookings = response.data.bookings.map((booking: any) => ({
             id: booking.bookingNumber || booking.id,
@@ -466,18 +456,7 @@ export function useBookings() {
         const response = await getActiveBookingAPI(activeStatus, activePage, 10);
         if (!isMounted) return;
         if (response?.data?.bookings) {
-          const getPriceDisplay = (booking: any) => {
-            if (booking.purohitPayoutAmount && Number(booking.purohitPayoutAmount) > 0)
-              return `₹${booking.purohitPayoutAmount}`;
-            if (booking.agreedPrice && Number(booking.agreedPrice) > 0)
-              return `₹${booking.agreedPrice}`;
-            const pWithout = booking.service?.priceWithoutSamagri ?? booking.service?.minPrice;
-            const pWith = booking.service?.priceWithSamagri ?? booking.service?.maxPrice;
-            if (pWithout != null && pWith != null) {
-              return `₹${Math.round(Number(pWithout))} - ₹${Math.round(Number(pWith))}`;
-            }
-            return "₹0";
-          };
+          const getPriceDisplay = (booking: any) => getBookingPurohitPayoutDisplay(booking);
 
           const mappedBookings = response.data.bookings.map((booking: any) => ({
             id: booking.bookingNumber || booking.id,

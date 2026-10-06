@@ -50,9 +50,9 @@ export default function PortalLoginForm() {
             userObj?.role === 'PUROHIT' &&
             (userObj?.isAdminCreated || userObj?.is_admin_created)
           ) {
-            setTimeout(() => router.push('/purohit/register?step=2'), 1000);
+            setTimeout(() => router.replace('/purohit/register?step=2'), 1000);
           } else {
-            setTimeout(() => router.push('/purohit/dashboard'), 1000);
+            setTimeout(() => router.replace('/purohit/dashboard'), 1000);
           }
         }
       } catch (error: any) {

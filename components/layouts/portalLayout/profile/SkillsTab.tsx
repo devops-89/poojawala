@@ -138,7 +138,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
             </Select>
           </FormControl>
         </Grid>
-        <Grid size={{ xs: 12 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <FormControl fullWidth>
             <InputLabel id="rituals-label">Specialized Rituals & Pujas</InputLabel>
             <Select

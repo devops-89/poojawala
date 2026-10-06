@@ -182,7 +182,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 800,
                 color: "#2C1810",
                 fontSize: "18px",
@@ -257,7 +257,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 700,
                 color: "#2C1810",
                 mb: 1,
@@ -332,7 +332,7 @@ export default function CustomerCartDrawer() {
                   <Typography
                     variant="subtitle2"
                     sx={{
-                      fontFamily: '"Georgia", "Times New Roman", serif',
+                      fontFamily: '"DM Sans", sans-serif',
                       fontWeight: 700,
                       color: "#2C1810",
                       fontSize: "15px",
@@ -454,7 +454,7 @@ export default function CustomerCartDrawer() {
 
                   <Typography
                     sx={{
-                      fontFamily: '"Georgia", "Times New Roman", serif',
+                      fontFamily: '"DM Sans", sans-serif',
                       fontWeight: 800,
                       color: "#2C1810",
                       fontSize: "16px",
@@ -506,7 +506,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 800,
                 color: "#2C1810",
                 fontSize: "18px",
@@ -517,7 +517,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 800,
                 color: "#C84B16",
                 fontSize: "24px",
@@ -568,7 +568,7 @@ export default function CustomerCartDrawer() {
       >
         <DialogTitle
           sx={{
-            fontFamily: '"Georgia", "Times New Roman", serif',
+            fontFamily: '"DM Sans", sans-serif',
             fontWeight: 800,
             color: "#2C1810",
             fontSize: "20px",

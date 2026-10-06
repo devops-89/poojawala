@@ -202,7 +202,6 @@ export function useProfile() {
       formData.append("lastName", lastName);
       formData.append("username", username);
       if (dob) formData.append("dob", new Date(dob).toISOString());
-      formData.append("birthPlace", birthPlace);
       formData.append("bio", bio);
       formData.append("city", city);
       formData.append("state", state);

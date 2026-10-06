@@ -78,7 +78,7 @@ export default function WebsiteServiceAboutSection({
       <Typography
         variant="h3"
         sx={{
-          fontFamily: '"Georgia", "Playfair Display", serif',
+          fontFamily: '"DM Sans", sans-serif',
           fontWeight: 800,
           fontSize: { xs: "24px", sm: "32px", md: "36px" },
           color: "#1A0B05",
@@ -132,7 +132,7 @@ export default function WebsiteServiceAboutSection({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: '"Georgia", "Playfair Display", serif',
+            fontFamily: '"DM Sans", sans-serif',
             fontWeight: 800,
             fontSize: { xs: "20px", sm: "24px" },
             color: "#1A0B05",

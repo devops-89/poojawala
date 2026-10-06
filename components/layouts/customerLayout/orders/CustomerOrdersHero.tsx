@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Box, Typography, Paper, Divider } from "@mui/material";
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 interface CustomerOrdersHeroProps {
   totalOrders: number;
@@ -11,6 +12,12 @@ export default function CustomerOrdersHero({
 }: CustomerOrdersHeroProps) {
   return (
     <Box sx={{ mb: 4 }}>
+      <AppBreadcrumbs
+        items={[
+          { label: "Dashboard", href: "/customer/dashboard" },
+          { label: "Orders" },
+        ]}
+      />
       <Box
         sx={{
           display: "flex",

@@ -11,11 +11,13 @@ import {
   CircularProgress,
   Divider,
   Grid,
+  IconButton,
   Paper,
   Typography,
 } from "@mui/material";
 import { FormikProvider, useFormik } from "formik";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import * as Yup from "yup";
 
@@ -73,6 +75,7 @@ export default function ProductForm({
   submitButtonText,
   isEdit = false,
 }: ProductFormProps) {
+  const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     existingImageUrl,
@@ -177,22 +180,6 @@ export default function ProductForm({
               {title}
             </Typography>
           </Box>
-          <Button
-            component={NextLink}
-            href="/admin/products"
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            sx={{
-              borderColor: "#e2e8f0",
-              color: "#64748b",
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 600,
-              "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
-            }}
-          >
-            Back
-          </Button>
         </Box>
 
         {/* Main Form Paper */}

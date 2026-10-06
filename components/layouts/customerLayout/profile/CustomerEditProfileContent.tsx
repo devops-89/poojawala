@@ -6,10 +6,10 @@ import {
   updateProfileAPI,
 } from "@/api/userControllers";
 import AddAddressModal from "@/components/widgets/AddAddressModal";
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -18,6 +18,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import {
   Avatar,
   Box,
+  Breadcrumbs,
   Button,
   Card,
   CardContent,
@@ -33,6 +34,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
 
@@ -340,18 +342,14 @@ function CustomerEditProfileContentInner() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: "auto" }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-        <IconButton
-          onClick={() => router.push("/customer/profile")}
-          sx={{
-            mr: 2,
-            bgcolor: "white",
-            border: "1px solid #e2e8f0",
-            "&:hover": { bgcolor: "#f8fafc" },
-          }}
-        >
-          <ArrowBackIcon />
-        </IconButton>
+      <Box sx={{ mb: 4 }}>
+        <AppBreadcrumbs
+          items={[
+            { label: "Dashboard", href: "/customer/dashboard" },
+            { label: "Profile", href: "/customer/profile" },
+            { label: "Edit Profile" },
+          ]}
+        />
         <Box>
           <Typography
             variant="h4"

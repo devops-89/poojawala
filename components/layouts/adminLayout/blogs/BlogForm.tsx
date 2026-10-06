@@ -29,6 +29,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
+import { TiptapEditor } from "@/components/widgets/TiptapEditor";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
 export interface BlogSection {
@@ -228,23 +229,6 @@ export default function BlogForm({
               {title}
             </Typography>
           </Box>
-          <Button
-            component={NextLink}
-            href="/admin/blogs"
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            sx={{
-              borderColor: "#e2e8f0",
-              color: "#64748b",
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 600,
-              fontFamily: "var(--font-outfit), sans-serif",
-              "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
-            }}
-          >
-            Back
-          </Button>
         </Box>
 
         {/* Main Form Paper */}
@@ -502,26 +486,16 @@ export default function BlogForm({
               </Box>
             </Grid>
 
-            {/* Content / Main Body */}
+            {/* Content / Main Body (Tiptap Rich Text Editor) */}
             <Grid size={{ xs: 12 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={8}
+              <TiptapEditor
                 label="Blog Main Content *"
-                name="content"
-                placeholder="Detailed blog article content..."
                 value={formik.values.content}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                onChange={(html) => formik.setFieldValue("content", html)}
+                placeholder="Write detailed blog article content with rich formatting..."
+                minHeight={300}
                 error={formik.touched.content && Boolean(formik.errors.content)}
-                helperText={formik.touched.content && formik.errors.content}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    fontFamily: "var(--font-outfit), sans-serif",
-                  },
-                }}
+                helperText={formik.touched.content ? (formik.errors.content as string) : undefined}
               />
             </Grid>
           </Grid>
@@ -664,28 +638,14 @@ export default function BlogForm({
                         />
                       </Grid>
                       <Grid size={{ xs: 12 }}>
-                        <TextField
-                          fullWidth
-                          multiline
-                          rows={3}
-                          size="small"
+                        <TiptapEditor
                           label="Section Description *"
-                          placeholder="Detailed instructions or list of items for this section..."
                           value={sec.content || sec.description || ""}
-                          onChange={(e) =>
-                            handleSectionChange(
-                              idx,
-                              "content",
-                              e.target.value
-                            )
+                          onChange={(html) =>
+                            handleSectionChange(idx, "content", html)
                           }
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: "10px",
-                              bgcolor: "white",
-                              fontFamily: "var(--font-outfit), sans-serif",
-                            },
-                          }}
+                          placeholder="Detailed instructions or list of items for this section..."
+                          minHeight={160}
                         />
                       </Grid>
                     </Grid>

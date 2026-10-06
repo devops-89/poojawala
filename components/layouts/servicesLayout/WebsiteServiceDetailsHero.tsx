@@ -128,7 +128,7 @@ export default function WebsiteServiceDetailsHero({
           <Typography
             variant="h1"
             sx={{
-              fontFamily: '"Georgia", "Playfair Display", serif',
+              fontFamily: '"DM Sans", sans-serif',
               fontWeight: 800,
               fontSize: { xs: "32px", sm: "44px", md: "52px" },
               lineHeight: 1.15,
@@ -413,7 +413,7 @@ export default function WebsiteServiceDetailsHero({
               </Typography>
               <Typography
                 sx={{
-                  fontFamily: '"Georgia", "Playfair Display", serif',
+                  fontFamily: '"DM Sans", sans-serif',
                   fontWeight: 800,
                   fontSize: { xs: "18px", sm: "24px", md: "26px" },
                   color: "#1A0B05",

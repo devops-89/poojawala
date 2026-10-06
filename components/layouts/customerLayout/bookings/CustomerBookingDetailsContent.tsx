@@ -5,6 +5,7 @@ import {
   rescheduleBookingAPI,
 } from "@/api/bookingControllers";
 import { getPaymentLinkAPI, settleBookingPaymentAPI } from "@/api/paymentControllers";
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useTicketModalStore } from "@/stores/ticketModalStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -300,62 +301,31 @@ export default function CustomerBookingDetailsContent({
   return (
     <Box sx={{ maxWidth: "1100px", mx: "auto", pb: 8 }}>
       <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <IconButton
-            onClick={() => router.push("/customer/bookings")}
-            sx={{
-              bgcolor: "#f1f5f9",
-              color: "#334155",
-              "&:hover": { bgcolor: "#e2e8f0" },
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontWeight: 800,
-                color: "#0f172a",
-                mb: 0.5,
-              }}
-            >
-              Booking Details
-            </Typography>
-            <Typography
-              sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64748b" }}
-            >
-              Review the full details for your selected booking.
-            </Typography>
-          </Box>
-        </Box>
-        <Breadcrumbs
-          aria-label="breadcrumb"
-          sx={{
-            mt: 2,
-            ml: 7,
-            fontFamily: '"DM Sans", sans-serif',
-            fontSize: "14px",
-          }}
-        >
-          <Link
-            href="/customer/dashboard"
-            style={{ textDecoration: "none", color: "#64748b" }}
-          >
-            Bookings
-          </Link>
+        <AppBreadcrumbs
+          items={[
+            { label: "Dashboard", href: "/customer/dashboard" },
+            { label: "Bookings", href: "/customer/bookings" },
+            { label: "Booking Details" },
+          ]}
+        />
+        <Box>
           <Typography
-            color="text.primary"
+            variant="h4"
             sx={{
               fontFamily: '"DM Sans", sans-serif',
-              fontSize: "14px",
-              fontWeight: 600,
+              fontWeight: 800,
+              color: "#0f172a",
+              mb: 0.5,
             }}
           >
             Booking Details
           </Typography>
-        </Breadcrumbs>
+          <Typography
+            sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64748b" }}
+          >
+            Review the full details for your selected booking.
+          </Typography>
+        </Box>
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>

@@ -10,11 +10,12 @@ import ThemeRegistry from "@/theme/ThemeRegistry";
 import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 
 export const metadata: Metadata = {
   title: "Poojawala | Book Verified Purohits & Pujas Online",
@@ -44,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body suppressHydrationWarning className={`${inter.variable} ${outfit.variable} min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9]`}>
+      <body suppressHydrationWarning className={`${dmSans.variable} ${inter.variable} ${outfit.variable} min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9]`}>
         <ThemeRegistry>
           <Navbar />
           <main className="flex-grow flex flex-col w-full relative">

@@ -10,8 +10,7 @@ import { Box, Button, CircularProgress, Container, Paper, Typography } from "@mu
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const DEFAULT_BANNER =
-  "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80";
+const DEFAULT_BANNER = "/images/home/poojaPackages/satyanarayan.webp";
 
 export default function WebsiteServiceDetailsContent() {
   const params = useParams();

@@ -72,7 +72,7 @@ export function parseCartApiResponse(res: any) {
         item.imageUrl ||
         item.imageDownloadurl ||
         item.image ||
-        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80",
+        "/images/productsHero.webp",
       quantity: Number(item.quantity || 1),
       unitString: pUnit,
       pricingUnit: pUnit,

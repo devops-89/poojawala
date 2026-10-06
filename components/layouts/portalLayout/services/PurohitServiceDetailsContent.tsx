@@ -26,8 +26,7 @@ import ServiceDetailsInfoGrid from "@/components/layouts/customerLayout/services
 import PurohitServiceDetailsAddForm from "./PurohitServiceDetailsAddForm";
 import PurohitServicePlansSection from "./PurohitServicePlansSection";
 
-const DEFAULT_BANNER =
-  "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80";
+const DEFAULT_BANNER = "/images/home/poojaPackages/satyanarayan.webp";
 
 export default function PurohitServiceDetailsContent() {
   const params = useParams();

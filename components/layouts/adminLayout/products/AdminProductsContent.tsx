@@ -19,6 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import NextLink from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 const STATUS_TABS = [
@@ -28,13 +29,84 @@ const STATUS_TABS = [
 ];
 
 export default function AdminProductsContent() {
+  const searchParams = useSearchParams();
+
+  const getInitialState = () => {
+    const paramStatus = searchParams.get("status");
+    const paramPage = searchParams.get("page");
+    if (paramStatus || paramPage) {
+      return {
+        status: paramStatus || "All",
+        page: paramPage ? Math.max(0, parseInt(paramPage, 10) - 1) : 0,
+      };
+    }
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem("admin_products_state");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            status: parsed.status || "All",
+            page: typeof parsed.page === "number" ? parsed.page : 0,
+          };
+        }
+      } catch (e) {}
+    }
+    return { status: "All", page: 0 };
+  };
+
+  const initialState = getInitialState();
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState(initialState.status);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(initialState.page);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          "admin_products_state",
+          JSON.stringify({ status: statusFilter, page })
+        );
+      } catch (e) {}
+
+      const params = new URLSearchParams(window.location.search);
+      let changed = false;
+
+      if (statusFilter !== "All") {
+        if (params.get("status") !== statusFilter) {
+          params.set("status", statusFilter);
+          changed = true;
+        }
+      } else {
+        if (params.has("status")) {
+          params.delete("status");
+          changed = true;
+        }
+      }
+
+      if (page > 0) {
+        if (params.get("page") !== String(page + 1)) {
+          params.set("page", String(page + 1));
+          changed = true;
+        }
+      } else {
+        if (params.has("page")) {
+          params.delete("page");
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        const queryString = params.toString();
+        const newUrl = queryString ? `/admin/products?${queryString}` : `/admin/products`;
+        window.history.replaceState(null, "", newUrl);
+      }
+    }
+  }, [statusFilter, page]);
 
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<number | string | null>(
@@ -170,7 +242,7 @@ export default function AdminProductsContent() {
           product.productImage ||
           product.imageUrl ||
           product.image ||
-          "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&w=100&q=80";
+          "/images/productsHero.webp";
         return (
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar

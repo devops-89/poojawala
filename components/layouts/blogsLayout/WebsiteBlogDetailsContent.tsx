@@ -203,12 +203,12 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                 variant="h2"
                 component="h1"
                 sx={{
-                  fontFamily: '"Georgia", serif',
+                  fontFamily: '"DM Sans", sans-serif',
                   fontWeight: 700,
                   color: "#0F172A",
                   fontSize: { xs: "1.85rem", sm: "2.4rem", md: "2.8rem" },
                   lineHeight: 1.25,
-                  letterSpacing: "-0.015em",
+                  letterSpacing: "-0.02em",
                 }}
               >
                 {renderHighlightedTitle(titleText)}
@@ -294,20 +294,90 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
 
         {/* FULL ARTICLE BODY */}
         {contentText && (
-          <Box sx={{ mb: 6 }}>
-            <Typography
-              sx={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: "1.1rem",
+          <Box
+            sx={{
+              mb: 6,
+              fontFamily: '"DM Sans", sans-serif',
+              fontSize: "1.1rem",
+              color: "#334155",
+              lineHeight: 1.9,
+              letterSpacing: "0.01em",
+              "& h1": {
+                fontSize: "2.1rem",
+                fontWeight: 800,
+                color: "#0f172a",
+                mt: 3,
+                mb: 1.5,
+                fontFamily: '"Georgia", serif',
+              },
+              "& h2": {
+                fontSize: "1.75rem",
+                fontWeight: 700,
+                color: "#FF6200",
+                mt: 3.5,
+                mb: 1.5,
+                fontFamily: '"Georgia", serif',
+              },
+              "& h3": {
+                fontSize: "1.4rem",
+                fontWeight: 700,
+                color: "#1e293b",
+                mt: 3,
+                mb: 1,
+                fontFamily: '"Georgia", serif',
+              },
+              "& h4": {
+                fontSize: "1.2rem",
+                fontWeight: 700,
                 color: "#334155",
-                lineHeight: 1.9,
-                whiteSpace: "pre-line",
-                letterSpacing: "0.01em",
-              }}
-            >
-              {contentText}
-            </Typography>
-          </Box>
+                mt: 2.5,
+                mb: 1,
+              },
+              "& p": {
+                mb: 2,
+              },
+              "& ul, & ol": {
+                pl: 3.5,
+                mb: 2.5,
+              },
+              "& li": {
+                mb: 0.75,
+                lineHeight: 1.8,
+              },
+              "& blockquote": {
+                borderLeft: "4px solid #FF6200",
+                pl: 3,
+                py: 2,
+                my: 3.5,
+                fontStyle: "italic",
+                color: "#475569",
+                bgcolor: "#FFF8F2",
+                borderRadius: "0 14px 14px 0",
+                fontSize: "1.125rem",
+                boxShadow: "0 2px 10px rgba(255, 98, 0, 0.05)",
+              },
+              "& a": {
+                color: "#FF6200",
+                textDecoration: "underline",
+                fontWeight: 600,
+                "&:hover": { color: "#E65800" },
+              },
+              "& strong, & b": {
+                fontWeight: 700,
+                color: "#0f172a",
+              },
+              "& code": {
+                bgcolor: "#f1f5f9",
+                color: "#0f172a",
+                px: 0.8,
+                py: 0.2,
+                borderRadius: "4px",
+                fontFamily: "monospace",
+                fontSize: "0.9em",
+              },
+            }}
+            dangerouslySetInnerHTML={{ __html: contentText }}
+          />
         )}
 
         {/* SECTIONS LIST (With #FF6200 Section Titles) */}
@@ -331,17 +401,28 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                     {secTitle}
                   </Typography>
 
-                  <Typography
+                  <Box
                     sx={{
                       fontFamily: '"DM Sans", sans-serif',
                       fontSize: "1.05rem",
                       color: "#475569",
                       lineHeight: 1.85,
-                      whiteSpace: "pre-line",
+                      "& p": { mb: 1.5 },
+                      "& ul, & ol": { pl: 3, mb: 1.5 },
+                      "& li": { mb: 0.5 },
+                      "& blockquote": {
+                        borderLeft: "4px solid #FF6200",
+                        pl: 2.5,
+                        py: 1,
+                        my: 2,
+                        fontStyle: "italic",
+                        bgcolor: "#FFF8F2",
+                        borderRadius: "0 8px 8px 0",
+                      },
+                      "& a": { color: "#FF6200", textDecoration: "underline" },
                     }}
-                  >
-                    {secDesc}
-                  </Typography>
+                    dangerouslySetInnerHTML={{ __html: secDesc }}
+                  />
                 </Box>
               );
             })}

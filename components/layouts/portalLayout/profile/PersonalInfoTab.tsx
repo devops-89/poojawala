@@ -214,14 +214,7 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
             }}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            label="Birth Place"
-            value={birthPlace}
-            onChange={(e) => setBirthPlace(e.target.value)}
-          />
-        </Grid>
+
         <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth

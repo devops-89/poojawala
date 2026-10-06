@@ -76,7 +76,6 @@ export default function AdminProductDetailsContent() {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <AdminDetailsHeader
         title="Product Details"
-        backHref="/admin/products"
         breadcrumbs={[
           { label: "Products", href: "/admin/products" },
           { label: "Product Details" },

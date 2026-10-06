@@ -8,6 +8,10 @@ import {
   Card,
   CardContent,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   TextField,
@@ -23,6 +27,7 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import SchoolIcon from "@mui/icons-material/School";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import BadgeIcon from "@mui/icons-material/Badge";
+import CloseIcon from "@mui/icons-material/Close";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
 interface DocumentsTabProps {
@@ -66,6 +71,42 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
   saving,
   onSave,
 }) => {
+  const [previewItem, setPreviewItem] = React.useState<{
+    title: string;
+    file: File | null;
+    url: string | null;
+  } | null>(null);
+
+  const previewSrc = React.useMemo(() => {
+    if (!previewItem) return null;
+    if (previewItem.file) {
+      return URL.createObjectURL(previewItem.file);
+    }
+    return previewItem.url || null;
+  }, [previewItem]);
+
+  React.useEffect(() => {
+    return () => {
+      if (previewSrc && previewSrc.startsWith("blob:")) {
+        URL.revokeObjectURL(previewSrc);
+      }
+    };
+  }, [previewSrc]);
+
+  const isPdf = React.useMemo(() => {
+    if (!previewItem) return false;
+    if (previewItem.file) {
+      return (
+        previewItem.file.type.includes("pdf") ||
+        previewItem.file.name.toLowerCase().endsWith(".pdf")
+      );
+    }
+    if (previewItem.url) {
+      return previewItem.url.toLowerCase().includes(".pdf");
+    }
+    return false;
+  }, [previewItem]);
+
   const getStatusChip = () => {
     const status = (verificationStatus || "PENDING").toUpperCase();
     if (status === "APPROVED") {
@@ -316,18 +357,23 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                       )}
                     </Box>
 
-                    {hasExistingUrl && (
+                    {(hasExistingUrl || hasNewFile) && (
                       <Button
                         size="small"
                         startIcon={<VisibilityIcon />}
-                        href={doc.url as string}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={() =>
+                          setPreviewItem({
+                            title: doc.title,
+                            file: doc.file,
+                            url: doc.url,
+                          })
+                        }
                         sx={{
                           textTransform: "none",
                           fontSize: "13px",
                           fontWeight: 600,
                           color: "#FF6200",
+                          "&:hover": { bgcolor: "#FFF5EF" },
                         }}
                       >
                         View
@@ -404,6 +450,126 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
           {saving ? "Saving Documents..." : "Save Documents"}
         </Button>
       </Box>
+
+      {/* Document Preview Modal */}
+      <Dialog
+        open={Boolean(previewItem)}
+        onClose={() => setPreviewItem(null)}
+        maxWidth="md"
+        fullWidth
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: "16px",
+            overflow: "hidden",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            m: 0,
+            p: 2,
+            px: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontWeight: 700,
+            fontSize: "18px",
+            color: "#1e293b",
+            borderBottom: "1px solid #E2E8F0",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <VisibilityIcon sx={{ color: "#FF6200" }} />
+            {previewItem?.title || "Document Preview"}
+          </Box>
+          <IconButton
+            aria-label="close"
+            onClick={() => setPreviewItem(null)}
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+              "&:hover": { color: "#FF6200", bgcolor: "#FFF5EF" },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent
+          sx={{
+            p: 3,
+            bgcolor: "#F8FAFC",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "350px",
+            maxHeight: "75vh",
+            overflow: "auto",
+          }}
+        >
+          {previewSrc ? (
+            isPdf ? (
+              <Box sx={{ width: "100%", height: "65vh" }}>
+                <iframe
+                  src={previewSrc}
+                  title={previewItem?.title || "Document Preview"}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    borderRadius: "8px",
+                    backgroundColor: "#ffffff",
+                  }}
+                />
+              </Box>
+            ) : (
+              <Box
+                component="img"
+                src={previewSrc}
+                alt={previewItem?.title || "Document Preview"}
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "65vh",
+                  objectFit: "contain",
+                  borderRadius: "10px",
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
+                }}
+              />
+            )
+          ) : (
+            <Typography sx={{ color: "#64748b" }}>
+              No document preview available.
+            </Typography>
+          )}
+        </DialogContent>
+
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 1.5,
+            borderTop: "1px solid #E2E8F0",
+            bgcolor: "#FFFFFF",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            onClick={() => setPreviewItem(null)}
+            variant="contained"
+            sx={{
+              bgcolor: "#FF6200 !important",
+              color: "white !important",
+              borderRadius: "8px",
+              px: 3,
+              textTransform: "none",
+              fontWeight: 700,
+              "&:hover": { bgcolor: "#F05A00 !important" },
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

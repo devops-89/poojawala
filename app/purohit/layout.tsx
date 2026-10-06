@@ -41,16 +41,6 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     } else {
       if (!isAuthorized) {
         router.replace('/sign-in');
-      } else {
-        // Lock back button to prevent navigating back to login/registration pages
-        window.history.pushState(null, '', window.location.href);
-        const handlePopState = () => {
-          window.history.pushState(null, '', window.location.href);
-        };
-        window.addEventListener('popstate', handlePopState);
-        return () => {
-          window.removeEventListener('popstate', handlePopState);
-        };
       }
     }
   }, [pathname, router]);

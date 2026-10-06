@@ -12,6 +12,7 @@ import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStat
 import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, IconButton, TextField, Typography } from "@mui/material";
 import NextLink from "next/link";
@@ -27,12 +28,35 @@ const STATUS_TABS = [
 
 export default function AdminPurohitsContent() {
   const searchParams = useSearchParams();
-  const initialStatus = searchParams.get("status") || "All";
 
+  const getInitialState = () => {
+    const paramStatus = searchParams.get("status");
+    const paramPage = searchParams.get("page");
+    if (paramStatus || paramPage) {
+      return {
+        status: paramStatus || "All",
+        page: paramPage ? Math.max(0, parseInt(paramPage, 10) - 1) : 0,
+      };
+    }
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem("admin_purohits_state");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            status: parsed.status || "All",
+            page: typeof parsed.page === "number" ? parsed.page : 0,
+          };
+        }
+      } catch (e) {}
+    }
+    return { status: "All", page: 0 };
+  };
+
+  const initialState = getInitialState();
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState(initialStatus);
-
-  const [page, setPage] = useState(0);
+  const [statusFilter, setStatusFilter] = useState(initialState.status);
+  const [page, setPage] = useState(initialState.page);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -42,6 +66,50 @@ export default function AdminPurohitsContent() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSnackbar } = useSnackbarStore();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          "admin_purohits_state",
+          JSON.stringify({ status: statusFilter, page })
+        );
+      } catch (e) {}
+
+      const params = new URLSearchParams(window.location.search);
+      let changed = false;
+
+      if (statusFilter !== "All") {
+        if (params.get("status") !== statusFilter) {
+          params.set("status", statusFilter);
+          changed = true;
+        }
+      } else {
+        if (params.has("status")) {
+          params.delete("status");
+          changed = true;
+        }
+      }
+
+      if (page > 0) {
+        if (params.get("page") !== String(page + 1)) {
+          params.set("page", String(page + 1));
+          changed = true;
+        }
+      } else {
+        if (params.has("page")) {
+          params.delete("page");
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        const queryString = params.toString();
+        const newUrl = queryString ? `/admin/purohits?${queryString}` : `/admin/purohits`;
+        window.history.replaceState(null, "", newUrl);
+      }
+    }
+  }, [statusFilter, page]);
 
   const fetchPurohits = useCallback(async () => {
     try {
@@ -266,16 +334,38 @@ export default function AdminPurohitsContent() {
       label: "ACTION",
       align: "center",
       render: (purohit) => (
-        <IconButton
-          component={NextLink}
-          href={`/admin/purohits/${purohit.id}`}
+        <Box
           sx={{
-            color: "#94a3b8",
-            "&:hover": { color: "#FF6200", bgcolor: "#fff7ed" },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.5,
           }}
         >
-          <VisibilityIcon fontSize="small" />
-        </IconButton>
+          <IconButton
+            component={NextLink}
+            href={`/admin/purohits/${purohit.id}`}
+            title="View Details"
+            sx={{
+              color: "#94a3b8",
+              "&:hover": { color: "#FF6200", bgcolor: "#fff7ed" },
+            }}
+          >
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+
+          <IconButton
+            component={NextLink}
+            href={`/admin/purohits/edit/${purohit.id}`}
+            title="Edit Profile"
+            sx={{
+              color: "#94a3b8",
+              "&:hover": { color: "#FF6200", bgcolor: "#fff7ed" },
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </Box>
       ),
     },
   ];

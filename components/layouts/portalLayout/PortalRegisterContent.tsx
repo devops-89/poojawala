@@ -45,6 +45,28 @@ export default function PortalRegisterContent() {
   const router = useRouter();
   const { showSnackbar } = useSnackbarStore();
 
+  useEffect(() => {
+    const userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        if (userObj.role === "PUROHIT") {
+          if (!userObj.isAdminCreated && !userObj.is_admin_created) {
+            router.replace("/purohit/dashboard");
+          }
+        } else if (userObj.role === "CUSTOMER") {
+          router.replace("/customer/dashboard");
+        } else if (
+          userObj.role === "ADMIN" ||
+          userObj.role === "SUPERADMIN" ||
+          userObj.role === "SUPER_ADMIN"
+        ) {
+          router.replace("/admin/dashboard");
+        }
+      } catch (e) {}
+    }
+  }, [router]);
+
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);

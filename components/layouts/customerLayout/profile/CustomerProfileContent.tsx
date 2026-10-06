@@ -18,6 +18,8 @@ import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { Avatar, Box, Chip, Grid, Paper, Typography } from "@mui/material";
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -101,6 +103,12 @@ export default function CustomerProfileContent() {
         }}
       >
         <Box>
+          <AppBreadcrumbs
+            items={[
+              { label: "Dashboard", href: "/customer/dashboard" },
+              { label: "Profile" },
+            ]}
+          />
           <Typography
             variant="h4"
             sx={{

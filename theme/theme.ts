@@ -9,6 +9,47 @@ const theme = createTheme({
       default: '#FFFBF5',
     }
   },
+  typography: {
+    fontFamily: '"DM Sans", var(--font-dm-sans), var(--font-outfit), sans-serif',
+    h1: {
+      fontFamily: '"DM Sans", sans-serif',
+      fontWeight: 700,
+      letterSpacing: '-0.04em',
+    },
+    h2: {
+      fontFamily: '"DM Sans", sans-serif',
+      fontWeight: 700,
+      letterSpacing: '-0.04em',
+    },
+    h3: {
+      fontFamily: '"DM Sans", sans-serif',
+      fontWeight: 700,
+      letterSpacing: '-0.02em',
+    },
+    h4: {
+      fontFamily: '"DM Sans", sans-serif',
+      fontWeight: 700,
+      letterSpacing: '-0.02em',
+    },
+    h5: {
+      fontFamily: '"DM Sans", sans-serif',
+      fontWeight: 700,
+    },
+    h6: {
+      fontFamily: '"DM Sans", sans-serif',
+      fontWeight: 700,
+    },
+    body1: {
+      fontFamily: '"DM Sans", sans-serif',
+    },
+    body2: {
+      fontFamily: '"DM Sans", sans-serif',
+    },
+    button: {
+      fontFamily: '"DM Sans", sans-serif',
+      textTransform: 'none',
+    },
+  },
   components: {
     MuiPopover: {
       defaultProps: {

@@ -217,7 +217,7 @@ export default function DashboardServicesSection({
               item.imageUrl ||
               item.image ||
               item.bannerImage ||
-              "https://images.unsplash.com/photo-1609137144813-7d9921338f24?auto=format&fit=crop&w=600&q=80";
+              "/images/home/poojaPackages/satyanarayan.webp";
             const durationText = item.durationMinutes
               ? `${item.durationMinutes} mins`
               : null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
 import BlogCardGrid from "./BlogCardGrid";
@@ -51,14 +51,14 @@ export default function BlogsLayout() {
         position: "relative",
       }}
     >
-      {/* Hero Section matching Homepage & Services page */}
+      {/* Hero Section matching Homepage & Services page size & styling */}
       <Box
         sx={{
           width: "100%",
-          minHeight: { xs: "320px", sm: "400px", md: "520px" },
+          minHeight: { xs: "380px", sm: "480px", md: "777px" },
           backgroundImage: {
-            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.95) 0%, rgba(255, 253, 249, 0.82) 45%, rgba(255, 253, 249, 0.1) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-            md: "linear-gradient(90deg, #FFFDF9 0%, rgba(255, 253, 249, 0.85) 35%, rgba(255, 253, 249, 0.1) 65%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.6) 35%, rgba(255, 253, 249, 0.05) 70%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            md: "linear-gradient(90deg, rgba(255, 253, 249, 0.82) 0%, rgba(255, 253, 249, 0.45) 25%, rgba(255, 253, 249, 0.02) 50%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
           },
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -66,8 +66,8 @@ export default function BlogsLayout() {
           display: "flex",
           flexDirection: "column",
           pt: { xs: 2.5, md: 4 },
-          pb: { xs: 3.5, md: 6 },
-          mb: { xs: 2, md: 4 },
+          pb: { xs: 3.5, md: 8 },
+          mb: { xs: 4, md: 8 },
         }}
       >
         <Container
@@ -81,7 +81,7 @@ export default function BlogsLayout() {
           }}
         >
           {/* Content */}
-          <Box sx={{ maxWidth: "620px", mt: "auto", mb: "auto" }}>
+          <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
             <Typography
               variant="h2"
               component="h1"
@@ -89,12 +89,28 @@ export default function BlogsLayout() {
                 fontFamily: '"DM Sans", sans-serif',
                 fontWeight: 700,
                 color: "#0f172a",
-                mb: 1.5,
-                fontSize: { xs: "1.6rem", sm: "2.3rem", md: "48px" },
+                mb: 0.5,
+                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
+                lineHeight: { xs: 1.15, md: 1.2 },
                 letterSpacing: "-0.04em",
               }}
             >
-              Explore Our Articles & Vedic Wisdom
+              Explore Our Articles &
+            </Typography>
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontFamily: '"DM Sans", sans-serif',
+                fontWeight: 800,
+                color: "#D32F2F",
+                mb: { xs: 1.5, md: 3 },
+                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
+                lineHeight: { xs: 1.15, md: 1.2 },
+                letterSpacing: "-0.04em",
+              }}
+            >
+              Vedic Wisdom
             </Typography>
             <Typography
               variant="body1"
@@ -102,9 +118,9 @@ export default function BlogsLayout() {
                 fontFamily: '"DM Sans", sans-serif',
                 color: "#0f172a",
                 fontWeight: 600,
-                fontSize: { xs: "14px", sm: "15px", md: "18px" },
-                lineHeight: "1.5",
-                maxWidth: "540px",
+                fontSize: { xs: "14px", sm: "15px", md: "16px" },
+                lineHeight: "1.45",
+                maxWidth: "500px",
                 letterSpacing: "0em",
               }}
             >

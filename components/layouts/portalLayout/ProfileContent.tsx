@@ -1,14 +1,15 @@
 "use client";
+import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React from "react";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PersonIcon from "@mui/icons-material/Person";
 import WorkIcon from "@mui/icons-material/Work";
 import {
   Box,
+  Breadcrumbs,
   Button,
   CircularProgress,
   Dialog,
@@ -20,6 +21,7 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { AddressModal } from "./profile/AddressModal";
@@ -114,21 +116,14 @@ export default function ProfileContent() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Button
-          onClick={() => router.push("/purohit/dashboard")}
-          sx={{
-            minWidth: "auto",
-            p: 1,
-            color: "#666",
-            bgcolor: "white",
-            borderRadius: "12px",
-            border: "1px solid #eee",
-            "&:hover": { bgcolor: "#f5f5f5" },
-          }}
-        >
-          <ArrowBackIcon />
-        </Button>
+      <Box>
+        <AppBreadcrumbs
+          items={[
+            { label: "Dashboard", href: "/purohit/dashboard" },
+            { label: "Profile", href: "/purohit/profile" },
+            { label: "Profile & Settings" },
+          ]}
+        />
         <Box>
           <Typography
             variant="h4"

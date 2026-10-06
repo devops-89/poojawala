@@ -22,8 +22,7 @@ interface CategoryItem {
   isActive?: boolean;
 }
 
-const FALLBACK_CATEGORY_IMAGE =
-  "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=800&auto=format&fit=crop";
+const FALLBACK_CATEGORY_IMAGE = "/images/home/poojaPackages/satyanarayan.webp";
 
 export default function ServiceCategoriesSection() {
   const router = useRouter();
