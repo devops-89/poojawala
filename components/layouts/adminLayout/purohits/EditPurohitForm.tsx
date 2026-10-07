@@ -31,17 +31,13 @@ interface EditPurohitFormProps {
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string()
-    .matches(
-      /^[a-zA-Z\s]+$/,
-      "Full Name cannot contain numbers or special characters"
-    )
     .required("Full Name is required")
     .trim(),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   phone: Yup.string().required("Mobile Number is required").trim(),
-  dob: Yup.date().required("Date of Birth is required"),
+  dob: Yup.mixed().required("Date of Birth is required"),
   bio: Yup.string().required("Bio is required"),
   qualification: Yup.string().required("Qualification is required"),
   experienceYears: Yup.number()
@@ -50,7 +46,6 @@ const validationSchema = Yup.object().shape({
     .max(99, "Experience cannot exceed 99 years")
     .required("Experience Years is required"),
   aadhaarNumber: Yup.string()
-    .matches(/^[0-9]{12}$/, "Aadhaar Number must be exactly 12 digits")
     .required("Aadhaar Number is required"),
   state: Yup.string().required("State is required"),
   city: Yup.string().required("City is required"),
@@ -557,6 +552,13 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
             type="submit"
             variant="contained"
             disabled={isSubmitting}
+            onClick={() => {
+              if (Object.keys(errors).length > 0) {
+                const firstErrKey = Object.keys(errors)[0];
+                const firstErrMsg = errors[firstErrKey as keyof typeof errors];
+                showSnackbar(`Validation error in ${firstErrKey}: ${firstErrMsg}`, "error");
+              }
+            }}
             startIcon={
               isSubmitting ? (
                 <CircularProgress size={20} color="inherit" />

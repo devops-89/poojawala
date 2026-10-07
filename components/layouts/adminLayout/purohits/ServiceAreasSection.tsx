@@ -124,18 +124,22 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
   const handleConfirmDeleteArea = async () => {
     if (!deleteAreaTarget) return;
     setIsDeletingArea(true);
+    const areaId = deleteAreaTarget.id ?? deleteAreaTarget._id;
     try {
-      const areaId = deleteAreaTarget.id;
-      if (typeof areaId === "number" && areaId < 1000000000000) {
+      if (
+        areaId &&
+        (typeof areaId === "string" ||
+          (typeof areaId === "number" && areaId < 1000000000000))
+      ) {
         await deleteServiceAreaAPI(areaId);
       }
-      setServiceAreas((prev) => prev.filter((a) => a.id !== areaId));
+      setServiceAreas((prev) => prev.filter((a) => (a.id ?? a._id) !== areaId));
       showSnackbar("Service area deleted successfully!", "success");
     } catch (error: any) {
       console.error("Service area delete error:", error);
       showSnackbar(
         error?.response?.data?.message || "Failed to delete service area",
-        "error",
+        "error"
       );
     } finally {
       setIsDeletingArea(false);
@@ -157,12 +161,19 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
         return;
       }
     }
+
+    const constructedFullAddress =
+      targetData.fullAddress ||
+      [targetData.streetName, targetData.city, targetData.state, targetData.pincode]
+        .filter(Boolean)
+        .join(", ");
+
     const areaPayload = {
       purohitId: Number(purohitId),
       addressLabel: targetData.addressLabel || "Primary Service Area",
       streetName:
         targetData.streetName || targetData.addressLabel || "Main Area",
-      fullAddress: targetData.fullAddress,
+      fullAddress: constructedFullAddress,
       city: targetData.city || defaultCity,
       state: targetData.state || defaultState,
       pincode: targetData.pincode,
@@ -180,22 +191,43 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
     try {
       if (
         selectedAddressId &&
-        typeof selectedAddressId === "number" &&
-        selectedAddressId < 1000000000000
+        (typeof selectedAddressId === "string" ||
+          (typeof selectedAddressId === "number" && selectedAddressId < 1000000000000))
       ) {
         const res = await updateServiceAreaAPI(selectedAddressId, areaPayload);
-        const updatedObj = res?.data ||
-          res?.serviceArea || { ...targetData, id: selectedAddressId };
+        const resObj =
+          res?.data?.data ||
+          (res?.data && typeof res.data === "object" && !("success" in res.data) ? res.data : {}) ||
+          res?.serviceArea ||
+          {};
+        const updatedObj = {
+          ...targetData,
+          ...areaPayload,
+          ...resObj,
+          id: selectedAddressId,
+          fullAddress: resObj.fullAddress || constructedFullAddress,
+        };
         setServiceAreas((prev) =>
           prev.map((a) =>
-            a.id === selectedAddressId ? { ...a, ...updatedObj } : a,
+            (a.id ?? a._id) === selectedAddressId ? updatedObj : a,
           ),
         );
         showSnackbar("Service area updated successfully!", "success");
       } else {
         const res = await addServiceAreaAPI(areaPayload);
-        const newObj = res?.data ||
-          res?.serviceArea || { ...targetData, id: Date.now() };
+        const resObj =
+          res?.data?.data ||
+          (res?.data && typeof res.data === "object" && !("success" in res.data) ? res.data : {}) ||
+          res?.serviceArea ||
+          {};
+        const assignedId = resObj.id || resObj._id || res?.data?.id || Date.now();
+        const newObj = {
+          ...targetData,
+          ...areaPayload,
+          ...resObj,
+          id: assignedId,
+          fullAddress: resObj.fullAddress || constructedFullAddress,
+        };
         setServiceAreas((prev) => [...prev, newObj]);
         showSnackbar("Service area added successfully!", "success");
       }
@@ -374,10 +406,13 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
                       wordBreak: "break-word",
                     }}
                   >
-                    {area.fullAddress}
+                    {area.fullAddress ||
+                      [area.streetName, area.city, area.state, area.pincode]
+                        .filter(Boolean)
+                        .join(", ")}
                   </Typography>
 
-                  {area.serviceRadiusKm && (
+                  {(area.serviceRadiusKm || area.radius) && (
                     <Box
                       sx={{
                         mt: 2,
@@ -393,7 +428,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
                           color: "#FF6200",
                         }}
                       >
-                        Operating Radius: {area.serviceRadiusKm} km
+                        Operating Radius: {area.serviceRadiusKm || area.radius} km
                       </Typography>
                     </Box>
                   )}
