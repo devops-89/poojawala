@@ -9,20 +9,228 @@ const authSecuredApi = axios.create({
   },
 });
 
-authSecuredApi.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const method = config.method?.toUpperCase();
-    if (method && ["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-      const csrfToken = sessionStorage.getItem("csrfToken");
-      if (csrfToken) {
-        config.headers["X-CSRF-Token"] = csrfToken;
+export const getActiveRole = (): string | null => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user?.role) return String(user.role).toUpperCase();
+    }
+  } catch (e) {}
+
+  const path = window.location.pathname;
+  if (path.startsWith("/admin")) return "ADMIN";
+  if (path.startsWith("/purohit")) return "PUROHIT";
+  if (path.startsWith("/customer")) return "CUSTOMER";
+
+  return null;
+};
+
+export const saveRoleCsrfToken = (token: string | null, roleHint?: string | null) => {
+  if (typeof window === "undefined" || !token) return;
+  const role = (roleHint || getActiveRole() || "").toUpperCase();
+
+  sessionStorage.setItem("csrfToken", token);
+
+  if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+    sessionStorage.setItem("poojawala-admin-csrf-token", token);
+  } else if (role === "PUROHIT") {
+    sessionStorage.setItem("poojawala-purohit-csrf-token", token);
+  } else if (role === "CUSTOMER") {
+    sessionStorage.setItem("poojawala-customer-csrf-token", token);
+  }
+};
+
+export const clearRoleCsrfToken = () => {
+  if (typeof window === "undefined") return;
+  sessionStorage.removeItem("user");
+  sessionStorage.removeItem("csrfToken");
+  sessionStorage.removeItem("poojawala-admin-csrf-token");
+  sessionStorage.removeItem("poojawala-purohit-csrf-token");
+  sessionStorage.removeItem("poojawala-customer-csrf-token");
+};
+
+export const getCsrfToken = (): string | null => {
+  if (typeof window === "undefined") return null;
+
+  const role = getActiveRole();
+  let tokenFromCookie: string | null = null;
+
+  if (typeof document !== "undefined" && document.cookie) {
+    const cookies = document.cookie.split(";");
+    const cookieMap: Record<string, string> = {};
+    for (let cookie of cookies) {
+      const parts = cookie.trim().split("=");
+      if (parts.length >= 2) {
+        const key = parts[0];
+        const val = parts.slice(1).join("=");
+        if (key && val) {
+          cookieMap[key] = decodeURIComponent(val);
+        }
       }
     }
+
+    if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+      tokenFromCookie = cookieMap["poojawala-admin-csrf-token"] || cookieMap["poojawalaAdminCsrfToken"] || null;
+    } else if (role === "PUROHIT") {
+      tokenFromCookie = cookieMap["poojawala-purohit-csrf-token"] || cookieMap["poojawalaPurohitCsrfToken"] || null;
+    } else if (role === "CUSTOMER") {
+      tokenFromCookie = cookieMap["poojawala-customer-csrf-token"] || cookieMap["poojawalaCustomerCsrfToken"] || null;
+    }
+
+    if (!tokenFromCookie) {
+      const path = window.location.pathname;
+      if (path.startsWith("/purohit")) {
+        tokenFromCookie = cookieMap["poojawala-purohit-csrf-token"] || cookieMap["poojawalaPurohitCsrfToken"] || null;
+      } else if (path.startsWith("/admin")) {
+        tokenFromCookie = cookieMap["poojawala-admin-csrf-token"] || cookieMap["poojawalaAdminCsrfToken"] || null;
+      } else if (path.startsWith("/customer")) {
+        tokenFromCookie = cookieMap["poojawala-customer-csrf-token"] || cookieMap["poojawalaCustomerCsrfToken"] || null;
+      }
+    }
+
+    if (!tokenFromCookie) {
+      tokenFromCookie = cookieMap["csrfToken"] || cookieMap["csrftoken"] || cookieMap["_csrf"] || cookieMap["XSRF-TOKEN"] || null;
+    }
+  }
+
+  if (tokenFromCookie) {
+    saveRoleCsrfToken(tokenFromCookie, role);
+    return tokenFromCookie;
+  }
+
+  if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+    const adminToken = sessionStorage.getItem("poojawala-admin-csrf-token");
+    if (adminToken) return adminToken;
+  } else if (role === "PUROHIT") {
+    const purohitToken = sessionStorage.getItem("poojawala-purohit-csrf-token");
+    if (purohitToken) return purohitToken;
+  } else if (role === "CUSTOMER") {
+    const customerToken = sessionStorage.getItem("poojawala-customer-csrf-token");
+    if (customerToken) return customerToken;
+  }
+
+  return sessionStorage.getItem("csrfToken");
+};
+
+export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string | null => {
+  const role = (roleHint || getActiveRole() || "").toUpperCase();
+
+  if (typeof document !== "undefined" && document.cookie) {
+    const cookies = document.cookie.split(";");
+    const cookieMap: Record<string, string> = {};
+    for (let cookie of cookies) {
+      const parts = cookie.trim().split("=");
+      if (parts.length >= 2) {
+        const key = parts[0];
+        const val = parts.slice(1).join("=");
+        if (key && val) {
+          cookieMap[key] = decodeURIComponent(val);
+        }
+      }
+    }
+
+    if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+      if (cookieMap["poojawala-admin-csrf-token"]) return cookieMap["poojawala-admin-csrf-token"];
+      if (cookieMap["poojawalaAdminCsrfToken"]) return cookieMap["poojawalaAdminCsrfToken"];
+    } else if (role === "PUROHIT") {
+      if (cookieMap["poojawala-purohit-csrf-token"]) return cookieMap["poojawala-purohit-csrf-token"];
+      if (cookieMap["poojawalaPurohitCsrfToken"]) return cookieMap["poojawalaPurohitCsrfToken"];
+    } else if (role === "CUSTOMER") {
+      if (cookieMap["poojawala-customer-csrf-token"]) return cookieMap["poojawala-customer-csrf-token"];
+      if (cookieMap["poojawalaCustomerCsrfToken"]) return cookieMap["poojawalaCustomerCsrfToken"];
+    }
+  }
+
+  if (!res) return null;
+  const target = res.data || res;
+
+  if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+    if (target.poojawalaAdminCsrfToken || res.poojawalaAdminCsrfToken) {
+      return target.poojawalaAdminCsrfToken || res.poojawalaAdminCsrfToken;
+    }
+  } else if (role === "PUROHIT") {
+    if (target.poojawalaPurohitCsrfToken || res.poojawalaPurohitCsrfToken) {
+      return target.poojawalaPurohitCsrfToken || res.poojawalaPurohitCsrfToken;
+    }
+  } else if (role === "CUSTOMER") {
+    if (target.poojawalaCustomerCsrfToken || res.poojawalaCustomerCsrfToken) {
+      return target.poojawalaCustomerCsrfToken || res.poojawalaCustomerCsrfToken;
+    }
+  }
+
+  return (
+    target.poojawalaPurohitCsrfToken ||
+    target.poojawalaAdminCsrfToken ||
+    target.poojawalaCustomerCsrfToken ||
+    target.csrfToken ||
+    res.poojawalaPurohitCsrfToken ||
+    res.poojawalaAdminCsrfToken ||
+    res.poojawalaCustomerCsrfToken ||
+    res.csrfToken ||
+    null
+  );
+};
+
+export const attachCsrfHeaders = (headers: any, token?: string | null) => {
+  const activeToken = token || getCsrfToken();
+  if (!headers || !activeToken) return;
+
+  const role = getActiveRole();
+
+  const headerKeys: string[] = ["X-CSRF-Token", "x-csrf-token", "csrftoken"];
+
+  if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+    headerKeys.push("poojawala-admin-csrf-token", "poojawalaAdminCsrfToken");
+  } else if (role === "PUROHIT") {
+    headerKeys.push("poojawala-purohit-csrf-token", "poojawalaPurohitCsrfToken");
+  } else if (role === "CUSTOMER") {
+    headerKeys.push("poojawala-customer-csrf-token", "poojawalaCustomerCsrfToken");
+  } else {
+    headerKeys.push(
+      "poojawala-admin-csrf-token",
+      "poojawala-purohit-csrf-token",
+      "poojawala-customer-csrf-token"
+    );
+  }
+
+  for (const k of headerKeys) {
+    if (typeof headers.set === "function") {
+      headers.set(k, activeToken);
+    }
+    headers[k] = activeToken;
+  }
+};
+
+const attachRoleAndCsrfHeader = (config: InternalAxiosRequestConfig) => {
+  const role = getActiveRole();
+  if (role) {
+    if (typeof config.headers.set === "function") {
+      config.headers.set("X-Role", role);
+      config.headers.set("role", role);
+      config.headers.set("x-role", role);
+      config.headers.set("Poojawala-Role", role);
+    }
+    (config.headers as any)["X-Role"] = role;
+    (config.headers as any)["role"] = role;
+    (config.headers as any)["x-role"] = role;
+    (config.headers as any)["Poojawala-Role"] = role;
+  }
+
+  const csrfToken = getCsrfToken();
+  if (csrfToken) {
+    attachCsrfHeaders(config.headers, csrfToken);
+  }
+};
+
+authSecuredApi.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    attachRoleAndCsrfHeader(config);
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 const authPublicApi = axios.create({
@@ -43,18 +251,10 @@ const userSecuredApi = axios.create({
 
 userSecuredApi.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const method = config.method?.toUpperCase();
-    if (method && ["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-      const csrfToken = sessionStorage.getItem("csrfToken");
-      if (csrfToken) {
-        config.headers["X-CSRF-Token"] = csrfToken;
-      }
-    }
+    attachRoleAndCsrfHeader(config);
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 const userPublicApi = axios.create({
@@ -75,18 +275,10 @@ const paymentSecuredApi = axios.create({
 
 paymentSecuredApi.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const method = config.method?.toUpperCase();
-    if (method && ["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-      const csrfToken = sessionStorage.getItem("csrfToken");
-      if (csrfToken) {
-        config.headers["X-CSRF-Token"] = csrfToken;
-      }
-    }
+    attachRoleAndCsrfHeader(config);
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export { authPublicApi, authSecuredApi, paymentSecuredApi, userPublicApi, userSecuredApi };
@@ -148,16 +340,19 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
         isRefreshing = true;
 
         try {
-          const csrfToken = sessionStorage.getItem("csrfToken");
-          const response = await authPublicApi.post("auth/refresh-token", {}, {
-            headers: csrfToken ? { "X-CSRF-Token": csrfToken } : {}
-          });
+          const csrfToken = getCsrfToken();
+          const refreshHeaders: any = {};
+          if (csrfToken) {
+            attachCsrfHeaders(refreshHeaders, csrfToken);
+          }
+          const response = await authPublicApi.post("auth/refresh-token", {}, { headers: refreshHeaders });
           const resBody = response.data;
-          const newCsrfToken = resBody?.csrfToken || resBody?.data?.csrfToken;
           const userData = resBody?.user || resBody?.data?.user;
+          const activeRole = userData?.role || getActiveRole();
+          const newCsrfToken = extractRoleCsrfToken(resBody, activeRole);
 
           if (newCsrfToken) {
-            sessionStorage.setItem("csrfToken", newCsrfToken);
+            saveRoleCsrfToken(newCsrfToken, activeRole);
           }
 
           if (userData) {
@@ -167,15 +362,14 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
           processQueue(null, newCsrfToken);
 
           if (originalRequest.method && ["POST", "PUT", "PATCH", "DELETE"].includes(originalRequest.method.toUpperCase())) {
-            originalRequest.headers["X-CSRF-Token"] = newCsrfToken;
+            attachCsrfHeaders(originalRequest.headers, newCsrfToken);
           }
 
           return instance(originalRequest);
         } catch (refreshError) {
           const typedError = refreshError as AxiosError | Error;
           processQueue(typedError, null);
-          sessionStorage.removeItem("csrfToken");
-          sessionStorage.removeItem("user");
+          clearRoleCsrfToken();
           if (typeof window !== "undefined") {
             window.location.href = "/";
           }

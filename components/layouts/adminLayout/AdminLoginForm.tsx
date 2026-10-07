@@ -10,6 +10,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import { loginAPI, getMeAPI } from '@/api/authControllers';
+import { extractRoleCsrfToken, saveRoleCsrfToken } from '@/api/config';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -50,15 +51,27 @@ export default function AdminLoginForm() {
       setIsLoading(true);
       try {
         const response = await loginAPI({ email: values.email, password: values.password });
-        if (response.success) {
+        if (response.success || response.token || response.accessToken || response.poojawalaAdminCsrfToken) {
           const token = response.tokens?.access?.token || response.token || response.accessToken;
-          const meResponse = await getMeAPI(token);
-          sessionStorage.setItem('user', JSON.stringify(meResponse?.user || meResponse?.data || meResponse || response.user));
-          if (response.csrfToken) {
-            sessionStorage.setItem('csrfToken', response.csrfToken);
+          let userObj = response.user || response.data?.user;
+          if (token) {
+            try {
+              const meResponse = await getMeAPI(token);
+              userObj = meResponse?.user || meResponse?.data || meResponse || userObj;
+            } catch (err) {
+              console.warn("getMeAPI notice:", err);
+            }
+          }
+          if (userObj) {
+            sessionStorage.setItem('user', JSON.stringify(userObj));
+          }
+          const csrf = extractRoleCsrfToken(response, userObj?.role || "ADMIN");
+
+          if (csrf) {
+            saveRoleCsrfToken(csrf, userObj?.role || "ADMIN");
           }
           showSnackbar('Admin login successful!', 'success');
-          setTimeout(() => router.replace('/admin/dashboard'), 1000);
+          router.replace('/admin/dashboard');
         } else {
           showSnackbar(response.message || 'Login failed', 'error');
         }

@@ -127,6 +127,32 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                   },
                 }}
               >
+                {(file || url) && (
+                  <IconButton
+                    size="small"
+                    onClick={() => handleFileUpload(doc.fileKey, doc.urlKey, null)}
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      bgcolor: "#fee2e2",
+                      color: "#ef4444",
+                      width: 30,
+                      height: 30,
+                      border: "1px solid #fca5a5",
+                      transition: "all 0.2s",
+                      "&:hover": {
+                        bgcolor: "#ef4444",
+                        color: "#ffffff",
+                        transform: "scale(1.1)",
+                      },
+                    }}
+                    title="Remove document"
+                  >
+                    <CloseIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                )}
+
                 <Box sx={{ mb: 1.5 }}>
                   {file || url ? (
                     <CheckCircleIcon sx={{ fontSize: 44, color: "#4CAF50" }} />
@@ -177,6 +203,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                     gap: 1,
                     flexWrap: "wrap",
                     justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
                   {(file || (url && typeof url === "string" && !url.startsWith("blob:"))) && (

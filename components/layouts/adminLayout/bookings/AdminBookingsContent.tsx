@@ -252,6 +252,8 @@ export default function AdminBookingsContent() {
     {
       id: "id",
       label: "BOOKING ID",
+      width: "11%",
+      minWidth: 100,
       render: (booking) => (
         <Typography
           sx={{
@@ -267,6 +269,8 @@ export default function AdminBookingsContent() {
     {
       id: "customer",
       label: "CUSTOMER DETAILS",
+      width: "18%",
+      minWidth: 160,
       render: (booking) => {
         const customerName = booking.customer?.firstName
           ? `${booking.customer.firstName} ${booking.customer.lastName || ""}`
@@ -299,6 +303,8 @@ export default function AdminBookingsContent() {
     {
       id: "service",
       label: "SERVICE",
+      width: "20%",
+      minWidth: 180,
       render: (booking) => (
         <Typography
           sx={{
@@ -314,6 +320,8 @@ export default function AdminBookingsContent() {
     {
       id: "purohit",
       label: "PUROHIT",
+      width: "14%",
+      minWidth: 130,
       render: (booking) => {
         const technicianName = booking.purohit?.user?.firstName
           ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`
@@ -360,6 +368,8 @@ export default function AdminBookingsContent() {
     {
       id: "date",
       label: "BOOKING DATE",
+      width: "16%",
+      minWidth: 150,
       render: (booking) => (
         <Typography
           sx={{
@@ -387,6 +397,8 @@ export default function AdminBookingsContent() {
     {
       id: "amount",
       label: "AMOUNT",
+      width: "9%",
+      minWidth: 90,
       render: (booking) => (
         <Typography
           sx={{
@@ -402,6 +414,8 @@ export default function AdminBookingsContent() {
     {
       id: "status",
       label: "STATUS",
+      width: "12%",
+      minWidth: 120,
       render: (booking) =>
         booking.status === "PENDING" ? (
           <AdminStatusSelect
@@ -421,6 +435,8 @@ export default function AdminBookingsContent() {
     {
       id: "actions",
       label: "ACTIONS",
+      width: "10%",
+      minWidth: 100,
       align: "center",
       render: (booking) => {
         const technicianName = booking.purohit?.user?.firstName

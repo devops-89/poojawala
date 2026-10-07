@@ -1,5 +1,6 @@
 "use client";
 import { logoutAPI } from "@/api/authControllers";
+import { clearRoleCsrfToken } from "@/api/config";
 import { useCartStore } from "@/stores/cartStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
@@ -114,14 +115,14 @@ export default function CustomerHeader() {
   const handleLogout = async () => {
     try {
       await logoutAPI();
-      sessionStorage.removeItem("user");
-      sessionStorage.removeItem("csrfToken");
+    } catch (error: any) {
+      console.error("Logout notice:", error);
+    } finally {
+      clearRoleCsrfToken();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
         router.push("/sign-in");
-      }, 1000);
-    } catch (error) {
-      console.error("Logout error", error);
+      }, 300);
     }
   };
 

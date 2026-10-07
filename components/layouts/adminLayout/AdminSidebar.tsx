@@ -1,5 +1,6 @@
 "use client";
 import { logoutAPI } from "@/api/authControllers";
+import { clearRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import CategoryIcon from "@mui/icons-material/Category";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
@@ -55,15 +56,14 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const handleLogout = async () => {
     try {
       await logoutAPI();
-      sessionStorage.removeItem("user");
-      sessionStorage.removeItem("csrfToken");
+    } catch (error: any) {
+      console.error("Logout notice:", error);
+    } finally {
+      clearRoleCsrfToken();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
         router.push("/admin");
-      }, 1000);
-    } catch (error) {
-      console.error("Logout error", error);
-      showSnackbar("Logout failed", "error");
+      }, 300);
     }
   };
 

@@ -1,4 +1,4 @@
-import { authPublicApi, authSecuredApi } from "./config";
+import { authPublicApi, authSecuredApi, attachCsrfHeaders, getCsrfToken } from "./config";
 
 export const loginAPI = async (data: any) => {
   try {
@@ -38,12 +38,12 @@ export const resendOtpAPI = async (data: { email?: string; phone?: string; otpTy
 
 export const logoutAPI = async () => {
   try {
-    const csrfToken = sessionStorage.getItem("csrfToken");
-    const res = await authSecuredApi.post("auth/logout", {}, {
-      headers: {
-        'x-csrf-token': csrfToken
-      }
-    });
+    const csrfToken = getCsrfToken();
+    const headers: any = {};
+    if (csrfToken) {
+      attachCsrfHeaders(headers, csrfToken);
+    }
+    const res = await authSecuredApi.post("auth/logout", {}, { headers });
     return res.data;
   } catch (error) {
     throw error;
@@ -52,12 +52,12 @@ export const logoutAPI = async () => {
 
 export const refreshTokenAPI = async () => {
   try {
-    const csrfToken = sessionStorage.getItem("csrfToken");
-    const res = await authSecuredApi.post("auth/refresh-token", {}, {
-      headers: {
-        'x-csrf-token': csrfToken
-      }
-    });
+    const csrfToken = getCsrfToken();
+    const headers: any = {};
+    if (csrfToken) {
+      attachCsrfHeaders(headers, csrfToken);
+    }
+    const res = await authSecuredApi.post("auth/refresh-token", {}, { headers });
     return res.data;
   } catch (error) {
     throw error;

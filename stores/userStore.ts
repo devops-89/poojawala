@@ -26,9 +26,31 @@ export const useUserStore = create<UserState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await getMeAPI();
-      set({ profile: res.data, loading: false });
-      return res.data;
+      const fetchedUser = res?.data?.user || res?.data?.data || res?.data;
+      
+      const activeRole = typeof window !== "undefined" ? sessionStorage.getItem("user") : null;
+      let localUser: any = null;
+      if (activeRole) {
+        try { localUser = JSON.parse(activeRole); } catch (e) {}
+      }
+
+      if (fetchedUser && localUser?.role && fetchedUser.role && fetchedUser.role !== localUser.role) {
+        set({ profile: localUser, loading: false });
+        return localUser;
+      }
+
+      const finalProfile = fetchedUser || localUser;
+      set({ profile: finalProfile, loading: false });
+      return finalProfile;
     } catch (error: any) {
+      try {
+        const userStr = sessionStorage.getItem("user");
+        if (userStr) {
+          const localUser = JSON.parse(userStr);
+          set({ profile: localUser, loading: false });
+          return localUser;
+        }
+      } catch (e) {}
       set({ error: error.message || 'Failed to fetch profile', loading: false });
       return null;
     }

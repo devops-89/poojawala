@@ -1,5 +1,6 @@
 "use client";
 import { getMeAPI, loginAPI } from "@/api/authControllers";
+import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -194,45 +195,58 @@ export default function SignInContent() {
                         email: values.email,
                         password: values.password,
                       });
-                      if (response.success) {
+                      if (response.success || response.token || response.accessToken || response.poojawalaPurohitCsrfToken || response.poojawalaCustomerCsrfToken) {
                         const token =
                           response.tokens?.access?.token ||
                           response.token ||
                           response.accessToken;
-                        const meResponse = await getMeAPI(token);
-                        const userObj =
-                          meResponse?.user ||
-                          meResponse?.data ||
-                          meResponse ||
-                          response.user;
-                        sessionStorage.setItem("user", JSON.stringify(userObj));
-                        if (response.csrfToken) {
-                          sessionStorage.setItem(
-                            "csrfToken",
-                            response.csrfToken,
-                          );
+                        let userObj = response.user || response.data?.user;
+                        if (token) {
+                          try {
+                            const meResponse = await getMeAPI(token);
+                            userObj =
+                              meResponse?.user ||
+                              meResponse?.data ||
+                              meResponse ||
+                              userObj;
+                          } catch (err) {
+                            console.warn("getMeAPI notice:", err);
+                          }
                         }
+
+                        if (userObj) {
+                          sessionStorage.setItem("user", JSON.stringify(userObj));
+                        }
+
+                        const csrf = extractRoleCsrfToken(response, userObj?.role);
+
+                        if (csrf) {
+                          saveRoleCsrfToken(csrf, userObj?.role);
+                        }
+
                         showSnackbar("Login successful!", "success");
 
-                        setTimeout(() => {
-                          const role = userObj?.role || response?.user?.role;
-                          if (role === "CUSTOMER") {
-                            router.replace("/customer/dashboard");
-                          } else if (role === "PUROHIT") {
-                            if (
-                              userObj?.isAdminCreated ||
-                              userObj?.is_admin_created
-                            ) {
-                              router.replace("/purohit/register?step=2");
-                            } else {
-                              router.replace("/purohit/dashboard");
-                            }
-                          } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
-                            router.replace("/admin/dashboard");
+                        const role = userObj?.role || response?.user?.role;
+                        if (role === "CUSTOMER") {
+                          router.replace("/customer/dashboard");
+                        } else if (role === "PUROHIT") {
+                          if (
+                            userObj?.isAdminCreated ||
+                            userObj?.is_admin_created
+                          ) {
+                            router.replace("/purohit/register?step=2");
                           } else {
-                            router.replace("/");
+                            router.replace("/purohit/dashboard");
                           }
-                        }, 1000);
+                        } else if (
+                          role === "ADMIN" ||
+                          role === "SUPERADMIN" ||
+                          role === "SUPER_ADMIN"
+                        ) {
+                          router.replace("/admin/dashboard");
+                        } else {
+                          router.replace("/");
+                        }
                       }
                     } catch (error: any) {
                       console.error("Login failed", error);

@@ -110,7 +110,7 @@ export default function AdminDataTable<T = any>({
 
       {/* Table Container */}
       <TableContainer>
-        <Table sx={{ minWidth }}>
+        <Table sx={{ minWidth, tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow sx={{ bgcolor: '#f8fafc' }}>
               {columns.map((col) => (
@@ -168,7 +168,15 @@ export default function AdminDataTable<T = any>({
                     }}
                   >
                     {columns.map((col) => (
-                      <TableCell key={col.id} align={col.align || 'left'}>
+                      <TableCell
+                        key={col.id}
+                        align={col.align || 'left'}
+                        sx={{
+                          width: col.width,
+                          minWidth: col.minWidth,
+                          fontFamily: 'var(--font-outfit), sans-serif',
+                        }}
+                      >
                         {col.render
                           ? col.render(item, index)
                           : (item as any)?.[col.id] ?? '-'}

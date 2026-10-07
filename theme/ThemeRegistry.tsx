@@ -17,6 +17,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import * as React from "react";
 import theme from "./theme";
 
+import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
+
 export default function ThemeRegistry({
   children,
 }: {
@@ -27,9 +29,12 @@ export default function ThemeRegistry({
       const userStr = sessionStorage.getItem("user");
       if (userStr) {
         try {
+          const user = JSON.parse(userStr);
           const res = await refreshTokenAPI();
-          if (res.csrfToken) {
-            sessionStorage.setItem("csrfToken", res.csrfToken);
+          const csrf = extractRoleCsrfToken(res, user?.role);
+
+          if (csrf) {
+            saveRoleCsrfToken(csrf, user?.role);
           }
         } catch (error) {
           console.error("Failed to refresh token periodically", error);

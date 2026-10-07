@@ -211,6 +211,8 @@ export default function AdminPurohitsContent() {
     {
       id: "id",
       label: "PUROHIT ID",
+      width: "12%",
+      minWidth: 100,
       render: (purohit) => (
         <Typography
           sx={{
@@ -226,6 +228,8 @@ export default function AdminPurohitsContent() {
     {
       id: "name",
       label: "PUROHIT NAME",
+      width: "22%",
+      minWidth: 180,
       render: (purohit) => (
         <Box>
           <Typography
@@ -252,6 +256,8 @@ export default function AdminPurohitsContent() {
     {
       id: "city",
       label: "CITY",
+      width: "15%",
+      minWidth: 120,
       render: (purohit) => (
         <Typography
           sx={{
@@ -268,6 +274,8 @@ export default function AdminPurohitsContent() {
     {
       id: "status",
       label: "STATUS",
+      width: "16%",
+      minWidth: 140,
       render: (purohit) => {
         const options =
           purohit.status === "Approved"
@@ -302,6 +310,8 @@ export default function AdminPurohitsContent() {
     {
       id: "phone",
       label: "PHONE",
+      width: "14%",
+      minWidth: 120,
       render: (purohit) => (
         <Typography
           sx={{
@@ -317,6 +327,8 @@ export default function AdminPurohitsContent() {
     {
       id: "appliedAt",
       label: "APPLIED ON",
+      width: "13%",
+      minWidth: 110,
       render: (purohit) => (
         <Typography
           sx={{
@@ -332,6 +344,8 @@ export default function AdminPurohitsContent() {
     {
       id: "actions",
       label: "ACTION",
+      width: "8%",
+      minWidth: 80,
       align: "center",
       render: (purohit) => (
         <Box

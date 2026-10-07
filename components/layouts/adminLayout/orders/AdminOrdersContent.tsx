@@ -237,6 +237,8 @@ export default function AdminOrdersContent() {
     {
       id: "id",
       label: "ORDER ID",
+      width: "12%",
+      minWidth: 100,
       render: (order) => (
         <Typography
           sx={{
@@ -252,6 +254,8 @@ export default function AdminOrdersContent() {
     {
       id: "customer",
       label: "CUSTOMER DETAILS",
+      width: "20%",
+      minWidth: 170,
       render: (order) => {
         const user = order.customer || order.user;
         const name = user
@@ -286,12 +290,10 @@ export default function AdminOrdersContent() {
     {
       id: "items",
       label: "ITEMS",
+      width: "11%",
+      minWidth: 90,
       render: (order) => {
         const items = order.items || [];
-        const totalQty = items.reduce(
-          (sum: number, it: any) => sum + (Number(it.quantity) || 1),
-          0,
-        );
         const count = items.length || 1;
         return (
           <Typography
@@ -310,6 +312,8 @@ export default function AdminOrdersContent() {
     {
       id: "createdAt",
       label: "ORDER DATE",
+      width: "17%",
+      minWidth: 150,
       render: (order) => (
         <Typography
           sx={{
@@ -334,6 +338,8 @@ export default function AdminOrdersContent() {
     {
       id: "totalAmount",
       label: "AMOUNT",
+      width: "10%",
+      minWidth: 90,
       render: (order) => (
         <Typography
           sx={{
@@ -349,6 +355,8 @@ export default function AdminOrdersContent() {
     {
       id: "paymentStatus",
       label: "PAYMENT STATUS",
+      width: "14%",
+      minWidth: 130,
       render: (order) => {
         const pStatus =
           order.paymentStatus ||
@@ -373,6 +381,8 @@ export default function AdminOrdersContent() {
     {
       id: "orderStatus",
       label: "ORDER STATUS",
+      width: "14%",
+      minWidth: 130,
       render: (order) => {
         const currentStatus = (
           order.orderStatus ||
@@ -401,6 +411,8 @@ export default function AdminOrdersContent() {
     {
       id: "actions",
       label: "ACTIONS",
+      width: "8%",
+      minWidth: 70,
       align: "center",
       render: (order) => (
         <IconButton

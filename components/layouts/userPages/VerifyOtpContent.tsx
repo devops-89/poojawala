@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useLoaderStore } from '@/stores/loaderStore';
 import { verifyOtpAPI, registerPurohitAPI, sendOtpAPI } from '@/api/userControllers';
+import { extractRoleCsrfToken, saveRoleCsrfToken } from '@/api/config';
 import Link from 'next/link';
 
 export default function VerifyOtpContent() {
@@ -153,8 +154,10 @@ export default function VerifyOtpContent() {
           sessionStorage.removeItem('signupData');
           
           // Save tokens and user data returned by register API
-          if (registerRes.csrfToken) {
-            sessionStorage.setItem('csrfToken', registerRes.csrfToken);
+          const csrf = extractRoleCsrfToken(registerRes, registerRes.user?.role);
+
+          if (csrf) {
+            saveRoleCsrfToken(csrf, registerRes.user?.role);
           }
           if (registerRes.user) {
             sessionStorage.setItem('user', JSON.stringify(registerRes.user));

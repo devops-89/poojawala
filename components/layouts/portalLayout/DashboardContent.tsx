@@ -34,6 +34,16 @@ export default function DashboardContent() {
   const [activeBookings, setActiveBookings] = React.useState<any[]>([]);
 
   React.useEffect(() => {
+    try {
+      const userStr = sessionStorage.getItem("user");
+      if (userStr) {
+        const localUser = JSON.parse(userStr);
+        if (localUser && (localUser.role === "PUROHIT" || !localUser.role)) {
+          setProfile(localUser);
+        }
+      }
+    } catch (e) {}
+
     getPayoutStatsAPI().then(res => {
       if (res?.data) {
         setStatsData(res.data.data || res.data);
@@ -42,7 +52,10 @@ export default function DashboardContent() {
 
     getMeAPI().then(res => {
       if (res?.data) {
-        setProfile(res.data);
+        const fetchedUser = res.data.user || res.data.data || res.data;
+        if (fetchedUser && (fetchedUser.role === "PUROHIT" || !fetchedUser.role)) {
+          setProfile(fetchedUser);
+        }
       }
     }).catch(console.error);
 

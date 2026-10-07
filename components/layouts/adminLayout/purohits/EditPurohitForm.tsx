@@ -198,9 +198,10 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           phone: values.phone,
           countryCode: values.countryCode || "+91",
           dob: values.dob,
-          ...(values.profilePhotoUrl && !values.profilePhotoUrl.startsWith("blob:")
-            ? { profileImage: values.profilePhotoUrl }
-            : {}),
+          profileImage:
+            values.profilePhotoUrl && !values.profilePhotoUrl.startsWith("blob:")
+              ? values.profilePhotoUrl
+              : null,
           profile: {
             bio: values.bio,
             qualification: values.qualification ? [values.qualification] : [],
@@ -216,15 +217,19 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
             state: values.state,
             isOnlineAvailable: values.isOnlineAvailable,
             isOfflineAvailable: values.isOfflineAvailable,
-            ...(values.identityDocUrl && !values.identityDocUrl.startsWith("blob:")
-              ? { aadhaarDocUrl: values.identityDocUrl }
-              : {}),
-            ...(values.certificateUrl && !values.certificateUrl.startsWith("blob:")
-              ? { certificateUrl: values.certificateUrl }
-              : {}),
-            ...(values.templeAffiliationProofUrl && !values.templeAffiliationProofUrl.startsWith("blob:")
-              ? { templeAffiliationProofUrl: values.templeAffiliationProofUrl }
-              : {}),
+            aadhaarDocUrl:
+              values.identityDocUrl && !values.identityDocUrl.startsWith("blob:")
+                ? values.identityDocUrl
+                : null,
+            certificateUrl:
+              values.certificateUrl && !values.certificateUrl.startsWith("blob:")
+                ? values.certificateUrl
+                : null,
+            templeAffiliationProofUrl:
+              values.templeAffiliationProofUrl &&
+              !values.templeAffiliationProofUrl.startsWith("blob:")
+                ? values.templeAffiliationProofUrl
+                : null,
           },
           serviceAreas: formattedServiceAreas,
           bankAccounts: formattedBankAccounts,
@@ -246,7 +251,7 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           if (values.countryCode) fd.append("countryCode", values.countryCode || "+91");
           if (values.dob) fd.append("dob", values.dob);
 
-          const profileObj = {
+          const profileObj: any = {
             bio: values.bio,
             qualification: values.qualification ? [values.qualification] : [],
             experienceYears: Number(values.experienceYears || 0),
@@ -261,6 +266,19 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
             state: values.state,
             isOnlineAvailable: values.isOnlineAvailable,
             isOfflineAvailable: values.isOfflineAvailable,
+            aadhaarDocUrl:
+              values.identityDocUrl && !values.identityDocUrl.startsWith("blob:")
+                ? values.identityDocUrl
+                : null,
+            certificateUrl:
+              values.certificateUrl && !values.certificateUrl.startsWith("blob:")
+                ? values.certificateUrl
+                : null,
+            templeAffiliationProofUrl:
+              values.templeAffiliationProofUrl &&
+              !values.templeAffiliationProofUrl.startsWith("blob:")
+                ? values.templeAffiliationProofUrl
+                : null,
           };
 
           fd.append("profile", JSON.stringify(profileObj));
@@ -500,6 +518,8 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
     if (file) {
       const tempUrl = URL.createObjectURL(file);
       setFieldValue(urlKey, tempUrl);
+    } else {
+      setFieldValue(urlKey, "");
     }
   };
 
