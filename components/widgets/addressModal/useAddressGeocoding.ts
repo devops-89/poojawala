@@ -55,6 +55,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     }
 
     if (initialData) {
+      const isEdit = Boolean(initialData.id);
       const constructedAddress =
         initialData.fullAddress ||
         initialData.addressLine1 ||
@@ -66,7 +67,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         id: initialData.id,
         venueType: initialData.venueType || "HOME",
         fullAddress: constructedAddress,
-        addressLabel: initialData.addressLabel || "Home",
+        addressLabel: isEdit ? (initialData.addressLabel || "Home") : (initialData.addressLabel || ""),
         streetName: initialData.streetName || "",
         city: initialData.city || "",
         state: initialData.state || "",
@@ -79,7 +80,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       setAddressData({
         venueType: "HOME",
         fullAddress: "",
-        addressLabel: "Home",
+        addressLabel: "",
         streetName: "",
         city: "",
         state: "",

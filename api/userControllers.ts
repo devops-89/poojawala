@@ -381,6 +381,18 @@ export const getAdminDashboardStatsAPI = async () => {
 };
 
 export const updateUserByAdminAPI = async (id: string | number, data: any) => {
-  const response = await userSecuredApi.patch(`/users/admin/update/${id}`, data);
+  const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+  const response = await userSecuredApi.patch(
+    `/users/admin/update/${id}`,
+    data,
+    isFormData
+      ? {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      : undefined
+  );
   return response.data;
 };
+

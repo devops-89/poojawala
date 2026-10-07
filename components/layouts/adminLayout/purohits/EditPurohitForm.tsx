@@ -17,7 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import { getPurohitByIdAPI, updateUserByAdminAPI, updateProfileAPI } from "@/api/userControllers";
+import { getPurohitByIdAPI, updateUserByAdminAPI } from "@/api/userControllers";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
 import { BasicDetailsSection } from "./BasicDetailsSection";
@@ -238,46 +238,78 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
         );
 
         if (hasSelectedFiles) {
-          try {
-            const docFormData = new FormData();
-            if (selectedFiles.profilePhoto) {
-              const webpFile = await convertImageToWebP(selectedFiles.profilePhoto);
-              docFormData.append("profileImage", webpFile);
-            }
-            if (selectedFiles.identityDoc) {
-              const webpFile = await convertImageToWebP(selectedFiles.identityDoc);
-              docFormData.append("aadhaarDoc", webpFile);
-            }
-            if (selectedFiles.certificate) {
-              const webpFile = await convertImageToWebP(selectedFiles.certificate);
-              docFormData.append("certificate", webpFile);
-            }
-            if (selectedFiles.templeAffiliationProof) {
-              const webpFile = await convertImageToWebP(selectedFiles.templeAffiliationProof);
-              docFormData.append("templeAffiliationProof", webpFile);
-            }
+          const fd = new FormData();
+          fd.append("firstName", firstName);
+          fd.append("lastName", lastName);
+          if (values.email) fd.append("email", values.email);
+          if (values.phone) fd.append("phone", values.phone);
+          if (values.countryCode) fd.append("countryCode", values.countryCode || "+91");
+          if (values.dob) fd.append("dob", values.dob);
 
-            const uploadRes = await updateProfileAPI(docFormData);
-            const resData = uploadRes?.data?.data || uploadRes?.data?.profile || uploadRes?.data || {};
+          const profileObj = {
+            bio: values.bio,
+            qualification: values.qualification ? [values.qualification] : [],
+            experienceYears: Number(values.experienceYears || 0),
+            languages: Array.isArray(values.languages)
+              ? values.languages.join(",")
+              : values.languages,
+            specializations: Array.isArray(values.specializations)
+              ? values.specializations.join(",")
+              : values.specializations,
+            aadhaarNumber: values.aadhaarNumber,
+            city: values.city,
+            state: values.state,
+            isOnlineAvailable: values.isOnlineAvailable,
+            isOfflineAvailable: values.isOfflineAvailable,
+          };
 
-            if (resData.profileImage) {
-              updatePayload.profileImage = resData.profileImage;
-            }
-            if (resData.profile?.aadhaarDocUrl || resData.aadhaarDocUrl) {
-              updatePayload.profile.aadhaarDocUrl = resData.profile?.aadhaarDocUrl || resData.aadhaarDocUrl;
-            }
-            if (resData.profile?.certificateUrl || resData.certificateUrl) {
-              updatePayload.profile.certificateUrl = resData.profile?.certificateUrl || resData.certificateUrl;
-            }
-            if (resData.profile?.templeAffiliationProofUrl || resData.templeAffiliationProofUrl) {
-              updatePayload.profile.templeAffiliationProofUrl = resData.profile?.templeAffiliationProofUrl || resData.templeAffiliationProofUrl;
-            }
-          } catch (e) {
-            console.warn("Document file upload notice:", e);
+          fd.append("profile", JSON.stringify(profileObj));
+          fd.append("serviceAreas", JSON.stringify(formattedServiceAreas));
+          fd.append("bankAccounts", JSON.stringify(formattedBankAccounts));
+
+          // Scalar fields for backend compatibility
+          fd.append("bio", values.bio);
+          if (values.qualification) fd.append("qualification", values.qualification);
+          fd.append("experienceYears", String(values.experienceYears || 0));
+          if (values.languages) {
+            fd.append(
+              "languages",
+              Array.isArray(values.languages) ? values.languages.join(",") : values.languages
+            );
           }
-        }
+          if (values.specializations) {
+            fd.append(
+              "specializations",
+              Array.isArray(values.specializations) ? values.specializations.join(",") : values.specializations
+            );
+          }
+          if (values.aadhaarNumber) fd.append("aadhaarNumber", values.aadhaarNumber);
+          if (values.city) fd.append("city", values.city);
+          if (values.state) fd.append("state", values.state);
+          fd.append("isOnlineAvailable", values.isOnlineAvailable ? "true" : "false");
+          fd.append("isOfflineAvailable", values.isOfflineAvailable ? "true" : "false");
 
-        await updateUserByAdminAPI(id, updatePayload);
+          if (selectedFiles.profilePhoto) {
+            const webpFile = await convertImageToWebP(selectedFiles.profilePhoto);
+            fd.append("profileImage", webpFile);
+          }
+          if (selectedFiles.identityDoc) {
+            const webpFile = await convertImageToWebP(selectedFiles.identityDoc);
+            fd.append("aadhaarDoc", webpFile);
+          }
+          if (selectedFiles.certificate) {
+            const webpFile = await convertImageToWebP(selectedFiles.certificate);
+            fd.append("certificate", webpFile);
+          }
+          if (selectedFiles.templeAffiliationProof) {
+            const webpFile = await convertImageToWebP(selectedFiles.templeAffiliationProof);
+            fd.append("templeAffiliationProof", webpFile);
+          }
+
+          await updateUserByAdminAPI(id, fd);
+        } else {
+          await updateUserByAdminAPI(id, updatePayload);
+        }
 
         showSnackbar("Purohit details updated successfully!", "success");
         router.push("/admin/purohits");

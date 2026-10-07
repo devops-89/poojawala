@@ -63,11 +63,11 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
     serviceRadiusKm: number;
   }>({
     id: null,
-    addressLabel: "Primary Service Area",
+    addressLabel: "",
     streetName: "",
     fullAddress: "",
-    city: defaultCity || "",
-    state: defaultState || "",
+    city: "",
+    state: "",
     pincode: "",
     isDefault: false,
     latitude: "",
@@ -81,11 +81,11 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
     setSelectedAddressId(null);
     const initialData = {
       id: null,
-      addressLabel: "Primary Service Area",
+      addressLabel: "",
       streetName: "",
       fullAddress: "",
-      city: defaultCity || "",
-      state: defaultState || "",
+      city: "",
+      state: "",
       pincode: "",
       isDefault: serviceAreas.length === 0,
       latitude: "",
