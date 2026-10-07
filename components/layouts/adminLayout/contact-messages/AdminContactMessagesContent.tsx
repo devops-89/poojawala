@@ -139,6 +139,8 @@ export default function AdminContactMessagesContent() {
     {
       id: "id",
       label: "ID",
+      width: "12%",
+      minWidth: 80,
       render: (msg) => (
         <Typography sx={{ fontWeight: 700, color: "#FF6200", fontFamily: "var(--font-outfit), sans-serif" }}>
           CM-{msg.id}
@@ -148,6 +150,8 @@ export default function AdminContactMessagesContent() {
     {
       id: "date",
       label: "DATE",
+      width: "18%",
+      minWidth: 120,
       render: (msg) => (
         <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", fontSize: "0.85rem" }}>
           {moment(msg.createdAt).format("MMM DD, YYYY")}
@@ -157,6 +161,8 @@ export default function AdminContactMessagesContent() {
     {
       id: "name",
       label: "NAME",
+      width: "25%",
+      minWidth: 150,
       render: (msg) => (
         <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif" }}>
           {msg.name}
@@ -166,6 +172,8 @@ export default function AdminContactMessagesContent() {
     {
       id: "email",
       label: "EMAIL",
+      width: "25%",
+      minWidth: 180,
       render: (msg) => (
         <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", fontSize: "0.9rem" }}>
           {msg.email}
@@ -173,17 +181,10 @@ export default function AdminContactMessagesContent() {
       ),
     },
     {
-      id: "subject",
-      label: "SUBJECT",
-      render: (msg) => (
-        <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#1e293b", fontWeight: 500 }}>
-          {msg.subject}
-        </Typography>
-      ),
-    },
-    {
       id: "status",
       label: "STATUS",
+      width: "12%",
+      minWidth: 120,
       render: (msg) => {
         const isRead = msg.status === "READ";
         return (
@@ -206,6 +207,8 @@ export default function AdminContactMessagesContent() {
     {
       id: "actions",
       label: "ACTIONS",
+      width: "8%",
+      minWidth: 80,
       align: "right",
       render: (msg) => (
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5 }}>
