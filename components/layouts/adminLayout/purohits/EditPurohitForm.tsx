@@ -237,7 +237,7 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           formData.append("serviceAreas", JSON.stringify(formattedServiceAreas));
           formData.append("bankAccounts", JSON.stringify(formattedBankAccounts));
 
-          // Flat fields for endpoints reading FormData keys directly
+          // Flat fields matching registration payload format
           formData.append("bio", values.bio);
           formData.append("qualification", values.qualification);
           formData.append("experienceYears", String(values.experienceYears || 0));
@@ -247,13 +247,20 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           formData.append("isOnlineAvailable", values.isOnlineAvailable ? "true" : "false");
           formData.append("isOfflineAvailable", values.isOfflineAvailable ? "true" : "false");
 
-          if (selectedFiles.profilePhoto) {
-            const webpFile = await convertImageToWebP(selectedFiles.profilePhoto);
-            formData.append("profileImage", webpFile);
+          if (Array.isArray(values.languages)) {
+            values.languages.forEach((l) => formData.append("languages", l));
+          } else if (values.languages) {
+            formData.append("languages", values.languages);
           }
+
+          if (Array.isArray(values.specializations)) {
+            values.specializations.forEach((s) => formData.append("specializations", s));
+          } else if (values.specializations) {
+            formData.append("specializations", values.specializations);
+          }
+
           if (selectedFiles.identityDoc) {
             const webpFile = await convertImageToWebP(selectedFiles.identityDoc);
-            formData.append("aadhaarDoc", webpFile);
             formData.append("identityDoc", webpFile);
           }
           if (selectedFiles.certificate) {
@@ -263,6 +270,10 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           if (selectedFiles.templeAffiliationProof) {
             const webpFile = await convertImageToWebP(selectedFiles.templeAffiliationProof);
             formData.append("templeAffiliationProof", webpFile);
+          }
+          if (selectedFiles.profilePhoto) {
+            const webpFile = await convertImageToWebP(selectedFiles.profilePhoto);
+            formData.append("profileImage", webpFile);
           }
 
           await updateUserByAdminAPI(id, formData);
@@ -433,6 +444,11 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
         initialServiceAreasRef.current = JSON.stringify(areas);
         initialBankAccountsRef.current = JSON.stringify(bankAccountsList);
 
+        const cleanUrl = (url?: string) => {
+          if (!url || typeof url !== "string" || url.startsWith("blob:")) return "";
+          return url;
+        };
+
         formik.resetForm({
           values: {
             fullName: combinedName,
@@ -452,18 +468,19 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
             aadhaarNumber: profile.aadhaarNumber || "",
             isOnlineAvailable: profile.isOnlineAvailable ?? true,
             isOfflineAvailable: profile.isOfflineAvailable ?? true,
-            profilePhotoUrl: u.profileImage || profile.profileImage || "",
-            identityDocUrl:
+            profilePhotoUrl: cleanUrl(u.profileImage || profile.profileImage),
+            identityDocUrl: cleanUrl(
               profile.aadhaarDocUrl ||
-              profile.aadhaarDocDownloadUrl ||
-              profile.panDocUrl ||
-              "",
-            certificateUrl:
-              profile.certificateUrl || profile.certificateDownloadUrl || "",
-            templeAffiliationProofUrl:
+                profile.aadhaarDocDownloadUrl ||
+                profile.panDocUrl
+            ),
+            certificateUrl: cleanUrl(
+              profile.certificateUrl || profile.certificateDownloadUrl
+            ),
+            templeAffiliationProofUrl: cleanUrl(
               profile.templeAffiliationProofUrl ||
-              profile.templeAffiliationProofDownloadUrl ||
-              "",
+                profile.templeAffiliationProofDownloadUrl
+            ),
             city: profile.city || u.city || (areas[0] && areas[0].city) || "",
             state: profile.state || (areas[0] && areas[0].state) || "",
             paymentMethod: primaryAcc.paymentMethod || "BANK",

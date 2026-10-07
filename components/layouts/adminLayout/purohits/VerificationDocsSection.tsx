@@ -179,7 +179,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                     justifyContent: "center",
                   }}
                 >
-                  {(file || url) && (
+                  {(file || (url && typeof url === "string" && !url.startsWith("blob:"))) && (
                     <Button
                       size="small"
                       variant="outlined"
