@@ -22,8 +22,9 @@ import {
 interface BankModalProps {
   open: boolean;
   onClose: () => void;
-  selectedBankId: number | null;
+  selectedBankId: number | string | null;
   bankForm: {
+    id?: number | string | null;
     paymentMethod: string;
     accountHolderName: string;
     accountNumber: string;
@@ -130,22 +131,29 @@ export const BankModal: React.FC<BankModalProps> = ({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Account Number"
+                label="Account Number *"
                 value={bankForm.accountNumber}
-                onChange={(e) =>
-                  setBankForm({ ...bankForm, accountNumber: e.target.value })
-                }
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 18);
+                  setBankForm({ ...bankForm, accountNumber: val });
+                }}
+                slotProps={{ htmlInput: { maxLength: 18, inputMode: "numeric" } }}
                 required
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="IFSC Code"
+                label="IFSC Code *"
                 value={bankForm.ifscCode}
-                onChange={(e) =>
-                  setBankForm({ ...bankForm, ifscCode: e.target.value })
-                }
+                onChange={(e) => {
+                  const val = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, "")
+                    .slice(0, 11);
+                  setBankForm({ ...bankForm, ifscCode: val });
+                }}
+                slotProps={{ htmlInput: { maxLength: 11 } }}
                 required
               />
             </Grid>

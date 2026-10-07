@@ -193,7 +193,10 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
                         wordBreak: "break-word",
                       }}
                     >
-                      {area.fullAddress}
+                      {area.fullAddress ||
+                        [area.streetName, area.city, area.state, area.pincode]
+                          .filter(Boolean)
+                          .join(", ")}
                     </Typography>
                   </Box>
 

@@ -42,7 +42,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   }, []);
 
   const initialDataKey = initialData
-    ? `${initialData.id ?? ""}_${initialData.addressLabel || ""}_${initialData.fullAddress || initialData.addressLine1 || ""}_${initialData.city || ""}_${initialData.state || ""}_${initialData.pincode || initialData.zipCode || ""}_${initialData.latitude || ""}_${initialData.longitude || ""}`
+    ? `${initialData.id ?? ""}_${initialData.addressLabel || ""}_${initialData.fullAddress || initialData.addressLine1 || ""}_${initialData.streetName || ""}_${initialData.city || ""}_${initialData.state || ""}_${initialData.pincode || initialData.zipCode || ""}_${initialData.latitude || ""}_${initialData.longitude || ""}`
     : "";
 
   // Initialize or update Map when Dialog opens or initialData changes
@@ -57,10 +57,17 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     }
 
     if (initialData) {
+      const constructedAddress =
+        initialData.fullAddress ||
+        initialData.addressLine1 ||
+        [initialData.streetName, initialData.city, initialData.state, initialData.pincode]
+          .filter(Boolean)
+          .join(", ");
+
       setAddressData({
         id: initialData.id,
         venueType: initialData.venueType || "HOME",
-        fullAddress: initialData.fullAddress || initialData.addressLine1 || "",
+        fullAddress: constructedAddress,
         addressLabel: initialData.addressLabel || "Home",
         city: initialData.city || "",
         state: initialData.state || "",

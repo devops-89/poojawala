@@ -191,23 +191,32 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
             certificateUrl: values.certificateUrl,
             templeAffiliationProofUrl: values.templeAffiliationProofUrl,
           },
-          serviceAreas: serviceAreas.map((sa) => ({
-            ...(typeof sa.id === "number" && sa.id < 1000000000000
-              ? { id: sa.id }
-              : {}),
-            addressLabel: sa.addressLabel || "Primary Service Area",
-            streetName: sa.streetName || sa.addressLabel || "Main Area",
-            fullAddress: sa.fullAddress,
-            city: sa.city || values.city,
-            state: sa.state || values.state,
-            pincode: sa.pincode,
-            latitude: sa.latitude ? String(sa.latitude) : undefined,
-            longitude: sa.longitude ? String(sa.longitude) : undefined,
-            serviceRadiusKm: sa.serviceRadiusKm
-              ? String(sa.serviceRadiusKm)
-              : "15.00",
-            isDefault: sa.isDefault || false,
-          })),
+          serviceAreas: serviceAreas.map((sa) => {
+            const areaId = sa.id ?? sa._id;
+            return {
+              ...(areaId &&
+              (typeof areaId === "string" ||
+                (typeof areaId === "number" && areaId < 1000000000000))
+                ? { id: areaId }
+                : {}),
+              addressLabel: sa.addressLabel || "Primary Service Area",
+              streetName: sa.streetName || sa.addressLabel || "Main Area",
+              fullAddress:
+                sa.fullAddress ||
+                [sa.streetName, sa.city, sa.state, sa.pincode]
+                  .filter(Boolean)
+                  .join(", "),
+              city: sa.city || values.city,
+              state: sa.state || values.state,
+              pincode: sa.pincode,
+              latitude: sa.latitude ? String(sa.latitude) : undefined,
+              longitude: sa.longitude ? String(sa.longitude) : undefined,
+              serviceRadiusKm: sa.serviceRadiusKm
+                ? String(sa.serviceRadiusKm)
+                : "15.00",
+              isDefault: sa.isDefault || false,
+            };
+          }),
           bankAccounts: bankAccounts.length > 0 ? bankAccounts : [selectedPaymentObject],
         };
 

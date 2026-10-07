@@ -64,8 +64,10 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
   };
 
   const handleEditBankClick = (bank: any) => {
-    setSelectedBankId(bank.id);
+    const bankId = bank.id ?? bank._id ?? null;
+    setSelectedBankId(bankId);
     const initialData = {
+      id: bankId,
       paymentMethod: bank.paymentMethod || (bank.upiId ? "UPI" : "BANK"),
       accountHolderName: bank.accountHolderName || "",
       accountNumber: bank.accountNumber || "",
@@ -88,8 +90,11 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
     if (!deleteBankTarget) return;
     setIsDeletingBank(true);
     try {
-      await deleteBankAccountAPI(deleteBankTarget.id);
-      setBankAccounts((prev) => prev.filter((b) => b.id !== deleteBankTarget.id));
+      const bankId = deleteBankTarget.id ?? deleteBankTarget._id;
+      if (bankId && typeof bankId === "number" && bankId < 1000000000000) {
+        await deleteBankAccountAPI(bankId);
+      }
+      setBankAccounts((prev) => prev.filter((b) => (b.id ?? b._id) !== bankId));
       showSnackbar("Bank account deleted successfully!", "success");
     } catch (error: any) {
       console.error("Bank account delete error:", error);
@@ -135,19 +140,46 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
             isPrimary: bankForm.isPrimary,
           };
 
-      if (selectedBankId) {
-        await updateBankAccountAPI(selectedBankId, payload);
+      if (
+        selectedBankId &&
+        (typeof selectedBankId === "string" ||
+          (typeof selectedBankId === "number" && selectedBankId < 1000000000000))
+      ) {
+        const res = await updateBankAccountAPI(selectedBankId, payload);
+        const resObj =
+          res?.data?.data ||
+          (res?.data && typeof res.data === "object" && !("success" in res.data) ? res.data : {}) ||
+          {};
+        const updatedObj = { ...bankForm, ...payload, ...resObj, id: selectedBankId };
+        setBankAccounts((prev) =>
+          prev.map((b) => ((b.id ?? b._id) === selectedBankId ? updatedObj : b))
+        );
         showSnackbar("Bank account updated successfully!", "success");
       } else {
-        await addBankAccountAPI(payload);
+        const res = await addBankAccountAPI(payload);
+        const resObj =
+          res?.data?.data ||
+          (res?.data && typeof res.data === "object" && !("success" in res.data) ? res.data : {}) ||
+          {};
+        const assignedId = resObj.id || resObj._id || res?.data?.id || Date.now();
+        const newObj = { ...bankForm, ...payload, ...resObj, id: assignedId };
+        setBankAccounts((prev) => [...prev, newObj]);
         showSnackbar("Bank account added successfully!", "success");
       }
 
-      const updatedPurohitRes = await getPurohitByIdAPI(purohitId);
-      const wrapper = updatedPurohitRes?.data?.data || updatedPurohitRes?.data;
-      const u = wrapper?.user || wrapper || {};
-      const updatedList = u?.bankAccounts || wrapper?.bankAccounts || [];
-      setBankAccounts(updatedList);
+      if (purohitId && Number(purohitId) < 1000000000000) {
+        try {
+          const updatedPurohitRes = await getPurohitByIdAPI(purohitId);
+          const wrapper = updatedPurohitRes?.data?.data || updatedPurohitRes?.data;
+          const u = wrapper?.user || wrapper || {};
+          const updatedList = u?.bankAccounts || wrapper?.bankAccounts;
+          if (Array.isArray(updatedList) && updatedList.length > 0) {
+            setBankAccounts(updatedList);
+          }
+        } catch (e) {
+          // ignore refetch error
+        }
+      }
 
       setBankModalOpen(false);
       setSelectedBankId(null);

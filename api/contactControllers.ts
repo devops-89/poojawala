@@ -39,7 +39,6 @@ export const updateContactMessageStatusAPI = async (
     const payload: any = { status };
     if (message) {
       payload.message = message;
-      payload.replyMessage = message;
     }
     const response = await userSecuredApi.patch(`/contact-us/${id}/status`, payload);
     return response.data;

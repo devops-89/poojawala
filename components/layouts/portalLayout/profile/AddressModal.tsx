@@ -22,8 +22,9 @@ import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddres
 interface AddressModalProps {
   open: boolean;
   onClose: () => void;
-  selectedAddressId: number | null;
+  selectedAddressId: number | string | null;
   addressForm: {
+    id?: number | string | null;
     addressLabel: string;
     streetName: string;
     fullAddress: string;
@@ -99,7 +100,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         }}
       >
         <Box component="span">
-          {selectedAddressId ? "Edit Service Area" : "Add New Service Area"}
+          {Boolean(selectedAddressId || addressForm?.id) ? "Edit Service Area" : "Add New Service Area"}
         </Box>
         <AddressLocationButton
           isFetchingLocation={isFetchingLocation}

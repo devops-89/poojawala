@@ -1,6 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import {
+  addServiceAreaAPI,
+  deleteServiceAreaAPI,
+  updateServiceAreaAPI,
+} from "@/api/userControllers";
+import { AddressModal } from "@/components/layouts/portalLayout/profile/AddressModal";
+import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
+import { useSnackbarStore } from "@/stores/snackbarStore";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import {
   Box,
   Button,
@@ -12,17 +22,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { AddressModal } from "@/components/layouts/portalLayout/profile/AddressModal";
-import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
-import {
-  addServiceAreaAPI,
-  updateServiceAreaAPI,
-  deleteServiceAreaAPI,
-} from "@/api/userControllers";
-import { useSnackbarStore } from "@/stores/snackbarStore";
+import React, { useState } from "react";
 
 interface ServiceAreasSectionProps {
   purohitId: string | number;
@@ -42,7 +42,9 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
   const { showSnackbar } = useSnackbarStore();
 
   const [addressModalOpen, setAddressModalOpen] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
+    null,
+  );
   const [deleteAreaTarget, setDeleteAreaTarget] = useState<any>(null);
   const [isDeletingArea, setIsDeletingArea] = useState(false);
   const [isSavingAreaModal, setIsSavingAreaModal] = useState(false);
@@ -133,7 +135,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
       console.error("Service area delete error:", error);
       showSnackbar(
         error?.response?.data?.message || "Failed to delete service area",
-        "error"
+        "error",
       );
     } finally {
       setIsDeletingArea(false);
@@ -146,7 +148,8 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
 
     if (selectedAddressId && initialAddressDataRef.current) {
       const isUnchanged =
-        JSON.stringify(targetData) === JSON.stringify(initialAddressDataRef.current);
+        JSON.stringify(targetData) ===
+        JSON.stringify(initialAddressDataRef.current);
       if (isUnchanged) {
         showSnackbar("No changes detected to save", "info");
         setAddressModalOpen(false);
@@ -157,14 +160,19 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
     const areaPayload = {
       purohitId: Number(purohitId),
       addressLabel: targetData.addressLabel || "Primary Service Area",
-      streetName: targetData.streetName || targetData.addressLabel || "Main Area",
+      streetName:
+        targetData.streetName || targetData.addressLabel || "Main Area",
       fullAddress: targetData.fullAddress,
       city: targetData.city || defaultCity,
       state: targetData.state || defaultState,
       pincode: targetData.pincode,
       latitude: targetData.latitude ? String(targetData.latitude) : undefined,
-      longitude: targetData.longitude ? String(targetData.longitude) : undefined,
-      serviceRadiusKm: targetData.serviceRadiusKm ? String(targetData.serviceRadiusKm) : "15.00",
+      longitude: targetData.longitude
+        ? String(targetData.longitude)
+        : undefined,
+      serviceRadiusKm: targetData.serviceRadiusKm
+        ? String(targetData.serviceRadiusKm)
+        : "15.00",
       isDefault: targetData.isDefault || false,
     };
 
@@ -176,16 +184,18 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
         selectedAddressId < 1000000000000
       ) {
         const res = await updateServiceAreaAPI(selectedAddressId, areaPayload);
-        const updatedObj =
-          res?.data || res?.serviceArea || { ...targetData, id: selectedAddressId };
+        const updatedObj = res?.data ||
+          res?.serviceArea || { ...targetData, id: selectedAddressId };
         setServiceAreas((prev) =>
-          prev.map((a) => (a.id === selectedAddressId ? { ...a, ...updatedObj } : a))
+          prev.map((a) =>
+            a.id === selectedAddressId ? { ...a, ...updatedObj } : a,
+          ),
         );
         showSnackbar("Service area updated successfully!", "success");
       } else {
         const res = await addServiceAreaAPI(areaPayload);
-        const newObj =
-          res?.data || res?.serviceArea || { ...targetData, id: Date.now() };
+        const newObj = res?.data ||
+          res?.serviceArea || { ...targetData, id: Date.now() };
         setServiceAreas((prev) => [...prev, newObj]);
         showSnackbar("Service area added successfully!", "success");
       }
@@ -195,7 +205,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
       console.error("Service area save error:", error);
       showSnackbar(
         error?.response?.data?.message || "Failed to save service area",
-        "error"
+        "error",
       );
     } finally {
       setIsSavingAreaModal(false);
@@ -265,13 +275,18 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
               color: "#64748b",
             }}
           >
-            No service areas added yet. Click "Add Service Area" to configure operating locations.
+            No service areas added yet. Click "Add Service Area" to configure
+            operating locations.
           </Typography>
         </Card>
       ) : (
         <Grid container spacing={2.5}>
           {serviceAreas.map((area: any) => (
-            <Grid size={{ xs: 12, sm: 6 }} key={area.id} sx={{ display: "flex" }}>
+            <Grid
+              size={{ xs: 12, sm: 6 }}
+              key={area.id}
+              sx={{ display: "flex" }}
+            >
               <Card
                 variant="outlined"
                 sx={{
@@ -406,8 +421,12 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
       <ConfirmDeleteDialog
         open={Boolean(deleteAreaTarget)}
         title="Delete Service Area"
-        itemName={deleteAreaTarget?.addressLabel || deleteAreaTarget?.fullAddress || "Service Area"}
-        customMessage={`Are you sure you want to delete the service area "${deleteAreaTarget?.addressLabel || deleteAreaTarget?.fullAddress || 'this area'}"?`}
+        itemName={
+          deleteAreaTarget?.addressLabel ||
+          deleteAreaTarget?.fullAddress ||
+          "Service Area"
+        }
+        customMessage={`Are you sure you want to delete the service area "${deleteAreaTarget?.addressLabel || deleteAreaTarget?.fullAddress || "this area"}"?`}
         onClose={() => setDeleteAreaTarget(null)}
         onConfirm={handleConfirmDeleteArea}
         loading={isDeletingArea}
