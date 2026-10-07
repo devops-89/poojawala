@@ -3,6 +3,7 @@ export interface AddressFormData {
   venueType: string;
   fullAddress: string;
   addressLabel: string;
+  streetName?: string;
   city: string;
   state: string;
   pincode: string;

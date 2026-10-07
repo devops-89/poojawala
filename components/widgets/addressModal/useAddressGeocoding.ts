@@ -41,11 +41,9 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     }
   }, []);
 
-  const initialDataKey = initialData
-    ? `${initialData.id ?? ""}_${initialData.addressLabel || ""}_${initialData.fullAddress || initialData.addressLine1 || ""}_${initialData.streetName || ""}_${initialData.city || ""}_${initialData.state || ""}_${initialData.pincode || initialData.zipCode || ""}_${initialData.latitude || ""}_${initialData.longitude || ""}`
-    : "";
+  const initialId = initialData?.id ?? null;
 
-  // Initialize or update Map when Dialog opens or initialData changes
+  // Initialize or update Map ONLY when Dialog opens or initialId changes
   useEffect(() => {
     if (!open) {
       if (mapInstanceRef.current) {
@@ -69,6 +67,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         venueType: initialData.venueType || "HOME",
         fullAddress: constructedAddress,
         addressLabel: initialData.addressLabel || "Home",
+        streetName: initialData.streetName || "",
         city: initialData.city || "",
         state: initialData.state || "",
         pincode: initialData.pincode || initialData.zipCode || "",
@@ -81,6 +80,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         venueType: "HOME",
         fullAddress: "",
         addressLabel: "Home",
+        streetName: "",
         city: "",
         state: "",
         pincode: "",
@@ -100,7 +100,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     return () => {
       clearTimeout(timer);
     };
-  }, [open, initialDataKey]);
+  }, [open, initialId]);
 
   const initMap = () => {
     if (!mapContainerRef.current) return;

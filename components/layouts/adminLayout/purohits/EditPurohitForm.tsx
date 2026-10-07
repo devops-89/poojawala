@@ -18,6 +18,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { getPurohitByIdAPI, updateUserByAdminAPI } from "@/api/userControllers";
+import { convertImageToWebP } from "@/utils/imageHelper";
 
 import { BasicDetailsSection } from "./BasicDetailsSection";
 import { PurohitProfileSection } from "./PurohitProfileSection";
@@ -160,15 +161,53 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
               isPrimary: true,
             };
 
-        const updatePayload = {
-          firstName,
-          lastName,
-          email: values.email,
-          phone: values.phone,
-          countryCode: values.countryCode || "+91",
-          dob: values.dob,
-          profileImage: values.profilePhotoUrl,
-          profile: {
+        const formattedServiceAreas = serviceAreas.map((sa) => {
+          const areaId = sa.id ?? sa._id;
+          return {
+            ...(areaId &&
+            (typeof areaId === "string" ||
+              (typeof areaId === "number" && areaId < 1000000000000))
+              ? { id: areaId }
+              : {}),
+            addressLabel: sa.addressLabel || "Primary Service Area",
+            streetName: sa.streetName || sa.addressLabel || "Main Area",
+            fullAddress:
+              sa.fullAddress ||
+              [sa.streetName, sa.city, sa.state, sa.pincode]
+                .filter(Boolean)
+                .join(", "),
+            city: sa.city || values.city,
+            state: sa.state || values.state,
+            pincode: sa.pincode,
+            latitude: sa.latitude ? String(sa.latitude) : undefined,
+            longitude: sa.longitude ? String(sa.longitude) : undefined,
+            serviceRadiusKm: sa.serviceRadiusKm
+              ? String(sa.serviceRadiusKm)
+              : "15.00",
+            isDefault: sa.isDefault || false,
+          };
+        });
+
+        const formattedBankAccounts =
+          bankAccounts.length > 0 ? bankAccounts : [selectedPaymentObject];
+
+        const hasSelectedFiles = Boolean(
+          selectedFiles.profilePhoto ||
+            selectedFiles.identityDoc ||
+            selectedFiles.certificate ||
+            selectedFiles.templeAffiliationProof
+        );
+
+        if (hasSelectedFiles) {
+          const formData = new FormData();
+          formData.append("firstName", firstName);
+          formData.append("lastName", lastName);
+          formData.append("email", values.email);
+          formData.append("phone", values.phone);
+          formData.append("countryCode", values.countryCode || "+91");
+          formData.append("dob", values.dob);
+
+          const profileObj = {
             bio: values.bio,
             qualification: values.qualification ? [values.qualification] : [],
             experienceYears: Number(values.experienceYears || 0),
@@ -180,42 +219,95 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
               : values.specializations,
             aadhaarNumber: values.aadhaarNumber,
             city: values.city,
+            state: values.state,
             isOnlineAvailable: values.isOnlineAvailable,
             isOfflineAvailable: values.isOfflineAvailable,
-            aadhaarDocUrl: values.identityDocUrl,
-            certificateUrl: values.certificateUrl,
-            templeAffiliationProofUrl: values.templeAffiliationProofUrl,
-          },
-          serviceAreas: serviceAreas.map((sa) => {
-            const areaId = sa.id ?? sa._id;
-            return {
-              ...(areaId &&
-              (typeof areaId === "string" ||
-                (typeof areaId === "number" && areaId < 1000000000000))
-                ? { id: areaId }
-                : {}),
-              addressLabel: sa.addressLabel || "Primary Service Area",
-              streetName: sa.streetName || sa.addressLabel || "Main Area",
-              fullAddress:
-                sa.fullAddress ||
-                [sa.streetName, sa.city, sa.state, sa.pincode]
-                  .filter(Boolean)
-                  .join(", "),
-              city: sa.city || values.city,
-              state: sa.state || values.state,
-              pincode: sa.pincode,
-              latitude: sa.latitude ? String(sa.latitude) : undefined,
-              longitude: sa.longitude ? String(sa.longitude) : undefined,
-              serviceRadiusKm: sa.serviceRadiusKm
-                ? String(sa.serviceRadiusKm)
-                : "15.00",
-              isDefault: sa.isDefault || false,
-            };
-          }),
-          bankAccounts: bankAccounts.length > 0 ? bankAccounts : [selectedPaymentObject],
-        };
+            ...(values.identityDocUrl && !values.identityDocUrl.startsWith("blob:")
+              ? { aadhaarDocUrl: values.identityDocUrl }
+              : {}),
+            ...(values.certificateUrl && !values.certificateUrl.startsWith("blob:")
+              ? { certificateUrl: values.certificateUrl }
+              : {}),
+            ...(values.templeAffiliationProofUrl && !values.templeAffiliationProofUrl.startsWith("blob:")
+              ? { templeAffiliationProofUrl: values.templeAffiliationProofUrl }
+              : {}),
+          };
 
-        await updateUserByAdminAPI(id, updatePayload);
+          formData.append("profile", JSON.stringify(profileObj));
+          formData.append("serviceAreas", JSON.stringify(formattedServiceAreas));
+          formData.append("bankAccounts", JSON.stringify(formattedBankAccounts));
+
+          // Flat fields for endpoints reading FormData keys directly
+          formData.append("bio", values.bio);
+          formData.append("qualification", values.qualification);
+          formData.append("experienceYears", String(values.experienceYears || 0));
+          formData.append("aadhaarNumber", values.aadhaarNumber);
+          formData.append("city", values.city);
+          formData.append("state", values.state);
+          formData.append("isOnlineAvailable", values.isOnlineAvailable ? "true" : "false");
+          formData.append("isOfflineAvailable", values.isOfflineAvailable ? "true" : "false");
+
+          if (selectedFiles.profilePhoto) {
+            const webpFile = await convertImageToWebP(selectedFiles.profilePhoto);
+            formData.append("profileImage", webpFile);
+          }
+          if (selectedFiles.identityDoc) {
+            const webpFile = await convertImageToWebP(selectedFiles.identityDoc);
+            formData.append("aadhaarDoc", webpFile);
+            formData.append("identityDoc", webpFile);
+          }
+          if (selectedFiles.certificate) {
+            const webpFile = await convertImageToWebP(selectedFiles.certificate);
+            formData.append("certificate", webpFile);
+          }
+          if (selectedFiles.templeAffiliationProof) {
+            const webpFile = await convertImageToWebP(selectedFiles.templeAffiliationProof);
+            formData.append("templeAffiliationProof", webpFile);
+          }
+
+          await updateUserByAdminAPI(id, formData);
+        } else {
+          const updatePayload = {
+            firstName,
+            lastName,
+            email: values.email,
+            phone: values.phone,
+            countryCode: values.countryCode || "+91",
+            dob: values.dob,
+            ...(values.profilePhotoUrl && !values.profilePhotoUrl.startsWith("blob:")
+              ? { profileImage: values.profilePhotoUrl }
+              : {}),
+            profile: {
+              bio: values.bio,
+              qualification: values.qualification ? [values.qualification] : [],
+              experienceYears: Number(values.experienceYears || 0),
+              languages: Array.isArray(values.languages)
+                ? values.languages.join(",")
+                : values.languages,
+              specializations: Array.isArray(values.specializations)
+                ? values.specializations.join(",")
+                : values.specializations,
+              aadhaarNumber: values.aadhaarNumber,
+              city: values.city,
+              state: values.state,
+              isOnlineAvailable: values.isOnlineAvailable,
+              isOfflineAvailable: values.isOfflineAvailable,
+              ...(values.identityDocUrl && !values.identityDocUrl.startsWith("blob:")
+                ? { aadhaarDocUrl: values.identityDocUrl }
+                : {}),
+              ...(values.certificateUrl && !values.certificateUrl.startsWith("blob:")
+                ? { certificateUrl: values.certificateUrl }
+                : {}),
+              ...(values.templeAffiliationProofUrl && !values.templeAffiliationProofUrl.startsWith("blob:")
+                ? { templeAffiliationProofUrl: values.templeAffiliationProofUrl }
+                : {}),
+            },
+            serviceAreas: formattedServiceAreas,
+            bankAccounts: formattedBankAccounts,
+          };
+
+          await updateUserByAdminAPI(id, updatePayload);
+        }
 
         showSnackbar("Purohit details updated successfully!", "success");
         router.push("/admin/purohits");

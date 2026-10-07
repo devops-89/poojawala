@@ -165,13 +165,12 @@ export const AddressModal: React.FC<AddressModalProps> = ({
               <TextField
                 fullWidth
                 label="Street Name / Area / Landmark *"
-                value={addressForm.streetName || ""}
-                onChange={(e) =>
-                  setAddressForm((prev: any) => ({
-                    ...prev,
-                    streetName: e.target.value,
-                  }))
-                }
+                value={addressData.streetName ?? addressForm.streetName ?? ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setAddressData((prev) => ({ ...prev, streetName: val }));
+                  setAddressForm((prev: any) => ({ ...prev, streetName: val }));
+                }}
                 variant="outlined"
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
@@ -277,10 +276,18 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         </Button>
         <Button
           onClick={() => {
+            const currentStreetName = addressData.streetName ?? addressForm.streetName ?? "";
+            const constructedAddress =
+              addressData.fullAddress ||
+              [currentStreetName, addressData.city, addressData.state, addressData.pincode]
+                .filter(Boolean)
+                .join(", ");
+
             const updatedForm = {
               ...addressForm,
               addressLabel: addressData.addressLabel,
-              fullAddress: addressData.fullAddress,
+              streetName: currentStreetName,
+              fullAddress: constructedAddress,
               city: addressData.city,
               state: addressData.state,
               pincode: addressData.pincode,
