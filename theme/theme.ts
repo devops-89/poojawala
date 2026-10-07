@@ -51,6 +51,27 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        'input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button': {
+          WebkitAppearance: 'none !important',
+          margin: 0,
+        },
+        'input[type=number]': {
+          MozAppearance: 'textfield !important',
+          appearance: 'textfield !important',
+        },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        slotProps: {
+          htmlInput: {
+            min: 0,
+          },
+        },
+      },
+    },
     MuiPopover: {
       defaultProps: {
         disableScrollLock: true,

@@ -25,6 +25,30 @@ export default function ThemeRegistry({
   children: React.ReactNode;
 }) {
   React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.tagName === "INPUT") {
+        const input = target as HTMLInputElement;
+        if (input.type === "number") {
+          if (e.key === "-" || e.key === "e" || e.key === "E") {
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    const handleInput = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      if (target && target.tagName === "INPUT" && target.type === "number") {
+        if (target.value && (target.value.includes("-") || Number(target.value) < 0)) {
+          target.value = target.value.replace(/-/g, "");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    window.addEventListener("input", handleInput, true);
+
     const interval = setInterval(async () => {
       const userStr = sessionStorage.getItem("user");
       if (userStr) {
@@ -42,7 +66,11 @@ export default function ThemeRegistry({
       }
     }, 600000); // 10 minutes
 
-    return () => clearInterval(interval);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, true);
+      window.removeEventListener("input", handleInput, true);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
