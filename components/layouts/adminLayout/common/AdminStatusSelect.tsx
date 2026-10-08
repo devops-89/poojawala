@@ -3,17 +3,8 @@
 import { Box, MenuItem, Select } from "@mui/material";
 import React from "react";
 
-export interface StatusOption {
-  value: string;
-  label: string;
-}
-
-export interface AdminStatusSelectProps {
-  value: string;
-  options?: StatusOption[];
-  onChange?: (newValue: string) => void;
-  readOnly?: boolean;
-}
+import { StatusOption, AdminStatusSelectProps } from "@/utils/types";
+export type { StatusOption, AdminStatusSelectProps };
 
 export const getStatusTheme = (statusStr?: string) => {
   const status = (statusStr || "").toUpperCase().replace(/_/g, " ").trim();
@@ -70,8 +61,8 @@ export default function AdminStatusSelect({
 
   if (readOnly || !options || options.length <= 1 || !onChange) {
     const displayLabel =
-      options?.find((o) => o.value === value)?.label ||
-      value.replace(/_/g, " ");
+      options?.find((o) => String(o.value) === String(value))?.label ||
+      (typeof value === "string" ? value.replace(/_/g, " ") : String(value));
     return (
       <Box
         sx={{
@@ -110,8 +101,8 @@ export default function AdminStatusSelect({
     >
       {options.map((opt) => (
         <MenuItem
-          key={opt.value}
-          value={opt.value}
+          key={String(opt.value)}
+          value={String(opt.value)}
           sx={{
             fontFamily: "var(--font-outfit), sans-serif",
             fontSize: "0.85rem",

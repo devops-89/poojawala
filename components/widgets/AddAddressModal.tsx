@@ -16,10 +16,9 @@ import { useState } from "react";
 import AddressFormInputs from "./addressModal/AddressFormInputs";
 import AddressLocationButton from "./addressModal/AddressLocationButton";
 import AddressMapPreview from "./addressModal/AddressMapPreview";
-import { AddAddressModalProps } from "./addressModal/types";
+import { AddAddressModalProps, AddressFormData } from "@/utils/types";
 import { useAddressGeocoding } from "./addressModal/useAddressGeocoding";
-
-export type { AddressFormData } from "./addressModal/types";
+export type { AddressFormData };
 
 export default function AddAddressModal({
   open,

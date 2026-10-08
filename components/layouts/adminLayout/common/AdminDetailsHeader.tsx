@@ -4,19 +4,8 @@ import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
-}
-
-export interface AdminDetailsHeaderProps {
-  title: string;
-  breadcrumbs?: BreadcrumbItem[];
-  backHref?: string;
-  onBack?: () => void;
-  actionButton?: React.ReactNode;
-  children?: React.ReactNode;
-}
+import { BreadcrumbItem, AdminDetailsHeaderProps } from "@/utils/types";
+export type { BreadcrumbItem, AdminDetailsHeaderProps };
 
 export default function AdminDetailsHeader({
   title,

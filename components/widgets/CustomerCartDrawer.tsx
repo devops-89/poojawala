@@ -45,16 +45,16 @@ export default function CustomerCartDrawer() {
   const [confirmModal, setConfirmModal] = useState<{
     open: boolean;
     type: "remove" | "clear";
-    itemId?: string;
+    itemId?: string | number;
     itemTitle?: string;
   }>({
     open: false,
     type: "remove",
   });
 
-  const handleQuantityChange = async (itemId: string, newQty: number) => {
+  const handleQuantityChange = async (itemId: string | number, newQty: number) => {
     if (newQty <= 0) {
-      const targetItem = items.find((i) => i.id === itemId);
+      const targetItem = items.find((i) => String(i.id) === String(itemId));
       setConfirmModal({
         open: true,
         type: "remove",
@@ -76,12 +76,12 @@ export default function CustomerCartDrawer() {
     }
   };
 
-  const promptRemoveItem = (itemId: string, title: string) => {
+  const promptRemoveItem = (itemId: string | number, title?: string) => {
     setConfirmModal({
       open: true,
       type: "remove",
       itemId,
-      itemTitle: title,
+      itemTitle: title || "this product",
     });
   };
 
@@ -446,7 +446,12 @@ export default function CustomerCartDrawer() {
                 >
                   <IconButton
                     size="small"
-                    onClick={() => promptRemoveItem(item.id, item.title)}
+                    onClick={() =>
+                      promptRemoveItem(
+                        item.id,
+                        item.title || item.name || "this item",
+                      )
+                    }
                     sx={{ color: "#A8968D", "&:hover": { color: "#d32f2f" } }}
                   >
                     <DeleteOutlinedIcon sx={{ fontSize: 18 }} />

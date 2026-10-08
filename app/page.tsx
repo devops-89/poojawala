@@ -4,6 +4,7 @@ import HeroSection from "@/components/layouts/home-layout/HeroSection";
 import PopularPackages from "@/components/layouts/home-layout/PopularPackages";
 import PoojaProcessSection from "@/components/layouts/home-layout/PoojaProcessSection";
 import ServiceCategoriesSection from "@/components/layouts/home-layout/ServiceCategoriesSection";
+import TemplesSection from "@/components/layouts/home-layout/TemplesSection";
 import Testimonials from "@/components/layouts/home-layout/Testimonials";
 import UpcomingFestivals from "@/components/layouts/home-layout/UpcomingFestivals";
 import VerifiedPurohits from "@/components/layouts/home-layout/VerifiedPurohits";
@@ -19,6 +20,7 @@ export default function Home() {
       <PopularPackages />
       <PoojaProcessSection />
       <ServiceCategoriesSection />
+      <TemplesSection />
       <VerifiedPurohits />
       <UpcomingFestivals />
       <Testimonials />

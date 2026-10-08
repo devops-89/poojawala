@@ -17,40 +17,8 @@ import {
   Box,
 } from '@mui/material';
 
-export interface Column<T = any> {
-  id: string;
-  label: string;
-  align?: 'left' | 'center' | 'right';
-  minWidth?: number | string;
-  width?: number | string;
-  render?: (item: T, index: number) => React.ReactNode;
-}
-
-export interface TabOption {
-  id: string;
-  label: string;
-}
-
-export interface AdminDataTableProps<T = any> {
-  columns: Column<T>[];
-  data: T[];
-  isLoading?: boolean;
-  totalCount?: number;
-  page?: number;
-  rowsPerPage?: number;
-  onPageChange?: (newPage: number) => void;
-  onRowsPerPageChange?: (newRowsPerPage: number) => void;
-  
-  // Tabs props (optional)
-  tabs?: TabOption[];
-  activeTab?: string;
-  onTabChange?: (newTab: string) => void;
-  
-  // Table Styling & Customization
-  minWidth?: number | string;
-  emptyMessage?: string;
-  keyExtractor?: (item: T, index: number) => string | number;
-}
+import { Column, TabOption, AdminDataTableProps } from "@/utils/types";
+export type { Column, TabOption, AdminDataTableProps };
 
 export default function AdminDataTable<T = any>({
   columns,

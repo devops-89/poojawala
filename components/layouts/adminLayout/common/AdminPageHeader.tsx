@@ -12,17 +12,8 @@ import {
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
-export interface AdminPageHeaderProps {
-  title: string;
-  subtitle?: string;
-  searchPlaceholder?: string;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  actionButtonText?: string;
-  actionButtonHref?: string;
-  actionButtonIcon?: ReactNode;
-  onActionButtonClick?: () => void;
-}
+import { AdminPageHeaderProps } from "@/utils/types";
+export type { AdminPageHeaderProps };
 
 export default function AdminPageHeader({
   title,

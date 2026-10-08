@@ -3,19 +3,7 @@ import { useUserStore } from '@/stores/userStore';
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
-interface ServiceCardProps {
-  id?: number | string;
-  title: string;
-  image: string;
-  description?: string;
-  price?: string;
-  duration?: string;
-  category?: string;
-  language?: string;
-  experience?: string;
-  rating?: string;
-  availability?: string;
-}
+import { ServiceCardProps } from '@/utils/types';
 
 export default function ServiceCard({
   id,

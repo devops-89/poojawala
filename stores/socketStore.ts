@@ -1,11 +1,8 @@
 import { create } from 'zustand';
 import { Socket } from 'socket.io-client';
 
-export interface NotificationItem {
-  id: string;
-  message: string;
-  time: string;
-}
+import { NotificationItem } from '@/utils/types';
+export type { NotificationItem };
 
 interface SocketState {
   socket: Socket | null;

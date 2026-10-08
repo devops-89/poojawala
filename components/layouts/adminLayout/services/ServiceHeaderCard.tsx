@@ -1,8 +1,10 @@
 "use client";
 
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import { Box, Chip, Paper, Typography } from "@mui/material";
 import Image from "next/image";
+import NextLink from "next/link";
 import React from "react";
 
 const PLACEHOLDER =
@@ -19,6 +21,13 @@ export default function ServiceHeaderCard({
   languagesList,
   languagesText,
 }: ServiceHeaderCardProps) {
+  const isTempleService = Boolean(service.templeId || service.temple);
+  const templeName =
+    service.temple?.name ||
+    service.templeName ||
+    (typeof service.temple === "string" ? service.temple : null);
+  const templeId = service.templeId || service.temple?.id;
+
   return (
     <Paper
       elevation={0}
@@ -96,23 +105,72 @@ export default function ServiceHeaderCard({
                   : "none",
               }}
             />
-            <Chip
-              label={
-                service.isUpcomingFestival
-                  ? "Upcoming Festival"
-                  : "Regular Service"
-              }
-              sx={{
-                bgcolor: service.isUpcomingFestival ? "#8b5cf6" : "#f1f5f9",
-                color: service.isUpcomingFestival ? "#ffffff" : "#64748b",
-                fontWeight: 700,
-                fontFamily: "var(--font-outfit), sans-serif",
-                borderRadius: "8px",
-                boxShadow: service.isUpcomingFestival
-                  ? "0 4px 14px 0 rgba(139, 92, 246, 0.39)"
-                  : "none",
-              }}
-            />
+
+            {/* Service Type Chip (Temple Service vs Regular/Festival Service) */}
+            {isTempleService ? (
+              <Chip
+                icon={
+                  <TempleHinduIcon
+                    sx={{ color: "#ffffff !important", fontSize: "1.1rem" }}
+                  />
+                }
+                label="Temple Service"
+                sx={{
+                  bgcolor: "#FF6200",
+                  color: "#ffffff",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 14px 0 rgba(255, 98, 0, 0.35)",
+                }}
+              />
+            ) : (
+              <Chip
+                label={
+                  service.isUpcomingFestival
+                    ? "Upcoming Festival"
+                    : "Regular Service"
+                }
+                sx={{
+                  bgcolor: service.isUpcomingFestival ? "#8b5cf6" : "#f1f5f9",
+                  color: service.isUpcomingFestival ? "#ffffff" : "#64748b",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                  boxShadow: service.isUpcomingFestival
+                    ? "0 4px 14px 0 rgba(139, 92, 246, 0.39)"
+                    : "none",
+                }}
+              />
+            )}
+
+            {/* Temple Name Chip if available */}
+            {templeName && (
+              <Chip
+                icon={
+                  <TempleHinduIcon
+                    sx={{ color: "#b45309 !important", fontSize: "1.1rem" }}
+                  />
+                }
+                label={templeName}
+                component={templeId ? NextLink : "div"}
+                href={templeId ? `/admin/temples/${templeId}` : undefined}
+                clickable={Boolean(templeId)}
+                sx={{
+                  bgcolor: "#fef3c7",
+                  color: "#b45309",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                  border: "1px solid #fde68a",
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    bgcolor: "#fde68a",
+                  },
+                }}
+              />
+            )}
+
             <Chip
               icon={
                 <AccessTimeIcon
@@ -129,6 +187,7 @@ export default function ServiceHeaderCard({
                 border: "1px solid #ffedd5",
               }}
             />
+
             {service.category?.name && (
               <Chip
                 label={service.category.name}
@@ -139,6 +198,21 @@ export default function ServiceHeaderCard({
                   fontFamily: "var(--font-outfit), sans-serif",
                   borderRadius: "8px",
                   border: "1px solid #bae6fd",
+                }}
+              />
+            )}
+
+            {/* Show Upcoming Festival Chip if also marked as festival */}
+            {isTempleService && service.isUpcomingFestival && (
+              <Chip
+                label="Upcoming Festival"
+                sx={{
+                  bgcolor: "#8b5cf6",
+                  color: "#ffffff",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-outfit), sans-serif",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 14px 0 rgba(139, 92, 246, 0.39)",
                 }}
               />
             )}
@@ -160,6 +234,44 @@ export default function ServiceHeaderCard({
                 {languagesList.length === 1 ? "Language:" : "Languages:"}
               </Box>
               {languagesText}
+            </Typography>
+          )}
+
+          {templeName && (
+            <Typography
+              sx={{
+                fontFamily: "var(--font-outfit), sans-serif",
+                color: "#64748b",
+                fontSize: "0.95rem",
+                fontWeight: 600,
+                mt: 0.5,
+              }}
+            >
+              <Box
+                component="span"
+                sx={{ color: "#1e293b", fontWeight: 700, mr: 0.5 }}
+              >
+                Temple:
+              </Box>
+              {templeId ? (
+                <NextLink
+                  href={`/admin/temples/${templeId}`}
+                  style={{
+                    color: "#FF6200",
+                    textDecoration: "none",
+                    fontWeight: 700,
+                  }}
+                >
+                  {templeName}
+                </NextLink>
+              ) : (
+                <Box
+                  component="span"
+                  sx={{ color: "#FF6200", fontWeight: 700 }}
+                >
+                  {templeName}
+                </Box>
+              )}
             </Typography>
           )}
         </Box>

@@ -103,38 +103,15 @@ export default function AddServiceForm() {
     initialValues: {
       name: "",
       categoryId: "",
+      templeId: "",
       description: "",
-      tokenPercentage: "40.00",
+      tokenPercentage: "",
       basicPrice: "",
-      basicFeatures: [
-        { key: "kalashSthapana", value: "true" },
-        { key: "durgaPuja", value: "true" },
-        { key: "pujaSamagri", value: "Basic" },
-      ] as Array<{ key: string; value: string }>,
-      basicPurohitCarryItems: [
-        "Ganapati Idol",
-        "Puja Aasan",
-        "Puja Thali",
-        "Kalash",
-        "Roli",
-        "Moli",
-        "Havan Samagri",
-      ] as string[],
+      basicFeatures: [] as Array<{ key: string; value: string }>,
+      basicPurohitCarryItems: [] as string[],
       standardPrice: "",
-      standardFeatures: [
-        { key: "kalashSthapana", value: "true" },
-        { key: "durgaPuja", value: "true" },
-        { key: "pujaSamagri", value: "Complete" },
-      ] as Array<{ key: string; value: string }>,
-      standardPurohitCarryItems: [
-        "Ganapati Idol",
-        "Premium Puja Aasan",
-        "Premium Puja Thali",
-        "Kalash",
-        "Navagraha Puja Items",
-        "Havan Kund",
-        "Premium Puja Decorations",
-      ] as string[],
+      standardFeatures: [] as Array<{ key: string; value: string }>,
+      standardPurohitCarryItems: [] as string[],
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
@@ -246,6 +223,10 @@ export default function AddServiceForm() {
         }
 
         formData.append("isActive", "true");
+
+        if (values.templeId) {
+          formData.append("templeId", String(values.templeId));
+        }
 
         formData.append("icon", iconFile);
 
@@ -390,6 +371,7 @@ export default function AddServiceForm() {
                   touched={touched}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
                 />
 
                 <ServiceBenefitsFields

@@ -350,7 +350,8 @@ export default function CustomerOrdersContent() {
   >(null);
 
   const handleDownloadInvoice = async (order: CustomerOrder) => {
-    const targetId = order.rawId || order.id.replace(/^(ORD-|#PW-|#)/i, "");
+    const targetId =
+      order.rawId || String(order.id).replace(/^(ORD-|#PW-|#)/i, "");
     setDownloadingInvoiceId(order.id);
     try {
       showSnackbar(`Downloading invoice for ${order.orderNumber}...`, "info");
@@ -389,7 +390,7 @@ export default function CustomerOrdersContent() {
 
   const handlePayOrder = async (orderToPay: CustomerOrder) => {
     const targetId =
-      orderToPay.rawId || orderToPay.id.replace(/^(ORD-|#PW-|#)/i, "");
+      orderToPay.rawId || String(orderToPay.id).replace(/^(ORD-|#PW-|#)/i, "");
     setPayingOrderId(orderToPay.id);
     try {
       showSnackbar(`Initiating payment for ${orderToPay.id}...`, "info");

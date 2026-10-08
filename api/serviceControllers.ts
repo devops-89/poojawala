@@ -57,7 +57,9 @@ export const getServicesAPI = async (
   maxPrice?: string,
   isActive?: boolean,
   isUpcomingFestival?: boolean,
-  city?: string
+  city?: string,
+  templeId?: string | number,
+  categoryId?: string | number
 ) => {
   try {
     const params = new URLSearchParams();
@@ -83,6 +85,12 @@ export const getServicesAPI = async (
     }
     if (city && city !== 'All') {
       params.append('city', city);
+    }
+    if (templeId && templeId !== 'All') {
+      params.append('templeId', String(templeId));
+    }
+    if (categoryId && categoryId !== 'All') {
+      params.append('categoryId', String(categoryId));
     }
     const response = await userPublicApi.get(`/service`, { params });
     return response.data;
@@ -142,7 +150,8 @@ export const getAllServicesAPI = async (
   isActive?: boolean,
   city?: string,
   state?: string,
-  categoryId?: string | number
+  categoryId?: string | number,
+  templeId?: string | number
 ) => {
   try {
     const params: Record<string, any> = {};
@@ -153,6 +162,7 @@ export const getAllServicesAPI = async (
     if (city && city !== 'All' && city !== 'All Cities') params.city = city;
     if (state && state !== 'All' && state !== 'All States') params.state = state;
     if (categoryId && categoryId !== 'All') params.categoryId = categoryId;
+    if (templeId && templeId !== 'All') params.templeId = templeId;
 
     const response = await userPublicApi.get('/service', { params });
     return response.data;

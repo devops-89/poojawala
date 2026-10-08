@@ -1,7 +1,7 @@
 "use client";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
-import { AddressFormData, StatusMessage } from "./types";
+import { AddressFormData, StatusMessage } from "@/utils/types";
 
 export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
@@ -288,14 +288,14 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     overrideAddress?: string
   ) => {
     const pin = (
-      typeof overridePin === "string" ? overridePin : addressData.pincode
+      typeof overridePin === "string" ? overridePin : addressData.pincode || ""
     ).trim();
-    const city = addressData.city.trim();
-    const state = addressData.state.trim();
+    const city = (addressData.city || "").trim();
+    const state = (addressData.state || "").trim();
     const address = (
       typeof overrideAddress === "string"
         ? overrideAddress
-        : addressData.fullAddress
+        : addressData.fullAddress || ""
     ).trim();
 
     const validPin = /^\d{6}$/.test(pin);
@@ -571,7 +571,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         pincode: pin,
         city: fetchedCity || prev.city,
         state: fetchedState || prev.state,
-        fullAddress: prev.fullAddress.trim() ? prev.fullAddress : defaultAddressStr,
+        fullAddress: prev.fullAddress?.trim() ? prev.fullAddress : defaultAddressStr,
         latitude: lat.toFixed(6),
         longitude: lon.toFixed(6),
       }));
@@ -615,7 +615,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   };
 
   const handleAddressInputBlur = () => {
-    const trimmed = addressData.fullAddress.trim();
+    const trimmed = (addressData.fullAddress || "").trim();
     if (trimmed.length >= 5 && trimmed !== lastSearchedQueryRef.current) {
       if (addressDebounceRef.current) {
         clearTimeout(addressDebounceRef.current);

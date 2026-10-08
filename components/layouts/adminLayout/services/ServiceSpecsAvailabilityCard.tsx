@@ -3,9 +3,11 @@
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import EventIcon from "@mui/icons-material/Event";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import WifiIcon from "@mui/icons-material/Wifi";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import { Box, Grid, Paper, Typography } from "@mui/material";
+import NextLink from "next/link";
 
 export interface ServiceSpecsAvailabilityCardProps {
   service: any;
@@ -14,6 +16,13 @@ export interface ServiceSpecsAvailabilityCardProps {
 export default function ServiceSpecsAvailabilityCard({
   service,
 }: ServiceSpecsAvailabilityCardProps) {
+  const isTempleService = Boolean(service.templeId || service.temple);
+  const templeName =
+    service.temple?.name ||
+    service.templeName ||
+    (typeof service.temple === "string" ? service.temple : null);
+  const templeId = service.templeId || service.temple?.id;
+
   return (
     <Paper
       elevation={0}
@@ -51,6 +60,63 @@ export default function ServiceSpecsAvailabilityCard({
       </Typography>
 
       <Grid container spacing={3}>
+        {/* Associated Temple if Temple Service */}
+        {isTempleService && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Box
+              component={templeId ? NextLink : "div"}
+              href={templeId ? `/admin/temples/${templeId}` : undefined}
+              sx={{
+                p: 3,
+                bgcolor: "#fffbeb",
+                borderRadius: "16px",
+                border: "1px solid #fde68a",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 2,
+                textDecoration: "none",
+                transition: "all 0.2s",
+                "&:hover": {
+                  borderColor: "#d97706",
+                  boxShadow: "0 4px 20px rgba(217, 119, 6, 0.1)",
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  p: 1.5,
+                  bgcolor: "#fef3c7",
+                  borderRadius: "12px",
+                  color: "#d97706",
+                  display: "flex",
+                }}
+              >
+                <TempleHinduIcon />
+              </Box>
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: "0.9rem",
+                    color: "#92400e",
+                    fontWeight: 600,
+                    mb: 0.5,
+                  }}
+                >
+                  Associated Temple
+                </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: 800,
+                    color: "#78350f",
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  {templeName || (templeId ? `Temple #${templeId}` : "Temple Service")}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+        )}
         {/* Requires Venue */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Box

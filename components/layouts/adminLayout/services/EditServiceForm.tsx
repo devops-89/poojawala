@@ -108,6 +108,7 @@ export default function EditServiceForm() {
     initialValues: {
       name: "",
       categoryId: "",
+      templeId: "",
       description: "",
       tokenPercentage: "40.00",
       basicPrice: "",
@@ -238,6 +239,10 @@ export default function EditServiceForm() {
         }
 
         formData.append("isActive", "true");
+
+        if (values.templeId) {
+          formData.append("templeId", String(values.templeId));
+        }
 
         if (iconFile) {
           formData.append("icon", iconFile);
@@ -373,6 +378,7 @@ export default function EditServiceForm() {
                 ? service.category?.id
                 : "") ||
               "",
+            templeId: service.templeId || service.temple?.id || "",
             description: service.description || "",
             tokenPercentage: service.tokenPercentage ?? "40.00",
             basicPrice: basicPrice,
@@ -552,6 +558,7 @@ export default function EditServiceForm() {
                   touched={touched}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
                 />
 
                 <ServiceBenefitsFields

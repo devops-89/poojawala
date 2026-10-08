@@ -4,10 +4,8 @@ import { Breadcrumbs, Typography } from "@mui/material";
 import Link from "next/link";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
-}
+import { BreadcrumbItem } from "@/utils/types";
+export type { BreadcrumbItem };
 
 interface AppBreadcrumbsProps {
   items: BreadcrumbItem[];

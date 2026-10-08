@@ -26,19 +26,10 @@ export default function ServicePricingFields({
     <>
       {/* Token Percentage */}
       <Grid size={{ xs: 12, md: 4 }}>
-        <Typography
-          sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
-            fontWeight: 700,
-            mb: 1,
-            color: "#1e293b",
-          }}
-        >
-          Token Percentage (%) *
-        </Typography>
         <TextField
           fullWidth
           name="tokenPercentage"
+          label="Token Percentage (%) *"
           placeholder="e.g. 30.00"
           variant="outlined"
           type="number"
@@ -62,19 +53,10 @@ export default function ServicePricingFields({
 
       {/* Commission Percentage */}
       <Grid size={{ xs: 12, md: 4 }}>
-        <Typography
-          sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
-            fontWeight: 700,
-            mb: 1,
-            color: "#1e293b",
-          }}
-        >
-          Commission Percentage (%) *
-        </Typography>
         <TextField
           fullWidth
           name="commissionPercentage"
+          label="Commission Percentage (%) *"
           placeholder="e.g. 10"
           variant="outlined"
           type="number"
@@ -103,19 +85,10 @@ export default function ServicePricingFields({
 
       {/* Duration */}
       <Grid size={{ xs: 12, md: 4 }}>
-        <Typography
-          sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
-            fontWeight: 700,
-            mb: 1,
-            color: "#1e293b",
-          }}
-        >
-          Duration (Minutes) *
-        </Typography>
         <TextField
           fullWidth
           name="durationMinutes"
+          label="Duration (Minutes) *"
           placeholder="e.g. 120"
           variant="outlined"
           type="number"

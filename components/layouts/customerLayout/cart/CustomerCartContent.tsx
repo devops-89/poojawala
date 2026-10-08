@@ -34,18 +34,8 @@ import CartOrderSummary from "./CartOrderSummary";
 import CartPaymentSection from "./CartPaymentSection";
 import SavedAddressesSection from "./SavedAddressesSection";
 
-export interface CustomerAddress {
-  id: string | number;
-  addressLabel: string;
-  fullAddress: string;
-  city: string;
-  state: string;
-  pincode: string;
-  venueType?: string;
-  latitude?: string;
-  longitude?: string;
-  isDefault?: boolean;
-}
+import { CustomerAddress } from "@/utils/types";
+export type { CustomerAddress };
 
 export default function CustomerCartContent() {
   const router = useRouter();
@@ -72,7 +62,7 @@ export default function CustomerCartContent() {
   const [confirmModal, setConfirmModal] = useState<{
     open: boolean;
     type: "remove" | "clear";
-    itemId?: string;
+    itemId?: string | number;
     itemTitle?: string;
   }>({
     open: false,
@@ -174,9 +164,9 @@ export default function CustomerCartContent() {
   const totalItemsCount = getTotalItems();
   const finalTotal = rawSubtotal;
 
-  const handleQuantityChange = async (itemId: string, newQty: number) => {
+  const handleQuantityChange = async (itemId: string | number, newQty: number) => {
     if (newQty <= 0) {
-      const targetItem = items.find((i) => i.id === itemId);
+      const targetItem = items.find((i) => String(i.id) === String(itemId));
       setConfirmModal({
         open: true,
         type: "remove",
@@ -198,12 +188,12 @@ export default function CustomerCartContent() {
     }
   };
 
-  const promptRemoveItem = (itemId: string, title: string) => {
+  const promptRemoveItem = (itemId: string | number, title?: string) => {
     setConfirmModal({
       open: true,
       type: "remove",
       itemId,
-      itemTitle: title,
+      itemTitle: title || "this product",
     });
   };
 

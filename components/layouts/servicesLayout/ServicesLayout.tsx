@@ -12,6 +12,8 @@ export default function ServicesLayout() {
   const cityParam = searchParams.get("city");
   const categoryParam = searchParams.get("category");
   const categoryIdParam = searchParams.get("categoryId");
+  const templeParam = searchParams.get("temple");
+  const templeIdParam = searchParams.get("templeId");
 
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,6 +25,12 @@ export default function ServicesLayout() {
   );
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
     categoryParam || "All Categories",
+  );
+  const [selectedTempleId, setSelectedTempleId] = useState<string>(
+    templeIdParam || "",
+  );
+  const [selectedTempleName, setSelectedTempleName] = useState<string>(
+    templeParam || "All Temples",
   );
   const [selectedCity, setSelectedCity] = useState<string>(cityParam || "All");
 
@@ -36,10 +44,16 @@ export default function ServicesLayout() {
     if (categoryParam) {
       setSelectedCategoryName(categoryParam);
     }
+    if (templeIdParam) {
+      setSelectedTempleId(templeIdParam);
+    }
+    if (templeParam) {
+      setSelectedTempleName(templeParam);
+    }
     if (cityParam) {
       setSelectedCity(cityParam);
     }
-  }, [stateParam, categoryParam, categoryIdParam, cityParam]);
+  }, [stateParam, categoryParam, categoryIdParam, templeParam, templeIdParam, cityParam]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -67,6 +81,16 @@ export default function ServicesLayout() {
     if (selectedCategoryName && selectedCategoryName !== "All Categories") {
       params.set("category", selectedCategoryName);
     }
+    if (
+      selectedTempleId &&
+      selectedTempleId !== "All" &&
+      selectedTempleId !== "All Temples"
+    ) {
+      params.set("templeId", selectedTempleId);
+    }
+    if (selectedTempleName && selectedTempleName !== "All Temples") {
+      params.set("temple", selectedTempleName);
+    }
     if (searchQuery) {
       params.set("search", searchQuery);
     }
@@ -81,6 +105,8 @@ export default function ServicesLayout() {
     selectedCity,
     selectedCategoryId,
     selectedCategoryName,
+    selectedTempleId,
+    selectedTempleName,
     searchQuery,
   ]);
 
@@ -108,6 +134,11 @@ export default function ServicesLayout() {
   const handleCategoryChange = (catId: string, catName: string) => {
     setSelectedCategoryId(catId);
     setSelectedCategoryName(catName);
+  };
+
+  const handleTempleChange = (templeId: string, templeName: string) => {
+    setSelectedTempleId(templeId);
+    setSelectedTempleName(templeName);
   };
 
   const handleCityChange = (newCity: string) => {
@@ -223,6 +254,8 @@ export default function ServicesLayout() {
             }}
             selectedCategory={selectedCategoryName}
             onCategoryChange={handleCategoryChange}
+            selectedTemple={selectedTempleName}
+            onTempleChange={handleTempleChange}
             cityOptions={cityOptions}
             selectedCity={selectedCity}
             onCityChange={handleCityChange}
@@ -236,6 +269,8 @@ export default function ServicesLayout() {
               <ServiceGrid
                 activeCategory={selectedCategoryName}
                 selectedCategoryId={selectedCategoryId}
+                selectedTempleId={selectedTempleId}
+                selectedTempleName={selectedTempleName}
                 activeFilters={activeFilters}
                 searchQuery={searchQuery}
                 selectedState={selectedState}

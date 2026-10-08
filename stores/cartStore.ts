@@ -1,20 +1,7 @@
 import { create } from 'zustand';
 import { getCartAPI } from '@/api/cartControllers';
-
-export interface CartItem {
-  id: string; // Cart Item ID (used for PATCH and DELETE)
-  productId?: string; // Product ID
-  title: string;
-  price: number;
-  image: string;
-  quantity: number;
-  unitString?: string;
-  pricingUnit?: string;
-  unitQuantity?: number;
-  packQuantity?: number;
-  description?: string;
-  subtotal?: number;
-}
+import { CartItem } from '@/utils/types';
+export type { CartItem };
 
 export function parseCartApiResponse(res: any) {
   let cartData: any = null;
@@ -102,10 +89,10 @@ interface CartState {
   fetchCartFromApi: () => Promise<void>;
   setCartItems: (items: CartItem[]) => void;
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  removeItem: (id: string | number) => void;
+  updateQuantity: (id: string | number, quantity: number) => void;
   clearCart: () => void;
-  isInCart: (id: string) => boolean;
+  isInCart: (id: string | number) => boolean;
   getTotalPrice: () => number;
   getTotalItems: () => number;
 }
@@ -196,7 +183,9 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   removeItem: (id) => {
     set((state) => {
-      const updated = state.items.filter((item) => item.id !== id && item.productId !== id);
+      const updated = state.items.filter(
+        (item) => String(item.id) !== String(id) && String(item.productId) !== String(id)
+      );
       const calculatedTotal = updated.reduce((sum, i) => sum + i.price * i.quantity, 0);
       const calculatedTotalQty = updated.reduce((sum, i) => sum + i.quantity, 0);
       return {
@@ -214,7 +203,9 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
     set((state) => {
       const updated = state.items.map((item) =>
-        item.id === id || item.productId === id ? { ...item, quantity } : item
+        String(item.id) === String(id) || String(item.productId) === String(id)
+          ? { ...item, quantity }
+          : item
       );
       const calculatedTotal = updated.reduce((sum, i) => sum + i.price * i.quantity, 0);
       const calculatedTotalQty = updated.reduce((sum, i) => sum + i.quantity, 0);

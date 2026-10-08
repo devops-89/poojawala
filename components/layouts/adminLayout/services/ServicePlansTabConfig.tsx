@@ -135,19 +135,10 @@ export default function ServicePlansTabConfig({
           <Grid container spacing={3}>
             {/* Pricing Details */}
             <Grid size={{ xs: 12 }}>
-              <Typography
-                sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
-                  fontWeight: 700,
-                  mb: 1,
-                  color: "#1e293b",
-                }}
-              >
-                Basic Plan Price (₹) *
-              </Typography>
               <TextField
                 fullWidth
                 name="basicPrice"
+                label="Basic Plan Price (₹) *"
                 placeholder="e.g. 5100"
                 variant="outlined"
                 type="number"
@@ -218,7 +209,7 @@ export default function ServicePlansTabConfig({
                       </Button>
                     </Box>
 
-                    {values.basicFeatures.map((item: any, index: number) => {
+                    {(values.basicFeatures || []).map((item: any, index: number) => {
                       const valKey = typeof item === "string" ? item : item.key;
                       return (
                         <Box
@@ -390,19 +381,10 @@ export default function ServicePlansTabConfig({
           <Grid container spacing={3}>
             {/* Pricing Details */}
             <Grid size={{ xs: 12 }}>
-              <Typography
-                sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
-                  fontWeight: 700,
-                  mb: 1,
-                  color: "#1e293b",
-                }}
-              >
-                Standard Plan Price (₹) *
-              </Typography>
               <TextField
                 fullWidth
                 name="standardPrice"
+                label="Standard Plan Price (₹) *"
                 placeholder="e.g. 8100"
                 variant="outlined"
                 type="number"
@@ -473,7 +455,7 @@ export default function ServicePlansTabConfig({
                       </Button>
                     </Box>
 
-                    {values.standardFeatures.map((item: any, index: number) => {
+                    {(values.standardFeatures || []).map((item: any, index: number) => {
                       const valKey = typeof item === "string" ? item : item.key;
                       return (
                         <Box

@@ -5,13 +5,8 @@ import { Box, Button, Typography } from '@mui/material';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { useRouter } from 'next/navigation';
 
-export interface EmptyStateCardProps {
-  icon?: React.ReactNode;
-  title: string;
-  description: string;
-  actionText?: string;
-  actionHref?: string;
-}
+import { EmptyStateCardProps } from '@/utils/types';
+export type { EmptyStateCardProps };
 
 export default function EmptyStateCard({
   icon,

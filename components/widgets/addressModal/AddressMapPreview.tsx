@@ -1,7 +1,7 @@
 "use client";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import { StatusMessage } from "./types";
+import { StatusMessage } from "@/utils/types";
 
 interface AddressMapPreviewProps {
   mapContainerRef: React.RefObject<HTMLDivElement | null>;

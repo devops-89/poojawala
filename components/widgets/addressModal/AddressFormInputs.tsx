@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { AddressFormData } from "./types";
+import { AddressFormData } from "@/utils/types";
 
 interface AddressFormInputsProps {
   addressData: AddressFormData;

@@ -9,20 +9,7 @@ import { Box, Button, Card, CardContent, IconButton, Typography, Avatar } from '
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-interface PurohitCardProps {
-  id: number | string;
-  title: string;
-  image: string;
-  price?: string;
-  duration?: string;
-  category?: string;
-  language?: string;
-  experience?: string;
-  rating?: string;
-  availability?: string;
-  bio?: string;
-  specialization?: string;
-}
+import { PurohitCardProps } from '@/utils/types';
 
 export default function PurohitCard({ id, title, image, price, duration, category, language = 'Hindi, English, Sanskrit', experience = '5+ Years', rating = '4.8', availability = 'Online', bio, specialization }: PurohitCardProps) {
   const router = useRouter();

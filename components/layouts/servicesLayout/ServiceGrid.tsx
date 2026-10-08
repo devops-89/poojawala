@@ -4,20 +4,14 @@ import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { Box, CircularProgress, Grid, Pagination, Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { ServiceGridProps } from '@/utils/types';
 import ServiceCard from './ServiceCard';
-
-interface ServiceGridProps {
-  activeCategory: string;
-  selectedCategoryId?: string | number;
-  activeFilters?: any;
-  searchQuery?: string;
-  selectedState?: string;
-  selectedCity?: string;
-}
 
 export default function ServiceGrid({
   activeCategory,
   selectedCategoryId,
+  selectedTempleId,
+  selectedTempleName,
   activeFilters,
   searchQuery,
   selectedState,
@@ -54,7 +48,7 @@ export default function ServiceGrid({
       return;
     }
     setPage(1);
-  }, [searchQuery, selectedState, selectedCity, selectedCategoryId, activeCategory]);
+  }, [searchQuery, selectedState, selectedCity, selectedCategoryId, activeCategory, selectedTempleId]);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -68,6 +62,10 @@ export default function ServiceGrid({
           selectedState && selectedState !== 'All' && selectedState !== 'All States'
             ? selectedState
             : undefined;
+        const templeParam =
+          selectedTempleId && selectedTempleId !== 'All' && selectedTempleId !== 'All Temples'
+            ? selectedTempleId
+            : undefined;
 
         const response = await getAllServicesAPI(
           page,
@@ -76,7 +74,8 @@ export default function ServiceGrid({
           true,
           cityParam,
           stateParam,
-          selectedCategoryId || undefined
+          selectedCategoryId || undefined,
+          templeParam
         );
 
         let fetchedServices = [];
@@ -110,11 +109,23 @@ export default function ServiceGrid({
           });
         }
 
+        if (templeParam) {
+          activeOnly = activeOnly.filter((s: any) => {
+            const sTempleId = s.templeId || s.temple?.id || (typeof s.temple === "object" ? s.temple?.id : "");
+            return String(sTempleId) === String(templeParam);
+          });
+        }
+
         const pagination = rawData?.data?.pagination || rawData?.pagination || rawData?.data || {};
-        const total = (selectedCategoryId || (activeCategory && activeCategory !== 'All Categories'))
+        const hasCustomFilter =
+          Boolean(selectedCategoryId) ||
+          Boolean(templeParam) ||
+          Boolean(activeCategory && activeCategory !== 'All Categories');
+
+        const total = hasCustomFilter
           ? activeOnly.length
           : (pagination?.total || pagination?.totalCount || rawData?.total || activeOnly.length);
-        const calcTotalPages = (selectedCategoryId || (activeCategory && activeCategory !== 'All Categories'))
+        const calcTotalPages = hasCustomFilter
           ? (Math.ceil(total / itemsPerPage) || 1)
           : (pagination?.totalPages || pagination?.pageCount || Math.ceil(total / itemsPerPage) || 1);
 
@@ -180,7 +191,7 @@ export default function ServiceGrid({
     };
 
     fetchServices();
-  }, [page, searchQuery, selectedState, selectedCity, selectedCategoryId]);
+  }, [page, searchQuery, selectedState, selectedCity, selectedCategoryId, selectedTempleId]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);

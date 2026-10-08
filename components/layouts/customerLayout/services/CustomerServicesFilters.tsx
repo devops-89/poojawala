@@ -1,6 +1,7 @@
 "use client";
 
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
+import { getTemplesAPI } from "@/api/templeControllers";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Autocomplete,
@@ -9,11 +10,8 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-
-export interface CategoryOption {
-  id: string | number;
-  name: string;
-}
+import { CategoryOption, TempleOption } from "@/utils/types";
+export type { CategoryOption, TempleOption };
 
 interface CustomerServicesFiltersProps {
   searchTerm: string;
@@ -26,6 +24,10 @@ interface CustomerServicesFiltersProps {
   categoryOptions?: CategoryOption[];
   selectedCategory?: string;
   onCategoryChange?: (categoryId: string, categoryName: string) => void;
+  // Optional Temple filter props (used in public services page)
+  templeOptions?: TempleOption[];
+  selectedTemple?: string;
+  onTempleChange?: (templeId: string, templeName: string) => void;
   // City filter props
   cityOptions: string[];
   selectedCity: string;
@@ -41,11 +43,15 @@ export default function CustomerServicesFilters({
   categoryOptions,
   selectedCategory = "All Categories",
   onCategoryChange,
+  templeOptions,
+  selectedTemple = "All Temples",
+  onTempleChange,
   cityOptions,
   selectedCity,
   onCityChange,
 }: CustomerServicesFiltersProps) {
   const [internalCategories, setInternalCategories] = useState<CategoryOption[]>([]);
+  const [internalTemples, setInternalTemples] = useState<TempleOption[]>([]);
 
   useEffect(() => {
     if (onCategoryChange && (!categoryOptions || categoryOptions.length === 0)) {
@@ -77,6 +83,36 @@ export default function CustomerServicesFilters({
     }
   }, [categoryOptions, onCategoryChange]);
 
+  useEffect(() => {
+    if (onTempleChange && (!templeOptions || templeOptions.length === 0)) {
+      const fetchTemples = async () => {
+        try {
+          const res = await getTemplesAPI(1, 100, "", true);
+          let list: any[] = [];
+          if (res) {
+            if (Array.isArray(res)) list = res;
+            else if (res.data) {
+              if (Array.isArray(res.data.data)) list = res.data.data;
+              else if (Array.isArray(res.data)) list = res.data;
+              else if (Array.isArray(res.data.temples)) list = res.data.temples;
+            } else if (res.temples && Array.isArray(res.temples)) {
+              list = res.temples;
+            }
+          }
+          const activeOnly = list.filter((t: any) => t.isActive !== false);
+          const formatted = activeOnly.map((t: any) => ({
+            id: t.id || t._id,
+            name: t.name || "Temple",
+          }));
+          setInternalTemples(formatted);
+        } catch (err) {
+          console.error("Failed to fetch temples for filter", err);
+        }
+      };
+      fetchTemples();
+    }
+  }, [templeOptions, onTempleChange]);
+
   const catsToUse = categoryOptions && categoryOptions.length > 0 ? categoryOptions : internalCategories;
   const categoryNames = ["All Categories", ...catsToUse.map((c) => c.name)];
 
@@ -93,11 +129,35 @@ export default function CustomerServicesFilters({
     return selectedCategory;
   }, [selectedCategory, catsToUse]);
 
+  const templesToUse = templeOptions && templeOptions.length > 0 ? templeOptions : internalTemples;
+  const templeNames = ["All Temples", ...templesToUse.map((t) => t.name)];
+
+  const displayTempleName = React.useMemo(() => {
+    if (!selectedTemple || selectedTemple === "All" || selectedTemple === "All Temples") {
+      return "All Temples";
+    }
+    const matchById = templesToUse.find((t) => String(t.id) === String(selectedTemple));
+    if (matchById) return matchById.name;
+
+    const matchByName = templesToUse.find((t) => t.name.toLowerCase() === selectedTemple.toLowerCase());
+    if (matchByName) return matchByName.name;
+
+    return selectedTemple;
+  }, [selectedTemple, templesToUse]);
+
   const filterCount =
     (stateOptions && onStateChange ? 1 : 0) +
     (onCategoryChange ? 1 : 0) +
+    (onTempleChange ? 1 : 0) +
     1; // City is always present
-  const filterGridSize = filterCount === 3 ? { xs: 12, sm: 4 } : filterCount === 2 ? { xs: 12, sm: 6 } : { xs: 12 };
+  const filterGridSize =
+    filterCount === 4
+      ? { xs: 12, sm: 6, md: 3 }
+      : filterCount === 3
+      ? { xs: 12, sm: 4 }
+      : filterCount === 2
+      ? { xs: 12, sm: 6 }
+      : { xs: 12 };
 
   return (
     <Grid container spacing={2} sx={{ mb: 4 }}>
@@ -186,6 +246,45 @@ export default function CustomerServicesFilters({
                 {...params}
                 label="Filter by Category"
                 placeholder="Select or type Category"
+                variant="outlined"
+                autoComplete="off"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "12px",
+                    bgcolor: "white",
+                    "& fieldset": { borderColor: "#E0E0E0" },
+                  },
+                }}
+              />
+            )}
+          />
+        </Grid>
+      )}
+
+      {/* Temple Filter (Rendered if onTempleChange is passed) */}
+      {onTempleChange && (
+        <Grid size={filterGridSize}>
+          <Autocomplete
+            openOnFocus
+            options={templeNames}
+            value={displayTempleName}
+            onChange={(_, newValue) => {
+              if (!newValue || newValue === "All Temples") {
+                onTempleChange("", "All Temples");
+              } else {
+                const found = templesToUse.find((t) => t.name === newValue);
+                if (found) {
+                  onTempleChange(String(found.id), found.name);
+                } else {
+                  onTempleChange("", newValue);
+                }
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Filter by Temple"
+                placeholder="Select or type Temple"
                 variant="outlined"
                 autoComplete="off"
                 sx={{

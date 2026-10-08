@@ -9,8 +9,8 @@ import { CartItem } from "@/stores/cartStore";
 interface CartItemsListProps {
   items: CartItem[];
   totalItemsCount: number;
-  onQuantityChange: (itemId: string, newQty: number) => void;
-  onRemoveItem: (itemId: string, title: string) => void;
+  onQuantityChange: (itemId: string | number, newQty: number) => void;
+  onRemoveItem: (itemId: string | number, title?: string) => void;
   onPromptClearCart: () => void;
 }
 
@@ -205,7 +205,12 @@ export default function CartItemsList({
 
                   <IconButton
                     size="small"
-                    onClick={() => onRemoveItem(item.id, item.title)}
+                    onClick={() =>
+                      onRemoveItem(
+                        item.id,
+                        item.title || item.name || "item",
+                      )
+                    }
                     sx={{
                       color: "#8C7A70",
                       p: 0.8,

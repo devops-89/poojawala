@@ -103,21 +103,13 @@ export default function ServiceAvailabilityFields({
       {values.isUpcomingFestival && (
         <Grid container spacing={3} sx={{ mt: 2 }}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Typography
-              sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
-                fontWeight: 700,
-                mb: 1,
-                color: "#1e293b",
-              }}
-            >
-              Festival Start Date *
-            </Typography>
             <TextField
               fullWidth
               name="festivalStartDate"
+              label="Festival Start Date *"
               variant="outlined"
               type="datetime-local"
+              slotProps={{ inputLabel: { shrink: true } }}
               value={values.festivalStartDate}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -135,21 +127,13 @@ export default function ServiceAvailabilityFields({
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Typography
-              sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
-                fontWeight: 700,
-                mb: 1,
-                color: "#1e293b",
-              }}
-            >
-              Festival End Date *
-            </Typography>
             <TextField
               fullWidth
               name="festivalEndDate"
+              label="Festival End Date *"
               variant="outlined"
               type="datetime-local"
+              slotProps={{ inputLabel: { shrink: true } }}
               value={values.festivalEndDate}
               onChange={handleChange}
               onBlur={handleBlur}

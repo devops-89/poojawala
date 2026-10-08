@@ -18,30 +18,8 @@ import {
   Typography,
 } from "@mui/material";
 
-export interface OrderItem {
-  id: string | number;
-  productId?: string | number;
-  title: string;
-  quantity: number;
-  image: string;
-  price: number;
-}
-
-export interface CustomerOrder {
-  id: string;
-  rawId?: string | number;
-  orderNumber: string;
-  orderDate: string;
-  categoryTag?: string;
-  status: ORDER_STATUS | string;
-  orderStatus: ORDER_STATUS | string;
-  paymentStatus: ORDER_PAYMENT_STATUS | string;
-  items: OrderItem[];
-  totalAmount: number;
-  deliveredDate?: string;
-  deliveryAddress?: string;
-  paymentMethod?: string;
-}
+import { OrderItem, CustomerOrder } from "@/utils/types";
+export type { OrderItem, CustomerOrder };
 
 interface CustomerOrdersCardProps {
   order: CustomerOrder;
@@ -194,8 +172,9 @@ export default function CustomerOrdersCard({
 
   const statusConfig = getStatusChipConfig(order.orderStatus || order.status);
   const paymentStatusConfig = getPaymentStatusChipConfig(order.paymentStatus);
-  const visibleItems = order.items.slice(0, 2);
-  const hiddenCount = order.items.length - 2;
+  const orderItemsList = order.items || [];
+  const visibleItems = orderItemsList.slice(0, 2);
+  const hiddenCount = orderItemsList.length - 2;
 
   // Render Left Footer Note corresponding to Order Status
   const renderFooterStatusNote = () => {
@@ -672,7 +651,8 @@ export default function CustomerOrdersCard({
                 } else {
                   try {
                     const targetId =
-                      order.rawId || order.id.replace(/^(ORD-|#PW-|#)/i, "");
+                      order.rawId ||
+                      String(order.id).replace(/^(ORD-|#PW-|#)/i, "");
                     const blobData = await downloadOrderInvoiceAPI(targetId);
                     const blob = new Blob([blobData], {
                       type: "application/pdf",
