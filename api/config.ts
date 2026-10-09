@@ -92,7 +92,18 @@ export const getCsrfToken = (): string | null => {
     }
 
     if (!tokenFromCookie) {
-      tokenFromCookie = cookieMap["csrfToken"] || cookieMap["csrftoken"] || cookieMap["_csrf"] || cookieMap["XSRF-TOKEN"] || null;
+      tokenFromCookie =
+        cookieMap["poojawala-admin-csrf-token"] ||
+        cookieMap["poojawalaAdminCsrfToken"] ||
+        cookieMap["poojawala-purohit-csrf-token"] ||
+        cookieMap["poojawalaPurohitCsrfToken"] ||
+        cookieMap["poojawala-customer-csrf-token"] ||
+        cookieMap["poojawalaCustomerCsrfToken"] ||
+        cookieMap["csrfToken"] ||
+        cookieMap["csrftoken"] ||
+        cookieMap["_csrf"] ||
+        cookieMap["XSRF-TOKEN"] ||
+        null;
     }
   }
 
@@ -112,7 +123,12 @@ export const getCsrfToken = (): string | null => {
     if (customerToken) return customerToken;
   }
 
-  return sessionStorage.getItem("csrfToken");
+  return (
+    sessionStorage.getItem("poojawala-admin-csrf-token") ||
+    sessionStorage.getItem("poojawala-purohit-csrf-token") ||
+    sessionStorage.getItem("poojawala-customer-csrf-token") ||
+    sessionStorage.getItem("csrfToken")
+  );
 };
 
 export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string | null => {
@@ -178,45 +194,38 @@ export const attachCsrfHeaders = (headers: any, token?: string | null) => {
   const activeToken = token || getCsrfToken();
   if (!headers || !activeToken) return;
 
-  const role = getActiveRole();
-
-  const headerKeys: string[] = ["X-CSRF-Token", "x-csrf-token", "csrftoken"];
-
-  if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
-    headerKeys.push("poojawala-admin-csrf-token", "poojawalaAdminCsrfToken");
-  } else if (role === "PUROHIT") {
-    headerKeys.push("poojawala-purohit-csrf-token", "poojawalaPurohitCsrfToken");
-  } else if (role === "CUSTOMER") {
-    headerKeys.push("poojawala-customer-csrf-token", "poojawalaCustomerCsrfToken");
-  } else {
-    headerKeys.push(
-      "poojawala-admin-csrf-token",
-      "poojawala-purohit-csrf-token",
-      "poojawala-customer-csrf-token"
-    );
-  }
-
-  for (const k of headerKeys) {
+  const setHeader = (key: string, val: string) => {
     if (typeof headers.set === "function") {
-      headers.set(k, activeToken);
+      headers.set(key, val);
     }
-    headers[k] = activeToken;
-  }
+    headers[key] = val;
+  };
+
+  setHeader("X-CSRF-Token", activeToken);
+  setHeader("x-csrf-token", activeToken);
+  setHeader("csrftoken", activeToken);
+
+  setHeader("poojawala-admin-csrf-token", activeToken);
+  setHeader("poojawalaAdminCsrfToken", activeToken);
+  setHeader("poojawala-purohit-csrf-token", activeToken);
+  setHeader("poojawalaPurohitCsrfToken", activeToken);
+  setHeader("poojawala-customer-csrf-token", activeToken);
+  setHeader("poojawalaCustomerCsrfToken", activeToken);
 };
 
 const attachRoleAndCsrfHeader = (config: InternalAxiosRequestConfig) => {
   const role = getActiveRole();
   if (role) {
-    if (typeof config.headers.set === "function") {
-      config.headers.set("X-Role", role);
-      config.headers.set("role", role);
-      config.headers.set("x-role", role);
-      config.headers.set("Poojawala-Role", role);
-    }
-    (config.headers as any)["X-Role"] = role;
-    (config.headers as any)["role"] = role;
-    (config.headers as any)["x-role"] = role;
-    (config.headers as any)["Poojawala-Role"] = role;
+    const setHeader = (key: string, val: string) => {
+      if (typeof config.headers.set === "function") {
+        config.headers.set(key, val);
+      }
+      (config.headers as any)[key] = val;
+    };
+    setHeader("X-Role", role);
+    setHeader("role", role);
+    setHeader("x-role", role);
+    setHeader("Poojawala-Role", role);
   }
 
   const csrfToken = getCsrfToken();
