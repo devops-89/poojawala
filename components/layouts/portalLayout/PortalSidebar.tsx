@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { logoutAPI } from "@/api/authControllers";
 import { clearRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
@@ -126,7 +128,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
                 onClick={() => setMobileOpen(false)}
                 sx={{
                   backgroundColor: isActive ? "#FFF0E6" : "transparent",
-                  color: isActive ? "#FF6200" : "#475569",
+                  color: isActive ? COLORS.PRIMARY : "#475569",
                   "&:hover": {
                     backgroundColor: isActive ? "#FFF0E6" : "#FAFAFA",
                   },
@@ -140,7 +142,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
                   primary={
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: isActive ? 600 : 500,
                         fontSize: "0.95rem",
                       }}
@@ -172,7 +174,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
       >
         <Avatar
           src={profile?.profileImage || profile?.avatar || undefined}
-          sx={{ width: 40, height: 40, bgcolor: "#FF6200" }}
+          sx={{ width: 40, height: 40, bgcolor: COLORS.PRIMARY }}
         >
           {!profile?.profileImage && !profile?.avatar && (
             <PersonIcon sx={{ fontSize: 28, color: "white" }} />
@@ -181,7 +183,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
         <Box sx={{ flex: 1 }}>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               fontSize: "0.9rem",
               color: "#1e293b",
@@ -193,7 +195,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
               fontSize: "0.75rem",
             }}
@@ -220,7 +222,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
               "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
             border: "1px solid #e2e8f0",
             "& .MuiMenuItem-root": {
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontSize: "14px",
               py: 1.5,
               "&:hover": { bgcolor: "#f1f5f9" },

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteReviewAPI,
@@ -185,7 +187,7 @@ export default function AdminReviewsContent() {
       id: "id",
       label: "BOOKING ID",
       render: (item) => (
-        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
           {item.id}
         </Typography>
       ),
@@ -194,7 +196,7 @@ export default function AdminReviewsContent() {
       id: "customer",
       label: "CUSTOMER",
       render: (item) => (
-        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
           {item.customer}
         </Typography>
       ),
@@ -203,7 +205,7 @@ export default function AdminReviewsContent() {
       id: "service",
       label: "SERVICE",
       render: (item) => (
-        <Typography sx={{ color: "#64748b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.85rem" }}>
+        <Typography sx={{ color: "#64748b", fontFamily: FONTS.OUTFIT, fontSize: "0.85rem" }}>
           {item.service}
         </Typography>
       ),
@@ -212,7 +214,7 @@ export default function AdminReviewsContent() {
       id: "purohit",
       label: "PUROHIT",
       render: (item) => (
-        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
           {item.purohit}
         </Typography>
       ),
@@ -307,38 +309,38 @@ export default function AdminReviewsContent() {
       <Dialog open={Boolean(selectedReview) || isModalLoading} onClose={() => setSelectedReview(null)} maxWidth="md" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1 } }}>
         {isModalLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-            <CircularProgress sx={{ color: "#FF6200" }} />
+            <CircularProgress sx={{ color: COLORS.PRIMARY }} />
           </Box>
         ) : selectedReview ? (
           <>
-            <DialogTitle sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <DialogTitle sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span>Review Details ({selectedReview.id})</span>
               <IconButton onClick={() => setSelectedReview(null)}><CloseIcon /></IconButton>
             </DialogTitle>
             <DialogContent dividers sx={{ py: 3 }}>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", mb: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, mb: 1 }}>
                     Customer Review ({selectedReview.customer})
                   </Typography>
                   <Rating value={selectedReview.customerRating} readOnly precision={0.5} />
-                  <Typography sx={{ color: "#334155", fontFamily: "var(--font-outfit), sans-serif", mt: 1, whiteSpace: "pre-wrap" }}>
+                  <Typography sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 1, whiteSpace: "pre-wrap" }}>
                     &quot;{selectedReview.customerComment || "No comment provided."}&quot;
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", mb: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, mb: 1 }}>
                     Purohit Review ({selectedReview.purohit})
                   </Typography>
                   <Rating value={selectedReview.purohitRating} readOnly precision={0.5} />
-                  <Typography sx={{ color: "#334155", fontFamily: "var(--font-outfit), sans-serif", mt: 1, whiteSpace: "pre-wrap" }}>
+                  <Typography sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 1, whiteSpace: "pre-wrap" }}>
                     &quot;{selectedReview.purohitComment || "No comment provided."}&quot;
                   </Typography>
                 </Grid>
               </Grid>
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
-              <Button onClick={() => setSelectedReview(null)} variant="contained" sx={{ bgcolor: "#FF6200", color: "white", borderRadius: "8px", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: "#E65800" } }}>Close</Button>
+              <Button onClick={() => setSelectedReview(null)} variant="contained" sx={{ bgcolor: COLORS.PRIMARY, color: "white", borderRadius: "8px", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: COLORS.PRIMARY_DARK } }}>Close</Button>
             </DialogActions>
           </>
         ) : null}

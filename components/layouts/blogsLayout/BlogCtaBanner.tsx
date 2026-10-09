@@ -2,6 +2,8 @@
 
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import NextLink from "next/link";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function BlogCtaBanner() {
   return (
@@ -22,7 +24,7 @@ export default function BlogCtaBanner() {
             <Typography
               variant="h3"
               sx={{
-                fontFamily: '"Georgia", serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "white",
                 fontSize: { xs: "1.75rem", sm: "2.35rem", md: "2.75rem" },
@@ -32,7 +34,7 @@ export default function BlogCtaBanner() {
               }}
             >
               Your{" "}
-              <span style={{ fontStyle: "italic", color: "#FF6200" }}>
+              <span style={{ fontStyle: "italic", color: COLORS.PRIMARY }}>
                 home&apos;s blessings
               </span>{" "}
               are one booking away.
@@ -40,7 +42,7 @@ export default function BlogCtaBanner() {
 
             <Typography
               sx={{
-                fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+                fontFamily: FONTS.THEME_DEFAULT,
                 fontSize: { xs: "0.95rem", sm: "1.05rem" },
                 color: "#D1C7BD",
                 lineHeight: 1.65,
@@ -68,19 +70,19 @@ export default function BlogCtaBanner() {
                 href="/services"
                 variant="contained"
                 sx={{
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "white",
                   borderRadius: "30px",
                   px: { xs: 4, sm: 5 },
                   py: 1.5,
                   fontSize: "1.05rem",
                   fontWeight: 700,
-                  fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+                  fontFamily: FONTS.THEME_DEFAULT,
                   textTransform: "none",
                   boxShadow: "0 6px 20px rgba(255, 98, 0, 0.4)",
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    bgcolor: "#E65800",
+                    bgcolor: COLORS.PRIMARY_HOVER,
                     boxShadow: "0 8px 26px rgba(255, 98, 0, 0.5)",
                     transform: "translateY(-2px)",
                   },

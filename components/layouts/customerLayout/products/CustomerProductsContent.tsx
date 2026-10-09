@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { addToCartAPI, deleteCartItemAPI } from "@/api/cartControllers";
 import { getAllProductsAPI } from "@/api/productControllers";
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
@@ -238,7 +240,7 @@ export default function CustomerProductsContent() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "24px", sm: "28px" },
@@ -250,7 +252,7 @@ export default function CustomerProductsContent() {
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
             }}
@@ -277,7 +279,7 @@ export default function CustomerProductsContent() {
               sx={{
                 bgcolor: "#FAF4EE",
                 borderRadius: "10px",
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontSize: "14px",
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderColor: "#EADCCF",
@@ -363,7 +365,7 @@ export default function CustomerProductsContent() {
               height: 64,
               borderRadius: "50%",
               bgcolor: "#FFF0E6",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
@@ -385,7 +387,7 @@ export default function CustomerProductsContent() {
           </Typography>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
               maxWidth: 450,
@@ -463,13 +465,13 @@ export default function CustomerProductsContent() {
                             bgcolor: "rgba(255, 255, 255, 0.92)",
                             backdropFilter: "blur(4px)",
                             border: "1px solid #EADCCF",
-                            color: "#C84B16",
+                            color: COLORS.PRIMARY,
                             borderRadius: "20px",
                             px: 1.4,
                             py: 0.4,
                             fontSize: "11px",
                             fontWeight: 700,
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             textTransform: "uppercase",
                             letterSpacing: "0.5px",
                             boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
@@ -482,7 +484,7 @@ export default function CustomerProductsContent() {
                       {isAdded && (
                         <Box
                           sx={{
-                            bgcolor: "#C84B16",
+                            bgcolor: COLORS.PRIMARY,
                             color: "white",
                             borderRadius: "20px",
                             px: 1.4,
@@ -515,7 +517,7 @@ export default function CustomerProductsContent() {
                       <Typography
                         variant="h6"
                         sx={{
-                          fontFamily: '"Georgia", "Times New Roman", serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           color: "#2C1810",
                           fontSize: "19px",
@@ -528,7 +530,7 @@ export default function CustomerProductsContent() {
 
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#64534A",
                           fontSize: "13.5px",
                           lineHeight: 1.6,
@@ -550,7 +552,7 @@ export default function CustomerProductsContent() {
                     >
                       <Typography
                         sx={{
-                          fontFamily: '"Georgia", "Times New Roman", serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
                           fontSize: "21px",
                           color: "#2C1810",
@@ -561,7 +563,7 @@ export default function CustomerProductsContent() {
                           <Typography
                             component="span"
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontSize: "12px",
                               fontWeight: 600,
                               color: "#8C786D",
@@ -580,7 +582,7 @@ export default function CustomerProductsContent() {
                           isAdded ? <CheckIcon fontSize="small" /> : undefined
                         }
                         sx={{
-                          bgcolor: isAdded ? "#2C1810" : "#C84B16",
+                          bgcolor: isAdded ? "#2C1810" : COLORS.PRIMARY,
                           color: "white",
                           borderRadius: "8px",
                           px: 2.5,
@@ -590,7 +592,7 @@ export default function CustomerProductsContent() {
                           textTransform: "none",
                           boxShadow: "none",
                           "&:hover": {
-                            bgcolor: isAdded ? "#1E100B" : "#FF6200",
+                            bgcolor: isAdded ? "#1E100B" : COLORS.PRIMARY,
                             boxShadow: "0 4px 14px rgba(200, 75, 22, 0.3)",
                           },
                         }}

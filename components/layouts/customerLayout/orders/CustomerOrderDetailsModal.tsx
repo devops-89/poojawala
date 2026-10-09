@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -214,11 +216,11 @@ export default function CustomerOrderDetailsModal({
         <Box>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontSize: { xs: "10.5px", sm: "11.5px" },
               fontWeight: 800,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
             }}
           >
@@ -227,7 +229,7 @@ export default function CustomerOrderDetailsModal({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "18px", sm: "22px" },
@@ -244,7 +246,7 @@ export default function CustomerOrderDetailsModal({
             color: "#64534A",
             bgcolor: "#FFFFFF",
             border: "1px solid #EADCCF",
-            "&:hover": { bgcolor: "#FAF4EE", color: "#C84B16" },
+            "&:hover": { bgcolor: "#FAF4EE", color: COLORS.PRIMARY },
           }}
         >
           <CloseIcon sx={{ fontSize: 20 }} />
@@ -286,10 +288,10 @@ export default function CustomerOrderDetailsModal({
             >
               <Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <AccessTimeOutlinedIcon sx={{ color: "#C84B16", fontSize: 18 }} />
+                  <AccessTimeOutlinedIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: { xs: "12.5px", sm: "13.5px" },
                     }}
@@ -300,7 +302,7 @@ export default function CustomerOrderDetailsModal({
                 {paidAtFormatted && (
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#8C7A70",
                       fontSize: "12px",
                       mt: 0.3,
@@ -358,10 +360,10 @@ export default function CustomerOrderDetailsModal({
                 >
                   <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.2 }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <LocationOnOutlinedIcon sx={{ color: "#C84B16", fontSize: 20 }} />
+                      <LocationOnOutlinedIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontWeight: 800,
                           color: "#2C1810",
                           fontSize: "13.5px",
@@ -377,7 +379,7 @@ export default function CustomerOrderDetailsModal({
                         size="small"
                         sx={{
                           bgcolor: "#FAF4EE",
-                          color: "#C84B16",
+                          color: COLORS.PRIMARY,
                           border: "1px solid #EADCCF",
                           fontWeight: 700,
                           fontSize: "10px",
@@ -392,7 +394,7 @@ export default function CustomerOrderDetailsModal({
                       <PersonOutlinedIcon sx={{ color: "#8C7A70", fontSize: 16 }} />
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontWeight: 700,
                           color: "#2C1810",
                           fontSize: "13.5px",
@@ -408,7 +410,7 @@ export default function CustomerOrderDetailsModal({
                       <PhoneOutlinedIcon sx={{ color: "#8C7A70", fontSize: 16 }} />
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#64534A",
                           fontSize: "13px",
                         }}
@@ -420,7 +422,7 @@ export default function CustomerOrderDetailsModal({
 
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: "13px",
                       lineHeight: 1.5,
@@ -444,10 +446,10 @@ export default function CustomerOrderDetailsModal({
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-                    <PaymentOutlinedIcon sx={{ color: "#C84B16", fontSize: 20 }} />
+                    <PaymentOutlinedIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 800,
                         color: "#2C1810",
                         fontSize: "13.5px",
@@ -460,7 +462,7 @@ export default function CustomerOrderDetailsModal({
 
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: "13px",
                       mb: 0.6,
@@ -472,7 +474,7 @@ export default function CustomerOrderDetailsModal({
                   {razorpayPaymentId && (
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#64534A",
                         fontSize: "12.5px",
                         mb: 0.6,
@@ -486,7 +488,7 @@ export default function CustomerOrderDetailsModal({
                   {razorpayOrderId && (
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#64534A",
                         fontSize: "12.5px",
                         mb: 0.6,
@@ -499,7 +501,7 @@ export default function CustomerOrderDetailsModal({
 
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: "13px",
                     }}
@@ -516,7 +518,7 @@ export default function CustomerOrderDetailsModal({
             {/* Items Section */}
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 fontSize: "12px",
                 letterSpacing: "1px",
@@ -571,7 +573,7 @@ export default function CustomerOrderDetailsModal({
                     <Box sx={{ minWidth: 0 }}>
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontWeight: 700,
                           color: "#2C1810",
                           fontSize: { xs: "14px", sm: "15px" },
@@ -584,7 +586,7 @@ export default function CustomerOrderDetailsModal({
                       {item.description && (
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             color: "#8C7A70",
                             fontSize: "12px",
                             mt: 0.3,
@@ -600,7 +602,7 @@ export default function CustomerOrderDetailsModal({
 
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#64534A",
                           fontSize: { xs: "12px", sm: "13px" },
                           mt: 0.4,
@@ -613,7 +615,7 @@ export default function CustomerOrderDetailsModal({
 
                   <Typography
                     sx={{
-                      fontFamily: '"Georgia", "Times New Roman", serif',
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 800,
                       color: "#2C1810",
                       fontSize: { xs: "17px", sm: "19px" },
@@ -631,7 +633,7 @@ export default function CustomerOrderDetailsModal({
             {/* Financial Summary */}
             <Box sx={{ bgcolor: "#FAF4EE", p: 2.5, borderRadius: "16px", border: "1px solid #EADCCF" }}>
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64534A", fontSize: "14px" }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#64534A", fontSize: "14px" }}>
                   Items Subtotal
                 </Typography>
                 <Typography sx={{ fontFamily: '"Georgia", serif', fontWeight: 700, color: "#2C1810" }}>
@@ -641,20 +643,20 @@ export default function CustomerOrderDetailsModal({
 
               {discountAmount > 0 && (
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64534A", fontSize: "14px" }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#64534A", fontSize: "14px" }}>
                     Discount
                   </Typography>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: "#2E7D32", fontWeight: 700 }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#2E7D32", fontWeight: 700 }}>
                     - ₹{discountAmount.toLocaleString("en-IN")}
                   </Typography>
                 </Box>
               )}
 
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64534A", fontSize: "14px" }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#64534A", fontSize: "14px" }}>
                   Sacred Delivery & Packaging
                 </Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: "#2E7D32", fontWeight: 700 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#2E7D32", fontWeight: 700 }}>
                   FREE
                 </Typography>
               </Box>
@@ -671,7 +673,7 @@ export default function CustomerOrderDetailsModal({
               >
                 <Typography
                   sx={{
-                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
                     color: "#2C1810",
                     fontSize: { xs: "17px", sm: "19px" },
@@ -681,9 +683,9 @@ export default function CustomerOrderDetailsModal({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
-                    color: "#C84B16",
+                    color: COLORS.PRIMARY,
                     fontSize: { xs: "22px", sm: "26px" },
                   }}
                 >
@@ -755,7 +757,7 @@ export default function CustomerOrderDetailsModal({
             variant="contained"
             sx={{
               width: { xs: "100%", sm: "auto" },
-              bgcolor: "#C84B16",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               fontWeight: 700,
               borderRadius: "10px",

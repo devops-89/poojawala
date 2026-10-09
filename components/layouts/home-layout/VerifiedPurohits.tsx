@@ -16,6 +16,8 @@ import "swiper/css";
 import { getPublicPurohitsListAPI } from "@/api/userControllers";
 import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import CircularProgress from "@mui/material/CircularProgress";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function VerifiedPurohits() {
   const router = useRouter();
@@ -120,7 +122,7 @@ export default function VerifiedPurohits() {
         >
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: { xs: "26px", sm: "36px", md: "48px" },
               lineHeight: "130.6%",
@@ -133,7 +135,7 @@ export default function VerifiedPurohits() {
           <Typography
             sx={{
               mt: 1,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 500,
               fontSize: { xs: "16px", md: "24px" },
               lineHeight: "130.6%",
@@ -164,7 +166,7 @@ export default function VerifiedPurohits() {
         >
           {loading ? (
             <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-              <CircularProgress sx={{ color: "#FF6200" }} />
+              <CircularProgress sx={{ color: COLORS.PRIMARY }} />
             </Box>
           ) : purohits.length === 0 ? (
             <EmptyStateCard
@@ -296,7 +298,7 @@ export default function VerifiedPurohits() {
                             />
                             <Typography
                               sx={{
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontWeight: 700,
                                 fontSize: "16px",
                                 color: "#1A1A1A",
@@ -336,7 +338,7 @@ export default function VerifiedPurohits() {
                         <Box sx={{ width: "100%" }}>
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontWeight: 700,
                               fontSize: { xs: "18px", sm: "18px", md: "20px" },
                               lineHeight: "1.25",
@@ -374,13 +376,13 @@ export default function VerifiedPurohits() {
                                 <TranslateIcon
                                   sx={{
                                     fontSize: "16px",
-                                    color: "#FF6200",
+                                    color: COLORS.PRIMARY,
                                     flexShrink: 0,
                                   }}
                                 />
                                 <Typography
                                   sx={{
-                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontFamily: FONTS.PRIMARY,
                                     fontWeight: 500,
                                     fontSize: {
                                       xs: "13px",
@@ -411,13 +413,13 @@ export default function VerifiedPurohits() {
                                 <PersonOutlinedIcon
                                   sx={{
                                     fontSize: "16px",
-                                    color: "#FF6200",
+                                    color: COLORS.PRIMARY,
                                     flexShrink: 0,
                                   }}
                                 />
                                 <Typography
                                   sx={{
-                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontFamily: FONTS.PRIMARY,
                                     fontWeight: 500,
                                     fontSize: {
                                       xs: "13px",
@@ -448,13 +450,13 @@ export default function VerifiedPurohits() {
                                 <WorkspacePremiumOutlinedIcon
                                   sx={{
                                     fontSize: "16px",
-                                    color: "#FF6200",
+                                    color: COLORS.PRIMARY,
                                     flexShrink: 0,
                                   }}
                                 />
                                 <Typography
                                   sx={{
-                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontFamily: FONTS.PRIMARY,
                                     fontWeight: 500,
                                     fontSize: {
                                       xs: "13px",
@@ -486,17 +488,17 @@ export default function VerifiedPurohits() {
                               width: { xs: "120px", md: "135px" },
                               height: { xs: "38px", md: "42px" },
                               borderRadius: "31px",
-                              background: "#FF6200",
+                              background: COLORS.PRIMARY,
                               color: "#FFFFFF",
                               textTransform: "none",
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontWeight: 600,
                               fontSize: { xs: "14px", md: "15px" },
                               lineHeight: "normal",
                               letterSpacing: "-0.01em",
                               boxShadow: "0px 4px 14px rgba(255,98,0,.35)",
                               "&:hover": {
-                                background: "#E65800",
+                                background: COLORS.PRIMARY_DARK,
                                 boxShadow: "0px 6px 18px rgba(255,98,0,.45)",
                               },
                             }}

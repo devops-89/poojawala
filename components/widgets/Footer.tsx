@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 // Quick Links with their routes
 const quickLinks = [
@@ -54,7 +56,7 @@ const socialLinks = [
 
 // Shared link styles
 const linkSx = {
-  fontFamily: '"DM Sans", sans-serif',
+  fontFamily: FONTS.PRIMARY,
   color: "#757575",
   fontSize: "14px",
   lineHeight: "15.3px",
@@ -101,7 +103,7 @@ export default function Footer() {
               </Link>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#757575",
                   fontSize: "14px",
                   lineHeight: "15.3px",
@@ -138,7 +140,7 @@ export default function Footer() {
             <Grid size={{ xs: 6, md: 2 }}>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 600,
                   color: "#141414",
                   mb: 3,
@@ -168,7 +170,7 @@ export default function Footer() {
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 600,
                   color: "#141414",
                   mb: 3,
@@ -192,7 +194,7 @@ export default function Footer() {
                     <Typography
                       key={city}
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#757575",
                         fontSize: "14px",
                         lineHeight: "15.3px",
@@ -208,7 +210,7 @@ export default function Footer() {
                     <Typography
                       key={city}
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#757575",
                         fontSize: "14px",
                         lineHeight: "15.3px",
@@ -226,7 +228,7 @@ export default function Footer() {
             <Grid size={{ xs: 12, sm: 6, md: 2 }}>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 600,
                   color: "#141414",
                   mb: 3,
@@ -251,7 +253,7 @@ export default function Footer() {
 
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 600,
                   color: "#141414",
                   mb: 3,
@@ -293,7 +295,7 @@ export default function Footer() {
           >
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#9E9E9E",
                 fontSize: "12px",
               }}
@@ -306,7 +308,7 @@ export default function Footer() {
                 href="/privacy-policy"
                 underline="none"
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#9E9E9E",
                   fontSize: "12px",
                   "&:hover": { color: "#CC2E2E" },
@@ -322,7 +324,7 @@ export default function Footer() {
                 href="/terms-and-conditions"
                 underline="none"
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#9E9E9E",
                   fontSize: "12px",
                   "&:hover": { color: "#CC2E2E" },

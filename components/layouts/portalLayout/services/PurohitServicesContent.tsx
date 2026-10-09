@@ -24,6 +24,8 @@ import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { City, State } from 'country-state-city';
 import CustomerServicesFilters from '@/components/layouts/customerLayout/services/CustomerServicesFilters';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function PurohitServicesContent() {
   const router = useRouter();
@@ -154,10 +156,10 @@ export default function PurohitServicesContent() {
           ]}
         />
         <Box>
-          <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
+          <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: COLORS.SLATE_DARK }}>
             Available Services
           </Typography>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', mt: 0.5 }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.SLATE_MUTED, mt: 0.5 }}>
             Browse all services and add them to your profile
           </Typography>
         </Box>
@@ -184,14 +186,14 @@ export default function PurohitServicesContent() {
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-          <CircularProgress sx={{ color: '#FF6200' }} />
+          <CircularProgress sx={{ color: COLORS.PRIMARY }} />
         </Box>
       ) : (
         <Grid container spacing={3}>
           {services.length === 0 ? (
             <Grid size={{ xs: 12 }}>
               <Paper sx={{ p: 4, textAlign: 'center', borderRadius: '16px' }}>
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b' }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.SLATE_MUTED }}>
                   No services available at the moment.
                 </Typography>
               </Paper>
@@ -209,7 +211,7 @@ export default function PurohitServicesContent() {
                     p: 2.5,
                     borderRadius: '20px',
                     border: '1px solid #e2e8f0',
-                    bgcolor: '#ffffff',
+                    bgcolor: COLORS.WHITE,
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
                     gap: 2.5,
@@ -280,9 +282,9 @@ export default function PurohitServicesContent() {
                         <Typography
                           variant="h6"
                           sx={{
-                            fontFamily: 'var(--font-outfit), sans-serif',
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 800,
-                            color: '#1e293b',
+                            color: COLORS.SLATE_DARK,
                             fontSize: '1.1rem',
                             lineHeight: 1.3,
                           }}
@@ -295,7 +297,7 @@ export default function PurohitServicesContent() {
                             size="small"
                             sx={{
                               bgcolor: '#fff7ed',
-                              color: '#FF6200',
+                              color: COLORS.PRIMARY,
                               fontWeight: 700,
                               fontSize: '0.75rem',
                               borderRadius: '12px',
@@ -306,8 +308,8 @@ export default function PurohitServicesContent() {
 
                       <Typography
                         sx={{
-                          fontFamily: 'var(--font-outfit), sans-serif',
-                          color: '#64748b',
+                          fontFamily: FONTS.OUTFIT,
+                          color: COLORS.SLATE_MUTED,
                           fontSize: '0.875rem',
                           lineHeight: 1.5,
                           display: '-webkit-box',
@@ -338,7 +340,7 @@ export default function PurohitServicesContent() {
                         <Box>
                           <Typography
                             sx={{
-                              fontFamily: 'var(--font-outfit), sans-serif',
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: '0.7rem',
                               color: '#94a3b8',
                               fontWeight: 600,
@@ -350,9 +352,9 @@ export default function PurohitServicesContent() {
                           </Typography>
                           <Typography
                             sx={{
-                              fontFamily: 'var(--font-outfit), sans-serif',
+                              fontFamily: FONTS.OUTFIT,
                               fontWeight: 800,
-                              color: '#FF6200',
+                              color: COLORS.PRIMARY,
                               fontSize: '0.95rem',
                             }}
                           >
@@ -364,7 +366,7 @@ export default function PurohitServicesContent() {
                         <Box sx={{ borderLeft: '1px solid #e2e8f0', pl: 2 }}>
                           <Typography
                             sx={{
-                              fontFamily: 'var(--font-outfit), sans-serif',
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: '0.7rem',
                               color: '#94a3b8',
                               fontWeight: 600,
@@ -376,7 +378,7 @@ export default function PurohitServicesContent() {
                           </Typography>
                           <Typography
                             sx={{
-                              fontFamily: 'var(--font-outfit), sans-serif',
+                              fontFamily: FONTS.OUTFIT,
                               fontWeight: 700,
                               color: '#475569',
                               fontSize: '0.9rem',
@@ -404,7 +406,7 @@ export default function PurohitServicesContent() {
                           fontWeight: 700,
                           px: 2.5,
                           py: 0.8,
-                          fontFamily: 'var(--font-outfit), sans-serif',
+                          fontFamily: FONTS.OUTFIT,
                           ...(isAlreadyAdded
                             ? {
                                 borderColor: '#e2e8f0',
@@ -413,12 +415,12 @@ export default function PurohitServicesContent() {
                                 cursor: 'not-allowed',
                               }
                             : {
-                                background: '#FF6200 !important',
-                                backgroundColor: '#FF6200 !important',
-                                color: '#ffffff !important',
+                                background: `${COLORS.PRIMARY} !important`,
+                                backgroundColor: `${COLORS.PRIMARY} !important`,
+                                color: `${COLORS.WHITE} !important`,
                                 '&:hover': {
-                                  background: '#E65800 !important',
-                                  backgroundColor: '#E65800 !important',
+                                  background: `${COLORS.PRIMARY_DARK} !important`,
+                                  backgroundColor: `${COLORS.PRIMARY_DARK} !important`,
                                 },
                               }),
                         }}
@@ -442,7 +444,7 @@ export default function PurohitServicesContent() {
             page={page} 
             onChange={(e, newPage) => setPage(newPage)} 
             color="primary"
-            sx={{ '& .MuiPaginationItem-root': { fontFamily: 'var(--font-outfit), sans-serif', '&.Mui-selected': { bgcolor: '#FF6200', color: 'white', '&:hover': { bgcolor: '#E65800' } } } }}
+            sx={{ '& .MuiPaginationItem-root': { fontFamily: FONTS.OUTFIT, '&.Mui-selected': { bgcolor: COLORS.PRIMARY, color: 'white', '&:hover': { bgcolor: COLORS.PRIMARY_DARK } } } }}
           />
         </Box>
       )}

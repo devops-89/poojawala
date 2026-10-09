@@ -4,6 +4,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import { Box, Button, Typography } from "@mui/material";
 import Link from "next/link";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function SignUpBrandingSide() {
   return (
@@ -53,7 +55,7 @@ export default function SignUpBrandingSide() {
               borderColor: "rgba(255, 255, 255, 0.3)",
               bgcolor: "rgba(255, 255, 255, 0.1)",
               color: "#ffffff",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               fontWeight: 600,
               fontSize: "12px",
               textTransform: "none",
@@ -98,7 +100,7 @@ export default function SignUpBrandingSide() {
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "0.5px",
@@ -113,7 +115,7 @@ export default function SignUpBrandingSide() {
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT_ONLY,
             fontWeight: 800,
             mb: 1.5,
             fontSize: { xs: "1.6rem", md: "2.1rem" },
@@ -124,7 +126,7 @@ export default function SignUpBrandingSide() {
         </Typography>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT_ONLY,
             fontSize: "13.5px",
             lineHeight: 1.55,
             color: "rgba(255, 255, 255, 0.85)",
@@ -151,7 +153,7 @@ export default function SignUpBrandingSide() {
               />
               <Typography
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT_ONLY,
                   fontSize: "13px",
                   fontWeight: 600,
                   color: "rgba(255, 255, 255, 0.95)",

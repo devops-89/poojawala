@@ -17,6 +17,8 @@ import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { getBlogByIdAPI } from "@/api/blogControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import RelatedBlogsSection from "./RelatedBlogsSection";
 import BlogCtaBanner from "./BlogCtaBanner";
@@ -61,7 +63,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
           bgcolor: "#FFFDF9",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -72,8 +74,8 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
         <Typography
           variant="h5"
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
-            color: "#64748b",
+            fontFamily: FONTS.PRIMARY,
+            color: COLORS.SLATE_MUTED,
             mb: 3,
           }}
         >
@@ -85,15 +87,15 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
           variant="contained"
           startIcon={<ArrowBackIcon />}
           sx={{
-            bgcolor: "#FF6200",
+            bgcolor: COLORS.PRIMARY,
             color: "white",
             borderRadius: "30px",
             textTransform: "none",
             px: 4,
             py: 1.2,
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 700,
-            "&:hover": { bgcolor: "#E65800" },
+            "&:hover": { bgcolor: COLORS.PRIMARY_HOVER },
           }}
         >
           Explore All Articles
@@ -147,7 +149,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
     if (parts.length > 1) {
       return (
         <>
-          <span style={{ fontStyle: "italic", color: "#FF6200" }}>{parts[0]}:</span>{" "}
+          <span style={{ fontStyle: "italic", color: COLORS.PRIMARY }}>{parts[0]}:</span>{" "}
           {parts.slice(1).join(":")}
         </>
       );
@@ -165,12 +167,12 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
           startIcon={<ArrowBackIcon />}
           sx={{
             color: "#64748B",
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 700,
             fontSize: "0.875rem",
             textTransform: "none",
             mb: 4,
-            "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+            "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
           }}
         >
           Back to Articles
@@ -188,10 +190,10 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                   label={categoryName}
                   sx={{
                     fontWeight: 800,
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontSize: "0.75rem",
                     bgcolor: "#FFF0E6",
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     borderRadius: "6px",
                     px: 0.5,
                   }}
@@ -203,7 +205,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                 variant="h2"
                 component="h1"
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   color: "#0F172A",
                   fontSize: { xs: "1.85rem", sm: "2.4rem", md: "2.8rem" },
@@ -223,9 +225,9 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                     width: 52,
                     height: 52,
                     bgcolor: "#FFF0E6",
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     fontWeight: 700,
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontSize: "1.1rem",
                     border: "2.5px solid #FF6200",
                     boxShadow: "0 2px 8px rgba(255, 98, 0, 0.2)",
@@ -248,7 +250,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
 
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontSize: "0.825rem",
                       color: "#64748B",
                       fontWeight: 500,
@@ -297,7 +299,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
           <Box
             sx={{
               mb: 6,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontSize: "1.1rem",
               color: "#334155",
               lineHeight: 1.9,
@@ -313,7 +315,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
               "& h2": {
                 fontSize: "1.75rem",
                 fontWeight: 700,
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 mt: 3.5,
                 mb: 1.5,
                 fontFamily: '"Georgia", serif',
@@ -357,10 +359,10 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                 boxShadow: "0 2px 10px rgba(255, 98, 0, 0.05)",
               },
               "& a": {
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 textDecoration: "underline",
                 fontWeight: 600,
-                "&:hover": { color: "#E65800" },
+                "&:hover": { color: COLORS.PRIMARY_DARK },
               },
               "& strong, & b": {
                 fontWeight: 700,
@@ -393,7 +395,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                     sx={{
                       fontFamily: '"Georgia", serif',
                       fontWeight: 700,
-                      color: "#FF6200",
+                      color: COLORS.PRIMARY,
                       fontSize: { xs: "1.35rem", sm: "1.6rem" },
                       letterSpacing: "-0.01em",
                     }}
@@ -403,7 +405,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
 
                   <Box
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontSize: "1.05rem",
                       color: "#475569",
                       lineHeight: 1.85,
@@ -419,7 +421,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
                         bgcolor: "#FFF8F2",
                         borderRadius: "0 8px 8px 0",
                       },
-                      "& a": { color: "#FF6200", textDecoration: "underline" },
+                      "& a": { color: COLORS.PRIMARY, textDecoration: "underline" },
                     }}
                     dangerouslySetInnerHTML={{ __html: secDesc }}
                   />

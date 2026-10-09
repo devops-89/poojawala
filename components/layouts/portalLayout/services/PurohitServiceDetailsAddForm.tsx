@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface Props {
   service: any;
@@ -82,7 +84,7 @@ export default function PurohitServiceDetailsAddForm({
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -93,9 +95,9 @@ export default function PurohitServiceDetailsAddForm({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              color: "#2C1810",
+              color: COLORS.DARK,
               fontSize: { xs: "26px", sm: "32px", md: "36px" },
               lineHeight: 1.2,
               mb: 2,
@@ -108,8 +110,8 @@ export default function PurohitServiceDetailsAddForm({
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
-              color: "#64534A",
+              fontFamily: FONTS.PRIMARY,
+              color: COLORS.MUTED_TEXT,
               fontSize: "15px",
               lineHeight: 1.7,
               maxWidth: 480,
@@ -128,7 +130,7 @@ export default function PurohitServiceDetailsAddForm({
               sx={{
                 p: 4,
                 borderRadius: "16px",
-                bgcolor: "#FFFFFF",
+                bgcolor: COLORS.WHITE,
                 border: "1px solid #EADCCF",
                 display: "flex",
                 flexDirection: "column",
@@ -152,8 +154,8 @@ export default function PurohitServiceDetailsAddForm({
               />
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
-                  color: "#64534A",
+                  fontFamily: FONTS.PRIMARY,
+                  color: COLORS.MUTED_TEXT,
                   fontSize: "14px",
                 }}
               >
@@ -164,15 +166,15 @@ export default function PurohitServiceDetailsAddForm({
                 variant="contained"
                 onClick={() => router.push("/purohit/my-services")}
                 sx={{
-                  background: "#C84B16 !important",
-                  color: "white !important",
+                  background: `${COLORS.PRIMARY} !important`,
+                  color: `${COLORS.WHITE} !important`,
                   borderRadius: "30px",
                   fontWeight: 700,
                   textTransform: "none",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   px: 4,
                   py: 1.2,
-                  "&:hover": { background: "#A0380E !important" },
+                  "&:hover": { background: `${COLORS.PRIMARY_DARK} !important` },
                 }}
               >
                 Go to My Services
@@ -182,7 +184,7 @@ export default function PurohitServiceDetailsAddForm({
             <Box
               sx={{
                 p: { xs: 3, sm: 4 },
-                bgcolor: "#FFFFFF",
+                bgcolor: COLORS.WHITE,
                 borderRadius: "20px",
                 border: "1px solid #EADCCF",
                 display: "flex",
@@ -193,7 +195,7 @@ export default function PurohitServiceDetailsAddForm({
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "space-between",
+                  justify: "space-between",
                   alignItems: "center",
                   pb: 2,
                   borderBottom: "1px dashed #EADCCF",
@@ -216,7 +218,7 @@ export default function PurohitServiceDetailsAddForm({
                       fontWeight: 800,
                       color: "#16a34a",
                       fontSize: "18px",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {defaultPriceDisplay}
@@ -238,9 +240,9 @@ export default function PurohitServiceDetailsAddForm({
                   <Typography
                     sx={{
                       fontWeight: 800,
-                      color: "#1e293b",
+                      color: COLORS.SLATE_DARK,
                       fontSize: "18px",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {service?.durationMinutes || 60} mins
@@ -254,21 +256,21 @@ export default function PurohitServiceDetailsAddForm({
                 disabled={submitting}
                 startIcon={
                   !submitting ? (
-                    <AddIcon sx={{ color: "#FFFFFF !important" }} />
+                    <AddIcon sx={{ color: `${COLORS.WHITE} !important` }} />
                   ) : null
                 }
                 sx={{
-                  bgcolor: "#C84B16 !important",
-                  color: "#FFFFFF !important",
+                  bgcolor: `${COLORS.PRIMARY} !important`,
+                  color: `${COLORS.WHITE} !important`,
                   fontWeight: 800,
                   fontSize: "16px",
                   py: 1.6,
                   borderRadius: "30px",
                   textTransform: "none",
-                  fontFamily: '"DM Sans", sans-serif',
-                  boxShadow: "0 8px 24px rgba(200, 75, 22, 0.25)",
+                  fontFamily: FONTS.PRIMARY,
+                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.25)",
                   "&:hover": {
-                    bgcolor: "#A0380E !important",
+                    bgcolor: `${COLORS.PRIMARY_DARK} !important`,
                   },
                 }}
               >

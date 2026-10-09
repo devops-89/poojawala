@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import { Box, Typography, Button, Paper, IconButton } from "@mui/material";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -33,7 +35,7 @@ export default function CartItemsList({
       >
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             fontSize: "13px",
             letterSpacing: "1.2px",
@@ -51,7 +53,7 @@ export default function CartItemsList({
           sx={{
             color: "#8C7A70",
             fontSize: "13px",
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             textTransform: "none",
             "&:hover": { color: "#d32f2f", bgcolor: "transparent" },
           }}
@@ -113,7 +115,7 @@ export default function CartItemsList({
                 <Typography
                   variant="h6"
                   sx={{
-                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     color: "#2C1810",
                     fontSize: { xs: "16px", sm: "18px" },
@@ -126,7 +128,7 @@ export default function CartItemsList({
 
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#64534A",
                     fontSize: "13px",
                     mb: 2,
@@ -180,7 +182,7 @@ export default function CartItemsList({
                         fontWeight: 800,
                         fontSize: "14px",
                         color: "#2C1810",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         minWidth: 24,
                         textAlign: "center",
                       }}
@@ -195,7 +197,7 @@ export default function CartItemsList({
                       }
                       sx={{
                         p: 0.4,
-                        color: "#FF6200",
+                        color: COLORS.PRIMARY,
                         "&:hover": { bgcolor: "#FFF0E6" },
                       }}
                     >
@@ -238,7 +240,7 @@ export default function CartItemsList({
               >
                 <Typography
                   sx={{
-                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
                     color: "#2C1810",
                     fontSize: { xs: "20px", sm: "24px" },
@@ -250,7 +252,7 @@ export default function CartItemsList({
 
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#8C7A70",
                     fontSize: "12px",
                     mt: 0.5,

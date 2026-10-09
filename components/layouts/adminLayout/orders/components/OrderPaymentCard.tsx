@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
@@ -52,7 +53,7 @@ export default function OrderPaymentCard({
           sx={{
             fontWeight: 700,
             color: "#0f172a",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Payment & Gateway Information
@@ -66,7 +67,7 @@ export default function OrderPaymentCard({
               variant="body2"
               sx={{
                 color: "#64748b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               Payment Method
@@ -75,7 +76,7 @@ export default function OrderPaymentCard({
               sx={{
                 fontWeight: 700,
                 color: "#0f172a",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {payment?.paymentMethod ||
@@ -92,7 +93,7 @@ export default function OrderPaymentCard({
               variant="body2"
               sx={{
                 color: "#64748b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               Payment Status
@@ -111,7 +112,7 @@ export default function OrderPaymentCard({
                 variant="body2"
                 sx={{
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Razorpay Order ID
@@ -120,7 +121,7 @@ export default function OrderPaymentCard({
                 sx={{
                   fontWeight: 600,
                   color: "#334155",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "0.9rem",
                 }}
               >
@@ -137,7 +138,7 @@ export default function OrderPaymentCard({
                 variant="body2"
                 sx={{
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Razorpay Payment ID
@@ -146,7 +147,7 @@ export default function OrderPaymentCard({
                 sx={{
                   fontWeight: 600,
                   color: "#334155",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "0.9rem",
                 }}
               >
@@ -163,7 +164,7 @@ export default function OrderPaymentCard({
                 variant="body2"
                 sx={{
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Gateway Fee & Tax
@@ -172,7 +173,7 @@ export default function OrderPaymentCard({
                 sx={{
                   fontWeight: 600,
                   color: "#334155",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Fee: ₹{payment.razorpayFee} | Tax: ₹
@@ -189,7 +190,7 @@ export default function OrderPaymentCard({
                 variant="body2"
                 sx={{
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Payment Time
@@ -198,7 +199,7 @@ export default function OrderPaymentCard({
                 sx={{
                   fontWeight: 600,
                   color: "#0f172a",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 {new Date(payment.paidAt).toLocaleString("en-IN")}

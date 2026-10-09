@@ -1,6 +1,8 @@
 "use client";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { Button, CircularProgress } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface AddressLocationButtonProps {
   isFetchingLocation: boolean;
@@ -33,7 +35,7 @@ export default function AddressLocationButton({
         fontWeight: 700,
         fontSize: { xs: "0.8rem", sm: "0.88rem" },
         textTransform: "none",
-        fontFamily: '"DM Sans", sans-serif',
+        fontFamily: FONTS.PRIMARY,
         boxShadow: "0 2px 6px rgba(31, 138, 59, 0.08)",
         transition: "all 0.2s ease",
         "&:hover": {

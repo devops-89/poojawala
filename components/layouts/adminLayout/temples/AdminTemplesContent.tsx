@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteTempleAPI,
@@ -133,7 +135,7 @@ export default function AdminTemplesContent() {
       render: (temple: ITemple) => (
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             fontSize: "0.875rem",
             color: "#64748b",
@@ -149,7 +151,7 @@ export default function AdminTemplesContent() {
       render: (temple: ITemple) => (
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             fontSize: "0.95rem",
             color: "#1e293b",
@@ -165,7 +167,7 @@ export default function AdminTemplesContent() {
       render: (temple: ITemple) => (
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 600,
             fontSize: "0.9rem",
             color: "#475569",
@@ -207,6 +209,8 @@ export default function AdminTemplesContent() {
             component={NextLink}
             href={`/admin/temples/${temple.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
@@ -218,9 +222,11 @@ export default function AdminTemplesContent() {
             component={NextLink}
             href={`/admin/temples/edit/${temple.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
-              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
             }}
           >
             <EditIcon fontSize="small" />
@@ -228,6 +234,8 @@ export default function AdminTemplesContent() {
           <IconButton
             onClick={() => setDeleteTarget(temple.id)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },

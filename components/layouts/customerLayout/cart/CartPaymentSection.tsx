@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import {
   Box,
@@ -42,7 +44,7 @@ export default function CartPaymentSection({
     >
       <Typography
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontWeight: 800,
           fontSize: "13px",
           letterSpacing: "1.2px",
@@ -85,7 +87,7 @@ export default function CartPaymentSection({
               position: "absolute",
               top: 12,
               right: 12,
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               fontWeight: 800,
               fontSize: "10px",
@@ -100,17 +102,17 @@ export default function CartPaymentSection({
               <Radio
                 sx={{
                   color: "#64534A",
-                  "&.Mui-checked": { color: "#FF6200" },
+                  "&.Mui-checked": { color: COLORS.PRIMARY },
                 }}
               />
             }
             label={
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <PaymentIcon sx={{ color: "#FF6200" }} />
+                <PaymentIcon sx={{ color: COLORS.PRIMARY }} />
                 <Box>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 800,
                       color: "#2C1810",
                       fontSize: "15px",
@@ -120,7 +122,7 @@ export default function CartPaymentSection({
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: "12px",
                     }}
@@ -145,13 +147,13 @@ export default function CartPaymentSection({
         variant="contained"
         sx={{
           mt: 3,
-          bgcolor: "#FF6200",
+          bgcolor: COLORS.PRIMARY,
           color: "white",
           py: 1.8,
           borderRadius: "14px",
           fontWeight: 800,
           fontSize: "16px",
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           textTransform: "none",
           boxShadow: "0 8px 24px rgba(255, 98, 0, 0.35)",
           "&:hover": {

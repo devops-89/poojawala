@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -48,7 +50,7 @@ export default function ServicePlansTabConfig({
       <Typography
         variant="h6"
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#1e293b",
           mb: 0.5,
@@ -71,7 +73,7 @@ export default function ServicePlansTabConfig({
             py: 1,
             fontWeight: 700,
             textTransform: "none",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             ...(selectedPlanTab === "basic"
               ? {
                   bgcolor: "#FF6200 !important",
@@ -94,7 +96,7 @@ export default function ServicePlansTabConfig({
             py: 1,
             fontWeight: 700,
             textTransform: "none",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             ...(selectedPlanTab === "standard"
               ? {
                   bgcolor: "#FF6200 !important",
@@ -126,7 +128,7 @@ export default function ServicePlansTabConfig({
               fontSize: "1.05rem",
               color: "#c2410c",
               mb: 2,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Basic Plan Configuration
@@ -180,7 +182,7 @@ export default function ServicePlansTabConfig({
                     >
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           color: "#1e293b",
                         }}
@@ -194,13 +196,13 @@ export default function ServicePlansTabConfig({
                         onClick={() => push({ key: "" })}
                         sx={{
                           ml: "auto",
-                          borderColor: "#FF6200",
-                          color: "#FF6200",
+                          borderColor: COLORS.PRIMARY,
+                          color: COLORS.PRIMARY,
                           textTransform: "none",
                           borderRadius: "8px",
                           fontWeight: 600,
                           "&:hover": {
-                            borderColor: "#E65800",
+                            borderColor: COLORS.PRIMARY_DARK,
                             bgcolor: "#fff7ed",
                           },
                         }}
@@ -276,11 +278,11 @@ export default function ServicePlansTabConfig({
                         sx={{ display: "flex", alignItems: "center", gap: 1 }}
                       >
                         <InventoryIcon
-                          sx={{ color: "#FF6200", fontSize: "1.2rem" }}
+                          sx={{ color: COLORS.PRIMARY, fontSize: "1.2rem" }}
                         />
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             color: "#1e293b",
                           }}
@@ -295,13 +297,13 @@ export default function ServicePlansTabConfig({
                         onClick={() => push("")}
                         sx={{
                           ml: "auto",
-                          borderColor: "#FF6200",
-                          color: "#FF6200",
+                          borderColor: COLORS.PRIMARY,
+                          color: COLORS.PRIMARY,
                           textTransform: "none",
                           borderRadius: "8px",
                           fontWeight: 600,
                           "&:hover": {
-                            borderColor: "#E65800",
+                            borderColor: COLORS.PRIMARY_DARK,
                             bgcolor: "#fff7ed",
                           },
                         }}
@@ -372,7 +374,7 @@ export default function ServicePlansTabConfig({
               fontSize: "1.05rem",
               color: "#15803d",
               mb: 2,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Standard Plan Configuration
@@ -426,7 +428,7 @@ export default function ServicePlansTabConfig({
                     >
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           color: "#1e293b",
                         }}
@@ -526,7 +528,7 @@ export default function ServicePlansTabConfig({
                         />
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             color: "#1e293b",
                           }}

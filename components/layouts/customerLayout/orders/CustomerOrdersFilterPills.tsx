@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { ORDER_STATUS } from "@/utils/enums";
 import { Box, Button } from "@mui/material";
 
@@ -63,11 +65,11 @@ export default function CustomerOrdersFilterPills({
               borderRadius: "30px",
               px: { xs: 2, sm: 2.5 },
               py: { xs: 0.8, sm: 1 },
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: { xs: "13px", sm: "14px" },
               textTransform: "none",
-              bgcolor: isActive ? "#FF6200" : "#FFFFFF",
+              bgcolor: isActive ? COLORS.PRIMARY : "#FFFFFF",
               color: isActive ? "white" : "#64534A",
               border: isActive ? "1px solid #FF6200" : "1px solid #EADCCF",
               boxShadow: isActive ? "0 4px 14px rgba(255, 98, 0, 0.3)" : "none",

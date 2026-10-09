@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import CheckCircleIconComponent from "@mui/icons-material/CheckCircle";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import {
@@ -319,7 +321,7 @@ export default function CustomerCartContent() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 mx: "auto",
                 mb: 3,
               }}
@@ -329,7 +331,7 @@ export default function CustomerCartContent() {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 color: "#2C1810",
                 mb: 1.5,
@@ -339,7 +341,7 @@ export default function CustomerCartContent() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: "15px",
                 maxWidth: 400,
@@ -354,7 +356,7 @@ export default function CustomerCartContent() {
               onClick={() => router.push("/customer/products")}
               variant="contained"
               sx={{
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 borderRadius: "30px",
                 px: 4,
@@ -441,7 +443,7 @@ export default function CustomerCartContent() {
       >
         <DialogTitle
           sx={{
-            fontFamily: '"Georgia", "Times New Roman", serif',
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#2C1810",
             fontSize: "20px",
@@ -456,7 +458,7 @@ export default function CustomerCartContent() {
           <DialogContentText
             component="div"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
             }}
@@ -535,7 +537,7 @@ export default function CustomerCartContent() {
         <Typography
           variant="h5"
           sx={{
-            fontFamily: '"Georgia", "Times New Roman", serif',
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#2C1810",
             mb: 1,
@@ -546,7 +548,7 @@ export default function CustomerCartContent() {
 
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             color: "#64534A",
             fontSize: "14px",
             mb: 3,
@@ -565,7 +567,7 @@ export default function CustomerCartContent() {
             router.push("/customer/products");
           }}
           sx={{
-            bgcolor: "#FF6200",
+            bgcolor: COLORS.PRIMARY,
             color: "white",
             py: 1.5,
             borderRadius: "12px",

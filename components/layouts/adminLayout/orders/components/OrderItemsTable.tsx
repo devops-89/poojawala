@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import {
@@ -57,7 +59,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
           sx={{
             fontWeight: 700,
             color: "#0f172a",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Ordered Items ({itemsList.length})
@@ -76,7 +78,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                 sx={{
                   fontWeight: 700,
                   color: "#475569",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Product
@@ -86,7 +88,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                 sx={{
                   fontWeight: 700,
                   color: "#475569",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Unit Price
@@ -96,7 +98,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                 sx={{
                   fontWeight: 700,
                   color: "#475569",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Quantity
@@ -106,7 +108,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                 sx={{
                   fontWeight: 700,
                   color: "#475569",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                 }}
               >
                 Total
@@ -162,7 +164,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                           sx={{
                             fontWeight: 700,
                             color: "#0f172a",
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                           }}
                         >
                           {title}
@@ -172,7 +174,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                             variant="body2"
                             sx={{
                               color: "#64748b",
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "0.8rem",
                               maxWidth: 400,
                             }}
@@ -184,7 +186,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                           variant="body2"
                           sx={{
                             color: "#94a3b8",
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "0.75rem",
                             mt: 0.25,
                           }}
@@ -199,7 +201,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                       sx={{
                         fontWeight: 600,
                         color: "#334155",
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                       }}
                     >
                       ₹{price.toFixed(2)}
@@ -213,7 +215,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                         fontWeight: 700,
                         bgcolor: "#f1f5f9",
                         color: "#0f172a",
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                       }}
                     />
                   </TableCell>
@@ -221,8 +223,8 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                     <Typography
                       sx={{
                         fontWeight: 700,
-                        color: "#FF6200",
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        color: COLORS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                       }}
                     >
                       ₹{total.toFixed(2)}

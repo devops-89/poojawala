@@ -3,6 +3,8 @@
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Box, Typography } from "@mui/material";
 import React from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface WebsiteServiceAboutSectionProps {
   service: any;
@@ -78,7 +80,7 @@ export default function WebsiteServiceAboutSection({
       <Typography
         variant="h3"
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontWeight: 800,
           fontSize: { xs: "24px", sm: "32px", md: "36px" },
           color: "#1A0B05",
@@ -94,7 +96,7 @@ export default function WebsiteServiceAboutSection({
         sx={{
           width: 44,
           height: 3.5,
-          bgcolor: "#FF6200",
+          bgcolor: COLORS.PRIMARY,
           borderRadius: 2,
           mb: 3.5,
         }}
@@ -103,7 +105,7 @@ export default function WebsiteServiceAboutSection({
       {/* Normal Text Description (No Card Container) */}
       <Typography
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontSize: { xs: "15px", sm: "16px" },
           color: "#4A3B32",
           lineHeight: 1.8,
@@ -116,7 +118,7 @@ export default function WebsiteServiceAboutSection({
       {para2 && (
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontSize: { xs: "15px", sm: "16px" },
             color: "#4A3B32",
             lineHeight: 1.8,
@@ -132,7 +134,7 @@ export default function WebsiteServiceAboutSection({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             fontSize: { xs: "20px", sm: "24px" },
             color: "#1A0B05",
@@ -165,7 +167,7 @@ export default function WebsiteServiceAboutSection({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     flexShrink: 0,
                     mt: 0.3,
                   }}
@@ -176,7 +178,7 @@ export default function WebsiteServiceAboutSection({
                 <Box>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       fontSize: "16px",
                       color: "#1A0B05",
@@ -189,7 +191,7 @@ export default function WebsiteServiceAboutSection({
                   {bDesc && (
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: "14px",
                         color: "#5C4A40",
                         lineHeight: 1.6,

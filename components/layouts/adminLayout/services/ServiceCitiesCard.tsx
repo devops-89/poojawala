@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Box, Chip, Paper, Typography } from "@mui/material";
@@ -26,7 +28,7 @@ export default function ServiceCitiesCard({
       <Typography
         variant="h5"
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#1e293b",
           mb: 3,
@@ -40,7 +42,7 @@ export default function ServiceCitiesCard({
           sx={{
             width: 8,
             height: 24,
-            bgcolor: "#FF6200",
+            bgcolor: COLORS.PRIMARY,
             borderRadius: 4,
             display: "inline-block",
           }}
@@ -58,7 +60,7 @@ export default function ServiceCitiesCard({
               key={`city-chip-${idx}`}
               icon={
                 <LocationOnIcon
-                  style={{ color: "#FF6200", fontSize: "1.1rem" }}
+                  style={{ color: COLORS.PRIMARY, fontSize: "1.1rem" }}
                 />
               }
               label={label}
@@ -70,7 +72,7 @@ export default function ServiceCitiesCard({
                 color: "#334155",
                 py: 2,
                 px: 1,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             />
           );

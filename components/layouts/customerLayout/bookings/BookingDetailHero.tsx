@@ -1,3 +1,5 @@
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { Box, Button, Chip, Grid, Paper, Typography } from '@mui/material';
 
 interface Props {
@@ -25,13 +27,13 @@ export default function BookingDetailHero({ booking, formattedDate, formattedAmo
     <Paper sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
       <Grid container spacing={3} sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <Grid size={{xs:12,md:6}}>
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FF6200', mb: 1 }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COLORS.PRIMARY, mb: 1 }}>
             Booking Details
           </Typography>
-          <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#0f172a', mb: 1 }}>
+          <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 1 }}>
             {booking.service?.name ?? 'Service'}
           </Typography>
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px', mb: 3 }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 3 }}>
             Scheduled on {formattedDate}
           </Typography>
           
@@ -52,7 +54,7 @@ export default function BookingDetailHero({ booking, formattedDate, formattedAmo
                 backgroundColor: '#3b82f6',
                 color: '#ffffff',
                 borderRadius: '12px',
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 textTransform: 'none',
                 fontWeight: 600,
                 '&:hover': { backgroundColor: '#2563eb' }
@@ -69,12 +71,12 @@ export default function BookingDetailHero({ booking, formattedDate, formattedAmo
             label={statusLabel} 
             sx={{ 
               fontWeight: 700, 
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               bgcolor: statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED' ? '#E8F5E9' : statusStr === 'COMPLETED' ? '#E3F2FD' : statusStr === 'CANCELLED' ? '#FFEBEE' : '#FFF5F0',
-              color: statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED' ? '#2E7D32' : statusStr === 'COMPLETED' ? '#1565C0' : statusStr === 'CANCELLED' ? '#C62828' : '#FF6200'
+              color: statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED' ? '#2E7D32' : statusStr === 'COMPLETED' ? '#1565C0' : statusStr === 'CANCELLED' ? '#C62828' : COLORS.PRIMARY
             }} 
           />
-          <Typography variant="h4" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#0f172a' }}>
+          <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
             {formattedAmount}
           </Typography>
           
@@ -97,7 +99,7 @@ export default function BookingDetailHero({ booking, formattedDate, formattedAmo
                    backgroundColor: '#10b981',
                    color: '#ffffff',
                    borderRadius: '12px',
-                   fontFamily: '"DM Sans", sans-serif',
+                   fontFamily: FONTS.PRIMARY,
                    textTransform: 'none',
                    fontWeight: 600,
                    opacity: isRedirectingPayment ? 0.7 : 1,
@@ -124,7 +126,7 @@ export default function BookingDetailHero({ booking, formattedDate, formattedAmo
                  backgroundColor: '#f59e0b',
                  color: '#ffffff',
                  borderRadius: '12px',
-                 fontFamily: '"DM Sans", sans-serif',
+                 fontFamily: FONTS.PRIMARY,
                  textTransform: 'none',
                  fontWeight: 600,
                  '&:hover': { backgroundColor: '#d97706' }
@@ -150,7 +152,7 @@ export default function BookingDetailHero({ booking, formattedDate, formattedAmo
                    backgroundColor: '#ef4444',
                    color: '#ffffff',
                    borderRadius: '12px',
-                   fontFamily: '"DM Sans", sans-serif',
+                   fontFamily: FONTS.PRIMARY,
                    textTransform: 'none',
                    fontWeight: 600,
                    '&:hover': { backgroundColor: '#dc2626' }

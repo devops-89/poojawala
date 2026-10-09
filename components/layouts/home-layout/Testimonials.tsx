@@ -10,6 +10,8 @@ import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { getAllReviewsAPI } from '@/api/userControllers';
 import EmptyStateCard from '@/components/widgets/EmptyStateCard';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function Testimonials() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -57,7 +59,7 @@ export default function Testimonials() {
           <Typography 
             variant="h2" 
             sx={{ 
-              fontFamily: '"DM Sans", sans-serif', 
+              fontFamily: FONTS.PRIMARY, 
               fontWeight: 700, 
               fontSize: { xs: '28px', sm: '36px', md: '48px' }, 
               color: '#C82E2E', 
@@ -68,7 +70,7 @@ export default function Testimonials() {
           </Typography>
           <Typography 
             sx={{ 
-              fontFamily: '"DM Sans", sans-serif', 
+              fontFamily: FONTS.PRIMARY, 
               fontWeight: 500, 
               fontSize: { xs: '16px', md: '24px' },
               lineHeight: '130.6%', 
@@ -167,7 +169,7 @@ export default function Testimonials() {
 
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontWeight: 500,
                           fontSize: { xs: '14px', md: '16px' },
                           color: '#141414',
@@ -188,7 +190,7 @@ export default function Testimonials() {
                       <Box>
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 700,
                             fontSize: { xs: '15px', md: '17px' },
                             lineHeight: '1.2',
@@ -199,7 +201,7 @@ export default function Testimonials() {
                         </Typography>
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 400,
                             fontSize: { xs: '13px', md: '14px' },
                             color: '#888888',

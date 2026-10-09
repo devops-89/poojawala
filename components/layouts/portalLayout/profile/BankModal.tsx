@@ -18,6 +18,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
 
 interface BankModalProps {
   open: boolean;
@@ -51,7 +54,7 @@ export const BankModal: React.FC<BankModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle
-        sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800 }}
+        sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800 }}
       >
         {selectedBankId ? "Edit Bank Account" : "Add Bank Account"}
       </DialogTitle>
@@ -59,7 +62,7 @@ export const BankModal: React.FC<BankModalProps> = ({
         <Box sx={{ mb: 3 }}>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               fontSize: "14px",
               mb: 1,
@@ -95,7 +98,7 @@ export const BankModal: React.FC<BankModalProps> = ({
                 label="UPI ID (e.g. mobile@upi, username@okaxis)"
                 value={bankForm.upiId}
                 onChange={(e) =>
-                  setBankForm({ ...bankForm, upiId: e.target.value })
+                  setBankForm({ ...bankForm, upiId: e.target.value.trim() })
                 }
                 required
               />
@@ -106,12 +109,13 @@ export const BankModal: React.FC<BankModalProps> = ({
             <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
-                label="Account Holder Name"
+                label="Account Holder Name *"
                 value={bankForm.accountHolderName}
+                onKeyDown={allowOnlyLettersOnKeyDown}
                 onChange={(e) =>
                   setBankForm({
                     ...bankForm,
-                    accountHolderName: e.target.value,
+                    accountHolderName: sanitizeLettersOnly(e.target.value),
                   })
                 }
                 required
@@ -120,10 +124,11 @@ export const BankModal: React.FC<BankModalProps> = ({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Bank Name"
+                label="Bank Name *"
                 value={bankForm.bankName}
+                onKeyDown={allowOnlyLettersOnKeyDown}
                 onChange={(e) =>
-                  setBankForm({ ...bankForm, bankName: e.target.value })
+                  setBankForm({ ...bankForm, bankName: sanitizeLettersOnly(e.target.value) })
                 }
                 required
               />
@@ -133,6 +138,16 @@ export const BankModal: React.FC<BankModalProps> = ({
                 fullWidth
                 label="Account Number *"
                 value={bankForm.accountNumber}
+                onKeyDown={(e) => {
+                  if (
+                    !/\d/.test(e.key) &&
+                    !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter", "Home", "End"].includes(e.key) &&
+                    !e.ctrlKey &&
+                    !e.metaKey
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, "").slice(0, 18);
                   setBankForm({ ...bankForm, accountNumber: val });
@@ -146,6 +161,16 @@ export const BankModal: React.FC<BankModalProps> = ({
                 fullWidth
                 label="IFSC Code *"
                 value={bankForm.ifscCode}
+                onKeyDown={(e) => {
+                  if (
+                    !/[a-zA-Z0-9]/.test(e.key) &&
+                    !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter", "Home", "End"].includes(e.key) &&
+                    !e.ctrlKey &&
+                    !e.metaKey
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={(e) => {
                   const val = e.target.value
                     .toUpperCase()

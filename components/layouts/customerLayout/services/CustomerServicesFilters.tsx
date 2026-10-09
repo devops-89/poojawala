@@ -159,6 +159,21 @@ export default function CustomerServicesFilters({
       ? { xs: 12, sm: 6 }
       : { xs: 12 };
 
+  const [localSearch, setLocalSearch] = useState(searchTerm || "");
+
+  useEffect(() => {
+    setLocalSearch(searchTerm || "");
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (onSearchChange && localSearch !== (searchTerm || "")) {
+        onSearchChange(localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [localSearch, onSearchChange, searchTerm]);
+
   return (
     <Grid container spacing={2} sx={{ mb: 4 }}>
       {/* Search Input - Full Width */}
@@ -167,8 +182,8 @@ export default function CustomerServicesFilters({
           fullWidth
           variant="outlined"
           placeholder="Search pujas or services..."
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
           slotProps={{
             input: {
               startAdornment: (

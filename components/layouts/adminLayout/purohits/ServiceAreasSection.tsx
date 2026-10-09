@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   addServiceAreaAPI,
@@ -257,11 +259,11 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <LocationOnIcon sx={{ color: "#FF6200" }} />
+          <LocationOnIcon sx={{ color: COLORS.PRIMARY }} />
           <Typography
             variant="h6"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: "#1e293b",
             }}
@@ -273,16 +275,16 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
           variant="outlined"
           onClick={handleOpenAddAddress}
           sx={{
-            borderColor: "#FF6200",
-            color: "#FF6200",
+            borderColor: COLORS.PRIMARY,
+            color: COLORS.PRIMARY,
             borderRadius: "10px",
             textTransform: "none",
             fontWeight: 700,
             px: 2.5,
             py: 0.8,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             "&:hover": {
-              borderColor: "#E65800",
+              borderColor: COLORS.PRIMARY_DARK,
               bgcolor: "#FFF8F2",
             },
           }}
@@ -303,7 +305,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
             }}
           >
@@ -343,10 +345,10 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
                     }}
                   >
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <LocationOnIcon sx={{ color: "#FF6200", fontSize: 20 }} />
+                      <LocationOnIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           fontSize: "16px",
                           color: "#1A1A1A",
@@ -376,7 +378,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
                           onClick={() => handleOpenEditAddress(area)}
                           sx={{
                             color: "#64748b",
-                            "&:hover": { color: "#FF6200" },
+                            "&:hover": { color: COLORS.PRIMARY },
                           }}
                         >
                           <EditIcon fontSize="small" />
@@ -399,7 +401,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
 
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       color: "#64748b",
                       fontSize: "13px",
                       lineHeight: 1.5,
@@ -422,10 +424,10 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
                     >
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "12px",
                           fontWeight: 700,
-                          color: "#FF6200",
+                          color: COLORS.PRIMARY,
                         }}
                       >
                         Operating Radius: {area.serviceRadiusKm || area.radius} km

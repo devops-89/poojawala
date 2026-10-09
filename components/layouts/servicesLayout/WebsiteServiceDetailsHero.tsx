@@ -7,6 +7,8 @@ import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ShieldCheckIcon from "@mui/icons-material/VerifiedUser";
 import { Box, Button, Grid, Typography } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface WebsiteServiceDetailsHeroProps {
   service: any;
@@ -105,10 +107,10 @@ export default function WebsiteServiceDetailsHero({
               boxShadow: "0 2px 8px rgba(255, 98, 0, 0.08)",
             }}
           >
-            <AutoAwesomeIcon sx={{ fontSize: 16, color: "#FF6200" }} />
+            <AutoAwesomeIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), 'DM Sans', sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "12px",
                 fontWeight: 700,
                 letterSpacing: "0.8px",
@@ -128,7 +130,7 @@ export default function WebsiteServiceDetailsHero({
           <Typography
             variant="h1"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: { xs: "32px", sm: "44px", md: "52px" },
               lineHeight: 1.15,
@@ -180,17 +182,17 @@ export default function WebsiteServiceDetailsHero({
                 fontSize: "12px",
                 fontWeight: 700,
                 letterSpacing: "0.5px",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                 transition: "all 0.2s ease",
                 "&:hover": {
                   bgcolor: "#FFF0E6",
-                  borderColor: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
                   transform: "translateY(-2px)",
                 },
               }}
             >
-              <AccessTimeIcon sx={{ fontSize: 17, color: "#FF6200" }} />
+              <AccessTimeIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
               <span>{durationText}</span>
             </Box>
 
@@ -208,17 +210,17 @@ export default function WebsiteServiceDetailsHero({
                 fontSize: "12px",
                 fontWeight: 700,
                 letterSpacing: "0.5px",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                 transition: "all 0.2s ease",
                 "&:hover": {
                   bgcolor: "#FFF0E6",
-                  borderColor: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
                   transform: "translateY(-2px)",
                 },
               }}
             >
-              <LanguageIcon sx={{ fontSize: 17, color: "#FF6200" }} />
+              <LanguageIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
               <span>{formattedLanguages ? formattedLanguages : "HINDI"}</span>
             </Box>
 
@@ -236,17 +238,17 @@ export default function WebsiteServiceDetailsHero({
                 fontSize: "12px",
                 fontWeight: 700,
                 letterSpacing: "0.5px",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                 transition: "all 0.2s ease",
                 "&:hover": {
                   bgcolor: "#FFF0E6",
-                  borderColor: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
                   transform: "translateY(-2px)",
                 },
               }}
             >
-              <LocationOnIcon sx={{ fontSize: 17, color: "#FF6200" }} />
+              <LocationOnIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
               <span>
                 {formattedCities ? formattedCities : "NOIDA & GHAZIABAD"}
               </span>
@@ -275,7 +277,7 @@ export default function WebsiteServiceDetailsHero({
                   px: { xs: 4, sm: 5 },
                   py: 1.6,
                   borderRadius: "12px",
-                  fontFamily: "var(--font-outfit), 'DM Sans', sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: { xs: "15px", sm: "16px" },
                   textTransform: "none",
@@ -304,26 +306,26 @@ export default function WebsiteServiceDetailsHero({
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-                <ShieldCheckIcon sx={{ color: "#38A169", fontSize: 18 }} />
+                <ShieldCheckIcon sx={{ color: COLORS.GREEN_SUCCESS, fontSize: 18 }} />
                 <Typography
                   sx={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: FONTS.PRIMARY,
                     fontSize: { xs: "12px", sm: "13px" },
                     fontWeight: 600,
-                    color: "#4A5568",
+                    color: COLORS.SLATE_MUTED,
                   }}
                 >
                   Verified Vedic Purohits
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-                <ShieldCheckIcon sx={{ color: "#FF6200", fontSize: 18 }} />
+                <ShieldCheckIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
                 <Typography
                   sx={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: FONTS.PRIMARY,
                     fontSize: { xs: "12px", sm: "13px" },
                     fontWeight: 600,
-                    color: "#4A5568",
+                    color: COLORS.SLATE_MUTED,
                   }}
                 >
                   100% Sacred Samagri
@@ -400,11 +402,11 @@ export default function WebsiteServiceDetailsHero({
             >
               <Typography
                 sx={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: FONTS.PRIMARY,
                   fontSize: { xs: "10px", sm: "11px" },
                   fontWeight: 800,
                   letterSpacing: "1.2px",
-                  color: "#B8860B",
+                  color: COLORS.GOLD_DARK,
                   textTransform: "uppercase",
                   mb: 0.4,
                 }}
@@ -413,7 +415,7 @@ export default function WebsiteServiceDetailsHero({
               </Typography>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 800,
                   fontSize: { xs: "18px", sm: "24px", md: "26px" },
                   color: "#1A0B05",

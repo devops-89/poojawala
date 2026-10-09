@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import PercentIcon from "@mui/icons-material/Percent";
@@ -30,7 +32,7 @@ export default function ServicePricingSummaryCard({
       <Typography
         variant="h5"
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#1e293b",
           mb: 3,
@@ -44,7 +46,7 @@ export default function ServicePricingSummaryCard({
           sx={{
             width: 8,
             height: 24,
-            bgcolor: "#FF6200",
+            bgcolor: COLORS.PRIMARY,
             borderRadius: 4,
             display: "inline-block",
           }}
@@ -70,7 +72,7 @@ export default function ServicePricingSummaryCard({
               p: 1,
               bgcolor: "#FFF0E6",
               borderRadius: "8px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -107,7 +109,7 @@ export default function ServicePricingSummaryCard({
               p: 1,
               bgcolor: "#FFF0E6",
               borderRadius: "8px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -144,7 +146,7 @@ export default function ServicePricingSummaryCard({
               p: 1,
               bgcolor: "#FFF0E6",
               borderRadius: "8px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -180,7 +182,7 @@ export default function ServicePricingSummaryCard({
               p: 1,
               bgcolor: "#FFF0E6",
               borderRadius: "8px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >

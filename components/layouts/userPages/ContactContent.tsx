@@ -9,6 +9,8 @@ import React, { useState } from 'react';
 import { submitContactFormAPI } from '@/api/userControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -50,10 +52,10 @@ export default function ContactContent() {
           position: 'relative'
         }}
       >
-        <Typography variant="h2" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
+        <Typography variant="h2" sx={{ fontFamily: FONTS.DM_SANS, fontWeight: 800, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
           Get in Touch
         </Typography>
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '18px', opacity: 0.9, maxWidth: '600px', mx: 'auto', px: 2 }}>
+        <Typography sx={{ fontFamily: FONTS.DM_SANS, fontSize: '18px', opacity: 0.9, maxWidth: '600px', mx: 'auto', px: 2 }}>
           Have questions about our puja packages, purohits, or anything else? We'd love to hear from you.
         </Typography>
       </Box>
@@ -71,37 +73,37 @@ export default function ContactContent() {
         >
           {/* Contact Details (Left Column) */}
           <Box sx={{ flex: 1, bgcolor: '#FFF0E6', p: { xs: 4, md: 6 } }}>
-            <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 4 }}>
+            <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 4 }}>
               Contact Information
             </Typography>
             
             <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'flex-start' }}>
-              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: '#FF6200', display: 'flex' }}>
+              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
                 <PhoneIcon />
               </Box>
               <Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '14px', mb: 0.5 }}>Phone</Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1A1A1A', fontSize: '16px' }}>+91 98765 43210</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Phone</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>+91 98765 43210</Typography>
               </Box>
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'flex-start' }}>
-              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: '#FF6200', display: 'flex' }}>
+              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
                 <EmailIcon />
               </Box>
               <Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '14px', mb: 0.5 }}>Email</Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1A1A1A', fontSize: '16px' }}>support@poojawala.com</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Email</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>support@poojawala.com</Typography>
               </Box>
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: '#FF6200', display: 'flex' }}>
+              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
                 <LocationOnIcon />
               </Box>
               <Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '14px', mb: 0.5 }}>Office Address</Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1A1A1A', fontSize: '16px' }}>123, Devotion Tower,<br/>Sector 4, New Delhi - 110001</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Office Address</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>123, Devotion Tower,<br/>Sector 4, New Delhi - 110001</Typography>
               </Box>
             </Box>
           </Box>
@@ -111,25 +113,25 @@ export default function ContactContent() {
             {success ? (
               <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
                 <Box component="img" src="/images/home/poojaPackages/dhanush.webp" sx={{ width: '120px', mb: 3 }} />
-                <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
+                <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 1 }}>
                   Message Sent!
                 </Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666' }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED }}>
                   Thank you for reaching out. Our team will get back to you shortly.
                 </Typography>
                 <Button 
                   onClick={() => setSuccess(false)}
-                  sx={{ mt: 4, color: '#FF6200', fontWeight: 600, textTransform: 'none' }}
+                  sx={{ mt: 4, color: COLORS.PRIMARY, fontWeight: 600, textTransform: 'none' }}
                 >
                   Send another message
                 </Button>
               </Box>
             ) : (
               <Box>
-                <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
+                <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 1 }}>
                   Send a Message
                 </Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', mb: 4 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, mb: 4 }}>
                   Fill out the form below and we will get back to you as soon as possible.
                 </Typography>
 
@@ -167,28 +169,28 @@ export default function ContactContent() {
                           <Field 
                             as={TextField} name="name" fullWidth label="Full Name" variant="outlined"
                             error={touched.name && !!errors.name} helperText={touched.name && errors.name}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' }, '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
                           />
                         </Grid>
                         <Grid size={{ xs: 12, md: 6 }}>
                           <Field 
                             as={TextField} name="email" fullWidth label="Email Address" variant="outlined"
                             error={touched.email && !!errors.email} helperText={touched.email && errors.email}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' }, '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
                           />
                         </Grid>
                         <Grid size={{ xs: 12 }}>
                           <Field 
                             as={TextField} name="subject" fullWidth label="Subject" variant="outlined"
                             error={touched.subject && !!errors.subject} helperText={touched.subject && errors.subject}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' }, '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
                           />
                         </Grid>
                         <Grid size={{ xs: 12 }}>
                           <Field 
                             as={TextField} name="message" fullWidth label="Your Message" variant="outlined" multiline rows={4}
                             error={touched.message && !!errors.message} helperText={touched.message && errors.message}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' }, '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
                           />
                         </Grid>
                       </Grid>
@@ -199,7 +201,7 @@ export default function ContactContent() {
                         variant="contained" 
                         sx={{
                           mt: 4,
-                          background: '#FF6200',
+                          background: COLORS.PRIMARY,
                           color: 'white',
                           py: 1.5,
                           px: 5,
@@ -208,7 +210,7 @@ export default function ContactContent() {
                           fontWeight: 700,
                           fontSize: '16px',
                           boxShadow: '0 8px 20px rgba(255, 98, 0, 0.3)',
-                          '&:hover': { background: '#E65800', boxShadow: '0 8px 25px rgba(255, 98, 0, 0.4)' }
+                          '&:hover': { background: COLORS.PRIMARY_HOVER, boxShadow: '0 8px 25px rgba(255, 98, 0, 0.4)' }
                         }}
                       >
                         {isSubmitting ? 'Sending...' : 'Send Message'}

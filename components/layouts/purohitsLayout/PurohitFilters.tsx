@@ -17,6 +17,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 interface PurohitFiltersProps {
   onApplyFilters: (filters: any) => void;
@@ -42,10 +44,10 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
     <Box sx={{ bgcolor: '#fff', borderRadius: '16px', overflow: 'hidden', position: 'sticky', top: 100, height: 'fit-content', pb: 3 }}>
       {/* Header */}
       <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: '18px', color: '#1A1A1A' }}>
+        <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: '18px', color: '#1A1A1A' }}>
         Filters
         </Typography>
-        <TuneIcon sx={{ color: '#FF6200', fontSize: '20px' }} />
+        <TuneIcon sx={{ color: COLORS.PRIMARY, fontSize: '20px' }} />
       </Box>
 
       <Box sx={{ px: 3, display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -54,14 +56,14 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <LanguageIcon sx={{ fontSize: '18px', color: '#666' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '14px', color: '#333' }}>Language</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '14px', color: '#333' }}>Language</Typography>
           </Box>
           <Select 
             value={language} 
             onChange={(e) => setLanguage(e.target.value)}
             size="small" 
             fullWidth 
-            sx={{ borderRadius: '8px', fontFamily: '"DM Sans", sans-serif', fontSize: '14px', color: '#555', '.MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' } }}
+            sx={{ borderRadius: '8px', fontFamily: FONTS.PRIMARY, fontSize: '14px', color: '#555', '.MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' } }}
           >
             <MenuItem value="all">All Languages</MenuItem>
             <MenuItem value="hindi">Hindi</MenuItem>
@@ -76,14 +78,14 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <PersonOutlinedIcon sx={{ fontSize: '18px', color: '#666' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '14px', color: '#333' }}>Experience</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '14px', color: '#333' }}>Experience</Typography>
           </Box>
           <Select 
             value={experience} 
             onChange={(e) => setExperience(e.target.value)}
             size="small" 
             fullWidth 
-            sx={{ borderRadius: '8px', fontFamily: '"DM Sans", sans-serif', fontSize: '14px', color: '#555', '.MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' } }}
+            sx={{ borderRadius: '8px', fontFamily: FONTS.PRIMARY, fontSize: '14px', color: '#555', '.MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' } }}
           >
             <MenuItem value="all">Any Experience</MenuItem>
             <MenuItem value="1">1+ Years</MenuItem>
@@ -97,7 +99,7 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <CurrencyRupeeIcon sx={{ fontSize: '18px', color: '#666' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '14px', color: '#333' }}>Price Range</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '14px', color: '#333' }}>Price Range</Typography>
           </Box>
           <Box sx={{ px: 1 }}>
             <Slider
@@ -107,15 +109,15 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
               max={15000}
               step={500}
               sx={{
-                color: '#FF6200',
+                color: COLORS.PRIMARY,
                 '& .MuiSlider-thumb': { bgcolor: '#fff', border: '2px solid #FF6200' },
                 '& .MuiSlider-track': { height: 4 },
                 '& .MuiSlider-rail': { height: 4, bgcolor: '#E5E7EB' }
               }}
             />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: -1 }}>
-              <Typography sx={{ fontSize: '12px', color: '#888', fontFamily: '"DM Sans", sans-serif' }}>₹{priceRange[0]}</Typography>
-              <Typography sx={{ fontSize: '12px', color: '#888', fontFamily: '"DM Sans", sans-serif' }}>₹{priceRange[1]}{priceRange[1] === 15000 ? '+' : ''}</Typography>
+              <Typography sx={{ fontSize: '12px', color: '#888', fontFamily: FONTS.PRIMARY }}>₹{priceRange[0]}</Typography>
+              <Typography sx={{ fontSize: '12px', color: '#888', fontFamily: FONTS.PRIMARY }}>₹{priceRange[1]}{priceRange[1] === 15000 ? '+' : ''}</Typography>
             </Box>
           </Box>
         </Box>
@@ -124,7 +126,7 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <StarBorderIcon sx={{ fontSize: '18px', color: '#666' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '14px', color: '#333' }}>Ratings</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '14px', color: '#333' }}>Ratings</Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             {['5 ★', '4 ★', '3 ★', '2 ★', '1 ★'].map((r) => (
@@ -137,13 +139,13 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
                   minWidth: 0, 
                   px: 1.5, 
                   py: 0.5, 
-                  fontFamily: '"DM Sans", sans-serif', 
+                  fontFamily: FONTS.PRIMARY, 
                   fontSize: '13px',
-                  borderColor: rating === r ? '#FF6200' : '#E5E7EB',
-                  color: rating === r ? '#FF6200' : '#666',
+                  borderColor: rating === r ? COLORS.PRIMARY : '#E5E7EB',
+                  color: rating === r ? COLORS.PRIMARY : '#666',
                   textTransform: 'none',
                   '&:hover': {
-                    borderColor: '#FF6200',
+                    borderColor: COLORS.PRIMARY,
                     bgcolor: 'transparent'
                   }
                 }}
@@ -158,7 +160,7 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <DesktopWindowsOutlinedIcon sx={{ fontSize: '18px', color: '#666' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '14px', color: '#333' }}>Online/Offline Availability</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '14px', color: '#333' }}>Online/Offline Availability</Typography>
           </Box>
           <ButtonGroup fullWidth sx={{ borderRadius: '8px', overflow: 'hidden' }}>
             {['All', 'Online', 'Offline'].map((avail) => (
@@ -166,13 +168,13 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
                 key={avail}
                 onClick={() => setAvailability(avail)}
                 sx={{ 
-                  bgcolor: availability === avail ? '#FF6200' : 'transparent', 
+                  bgcolor: availability === avail ? COLORS.PRIMARY : 'transparent', 
                   color: availability === avail ? 'white' : '#666', 
                   borderColor: availability === avail ? '#FF6200 !important' : '#E5E7EB !important', 
                   textTransform: 'none', 
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   '&:hover': { 
-                    bgcolor: availability === avail ? '#E65800' : 'rgba(0,0,0,0.02)' 
+                    bgcolor: availability === avail ? COLORS.PRIMARY_DARK : 'rgba(0,0,0,0.02)' 
                   }
                 }}
               >
@@ -186,14 +188,14 @@ export default function PurohitFilters({ onApplyFilters }: PurohitFiltersProps) 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <SpaOutlinedIcon sx={{ fontSize: '18px', color: '#666' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '14px', color: '#333' }}>Specialized Rituals</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '14px', color: '#333' }}>Specialized Rituals</Typography>
           </Box>
           <Select 
             value={rituals} 
             onChange={(e) => setRituals(e.target.value)}
             size="small" 
             fullWidth 
-            sx={{ borderRadius: '8px', fontFamily: '"DM Sans", sans-serif', fontSize: '14px', color: '#555', '.MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' } }}
+            sx={{ borderRadius: '8px', fontFamily: FONTS.PRIMARY, fontSize: '14px', color: '#555', '.MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' } }}
           >
             <MenuItem value="all">All Rituals</MenuItem>
             <MenuItem value="navagraha">Navagraha Shanti</MenuItem>

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import Link from "next/link";
 import { Box, Typography, Button, Divider } from "@mui/material";
@@ -19,11 +21,11 @@ export default function CartHeader() {
         <Box>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: "12px",
               letterSpacing: "1.5px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 0.5,
             }}
@@ -33,7 +35,7 @@ export default function CartHeader() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "28px", sm: "36px", md: "42px" },
@@ -44,7 +46,7 @@ export default function CartHeader() {
             <Box
               component="span"
               sx={{
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 fontStyle: "italic",
                 fontWeight: 700,
               }}
@@ -62,11 +64,11 @@ export default function CartHeader() {
             startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "12px !important" }} />}
             sx={{
               color: "#64534A",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontSize: "14px",
               fontWeight: 600,
               textTransform: "none",
-              "&:hover": { color: "#C84B16", bgcolor: "transparent" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "transparent" },
             }}
           >
             Continue Shopping
@@ -89,7 +91,7 @@ export default function CartHeader() {
         <Box
           sx={{
             px: 2,
-            color: "#C84B16",
+            color: COLORS.PRIMARY,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -104,7 +106,7 @@ export default function CartHeader() {
           >
             <path
               d="M12 2C12 2 8 7 8 11C8 13.2091 9.79086 15 12 15C14.2091 15 16 13.2091 16 11C16 7 12 2 12 2Z"
-              fill="#C84B16"
+              fill={COLORS.PRIMARY}
             />
             <path
               d="M12 6C12 6 10 9 10 11C10 12.1046 10.8954 13 12 13C13.1046 13 14 12.1046 14 11C14 9 12 6 12 6Z"

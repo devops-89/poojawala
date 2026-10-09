@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import { Box, Typography, Paper, Divider } from "@mui/material";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
@@ -32,11 +34,11 @@ export default function CustomerOrdersHero({
         <Box sx={{ maxWidth: 650 }}>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: { xs: "11px", sm: "12px" },
               letterSpacing: "1.5px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 0.8,
             }}
@@ -47,7 +49,7 @@ export default function CustomerOrdersHero({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "30px", sm: "42px", md: "48px" },
@@ -59,7 +61,7 @@ export default function CustomerOrdersHero({
             <Box
               component="span"
               sx={{
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 fontStyle: "italic",
                 fontWeight: 700,
               }}
@@ -70,7 +72,7 @@ export default function CustomerOrdersHero({
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: { xs: "13.5px", sm: "16px" },
               lineHeight: 1.6,
@@ -99,9 +101,9 @@ export default function CustomerOrdersHero({
         >
           <Typography
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               fontSize: { xs: "22px", sm: "36px" },
               lineHeight: 1,
               mb: 0.3,
@@ -111,7 +113,7 @@ export default function CustomerOrdersHero({
           </Typography>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: { xs: "10px", sm: "11px" },
               letterSpacing: "0.8px",

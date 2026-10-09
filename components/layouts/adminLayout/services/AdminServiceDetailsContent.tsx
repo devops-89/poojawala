@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
@@ -67,7 +68,7 @@ export default function AdminServiceDetailsContent() {
           minHeight: "50vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -81,7 +82,7 @@ export default function AdminServiceDetailsContent() {
         <Button
           component={NextLink}
           href="/admin/services"
-          sx={{ mt: 2, color: "#FF6200" }}
+          sx={{ mt: 2, color: COLORS.PRIMARY }}
         >
           Back to Services
         </Button>
@@ -113,7 +114,7 @@ export default function AdminServiceDetailsContent() {
             href={`/admin/services/edit/${params.id}`}
             variant="contained"
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               textTransform: "none",
               borderRadius: "12px",
@@ -122,7 +123,7 @@ export default function AdminServiceDetailsContent() {
               px: 3,
               boxShadow: "0 4px 14px 0 rgba(255, 98, 0, 0.39)",
               "&:hover": {
-                background: "#E65800",
+                background: COLORS.PRIMARY_DARK,
                 boxShadow: "0 6px 20px rgba(255, 98, 0, 0.23)",
               },
             }}

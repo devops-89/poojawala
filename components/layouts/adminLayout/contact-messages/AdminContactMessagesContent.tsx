@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteContactMessageAPI,
@@ -142,7 +144,7 @@ export default function AdminContactMessagesContent() {
       width: "12%",
       minWidth: 80,
       render: (msg) => (
-        <Typography sx={{ fontWeight: 700, color: "#FF6200", fontFamily: "var(--font-outfit), sans-serif" }}>
+        <Typography sx={{ fontWeight: 700, color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT }}>
           CM-{msg.id}
         </Typography>
       ),
@@ -153,7 +155,7 @@ export default function AdminContactMessagesContent() {
       width: "18%",
       minWidth: 120,
       render: (msg) => (
-        <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", fontSize: "0.85rem" }}>
+        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "0.85rem" }}>
           {moment(msg.createdAt).format("MMM DD, YYYY")}
         </Typography>
       ),
@@ -164,7 +166,7 @@ export default function AdminContactMessagesContent() {
       width: "25%",
       minWidth: 150,
       render: (msg) => (
-        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif" }}>
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT }}>
           {msg.name}
         </Typography>
       ),
@@ -175,7 +177,7 @@ export default function AdminContactMessagesContent() {
       width: "25%",
       minWidth: 180,
       render: (msg) => (
-        <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", fontSize: "0.9rem" }}>
+        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "0.9rem" }}>
           {msg.email}
         </Typography>
       ),
@@ -265,21 +267,21 @@ export default function AdminContactMessagesContent() {
       <Dialog open={viewModalOpen} onClose={() => setViewModalOpen(false)} maxWidth="sm" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px" } }}>
         {selectedMessage && (
           <>
-            <DialogTitle sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800, color: "#1e293b", borderBottom: "1px solid #e2e8f0", pb: 2 }}>
+            <DialogTitle sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b", borderBottom: "1px solid #e2e8f0", pb: 2 }}>
               Message Details
             </DialogTitle>
             <DialogContent sx={{ pt: 3 }}>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>From</Typography>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 600, color: "#1e293b", mb: 2 }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>From</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: "#1e293b", mb: 2 }}>
                 {selectedMessage.name} ({selectedMessage.email})
               </Typography>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>Subject</Typography>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 600, color: "#1e293b", mb: 2 }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>Subject</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: "#1e293b", mb: 2 }}>
                 {selectedMessage.subject}
               </Typography>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>Message</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>Message</Typography>
               <Paper elevation={0} sx={{ p: 2, bgcolor: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-                <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#334155", whiteSpace: "pre-wrap" }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#334155", whiteSpace: "pre-wrap" }}>
                   {selectedMessage.message}
                 </Typography>
               </Paper>
@@ -300,19 +302,19 @@ export default function AdminContactMessagesContent() {
       />
 
       <Dialog open={statusModalOpen} onClose={() => setStatusModalOpen(false)} maxWidth="sm" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px" } }}>
-        <DialogTitle sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800, color: "#1e293b", borderBottom: "1px solid #e2e8f0", pb: 2 }}>
+        <DialogTitle sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b", borderBottom: "1px solid #e2e8f0", pb: 2 }}>
           {statusToChange?.status === "READ" ? "Update Message Status to READ" : "Change Status"}
         </DialogTitle>
         <DialogContent sx={{ pt: 3 }}>
           {statusToChange?.messageObj && (
             <Box sx={{ mb: 2.5, p: 2, bgcolor: "#f8fafc", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700, color: "#1e293b", fontSize: "0.9rem" }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#1e293b", fontSize: "0.9rem" }}>
                 {statusToChange.messageObj.name} ({statusToChange.messageObj.email})
               </Typography>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", fontSize: "0.85rem", mt: 0.5 }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "0.85rem", mt: 0.5 }}>
                 <b>Subject:</b> {statusToChange.messageObj.subject}
               </Typography>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#475569", fontSize: "0.85rem", mt: 1, whiteSpace: "pre-wrap" }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#475569", fontSize: "0.85rem", mt: 1, whiteSpace: "pre-wrap" }}>
                 &quot;{statusToChange.messageObj.message}&quot;
               </Typography>
             </Box>
@@ -320,7 +322,7 @@ export default function AdminContactMessagesContent() {
 
           {statusToChange?.status === "READ" ? (
             <Box>
-              <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700, color: "#1e293b", mb: 1, fontSize: "0.9rem" }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#1e293b", mb: 1, fontSize: "0.9rem" }}>
                 Reply / Note Message
               </Typography>
               <TextField
@@ -330,18 +332,18 @@ export default function AdminContactMessagesContent() {
                 placeholder="Write reply or note message here..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px", fontFamily: "var(--font-outfit), sans-serif" } }}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px", fontFamily: FONTS.OUTFIT } }}
               />
             </Box>
           ) : (
-            <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b" }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b" }}>
               Are you sure you want to change the status of this message to <b>{statusToChange?.status}</b>?
             </Typography>
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, pt: 1 }}>
           <Button onClick={() => setStatusModalOpen(false)} sx={{ color: "#64748b", fontWeight: 600 }}>Cancel</Button>
-          <Button onClick={handleStatusChange} disabled={statusUpdating} variant="contained" sx={{ bgcolor: "#FF6200", color: "white", "&:hover": { bgcolor: "#E65800" }, boxShadow: "none", borderRadius: "8px", px: 3 }}>
+          <Button onClick={handleStatusChange} disabled={statusUpdating} variant="contained" sx={{ bgcolor: COLORS.PRIMARY, color: "white", "&:hover": { bgcolor: COLORS.PRIMARY_DARK }, boxShadow: "none", borderRadius: "8px", px: 3 }}>
             {statusUpdating ? "Submitting..." : "Submit"}
           </Button>
         </DialogActions>

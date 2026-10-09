@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EventIcon from '@mui/icons-material/Event';
@@ -37,14 +39,14 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
   return (
     <Box sx={{ mb: 5 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
+        <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1e293b' }}>
           Recent Bookings
         </Typography>
         <Button
           component={NextLink}
           href="/customer/bookings"
           endIcon={<ArrowForwardIcon />}
-          sx={{ color: '#FF6200', textTransform: 'none', fontWeight: 700 }}
+          sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700 }}
         >
           View All Bookings
         </Button>
@@ -52,7 +54,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
 
       {recentBookings.length === 0 ? (
         <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
             No recent bookings found.
           </Typography>
         </Paper>
@@ -80,7 +82,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                   }}
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1e293b', fontSize: '1.2rem' }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1e293b', fontSize: '1.2rem' }}>
                       {row.service?.name || 'Puja Service'}
                     </Typography>
                     {(() => {
@@ -91,7 +93,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                           size="small"
                           sx={{
                             fontWeight: 700,
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: '11px',
                             height: '24px',
                             bgcolor: statusStyle.bg,
@@ -101,7 +103,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                       );
                     })()}
                   </Box>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px', mb: 2 }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 2 }}>
                     Booking ID: <span style={{ fontWeight: 700, color: '#1e293b' }}>B-{row.id}</span>
                   </Typography>
 
@@ -109,7 +111,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <EventIcon sx={{ color: '#FF6200', fontSize: 18 }} />
+                      <EventIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
                       <Typography sx={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Date:</Typography>
                     </Box>
                     <Typography sx={{ fontSize: '14px', fontWeight: 700, color: '#333' }}>
@@ -125,7 +127,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <AccountBalanceWalletIcon sx={{ color: '#FF6200', fontSize: 18 }} />
+                      <AccountBalanceWalletIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
                       <Typography sx={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Amount:</Typography>
                     </Box>
                     <Typography sx={{ fontSize: '14px', fontWeight: 800, color: '#333' }}>
@@ -139,12 +141,12 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                       variant="outlined"
                       size="small"
                       sx={{
-                        color: '#FF6200',
-                        borderColor: '#FF6200',
+                        color: COLORS.PRIMARY,
+                        borderColor: COLORS.PRIMARY,
                         textTransform: 'none',
                         fontWeight: 700,
                         borderRadius: '8px',
-                        '&:hover': { bgcolor: '#FFF5F0', borderColor: '#FF6200' },
+                        '&:hover': { bgcolor: '#FFF5F0', borderColor: COLORS.PRIMARY },
                       }}
                     >
                       View Details

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import { Box, Button, Chip, Divider, Paper, Typography } from "@mui/material";
@@ -65,7 +67,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
           >
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 fontSize: "18px",
                 color: "#1A1A1A",
@@ -79,7 +81,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
                 size="small"
                 sx={{
                   bgcolor: isStandard ? "#F0FDF4" : "#FFF8F5",
-                  color: isStandard ? "#16A34A" : "#FF6200",
+                  color: isStandard ? "#16A34A" : COLORS.PRIMARY,
                   border: isStandard ? "1px solid #BBF7D0" : "1px solid #FFD8C2",
                   fontWeight: 700,
                   fontSize: "11px",
@@ -106,7 +108,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
           </Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: "14px",
             }}
@@ -117,10 +119,10 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
         </Box>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             fontSize: "22px",
-            color: "#FF6200",
+            color: COLORS.PRIMARY,
           }}
         >
           {req.price}
@@ -138,7 +140,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <EventIcon sx={{ color: "#FF6200", fontSize: 18 }} />
+          <EventIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
           <Box>
             <Typography
               sx={{
@@ -152,7 +154,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 600,
                 color: "#333",
@@ -163,7 +165,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
           </Box>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <TimerIcon sx={{ color: "#FF6200", fontSize: 18 }} />
+          <TimerIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
           <Box>
             <Typography
               sx={{
@@ -177,7 +179,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 600,
                 color: "#333",
@@ -197,7 +199,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
         >
           <LocationOnIcon
             sx={{
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               fontSize: 18,
               flexShrink: 0,
               mt: 0.2,
@@ -216,7 +218,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 600,
                 color: "#333",
@@ -235,14 +237,14 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
           fullWidth
           onClick={() => onRespond(bookingId, "ACCEPT")}
           sx={{
-            background: "#FF6200",
+            background: COLORS.PRIMARY,
             color: "white",
             textTransform: "none",
             fontWeight: 700,
             borderRadius: "8px",
             py: 1.2,
             boxShadow: "none",
-            "&:hover": { background: "#F05A00" },
+            "&:hover": { background: COLORS.PRIMARY_DARK },
           }}
         >
           Accept Booking

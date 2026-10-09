@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from 'react';
 import {
@@ -59,15 +61,15 @@ export default function AdminDataTable<T = any>({
             px: 2,
             pt: 1,
             borderBottom: '1px solid #e2e8f0',
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200' },
+            '& .MuiTabs-indicator': { backgroundColor: COLORS.PRIMARY },
             '& .MuiTab-root': {
               textTransform: 'none',
               fontWeight: 600,
               color: '#64748b',
               minWidth: 100,
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
             },
-            '& .MuiTab-root.Mui-selected': { color: '#FF6200' },
+            '& .MuiTab-root.Mui-selected': { color: COLORS.PRIMARY },
           }}
         >
           {tabs.map((tab) => (
@@ -92,7 +94,7 @@ export default function AdminDataTable<T = any>({
                     py: 2,
                     minWidth: col.minWidth,
                     width: col.width,
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                   }}
                 >
                   {col.label}
@@ -104,7 +106,7 @@ export default function AdminDataTable<T = any>({
             {isLoading ? (
               <TableRow>
                 <TableCell colSpan={columns.length} align="center" sx={{ py: 6 }}>
-                  <CircularProgress sx={{ color: '#FF6200' }} />
+                  <CircularProgress sx={{ color: COLORS.PRIMARY }} />
                 </TableCell>
               </TableRow>
             ) : data.length === 0 ? (
@@ -113,7 +115,7 @@ export default function AdminDataTable<T = any>({
                   <Typography
                     sx={{
                       color: '#64748b',
-                      fontFamily: 'var(--font-outfit), sans-serif',
+                      fontFamily: FONTS.OUTFIT,
                     }}
                   >
                     {emptyMessage}
@@ -142,7 +144,7 @@ export default function AdminDataTable<T = any>({
                         sx={{
                           width: col.width,
                           minWidth: col.minWidth,
-                          fontFamily: 'var(--font-outfit), sans-serif',
+                          fontFamily: FONTS.OUTFIT,
                         }}
                       >
                         {col.render
@@ -170,10 +172,26 @@ export default function AdminDataTable<T = any>({
           onRowsPerPageChange={(e) => {
             onRowsPerPageChange?.(parseInt(e.target.value, 10));
           }}
+          slotProps={{
+            select: {
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                disableScrollLock: true,
+              },
+            },
+          }}
           sx={{
             borderTop: '1px solid #e2e8f0',
             '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
             },
           }}
         />

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -66,7 +68,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
           minHeight: "65vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -84,7 +86,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#64748b",
             mb: 2,
           }}
@@ -97,11 +99,11 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           sx={{
-            borderColor: "#FF6200",
-            color: "#FF6200",
+            borderColor: COLORS.PRIMARY,
+            color: COLORS.PRIMARY,
             borderRadius: "12px",
             textTransform: "none",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Back to Blogs List
@@ -156,7 +158,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
     if (parts.length > 1) {
       return (
         <>
-          <span style={{ fontStyle: "italic", color: "#FF6200" }}>{parts[0]}:</span>{" "}
+          <span style={{ fontStyle: "italic", color: COLORS.PRIMARY }}>{parts[0]}:</span>{" "}
           {parts.slice(1).join(":")}
         </>
       );
@@ -194,7 +196,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
             style={{
               textDecoration: "none",
               color: "#64748b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               fontSize: "14px",
             }}
@@ -203,8 +205,8 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
           </NextLink>
           <Typography
             sx={{
-              color: "#FF6200",
-              fontFamily: "var(--font-outfit), sans-serif",
+              color: COLORS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "14px",
             }}
@@ -221,15 +223,15 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
             variant="contained"
             startIcon={<EditIcon />}
             sx={{
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               borderRadius: "12px",
               textTransform: "none",
               fontWeight: 700,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               px: 3,
               boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
-              "&:hover": { bgcolor: "#E65800" },
+              "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
             }}
           >
             Edit Post
@@ -248,7 +250,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                 label={isPublished ? "PUBLISHED" : "DRAFT"}
                 sx={{
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "0.75rem",
                   bgcolor: isPublished ? "#e0f2fe" : "#f1f5f9",
                   color: isPublished ? "#0284c7" : "#64748b",
@@ -262,7 +264,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                   label="Featured Article"
                   sx={{
                     fontWeight: 700,
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "0.75rem",
                     bgcolor: "#fef3c7",
                     color: "#d97706",
@@ -276,10 +278,10 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                 label={categoryName}
                 sx={{
                   fontWeight: 800,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "0.75rem",
                   bgcolor: "#FFF0E6",
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                   borderRadius: "6px",
                   px: 0.5,
                 }}
@@ -311,9 +313,9 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                   width: 50,
                   height: 50,
                   bgcolor: "#FFF0E6",
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "1.05rem",
                   border: "2.5px solid #FF6200",
                   boxShadow: "0 2px 8px rgba(255, 98, 0, 0.2)",
@@ -336,7 +338,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
 
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "0.825rem",
                     color: "#64748B",
                     fontWeight: 500,
@@ -385,7 +387,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
         <Box
           sx={{
             mb: 5,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontSize: "1.08rem",
             color: "#334155",
             lineHeight: 1.85,
@@ -401,7 +403,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
             "& h2": {
               fontSize: "1.65rem",
               fontWeight: 700,
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               mt: 3,
               mb: 1.5,
               fontFamily: '"Georgia", serif',
@@ -444,10 +446,10 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
               fontSize: "1.1rem",
             },
             "& a": {
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               textDecoration: "underline",
               fontWeight: 600,
-              "&:hover": { color: "#E65800" },
+              "&:hover": { color: COLORS.PRIMARY_DARK },
             },
             "& strong, & b": {
               fontWeight: 700,
@@ -480,7 +482,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                   sx={{
                     fontFamily: '"Georgia", serif',
                     fontWeight: 700,
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     fontSize: { xs: "1.35rem", sm: "1.6rem" },
                     letterSpacing: "-0.01em",
                   }}
@@ -490,7 +492,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
 
                 <Box
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "1.025rem",
                     color: "#475569",
                     lineHeight: 1.8,
@@ -506,7 +508,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                       bgcolor: "#FFF8F2",
                       borderRadius: "0 8px 8px 0",
                     },
-                    "& a": { color: "#FF6200", textDecoration: "underline" },
+                    "& a": { color: COLORS.PRIMARY, textDecoration: "underline" },
                   }}
                   dangerouslySetInnerHTML={{ __html: secDesc }}
                 />

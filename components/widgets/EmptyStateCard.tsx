@@ -4,6 +4,8 @@ import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { useRouter } from 'next/navigation';
+import { COLORS } from '@/utils/enums';
+import { FONTS } from '@/utils/fonts';
 
 import { EmptyStateCardProps } from '@/utils/types';
 export type { EmptyStateCardProps };
@@ -52,11 +54,11 @@ export default function EmptyStateCard({
           borderRadius: '20px',
           bgcolor: '#FFF7ED',
           border: '1.5px solid #FED7AA',
-          color: '#FF6200',
+          color: COLORS.BRAND_ORANGE,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 6px 18px rgba(255, 98, 0, 0.1)',
+          boxShadow: `0 6px 18px ${COLORS.PRIMARY_SHADOW}`,
         }}
       >
         {icon || <AutoAwesomeOutlinedIcon sx={{ fontSize: 32 }} />}
@@ -67,7 +69,7 @@ export default function EmptyStateCard({
         <Typography
           component="h3"
           sx={{
-            fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             fontSize: { xs: '20px', sm: '22px' },
             color: '#2C1810',
@@ -80,9 +82,9 @@ export default function EmptyStateCard({
 
         <Typography
           sx={{
-            fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+            fontFamily: FONTS.OUTFIT,
             fontSize: '14.5px',
-            color: '#64748b',
+            color: COLORS.SLATE_MUTED,
             maxWidth: '440px',
             mx: 'auto',
             lineHeight: 1.55,
@@ -101,16 +103,16 @@ export default function EmptyStateCard({
             px: 3.5,
             py: 1.1,
             borderRadius: '31px',
-            bgcolor: '#FF6200',
-            color: '#FFFFFF',
+            bgcolor: COLORS.BRAND_ORANGE,
+            color: COLORS.WHITE,
             fontWeight: 700,
             fontSize: '14px',
-            fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+            fontFamily: FONTS.OUTFIT,
             textTransform: 'none',
-            boxShadow: '0 4px 14px rgba(255, 98, 0, 0.25)',
+            boxShadow: `0 4px 14px ${COLORS.PRIMARY_SHADOW}`,
             '&:hover': {
-              bgcolor: '#E65800',
-              boxShadow: '0 6px 18px rgba(255, 98, 0, 0.35)',
+              bgcolor: COLORS.PRIMARY_DARK,
+              boxShadow: `0 6px 18px ${COLORS.PRIMARY_SHADOW}`,
             },
           }}
         >

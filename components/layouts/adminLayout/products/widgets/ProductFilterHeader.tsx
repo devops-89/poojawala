@@ -1,8 +1,10 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, InputAdornment, Tab, Tabs, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const STATUS_TABS = [
   { id: "All", label: "All" },
@@ -24,6 +26,20 @@ export default function ProductFilterHeader({
   onSearchChange,
 }: ProductFilterHeaderProps) {
   const [focused, setFocused] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchValue || "");
+
+  useEffect(() => {
+    setLocalSearch(searchValue || "");
+  }, [searchValue]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (onSearchChange && localSearch !== (searchValue || "")) {
+        onSearchChange(localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [localSearch, onSearchChange, searchValue]);
 
   return (
     <Box
@@ -44,7 +60,7 @@ export default function ProductFilterHeader({
         sx={{
           minHeight: 48,
           "& .MuiTabs-indicator": {
-            backgroundColor: "#FF6200",
+            backgroundColor: COLORS.PRIMARY,
             height: 3,
             borderRadius: "3px 3px 0 0",
           },
@@ -60,9 +76,9 @@ export default function ProductFilterHeader({
               textTransform: "none",
               fontWeight: 600,
               fontSize: "0.875rem",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
-              "&.Mui-selected": { color: "#FF6200" },
+              "&.Mui-selected": { color: COLORS.PRIMARY },
             }}
           />
         ))}
@@ -71,8 +87,8 @@ export default function ProductFilterHeader({
       <TextField
         size="small"
         placeholder="Search products by name..."
-        value={searchValue}
-        onChange={(e) => onSearchChange(e.target.value)}
+        value={localSearch}
+        onChange={(e) => setLocalSearch(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         sx={{
@@ -80,16 +96,16 @@ export default function ProductFilterHeader({
           transition: "all 0.2s ease-in-out",
           "& .MuiOutlinedInput-root": {
             borderRadius: "12px",
-            borderColor: focused ? "#FF6200" : "#e2e8f0",
-            "&:hover fieldset": { borderColor: "#FF6200" },
-            "&.Mui-focused fieldset": { borderColor: "#FF6200" },
+            borderColor: focused ? COLORS.PRIMARY : "#e2e8f0",
+            "&:hover fieldset": { borderColor: COLORS.PRIMARY },
+            "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY },
           },
         }}
         slotProps={{
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: focused ? "#FF6200" : "#94a3b8" }} />
+                <SearchIcon sx={{ color: focused ? COLORS.PRIMARY : "#94a3b8" }} />
               </InputAdornment>
             ),
           },

@@ -20,6 +20,8 @@ import { addComplaintAPI } from '@/api/bookingControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useTicketModalStore } from '@/stores/ticketModalStore';
 import { convertImageToWebP } from '@/utils/imageHelper';
+import { COLORS } from '@/utils/enums';
+import { FONTS } from '@/utils/fonts';
 
 const CATEGORIES = [
   { value: 'SERVICE_NOT_PROVIDED', label: 'Service Not Provided' },
@@ -105,7 +107,7 @@ export default function RaiseTicketModal() {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" sx={{ '& .MuiDialog-paper': { borderRadius: '16px', p: 1 } }}>
-      <DialogTitle sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <DialogTitle sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.SLATE_DARK, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         Raise a Ticket
         <IconButton onClick={onClose} size="small">
           <CloseIcon />
@@ -114,25 +116,25 @@ export default function RaiseTicketModal() {
       
       <DialogContent sx={{ mt: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, py: 1 }}>
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px' }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px' }}>
             Please provide details about your issue. We will get back to you shortly.
           </Typography>
 
           <FormControl fullWidth variant="outlined">
-            <InputLabel id="category-label" sx={{ fontFamily: '"DM Sans", sans-serif' }}>Category *</InputLabel>
+            <InputLabel id="category-label" sx={{ fontFamily: FONTS.PRIMARY }}>Category *</InputLabel>
             <Select
               labelId="category-label"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               label="Category *"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FF6200 !important' },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: `${COLORS.BRAND_ORANGE} !important` },
               }}
             >
               {CATEGORIES.map((c) => (
-                <MenuItem key={c.value} value={c.value} sx={{ fontFamily: '"DM Sans", sans-serif' }}>
+                <MenuItem key={c.value} value={c.value} sx={{ fontFamily: FONTS.PRIMARY }}>
                   {c.label}
                 </MenuItem>
               ))}
@@ -146,10 +148,10 @@ export default function RaiseTicketModal() {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             sx={{
-              '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
-              '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' },
-              '& .Mui-focused fieldset': { borderColor: '#FF6200 !important' },
-              '& label.Mui-focused': { color: '#FF6200' }
+              '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
+              '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY },
+              '& .Mui-focused fieldset': { borderColor: `${COLORS.BRAND_ORANGE} !important` },
+              '& label.Mui-focused': { color: COLORS.BRAND_ORANGE }
             }}
           />
 
@@ -162,15 +164,15 @@ export default function RaiseTicketModal() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             sx={{
-              '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
-              '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' },
-              '& .Mui-focused fieldset': { borderColor: '#FF6200 !important' },
-              '& label.Mui-focused': { color: '#FF6200' }
+              '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
+              '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY },
+              '& .Mui-focused fieldset': { borderColor: `${COLORS.BRAND_ORANGE} !important` },
+              '& label.Mui-focused': { color: COLORS.BRAND_ORANGE }
             }}
           />
 
           <Box>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b', mb: 1, fontSize: '14px' }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.SLATE_DARK, mb: 1, fontSize: '14px' }}>
               Evidence / Screenshots (Optional)
             </Typography>
             <Button
@@ -179,9 +181,9 @@ export default function RaiseTicketModal() {
               startIcon={<CloudUploadIcon />}
               sx={{
                 textTransform: 'none',
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 600,
-                color: '#64748b',
+                color: COLORS.SLATE_MUTED,
                 borderColor: '#e2e8f0',
                 borderRadius: '8px',
                 '&:hover': { borderColor: '#cbd5e1', bgcolor: '#f8fafc' }
@@ -199,7 +201,7 @@ export default function RaiseTicketModal() {
             {evidence.length > 0 && (
               <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {evidence.map((file, idx) => (
-                  <Typography key={idx} sx={{ fontSize: '12px', color: '#1e293b', bgcolor: '#f1f5f9', px: 1, py: 0.5, borderRadius: '4px' }}>
+                  <Typography key={idx} sx={{ fontSize: '12px', color: COLORS.SLATE_DARK, bgcolor: '#f1f5f9', px: 1, py: 0.5, borderRadius: '4px' }}>
                     {file.name}
                   </Typography>
                 ))}
@@ -210,7 +212,7 @@ export default function RaiseTicketModal() {
       </DialogContent>
       
       <DialogActions sx={{ p: 2, pt: 0 }}>
-        <Button onClick={onClose} sx={{ color: '#64748b', textTransform: 'none', fontWeight: 600, fontFamily: '"DM Sans", sans-serif' }}>
+        <Button onClick={onClose} sx={{ color: COLORS.SLATE_MUTED, textTransform: 'none', fontWeight: 600, fontFamily: FONTS.PRIMARY }}>
           Cancel
         </Button>
         <Box 
@@ -227,13 +229,13 @@ export default function RaiseTicketModal() {
             border: 'none',
             cursor: (isSubmitting || !category || !subject || !description) ? 'default' : 'pointer',
             transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            backgroundColor: (isSubmitting || !category || !subject || !description) ? '#e2e8f0' : '#FF6200',
-            color: (isSubmitting || !category || !subject || !description) ? '#94a3b8' : '#ffffff',
+            backgroundColor: (isSubmitting || !category || !subject || !description) ? '#e2e8f0' : COLORS.BRAND_ORANGE,
+            color: (isSubmitting || !category || !subject || !description) ? '#94a3b8' : COLORS.WHITE,
             borderRadius: '8px',
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             textTransform: 'none',
             fontWeight: 600,
-            '&:hover': { backgroundColor: (isSubmitting || !category || !subject || !description) ? '#e2e8f0' : '#E65800' }
+            '&:hover': { backgroundColor: (isSubmitting || !category || !subject || !description) ? '#e2e8f0' : COLORS.PRIMARY_DARK }
           }}
         >
           {isSubmitting ? 'Submitting...' : 'Submit Ticket'}

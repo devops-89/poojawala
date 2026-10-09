@@ -3,6 +3,8 @@
 import React from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import { COLORS } from '@/utils/enums';
+import { FONTS } from '@/utils/fonts';
 
 export default function GlobalSnackbar() {
   const { open, message, severity, hideSnackbar } = useSnackbarStore();
@@ -37,13 +39,13 @@ export default function GlobalSnackbar() {
         sx={{
           width: 'auto',
           maxWidth: '100%',
-          color: '#ffffff',
+          color: COLORS.WHITE,
           borderRadius: '12px',
           boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
           px: 2.5,
           py: 1,
           fontWeight: 600,
-          fontFamily: 'var(--font-inter), sans-serif',
+          fontFamily: FONTS.INTER,
           display: 'flex',
           alignItems: 'center',
           '& .MuiAlert-icon': {

@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { PurohitCardProps } from '@/utils/types';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function PurohitCard({ id, title, image, price, duration, category, language = 'Hindi, English, Sanskrit', experience = '5+ Years', rating = '4.8', availability = 'Online', bio, specialization }: PurohitCardProps) {
   const router = useRouter();
@@ -36,7 +38,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
       {/* Top Right Rating (Replaced Heart Icon) */}
       <Box sx={{ position: 'absolute', top: 12, right: 12, display: 'flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(255,255,255,0.9)', px: 1, py: 0.5, borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
         <StarIcon sx={{ fontSize: '16px', color: '#FFB400' }} />
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#333' }}>
+        <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', fontWeight: 600, color: '#333' }}>
           {rating}
         </Typography>
       </Box>
@@ -57,7 +59,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
       {/* Content Area */}
       <CardContent sx={{ flexGrow: 1, p: 3, pt: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-          <Typography component="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '18px', color: '#1A1A1A' }}>
+          <Typography component="h3" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '18px', color: '#1A1A1A' }}>
             {title}
           </Typography>
           <VerifiedIcon sx={{ color: '#1976d2', fontSize: '18px' }} />
@@ -65,21 +67,21 @@ export default function PurohitCard({ id, title, image, price, duration, categor
         
         {/* Category / Qualification */}
         {category && (
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#FF6200', fontSize: '13px', fontWeight: 500, mb: 1 }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.PRIMARY, fontSize: '13px', fontWeight: 500, mb: 1 }}>
             {category}
           </Typography>
         )}
 
         {/* Bio */}
         {bio && (
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '13px', mb: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '13px', mb: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {bio}
           </Typography>
         )}
 
         {/* Specialization */}
         {specialization && (
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#444', fontSize: '12px', mb: 2, fontStyle: 'italic' }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#444', fontSize: '12px', mb: 2, fontStyle: 'italic' }}>
             Spec: {specialization}
           </Typography>
         )}
@@ -93,7 +95,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
           borderRadius: '12px',
           fontSize: '12px',
           fontWeight: 600,
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           mb: 2,
           display: 'inline-block'
         }}>
@@ -103,11 +105,11 @@ export default function PurohitCard({ id, title, image, price, duration, categor
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 2, color: '#555', mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <LanguageIcon sx={{ fontSize: '14px' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', textTransform: 'capitalize' }}>{language}</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', textTransform: 'capitalize' }}>{language}</Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <PersonOutlinedIcon sx={{ fontSize: '14px' }} />
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px' }}>{experience}</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px' }}>{experience}</Typography>
           </Box>
         </Box>
 
@@ -121,7 +123,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
             }}
             sx={{
               width: '100%',
-              background: '#FF6200',
+              background: COLORS.PRIMARY,
               color: 'white',
               borderRadius: '31px',
               textTransform: 'none',
@@ -131,7 +133,7 @@ export default function PurohitCard({ id, title, image, price, duration, categor
               fontSize: '14px',
               boxShadow: 'none',
               '&:hover': {
-                background: '#E65800',
+                background: COLORS.PRIMARY_DARK,
                 boxShadow: 'none',
               }
             }}

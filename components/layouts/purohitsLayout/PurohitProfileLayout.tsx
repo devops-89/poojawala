@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { getPurohitByIdAPI } from '@/api/userControllers';
 import { useEffect } from 'react';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 interface PurohitProfileLayoutProps {
   id?: string;
@@ -61,7 +63,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
   if (loading || !purohit) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 10, bgcolor: '#fff' }}>
-        <CircularProgress sx={{ color: '#FF6200' }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -103,39 +105,39 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
             <Box sx={{ textAlign: { xs: 'center', md: 'left' }, flexGrow: 1 }}>
               <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'center', md: 'center' }, gap: 2, mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography component="h1" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: { xs: '28px', md: '36px' }, color: '#1A1A1A' }}>
+                  <Typography component="h1" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: { xs: '28px', md: '36px' }, color: '#1A1A1A' }}>
                     {purohit.title}
                   </Typography>
                   <VerifiedIcon sx={{ color: '#1976d2', fontSize: '28px' }} />
                 </Box>
-                <Chip label={purohit.availability} size="small" sx={{ bgcolor: '#4CAF50', color: 'white', fontWeight: 600, fontFamily: '"DM Sans", sans-serif', height: '24px' }} />
+                <Chip label={purohit.availability} size="small" sx={{ bgcolor: '#4CAF50', color: 'white', fontWeight: 600, fontFamily: FONTS.PRIMARY, height: '24px' }} />
               </Box>
 
               <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' }, gap: 3, color: '#555', mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <SchoolIcon sx={{ fontSize: '18px', color: '#FF6200' }} />
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '15px' }}>{purohit.education}</Typography>
+                  <SchoolIcon sx={{ fontSize: '18px', color: COLORS.PRIMARY }} />
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '15px' }}>{purohit.education}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LanguageIcon sx={{ fontSize: '18px', color: '#FF6200' }} />
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '15px' }}>{purohit.language}</Typography>
+                  <LanguageIcon sx={{ fontSize: '18px', color: COLORS.PRIMARY }} />
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '15px' }}>{purohit.language}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PersonOutlinedIcon sx={{ fontSize: '18px', color: '#FF6200' }} />
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '15px' }}>{purohit.experience}</Typography>
+                  <PersonOutlinedIcon sx={{ fontSize: '18px', color: COLORS.PRIMARY }} />
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '15px' }}>{purohit.experience}</Typography>
                 </Box>
               </Box>
 
               <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' }, gap: 1, mb: 3 }}>
                 {(showAllExpertise ? purohit.expertise : purohit.expertise.slice(0, 4)).map((item: any, idx: number) => (
-                  <Chip key={idx} label={item} size="small" sx={{ bgcolor: 'white', border: '1px solid #FFE0D0', color: '#FF6200', fontFamily: '"DM Sans", sans-serif', fontWeight: 500 }} />
+                  <Chip key={idx} label={item} size="small" sx={{ bgcolor: 'white', border: '1px solid #FFE0D0', color: COLORS.PRIMARY, fontFamily: FONTS.PRIMARY, fontWeight: 500 }} />
                 ))}
                 {!showAllExpertise && purohit.expertise.length > 4 && (
                   <Chip 
                     label={`+${purohit.expertise.length - 4} more`} 
                     size="small" 
                     onClick={() => setShowAllExpertise(true)}
-                    sx={{ bgcolor: 'transparent', color: '#777', fontFamily: '"DM Sans", sans-serif', cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }} 
+                    sx={{ bgcolor: 'transparent', color: '#777', fontFamily: FONTS.PRIMARY, cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }} 
                   />
                 )}
                 {showAllExpertise && purohit.expertise.length > 4 && (
@@ -143,7 +145,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     label="Show less" 
                     size="small" 
                     onClick={() => setShowAllExpertise(false)}
-                    sx={{ bgcolor: 'transparent', color: '#777', fontFamily: '"DM Sans", sans-serif', cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }} 
+                    sx={{ bgcolor: 'transparent', color: '#777', fontFamily: FONTS.PRIMARY, cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }} 
                   />
                 )}
               </Box>
@@ -152,10 +154,10 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <StarIcon sx={{ fontSize: '24px', color: '#FFB400' }} />
                   <Box sx={{ textAlign: 'left' }}>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', fontWeight: 700, color: '#333', lineHeight: 1.2 }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '16px', fontWeight: 700, color: '#333', lineHeight: 1.2 }}>
                       {purohit.rating}
                     </Typography>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#777' }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#777' }}>
                       {purohit.reviews} Reviews
                     </Typography>
                   </Box>
@@ -164,12 +166,12 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                 <Divider orientation="vertical" flexItem sx={{ height: '30px', my: 'auto', display: { xs: 'none', md: 'block' } }} />
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PeopleOutlined sx={{ fontSize: '24px', color: '#FF6200' }} />
+                  <PeopleOutlined sx={{ fontSize: '24px', color: COLORS.PRIMARY }} />
                   <Box sx={{ textAlign: 'left' }}>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', fontWeight: 700, color: '#333', lineHeight: 1.2 }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '16px', fontWeight: 700, color: '#333', lineHeight: 1.2 }}>
                       1,200+
                     </Typography>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#777' }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#777' }}>
                       Consultations
                     </Typography>
                   </Box>
@@ -180,11 +182,11 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <SecurityIcon sx={{ color: '#4CAF50', fontSize: '20px' }} />
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '13px', color: '#2e7d32' }}>ID Verified</Typography>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '13px', color: '#2e7d32' }}>ID Verified</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <WorkspacePremiumIcon sx={{ color: '#FFB400', fontSize: '20px' }} />
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: '13px', color: '#f57f17' }}>Certified Scholar</Typography>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: '13px', color: '#f57f17' }}>Certified Scholar</Typography>
                   </Box>
                 </Box>
               </Box>
@@ -201,17 +203,17 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
             
 
             <Paper sx={{ p: 4, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', mb: 4, border: '1px solid #f0f0f0' }}>
-              <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
+              <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 About Pandit Ji
               </Typography>
               <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '180px', mb: 2, display: 'block', opacity: 0.8 }} />
-              <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', color: '#555', lineHeight: 1.8 }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '16px', color: '#555', lineHeight: 1.8 }}>
                 {purohit.bio}
               </Typography>
             </Paper>
 
             <Paper sx={{ p: 4, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', mb: 4, border: '1px solid #f0f0f0' }}>
-              <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
+              <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 Expertise & Services
               </Typography>
               <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '230px', mb: 2.5, display: 'block', opacity: 0.8 }} />
@@ -221,9 +223,9 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     key={index} 
                     label={item} 
                     sx={{ 
-                      fontFamily: '"DM Sans", sans-serif', 
+                      fontFamily: FONTS.PRIMARY, 
                       bgcolor: '#FFF5F0', 
-                      color: '#FF6200',
+                      color: COLORS.PRIMARY,
                       fontWeight: 600,
                       px: 1,
                       py: 2,
@@ -235,16 +237,16 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
             </Paper>
 
             <Paper sx={{ p: 4, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', mb: 4, border: '1px solid #f0f0f0' }}>
-              <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
+              <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 Client Reviews
               </Typography>
               <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '175px', mb: 2.5, display: 'block', opacity: 0.8 }} />
               {/* Dummy Review 1 */}
               <Box sx={{ mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                  <Avatar sx={{ bgcolor: '#FF6200' }}>R</Avatar>
+                  <Avatar sx={{ bgcolor: COLORS.PRIMARY }}>R</Avatar>
                   <Box>
-                    <Typography component="div" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="div" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', gap: 1 }}>
                       Rakesh Sharma
                       <Chip label="Verified User" size="small" icon={<VerifiedIcon sx={{ fontSize: '14px !important' }}/>} sx={{ height: '20px', fontSize: '10px', bgcolor: '#E8F5E9', color: '#2E7D32' }} />
                     </Typography>
@@ -253,7 +255,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     </Box>
                   </Box>
                 </Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '14px', color: '#555', ml: 7 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '14px', color: '#555', ml: 7 }}>
                   "Very knowledgeable and punctual. The puja was conducted very peacefully and properly."
                 </Typography>
               </Box>
@@ -263,7 +265,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
                   <Avatar sx={{ bgcolor: '#4CAF50' }}>A</Avatar>
                   <Box>
-                    <Typography component="div" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="div" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', gap: 1 }}>
                       Anjali Gupta
                       <Chip label="Verified User" size="small" icon={<VerifiedIcon sx={{ fontSize: '14px !important' }}/>} sx={{ height: '20px', fontSize: '10px', bgcolor: '#E8F5E9', color: '#2E7D32' }} />
                     </Typography>
@@ -272,7 +274,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     </Box>
                   </Box>
                 </Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '14px', color: '#555', ml: 7 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '14px', color: '#555', ml: 7 }}>
                   "Pandit ji explained the meaning of all mantras clearly. Great experience."
                 </Typography>
               </Box>
@@ -280,7 +282,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
 
             {/* Visual Gallery */}
             <Paper sx={{ p: 4, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', border: '1px solid #f0f0f0' }}>
-              <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
+              <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A', mb: 0.5 }}>
                 Gallery of Past Pujas
               </Typography>
               <Box component="img" src="/images/home/poojaPackages/dhanush.webp" alt="Decoration" sx={{ height: '12px', width: '235px', mb: 2.5, display: 'block', opacity: 0.8 }} />
@@ -350,10 +352,10 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     src="/images/home/cardline.webp"
                     sx={{ width: '100%', mb: 2, height: 'auto' }}
                   />
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#777', fontSize: '14px', mb: 1 }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#777', fontSize: '14px', mb: 1 }}>
                     Consultation Starting From
                   </Typography>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#D32F2F', fontSize: '32px' }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#D32F2F', fontSize: '32px' }}>
                     ₹{purohit.price}
                   </Typography>
                 </Box>
@@ -366,7 +368,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     fullWidth
                     onClick={() => router.push('/sign-up?from=book-now')}
                     sx={{
-                      background: '#FF6200',
+                      background: COLORS.PRIMARY,
                       color: 'white',
                       borderRadius: '30px',
                       textTransform: 'none',
@@ -375,7 +377,7 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                       fontSize: '16px',
                       boxShadow: '0 8px 20px rgba(255, 98, 0, 0.3)',
                       '&:hover': {
-                        background: '#E65800',
+                        background: COLORS.PRIMARY_DARK,
                         boxShadow: '0 8px 25px rgba(255, 98, 0, 0.4)',
                       }
                     }}
@@ -388,15 +390,15 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
                     fullWidth
                     sx={{
                       mt: 2,
-                      borderColor: '#FF6200',
-                      color: '#FF6200',
+                      borderColor: COLORS.PRIMARY,
+                      color: COLORS.PRIMARY,
                       borderRadius: '30px',
                       textTransform: 'none',
                       fontWeight: 600,
                       py: 1.2,
                       fontSize: '15px',
                       '&:hover': {
-                        borderColor: '#E65800',
+                        borderColor: COLORS.PRIMARY_DARK,
                         bgcolor: 'rgba(255, 98, 0, 0.05)',
                       }
                     }}

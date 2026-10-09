@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React from "react";
@@ -109,7 +111,7 @@ export default function ProfileContent() {
   if (p.loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -128,7 +130,7 @@ export default function ProfileContent() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
             }}
@@ -137,7 +139,7 @@ export default function ProfileContent() {
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
               mt: 0.5,
             }}
@@ -169,15 +171,15 @@ export default function ProfileContent() {
             sx={{
               px: 2,
               "& .MuiTab-root": {
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 textTransform: "none",
                 fontSize: "15px",
                 py: 2,
                 minHeight: 56,
               },
-              "& .Mui-selected": { color: "#FF6200" },
-              "& .MuiTabs-indicator": { backgroundColor: "#FF6200" },
+              "& .Mui-selected": { color: COLORS.PRIMARY },
+              "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY },
             }}
           >
             {visibleTabs.map((tab) => (
@@ -335,12 +337,12 @@ export default function ProfileContent() {
         onClose={() => p.setDeleteConfirmOpen(false)}
       >
         <DialogTitle
-          sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700 }}
+          sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700 }}
         >
           Confirm Delete
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT }}>
             Are you sure you want to delete this service area?
           </Typography>
         </DialogContent>
@@ -379,12 +381,12 @@ export default function ProfileContent() {
         onClose={() => p.setBankDeleteConfirmOpen(false)}
       >
         <DialogTitle
-          sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700 }}
+          sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700 }}
         >
           Confirm Delete Bank Account
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT }}>
             Are you sure you want to delete this bank account?
           </Typography>
         </DialogContent>

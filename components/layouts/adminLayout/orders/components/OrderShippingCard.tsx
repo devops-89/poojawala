@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Box, Card, Typography } from "@mui/material";
@@ -49,7 +50,7 @@ export default function OrderShippingCard({
           sx={{
             fontWeight: 700,
             color: "#0f172a",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Shipping Address
@@ -62,7 +63,7 @@ export default function OrderShippingCard({
             fontWeight: 700,
             color: "#0f172a",
             fontSize: "1.05rem",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           {shippingAddr?.name || customerName}
@@ -71,7 +72,7 @@ export default function OrderShippingCard({
         <Typography
           sx={{
             color: "#475569",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             lineHeight: 1.6,
           }}
         >
@@ -90,7 +91,7 @@ export default function OrderShippingCard({
             variant="body2"
             sx={{
               color: "#64748b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               mt: 1,
             }}
           >

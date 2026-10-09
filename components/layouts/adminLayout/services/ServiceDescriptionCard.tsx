@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import { Box, Divider, Paper, Typography } from "@mui/material";
@@ -31,7 +33,7 @@ export default function ServiceDescriptionCard({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
               mb: 2,
@@ -45,7 +47,7 @@ export default function ServiceDescriptionCard({
               sx={{
                 width: 8,
                 height: 24,
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 borderRadius: 4,
                 display: "inline-block",
               }}
@@ -54,7 +56,7 @@ export default function ServiceDescriptionCard({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#475569",
               fontSize: "1.05rem",
               lineHeight: 1.7,
@@ -73,7 +75,7 @@ export default function ServiceDescriptionCard({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
               mb: 2.5,
@@ -87,7 +89,7 @@ export default function ServiceDescriptionCard({
               sx={{
                 width: 8,
                 height: 24,
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 borderRadius: 4,
                 display: "inline-block",
               }}
@@ -102,7 +104,7 @@ export default function ServiceDescriptionCard({
               >
                 <Box
                   sx={{
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     mt: 0.5,
                     display: "flex",
                     alignItems: "center",
@@ -113,7 +115,7 @@ export default function ServiceDescriptionCard({
                 </Box>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     color: "#334155",
                     fontSize: "1rem",
                     lineHeight: 1.6,

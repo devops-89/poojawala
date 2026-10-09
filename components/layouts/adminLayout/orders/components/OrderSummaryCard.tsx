@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { Box, Card, Divider, Typography } from "@mui/material";
@@ -44,14 +46,14 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             display: "flex",
           }}
         >
-          <ReceiptLongIcon sx={{ fontSize: 24, color: "#FF6200" }} />
+          <ReceiptLongIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />
         </Box>
         <Typography
           variant="h6"
           sx={{
             fontWeight: 700,
             color: "#0f172a",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Order Summary
@@ -63,7 +65,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
           <Typography
             sx={{
               color: "#64748b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Subtotal
@@ -72,7 +74,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             sx={{
               fontWeight: 600,
               color: "#0f172a",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             ₹{subtotal.toFixed(2)}
@@ -83,7 +85,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
           <Typography
             sx={{
               color: "#64748b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Discount
@@ -92,7 +94,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             sx={{
               fontWeight: 600,
               color: "#10b981",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             -₹{discount.toFixed(2)}
@@ -113,7 +115,7 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             sx={{
               fontWeight: 800,
               color: "#0f172a",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Total Amount
@@ -122,8 +124,8 @@ export default function OrderSummaryCard({ order }: OrderSummaryCardProps) {
             variant="h5"
             sx={{
               fontWeight: 800,
-              color: "#FF6200",
-              fontFamily: "var(--font-outfit), sans-serif",
+              color: COLORS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             ₹{total.toFixed(2)}

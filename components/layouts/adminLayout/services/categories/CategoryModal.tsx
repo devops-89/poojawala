@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   createServiceCategoryAPI,
@@ -55,10 +57,12 @@ export default function CategoryModal({
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreview, setIconPreview] = useState<string>("");
   const [saving, setSaving] = useState(false);
+  const [touched, setTouched] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
   useEffect(() => {
     if (open) {
+      setTouched(false);
       if (mode === "edit" || mode === "view") {
         setNameInput(category?.name || category?.title || "");
         setDescriptionInput(category?.description || category?.details || "");
@@ -99,8 +103,9 @@ export default function CategoryModal({
   };
 
   const handleSave = async () => {
+    setTouched(true);
     if (!nameInput.trim()) {
-      showSnackbar("Category name is required", "error");
+      showSnackbar("Please fill in all mandatory fields", "error");
       return;
     }
     setSaving(true);
@@ -186,7 +191,7 @@ export default function CategoryModal({
     >
       <DialogTitle
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           color: "#1e293b",
           display: "flex",
@@ -204,7 +209,7 @@ export default function CategoryModal({
         {mode === "view" ? (
           loading ? (
             <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-              <CircularProgress sx={{ color: "#FF6200" }} />
+              <CircularProgress sx={{ color: COLORS.PRIMARY }} />
             </Box>
           ) : category ? (
             <Box
@@ -234,14 +239,14 @@ export default function CategoryModal({
                       unoptimized
                     />
                   ) : (
-                    <CategoryIcon sx={{ color: "#FF6200", fontSize: 32 }} />
+                    <CategoryIcon sx={{ color: COLORS.PRIMARY, fontSize: 32 }} />
                   )}
                 </Box>
 
                 <Box>
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "1.1rem",
                       color: "#1e293b",
@@ -254,7 +259,7 @@ export default function CategoryModal({
                     size="small"
                     sx={{
                       mt: 0.5,
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 600,
                       fontSize: "0.75rem",
                       bgcolor:
@@ -271,7 +276,7 @@ export default function CategoryModal({
               <Box>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 600,
                     fontSize: "0.85rem",
                     color: "#94a3b8",
@@ -282,7 +287,7 @@ export default function CategoryModal({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 400,
                     fontSize: "0.95rem",
                     color: "#334155",
@@ -298,7 +303,7 @@ export default function CategoryModal({
                   <Grid size={{ xs: 6 }}>
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 600,
                         fontSize: "0.85rem",
                         color: "#94a3b8",
@@ -308,7 +313,7 @@ export default function CategoryModal({
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 600,
                         fontSize: "0.9rem",
                         color: "#1e293b",
@@ -322,7 +327,7 @@ export default function CategoryModal({
                 <Grid size={{ xs: 6 }}>
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 600,
                       fontSize: "0.85rem",
                       color: "#94a3b8",
@@ -335,7 +340,7 @@ export default function CategoryModal({
                     size="small"
                     sx={{
                       mt: 0.5,
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "0.75rem",
                       bgcolor:
@@ -355,7 +360,7 @@ export default function CategoryModal({
                   <Grid size={{ xs: 6 }}>
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 600,
                         fontSize: "0.85rem",
                         color: "#94a3b8",
@@ -365,7 +370,7 @@ export default function CategoryModal({
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 500,
                         fontSize: "0.9rem",
                         color: "#1e293b",
@@ -389,6 +394,13 @@ export default function CategoryModal({
               fullWidth
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
+              onBlur={() => setTouched(true)}
+              error={touched && !nameInput.trim()}
+              helperText={
+                touched && !nameInput.trim()
+                  ? "Category name is required"
+                  : undefined
+              }
               slotProps={{ inputLabel: { shrink: true } }}
             />
 
@@ -435,7 +447,7 @@ export default function CategoryModal({
               borderColor: "#cbd5e1",
               color: "#475569",
               fontWeight: 600,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               borderRadius: "8px",
             }}
           >
@@ -448,7 +460,7 @@ export default function CategoryModal({
               sx={{
                 color: "#64748b",
                 fontWeight: 600,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               Cancel
@@ -458,10 +470,10 @@ export default function CategoryModal({
               disabled={saving}
               variant="contained"
               sx={{
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "#ffffff",
                 fontWeight: 600,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 borderRadius: "8px",
                 px: 3,
                 "&:hover": { bgcolor: "#e55800" },

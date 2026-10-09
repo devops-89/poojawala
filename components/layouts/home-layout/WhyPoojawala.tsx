@@ -1,6 +1,8 @@
 'use client';
 
 import { Box, Container, Typography } from '@mui/material';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function WhyPoojawala() {
   return (
@@ -10,7 +12,7 @@ export default function WhyPoojawala() {
           <Typography 
             variant="h2" 
             sx={{ 
-              fontFamily: '"DM Sans", sans-serif', 
+              fontFamily: FONTS.PRIMARY, 
               fontWeight: 700, 
               fontSize: { xs: '32px', md: '48px' }, 
               color: '#141414',
@@ -31,7 +33,7 @@ export default function WhyPoojawala() {
 
           <Typography 
             sx={{ 
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 400,
               fontSize: { xs: '16px', md: '24px' },
               color: '#141414',
@@ -44,7 +46,7 @@ export default function WhyPoojawala() {
           
           <Typography 
             sx={{ 
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 400,
               fontSize: { xs: '16px', md: '24px' },
               color: '#141414',

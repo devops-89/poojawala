@@ -18,6 +18,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface SkillsTabProps {
   city: string;
@@ -68,7 +70,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
     <Box>
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           fontSize: "20px",
           mb: 3,
@@ -168,7 +170,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
         <Grid size={{ xs: 12 }}>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "16px",
               mb: 1,

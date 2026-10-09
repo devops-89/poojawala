@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CelebrationIcon from "@mui/icons-material/Celebration";
@@ -50,7 +52,7 @@ export default function DashboardServicesSection({
         <Typography
           variant="h5"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -62,7 +64,7 @@ export default function DashboardServicesSection({
           component={NextLink}
           href="/customer/services"
           endIcon={<ArrowForwardIcon />}
-          sx={{ color: "#FF6200", textTransform: "none", fontWeight: 700 }}
+          sx={{ color: COLORS.PRIMARY, textTransform: "none", fontWeight: 700 }}
         >
           View All Services
         </Button>
@@ -102,7 +104,7 @@ export default function DashboardServicesSection({
                 width: 52,
                 height: 52,
                 borderRadius: "16px",
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 display: "flex",
                 alignItems: "center",
@@ -126,7 +128,7 @@ export default function DashboardServicesSection({
               >
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
                     color: "#2C1810",
                     fontSize: "18px",
@@ -138,7 +140,7 @@ export default function DashboardServicesSection({
                   label="Notice"
                   size="small"
                   sx={{
-                    bgcolor: "#FF6200",
+                    bgcolor: COLORS.PRIMARY,
                     color: "white",
                     fontWeight: 700,
                     fontSize: "11px",
@@ -148,7 +150,7 @@ export default function DashboardServicesSection({
               </Box>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#64748b",
                   fontSize: "14px",
                   lineHeight: 1.6,
@@ -164,7 +166,7 @@ export default function DashboardServicesSection({
             onClick={() => router.push("/customer/services")}
             variant="contained"
             sx={{
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               borderRadius: "12px",
               textTransform: "none",
@@ -312,7 +314,7 @@ export default function DashboardServicesSection({
                     <Box>
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
                           color: "#1e293b",
                           fontSize: isSingle
@@ -327,7 +329,7 @@ export default function DashboardServicesSection({
 
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#64748b",
                           fontSize: "14px",
                           lineHeight: 1.6,
@@ -400,7 +402,7 @@ export default function DashboardServicesSection({
                       <Box>
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "11px",
                             color: "#94a3b8",
                             fontWeight: 700,
@@ -412,10 +414,10 @@ export default function DashboardServicesSection({
                         </Typography>
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 800,
                             fontSize: isSingle ? "1.35rem" : "1.15rem",
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                           }}
                         >
                           {priceDisplay}
@@ -429,7 +431,7 @@ export default function DashboardServicesSection({
                         variant="contained"
                         size={isSingle ? "medium" : "small"}
                         sx={{
-                          bgcolor: "#FF6200",
+                          bgcolor: COLORS.PRIMARY,
                           color: "white",
                           borderRadius: "10px",
                           textTransform: "none",

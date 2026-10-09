@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteServiceCategoryAPI,
@@ -203,10 +205,10 @@ export default function AdminServiceCategoriesContent() {
         return (
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "0.9rem",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               bgcolor: "#FFF0E6",
               px: 1.5,
               py: 0.5,
@@ -258,12 +260,12 @@ export default function AdminServiceCategoriesContent() {
                   unoptimized
                 />
               ) : (
-                <CategoryIcon sx={{ color: "#FF6200" }} />
+                <CategoryIcon sx={{ color: COLORS.PRIMARY }} />
               )}
             </Box>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 fontSize: "0.95rem",
                 color: "#1e293b",
@@ -286,7 +288,7 @@ export default function AdminServiceCategoriesContent() {
             label={type}
             size="small"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "0.75rem",
               bgcolor: isService ? "#e0f2fe" : "#fef3c7",
@@ -328,6 +330,8 @@ export default function AdminServiceCategoriesContent() {
           <IconButton
             onClick={() => handleOpenViewModal(category)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
@@ -338,9 +342,11 @@ export default function AdminServiceCategoriesContent() {
           <IconButton
             onClick={() => handleOpenEditModal(category)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
-              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
             }}
           >
             <EditIcon fontSize="small" />
@@ -348,6 +354,8 @@ export default function AdminServiceCategoriesContent() {
           <IconButton
             onClick={() => setDeleteTarget(category)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },

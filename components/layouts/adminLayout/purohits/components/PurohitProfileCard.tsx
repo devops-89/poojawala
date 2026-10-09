@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -95,7 +97,7 @@ export default function PurohitProfileCard({
           sx={{
             width: { xs: 70, sm: 84 },
             height: { xs: 70, sm: 84 },
-            bgcolor: "#FF6200",
+            bgcolor: COLORS.PRIMARY,
             fontSize: "2rem",
             fontWeight: 700,
             border: "3px solid #fff",
@@ -139,7 +141,7 @@ export default function PurohitProfileCard({
                   bgcolor: statusColor.bg,
                   color: statusColor.text,
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                 }}
               />
@@ -148,7 +150,7 @@ export default function PurohitProfileCard({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
               fontSize: { xs: "1.25rem", sm: "1.5rem" },
@@ -158,7 +160,7 @@ export default function PurohitProfileCard({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
               fontSize: "0.9rem",
               mt: 0.5,
@@ -168,7 +170,7 @@ export default function PurohitProfileCard({
               flexWrap: "wrap",
             }}
           >
-            <LocationOnIcon sx={{ fontSize: 16, color: "#FF6200" }} />
+            <LocationOnIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
             {displayCity}
             {profile.experienceYears
               ? ` • ${profile.experienceYears} Years Experience`
@@ -182,7 +184,7 @@ export default function PurohitProfileCard({
       {/* Professional Details */}
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           color: "#1e293b",
           fontSize: "1.1rem",
@@ -259,7 +261,7 @@ export default function PurohitProfileCard({
                   key={i}
                   label={s}
                   size="small"
-                  sx={{ bgcolor: "#FFF0E6", color: "#FF6200", fontWeight: 700 }}
+                  sx={{ bgcolor: "#FFF0E6", color: COLORS.PRIMARY, fontWeight: 700 }}
                 />
               ))
             ) : (
@@ -294,7 +296,7 @@ export default function PurohitProfileCard({
       {/* Services Offered */}
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           color: "#1e293b",
           fontSize: "1.1rem",
@@ -346,7 +348,7 @@ export default function PurohitProfileCard({
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 1.5 }}>
                     {offlinePrice && (
                       <Typography sx={{ fontSize: "0.85rem", color: "#1e293b" }}>
-                        Offline Price: <b style={{ color: "#FF6200" }}>₹{offlinePrice}</b>
+                        Offline Price: <b style={{ color: COLORS.PRIMARY }}>₹{offlinePrice}</b>
                       </Typography>
                     )}
                     {onlinePrice && (
@@ -400,7 +402,7 @@ export default function PurohitProfileCard({
       {/* Service Areas / Operating Locations */}
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           color: "#1e293b",
           fontSize: "1.1rem",
@@ -466,7 +468,7 @@ export default function PurohitProfileCard({
       {/* Verification Documents */}
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           color: "#1e293b",
           fontSize: "1.1rem",
@@ -477,7 +479,7 @@ export default function PurohitProfileCard({
       </Typography>
 
       <Grid container spacing={2}>
-        {profile.aadhaarDocUrl && (
+        {(profile.aadhaarDocUrl || profile.panDocUrl) && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Box
               sx={{
@@ -492,25 +494,29 @@ export default function PurohitProfileCard({
             >
               <Box>
                 <Typography sx={{ fontWeight: 700, color: "#1e293b" }}>
-                  Aadhaar Card
+                  {profile.aadhaarDocUrl ? "Aadhaar Card" : "PAN Card"}
                 </Typography>
                 <Typography sx={{ fontSize: "0.85rem", color: "#64748b", mt: 0.5 }}>
-                  {profile.aadhaarNumber || "Uploaded"}
+                  {profile.aadhaarDocUrl ? (profile.aadhaarNumber || "Uploaded") : "Uploaded"}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", gap: 1 }}>
                 <IconButton
-                  onClick={() => onPreviewDoc(profile.aadhaarDocUrl)}
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  onClick={() => onPreviewDoc(profile.aadhaarDocUrl || profile.panDocUrl)}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   component="a"
-                  href={profile.aadhaarDocDownloadUrl || profile.aadhaarDocUrl}
+                  href={
+                    profile.aadhaarDocUrl
+                      ? (profile.aadhaarDocDownloadUrl || profile.aadhaarDocUrl)
+                      : (profile.panDocDownloadUrl || profile.panDocUrl)
+                  }
                   target="_blank"
                   download
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <DownloadIcon fontSize="small" />
                 </IconButton>
@@ -519,7 +525,7 @@ export default function PurohitProfileCard({
           </Grid>
         )}
 
-        {profile.panDocUrl && (
+        {!profile.aadhaarDocUrl && profile.panDocUrl && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Box
               sx={{
@@ -543,7 +549,7 @@ export default function PurohitProfileCard({
               <Box sx={{ display: "flex", gap: 1 }}>
                 <IconButton
                   onClick={() => onPreviewDoc(profile.panDocUrl)}
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
@@ -552,7 +558,7 @@ export default function PurohitProfileCard({
                   href={profile.panDocDownloadUrl || profile.panDocUrl}
                   target="_blank"
                   download
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <DownloadIcon fontSize="small" />
                 </IconButton>
@@ -585,7 +591,7 @@ export default function PurohitProfileCard({
               <Box sx={{ display: "flex", gap: 1 }}>
                 <IconButton
                   onClick={() => onPreviewDoc(profile.certificateUrl)}
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
@@ -594,7 +600,7 @@ export default function PurohitProfileCard({
                   href={profile.certificateDownloadUrl || profile.certificateUrl}
                   target="_blank"
                   download
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <DownloadIcon fontSize="small" />
                 </IconButton>
@@ -627,7 +633,7 @@ export default function PurohitProfileCard({
               <Box sx={{ display: "flex", gap: 1 }}>
                 <IconButton
                   onClick={() => onPreviewDoc(profile.templeAffiliationProofUrl)}
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
@@ -636,7 +642,7 @@ export default function PurohitProfileCard({
                   href={profile.templeAffiliationProofDownloadUrl || profile.templeAffiliationProofUrl}
                   target="_blank"
                   download
-                  sx={{ color: "#FF6200", bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
+                  sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <DownloadIcon fontSize="small" />
                 </IconButton>

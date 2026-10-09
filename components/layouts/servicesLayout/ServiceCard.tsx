@@ -4,6 +4,8 @@ import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
 import { ServiceCardProps } from '@/utils/types';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function ServiceCard({
   id,
@@ -101,7 +103,7 @@ export default function ServiceCard({
               fontSize: '11px',
               fontWeight: 600,
               color: '#5C4A40',
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               backdropFilter: 'blur(4px)',
             }}
           >
@@ -126,7 +128,7 @@ export default function ServiceCard({
           <Typography
             component="h3"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: { xs: '18px', sm: '20px' },
               color: '#2C1810',
@@ -140,7 +142,7 @@ export default function ServiceCard({
           {/* Description */}
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontSize: '13.5px',
               color: '#5C4A40',
               lineHeight: 1.65,
@@ -169,10 +171,10 @@ export default function ServiceCard({
             </Typography>
             <Typography
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 fontSize: { xs: '20px', sm: '22px' },
-                color: '#C84B16',
+                color: COLORS.PRIMARY,
               }}
             >
               {formattedPrice}
@@ -185,18 +187,18 @@ export default function ServiceCard({
             onClick={handleBookNow}
             sx={{
               width: '100%',
-              bgcolor: '#C84B16',
+              bgcolor: COLORS.PRIMARY,
               color: '#FFFFFF',
               borderRadius: '12px',
               py: 1.3,
               fontSize: '15px',
               fontWeight: 700,
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               textTransform: 'none',
               boxShadow: '0 4px 14px rgba(200, 75, 22, 0.25)',
               transition: 'all 0.25s ease-in-out',
               '&:hover': {
-                bgcolor: '#FF6200',
+                bgcolor: COLORS.PRIMARY,
                 boxShadow: '0 6px 18px rgba(255, 98, 0, 0.35)',
               },
             }}

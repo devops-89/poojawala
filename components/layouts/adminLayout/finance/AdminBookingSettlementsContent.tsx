@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { getCompletedBookingsAPI } from "@/api/bookingControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
@@ -77,7 +79,7 @@ export default function AdminBookingSettlementsContent() {
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -86,7 +88,7 @@ export default function AdminBookingSettlementsContent() {
         </Typography>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#64748b",
             mt: 0.5,
           }}
@@ -189,7 +191,7 @@ export default function AdminBookingSettlementsContent() {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center" sx={{ py: 5 }}>
-                    <CircularProgress sx={{ color: "#FF6200" }} />
+                    <CircularProgress sx={{ color: COLORS.PRIMARY }} />
                   </TableCell>
                 </TableRow>
               ) : settlements.length === 0 ? (
@@ -236,7 +238,7 @@ export default function AdminBookingSettlementsContent() {
                           sx={{
                             fontWeight: 700,
                             color: "#10b981",
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                           }}
                         >
                           B-{item.id}
@@ -247,7 +249,7 @@ export default function AdminBookingSettlementsContent() {
                           sx={{
                             fontWeight: 700,
                             color: "#1e293b",
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                           }}
                         >
                           {technicianName}
@@ -257,7 +259,7 @@ export default function AdminBookingSettlementsContent() {
                         <Typography
                           sx={{
                             color: "#64748b",
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 500,
                           }}
                         >
@@ -269,7 +271,7 @@ export default function AdminBookingSettlementsContent() {
                           sx={{
                             fontWeight: 700,
                             color: "#1e293b",
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                           }}
                         >
                           ₹
@@ -286,7 +288,7 @@ export default function AdminBookingSettlementsContent() {
                             bgcolor: bookingStyle.bg,
                             color: bookingStyle.text,
                             fontWeight: 700,
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             borderRadius: "6px",
                           }}
                         />
@@ -299,7 +301,7 @@ export default function AdminBookingSettlementsContent() {
                             bgcolor: paymentStyle.bg,
                             color: paymentStyle.text,
                             fontWeight: 700,
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             borderRadius: "6px",
                           }}
                         />
@@ -312,7 +314,7 @@ export default function AdminBookingSettlementsContent() {
                             bgcolor: payoutStyle.bg,
                             color: payoutStyle.text,
                             fontWeight: 700,
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             borderRadius: "6px",
                           }}
                         />
@@ -348,10 +350,26 @@ export default function AdminBookingSettlementsContent() {
             setRowsPerPage(parseInt(e.target.value, 10));
             setPage(0);
           }}
+          slotProps={{
+            select: {
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                disableScrollLock: true,
+              },
+            },
+          }}
           sx={{
             borderTop: "1px solid #e2e8f0",
             "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
-              { fontFamily: "var(--font-outfit), sans-serif" },
+              { fontFamily: FONTS.OUTFIT },
           }}
         />
       </Paper>

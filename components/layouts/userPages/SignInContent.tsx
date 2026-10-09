@@ -23,6 +23,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { extractBackendErrorMessage } from "@/utils/helpers";
 
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 
@@ -133,7 +136,7 @@ export default function SignInContent() {
                 <Typography
                   variant="h3"
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     mb: 2,
                   }}
@@ -142,7 +145,7 @@ export default function SignInContent() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontSize: "16px",
                     lineHeight: 1.6,
                     opacity: 0.9,
@@ -168,7 +171,7 @@ export default function SignInContent() {
                 <Typography
                   variant="h5"
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     color: "#1A1A1A",
                     mb: 1,
@@ -178,7 +181,7 @@ export default function SignInContent() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#666",
                     mb: 4,
                   }}
@@ -250,11 +253,17 @@ export default function SignInContent() {
                       }
                     } catch (error: any) {
                       console.error("Login failed", error);
-                      showSnackbar(
-                        error.response?.data?.message ||
-                          "Login failed. Please check your credentials.",
-                        "error",
+                      const rawMsg = extractBackendErrorMessage(
+                        error,
+                        "Invalid email or password",
                       );
+                      const finalMsg =
+                        !rawMsg ||
+                        rawMsg.toLowerCase() === "validation failed" ||
+                        rawMsg.toLowerCase() === "bad request"
+                          ? "Invalid email or password"
+                          : rawMsg;
+                      showSnackbar(finalMsg, "error");
                     } finally {
                       setSubmitting(false);
                     }
@@ -275,10 +284,10 @@ export default function SignInContent() {
                             helperText={meta.touched && meta.error}
                             sx={{
                               "& .MuiOutlinedInput-root": {
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               },
                               "& .MuiInputLabel-root": {
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               },
                             }}
                           />
@@ -320,10 +329,10 @@ export default function SignInContent() {
                             sx={{
                               mb: 1,
                               "& .MuiOutlinedInput-root": {
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               },
                               "& .MuiInputLabel-root": {
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               },
                             }}
                           />
@@ -345,15 +354,15 @@ export default function SignInContent() {
                               name="rememberMe"
                               size="small"
                               sx={{
-                                color: "#FF6200",
-                                "&.Mui-checked": { color: "#FF6200" },
+                                color: COLORS.PRIMARY,
+                                "&.Mui-checked": { color: COLORS.PRIMARY },
                               }}
                             />
                           }
                           label={
                             <Typography
                               sx={{
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontSize: "14px",
                                 color: "#555",
                               }}
@@ -367,9 +376,9 @@ export default function SignInContent() {
                           href="/forgot-password?redirect=/sign-in"
                           underline="hover"
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14px",
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                             fontWeight: 600,
                           }}
                         >
@@ -383,7 +392,7 @@ export default function SignInContent() {
                         disabled={isSubmitting}
                         variant="contained"
                         sx={{
-                          background: "#FF6200",
+                          background: COLORS.PRIMARY,
                           color: "white",
                           py: 1.5,
                           borderRadius: "31px",
@@ -392,7 +401,7 @@ export default function SignInContent() {
                           fontSize: "16px",
                           boxShadow: "0 8px 20px rgba(255, 98, 0, 0.3)",
                           "&:hover": {
-                            background: "#E65800",
+                            background: COLORS.PRIMARY_DARK,
                             boxShadow: "0 8px 25px rgba(255, 98, 0, 0.4)",
                           },
                         }}
@@ -412,15 +421,15 @@ export default function SignInContent() {
                             borderRadius: "31px",
                             borderColor: "#FFE0D0",
                             color: "#475569",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 600,
                             fontSize: "15px",
                             textTransform: "none",
                             transition: "all 0.2s ease",
                             "&:hover": {
                               bgcolor: "#FFF0E6",
-                              color: "#FF6200",
-                              borderColor: "#FF6200",
+                              color: COLORS.PRIMARY,
+                              borderColor: COLORS.PRIMARY,
                             },
                           }}
                         >
@@ -432,7 +441,7 @@ export default function SignInContent() {
                 </Formik>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#666",
                     textAlign: "center",
                     mt: 4,
@@ -443,7 +452,7 @@ export default function SignInContent() {
                   <Link
                     href="/sign-up"
                     style={{
-                      color: "#FF6200",
+                      color: COLORS.PRIMARY,
                       fontWeight: 700,
                       textDecoration: "none",
                     }}

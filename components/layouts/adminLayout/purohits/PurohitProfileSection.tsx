@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -41,11 +43,11 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2.5 }}>
-        <BadgesIcon sx={{ color: "#FF6200" }} />
+        <BadgesIcon sx={{ color: COLORS.PRIMARY }} />
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
           }}

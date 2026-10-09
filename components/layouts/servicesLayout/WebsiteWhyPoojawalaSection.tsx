@@ -6,26 +6,28 @@ import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function WebsiteWhyPoojawalaSection() {
   const features = [
     {
-      icon: <ShieldOutlinedIcon sx={{ fontSize: 24, color: "#FF6200" }} />,
+      icon: <ShieldOutlinedIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />,
       title: "Verified Pandits",
       description: "Background-checked & scripture-tested",
     },
     {
-      icon: <CheckCircleOutlinedIcon sx={{ fontSize: 24, color: "#FF6200" }} />,
+      icon: <CheckCircleOutlinedIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />,
       title: "Scriptural Accuracy",
       description: "Every mantra and ritual as prescribed",
     },
     {
-      icon: <CreditCardOutlinedIcon sx={{ fontSize: 24, color: "#FF6200" }} />,
+      icon: <CreditCardOutlinedIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />,
       title: "Transparent Pricing",
       description: "Fixed plans, no hidden charges",
     },
     {
-      icon: <HeadsetMicOutlinedIcon sx={{ fontSize: 24, color: "#FF6200" }} />,
+      icon: <HeadsetMicOutlinedIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />,
       title: "End-to-End Support",
       description: "We coordinate everything for you",
     },
@@ -63,11 +65,11 @@ export default function WebsiteWhyPoojawalaSection() {
         <Grid size={{ xs: 12, md: 5 }}>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontSize: "12px",
               fontWeight: 800,
               letterSpacing: "1.2px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -78,7 +80,7 @@ export default function WebsiteWhyPoojawalaSection() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: { xs: "28px", sm: "34px", md: "40px" },
               color: "#FFFFFF",
@@ -91,7 +93,7 @@ export default function WebsiteWhyPoojawalaSection() {
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontSize: { xs: "14.5px", sm: "16px" },
               color: "rgba(255, 255, 255, 0.82)",
               lineHeight: 1.75,
@@ -143,7 +145,7 @@ export default function WebsiteWhyPoojawalaSection() {
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 700,
                         fontSize: "16px",
                         color: "#FFFFFF",
@@ -154,7 +156,7 @@ export default function WebsiteWhyPoojawalaSection() {
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: "13.5px",
                         color: "rgba(255, 255, 255, 0.7)",
                         lineHeight: 1.5,

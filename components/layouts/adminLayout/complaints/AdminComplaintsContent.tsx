@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteComplaintAPI,
@@ -152,7 +154,7 @@ export default function AdminComplaintsContent() {
       id: "id",
       label: "COMPLAINT ID",
       render: (item) => (
-        <Typography sx={{ fontWeight: 700, color: "#ef4444", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+        <Typography sx={{ fontWeight: 700, color: "#ef4444", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
           C-{item.id}
         </Typography>
       ),
@@ -161,7 +163,7 @@ export default function AdminComplaintsContent() {
       id: "category",
       label: "CATEGORY",
       render: (item) => (
-        <Typography sx={{ color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.85rem", fontWeight: 600 }}>
+        <Typography sx={{ color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.85rem", fontWeight: 600 }}>
           {item.category?.replace(/_/g, " ")}
         </Typography>
       ),
@@ -175,10 +177,10 @@ export default function AdminComplaintsContent() {
         const userRole = userObj?.role || "UNKNOWN";
         return (
           <Box>
-            <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.9rem" }}>
+            <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
               {userName}
             </Typography>
-            <Box sx={{ bgcolor: userRole === "CUSTOMER" ? "#dbeafe" : "#f3e8ff", color: userRole === "CUSTOMER" ? "#2563eb" : "#9333ea", fontSize: "0.65rem", fontWeight: 700, px: 0.8, py: 0.2, borderRadius: "4px", display: "inline-block", mt: 0.5, fontFamily: "var(--font-outfit), sans-serif" }}>
+            <Box sx={{ bgcolor: userRole === "CUSTOMER" ? "#dbeafe" : "#f3e8ff", color: userRole === "CUSTOMER" ? "#2563eb" : "#9333ea", fontSize: "0.65rem", fontWeight: 700, px: 0.8, py: 0.2, borderRadius: "4px", display: "inline-block", mt: 0.5, fontFamily: FONTS.OUTFIT }}>
               {userRole}
             </Box>
           </Box>
@@ -189,7 +191,7 @@ export default function AdminComplaintsContent() {
       id: "createdAt",
       label: "CREATED ON",
       render: (item) => (
-        <Typography sx={{ color: "#64748b", fontFamily: "var(--font-outfit), sans-serif", fontSize: "0.85rem" }}>
+        <Typography sx={{ color: "#64748b", fontFamily: FONTS.OUTFIT, fontSize: "0.85rem" }}>
           {new Date(item.createdAt).toLocaleDateString()}
         </Typography>
       ),
@@ -282,7 +284,7 @@ export default function AdminComplaintsContent() {
           statusUpdateTarget?.newStatus === COMPLAINT_STATUS.REJECTED ||
           statusUpdateTarget?.newStatus === COMPLAINT_STATUS.RESOLVED ? (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 1 }}>
-              <Typography sx={{ color: "#475569", fontFamily: "var(--font-outfit), sans-serif" }}>
+              <Typography sx={{ color: "#475569", fontFamily: FONTS.OUTFIT }}>
                 Resolution notes are required when marking status as <strong>{statusUpdateTarget?.newStatus.replace(/_/g, " ")}</strong>:
               </Typography>
               <TextField
@@ -307,7 +309,7 @@ export default function AdminComplaintsContent() {
       <Dialog open={Boolean(selectedComplaint)} onClose={() => setSelectedComplaint(null)} maxWidth="md" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1 } }}>
         {selectedComplaint && (
           <>
-            <DialogTitle sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <DialogTitle sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span>Complaint C-{selectedComplaint.id}</span>
               <IconButton onClick={() => setSelectedComplaint(null)}><CloseIcon /></IconButton>
             </DialogTitle>
@@ -315,26 +317,26 @@ export default function AdminComplaintsContent() {
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600 }}>Category</Typography>
-                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: "var(--font-outfit), sans-serif" }}>{selectedComplaint.category?.replace(/_/g, " ")}</Typography>
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT }}>{selectedComplaint.category?.replace(/_/g, " ")}</Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600 }}>Status</Typography>
-                  <Chip label={selectedComplaint.status?.replace(/_/g, " ")} sx={{ fontWeight: 700, fontFamily: "var(--font-outfit), sans-serif" }} />
+                  <Chip label={selectedComplaint.status?.replace(/_/g, " ")} sx={{ fontWeight: 700, fontFamily: FONTS.OUTFIT }} />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600, mt: 1 }}>Description</Typography>
-                  <Typography sx={{ color: "#334155", fontFamily: "var(--font-outfit), sans-serif", mt: 0.5, whiteSpace: "pre-wrap" }}>{selectedComplaint.description || "No description provided."}</Typography>
+                  <Typography sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 0.5, whiteSpace: "pre-wrap" }}>{selectedComplaint.description || "No description provided."}</Typography>
                 </Grid>
                 {selectedComplaint.adminRemark && (
                   <Grid size={{ xs: 12 }}>
                     <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600, mt: 1 }}>Admin Resolution Notes</Typography>
-                    <Typography sx={{ color: "#059669", fontWeight: 600, fontFamily: "var(--font-outfit), sans-serif", mt: 0.5 }}>{selectedComplaint.adminRemark}</Typography>
+                    <Typography sx={{ color: "#059669", fontWeight: 600, fontFamily: FONTS.OUTFIT, mt: 0.5 }}>{selectedComplaint.adminRemark}</Typography>
                   </Grid>
                 )}
               </Grid>
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
-              <Button onClick={() => setSelectedComplaint(null)} variant="contained" sx={{ bgcolor: "#FF6200", color: "white", borderRadius: "8px", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: "#E65800" } }}>Close</Button>
+              <Button onClick={() => setSelectedComplaint(null)} variant="contained" sx={{ bgcolor: COLORS.PRIMARY, color: "white", borderRadius: "8px", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: COLORS.PRIMARY_DARK } }}>Close</Button>
             </DialogActions>
           </>
         )}

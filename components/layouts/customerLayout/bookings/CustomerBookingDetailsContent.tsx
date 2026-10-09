@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import {
   cancelBookingAPI,
   getBookingDetailsAPI,
@@ -246,7 +248,7 @@ export default function CustomerBookingDetailsContent({
           height: "60vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -265,7 +267,7 @@ export default function CustomerBookingDetailsContent({
       >
         <Typography
           variant="h5"
-          sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64748b" }}
+          sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b" }}
         >
           Booking not found.
         </Typography>
@@ -273,8 +275,8 @@ export default function CustomerBookingDetailsContent({
           variant="outlined"
           onClick={() => router.push("/customer/dashboard")}
           sx={{
-            color: "#FF6200",
-            borderColor: "#FF6200",
+            color: COLORS.PRIMARY,
+            borderColor: COLORS.PRIMARY,
             textTransform: "none",
           }}
         >
@@ -312,7 +314,7 @@ export default function CustomerBookingDetailsContent({
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               color: "#0f172a",
               mb: 0.5,
@@ -321,7 +323,7 @@ export default function CustomerBookingDetailsContent({
             Booking Details
           </Typography>
           <Typography
-            sx={{ fontFamily: '"DM Sans", sans-serif', color: "#64748b" }}
+            sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b" }}
           >
             Review the full details for your selected booking.
           </Typography>
@@ -379,7 +381,7 @@ export default function CustomerBookingDetailsContent({
       >
         <DialogTitle
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -388,7 +390,7 @@ export default function CustomerBookingDetailsContent({
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
           <Typography
-            sx={{ fontFamily: '"DM Sans", sans-serif', color: "#1e293b" }}
+            sx={{ fontFamily: FONTS.PRIMARY, color: "#1e293b" }}
           >
             Are you sure you want to cancel this booking? This action cannot be
             undone.
@@ -402,7 +404,7 @@ export default function CustomerBookingDetailsContent({
               color: "#64748b",
               textTransform: "none",
               fontWeight: 600,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               borderRadius: "30px",
               px: 3,
               py: 1,
@@ -420,7 +422,7 @@ export default function CustomerBookingDetailsContent({
               px: 4,
               py: 1,
               fontWeight: 600,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               boxShadow: "none",
               background: "#ef4444",
               color: "white",
@@ -446,7 +448,7 @@ export default function CustomerBookingDetailsContent({
       >
         <DialogTitle
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -457,7 +459,7 @@ export default function CustomerBookingDetailsContent({
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3, py: 1 }}>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64748b",
                 fontSize: "14px",
               }}
@@ -494,10 +496,10 @@ export default function CustomerBookingDetailsContent({
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     },
                     "& .MuiInputLabel-root": {
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     },
                     "& .Mui-focused fieldset": {
                       borderColor: "#3b82f6 !important",
@@ -518,10 +520,10 @@ export default function CustomerBookingDetailsContent({
               onChange={(e) => setRescheduleReason(e.target.value)}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                 },
                 "& .MuiInputLabel-root": {
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                 },
                 "& .Mui-focused fieldset": {
                   borderColor: "#3b82f6 !important",
@@ -538,7 +540,7 @@ export default function CustomerBookingDetailsContent({
               color: "#64748b",
               textTransform: "none",
               fontWeight: 600,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
             }}
           >
             Cancel
@@ -550,7 +552,7 @@ export default function CustomerBookingDetailsContent({
             sx={{
               bgcolor: "#FF6200 !important",
               color: "white !important",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 600,
               border: "none",
               cursor:

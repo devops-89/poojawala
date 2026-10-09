@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -36,14 +38,14 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle
-        sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800 }}
+        sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800 }}
       >
         Verify OTP
       </DialogTitle>
       <DialogContent>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#666",
             mb: 3,
             fontSize: "14px",
@@ -67,7 +69,7 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
                   fontSize: "22px",
                   fontWeight: 700,
                   p: "12px 0",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                 },
                 "& .MuiOutlinedInput-root": {
@@ -92,7 +94,7 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: "13px",
             }}
@@ -103,7 +105,7 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
             onClick={onResendOtp}
             disabled={isResendingOtp}
             sx={{
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               textTransform: "none",
               fontWeight: 600,
               fontSize: "13px",

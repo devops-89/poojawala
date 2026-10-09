@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 
 import { getProductByIdAPI } from "@/api/productControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
@@ -50,7 +51,7 @@ export default function AdminProductDetailsContent() {
           minHeight: "50vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -64,7 +65,7 @@ export default function AdminProductDetailsContent() {
         <Button
           component={NextLink}
           href="/admin/products"
-          sx={{ mt: 2, color: "#FF6200" }}
+          sx={{ mt: 2, color: COLORS.PRIMARY }}
         >
           Back to Products
         </Button>
@@ -87,14 +88,14 @@ export default function AdminProductDetailsContent() {
             variant="contained"
             startIcon={<EditIcon />}
             sx={{
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               textTransform: "none",
               borderRadius: "12px",
               fontWeight: 600,
               py: 1.2,
               px: 3,
-              "&:hover": { bgcolor: "#E65800" },
+              "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
             }}
           >
             Edit Product

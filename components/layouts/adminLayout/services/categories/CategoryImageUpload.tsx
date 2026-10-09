@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,7 +25,7 @@ export default function CategoryImageUpload({
     <Box>
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 600,
           fontSize: "0.875rem",
           color: "#334155",
@@ -97,10 +99,10 @@ export default function CategoryImageUpload({
             size="small"
             sx={{
               mt: 1.5,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontSize: "0.8rem",
               fontWeight: 600,
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               textTransform: "none",
             }}
           >
@@ -130,7 +132,7 @@ export default function CategoryImageUpload({
             transition: "all 0.2s ease-in-out",
             "&:hover": {
               bgcolor: "#fff0e6",
-              borderColor: "#FF6200",
+              borderColor: COLORS.PRIMARY,
             },
           }}
         >
@@ -152,11 +154,11 @@ export default function CategoryImageUpload({
               boxShadow: "0 2px 8px rgba(255, 98, 0, 0.15)",
             }}
           >
-            <CloudUploadIcon sx={{ fontSize: 24, color: "#FF6200" }} />
+            <CloudUploadIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />
           </Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "0.9rem",
               color: "#1e293b",
@@ -166,7 +168,7 @@ export default function CategoryImageUpload({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontSize: "0.75rem",
               color: "#94a3b8",
             }}

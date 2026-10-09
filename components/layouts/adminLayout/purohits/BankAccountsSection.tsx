@@ -12,6 +12,7 @@ import {
   getPurohitByIdAPI,
 } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { validateBankForm, extractBackendErrorMessage } from "@/utils/helpers";
 
 interface BankAccountsSectionProps {
   purohitId: string | number;
@@ -109,6 +110,11 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
   };
 
   const handleSaveBankModal = async () => {
+    const err = validateBankForm(bankForm);
+    if (err) {
+      showSnackbar(err, "error");
+      return;
+    }
     if (selectedBankId && initialBankDataRef.current) {
       const isUnchanged =
         JSON.stringify(bankForm) === JSON.stringify(initialBankDataRef.current);
@@ -186,7 +192,7 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
     } catch (error: any) {
       console.error("Bank account save error:", error);
       showSnackbar(
-        error?.response?.data?.message || "Failed to save bank account",
+        extractBackendErrorMessage(error, "Failed to save bank account"),
         "error"
       );
     } finally {

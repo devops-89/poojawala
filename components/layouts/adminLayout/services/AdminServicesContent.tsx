@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteServiceAPI,
@@ -168,7 +170,7 @@ export default function AdminServicesContent() {
             <Box>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "0.95rem",
                   color: "#1e293b",
@@ -206,7 +208,7 @@ export default function AdminServicesContent() {
         return (
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "0.95rem",
               color: "#1e293b",
@@ -223,7 +225,7 @@ export default function AdminServicesContent() {
       render: (service) => (
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 600,
             fontSize: "0.9rem",
             color: "#64748b",
@@ -265,6 +267,8 @@ export default function AdminServicesContent() {
             component={NextLink}
             href={`/admin/services/${service.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
@@ -276,9 +280,11 @@ export default function AdminServicesContent() {
             component={NextLink}
             href={`/admin/services/edit/${service.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
-              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
             }}
           >
             <EditIcon fontSize="small" />
@@ -286,6 +292,8 @@ export default function AdminServicesContent() {
           <IconButton
             onClick={() => setDeleteTarget(service.id)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },

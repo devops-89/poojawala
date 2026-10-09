@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { addToCartAPI } from "@/api/cartControllers";
 import { getCustomerOrdersAPI } from "@/api/orderControllers";
 import {
@@ -532,7 +534,7 @@ export default function CustomerOrdersContent() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 mx: "auto",
                 mb: 2.5,
               }}
@@ -542,7 +544,7 @@ export default function CustomerOrdersContent() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 color: "#2C1810",
                 mb: 1,
@@ -555,7 +557,7 @@ export default function CustomerOrdersContent() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: "14px",
                 mb: 3,
@@ -568,7 +570,7 @@ export default function CustomerOrdersContent() {
               onClick={() => router.push("/customer/products")}
               variant="contained"
               sx={{
-                bgcolor: "#C84B16",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 borderRadius: "30px",
                 px: 3.5,
@@ -621,7 +623,7 @@ export default function CustomerOrdersContent() {
                 showLastButton
                 sx={{
                   "& .MuiPaginationItem-root": {
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 700,
                     fontSize: "14px",
                     color: "#64534A",
@@ -630,22 +632,22 @@ export default function CustomerOrdersContent() {
                     bgcolor: "white",
                     mx: 0.4,
                     "&.Mui-selected": {
-                      bgcolor: "#C84B16",
+                      bgcolor: COLORS.PRIMARY,
                       color: "white",
-                      borderColor: "#C84B16",
+                      borderColor: COLORS.PRIMARY,
                       boxShadow: "0 4px 14px rgba(200, 75, 22, 0.35)",
                       "&:hover": { bgcolor: "#B84A17" },
                     },
                     "&:hover": {
                       bgcolor: "#FAF4EE",
-                      borderColor: "#C84B16",
+                      borderColor: COLORS.PRIMARY,
                     },
                   },
                 }}
               />
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#8C7A70",
                   fontSize: "13px",
                   fontWeight: 600,

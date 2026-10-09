@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { Box, FormControlLabel, Grid, Switch, TextField, Typography } from "@mui/material";
 import React from "react";
@@ -30,7 +32,7 @@ export default function ServiceAvailabilityFields({
     <Grid size={{ xs: 12 }}>
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 1,
           color: "#1e293b",
@@ -47,10 +49,10 @@ export default function ServiceAvailabilityFields({
               onChange={handleChange}
               sx={{
                 "& .MuiSwitch-switchBase.Mui-checked": {
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                 },
                 "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                  backgroundColor: "#FF6200",
+                  backgroundColor: COLORS.PRIMARY,
                 },
               }}
             />
@@ -58,7 +60,7 @@ export default function ServiceAvailabilityFields({
           label={
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 color: "#475569",
               }}
@@ -78,10 +80,10 @@ export default function ServiceAvailabilityFields({
               onChange={handleChange}
               sx={{
                 "& .MuiSwitch-switchBase.Mui-checked": {
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                 },
                 "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                  backgroundColor: "#FF6200",
+                  backgroundColor: COLORS.PRIMARY,
                 },
               }}
             />
@@ -89,7 +91,7 @@ export default function ServiceAvailabilityFields({
           label={
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 color: "#475569",
               }}

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -43,12 +45,12 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
           : stats?.totalBookingRevenue
             ? `₹${Number(stats.totalBookingRevenue).toLocaleString("en-IN")}`
             : "₹0",
-      icon: <BookOnlineIcon sx={{ fontSize: 32, color: "#C84B16" }} />,
+      icon: <BookOnlineIcon sx={{ fontSize: 32, color: COLORS.PRIMARY }} />,
       bgcolor: "#FFF0E6",
       borderColor: "#FFE0D0",
       valueColor: "#9C330B",
       badgeText: "Bookings",
-      badgeColor: "#C84B16",
+      badgeColor: COLORS.PRIMARY,
       badgeBg: "#FFDBC8",
     },
     {
@@ -178,7 +180,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
                     color: kpi.badgeColor,
                     fontWeight: 800,
                     fontSize: "11px",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     height: 22,
                     borderRadius: "12px",
                   }}
@@ -188,7 +190,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
               <Box>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#8C7A70",
                     fontSize: "12px",
                     fontWeight: 700,
@@ -205,7 +207,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
                 ) : (
                   <Typography
                     sx={{
-                      fontFamily: '"Georgia", "Times New Roman", serif',
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 800,
                       color: kpi.valueColor,
                       fontSize: { xs: "24px", sm: "28px" },
@@ -219,7 +221,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
 
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#64534A",
                     fontSize: "12px",
                     fontWeight: 500,
@@ -275,7 +277,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
               <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#8C7A70",
                     fontSize: "11.5px",
                     fontWeight: 700,
@@ -294,7 +296,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
                 ) : (
                   <Typography
                     sx={{
-                      fontFamily: '"Georgia", "Times New Roman", serif',
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 800,
                       color: kpi.valueColor,
                       fontSize: { xs: "20px", sm: "23px" },

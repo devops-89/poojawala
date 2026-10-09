@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Box, Breadcrumbs, Grid, Typography } from '@mui/material';
 import NextLink from 'next/link';
@@ -37,7 +39,7 @@ export default function AdminDashboardContent() {
 
   return (
     <Box sx={{ animation: 'fadeIn 0.5s ease-out' }}>
-      <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
+      <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
         Marketplace Overview
       </Typography>
       <Breadcrumbs 
@@ -45,10 +47,10 @@ export default function AdminDashboardContent() {
         aria-label="breadcrumb"
         sx={{ mb: 4 }}
       >
-        <NextLink href="/admin/dashboard" style={{ color: '#666', textDecoration: 'none', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', fontWeight: 500 }}>
+        <NextLink href="/admin/dashboard" style={{ color: '#666', textDecoration: 'none', fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 500 }}>
           Control Centre
         </NextLink>
-        <Typography sx={{ color: '#FF6200', fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '14px' }}>
+        <Typography sx={{ color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: '14px' }}>
           Admin Dashboard
         </Typography>
       </Breadcrumbs>

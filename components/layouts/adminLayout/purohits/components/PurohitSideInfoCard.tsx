@@ -1,4 +1,7 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { formatPhoneNumber } from "@/utils/helpers";
 
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -47,7 +50,7 @@ export default function PurohitSideInfoCard({
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: "#1e293b",
               mb: 2.5,
@@ -57,7 +60,7 @@ export default function PurohitSideInfoCard({
               gap: 1,
             }}
           >
-            <PhoneIcon sx={{ color: "#FF6200", fontSize: 20 }} />
+            <PhoneIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
             Contact Information
           </Typography>
 
@@ -66,7 +69,7 @@ export default function PurohitSideInfoCard({
               Phone Number
             </Typography>
             <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
-              {purohit.countryCode ? `+${purohit.countryCode} ` : ""}{purohit.phone || "N/A"}
+              {formatPhoneNumber(purohit.phone, purohit.countryCode)}
             </Typography>
           </Box>
 
@@ -105,7 +108,7 @@ export default function PurohitSideInfoCard({
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: "#1e293b",
               mb: 2.5,
@@ -115,7 +118,7 @@ export default function PurohitSideInfoCard({
               gap: 1,
             }}
           >
-            <PersonIcon sx={{ color: "#FF6200", fontSize: 20 }} />
+            <PersonIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
             Personal Details
           </Typography>
 
@@ -163,7 +166,7 @@ export default function PurohitSideInfoCard({
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: "#1e293b",
               mb: 2.5,
@@ -173,7 +176,7 @@ export default function PurohitSideInfoCard({
               gap: 1,
             }}
           >
-            <AccountBalanceIcon sx={{ color: "#FF6200", fontSize: 20 }} />
+            <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
             Bank & Payment Accounts ({bankAccounts.length})
           </Typography>
 

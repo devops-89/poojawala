@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import EmailIcon from "@mui/icons-material/Email";
 import PersonIcon from "@mui/icons-material/Person";
@@ -53,14 +55,14 @@ export default function OrderCustomerCard({
             display: "flex",
           }}
         >
-          <PersonIcon sx={{ fontSize: 24, color: "#FF6200" }} />
+          <PersonIcon sx={{ fontSize: 24, color: COLORS.PRIMARY }} />
         </Box>
         <Typography
           variant="h6"
           sx={{
             fontWeight: 700,
             color: "#0f172a",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Customer Details
@@ -79,7 +81,7 @@ export default function OrderCustomerCard({
               sx={{
                 width: 52,
                 height: 52,
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 fontWeight: 700,
               }}
             >
@@ -92,7 +94,7 @@ export default function OrderCustomerCard({
                 fontWeight: 700,
                 color: "#0f172a",
                 fontSize: "1.1rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {customerName}
@@ -101,7 +103,7 @@ export default function OrderCustomerCard({
               variant="body2"
               sx={{
                 color: "#64748b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               Customer ID: CM-{customer?.id || orderCustomerId || "N/A"}
@@ -117,7 +119,7 @@ export default function OrderCustomerCard({
             sx={{
               fontWeight: 500,
               color: "#334155",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {customer?.phone || shippingAddr?.phone || "N/A"}
@@ -130,7 +132,7 @@ export default function OrderCustomerCard({
             sx={{
               fontWeight: 500,
               color: "#334155",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {customer?.email || "N/A"}

@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
 import BlogCardGrid from "./BlogCardGrid";
 import FeaturedBlogSection from "./FeaturedBlogSection";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function BlogsLayout() {
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -45,7 +47,7 @@ export default function BlogsLayout() {
   return (
     <Box
       sx={{
-        bgcolor: "#FFFDF9",
+        bgcolor: COLORS.CREAM_ULTRA_LIGHT,
         minHeight: "100vh",
         pb: 10,
         position: "relative",
@@ -86,9 +88,9 @@ export default function BlogsLayout() {
               variant="h2"
               component="h1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.DM_SANS,
                 fontWeight: 700,
-                color: "#0f172a",
+                color: COLORS.SLATE_DARK,
                 mb: 0.5,
                 fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
                 lineHeight: { xs: 1.15, md: 1.2 },
@@ -101,9 +103,9 @@ export default function BlogsLayout() {
               variant="h2"
               component="h1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.DM_SANS,
                 fontWeight: 800,
-                color: "#D32F2F",
+                color: COLORS.RED_DARK,
                 mb: { xs: 1.5, md: 3 },
                 fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
                 lineHeight: { xs: 1.15, md: 1.2 },
@@ -115,8 +117,8 @@ export default function BlogsLayout() {
             <Typography
               variant="body1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
-                color: "#0f172a",
+                fontFamily: FONTS.DM_SANS,
+                color: COLORS.SLATE_DARK,
                 fontWeight: 600,
                 fontSize: { xs: "14px", sm: "15px", md: "16px" },
                 lineHeight: "1.45",

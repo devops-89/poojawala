@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { getPurohitByIdAPI, updatePurohitVerificationAPI } from "@/api/userControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
@@ -6,6 +8,8 @@ import PurohitProfileCard from "@/components/layouts/adminLayout/purohits/compon
 import PurohitSideInfoCard from "@/components/layouts/adminLayout/purohits/components/PurohitSideInfoCard";
 import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
@@ -13,12 +17,30 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Grid,
+  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
+const checkIsImage = (url: string) => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.startsWith("data:image/") || lowerUrl.startsWith("blob:")) {
+    return !lowerUrl.includes("pdf");
+  }
+  const cleanUrl = lowerUrl.split("?")[0].split("#")[0];
+  return /\.(jpeg|jpg|gif|png|webp|svg|bmp)$/i.test(cleanUrl);
+};
+
+const getPdfUrlWithParams = (url: string) => {
+  if (!url) return "";
+  if (url.includes("#")) return url;
+  return `${url}#toolbar=0&navpanes=0&view=FitH`;
+};
 
 export default function AdminPurohitDetailsContent() {
   const params = useParams();
@@ -105,7 +127,7 @@ export default function AdminPurohitDetailsContent() {
           height: "60vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -187,25 +209,77 @@ export default function AdminPurohitDetailsContent() {
         maxWidth="md"
         fullWidth
       >
-        <DialogContent sx={{ p: 0, height: "80vh" }}>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
+          }}
+        >
+          Document Preview
+          <IconButton onClick={() => setPreviewDocUrl(null)}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          dividers
+          sx={{
+            p: 2,
+            height: "75vh",
+            bgcolor: "#f8fafc",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           {previewDocUrl &&
-            (previewDocUrl.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i) ? (
+            (checkIsImage(previewDocUrl) ? (
               <img
                 src={previewDocUrl}
                 alt="Document Preview"
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  maxWidth: "100%",
+                  maxHeight: "100%",
                   objectFit: "contain",
-                  backgroundColor: "#f8fafc",
+                  borderRadius: "8px",
                 }}
               />
             ) : (
-              <iframe
-                src={previewDocUrl}
-                style={{ width: "100%", height: "100%", border: "none" }}
-                title="Document Preview"
-              />
+              <object
+                data={getPdfUrlWithParams(previewDocUrl)}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              >
+                <iframe
+                  src={
+                    previewDocUrl.startsWith("blob:") || previewDocUrl.startsWith("data:")
+                      ? getPdfUrlWithParams(previewDocUrl)
+                      : `https://docs.google.com/gview?url=${encodeURIComponent(previewDocUrl)}&embedded=true`
+                  }
+                  style={{ width: "100%", height: "100%", border: "none", borderRadius: "8px" }}
+                  title="Document Preview"
+                >
+                  <Box sx={{ p: 3, textAlign: "center" }}>
+                    <Typography sx={{ mb: 2, fontFamily: FONTS.OUTFIT }}>
+                      Unable to display document directly in browser dialog.
+                    </Typography>
+                    <Button
+                      component="a"
+                      href={previewDocUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="contained"
+                      sx={{ bgcolor: COLORS.PRIMARY }}
+                    >
+                      Open / Download Document
+                    </Button>
+                  </Box>
+                </iframe>
+              </object>
             ))}
         </DialogContent>
         <DialogActions>
@@ -214,7 +288,7 @@ export default function AdminPurohitDetailsContent() {
             sx={{
               color: "#64748b",
               fontWeight: 600,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Close
@@ -230,7 +304,7 @@ export default function AdminPurohitDetailsContent() {
         customMessage={
           newStatusTarget === "Rejected" ? (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 1 }}>
-              <Typography sx={{ color: "#475569", fontFamily: "var(--font-outfit), sans-serif" }}>
+              <Typography sx={{ color: "#475569", fontFamily: FONTS.OUTFIT }}>
                 Please provide a rejection reason for <strong>{purohitName}</strong>:
               </Typography>
               <TextField

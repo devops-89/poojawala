@@ -1,4 +1,7 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { extractBackendErrorMessage } from "@/utils/helpers";
 
 import { getMeAPI, resendOtpAPI } from "@/api/authControllers";
 import {
@@ -38,12 +41,68 @@ export default function PortalRegisterContent() {
   const initialStep = parseInt(searchParams.get("step") || "0", 10);
   const isAdminFlow = initialStep === 2;
   const [activeStep, setActiveStep] = useState(initialStep);
+  const [lastActiveStep, setLastActiveStep] = useState<number>(2);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [otpVerifiedAt, setOtpVerifiedAt] = useState<number | null>(null);
   const [isRestored, setIsRestored] = useState(false);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
 
+  useEffect(() => {
+    if (activeStep > 1) {
+      setLastActiveStep(activeStep);
+    }
+  }, [activeStep]);
+
   const router = useRouter();
   const { showSnackbar } = useSnackbarStore();
+
+  const checkOtpExpiration = (): boolean => {
+    if (isOtpVerified && otpVerifiedAt && !isAdminFlow) {
+      const elapsed = Date.now() - otpVerifiedAt;
+      const THIRTY_MINUTES_MS = 30 * 60 * 1000;
+      if (elapsed > THIRTY_MINUTES_MS) {
+        setIsOtpVerified(false);
+        setOtpVerifiedAt(null);
+        setActiveStep(1);
+        formik.setFieldValue("otp", ["", "", "", "", "", ""]);
+        showSnackbar(
+          "Your OTP verification has expired. Please verify OTP again.",
+          "error"
+        );
+        return true;
+      }
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    if (isAdminFlow) return;
+
+    const verifyExpiration = () => {
+      if (isOtpVerified && otpVerifiedAt) {
+        const elapsed = Date.now() - otpVerifiedAt;
+        if (elapsed > 30 * 60 * 1000) {
+          setIsOtpVerified(false);
+          setOtpVerifiedAt(null);
+          setActiveStep(1);
+          formik.setFieldValue("otp", ["", "", "", "", "", ""]);
+          showSnackbar(
+            "Your 30-minute OTP verification session has expired. Please verify OTP again.",
+            "error"
+          );
+        }
+      }
+    };
+
+    verifyExpiration();
+    const timer = setInterval(verifyExpiration, 10000);
+    window.addEventListener("focus", verifyExpiration);
+
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("focus", verifyExpiration);
+    };
+  }, [isOtpVerified, otpVerifiedAt, isAdminFlow, showSnackbar]);
 
   useEffect(() => {
     const userStr = sessionStorage.getItem("user");
@@ -125,7 +184,7 @@ export default function PortalRegisterContent() {
     validationSchema: validationSchema[activeStep],
     onSubmit: async (values) => {
       if (activeStep === 0) {
-        if (isOtpVerified) {
+        if (isOtpVerified && !checkOtpExpiration()) {
           setActiveStep(2);
           formik.setTouched({});
           return;
@@ -144,11 +203,11 @@ export default function PortalRegisterContent() {
             formik.setTouched({});
           }
         } catch (error: any) {
-          const errorMsg = error.response?.data?.message;
-          const displayMsg = Array.isArray(errorMsg)
-            ? errorMsg.join(", ")
-            : errorMsg || "Failed to send OTP";
-          showSnackbar(displayMsg, "error");
+          showSnackbar(extractBackendErrorMessage(error, "Failed to send OTP"), "error");
+
+
+
+
         } finally {
           setIsSendingOtp(false);
         }
@@ -174,15 +233,16 @@ export default function PortalRegisterContent() {
           if (res.success || res.message) {
             showSnackbar("OTP Verified successfully!", "success");
             setIsOtpVerified(true);
-            setActiveStep(2);
+            setOtpVerifiedAt(Date.now());
+            setActiveStep(Math.max(2, lastActiveStep));
             formik.setTouched({});
           }
         } catch (error: any) {
-          const errorMsg = error.response?.data?.message;
-          const displayMsg = Array.isArray(errorMsg)
-            ? errorMsg.join(", ")
-            : errorMsg || "Invalid OTP";
-          showSnackbar(displayMsg, "error");
+          showSnackbar(extractBackendErrorMessage(error, "Invalid OTP"), "error");
+
+
+
+
         } finally {
           setIsVerifyingOtp(false);
         }
@@ -190,6 +250,7 @@ export default function PortalRegisterContent() {
       }
 
       if (activeStep === steps.length - 1) {
+        if (checkOtpExpiration()) return;
         setIsSubmittingForm(true);
         try {
           const fd = new FormData();
@@ -321,11 +382,30 @@ export default function PortalRegisterContent() {
             router.replace("/purohit/dashboard");
           }
         } catch (error: any) {
-          const errorMsg = error.response?.data?.message;
-          const displayMsg = Array.isArray(errorMsg)
-            ? errorMsg.join(", ")
-            : errorMsg || "Registration failed";
-          showSnackbar(displayMsg, "error");
+          const errMsg = extractBackendErrorMessage(error, "Registration failed");
+          const lowerMsg = errMsg.toLowerCase();
+          const isOtpOrSessionError =
+            lowerMsg.includes("otp") ||
+            lowerMsg.includes("expire") ||
+            lowerMsg.includes("verify") ||
+            lowerMsg.includes("session") ||
+            lowerMsg.includes("unauthorized") ||
+            error.response?.status === 400 ||
+            error.response?.status === 401;
+
+          if (isOtpOrSessionError && !isAdminFlow) {
+            setIsOtpVerified(false);
+            setOtpVerifiedAt(null);
+            setActiveStep(1);
+            formik.setFieldValue("otp", ["", "", "", "", "", ""]);
+            showSnackbar(`${errMsg}. Please verify OTP again.`, "error");
+          } else {
+            showSnackbar(errMsg, "error");
+          }
+
+
+
+
         } finally {
           setIsSubmittingForm(false);
         }
@@ -370,6 +450,21 @@ export default function PortalRegisterContent() {
         }
         if (typeof parsed.isOtpVerified === "boolean") {
           setIsOtpVerified(parsed.isOtpVerified);
+        }
+        if (typeof parsed.otpVerifiedAt === "number") {
+          const elapsed = Date.now() - parsed.otpVerifiedAt;
+          if (elapsed > 30 * 60 * 1000) {
+            setIsOtpVerified(false);
+            setOtpVerifiedAt(null);
+            if (!isAdminFlow) setActiveStep(1);
+          } else {
+            setOtpVerifiedAt(parsed.otpVerifiedAt);
+          }
+        }
+
+
+        if (typeof parsed.lastActiveStep === "number") {
+          setLastActiveStep(parsed.lastActiveStep);
         }
         if (typeof parsed.activeStep === "number" && !isAdminFlow) {
           let restoredStep = parsed.activeStep;
@@ -418,13 +513,15 @@ export default function PortalRegisterContent() {
           ifscCode: formik.values.ifscCode,
         },
         activeStep,
+        lastActiveStep,
         isOtpVerified,
+        otpVerifiedAt,
       };
       sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
     } catch (e) {
       console.error("Failed to save draft to sessionStorage", e);
     }
-  }, [formik.values, activeStep, isOtpVerified, isRestored]);
+  }, [formik.values, activeStep, lastActiveStep, isOtpVerified, otpVerifiedAt, isRestored]);
 
   // Resend OTP Timer
   useEffect(() => {
@@ -452,18 +549,15 @@ export default function PortalRegisterContent() {
       setResendTimer(30);
     } catch (err: any) {
       showSnackbar(
-        err.response?.data?.message || "Failed to resend OTP",
+        extractBackendErrorMessage(err, "Failed to resend OTP"),
         "error",
       );
     }
   };
 
   const handleBack = () => {
-    if (activeStep === 2 && isOtpVerified) {
-      setActiveStep(0);
-    } else {
-      setActiveStep((prev) => Math.max(0, prev - 1));
-    }
+    setActiveStep((prev) => Math.max(0, prev - 1));
+
   };
 
   const handleStepClick = async (targetIndex: number) => {
@@ -471,11 +565,7 @@ export default function PortalRegisterContent() {
 
     // Going backward
     if (targetIndex < activeStep) {
-      if (targetIndex === 1 && isOtpVerified) {
-        setActiveStep(0);
-      } else {
-        setActiveStep(targetIndex);
-      }
+      setActiveStep(targetIndex);
       return;
     }
 
@@ -595,8 +685,8 @@ export default function PortalRegisterContent() {
             alternativeLabel
             sx={{
               mb: 6,
-              "& .MuiStepIcon-root.Mui-active": { color: "#FF6200" },
-              "& .MuiStepIcon-root.Mui-completed": { color: "#FF6200" },
+              "& .MuiStepIcon-root.Mui-active": { color: COLORS.PRIMARY },
+              "& .MuiStepIcon-root.Mui-completed": { color: COLORS.PRIMARY },
               "& .MuiStep-root": { cursor: "pointer" },
             }}
           >
@@ -612,7 +702,7 @@ export default function PortalRegisterContent() {
                     sx={{
                       cursor: "pointer",
                       "& .MuiStepLabel-label": {
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 600,
                         cursor: "pointer",
                       },
@@ -674,14 +764,14 @@ export default function PortalRegisterContent() {
                   onClick={handleBack}
                   type="button"
                   sx={{
-                    background: "#FF6200",
+                    background: COLORS.PRIMARY,
                     color: "white",
                     textTransform: "none",
                     fontWeight: 600,
                     borderRadius: "30px",
                     px: 4,
                     boxShadow: "none",
-                    "&:hover": { background: "#F05A00", boxShadow: "none" },
+                    "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
                     "&.Mui-disabled": {
                       background: "#FFE0D0",
                       color: "#FFA07A",
@@ -695,14 +785,14 @@ export default function PortalRegisterContent() {
                 type="submit"
                 disabled={isSendingOtp || isVerifyingOtp || isSubmittingForm}
                 sx={{
-                  background: "#FF6200",
+                  background: COLORS.PRIMARY,
                   color: "white",
                   textTransform: "none",
                   fontWeight: 600,
                   borderRadius: "30px",
                   px: 4,
                   boxShadow: "none",
-                  "&:hover": { background: "#F05A00", boxShadow: "none" },
+                  "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
                   "&.Mui-disabled": {
                     background: "#FFE0D0",
                     color: "#FFA07A",

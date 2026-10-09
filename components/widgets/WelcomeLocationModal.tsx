@@ -18,6 +18,8 @@ import {
 import { City, State } from "country-state-city";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { COLORS } from "@/utils/enums";
+import { FONTS } from "@/utils/fonts";
 
 export default function WelcomeLocationModal() {
   const router = useRouter();
@@ -131,7 +133,7 @@ export default function WelcomeLocationModal() {
             color: "#64748b",
             bgcolor: "white",
             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            "&:hover": { bgcolor: "#f1f5f9", color: "#FF6200" },
+            "&:hover": { bgcolor: "#f1f5f9", color: COLORS.PRIMARY },
           }}
         >
           <CloseIcon fontSize="small" />
@@ -148,7 +150,7 @@ export default function WelcomeLocationModal() {
           <Typography
             variant="h5"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1E293B",
               fontSize: { xs: "20px", sm: "22px" },
@@ -159,7 +161,7 @@ export default function WelcomeLocationModal() {
           </Typography>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64748B",
               fontSize: "13.5px",
               lineHeight: 1.5,
@@ -213,7 +215,7 @@ export default function WelcomeLocationModal() {
                           <>
                             <InputAdornment position="start">
                               <LocationOnIcon
-                                sx={{ color: "#FF6200", fontSize: 18 }}
+                                sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
                               />
                             </InputAdornment>
                             {params.InputProps?.startAdornment}
@@ -227,15 +229,15 @@ export default function WelcomeLocationModal() {
                         placeholder="Select State"
                         autoComplete="off"
                         sx={{
-                          bgcolor: "#FFFFFF",
+                          bgcolor: COLORS.WHITE,
                           "& .MuiOutlinedInput-root": {
                             borderRadius: "12px",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14px",
                             "& fieldset": { borderColor: "#E2E8F0" },
-                            "&:hover fieldset": { borderColor: "#FF6200" },
+                            "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
                             "&.Mui-focused fieldset": {
-                              borderColor: "#FF6200",
+                              borderColor: COLORS.BRAND_ORANGE,
                             },
                           },
                         }}
@@ -282,7 +284,7 @@ export default function WelcomeLocationModal() {
                           <>
                             <InputAdornment position="start">
                               <LocationOnIcon
-                                sx={{ color: "#FF6200", fontSize: 18 }}
+                                sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
                               />
                             </InputAdornment>
                             {params.InputProps?.startAdornment}
@@ -303,15 +305,15 @@ export default function WelcomeLocationModal() {
                             : undefined
                         }
                         sx={{
-                          bgcolor: "#FFFFFF",
+                          bgcolor: COLORS.WHITE,
                           "& .MuiOutlinedInput-root": {
                             borderRadius: "12px",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14px",
                             "& fieldset": { borderColor: "#E2E8F0" },
-                            "&:hover fieldset": { borderColor: "#FF6200" },
+                            "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
                             "&.Mui-focused fieldset": {
-                              borderColor: "#FF6200",
+                              borderColor: COLORS.BRAND_ORANGE,
                             },
                           },
                         }}
@@ -331,16 +333,16 @@ export default function WelcomeLocationModal() {
                 mt: 1,
                 py: 1.4,
                 borderRadius: "12px",
-                bgcolor: "#FF6200",
-                color: "#FFFFFF",
-                fontFamily: '"DM Sans", sans-serif',
+                bgcolor: COLORS.BRAND_ORANGE,
+                color: COLORS.WHITE,
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 fontSize: "15px",
                 textTransform: "none",
-                boxShadow: "0 8px 20px rgba(255, 98, 0, 0.25)",
+                boxShadow: `0 8px 20px ${COLORS.PRIMARY_SHADOW}`,
                 "&:hover": {
                   bgcolor: "#E55800",
-                  boxShadow: "0 10px 25px rgba(255, 98, 0, 0.35)",
+                  boxShadow: `0 10px 25px ${COLORS.PRIMARY_SHADOW}`,
                 },
               }}
             >

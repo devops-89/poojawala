@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function UpcomingFestivals() {
   const router = useRouter();
@@ -126,7 +128,7 @@ export default function UpcomingFestivals() {
             variant="h2"
             component="h2"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: { xs: "28px", sm: "36px", md: "48px" },
               lineHeight: { xs: "36px", md: "62px" },
@@ -154,7 +156,7 @@ export default function UpcomingFestivals() {
         {/* Cards Section */}
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
-            <CircularProgress sx={{ color: "#FF6200" }} />
+            <CircularProgress sx={{ color: COLORS.PRIMARY }} />
           </Box>
         ) : festivalsData.length === 0 ? (
           <EmptyStateCard
@@ -212,7 +214,7 @@ export default function UpcomingFestivals() {
                 <Box sx={{ position: "relative", zIndex: 2 }}>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 600,
                       fontSize: { xs: "24px", md: "32px" },
                       lineHeight: "130.6%",
@@ -224,7 +226,7 @@ export default function UpcomingFestivals() {
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 400,
                       fontSize: "20px",
                       lineHeight: "130.6%",
@@ -254,7 +256,7 @@ export default function UpcomingFestivals() {
                 >
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 400,
                       fontSize: "18px",
                       lineHeight: "140%",
@@ -272,7 +274,7 @@ export default function UpcomingFestivals() {
                     variant="contained"
                     onClick={() => router.push("/sign-up?from=book-now")}
                     sx={{
-                      background: "#FF6200",
+                      background: COLORS.PRIMARY,
                       color: "#FFFFFF",
                       width: "117.82px",
                       height: "34px",
@@ -285,7 +287,7 @@ export default function UpcomingFestivals() {
                       transition: "all 0.3s ease",
                       boxShadow: "none",
                       "&:hover": {
-                        background: "#F05A00",
+                        background: COLORS.PRIMARY_DARK,
                         boxShadow: "none",
                       },
                     }}

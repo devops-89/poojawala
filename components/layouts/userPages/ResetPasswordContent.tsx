@@ -11,6 +11,8 @@ import { resetPasswordAPI, resendOtpAPI } from '@/api/authControllers';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
 import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 const validationSchema = Yup.object().shape({
   otp: Yup.array()
@@ -137,18 +139,18 @@ export default function ResetPasswordContent() {
             >
               <Button 
                 onClick={() => router.back()} 
-                sx={{ position: 'absolute', top: 16, right: 16, color: '#666', textTransform: 'none', fontFamily: '"DM Sans", sans-serif', fontWeight: 600, '&:hover': { background: 'transparent', color: '#1A1A1A' } }}
+                sx={{ position: 'absolute', top: 16, right: 16, color: '#666', textTransform: 'none', fontFamily: FONTS.PRIMARY, fontWeight: 600, '&:hover': { background: 'transparent', color: '#1A1A1A' } }}
                 startIcon={<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>}
               >
                 Back
               </Button>
               
               <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1A1A1A', textAlign: 'center' }}>
+                <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1A1A1A', textAlign: 'center' }}>
                   Reset Password
                 </Typography>
               </Box>
-              <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', mb: 4, textAlign: 'center' }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', mb: 4, textAlign: 'center' }}>
                 Enter the OTP sent to <b>{email}</b> and your new password.
               </Typography>
 
@@ -179,7 +181,7 @@ export default function ResetPasswordContent() {
                   <Box component={Form}>
                     <FormikValidationSnackbar />
                     <Box sx={{ mb: 2 }}>
-                      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', mb: 1, fontSize: '14px' }}>
+                      <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', mb: 1, fontSize: '14px' }}>
                         Enter your OTP
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'space-between' }}>
@@ -207,9 +209,9 @@ export default function ResetPasswordContent() {
                         <Typography 
                           onClick={handleResendOtp}
                           sx={{ 
-                            fontFamily: '"DM Sans", sans-serif', 
+                            fontFamily: FONTS.PRIMARY, 
                             fontSize: '14px', 
-                            color: timer > 0 ? '#999' : '#FF6200', 
+                            color: timer > 0 ? '#999' : COLORS.PRIMARY, 
                             cursor: timer > 0 ? 'default' : 'pointer',
                             fontWeight: 600,
                             '&:hover': { textDecoration: timer > 0 ? 'none' : 'underline' }
@@ -243,8 +245,8 @@ export default function ResetPasswordContent() {
                             }
                           }}
                           sx={{ 
-                            '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
-                            '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' }
+                            '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
+                            '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY }
                           }}
                         />
                       )}
@@ -273,8 +275,8 @@ export default function ResetPasswordContent() {
                             }
                           }}
                           sx={{ 
-                            '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
-                            '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' }
+                            '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
+                            '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY }
                           }}
                         />
                       )}
@@ -286,7 +288,7 @@ export default function ResetPasswordContent() {
                       disabled={isSubmitting}
                       variant="contained" 
                       sx={{
-                        background: '#FF6200',
+                        background: COLORS.PRIMARY,
                         color: 'white',
                         py: 1.5,
                         mt: 3,
@@ -296,7 +298,7 @@ export default function ResetPasswordContent() {
                         fontSize: '16px',
                         boxShadow: '0 8px 20px rgba(255, 98, 0, 0.3)',
                         '&:hover': {
-                          background: '#E65800',
+                          background: COLORS.PRIMARY_DARK,
                           boxShadow: '0 8px 25px rgba(255, 98, 0, 0.4)',
                         }
                       }}

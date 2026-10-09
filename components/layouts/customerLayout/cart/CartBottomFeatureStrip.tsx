@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -16,7 +18,7 @@ export default function CartBottomFeatureStrip() {
         right: "50%",
         marginLeft: "-50vw",
         marginRight: "-50vw",
-        bgcolor: "#FF6200",
+        bgcolor: COLORS.PRIMARY,
         color: "white",
         py: 3,
         px: { xs: 3, sm: 5, md: 8 },
@@ -38,7 +40,7 @@ export default function CartBottomFeatureStrip() {
           <SecurityIcon sx={{ fontSize: 22 }} />
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: "14px",
             }}
@@ -51,7 +53,7 @@ export default function CartBottomFeatureStrip() {
           <AccessTimeIcon sx={{ fontSize: 22 }} />
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: "14px",
             }}
@@ -64,7 +66,7 @@ export default function CartBottomFeatureStrip() {
           <LocalShippingOutlinedIcon sx={{ fontSize: 22 }} />
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: "14px",
             }}

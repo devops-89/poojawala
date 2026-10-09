@@ -1,4 +1,7 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import AdminStatusSelect from "../../common/AdminStatusSelect";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -7,8 +10,6 @@ import {
   Box,
   Chip,
   IconButton,
-  MenuItem,
-  Select,
   TableCell,
   TableRow,
   Typography,
@@ -37,9 +38,9 @@ export default function ProductTableRow({
       <TableCell>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            color: "#FF6200",
+            color: COLORS.PRIMARY,
             fontSize: "0.9rem",
           }}
         >
@@ -51,7 +52,7 @@ export default function ProductTableRow({
       <TableCell>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
             fontSize: "0.95rem",
@@ -65,7 +66,7 @@ export default function ProductTableRow({
       <TableCell>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
             fontSize: "0.95rem",
@@ -84,7 +85,7 @@ export default function ProductTableRow({
             bgcolor: "#f1f5f9",
             color: "#334155",
             fontWeight: 700,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             borderRadius: "6px",
             px: 0.5,
           }}
@@ -93,40 +94,19 @@ export default function ProductTableRow({
 
       {/* Status Dropdown */}
       <TableCell>
-        <Select
-          value={isActive ? "Available" : "Unavailable"}
-          onChange={(e) =>
+        <AdminStatusSelect
+          value={isActive ? "AVAILABLE" : "UNAVAILABLE"}
+          options={[
+            { value: "AVAILABLE", label: "Available" },
+            { value: "UNAVAILABLE", label: "Unavailable" },
+          ]}
+          onChange={(val) =>
             onStatusSelect({
               product,
-              isActive: e.target.value === "Available",
+              isActive: val === "AVAILABLE",
             })
           }
-          size="small"
-          sx={{
-            height: 32,
-            fontSize: "0.8rem",
-            fontWeight: 700,
-            borderRadius: "8px",
-            fontFamily: "var(--font-outfit), sans-serif",
-            bgcolor: isActive ? "#d1fae5" : "#fee2e2",
-            color: isActive ? "#065f46" : "#991b1b",
-            "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-            "& .MuiSvgIcon-root": { color: isActive ? "#065f46" : "#991b1b" },
-          }}
-        >
-          <MenuItem
-            value="Available"
-            sx={{ fontSize: "0.85rem", fontWeight: 600, color: "#10b981" }}
-          >
-            Available
-          </MenuItem>
-          <MenuItem
-            value="Unavailable"
-            sx={{ fontSize: "0.85rem", fontWeight: 600, color: "#ef4444" }}
-          >
-            Unavailable
-          </MenuItem>
-        </Select>
+        />
       </TableCell>
 
       {/* Actions */}
@@ -144,6 +124,8 @@ export default function ProductTableRow({
             href={`/admin/products/${product.id}`}
             size="small"
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
@@ -157,9 +139,11 @@ export default function ProductTableRow({
             href={`/admin/products/edit/${product.id}`}
             size="small"
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
-              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
             }}
             title="Edit Product"
           >
@@ -169,6 +153,8 @@ export default function ProductTableRow({
             onClick={() => onDeleteClick(product.id)}
             size="small"
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#ef4444", bgcolor: "#fee2e2" },

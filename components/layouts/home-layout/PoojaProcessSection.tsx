@@ -12,6 +12,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 const steps = [
   {
@@ -42,19 +44,19 @@ const steps = [
 
 const promises = [
   {
-    icon: <VerifiedUserOutlinedIcon sx={{ color: "#B8860B", fontSize: 24 }} />,
+    icon: <VerifiedUserOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,
     title: "Verified Vedic Pandits",
     description:
       "Every pandit is background-verified, Sanskrit-trained, and has completed a minimum 5-year practice.",
   },
   {
-    icon: <LocalMallOutlinedIcon sx={{ color: "#B8860B", fontSize: 24 }} />,
+    icon: <LocalMallOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,
     title: "Pure Samagri Delivery",
     description:
       "Order 100% pure, organic, and certified puja samagri kits separately directly from our app whenever required.",
   },
   {
-    icon: <AccessTimeOutlinedIcon sx={{ color: "#B8860B", fontSize: 24 }} />,
+    icon: <AccessTimeOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,
     title: "On Time, Every Time",
     description:
       "Muhurat is sacred. We are always at your door 30 minutes before the ceremony start time.",
@@ -65,7 +67,7 @@ export default function PoojaProcessSection() {
   const router = useRouter();
 
   return (
-    <Box sx={{ py: { xs: 7, md: 10 }, bgcolor: "#FFF" }}>
+    <Box sx={{ py: { xs: 7, md: 10 }, bgcolor: COLORS.WHITE }}>
       <Container maxWidth="lg">
         <Grid
           container
@@ -77,11 +79,11 @@ export default function PoojaProcessSection() {
             <Box sx={{ pr: { md: 3 } }}>
               <Typography
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "12px",
                   fontWeight: 700,
                   letterSpacing: "0.12em",
-                  color: "#B8860B",
+                  color: COLORS.GOLD_DARK,
                   textTransform: "uppercase",
                   mb: 1,
                 }}
@@ -93,10 +95,10 @@ export default function PoojaProcessSection() {
                 variant="h3"
                 component="h2"
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   fontSize: { xs: "28px", sm: "36px", md: "40px" },
-                  color: "#2C1810",
+                  color: COLORS.TEXT_DARK,
                   lineHeight: 1.2,
                   mb: 5,
                 }}
@@ -126,7 +128,7 @@ export default function PoojaProcessSection() {
                           top: "44px",
                           bottom: "-32px",
                           width: "2px",
-                          bgcolor: "#EFE6D5",
+                          bgcolor: COLORS.BORDER_LIGHT,
                           zIndex: 1,
                         }}
                       />
@@ -138,12 +140,12 @@ export default function PoojaProcessSection() {
                         width: 44,
                         height: 44,
                         borderRadius: "50%",
-                        border: "1.5px solid #D4B076",
-                        bgcolor: "#FFFDF9",
-                        color: "#B8860B",
+                        border: `1.5px solid ${COLORS.GOLD_MEDIUM}`,
+                        bgcolor: COLORS.CREAM_ULTRA_LIGHT,
+                        color: COLORS.GOLD_DARK,
                         fontWeight: 700,
                         fontSize: "16px",
-                        fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                        fontFamily: FONTS.OUTFIT,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -160,11 +162,10 @@ export default function PoojaProcessSection() {
                       <Typography
                         component="h3"
                         sx={{
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontWeight: 700,
                           fontSize: { xs: "18px", sm: "20px" },
-                          color: "#2C1810",
+                          color: COLORS.TEXT_DARK,
                           mb: 0.8,
                         }}
                       >
@@ -172,10 +173,9 @@ export default function PoojaProcessSection() {
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontSize: "14.5px",
-                          color: "#64748b",
+                          color: COLORS.SLATE_MUTED,
                           lineHeight: 1.6,
                         }}
                       >
@@ -192,9 +192,9 @@ export default function PoojaProcessSection() {
           <Grid size={{ xs: 12, md: 5 }}>
             <Box
               sx={{
-                bgcolor: "#FAF4E8",
+                bgcolor: COLORS.CREAM_LIGHT,
                 borderRadius: "24px",
-                border: "1.5px solid #EFE6D5",
+                border: `1.5px solid ${COLORS.BORDER_LIGHT}`,
                 p: { xs: 3, sm: 4.5 },
                 boxShadow: "0 8px 30px rgba(184, 134, 11, 0.06)",
               }}
@@ -202,10 +202,10 @@ export default function PoojaProcessSection() {
               <Typography
                 component="h3"
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   fontSize: { xs: "22px", sm: "24px" },
-                  color: "#2C1810",
+                  color: COLORS.TEXT_DARK,
                   mb: 4,
                 }}
               >
@@ -223,8 +223,8 @@ export default function PoojaProcessSection() {
                         width: 46,
                         height: 46,
                         borderRadius: "12px",
-                        bgcolor: "#FFF8ED",
-                        border: "1px solid #EFE6D5",
+                        bgcolor: COLORS.CREAM_SOFT,
+                        border: `1px solid ${COLORS.BORDER_LIGHT}`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -236,11 +236,10 @@ export default function PoojaProcessSection() {
                     <Box>
                       <Typography
                         sx={{
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontWeight: 700,
                           fontSize: "16.5px",
-                          color: "#2C1810",
+                          color: COLORS.TEXT_DARK,
                           mb: 0.5,
                         }}
                       >
@@ -248,10 +247,9 @@ export default function PoojaProcessSection() {
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontSize: "14px",
-                          color: "#64748b",
+                          color: COLORS.SLATE_MUTED,
                           lineHeight: 1.5,
                         }}
                       >
@@ -262,25 +260,25 @@ export default function PoojaProcessSection() {
                 ))}
               </Box>
 
-              <Divider sx={{ my: 3.5, borderColor: "#E5D9C5" }} />
+              <Divider sx={{ my: 3.5, borderColor: COLORS.BORDER_MUTED }} />
 
               <Button
                 variant="contained"
                 onClick={() => router.push("/sign-in")}
                 sx={{
                   width: "100%",
-                  bgcolor: "#FF6200",
-                  color: "#FFFFFF",
+                  bgcolor: COLORS.PRIMARY,
+                  color: COLORS.WHITE,
                   borderRadius: "14px",
                   py: 1.4,
                   fontSize: "16px",
                   fontWeight: 700,
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   textTransform: "none",
                   boxShadow: "none",
                   transition: "all 0.25s ease-in-out",
                   "&:hover": {
-                    bgcolor: "#E65800",
+                    bgcolor: COLORS.PRIMARY_HOVER,
                     boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
                   },
                 }}
@@ -290,9 +288,9 @@ export default function PoojaProcessSection() {
 
               <Typography
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "12.5px",
-                  color: "#8C6D53",
+                  color: COLORS.TEXT_MUTED,
                   textAlign: "center",
                   mt: 2,
                 }}

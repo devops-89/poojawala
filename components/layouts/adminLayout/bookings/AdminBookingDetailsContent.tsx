@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 
 import {
   getBookingDetailsAPI,
@@ -79,7 +80,7 @@ export default function AdminBookingDetailsContent() {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }

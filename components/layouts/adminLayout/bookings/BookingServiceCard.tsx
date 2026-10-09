@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
@@ -113,7 +115,7 @@ export default function BookingServiceCard({
             sx={{
               fontWeight: 700,
               color: "#0f172a",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Service Information
@@ -125,11 +127,11 @@ export default function BookingServiceCard({
             label={`${selectedPlanName} PLAN`}
             sx={{
               bgcolor: "#FFF8F5",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               fontWeight: 700,
               border: "1px solid #FF6200",
               fontSize: "0.85rem",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           />
         )}
@@ -165,7 +167,7 @@ export default function BookingServiceCard({
               sx={{
                 fontWeight: 700,
                 color: "#0f172a",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {service.name || "N/A"}
@@ -176,7 +178,7 @@ export default function BookingServiceCard({
                   color: "#64748b",
                   fontSize: "0.9rem",
                   mt: 0.8,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   lineHeight: 1.5,
                 }}
               >
@@ -234,7 +236,7 @@ export default function BookingServiceCard({
                 fontWeight: 800,
                 color: "#10b981",
                 fontSize: "1.4rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               ₹{Number(displayPrice).toLocaleString("en-IN")}
@@ -286,7 +288,7 @@ export default function BookingServiceCard({
                               fontSize: "13px",
                               color: "#334155",
                               fontWeight: 600,
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                             }}
                           >
                             {label}
@@ -296,7 +298,7 @@ export default function BookingServiceCard({
                             sx={{
                               fontSize: "13px",
                               color: "#475569",
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                             }}
                           >
                             <span style={{ color: "#64748b" }}>{label}:</span>{" "}

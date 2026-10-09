@@ -6,6 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ServiceGridProps } from '@/utils/types';
 import ServiceCard from './ServiceCard';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function ServiceGrid({
   activeCategory,
@@ -204,7 +206,7 @@ export default function ServiceGrid({
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-        <CircularProgress sx={{ color: '#FF6200' }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -214,10 +216,10 @@ export default function ServiceGrid({
       {/* Header Row */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-          <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+          <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>
             Top Services for You
           </Typography>
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#666' }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#666' }}>
             {totalCount || services.length} services available
           </Typography>
         </Box>
@@ -258,11 +260,11 @@ export default function ServiceGrid({
             shape="rounded"
             sx={{
               '& .MuiPaginationItem-root': {
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 '&.Mui-selected': {
-                  bgcolor: '#FF6200',
+                  bgcolor: COLORS.PRIMARY,
                   color: 'white',
-                  '&:hover': { bgcolor: '#E65800' }
+                  '&:hover': { bgcolor: COLORS.PRIMARY_DARK }
                 }
               }
             }}

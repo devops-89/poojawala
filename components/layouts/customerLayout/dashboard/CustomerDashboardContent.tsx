@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Button, Card, Divider, Tabs, Tab, IconButton, Tooltip, TablePagination, Pagination } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -79,10 +81,10 @@ export default function CustomerDashboardContent() {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1e293b', mb: 0.5 }}>
+      <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1e293b', mb: 0.5 }}>
         My Bookings
       </Typography>
-      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', mb: 4 }}>
+      <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', mb: 4 }}>
         Manage all your service bookings.
       </Typography>
 
@@ -97,7 +99,7 @@ export default function CustomerDashboardContent() {
             sx={{ 
               px: 2, 
               '& .MuiTab-root': { 
-                fontFamily: '"DM Sans", sans-serif', 
+                fontFamily: FONTS.PRIMARY, 
                 fontWeight: 600, 
                 textTransform: 'none', 
                 fontSize: '14px', 
@@ -107,7 +109,7 @@ export default function CustomerDashboardContent() {
                 py: 2.5
               }, 
               '& .Mui-selected': { color: '#FF6200 !important' }, 
-              '& .MuiTabs-indicator': { backgroundColor: '#FF6200' } 
+              '& .MuiTabs-indicator': { backgroundColor: COLORS.PRIMARY } 
             }}
           >
             {tabsList.map((label, index) => (
@@ -122,18 +124,18 @@ export default function CustomerDashboardContent() {
             <Table sx={{ minWidth: 800 }}>
               <TableHead sx={{ bgcolor: '#f8fafc' }}>
                 <TableRow>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking ID</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Service</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking Date</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Status</TableCell>
-                  <TableCell align="center" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Actions</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking ID</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Service</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking Date</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Status</TableCell>
+                  <TableCell align="center" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {bookings.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: '"DM Sans", sans-serif', color: '#64748b' }}>
+                    <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.PRIMARY, color: '#64748b' }}>
                       No bookings found.
                     </TableCell>
                   </TableRow>
@@ -144,12 +146,12 @@ export default function CustomerDashboardContent() {
                     
                     return (
                       <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b' }}>B-{row.id}</TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#334155' }}>{row.service?.name || 'Puja Service'}</TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#475569' }}>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>B-{row.id}</TableCell>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>{row.service?.name || 'Puja Service'}</TableCell>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
                           {row.scheduledAt ? new Date(row.scheduledAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                         </TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b' }}>{displayAmt}</TableCell>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>{displayAmt}</TableCell>
                         <TableCell>
                           {(() => {
                             const statusStyle = getStatusColor(row.status);
@@ -159,7 +161,7 @@ export default function CustomerDashboardContent() {
                                 size="small" 
                                 sx={{ 
                                   fontWeight: 600, 
-                                  fontFamily: '"DM Sans", sans-serif',
+                                  fontFamily: FONTS.PRIMARY,
                                   fontSize: '12px',
                                   bgcolor: statusStyle.bg,
                                   color: statusStyle.text
@@ -170,7 +172,7 @@ export default function CustomerDashboardContent() {
                         </TableCell>
                         <TableCell align="center">
                           <Tooltip title="View Details">
-                            <IconButton onClick={() => router.push(`/customer/bookings/${row.id}`)} size="small" sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                            <IconButton onClick={() => router.push(`/customer/bookings/${row.id}`)} size="small" sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
                               <VisibilityIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
@@ -190,10 +192,26 @@ export default function CustomerDashboardContent() {
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}
-              sx={{
+          slotProps={{
+            select: {
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                disableScrollLock: true,
+              },
+            },
+          }}
+          sx={{
                 borderTop: '1px solid #e2e8f0',
                 '& .MuiTablePagination-toolbar': { minHeight: '60px' },
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
               }}
             />
           )}
@@ -204,7 +222,7 @@ export default function CustomerDashboardContent() {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mt: 3 }}>
         {bookings.length === 0 ? (
           <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
               No bookings found.
             </Typography>
           </Paper>
@@ -218,7 +236,7 @@ export default function CustomerDashboardContent() {
             return (
               <Card key={row.id} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: 'white', borderColor: '#e2e8f0' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
                     {row.service?.name || 'Puja Service'}
                   </Typography>
                   {(() => {
@@ -229,7 +247,7 @@ export default function CustomerDashboardContent() {
                       size="small" 
                       sx={{ 
                         fontWeight: 700, 
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: '11px',
                         height: '22px',
                         bgcolor: statusStyle.bg,
@@ -239,7 +257,7 @@ export default function CustomerDashboardContent() {
                     );
                   })()}
                 </Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px', mb: 1.5 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
                   Booking ID: <span style={{ fontWeight: 600, color: '#1e293b' }}>B-{row.id}</span>
                 </Typography>
                 
@@ -267,7 +285,7 @@ export default function CustomerDashboardContent() {
                 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
                   <Tooltip title="View Details">
-                    <IconButton onClick={() => router.push(`/customer/bookings/${row.id}`)} size="small" sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                    <IconButton onClick={() => router.push(`/customer/bookings/${row.id}`)} size="small" sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
                       <VisibilityIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -287,7 +305,7 @@ export default function CustomerDashboardContent() {
               color="primary"
               size="medium"
               sx={{ 
-                '& .MuiPaginationItem-root': { fontFamily: '"DM Sans", sans-serif', fontWeight: 600 },
+                '& .MuiPaginationItem-root': { fontFamily: FONTS.PRIMARY, fontWeight: 600 },
                 '& .Mui-selected': { bgcolor: '#FF6200 !important', color: 'white', '&:hover': { bgcolor: '#E65800 !important' } }
               }}
             />

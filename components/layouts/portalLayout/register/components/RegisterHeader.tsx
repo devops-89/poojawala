@@ -4,6 +4,8 @@ import React from 'react';
 import { Box, Button, Typography, Link as MuiLink } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import NextLink from 'next/link';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function RegisterHeader() {
   return (
@@ -12,7 +14,7 @@ export default function RegisterHeader() {
         p: 2.5,
         px: { xs: 2, md: 4 },
         borderBottom: '1px solid #FFE0D0',
-        bgcolor: 'white',
+        bgcolor: COLORS.WHITE,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -34,8 +36,8 @@ export default function RegisterHeader() {
 
       <Typography
         sx={{
-          color: '#666',
-          fontFamily: 'var(--font-outfit), sans-serif',
+          color: COLORS.MUTED_TEXT,
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 600,
           fontSize: { xs: '13px', md: '15px' },
           display: { xs: 'none', sm: 'block' },
@@ -54,15 +56,15 @@ export default function RegisterHeader() {
           borderRadius: '25px',
           px: 2.5,
           py: 0.75,
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 600,
           fontSize: '0.85rem',
           textTransform: 'none',
           border: '1px solid #FFE0D0',
           '&:hover': {
             bgcolor: '#FFF0E6',
-            color: '#FF6200',
-            borderColor: '#FF6200',
+            color: COLORS.PRIMARY,
+            borderColor: COLORS.PRIMARY,
           },
         }}
       >

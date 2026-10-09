@@ -1,4 +1,5 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
 
 import {
   Autocomplete,
@@ -35,7 +36,7 @@ export default function AddBookingPurohitSection({
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography
           sx={{
-            fontFamily: 'var(--font-outfit), sans-serif',
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             mb: 1,
             color: '#1e293b',
@@ -114,7 +115,7 @@ export default function AddBookingPurohitSection({
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography
           sx={{
-            fontFamily: 'var(--font-outfit), sans-serif',
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             mb: 1,
             color: '#1e293b',
@@ -124,6 +125,8 @@ export default function AddBookingPurohitSection({
         </Typography>
         <DateTimePicker
           value={values.bookingDate ? moment(values.bookingDate) : null}
+          disablePast
+          minDateTime={moment()}
           onChange={(newValue) => {
             setFieldValue(
               'bookingDate',

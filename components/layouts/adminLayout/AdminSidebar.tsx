@@ -37,6 +37,8 @@ import {
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -161,11 +163,11 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                         py: 1.2,
                         px: 2,
                         backgroundColor: active ? "#FFF0E6" : "transparent",
-                        color: active ? "#FF6200" : "#475569",
+                        color: active ? COLORS.PRIMARY : "#475569",
                         transition: "all 0.15s ease-in-out",
                         "&:hover": {
                           backgroundColor: active ? "#FFF0E6" : "#f8fafc",
-                          color: active ? "#FF6200" : "#1e293b",
+                          color: active ? COLORS.PRIMARY : "#1e293b",
                         },
                       }}
                     >
@@ -177,7 +179,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                         primary={
                           <Typography
                             sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT_ONLY,
                               fontWeight: active ? 700 : 500,
                               fontSize: "0.95rem",
                               lineHeight: 1.2,
@@ -204,11 +206,11 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                         py: 1.2,
                         px: 2,
                         backgroundColor: active ? "#FFF0E6" : "transparent",
-                        color: active ? "#FF6200" : "#475569",
+                        color: active ? COLORS.PRIMARY : COLORS.SLATE_MUTED,
                         transition: "all 0.15s ease-in-out",
                         "&:hover": {
                           backgroundColor: active ? "#FFF0E6" : "#f8fafc",
-                          color: active ? "#FF6200" : "#1e293b",
+                          color: active ? COLORS.PRIMARY : COLORS.SLATE_DARK,
                         },
                       }}
                     >
@@ -220,7 +222,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                         primary={
                           <Typography
                             sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT_ONLY,
                               fontWeight: active ? 700 : 500,
                               fontSize: "0.95rem",
                               lineHeight: 1.2,
@@ -256,17 +258,17 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                                   px: 2,
                                   mb: 0.5,
                                   backgroundColor: childActive
-                                    ? "#FF6200"
+                                    ? COLORS.PRIMARY
                                     : "transparent",
-                                  color: childActive ? "#ffffff" : "#64748b",
+                                  color: childActive ? "#ffffff" : COLORS.SLATE_MUTED,
                                   boxShadow: childActive
                                     ? "0 4px 14px rgba(255, 98, 0, 0.2)"
                                     : "none",
                                   "&:hover": {
                                     backgroundColor: childActive
-                                      ? "#E65800"
+                                      ? COLORS.PRIMARY_HOVER
                                       : "#f8fafc",
-                                    color: childActive ? "#ffffff" : "#FF6200",
+                                    color: childActive ? "#ffffff" : COLORS.PRIMARY,
                                   },
                                 }}
                               >
@@ -275,8 +277,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
                                   primary={
                                     <Typography
                                       sx={{
-                                        fontFamily:
-                                          "var(--font-outfit), sans-serif",
+                                        fontFamily: FONTS.OUTFIT_ONLY,
                                         fontWeight: childActive ? 600 : 400,
                                         fontSize: "0.875rem",
                                       }}
@@ -323,14 +324,14 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
               width: 40,
               height: 40,
               borderRadius: "50%",
-              backgroundColor: "#FF6200",
+              backgroundColor: COLORS.PRIMARY,
               color: "white",
               alignItems: "center",
               justifyContent: "center",
               fontWeight: 700,
               fontSize: "0.95rem",
               flexShrink: 0,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               boxShadow: "0 2px 8px rgba(255, 98, 0, 0.25)",
             }}
           >
@@ -339,10 +340,10 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT_ONLY,
                 fontWeight: 700,
                 fontSize: "0.9rem",
-                color: "#1e293b",
+                color: COLORS.SLATE_DARK,
                 lineHeight: 1.2,
               }}
               noWrap
@@ -351,10 +352,10 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT_ONLY,
                 fontSize: "0.75rem",
                 fontWeight: 500,
-                color: "#64748b",
+                color: COLORS.SLATE_MUTED,
                 mt: 0.25,
               }}
             >
@@ -391,7 +392,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
               color: "#dc2626",
               fontWeight: 500,
               fontSize: "0.95rem",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               display: "flex",
               gap: 1.5,
               py: 1.5,
@@ -492,7 +493,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           />
           <IconButton
             onClick={onClose}
-            sx={{ color: "#FF6200", "&:hover": { backgroundColor: "#FFF0E6" } }}
+            sx={{ color: COLORS.PRIMARY, "&:hover": { backgroundColor: "#FFF0E6" } }}
           >
             <CloseIcon />
           </IconButton>

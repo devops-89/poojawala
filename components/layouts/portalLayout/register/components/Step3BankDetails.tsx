@@ -12,6 +12,9 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { FormikProps } from 'formik';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from '@/utils/helpers';
 
 interface Step3Props {
   formik: FormikProps<any>;
@@ -23,7 +26,7 @@ export default function Step3BankDetails({ formik }: Step3Props) {
       <Typography
         variant="h5"
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 3,
         }}
@@ -41,7 +44,7 @@ export default function Step3BankDetails({ formik }: Step3Props) {
           >
             <FormControlLabel
               value="BANK"
-              control={<Radio sx={{ '&.Mui-checked': { color: '#FF6200' } }} />}
+              control={<Radio sx={{ '&.Mui-checked': { color: COLORS.PRIMARY } }} />}
               label={
                 <Typography
                   sx={{
@@ -55,7 +58,7 @@ export default function Step3BankDetails({ formik }: Step3Props) {
             />
             <FormControlLabel
               value="UPI"
-              control={<Radio sx={{ '&.Mui-checked': { color: '#FF6200' } }} />}
+              control={<Radio sx={{ '&.Mui-checked': { color: COLORS.PRIMARY } }} />}
               label={
                 <Typography
                   sx={{
@@ -99,7 +102,10 @@ export default function Step3BankDetails({ formik }: Step3Props) {
               label="Account Holder Name *"
               variant="outlined"
               value={formik.values.accountName}
-              onChange={formik.handleChange}
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                formik.setFieldValue('accountName', sanitizeLettersOnly(e.target.value));
+              }}
               error={
                 formik.touched.accountName &&
                 Boolean(formik.errors.accountName)
@@ -118,7 +124,10 @@ export default function Step3BankDetails({ formik }: Step3Props) {
               label="Bank Name *"
               variant="outlined"
               value={formik.values.bankName}
-              onChange={formik.handleChange}
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                formik.setFieldValue('bankName', sanitizeLettersOnly(e.target.value));
+              }}
               error={formik.touched.bankName && Boolean(formik.errors.bankName)}
               helperText={
                 formik.touched.bankName && (formik.errors.bankName as string)
@@ -133,6 +142,16 @@ export default function Step3BankDetails({ formik }: Step3Props) {
               label="Account Number *"
               variant="outlined"
               value={formik.values.accountNumber}
+              onKeyDown={(e) => {
+                if (
+                  !/\d/.test(e.key) &&
+                  !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key) &&
+                  !e.ctrlKey &&
+                  !e.metaKey
+                ) {
+                  e.preventDefault();
+                }
+              }}
               onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, '').slice(0, 18);
                 formik.setFieldValue('accountNumber', val);

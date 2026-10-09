@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 import AutorenewOutlinedIcon from "@mui/icons-material/AutorenewOutlined";
 import GiteOutlinedIcon from "@mui/icons-material/GiteOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -75,7 +76,7 @@ export default function CustomerProductsFeatures() {
               <Typography
                 variant="h6"
                 sx={{
-                  fontFamily: '"Georgia", "Times New Roman", serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   fontSize: "19px",
                   lineHeight: 1.25,
@@ -91,7 +92,7 @@ export default function CustomerProductsFeatures() {
               {/* Description */}
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#C5B7AE",
                   fontSize: "13.5px",
                   lineHeight: 1.6,

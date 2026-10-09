@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { StatusMessage } from "@/utils/types";
@@ -51,15 +52,15 @@ export default function AddressMapPreview({
           disabled={isSearchingGeo}
           startIcon={
             isSearchingGeo ? (
-              <CircularProgress size={14} sx={{ color: "#FF6200" }} />
+              <CircularProgress size={14} sx={{ color: COLORS.PRIMARY }} />
             ) : (
               <SearchIcon />
             )
           }
           sx={{
             width: { xs: "100%", sm: "auto" },
-            borderColor: "#FF6200",
-            color: "#FF6200",
+            borderColor: COLORS.PRIMARY,
+            color: COLORS.PRIMARY,
             fontWeight: 600,
             fontSize: { xs: "0.8rem", sm: "0.85rem" },
             py: { xs: 1, sm: 0.8 },

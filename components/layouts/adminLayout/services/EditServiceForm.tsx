@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import {
@@ -465,7 +467,7 @@ export default function EditServiceForm() {
           minHeight: "50vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -492,7 +494,7 @@ export default function EditServiceForm() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
             }}
@@ -501,7 +503,7 @@ export default function EditServiceForm() {
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
               mt: 0.5,
             }}
@@ -523,7 +525,7 @@ export default function EditServiceForm() {
             activeStep={activeStep}
             sx={{
               mb: 5,
-              "& .MuiStepIcon-root.Mui-active": { color: "#FF6200" },
+              "& .MuiStepIcon-root.Mui-active": { color: COLORS.PRIMARY },
               "& .MuiStepIcon-root.Mui-completed": { color: "#10b981" },
             }}
           >
@@ -532,7 +534,7 @@ export default function EditServiceForm() {
                 <StepLabel
                   sx={{
                     "& .MuiStepLabel-label": {
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                     },
                   }}
                 >
@@ -636,7 +638,7 @@ export default function EditServiceForm() {
                 type="submit"
                 disabled={isSubmitting}
                 sx={{
-                  background: "#FF6200",
+                  background: COLORS.PRIMARY,
                   color: "white",
                   px: 4,
                   py: 1,
@@ -644,7 +646,7 @@ export default function EditServiceForm() {
                   textTransform: "none",
                   fontWeight: 600,
                   boxShadow: "none",
-                  "&:hover": { background: "#F05A00", boxShadow: "none" },
+                  "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
                 }}
               >
                 {isSubmitting ? "Saving..." : "Save Changes"}
@@ -660,7 +662,7 @@ export default function EditServiceForm() {
                 }}
                 disabled={isSubmitting}
                 sx={{
-                  background: "#FF6200",
+                  background: COLORS.PRIMARY,
                   color: "white",
                   px: 4,
                   py: 1,
@@ -668,7 +670,7 @@ export default function EditServiceForm() {
                   textTransform: "none",
                   fontWeight: 600,
                   boxShadow: "none",
-                  "&:hover": { background: "#F05A00", boxShadow: "none" },
+                  "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
                 }}
               >
                 Continue

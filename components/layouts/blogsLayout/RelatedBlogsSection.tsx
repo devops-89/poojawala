@@ -12,6 +12,8 @@ import {
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 const getCategoryTag = (blog: any) => {
   const cat = blog.category || blog.categoryName;
@@ -101,9 +103,9 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"Georgia", serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
-              color: "#0F172A",
+              color: COLORS.SLATE_DARK,
               fontSize: { xs: "1.5rem", sm: "1.85rem" },
             }}
           >
@@ -115,11 +117,11 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
             href={listUrl}
             underline="hover"
             sx={{
-              color: "#FF6200",
-              fontFamily: '"DM Sans", sans-serif',
+              color: COLORS.PRIMARY,
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: "0.875rem",
-              "&:hover": { color: "#E65800" },
+              "&:hover": { color: COLORS.PRIMARY_HOVER },
             }}
           >
             Browse all articles
@@ -206,11 +208,11 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
                         {/* Category Tag */}
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 800,
                             fontSize: "0.75rem",
                             letterSpacing: "0.1em",
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                             mb: 1.25,
                             textTransform: "uppercase",
                           }}
@@ -222,11 +224,11 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
                         <Typography
                           variant="h6"
                           sx={{
-                            fontFamily: '"Georgia", serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 700,
                             fontSize: "1.15rem",
                             lineHeight: 1.35,
-                            color: "#1E293B",
+                            color: COLORS.SLATE_DARK,
                             mb: 1.5,
                             display: "-webkit-box",
                             WebkitLineClamp: 2,
@@ -240,9 +242,9 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
                         {/* Excerpt Snippet */}
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "0.875rem",
-                            color: "#64748B",
+                            color: COLORS.SLATE_MUTED,
                             lineHeight: 1.6,
                             display: "-webkit-box",
                             WebkitLineClamp: 3,
@@ -268,7 +270,7 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
                       >
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "0.78rem",
                             color: "#94A3B8",
                             fontWeight: 500,
@@ -279,10 +281,10 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
 
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 800,
                             fontSize: "0.78rem",
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                             letterSpacing: "0.05em",
                             textTransform: "uppercase",
                           }}

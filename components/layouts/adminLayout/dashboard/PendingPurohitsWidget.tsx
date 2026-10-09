@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { getPurohitsAPI } from '@/api/userControllers';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import { Avatar, Box, Button, Chip, Divider, Paper, Skeleton, Typography } from '@mui/material';
@@ -33,27 +35,26 @@ export default function PendingPurohitsWidget() {
     <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A' }}>
+          <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A' }}>
             Pending Approvals
           </Typography>
-          <Chip label="Action Needed" size="small" sx={{ bgcolor: '#fff3e0', color: '#e65100', fontWeight: 600, fontSize: '0.7rem', height: 20 }} />
         </Box>
-        <Button 
-          variant="text" 
+        <Button
+          variant="text"
           size="small"
           onClick={() => router.push('/admin/purohits?status=Pending Approval')}
-          sx={{ 
-            textTransform: 'none', 
-            fontWeight: 700, 
-            fontFamily: 'var(--font-outfit), sans-serif',
-            color: '#FF6200',
+          sx={{
+            textTransform: 'none',
+            fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
+            color: COLORS.PRIMARY,
             '&:hover': { bgcolor: 'rgba(255, 98, 0, 0.05)' }
           }}
         >
           View All
         </Button>
       </Box>
-      
+
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
         {loading ? (
           Array.from(new Array(3)).map((_, idx) => (
@@ -73,7 +74,7 @@ export default function PendingPurohitsWidget() {
                   <SupervisorAccountIcon />
                 </Avatar>
                 <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                  <Typography noWrap sx={{ fontWeight: 700, color: '#1A1A1A', fontFamily: 'var(--font-outfit), sans-serif', fontSize: '15px' }}>
+                  <Typography noWrap sx={{ fontWeight: 700, color: '#1A1A1A', fontFamily: FONTS.OUTFIT, fontSize: '15px' }}>
                     {purohit.firstName} {purohit.lastName}
                   </Typography>
                   <Typography noWrap sx={{ color: '#666', fontSize: '13px' }}>
@@ -86,7 +87,7 @@ export default function PendingPurohitsWidget() {
           ))
         ) : (
           <Box sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography sx={{ color: '#999', fontFamily: 'var(--font-outfit), sans-serif' }}>No pending approvals</Typography>
+            <Typography sx={{ color: '#999', fontFamily: FONTS.OUTFIT }}>No pending approvals</Typography>
           </Box>
         )}
       </Box>

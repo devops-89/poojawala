@@ -1,3 +1,5 @@
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PublicIcon from "@mui/icons-material/Public";
 import { Box, Grid, Paper, Typography } from "@mui/material";
@@ -31,7 +33,7 @@ export default function ServiceDetailsInfoGrid({
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -42,7 +44,7 @@ export default function ServiceDetailsInfoGrid({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "26px", sm: "32px" },
@@ -93,7 +95,7 @@ export default function ServiceDetailsInfoGrid({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 700,
                     fontSize: "15px",
                     color: "#2C1810",
@@ -126,7 +128,7 @@ export default function ServiceDetailsInfoGrid({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     fontSize: "16px",
                     color: "#2C1810",
@@ -164,7 +166,7 @@ export default function ServiceDetailsInfoGrid({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 700,
                     fontSize: "15px",
                     color: "#2C1810",
@@ -206,7 +208,7 @@ export default function ServiceDetailsInfoGrid({
                           key={idx}
                           sx={{
                             bgcolor: "#F9EBE0",
-                            color: "#C84B16",
+                            color: COLORS.PRIMARY,
                             px: 1.5,
                             py: 0.5,
                             borderRadius: "6px",
@@ -245,7 +247,7 @@ export default function ServiceDetailsInfoGrid({
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       fontSize: "15px",
                       color: "#2C1810",
@@ -266,7 +268,7 @@ export default function ServiceDetailsInfoGrid({
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -277,7 +279,7 @@ export default function ServiceDetailsInfoGrid({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "26px", sm: "32px" },
@@ -305,10 +307,10 @@ export default function ServiceDetailsInfoGrid({
           >
             {/* Region Header */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2.5 }}>
-              <LocationOnIcon sx={{ color: "#C84B16", fontSize: 20 }} />
+              <LocationOnIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   color: "#2C1810",
                   fontSize: "16px",
@@ -335,10 +337,10 @@ export default function ServiceDetailsInfoGrid({
                   my: "auto",
                 }}
               >
-                <PublicIcon sx={{ color: "#C84B16", fontSize: 36 }} />
+                <PublicIcon sx={{ color: COLORS.PRIMARY, fontSize: 36 }} />
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     color: "#2C1810",
                     fontSize: "16px",
@@ -348,7 +350,7 @@ export default function ServiceDetailsInfoGrid({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontSize: "13.5px",
                     color: "#64534A",
                     lineHeight: 1.5,

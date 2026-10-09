@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import WebsiteServiceAboutSection from "./WebsiteServiceAboutSection";
@@ -60,7 +61,7 @@ export default function WebsiteServiceDetailsContent() {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -88,7 +89,7 @@ export default function WebsiteServiceDetailsContent() {
             variant="contained"
             onClick={() => router.push("/services")}
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               borderRadius: "30px",
               textTransform: "none",

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -56,7 +58,7 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#D32F2F",
         }}
@@ -79,7 +81,7 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
               onChange={(e) => setComplaintCategory(e.target.value)}
               sx={{
                 borderRadius: "8px",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                   borderColor: "#FF2600",
                 },
@@ -101,7 +103,7 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 "&.Mui-focused fieldset": { borderColor: "#FF2600" },
               },
               "& .MuiInputLabel-root.Mui-focused": { color: "#FF2600" },
@@ -119,7 +121,7 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 "&.Mui-focused fieldset": { borderColor: "#FF2600" },
               },
               "& .MuiInputLabel-root.Mui-focused": { color: "#FF2600" },
@@ -129,7 +131,7 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
           <Box>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 mb: 1,
                 fontSize: "14px",
@@ -158,7 +160,7 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
                 startIcon={<PhotoCameraIcon />}
                 onClick={() => fileInputRef.current?.click()}
                 sx={{
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                   textTransform: "none",
                   fontWeight: 600,
                 }}

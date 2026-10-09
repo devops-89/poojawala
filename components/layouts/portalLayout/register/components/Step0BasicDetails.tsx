@@ -13,6 +13,9 @@ import Grid from "@mui/material/Grid";
 import { FormikProps } from "formik";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import React from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
 
 interface Step0Props {
   formik: FormikProps<any>;
@@ -36,7 +39,7 @@ export default function Step0BasicDetails({
       <Typography
         variant="h5"
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 3,
         }}
@@ -51,8 +54,9 @@ export default function Step0BasicDetails({
             label="Full Name *"
             variant="outlined"
             value={formik.values.fullName}
+            onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) => {
-              const val = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+              const val = sanitizeLettersOnly(e.target.value);
               formik.setFieldValue("fullName", val);
             }}
             error={formik.touched.fullName && Boolean(formik.errors.fullName)}
@@ -101,11 +105,16 @@ export default function Step0BasicDetails({
               }
             }}
             error={
-              formik.touched.mobileNumber && Boolean(formik.errors.mobileNumber)
+              (formik.touched.mobileNumber || Boolean(formik.values.mobileNumber)) &&
+              (Boolean(formik.errors.mobileNumber) ||
+                (formik.values.mobileNumber.length > 0 && !/^[6-9]/.test(formik.values.mobileNumber)))
             }
             helperText={
-              formik.touched.mobileNumber &&
-              (formik.errors.mobileNumber as string)
+              formik.values.mobileNumber.length > 0 && !/^[6-9]/.test(formik.values.mobileNumber)
+                ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                : formik.touched.mobileNumber
+                ? (formik.errors.mobileNumber as string)
+                : undefined
             }
             sx={{
               "& .MuiOutlinedInput-root": { borderRadius: "12px" },

@@ -1,3 +1,5 @@
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Rating } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
@@ -60,7 +62,7 @@ export default function BookingReviewCard({ booking, onReviewAdded }: Props) {
   return (
     <>
       <Paper sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', height: '100%' }}>
-        <Typography variant="h6" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#0f172a', mb: 2 }}>
+        <Typography variant="h6" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 2 }}>
           Customer Review
         </Typography>
 
@@ -69,13 +71,13 @@ export default function BookingReviewCard({ booking, onReviewAdded }: Props) {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Rating value={booking.customerRating || 5} readOnly size="small" emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />} />
             </Box>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
               "{booking.customerReview || 'Review submitted without text.'}"
             </Typography>
           </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px' }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
               Please share your experience with this booking.
             </Typography>
             <Box
@@ -91,13 +93,13 @@ export default function BookingReviewCard({ booking, onReviewAdded }: Props) {
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                backgroundColor: '#FF6200',
+                backgroundColor: COLORS.PRIMARY,
                 color: '#ffffff',
                 borderRadius: '8px',
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 textTransform: 'none',
                 fontWeight: 600,
-                '&:hover': { backgroundColor: '#E65800' }
+                '&:hover': { backgroundColor: COLORS.PRIMARY_DARK }
               }}
             >
               Add Review
@@ -107,13 +109,13 @@ export default function BookingReviewCard({ booking, onReviewAdded }: Props) {
       </Paper>
 
       <Dialog open={reviewModalOpen} onClose={handleClose} fullWidth maxWidth="sm" sx={{ '& .MuiDialog-paper': { borderRadius: '16px', p: 1 } }}>
-        <DialogTitle sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#0f172a' }}>
+        <DialogTitle sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
           Add Review
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, py: 2 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b' }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>
                 How was your experience?
               </Typography>
               <Rating
@@ -134,16 +136,16 @@ export default function BookingReviewCard({ booking, onReviewAdded }: Props) {
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
               sx={{
-                '& .MuiOutlinedInput-root': { fontFamily: '"DM Sans", sans-serif' },
-                '& .MuiInputLabel-root': { fontFamily: '"DM Sans", sans-serif' },
+                '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
+                '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY },
                 '& .Mui-focused fieldset': { borderColor: '#FF6200 !important' },
-                '& label.Mui-focused': { color: '#FF6200' }
+                '& label.Mui-focused': { color: COLORS.PRIMARY }
               }}
             />
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={handleClose} sx={{ color: '#64748b', textTransform: 'none', fontWeight: 600, fontFamily: '"DM Sans", sans-serif' }}>
+          <Button onClick={handleClose} sx={{ color: '#64748b', textTransform: 'none', fontWeight: 600, fontFamily: FONTS.PRIMARY }}>
             Cancel
           </Button>
           <Box 
@@ -160,13 +162,13 @@ export default function BookingReviewCard({ booking, onReviewAdded }: Props) {
               border: 'none',
               cursor: (isSubmitting || !rating) ? 'default' : 'pointer',
               transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-              backgroundColor: (isSubmitting || !rating) ? '#e2e8f0' : '#FF6200',
+              backgroundColor: (isSubmitting || !rating) ? '#e2e8f0' : COLORS.PRIMARY,
               color: (isSubmitting || !rating) ? '#94a3b8' : '#ffffff',
               borderRadius: '8px',
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               textTransform: 'none',
               fontWeight: 600,
-              '&:hover': { backgroundColor: (isSubmitting || !rating) ? '#e2e8f0' : '#E65800' }
+              '&:hover': { backgroundColor: (isSubmitting || !rating) ? '#e2e8f0' : COLORS.PRIMARY_DARK }
             }}
           >
             {isSubmitting ? 'Submitting...' : 'Submit Review'}

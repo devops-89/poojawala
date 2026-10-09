@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { Box, Typography } from "@mui/material";
@@ -42,7 +43,7 @@ export default function AdminDetailsHeader({
               sx={{
                 fontWeight: 800,
                 color: "#0f172a",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 letterSpacing: "-0.02em",
               }}
             >

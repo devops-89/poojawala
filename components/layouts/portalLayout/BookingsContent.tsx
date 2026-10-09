@@ -16,6 +16,8 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { BookingActiveCard } from "./bookings/BookingActiveCard";
 import { BookingCancelModal } from "./bookings/BookingCancelModal";
@@ -73,9 +75,9 @@ export default function BookingsContent() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              color: "#1A1A1A",
+              color: COLORS.DARK,
               mb: 1,
             }}
           >
@@ -83,8 +85,8 @@ export default function BookingsContent() {
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              color: "#666",
+              fontFamily: FONTS.OUTFIT,
+              color: COLORS.MUTED_TEXT,
             }}
           >
             Manage your incoming requests and active jobs.
@@ -96,13 +98,13 @@ export default function BookingsContent() {
       <Paper
         sx={{
           borderRadius: "12px",
-          border: "1px solid #eee",
+          border: `1px solid ${COLORS.BORDER_LIGHT}`,
           boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
           overflow: "hidden",
         }}
       >
         <Box
-          sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "#FAFAFA" }}
+          sx={{ borderBottom: 1, borderColor: "divider", bgcolor: COLORS.SURFACE_LIGHT }}
         >
           <Tabs
             value={b.tabValue}
@@ -113,14 +115,14 @@ export default function BookingsContent() {
             sx={{
               px: 2,
               "& .MuiTab-root": {
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 textTransform: "none",
                 fontSize: "15px",
                 py: 2,
               },
-              "& .Mui-selected": { color: "#FF6200" },
-              "& .MuiTabs-indicator": { backgroundColor: "#FF6200" },
+              "& .Mui-selected": { color: COLORS.PRIMARY },
+              "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY },
             }}
           >
             <Tab label="New Requests" />
@@ -129,7 +131,7 @@ export default function BookingsContent() {
         </Box>
 
         <Box
-          sx={{ p: { xs: 2, md: 3 }, minHeight: "500px", bgcolor: "#F8F9FA" }}
+          sx={{ p: { xs: 2, md: 3 }, minHeight: "500px", bgcolor: COLORS.BG_MUTED }}
         >
           {/* --- TAB 0: New Requests --- */}
           <CustomTabPanel value={b.tabValue} index={0}>
@@ -139,14 +141,14 @@ export default function BookingsContent() {
                   p: 4,
                   borderRadius: "12px",
                   textAlign: "center",
-                  bgcolor: "#FFF",
-                  border: "1px solid #eee",
+                  bgcolor: COLORS.WHITE,
+                  border: `1px solid ${COLORS.BORDER_LIGHT}`,
                 }}
               >
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    color: "#666",
+                    fontFamily: FONTS.OUTFIT,
+                    color: COLORS.MUTED_TEXT,
                     fontSize: "16px",
                     fontWeight: 600,
                   }}
@@ -160,14 +162,14 @@ export default function BookingsContent() {
                   p: 4,
                   borderRadius: "12px",
                   textAlign: "center",
-                  bgcolor: "#FFF",
+                  bgcolor: COLORS.WHITE,
                   border: "1px dashed #ccc",
                 }}
               >
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    color: "#666",
+                    fontFamily: FONTS.OUTFIT,
+                    color: COLORS.MUTED_TEXT,
                     fontSize: "16px",
                     fontWeight: 600,
                   }}
@@ -199,18 +201,18 @@ export default function BookingsContent() {
                     b.setActivePage(1);
                   }}
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 600,
                     fontSize: "13px",
                     height: "32px",
-                    bgcolor: b.activeStatus === status ? "#FF6200" : "#FFF",
-                    color: b.activeStatus === status ? "#FFF" : "#666",
+                    bgcolor: b.activeStatus === status ? COLORS.PRIMARY : COLORS.WHITE,
+                    color: b.activeStatus === status ? COLORS.WHITE : COLORS.MUTED_TEXT,
                     border:
                       b.activeStatus === status
-                        ? "1px solid #FF6200"
+                        ? `1px solid ${COLORS.PRIMARY}`
                         : "1px solid #ddd",
                     "&:hover": {
-                      bgcolor: b.activeStatus === status ? "#F05A00" : "#f5f5f5",
+                      bgcolor: b.activeStatus === status ? COLORS.PRIMARY_DARK : "#f5f5f5",
                     },
                   }}
                 />
@@ -223,14 +225,14 @@ export default function BookingsContent() {
                   p: 4,
                   borderRadius: "12px",
                   textAlign: "center",
-                  bgcolor: "#FFF",
-                  border: "1px solid #eee",
+                  bgcolor: COLORS.WHITE,
+                  border: `1px solid ${COLORS.BORDER_LIGHT}`,
                 }}
               >
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    color: "#666",
+                    fontFamily: FONTS.OUTFIT,
+                    color: COLORS.MUTED_TEXT,
                     fontSize: "16px",
                     fontWeight: 600,
                   }}
@@ -247,14 +249,14 @@ export default function BookingsContent() {
                   p: 4,
                   borderRadius: "12px",
                   textAlign: "center",
-                  bgcolor: "#FFF",
+                  bgcolor: COLORS.WHITE,
                   border: "1px dashed #ccc",
                 }}
               >
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
-                    color: "#666",
+                    fontFamily: FONTS.OUTFIT,
+                    color: COLORS.MUTED_TEXT,
                     fontSize: "16px",
                     fontWeight: 600,
                   }}
@@ -296,11 +298,11 @@ export default function BookingsContent() {
                     color="primary"
                     sx={{
                       "& .MuiPaginationItem-root": {
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                       },
                       "& .Mui-selected": {
-                        backgroundColor: "#FF6200 !important",
-                        color: "#ffffff",
+                        backgroundColor: `${COLORS.PRIMARY} !important`,
+                        color: COLORS.WHITE,
                       },
                     }}
                   />
@@ -335,7 +337,7 @@ export default function BookingsContent() {
             key={status}
             onClick={() => b.handleStatusChange(status)}
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontSize: "14px",
               fontWeight: 500,
             }}

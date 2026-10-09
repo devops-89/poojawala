@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Box, Button, Chip, Grid, Paper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -140,7 +142,7 @@ export default function CustomerServiceCard({
               <Typography
                 variant="h6"
                 sx={{
-                  fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   color: "#1e293b",
                   fontSize: "1.1rem",
@@ -155,7 +157,7 @@ export default function CustomerServiceCard({
                   size="small"
                   sx={{
                     bgcolor: "#FFF0E6",
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     fontWeight: 700,
                     fontSize: "11px",
                     height: 22,
@@ -167,7 +169,7 @@ export default function CustomerServiceCard({
 
             <Typography
               sx={{
-                fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64748b",
                 fontSize: "13px",
                 lineHeight: 1.5,
@@ -207,9 +209,9 @@ export default function CustomerServiceCard({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     fontSize: "15px",
                   }}
                 >
@@ -231,7 +233,7 @@ export default function CustomerServiceCard({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 700,
                     color: "#1e293b",
                     fontSize: "14px",
@@ -250,7 +252,7 @@ export default function CustomerServiceCard({
                 handleCardClick();
               }}
               sx={{
-                background: "#FF6200",
+                background: COLORS.PRIMARY,
                 color: "white",
                 textTransform: "none",
                 borderRadius: "10px",
@@ -259,7 +261,7 @@ export default function CustomerServiceCard({
                 py: 0.9,
                 boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
                 "&:hover": {
-                  background: "#E65800",
+                  background: COLORS.PRIMARY_DARK,
                   boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
                 },
               }}

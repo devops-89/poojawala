@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, TablePagination, CircularProgress, Skeleton } from '@mui/material';
 import { getAdminPayoutsAPI, getAdminFinanceStatsAPI } from '@/api/paymentControllers';
@@ -58,10 +60,10 @@ export default function AdminFinancialsContent() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <Box>
-        <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
+        <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1e293b' }}>
           Purohit Payouts & Financials
         </Typography>
-        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', mt: 0.5 }}>
+        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#64748b', mt: 0.5 }}>
           Manage and view all transaction ledger and automated payouts
         </Typography>
       </Box>
@@ -86,13 +88,13 @@ export default function AdminFinancialsContent() {
               '&:hover': { transform: 'translateY(-4px)' }
             }}
           >
-            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '0.875rem', color: '#64748b' }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '0.875rem', color: '#64748b' }}>
               {card.title}
             </Typography>
             {statsLoading ? (
               <Skeleton variant="text" width="60%" height={40} sx={{ mt: 1 }} />
             ) : (
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', mt: 1, fontSize: '1.875rem', fontWeight: 800, color: '#FF6200' }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, mt: 1, fontSize: '1.875rem', fontWeight: 800, color: COLORS.PRIMARY }}>
                 {card.value}
               </Typography>
             )}
@@ -106,22 +108,22 @@ export default function AdminFinancialsContent() {
           <Table size="small" sx={{ minWidth: 800 }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#f8fafc" }}>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", py: 2 }}>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", py: 2 }}>
                   TXN ID
                 </TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Purohit
                 </TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Date
                 </TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Gross Amount
                 </TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Net Payout
                 </TableCell>
-                <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Status
                 </TableCell>
               </TableRow>
@@ -155,19 +157,19 @@ export default function AdminFinancialsContent() {
                       hover
                       sx={{ "&:last-child td": { borderBottom: 0 }, cursor: "default" }}
                     >
-                      <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: 13, fontWeight: 700, color: "#FF6200", py: 2 }}>
+                      <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 700, color: COLORS.PRIMARY, py: 2 }}>
                         TXN-{txn.paymentId}
                       </TableCell>
-                      <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
+                      <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
                         {txn.purohitName}
                       </TableCell>
-                      <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: 13, color: "#475569" }}>
+                      <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, color: "#475569" }}>
                         {txn.purohitPayoutDate ? new Date(txn.purohitPayoutDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-'}
                       </TableCell>
-                      <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
+                      <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
                         ₹{txn.finalAmount}
                       </TableCell>
-                      <TableCell sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: 13, fontWeight: 700, color: "#10b981" }}>
+                      <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 700, color: "#10b981" }}>
                         ₹{txn.payoutAmount}
                       </TableCell>
                       <TableCell>
@@ -177,7 +179,7 @@ export default function AdminFinancialsContent() {
                           sx={{
                             fontWeight: 600,
                             fontSize: 11,
-                            fontFamily: 'var(--font-outfit), sans-serif',
+                            fontFamily: FONTS.OUTFIT,
                             backgroundColor: statusConfig.backgroundColor,
                             color: statusConfig.color,
                           }}
@@ -188,7 +190,7 @@ export default function AdminFinancialsContent() {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 6, color: '#64748b', fontFamily: 'var(--font-outfit), sans-serif' }}>
+                  <TableCell colSpan={6} align="center" sx={{ py: 6, color: '#64748b', fontFamily: FONTS.OUTFIT }}>
                     No payouts found matching your criteria.
                   </TableCell>
                 </TableRow>
@@ -207,7 +209,23 @@ export default function AdminFinancialsContent() {
             setRowsPerPage(parseInt(e.target.value, 10));
             setPage(0);
           }}
-          sx={{ borderTop: '1px solid #e2e8f0', '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': { fontFamily: 'var(--font-outfit), sans-serif' } }}
+          slotProps={{
+            select: {
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                disableScrollLock: true,
+              },
+            },
+          }}
+          sx={{ borderTop: '1px solid #e2e8f0', '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': { fontFamily: FONTS.OUTFIT } }}
         />
       </Paper>
     </Box>

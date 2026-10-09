@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -65,12 +67,12 @@ export default function DashboardStatsGrid({ statsData }: DashboardStatsGridProp
     {
       title: 'Total Orders',
       value: statsData?.totalOrderCount ?? statsData?.totalOrders ?? 0,
-      icon: <ShoppingBagOutlinedIcon sx={{ fontSize: 32, color: '#C84B16' }} />,
+      icon: <ShoppingBagOutlinedIcon sx={{ fontSize: 32, color: COLORS.PRIMARY }} />,
       color: '#FFF0E6',
       borderColor: '#FFE0D0',
       valueColor: '#9C330B',
       badgeText: 'Samagri Items',
-      badgeColor: '#C84B16',
+      badgeColor: COLORS.PRIMARY,
       badgeBg: '#FFDBC8',
       link: '/customer/orders',
     },
@@ -149,7 +151,7 @@ export default function DashboardStatsGrid({ statsData }: DashboardStatsGridProp
                     color: stat.badgeColor,
                     fontWeight: 800,
                     fontSize: '11px',
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     height: 22,
                     borderRadius: '12px',
                   }}
@@ -159,7 +161,7 @@ export default function DashboardStatsGrid({ statsData }: DashboardStatsGridProp
               <Box>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: '#8C7A70',
                     fontSize: '12px',
                     fontWeight: 700,
@@ -173,7 +175,7 @@ export default function DashboardStatsGrid({ statsData }: DashboardStatsGridProp
 
                 <Typography
                   sx={{
-                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
                     fontSize: { xs: '26px', sm: '30px' },
                     color: stat.valueColor,

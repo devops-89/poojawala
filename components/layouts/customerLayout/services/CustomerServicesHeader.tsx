@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 import { Box, Typography } from "@mui/material";
 
 export default function CustomerServicesHeader() {
@@ -7,7 +8,7 @@ export default function CustomerServicesHeader() {
       <Typography
         variant="h4"
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontWeight: 800,
           color: "#1A1A1A",
           mb: 1,
@@ -16,7 +17,7 @@ export default function CustomerServicesHeader() {
         Explore Services
       </Typography>
       <Typography
-        sx={{ fontFamily: '"DM Sans", sans-serif', color: "#666" }}
+        sx={{ fontFamily: FONTS.PRIMARY, color: "#666" }}
       >
         Browse and book verified purohits for your pujas.
       </Typography>

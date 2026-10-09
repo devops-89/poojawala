@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 const formatDuration = (mins: number) => {
   if (!mins) return "2-3 hrs";
@@ -124,7 +126,7 @@ export default function PopularPackages() {
             variant="h3"
             component="h2"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: { xs: "28px", sm: "36px", md: "44px" },
               color: "#1A1A1A",
@@ -167,7 +169,7 @@ export default function PopularPackages() {
                   px: 3,
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    background: "#FF6200",
+                    background: COLORS.PRIMARY,
                     color: "#FFFFFF",
                   },
                 }}
@@ -198,7 +200,7 @@ export default function PopularPackages() {
                 fontWeight: 600,
                 px: 2,
                 "&:hover": {
-                  background: "#FF6200",
+                  background: COLORS.PRIMARY,
                   color: "#FFFFFF",
                 },
               }}
@@ -211,7 +213,7 @@ export default function PopularPackages() {
         {/* Packages Grid / Loading / Empty Notification State */}
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-            <CircularProgress sx={{ color: "#FF6200" }} />
+            <CircularProgress sx={{ color: COLORS.PRIMARY }} />
           </Box>
         ) : packages.length === 0 ? (
           <EmptyStateCard
@@ -280,7 +282,7 @@ export default function PopularPackages() {
                     <Typography
                       component="h3"
                       sx={{
-                        fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 700,
                         fontSize: { xs: "17px", sm: "18px" },
                         color: "#2C1810",
@@ -334,8 +336,7 @@ export default function PopularPackages() {
                       >
                         <Typography
                           sx={{
-                            fontFamily:
-                              'var(--font-outfit), "DM Sans", sans-serif',
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 800,
                             fontSize: pkg.price.length > 12 ? { xs: "17px", sm: "18px" } : { xs: "22px", sm: "24px" },
                             color: "#2C1810",
@@ -347,8 +348,7 @@ export default function PopularPackages() {
                         <Typography
                           component="span"
                           sx={{
-                            fontFamily:
-                              'var(--font-outfit), "DM Sans", sans-serif',
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "12px",
                             fontWeight: 500,
                             color: "#8C6D53",
@@ -362,8 +362,7 @@ export default function PopularPackages() {
                       {/* Service Description truncated to 3 lines */}
                       <Typography
                         sx={{
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "13.5px",
                           color: "#5C4A40",
                           lineHeight: 1.6,
@@ -395,13 +394,13 @@ export default function PopularPackages() {
                         py: 1.2,
                         fontSize: "15px",
                         fontWeight: 700,
-                        fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                        fontFamily: FONTS.OUTFIT,
                         textTransform: "none",
                         transition: "all 0.25s ease-in-out",
                         "&:hover": {
-                          bgcolor: "#FF6200",
+                          bgcolor: COLORS.PRIMARY,
                           color: "#FFFFFF",
-                          borderColor: "#FF6200",
+                          borderColor: COLORS.PRIMARY,
                           boxShadow: "0 6px 18px rgba(255, 98, 0, 0.25)",
                         },
                       }}

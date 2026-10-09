@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import React from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface FeaturedBlogSectionProps {
   blog: any;
@@ -76,7 +78,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
               display: "inline-flex",
               alignItems: "center",
               gap: 0.75,
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               px: 2,
               py: 0.75,
@@ -85,8 +87,8 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
               fontSize: "0.75rem",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
-              boxShadow: "0 2px 8px rgba(255, 98, 0, 0.25)",
+              fontFamily: FONTS.THEME_DEFAULT,
+              boxShadow: `0 2px 8px ${COLORS.PRIMARY_SHADOW}`,
             }}
           >
             <StarIcon sx={{ fontSize: 14, color: "white" }} />
@@ -140,7 +142,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                 />
               </Box>
               {/* Subtle orange accent line at bottom of image box */}
-              <Box sx={{ height: 5, bgcolor: "#FF6200", width: "35%" }} />
+              <Box sx={{ height: 5, bgcolor: COLORS.PRIMARY, width: "35%" }} />
             </Box>
           </Grid>
 
@@ -150,11 +152,11 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
               {/* Category Tag */}
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 800,
                   fontSize: "0.8rem",
                   letterSpacing: "0.12em",
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                   textTransform: "uppercase",
                 }}
               >
@@ -167,7 +169,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                 href={`/blogs/${blog.id}`}
                 variant="h3"
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   fontSize: { xs: "1.65rem", sm: "2.1rem", md: "2.4rem" },
                   lineHeight: 1.25,
@@ -175,7 +177,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                   textDecoration: "none",
                   letterSpacing: "-0.02em",
                   transition: "color 0.2s ease",
-                  "&:hover": { color: "#FF6200" },
+                  "&:hover": { color: COLORS.PRIMARY },
                 }}
               >
                 {title}
@@ -188,9 +190,9 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                   alignItems: "center",
                   gap: { xs: 2, sm: 2.5 },
                   flexWrap: "wrap",
-                  color: "#64748B",
+                  color: COLORS.SLATE_MUTED,
                   fontSize: "0.85rem",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   my: 0.5,
                 }}
               >
@@ -198,7 +200,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                   <PersonOutlinedIcon sx={{ fontSize: 17, color: "#94A3B8" }} />
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontSize: "0.85rem",
                       fontWeight: 600,
                       color: "#334155",
@@ -212,7 +214,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                   <CalendarTodayIcon sx={{ fontSize: 15, color: "#94A3B8" }} />
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontSize: "0.85rem",
                       fontWeight: 500,
                     }}
@@ -225,7 +227,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                   <AccessTimeIcon sx={{ fontSize: 16, color: "#94A3B8" }} />
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontSize: "0.85rem",
                       fontWeight: 500,
                     }}
@@ -238,7 +240,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
               {/* Excerpt Paragraph */}
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontSize: "1rem",
                   color: "#475569",
                   lineHeight: 1.75,
@@ -254,8 +256,8 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                   href={`/blogs/${blog.id}`}
                   endIcon={<ArrowForwardIcon />}
                   sx={{
-                    color: "#FF6200",
-                    fontFamily: '"DM Sans", sans-serif',
+                    color: COLORS.PRIMARY,
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     fontSize: "0.875rem",
                     textTransform: "uppercase",
@@ -265,7 +267,7 @@ export default function FeaturedBlogSection({ blog }: FeaturedBlogSectionProps) 
                     bgcolor: "transparent",
                     "&:hover": {
                       bgcolor: "transparent",
-                      color: "#E65800",
+                      color: COLORS.PRIMARY_HOVER,
                       "& .MuiSvgIcon-root": { transform: "translateX(4px)" },
                     },
                     "& .MuiSvgIcon-root": {

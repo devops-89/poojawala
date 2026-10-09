@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import PersonIcon from "@mui/icons-material/Person";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
@@ -69,7 +71,7 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
     <Box>
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           fontSize: "20px",
           mb: 3,
@@ -90,7 +92,7 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
               width: 100,
               height: 100,
               border: "2px solid #FFE0D0",
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
             }}
           >
             {!profileImage && !profileImageUrl && (
@@ -103,9 +105,9 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
               position: "absolute",
               bottom: -5,
               right: -5,
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
-              "&:hover": { bgcolor: "#F05A00" },
+              "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
               width: 32,
               height: 32,
             }}
@@ -127,7 +129,7 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
         <Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "18px",
             }}
@@ -136,7 +138,7 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: "13px",
             }}

@@ -23,6 +23,9 @@ import {
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+
 interface CustomerSidebarProps {
   setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -70,7 +73,7 @@ export default function CustomerSidebar({
         display: "flex",
         flexDirection: "column",
         bgcolor: "#ffffff",
-        color: "#1e293b",
+        color: COLORS.SLATE_DARK,
         borderRight: "1px solid #e2e8f0",
       }}
     >
@@ -110,7 +113,7 @@ export default function CustomerSidebar({
                 onClick={() => setMobileOpen(false)}
                 sx={{
                   backgroundColor: isActive ? "#FFF0E6" : "transparent",
-                  color: isActive ? "#FF6200" : "#475569",
+                  color: isActive ? COLORS.PRIMARY : COLORS.SLATE_MUTED,
                   "&:hover": {
                     backgroundColor: isActive ? "#FFF0E6" : "#FAFAFA",
                   },
@@ -124,7 +127,7 @@ export default function CustomerSidebar({
                   primary={
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT_ONLY,
                         fontWeight: isActive ? 600 : 500,
                         fontSize: "0.95rem",
                       }}
@@ -157,7 +160,7 @@ export default function CustomerSidebar({
       >
         <Avatar
           src={profile?.profileImage || profile?.avatar || undefined}
-          sx={{ width: 40, height: 40, bgcolor: "#FF6200" }}
+          sx={{ width: 40, height: 40, bgcolor: COLORS.PRIMARY }}
         >
           {!profile?.profileImage && !profile?.avatar && (
             <PersonIcon sx={{ fontSize: 28, color: "white" }} />
@@ -166,10 +169,10 @@ export default function CustomerSidebar({
         <Box sx={{ flex: 1 }}>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               fontWeight: 600,
               fontSize: "0.9rem",
-              color: "#1e293b",
+              color: COLORS.SLATE_DARK,
             }}
           >
             {profile?.firstName
@@ -178,8 +181,8 @@ export default function CustomerSidebar({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              color: "#64748b",
+              fontFamily: FONTS.OUTFIT_ONLY,
+              color: COLORS.SLATE_MUTED,
               fontSize: "0.75rem",
             }}
           >
@@ -198,14 +201,14 @@ export default function CustomerSidebar({
           mt: -1,
           "& .MuiPaper-root": {
             bgcolor: "#ffffff",
-            color: "#1e293b",
+            color: COLORS.SLATE_DARK,
             width: "230px",
             borderRadius: "12px",
             boxShadow:
               "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
             border: "1px solid #e2e8f0",
             "& .MuiMenuItem-root": {
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               fontSize: "14px",
               py: 1.5,
               "&:hover": { bgcolor: "#f1f5f9" },

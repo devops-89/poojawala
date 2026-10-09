@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { useUserStore } from "@/stores/userStore";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import BadgeIcon from "@mui/icons-material/Badge";
@@ -34,7 +36,7 @@ export default function CustomerProfileContent() {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif' }}>
+        <Typography sx={{ fontFamily: FONTS.PRIMARY }}>
           Loading profile...
         </Typography>
       </Box>
@@ -44,7 +46,7 @@ export default function CustomerProfileContent() {
   if (!profile) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif' }}>
+        <Typography sx={{ fontFamily: FONTS.PRIMARY }}>
           No profile data found.
         </Typography>
       </Box>
@@ -62,7 +64,7 @@ export default function CustomerProfileContent() {
       path: "/customer/bookings",
       icon: <EventNoteIcon sx={{ fontSize: 24 }} />,
       bgColor: "#FFF0E6",
-      iconColor: "#FF6200",
+      iconColor: COLORS.PRIMARY,
     },
     {
       title: "My Orders",
@@ -112,7 +114,7 @@ export default function CustomerProfileContent() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               color: "#1A1A1A",
               mb: 1,
@@ -121,7 +123,7 @@ export default function CustomerProfileContent() {
             My Profile
           </Typography>
           <Typography
-            sx={{ fontFamily: '"DM Sans", sans-serif', color: "#666" }}
+            sx={{ fontFamily: FONTS.PRIMARY, color: "#666" }}
           >
             View and manage your personal details and addresses.
           </Typography>
@@ -136,9 +138,9 @@ export default function CustomerProfileContent() {
             gap: "8px",
             border: "none",
             cursor: "pointer",
-            backgroundColor: "#FF6200",
+            backgroundColor: COLORS.PRIMARY,
             color: "#ffffff",
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             textTransform: "none",
             borderRadius: "30px",
             fontWeight: 700,
@@ -148,7 +150,7 @@ export default function CustomerProfileContent() {
             boxShadow: "0 4px 14px rgba(255, 98, 0, 0.3)",
             transition: "all 0.2s ease-in-out",
             "&:hover": {
-              backgroundColor: "#F05A00",
+              backgroundColor: COLORS.PRIMARY_DARK,
               boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
             },
           }}
@@ -179,7 +181,7 @@ export default function CustomerProfileContent() {
                 width: 120,
                 height: 120,
                 mb: 3,
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 fontSize: "3rem",
                 boxShadow: "0 4px 14px rgba(255, 98, 0, 0.2)",
               }}
@@ -191,7 +193,7 @@ export default function CustomerProfileContent() {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 1,
@@ -201,7 +203,7 @@ export default function CustomerProfileContent() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64748b",
                 mb: 2,
               }}
@@ -215,7 +217,7 @@ export default function CustomerProfileContent() {
                 bgcolor: "#e0f2fe",
                 color: "#0284c7",
                 fontWeight: 600,
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
               }}
               size="small"
             />
@@ -234,7 +236,7 @@ export default function CustomerProfileContent() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 3,
@@ -263,7 +265,7 @@ export default function CustomerProfileContent() {
                     fontSize: 12,
                     fontWeight: 700,
                     color: "#94a3b8",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   EMAIL
@@ -273,7 +275,7 @@ export default function CustomerProfileContent() {
                     fontSize: 14,
                     fontWeight: 600,
                     color: "#1e293b",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   {profile.email}
@@ -301,7 +303,7 @@ export default function CustomerProfileContent() {
                     fontSize: 12,
                     fontWeight: 700,
                     color: "#94a3b8",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   PHONE
@@ -311,7 +313,7 @@ export default function CustomerProfileContent() {
                     fontSize: 14,
                     fontWeight: 600,
                     color: "#1e293b",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   {profile.phone || "Not provided"}
@@ -339,7 +341,7 @@ export default function CustomerProfileContent() {
                     fontSize: 12,
                     fontWeight: 700,
                     color: "#94a3b8",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   JOINED ON
@@ -349,7 +351,7 @@ export default function CustomerProfileContent() {
                     fontSize: 14,
                     fontWeight: 600,
                     color: "#1e293b",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   {new Date(profile.createdAt).toLocaleDateString("en-GB", {
@@ -378,7 +380,7 @@ export default function CustomerProfileContent() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 3,
@@ -432,7 +434,7 @@ export default function CustomerProfileContent() {
                       <Box>
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 700,
                             fontSize: "15px",
                             color: "#1e293b",
@@ -443,7 +445,7 @@ export default function CustomerProfileContent() {
                         </Typography>
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "12px",
                             color: "#64748b",
                             mt: 0.5,
@@ -481,7 +483,7 @@ export default function CustomerProfileContent() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 3,
@@ -506,7 +508,7 @@ export default function CustomerProfileContent() {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#64748b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       FIRST NAME
@@ -517,7 +519,7 @@ export default function CustomerProfileContent() {
                       fontSize: 15,
                       fontWeight: 600,
                       color: "#1e293b",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {profile.firstName || "-"}
@@ -540,7 +542,7 @@ export default function CustomerProfileContent() {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#64748b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       LAST NAME
@@ -551,7 +553,7 @@ export default function CustomerProfileContent() {
                       fontSize: 15,
                       fontWeight: 600,
                       color: "#1e293b",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {profile.lastName || "-"}
@@ -574,7 +576,7 @@ export default function CustomerProfileContent() {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#64748b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       DATE OF BIRTH
@@ -585,7 +587,7 @@ export default function CustomerProfileContent() {
                       fontSize: 15,
                       fontWeight: 600,
                       color: "#1e293b",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {profile.dob
@@ -610,7 +612,7 @@ export default function CustomerProfileContent() {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#64748b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       BIRTH PLACE
@@ -621,7 +623,7 @@ export default function CustomerProfileContent() {
                       fontSize: 15,
                       fontWeight: 600,
                       color: "#1e293b",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       textTransform: "capitalize",
                     }}
                   >
@@ -645,7 +647,7 @@ export default function CustomerProfileContent() {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#64748b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       RASHI
@@ -656,7 +658,7 @@ export default function CustomerProfileContent() {
                       fontSize: 15,
                       fontWeight: 600,
                       color: "#1e293b",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       textTransform: "capitalize",
                     }}
                   >
@@ -682,7 +684,7 @@ export default function CustomerProfileContent() {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#64748b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       GOTRA
@@ -693,7 +695,7 @@ export default function CustomerProfileContent() {
                       fontSize: 15,
                       fontWeight: 600,
                       color: "#1e293b",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       textTransform: "capitalize",
                     }}
                   >
@@ -711,7 +713,7 @@ export default function CustomerProfileContent() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 3,
@@ -737,10 +739,10 @@ export default function CustomerProfileContent() {
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <HomeIcon sx={{ color: "#FF6200" }} />
+                    <HomeIcon sx={{ color: COLORS.PRIMARY }} />
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 700,
                         color: "#1e293b",
                       }}
@@ -753,15 +755,15 @@ export default function CustomerProfileContent() {
                     size="small"
                     sx={{
                       bgcolor: "#FFF0E6",
-                      color: "#FF6200",
+                      color: COLORS.PRIMARY,
                       fontWeight: 700,
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   />
                 </Box>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#475569",
                     mb: 1,
                     lineHeight: 1.6,
@@ -772,7 +774,7 @@ export default function CustomerProfileContent() {
                 <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64748b",
                       fontSize: "0.875rem",
                     }}
@@ -784,7 +786,7 @@ export default function CustomerProfileContent() {
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64748b",
                       fontSize: "0.875rem",
                     }}
@@ -805,7 +807,7 @@ export default function CustomerProfileContent() {
               >
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#64748b",
                     mb: 2,
                   }}
@@ -818,13 +820,13 @@ export default function CustomerProfileContent() {
                     router.push("/customer/profile/edit?tab=location")
                   }
                   sx={{
-                    bgcolor: "#FF6200",
+                    bgcolor: COLORS.PRIMARY,
                     color: "white",
                     border: "none",
                     cursor: "pointer",
                     px: 3,
                     py: 1,
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 600,
                     borderRadius: "8px",
                     transition: "background-color 0.2s",

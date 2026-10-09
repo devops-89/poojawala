@@ -2,8 +2,9 @@
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 
 import PurohitGrid from "./PurohitGrid";
-
 import { useEffect, useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -20,52 +21,52 @@ const categories = [
   {
     id: "All",
     label: "All Services",
-    icon: <AppsIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <AppsIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Astrology Consultation",
     label: "Astrology Consultation",
-    icon: <AutoAwesomeIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <AutoAwesomeIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Online Puja",
     label: "Online Puja",
-    icon: <LaptopMacIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <LaptopMacIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Temple Puja",
     label: "Temple Puja",
-    icon: <AccountBalanceIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <AccountBalanceIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Home Puja & Grah Pravesh",
     label: "Home & Grah Pravesh",
-    icon: <HomeIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <HomeIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Vastu Consultation",
     label: "Vastu Consultation",
-    icon: <ExploreIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <ExploreIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Marriage Ceremony",
     label: "Marriage Ceremony",
-    icon: <CelebrationIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <CelebrationIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Satyanarayan Katha",
     label: "Satyanarayan Katha",
-    icon: <MenuBookIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <MenuBookIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Havan/Yagya",
     label: "Havan / Yagya",
-    icon: <LocalFireDepartmentIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <LocalFireDepartmentIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
     id: "Festival Special Pujas",
     label: "Festival Special Pujas",
-    icon: <SpaIcon sx={{ fontSize: 28, color: "#FF6200" }} />,
+    icon: <SpaIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
 ];
 
@@ -123,7 +124,7 @@ export default function PurohitsLayout() {
               variant="h2"
               component="h1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 0.5,
@@ -138,7 +139,7 @@ export default function PurohitsLayout() {
               variant="h2"
               component="h1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 color: "#D32F2F",
                 mb: { xs: 1.5, md: 3 },
@@ -152,7 +153,7 @@ export default function PurohitsLayout() {
             <Typography
               variant="body1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#0f172a",
                 fontWeight: 600,
                 fontSize: { xs: "14px", sm: "15px", md: "16px" },

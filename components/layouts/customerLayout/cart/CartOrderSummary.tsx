@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import { Box, Typography, Paper, Divider } from "@mui/material";
 
@@ -26,7 +28,7 @@ export default function CartOrderSummary({
     >
       <Typography
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontWeight: 800,
           fontSize: "13px",
           letterSpacing: "1.2px",
@@ -49,7 +51,7 @@ export default function CartOrderSummary({
         >
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
             }}
@@ -58,7 +60,7 @@ export default function CartOrderSummary({
           </Typography>
           <Typography
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: "#2C1810",
               fontSize: "16px",
@@ -77,7 +79,7 @@ export default function CartOrderSummary({
         >
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
             }}
@@ -86,7 +88,7 @@ export default function CartOrderSummary({
           </Typography>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#2E7D32",
               fontWeight: 700,
               fontSize: "14px",
@@ -110,7 +112,7 @@ export default function CartOrderSummary({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: "22px",
@@ -121,9 +123,9 @@ export default function CartOrderSummary({
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               fontSize: "28px",
             }}
           >

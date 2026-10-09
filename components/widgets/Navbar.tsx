@@ -16,6 +16,8 @@ import {
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -107,8 +109,8 @@ export default function Navbar() {
               variant="outlined"
               sx={{
                 display: { xs: "none", md: "inline-flex" },
-                borderColor: "#FF6200",
-                color: "#FF6200",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
                 borderRadius: "30px",
                 textTransform: "none",
                 fontWeight: 600,
@@ -116,9 +118,9 @@ export default function Navbar() {
                 py: 0.8,
                 fontSize: "14px",
                 "&:hover": {
-                  borderColor: "#E65800",
+                  borderColor: COLORS.PRIMARY_DARK,
                   bgcolor: "#FFF0E6",
-                  color: "#E65800",
+                  color: COLORS.PRIMARY_DARK,
                 },
               }}
             >
@@ -130,7 +132,7 @@ export default function Navbar() {
               variant="contained"
               sx={{
                 display: { xs: "none", md: "inline-flex" },
-                background: "#FF6200",
+                background: COLORS.PRIMARY,
                 color: "white",
                 borderRadius: "30px",
                 textTransform: "none",
@@ -138,7 +140,7 @@ export default function Navbar() {
                 px: 3,
                 py: 0.8,
                 fontSize: "14px",
-                "&:hover": { background: "#F05A00" },
+                "&:hover": { background: COLORS.PRIMARY_DARK },
               }}
             >
               Sign In
@@ -217,7 +219,7 @@ export default function Navbar() {
                 >
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: isActive ? 600 : 500,
                       color: isActive ? "#D32F2F" : "#333",
                       fontSize: "16px",
@@ -240,14 +242,14 @@ export default function Navbar() {
             fullWidth
             onClick={handleDrawerToggle}
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               borderRadius: "30px",
               textTransform: "none",
               py: 1.2,
               fontWeight: 600,
               fontSize: "15px",
-              "&:hover": { background: "#F05A00" },
+              "&:hover": { background: COLORS.PRIMARY_DARK },
             }}
           >
             Sign In
@@ -259,17 +261,17 @@ export default function Navbar() {
             fullWidth
             onClick={handleDrawerToggle}
             sx={{
-              borderColor: "#FF6200",
-              color: "#FF6200",
+              borderColor: COLORS.PRIMARY,
+              color: COLORS.PRIMARY,
               borderRadius: "30px",
               textTransform: "none",
               py: 1.2,
               fontWeight: 600,
               fontSize: "15px",
               "&:hover": {
-                borderColor: "#E65800",
+                borderColor: COLORS.PRIMARY_DARK,
                 bgcolor: "#FFF0E6",
-                color: "#E65800",
+                color: COLORS.PRIMARY_DARK,
               },
             }}
           >

@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -110,12 +112,12 @@ export default function DashboardContent() {
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <Typography variant="h3" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: { xs: '24px', md: '32px' } }}>
+              <Typography variant="h3" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '24px', md: '32px' } }}>
                 Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : (profile?.name || 'Purohit')}!
               </Typography>
               {profile?.status === 'APPROVED' && <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: 28 }} />}
             </Box>
-            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', opacity: 0.9, fontSize: '16px', mb: 2 }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, opacity: 0.9, fontSize: '16px', mb: 2 }}>
               Here's what's happening with your pujas and bookings today.
             </Typography>
             
@@ -123,13 +125,13 @@ export default function DashboardContent() {
               {profile?.email && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <EmailIcon fontSize="small" />
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', fontWeight: 500 }}>{profile.email}</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 500 }}>{profile.email}</Typography>
                 </Box>
               )}
               {profile?.phone && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <PhoneIcon fontSize="small" />
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', fontWeight: 500 }}>+91 {profile.phone}</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 500 }}>+91 {profile.phone}</Typography>
                 </Box>
               )}
             </Box>
@@ -182,7 +184,7 @@ export default function DashboardContent() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
                     fontSize: "18px",
                     color: "#D32F2F",
@@ -201,7 +203,7 @@ export default function DashboardContent() {
               {rejReason && (
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     fontSize: "14px",
                     color: "#991B1B",
@@ -214,7 +216,7 @@ export default function DashboardContent() {
 
               <Typography
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "14px",
                   color: "#4B5563",
                   lineHeight: 1.6,
@@ -260,8 +262,8 @@ export default function DashboardContent() {
                   {stat.icon}
                 </Box>
                 <Box>
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px', fontWeight: 600 }}>{stat.title}</Typography>
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: '28px', color: '#1A1A1A' }}>{stat.value}</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px', fontWeight: 600 }}>{stat.title}</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: '28px', color: '#1A1A1A' }}>{stat.value}</Typography>
                 </Box>
               </Paper>
             </NextLink>
@@ -271,17 +273,17 @@ export default function DashboardContent() {
 
       {/* Active Bookings Section */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+        <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
           Active Bookings
         </Typography>
-        <Button component={NextLink} href="/purohit/bookings" sx={{ color: '#FF6200', textTransform: 'none', fontWeight: 700 }}>
+        <Button component={NextLink} href="/purohit/bookings" sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700 }}>
           View All Bookings
         </Button>
       </Box>
 
       {activeBookings.length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center', borderRadius: '16px', border: '1px dashed #ccc', bgcolor: '#fafafa' }}>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666' }}>No active bookings at the moment.</Typography>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666' }}>No active bookings at the moment.</Typography>
         </Paper>
       ) : (
         <Grid container spacing={3}>
@@ -290,7 +292,7 @@ export default function DashboardContent() {
               <Card sx={{ borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', '&:hover': { boxShadow: '0 8px 30px rgba(0,0,0,0.06)' }, transition: 'all 0.2s' }}>
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: '18px', color: '#1A1A1A' }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: '18px', color: '#1A1A1A' }}>
                       {booking.service?.name || 'Puja Service'}
                     </Typography>
                     <Chip label={booking.status || 'ACCEPTED'} size="small" sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 700, fontSize: '11px', height: '24px', borderRadius: '6px' }} />
@@ -299,27 +301,27 @@ export default function DashboardContent() {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Box sx={{ bgcolor: '#FFF0E6', p: 1, borderRadius: '8px', display: 'flex' }}>
-                        <CalendarTodayIcon sx={{ fontSize: 16, color: '#FF6200' }} />
+                        <CalendarTodayIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
                       </Box>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#444', fontSize: '14px', fontWeight: 500 }}>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: '14px', fontWeight: 500 }}>
                         {booking.scheduledAtIst ? booking.scheduledAtIst.split(',')[0] : (booking.scheduledAt ? new Date(booking.scheduledAt).toLocaleDateString() : 'N/A')}
                       </Typography>
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Box sx={{ bgcolor: '#FFF0E6', p: 1, borderRadius: '8px', display: 'flex' }}>
-                        <AccessTimeIcon sx={{ fontSize: 16, color: '#FF6200' }} />
+                        <AccessTimeIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
                       </Box>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#444', fontSize: '14px', fontWeight: 500 }}>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: '14px', fontWeight: 500 }}>
                         {booking.scheduledAtIst ? booking.scheduledAtIst.split(',')[1]?.trim() : (booking.scheduledAt ? new Date(booking.scheduledAt).toLocaleTimeString() : 'N/A')}
                       </Typography>
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Box sx={{ bgcolor: '#FFF0E6', p: 1, borderRadius: '8px', display: 'flex' }}>
-                        <LocationOnIcon sx={{ fontSize: 16, color: '#FF6200' }} />
+                        <LocationOnIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
                       </Box>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#444', fontSize: '14px', fontWeight: 500 }} noWrap>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: '14px', fontWeight: 500 }} noWrap>
                         {booking.customerAddress?.fullAddress || 'N/A'}
                       </Typography>
                     </Box>
@@ -329,12 +331,12 @@ export default function DashboardContent() {
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>Payout</Typography>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontSize: '18px', fontWeight: 800 }}>₹{booking.purohitPayoutAmount || booking.agreedPrice || '0'}</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>Payout</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontSize: '18px', fontWeight: 800 }}>₹{booking.purohitPayoutAmount || booking.agreedPrice || '0'}</Typography>
                     </Box>
                     <Box sx={{ textAlign: 'right' }}>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>Customer</Typography>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontSize: '14px', fontWeight: 600 }}>{booking.customer ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim() : 'Customer'}</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>Customer</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontSize: '14px', fontWeight: 600 }}>{booking.customer ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim() : 'Customer'}</Typography>
                     </Box>
                   </Box>
 

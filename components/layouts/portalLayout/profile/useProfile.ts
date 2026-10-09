@@ -13,6 +13,7 @@ import {
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
+import { validateBankForm, extractBackendErrorMessage } from "@/utils/helpers";
 
 export function useProfile() {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
@@ -441,6 +442,11 @@ export function useProfile() {
   };
 
   const handleSaveBank = async () => {
+    const err = validateBankForm(bankForm);
+    if (err) {
+      showSnackbar(err, "error");
+      return;
+    }
     setSavingBank(true);
     try {
       if (selectedBankId) {
@@ -483,9 +489,9 @@ export function useProfile() {
           });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      showSnackbar(`Failed to ${selectedBankId ? "update" : "add"} bank account.`, "error");
+      showSnackbar(extractBackendErrorMessage(error, `Failed to ${selectedBankId ? "update" : "add"} bank account.`), "error");
     } finally {
       setSavingBank(false);
     }

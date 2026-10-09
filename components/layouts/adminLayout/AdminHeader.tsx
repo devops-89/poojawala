@@ -5,18 +5,11 @@ import { useSocketStore } from "@/stores/socketStore";
 import { useUserStore } from "@/stores/userStore";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  Badge,
-  Box,
-  IconButton,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Badge, Box, IconButton, ListItemText, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -210,14 +203,14 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           <IconButton
             onClick={handleOpenNotif}
             sx={{
-              color: "#64748b",
+              color: COLORS.SLATE_MUTED,
               bgcolor: "#f8fafc",
               border: "1px solid #e2e8f0",
               p: 1.2,
               borderRadius: "10px",
               "&:hover": {
                 bgcolor: "#fff7ed",
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 borderColor: "#ffedd5",
               },
               transition: "all 0.2s ease",
@@ -229,7 +222,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               invisible={unreadCount === 0}
               sx={{
                 "& .MuiBadge-badge": {
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "white",
                   fontWeight: 700,
                   fontSize: "0.75rem",
@@ -274,10 +267,10 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT_ONLY,
                 fontWeight: 800,
                 fontSize: "16px",
-                color: "#0f172a",
+                color: COLORS.SLATE_DARK,
               }}
             >
               Notifications
@@ -286,10 +279,10 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "#FF6200",
+                  color: COLORS.PRIMARY,
                   cursor: "pointer",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT_ONLY,
                   "&:hover": { textDecoration: "underline" },
                 }}
                 onClick={clearNotifications}
@@ -304,7 +297,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                 sx={{
                   color: "#94a3b8",
                   fontSize: "14px",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT_ONLY,
                   fontWeight: 500,
                 }}
               >
@@ -329,7 +322,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                   slotProps={{
                     primary: {
                       sx: {
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontSize: "14px",
                         fontWeight: 600,
                         color: "#1e293b",
@@ -340,7 +333,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                         fontSize: "12px",
                         mt: 0.5,
                         color: "#94a3b8",
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                       },
                     },
                   }}

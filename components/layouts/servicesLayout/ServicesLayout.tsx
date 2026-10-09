@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import CustomerServicesFilters from "../customerLayout/services/CustomerServicesFilters";
 import ServiceGrid from "./ServiceGrid";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function ServicesLayout() {
   const searchParams = useSearchParams();
@@ -189,7 +191,7 @@ export default function ServicesLayout() {
               variant="h2"
               component="h1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
                 mb: 0.5,
@@ -204,7 +206,7 @@ export default function ServicesLayout() {
               variant="h2"
               component="h1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 color: "#D32F2F",
                 mb: { xs: 1.5, md: 3 },
@@ -218,7 +220,7 @@ export default function ServicesLayout() {
             <Typography
               variant="body1"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#0f172a",
                 fontWeight: 600,
                 fontSize: { xs: "14px", sm: "15px", md: "16px" },

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -37,7 +39,10 @@ const validationSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
-  phone: Yup.string().required("Mobile Number is required").trim(),
+  phone: Yup.string()
+    .required("Mobile Number is required")
+    .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
+    .trim(),
   dob: Yup.mixed().required("Date of Birth is required"),
   bio: Yup.string().required("Bio is required"),
   qualification: Yup.string().required("Qualification is required"),
@@ -533,7 +538,7 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           minHeight: "400px",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -550,12 +555,12 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
           ]}
         />
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 1 }}>
-          <EditIcon sx={{ color: "#FF6200", fontSize: 32 }} />
+          <EditIcon sx={{ color: COLORS.PRIMARY, fontSize: 32 }} />
           <Box>
             <Typography
               variant="h4"
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#1e293b",
               }}
@@ -564,7 +569,7 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 color: "#64748b",
                 fontSize: "14px",
               }}
@@ -687,7 +692,7 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
               )
             }
             sx={{
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               "&:hover": { bgcolor: "#e05600" },
               borderRadius: "12px",
               px: 4,

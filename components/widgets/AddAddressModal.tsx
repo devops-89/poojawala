@@ -18,6 +18,8 @@ import AddressLocationButton from "./addressModal/AddressLocationButton";
 import AddressMapPreview from "./addressModal/AddressMapPreview";
 import { AddAddressModalProps, AddressFormData } from "@/utils/types";
 import { useAddressGeocoding } from "./addressModal/useAddressGeocoding";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 export type { AddressFormData };
 
 export default function AddAddressModal({
@@ -124,14 +126,14 @@ export default function AddAddressModal({
           maxHeight: { xs: "calc(100% - 24px)", sm: "90vh" },
         },
         "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-          borderColor: "#FF6200",
+          borderColor: COLORS.PRIMARY,
         },
-        "& .MuiInputLabel-root.Mui-focused": { color: "#FF6200" },
+        "& .MuiInputLabel-root.Mui-focused": { color: COLORS.PRIMARY },
       }}
     >
       <DialogTitle
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontWeight: 800,
           fontSize: { xs: "1.2rem", sm: "1.45rem" },
           pb: 1.5,
@@ -215,7 +217,7 @@ export default function AddAddressModal({
             sx={{
               width: { xs: "50%", sm: "auto" },
               color: "#475569",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               textTransform: "none",
               py: 1,
@@ -230,7 +232,7 @@ export default function AddAddressModal({
               width: { xs: "50%", sm: "auto" },
               bgcolor: "#FF6200 !important",
               color: "white !important",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               px: 3,
               py: 1.2,

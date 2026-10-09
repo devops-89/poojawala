@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 
 import { editBlogAPI, getBlogByIdAPI } from "@/api/blogControllers";
 import BlogForm, { BlogFormValues } from "@/components/layouts/adminLayout/blogs/BlogForm";
@@ -144,7 +145,7 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
           height: "60vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }

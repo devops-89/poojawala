@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -39,7 +41,7 @@ export default function ServiceCitiesFields({
               <Box>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     color: "#1e293b",
                   }}
@@ -56,13 +58,13 @@ export default function ServiceCitiesFields({
                 startIcon={<AddIcon />}
                 onClick={() => push({ name: "", state: "" })}
                 sx={{
-                  borderColor: "#FF6200",
-                  color: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
+                  color: COLORS.PRIMARY,
                   textTransform: "none",
                   borderRadius: "8px",
                   fontWeight: 600,
                   "&:hover": {
-                    borderColor: "#E65800",
+                    borderColor: COLORS.PRIMARY_DARK,
                     bgcolor: "#fff7ed",
                   },
                 }}

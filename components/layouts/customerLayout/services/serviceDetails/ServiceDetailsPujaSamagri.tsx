@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { addToCartAPI, deleteCartItemAPI } from "@/api/cartControllers";
 import { getAllProductsAPI } from "@/api/productControllers";
 import { useCartStore } from "@/stores/cartStore";
@@ -199,7 +201,7 @@ export default function ServiceDetailsPujaSamagri({
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1,
             }}
@@ -210,7 +212,7 @@ export default function ServiceDetailsPujaSamagri({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "28px", sm: "34px", md: "38px" },
@@ -223,7 +225,7 @@ export default function ServiceDetailsPujaSamagri({
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "15px",
               lineHeight: 1.7,
@@ -240,8 +242,8 @@ export default function ServiceDetailsPujaSamagri({
           variant="outlined"
           endIcon={<ArrowForwardIcon />}
           sx={{
-            borderColor: "#C84B16",
-            color: "#C84B16",
+            borderColor: COLORS.PRIMARY,
+            color: COLORS.PRIMARY,
             fontWeight: 700,
             fontSize: "14px",
             borderRadius: "10px",
@@ -251,9 +253,9 @@ export default function ServiceDetailsPujaSamagri({
             whiteSpace: "nowrap",
             flexShrink: 0,
             "&:hover": {
-              borderColor: "#FF6200",
+              borderColor: COLORS.PRIMARY,
               bgcolor: "#FFF0E6",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
             },
           }}
         >
@@ -340,7 +342,7 @@ export default function ServiceDetailsPujaSamagri({
               height: 64,
               borderRadius: "50%",
               bgcolor: "#FFF0E6",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
@@ -362,7 +364,7 @@ export default function ServiceDetailsPujaSamagri({
           </Typography>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
               maxWidth: 450,
@@ -436,7 +438,7 @@ export default function ServiceDetailsPujaSamagri({
                           position: "absolute",
                           top: 12,
                           right: 12,
-                          bgcolor: "#C84B16",
+                          bgcolor: COLORS.PRIMARY,
                           color: "white",
                           borderRadius: "20px",
                           px: 1.5,
@@ -468,7 +470,7 @@ export default function ServiceDetailsPujaSamagri({
                       <Typography
                         variant="h6"
                         sx={{
-                          fontFamily: '"Georgia", "Times New Roman", serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           color: "#2C1810",
                           fontSize: "19px",
@@ -481,7 +483,7 @@ export default function ServiceDetailsPujaSamagri({
 
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#64534A",
                           fontSize: "13.5px",
                           lineHeight: 1.6,
@@ -503,7 +505,7 @@ export default function ServiceDetailsPujaSamagri({
                     >
                       <Typography
                         sx={{
-                          fontFamily: '"Georgia", "Times New Roman", serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
                           fontSize: "21px",
                           color: "#2C1810",
@@ -514,7 +516,7 @@ export default function ServiceDetailsPujaSamagri({
                           <Typography
                             component="span"
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontSize: "12px",
                               fontWeight: 600,
                               color: "#8C786D",
@@ -533,7 +535,7 @@ export default function ServiceDetailsPujaSamagri({
                           isAdded ? <CheckIcon fontSize="small" /> : undefined
                         }
                         sx={{
-                          bgcolor: isAdded ? "#2C1810" : "#C84B16",
+                          bgcolor: isAdded ? "#2C1810" : COLORS.PRIMARY,
                           color: "white",
                           borderRadius: "8px",
                           px: 2.5,
@@ -543,7 +545,7 @@ export default function ServiceDetailsPujaSamagri({
                           textTransform: "none",
                           boxShadow: "none",
                           "&:hover": {
-                            bgcolor: isAdded ? "#1E100B" : "#FF6200",
+                            bgcolor: isAdded ? "#1E100B" : COLORS.PRIMARY,
                             boxShadow: "0 4px 14px rgba(200, 75, 22, 0.3)",
                           },
                         }}
@@ -610,14 +612,14 @@ export default function ServiceDetailsPujaSamagri({
             }}
             variant="contained"
             sx={{
-              bgcolor: "#C84B16",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               fontWeight: 700,
               borderRadius: "10px",
               px: 3,
               py: 1,
               textTransform: "none",
-              "&:hover": { bgcolor: "#FF6200" },
+              "&:hover": { bgcolor: COLORS.PRIMARY },
             }}
           >
             Proceed to Booking

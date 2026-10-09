@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -200,7 +202,7 @@ export default function BlogForm({
                 style={{
                   textDecoration: "none",
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
                   fontSize: "14px",
                 }}
@@ -209,8 +211,8 @@ export default function BlogForm({
               </NextLink>
               <Typography
                 sx={{
-                  color: "#FF6200",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  color: COLORS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "14px",
                 }}
@@ -221,7 +223,7 @@ export default function BlogForm({
             <Typography
               variant="h4"
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#1e293b",
               }}
@@ -257,7 +259,7 @@ export default function BlogForm({
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -276,7 +278,7 @@ export default function BlogForm({
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -299,7 +301,7 @@ export default function BlogForm({
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -322,7 +324,7 @@ export default function BlogForm({
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -340,11 +342,11 @@ export default function BlogForm({
                     }
                     sx={{
                       "& .MuiSwitch-switchBase.Mui-checked": {
-                        color: "#FF6200",
+                        color: COLORS.PRIMARY,
                       },
                       "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
                         {
-                          backgroundColor: "#FF6200",
+                          backgroundColor: COLORS.PRIMARY,
                         },
                     }}
                   />
@@ -356,7 +358,7 @@ export default function BlogForm({
                     <StarIcon sx={{ color: "#FF9100", fontSize: 18 }} />
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 600,
                         color: "#1e293b",
                       }}
@@ -372,7 +374,7 @@ export default function BlogForm({
             <Grid size={{ xs: 12 }}>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   color: "#1e293b",
                   mb: 1,
@@ -438,7 +440,7 @@ export default function BlogForm({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#FF6200",
+                      color: COLORS.PRIMARY,
                     }}
                   >
                     <CloudUploadIcon sx={{ fontSize: 36 }} />
@@ -448,7 +450,7 @@ export default function BlogForm({
                 <Box sx={{ flex: 1 }}>
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "0.95rem",
                       color: "#1e293b",
@@ -462,14 +464,14 @@ export default function BlogForm({
                     component="label"
                     startIcon={<CloudUploadIcon />}
                     sx={{
-                      borderColor: "#FF6200",
-                      color: "#FF6200",
+                      borderColor: COLORS.PRIMARY,
+                      color: COLORS.PRIMARY,
                       borderRadius: "10px",
                       textTransform: "none",
                       fontWeight: 600,
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       "&:hover": {
-                        borderColor: "#E65800",
+                        borderColor: COLORS.PRIMARY_DARK,
                         bgcolor: "#FFF0E6",
                       },
                     }}
@@ -516,7 +518,7 @@ export default function BlogForm({
                 <Typography
                   variant="h6"
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     color: "#1e293b",
                   }}
@@ -525,7 +527,7 @@ export default function BlogForm({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "0.85rem",
                     color: "#64748b",
                   }}
@@ -539,13 +541,13 @@ export default function BlogForm({
                 startIcon={<AddIcon />}
                 onClick={handleAddSection}
                 sx={{
-                  borderColor: "#FF6200",
-                  color: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
+                  color: COLORS.PRIMARY,
                   borderRadius: "10px",
                   fontWeight: 700,
                   textTransform: "none",
-                  fontFamily: "var(--font-outfit), sans-serif",
-                  "&:hover": { borderColor: "#E65800", bgcolor: "#FFF0E6" },
+                  fontFamily: FONTS.OUTFIT,
+                  "&:hover": { borderColor: COLORS.PRIMARY_DARK, bgcolor: "#FFF0E6" },
                 }}
               >
                 Add Section
@@ -565,7 +567,7 @@ export default function BlogForm({
                 <Typography
                   sx={{
                     color: "#94a3b8",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "0.9rem",
                   }}
                 >
@@ -598,8 +600,8 @@ export default function BlogForm({
                       <Typography
                         sx={{
                           fontWeight: 700,
-                          color: "#FF6200",
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          color: COLORS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "0.9rem",
                         }}
                       >
@@ -632,7 +634,7 @@ export default function BlogForm({
                             "& .MuiOutlinedInput-root": {
                               borderRadius: "10px",
                               bgcolor: "white",
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                             },
                           }}
                         />
@@ -666,7 +668,7 @@ export default function BlogForm({
                 color: "#64748b",
                 textTransform: "none",
                 fontWeight: 600,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               Cancel
@@ -685,15 +687,15 @@ export default function BlogForm({
                 )
               }
               sx={{
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 textTransform: "none",
                 borderRadius: "12px",
                 fontWeight: 700,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 px: 4,
                 py: 1.2,
-                "&:hover": { bgcolor: "#E65800" },
+                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
               }}
             >
               {isSubmitting

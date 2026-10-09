@@ -12,8 +12,11 @@ import NextLink from 'next/link';
 import { loginAPI, getMeAPI } from '@/api/authControllers';
 import { extractRoleCsrfToken, saveRoleCsrfToken } from '@/api/config';
 import { useSnackbarStore } from '@/stores/snackbarStore';
+import { extractBackendErrorMessage } from '@/utils/helpers';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -73,10 +76,24 @@ export default function AdminLoginForm() {
           showSnackbar('Admin login successful!', 'success');
           router.replace('/admin/dashboard');
         } else {
-          showSnackbar(response.message || 'Login failed', 'error');
+          const rawMsg = response?.message;
+          const finalMsg =
+            !rawMsg ||
+            rawMsg.toLowerCase() === "validation failed" ||
+            rawMsg.toLowerCase() === "bad request"
+              ? "Invalid email or password"
+              : rawMsg;
+          showSnackbar(finalMsg, 'error');
         }
       } catch (error: any) {
-        showSnackbar(error.response?.data?.message || 'Invalid credentials', 'error');
+        const rawMsg = extractBackendErrorMessage(error, 'Invalid email or password');
+        const finalMsg =
+          !rawMsg ||
+          rawMsg.toLowerCase() === "validation failed" ||
+          rawMsg.toLowerCase() === "bad request"
+            ? "Invalid email or password"
+            : rawMsg;
+        showSnackbar(finalMsg, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -107,12 +124,12 @@ export default function AdminLoginForm() {
         
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 5 }}>
           <Box sx={{ width: 64, height: 64, borderRadius: '16px', bgcolor: 'rgba(255, 98, 0, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-            <AdminPanelSettingsIcon sx={{ fontSize: 32, color: '#FF6200' }} />
+            <AdminPanelSettingsIcon sx={{ fontSize: 32, color: COLORS.PRIMARY }} />
           </Box>
-          <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1, textAlign: 'center' }}>
+          <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT_ONLY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 1, textAlign: 'center' }}>
             Admin Control
           </Typography>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', textAlign: 'center' }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT_ONLY, color: COLORS.SLATE_MUTED, textAlign: 'center' }}>
             Sign in to manage the Poojawala platform.
           </Typography>
         </Box>
@@ -134,15 +151,15 @@ export default function AdminLoginForm() {
             sx={{ 
               mb: 3,
               '& .MuiOutlinedInput-root': { 
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT_ONLY,
                 '&.Mui-focused fieldset': {
-                  borderColor: '#FF6200',
+                  borderColor: COLORS.PRIMARY,
                 }
               },
               '& .MuiInputLabel-root': { 
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT_ONLY,
                 '&.Mui-focused': {
-                  color: '#FF6200',
+                  color: COLORS.PRIMARY,
                 }
               }
             }}
@@ -164,15 +181,15 @@ export default function AdminLoginForm() {
             sx={{ 
               mb: 4,
               '& .MuiOutlinedInput-root': { 
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT_ONLY,
                 '&.Mui-focused fieldset': {
-                  borderColor: '#FF6200',
+                  borderColor: COLORS.PRIMARY,
                 }
               },
               '& .MuiInputLabel-root': { 
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT_ONLY,
                 '&.Mui-focused': {
-                  color: '#FF6200',
+                  color: COLORS.PRIMARY,
                 }
               }
             }}
@@ -190,7 +207,7 @@ export default function AdminLoginForm() {
           />
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 4 }}>
-            <Typography component={NextLink} href="/forgot-password?redirect=/admin" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', color: '#FF6200', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+            <Typography component={NextLink} href="/forgot-password?redirect=/admin" sx={{ fontFamily: FONTS.OUTFIT_ONLY, fontSize: '14px', color: COLORS.PRIMARY, fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
               Forgot Password?
             </Typography>
           </Box>
@@ -201,20 +218,20 @@ export default function AdminLoginForm() {
             disabled={isLoading}
             variant="contained"
             sx={{
-              background: '#FF6200',
-              border: '2px solid #FF6200',
+              background: COLORS.PRIMARY,
+              border: `2px solid ${COLORS.PRIMARY}`,
               color: '#fff',
               py: 1.5,
               borderRadius: '30px',
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT_ONLY,
               fontWeight: 600,
               fontSize: '1rem',
               textTransform: 'none',
               boxShadow: '0 4px 14px rgba(255, 98, 0, 0.4)',
               transition: 'all 0.3s ease',
               '&:hover': { 
-                background: '#F05A00', 
-                borderColor: '#F05A00',
+                background: COLORS.PRIMARY_HOVER, 
+                borderColor: COLORS.PRIMARY_HOVER,
                 boxShadow: '0 4px 14px rgba(255, 98, 0, 0.4)' 
               },
               '&.Mui-disabled': {
@@ -239,15 +256,15 @@ export default function AdminLoginForm() {
                 borderRadius: '30px',
                 borderColor: '#e2e8f0',
                 color: '#475569',
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT_ONLY,
                 fontWeight: 600,
                 fontSize: '0.95rem',
                 textTransform: 'none',
                 transition: 'all 0.2s ease',
                 '&:hover': {
                   bgcolor: '#FFF0E6',
-                  color: '#FF6200',
-                  borderColor: '#FF6200',
+                  color: COLORS.PRIMARY,
+                  borderColor: COLORS.PRIMARY,
                 },
               }}
             >

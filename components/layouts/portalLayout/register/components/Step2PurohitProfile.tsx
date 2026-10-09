@@ -16,6 +16,9 @@ import Grid from '@mui/material/Grid';
 import { FormikProps } from 'formik';
 import { State, City } from 'country-state-city';
 import { QUALIFICATIONS, LANGUAGES, SPECIALIZATIONS } from '../constants';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from '@/utils/helpers';
 
 const CustomAutocomplete = Autocomplete as any;
 
@@ -49,7 +52,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
       <Typography
         variant="h5"
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 3,
         }}
@@ -66,22 +69,28 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             options={stateOptions}
             value={formik.values.state || ''}
             onChange={(_, newValue) => {
-              const val = (newValue || '').replace(/[^a-zA-Z\s.-]/g, '');
+              const val = sanitizeLettersOnly(newValue || '');
               formik.setFieldValue('state', val);
               // Reset city if state changes
               formik.setFieldValue('city', '');
             }}
             onInputChange={(_, newInputValue) => {
-              const val = (newInputValue || '').replace(/[^a-zA-Z\s.-]/g, '');
+              const val = sanitizeLettersOnly(newInputValue || '');
               formik.setFieldValue('state', val);
             }}
-            renderInput={(params) => (
+            renderInput={(params: any) => (
               <TextField
                 {...params}
                 fullWidth
                 name="state"
                 label="State *"
                 variant="outlined"
+                slotProps={{
+                  htmlInput: {
+                    ...params.inputProps,
+                    onKeyDown: allowOnlyLettersOnKeyDown,
+                  },
+                }}
                 error={formik.touched.state && Boolean(formik.errors.state)}
                 helperText={formik.touched.state && (formik.errors.state as string)}
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
@@ -99,14 +108,14 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             options={cityOptions}
             value={formik.values.city || ''}
             onChange={(_, newValue) => {
-              const val = (newValue || '').replace(/[^a-zA-Z\s.-]/g, '');
+              const val = sanitizeLettersOnly(newValue || '');
               formik.setFieldValue('city', val);
             }}
             onInputChange={(_, newInputValue) => {
-              const val = (newInputValue || '').replace(/[^a-zA-Z\s.-]/g, '');
+              const val = sanitizeLettersOnly(newInputValue || '');
               formik.setFieldValue('city', val);
             }}
-            renderInput={(params) => (
+            renderInput={(params: any) => (
               <TextField
                 {...params}
                 fullWidth
@@ -114,6 +123,12 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 label="City *"
                 placeholder={!formik.values.state ? 'Select State first' : 'Select or type City'}
                 variant="outlined"
+                slotProps={{
+                  htmlInput: {
+                    ...params.inputProps,
+                    onKeyDown: allowOnlyLettersOnKeyDown,
+                  },
+                }}
                 error={formik.touched.city && Boolean(formik.errors.city)}
                 helperText={
                   formik.touched.city
@@ -136,6 +151,16 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             label="Aadhaar Number *"
             variant="outlined"
             value={formik.values.aadhaarNumber || ''}
+            onKeyDown={(e) => {
+              if (
+                !/\d/.test(e.key) &&
+                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key) &&
+                !e.ctrlKey &&
+                !e.metaKey
+              ) {
+                e.preventDefault();
+              }
+            }}
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, '');
               if (val.length <= 12) {
@@ -162,20 +187,26 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             options={QUALIFICATIONS}
             value={formik.values.qualification || ''}
             onChange={(_, newValue) => {
-              const val = (newValue || '').replace(/[^a-zA-Z\s.-]/g, '');
+              const val = sanitizeLettersOnly(newValue || '');
               formik.setFieldValue('qualification', val);
             }}
             onInputChange={(_, newInputValue) => {
-              const val = (newInputValue || '').replace(/[^a-zA-Z\s.-]/g, '');
+              const val = sanitizeLettersOnly(newInputValue || '');
               formik.setFieldValue('qualification', val);
             }}
-            renderInput={(params) => (
+            renderInput={(params: any) => (
               <TextField
                 {...params}
                 fullWidth
                 name="qualification"
                 label="Qualification *"
                 variant="outlined"
+                slotProps={{
+                  htmlInput: {
+                    ...params.inputProps,
+                    onKeyDown: allowOnlyLettersOnKeyDown,
+                  },
+                }}
                 error={
                   formik.touched.qualification &&
                   Boolean(formik.errors.qualification)
@@ -199,6 +230,16 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             label="Experience (Years) *"
             variant="outlined"
             value={formik.values.experienceYears || ''}
+            onKeyDown={(e) => {
+              if (
+                !/\d/.test(e.key) &&
+                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key) &&
+                !e.ctrlKey &&
+                !e.metaKey
+              ) {
+                e.preventDefault();
+              }
+            }}
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, '').slice(0, 2);
               formik.setFieldValue('experienceYears', val);
@@ -353,7 +394,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                   checked={Boolean(formik.values.isOnlineAvailable)}
                   onChange={formik.handleChange}
                   name="isOnlineAvailable"
-                  sx={{ color: '#FF6200', '&.Mui-checked': { color: '#FF6200' } }}
+                  sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
                 />
               }
               label="Available for Online Pooja"
@@ -364,7 +405,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                   checked={Boolean(formik.values.isOfflineAvailable)}
                   onChange={formik.handleChange}
                   name="isOfflineAvailable"
-                  sx={{ color: '#FF6200', '&.Mui-checked': { color: '#FF6200' } }}
+                  sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
                 />
               }
               label="Available for Offline Pooja"

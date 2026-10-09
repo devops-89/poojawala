@@ -4,6 +4,8 @@ import CheckIcon from "@mui/icons-material/Check";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface WebsiteServicePlansSectionProps {
   service: any;
@@ -82,11 +84,11 @@ export default function WebsiteServicePlansSection({
       <Box sx={{ textAlign: "center", maxWidth: "640px", mx: "auto", mb: 5 }}>
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontSize: "12px",
             fontWeight: 800,
             letterSpacing: "1.2px",
-            color: "#FF6200",
+            color: COLORS.PRIMARY,
             textTransform: "uppercase",
             mb: 1,
           }}
@@ -97,7 +99,7 @@ export default function WebsiteServicePlansSection({
         <Typography
           variant="h3"
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             fontSize: { xs: "28px", sm: "36px", md: "40px" },
             color: "#1A0B05",
@@ -109,7 +111,7 @@ export default function WebsiteServicePlansSection({
 
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontSize: { xs: "14.5px", sm: "16px" },
             color: "#5C4A40",
             lineHeight: 1.6,
@@ -152,7 +154,7 @@ export default function WebsiteServicePlansSection({
                     : "0 4px 16px rgba(0, 0, 0, 0.02)",
                 transition: "all 0.3s ease",
                 "&:hover": {
-                  borderColor: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
                   transform: "translateY(-4px)",
                   boxShadow: "0 14px 40px rgba(255, 98, 0, 0.14)",
                 },
@@ -162,7 +164,7 @@ export default function WebsiteServicePlansSection({
                 {/* Plan Name */}
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     fontSize: "26px",
                     color: "#1A0B05",
@@ -175,10 +177,10 @@ export default function WebsiteServicePlansSection({
                 {/* Price */}
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     fontSize: { xs: "36px", sm: "42px" },
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     lineHeight: 1.1,
                     mb: 3,
                   }}
@@ -203,14 +205,14 @@ export default function WebsiteServicePlansSection({
                         <CheckIcon
                           sx={{
                             fontSize: 18,
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                             mt: 0.2,
                             flexShrink: 0,
                           }}
                         />
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14.5px",
                             color: "#3D2B22",
                             lineHeight: 1.5,
@@ -230,14 +232,14 @@ export default function WebsiteServicePlansSection({
                 variant={selectedPlan === "basic" ? "contained" : "outlined"}
                 onClick={(e) => handleBookPlan("basic", e)}
                 sx={{
-                  bgcolor: selectedPlan === "basic" ? "#FF6200" : "transparent",
-                  borderColor: "#FF6200",
+                  bgcolor: selectedPlan === "basic" ? COLORS.PRIMARY : "transparent",
+                  borderColor: COLORS.PRIMARY,
                   borderWidth: "1.5px",
-                  color: selectedPlan === "basic" ? "#FFFFFF" : "#FF6200",
+                  color: selectedPlan === "basic" ? "#FFFFFF" : COLORS.PRIMARY,
                   width: "100%",
                   py: 1.4,
                   borderRadius: "12px",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   fontSize: "15px",
                   textTransform: "none",
@@ -247,8 +249,8 @@ export default function WebsiteServicePlansSection({
                       : "none",
                   transition: "all 0.25s ease",
                   "&:hover": {
-                    bgcolor: "#E65800",
-                    borderColor: "#E65800",
+                    bgcolor: COLORS.PRIMARY_DARK,
+                    borderColor: COLORS.PRIMARY_DARK,
                     borderWidth: "1.5px",
                     color: "#FFFFFF",
                   },
@@ -287,7 +289,7 @@ export default function WebsiteServicePlansSection({
                 overflow: "hidden",
                 transition: "all 0.3s ease",
                 "&:hover": {
-                  borderColor: "#FF6200",
+                  borderColor: COLORS.PRIMARY,
                   transform: "translateY(-4px)",
                   boxShadow: "0 18px 45px rgba(255, 98, 0, 0.2)",
                 },
@@ -299,12 +301,12 @@ export default function WebsiteServicePlansSection({
                   position: "absolute",
                   top: 0,
                   right: 0,
-                  bgcolor: selectedPlan === "standard" ? "#FF6200" : "#E2E8F0",
+                  bgcolor: selectedPlan === "standard" ? COLORS.PRIMARY : "#E2E8F0",
                   color: selectedPlan === "standard" ? "#FFFFFF" : "#475569",
                   px: 2.5,
                   py: 0.6,
                   borderRadius: "0 22px 0 14px",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontSize: "11px",
                   fontWeight: 800,
                   letterSpacing: "1px",
@@ -318,7 +320,7 @@ export default function WebsiteServicePlansSection({
                 {/* Plan Name */}
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     fontSize: "26px",
                     color: "#1A0B05",
@@ -331,10 +333,10 @@ export default function WebsiteServicePlansSection({
                 {/* Price */}
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 800,
                     fontSize: { xs: "36px", sm: "42px" },
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     lineHeight: 1.1,
                     mb: 3,
                   }}
@@ -359,14 +361,14 @@ export default function WebsiteServicePlansSection({
                         <CheckIcon
                           sx={{
                             fontSize: 18,
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                             mt: 0.2,
                             flexShrink: 0,
                           }}
                         />
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14.5px",
                             color: "#3D2B22",
                             lineHeight: 1.5,
@@ -387,14 +389,14 @@ export default function WebsiteServicePlansSection({
                 onClick={(e) => handleBookPlan("standard", e)}
                 sx={{
                   bgcolor:
-                    selectedPlan === "standard" ? "#FF6200" : "transparent",
-                  borderColor: "#FF6200",
+                    selectedPlan === "standard" ? COLORS.PRIMARY : "transparent",
+                  borderColor: COLORS.PRIMARY,
                   borderWidth: "1.5px",
-                  color: selectedPlan === "standard" ? "#FFFFFF" : "#FF6200",
+                  color: selectedPlan === "standard" ? "#FFFFFF" : COLORS.PRIMARY,
                   width: "100%",
                   py: 1.4,
                   borderRadius: "12px",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   fontSize: "15px",
                   textTransform: "none",
@@ -404,8 +406,8 @@ export default function WebsiteServicePlansSection({
                       : "none",
                   transition: "all 0.25s ease",
                   "&:hover": {
-                    bgcolor: "#E65800",
-                    borderColor: "#E65800",
+                    bgcolor: COLORS.PRIMARY_DARK,
+                    borderColor: COLORS.PRIMARY_DARK,
                     borderWidth: "1.5px",
                     color: "#FFFFFF",
                   },

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
@@ -61,7 +63,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -72,7 +74,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "28px", sm: "36px", md: "40px" },
@@ -85,7 +87,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "15px",
               lineHeight: 1.7,
@@ -117,7 +119,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
                 }}
               >
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: "#C84B16", fontSize: 22 }} />}
+                  expandIcon={<ExpandMoreIcon sx={{ color: COLORS.PRIMARY, fontSize: 22 }} />}
                   sx={{
                     px: 3,
                     py: 1,
@@ -128,7 +130,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
                 >
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       color: "#2C1810",
                       fontSize: { xs: "15px", sm: "16px" },
@@ -141,7 +143,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
                 <AccordionDetails sx={{ px: 3, pb: 3, pt: 0 }}>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: "14px",
                       lineHeight: 1.65,

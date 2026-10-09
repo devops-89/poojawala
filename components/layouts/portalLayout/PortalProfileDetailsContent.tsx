@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Grid, Avatar, Divider, Chip, Breadcrumbs, Button, CircularProgress, Dialog, DialogContent, IconButton } from '@mui/material';
@@ -18,6 +20,22 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 
+const checkIsImage = (url: string) => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.startsWith("data:image/") || lowerUrl.startsWith("blob:")) {
+    return !lowerUrl.includes("pdf");
+  }
+  const cleanUrl = lowerUrl.split("?")[0].split("#")[0];
+  return /\.(jpeg|jpg|gif|png|webp|svg|bmp)$/i.test(cleanUrl);
+};
+
+const getPdfUrlWithParams = (url: string) => {
+  if (!url) return "";
+  if (url.includes("#")) return url;
+  return `${url}#toolbar=0&navpanes=0&view=FitH`;
+};
+
 export default function PortalProfileDetailsContent() {
   const { profile: profileData, fetchProfile } = useUserStore();
   const [loading, setLoading] = useState(true);
@@ -36,7 +54,7 @@ export default function PortalProfileDetailsContent() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-        <CircularProgress sx={{ color: '#FF6200' }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -74,10 +92,10 @@ export default function PortalProfileDetailsContent() {
               { label: "Profile" },
             ]}
           />
-          <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
+          <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
             My Profile
           </Typography>
-          <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666' }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666' }}>
             View your complete public profile and contact information.
           </Typography>
         </Box>
@@ -85,13 +103,13 @@ export default function PortalProfileDetailsContent() {
           <Button 
             variant="contained" 
             sx={{ 
-              background: '#FF6200', 
+              background: COLORS.PRIMARY, 
               color: 'white',
               borderRadius: '8px',
               textTransform: 'none',
               fontWeight: 700,
               px: 3,
-              '&:hover': { background: '#E65800' }
+              '&:hover': { background: COLORS.PRIMARY_DARK }
             }}
           >
             Edit Profile
@@ -106,15 +124,15 @@ export default function PortalProfileDetailsContent() {
           <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', textAlign: 'center', mb: 4 }}>
             <Avatar 
               src={profileData.profileImage || undefined} 
-              sx={{ width: 120, height: 120, mx: 'auto', mb: 2, border: '4px solid #FFF0E6', bgcolor: '#FF6200' }}
+              sx={{ width: 120, height: 120, mx: 'auto', mb: 2, border: '4px solid #FFF0E6', bgcolor: COLORS.PRIMARY }}
             >
               {!profileData.profileImage && <PersonIcon sx={{ fontSize: 80, color: 'white' }} />}
             </Avatar>
-            <Typography variant="h5" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+            <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A', mb: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
               {profileData.firstName} {profileData.lastName}
               {profile?.verificationStatus === 'APPROVED' && <VerifiedIcon sx={{ color: '#4CAF50', fontSize: 24 }} />}
             </Typography>
-            <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', mb: 3, fontWeight: 500 }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', mb: 3, fontWeight: 500 }}>
               {profile?.verificationStatus === 'APPROVED' ? 'Verified Partner' : 'Pending Verification'}
             </Typography>
             
@@ -122,8 +140,8 @@ export default function PortalProfileDetailsContent() {
             
             {profileData.phone && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center', mb: 2 }}>
-                <PhoneIcon sx={{ color: '#FF6200', fontSize: 20 }} />
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#333', fontWeight: 500 }}>
+                <PhoneIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#333', fontWeight: 500 }}>
                   +91 {profileData.phone}
                 </Typography>
               </Box>
@@ -131,8 +149,8 @@ export default function PortalProfileDetailsContent() {
             
             {profileData.email && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
-                <EmailIcon sx={{ color: '#FF6200', fontSize: 20 }} />
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#333', fontWeight: 500 }}>
+                <EmailIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#333', fontWeight: 500 }}>
                   {profileData.email}
                 </Typography>
               </Box>
@@ -143,8 +161,8 @@ export default function PortalProfileDetailsContent() {
           {bankAccounts && bankAccounts.length > 0 && (
             <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                <AccountBalanceIcon sx={{ color: '#FF6200' }} />
-                <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+                <AccountBalanceIcon sx={{ color: COLORS.PRIMARY }} />
+                <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
                   Bank Accounts
                 </Typography>
               </Box>
@@ -153,26 +171,26 @@ export default function PortalProfileDetailsContent() {
                 <Box key={bank.id} sx={{ mb: idx !== bankAccounts.length - 1 ? 3 : 0, pb: idx !== bankAccounts.length - 1 ? 3 : 0, borderBottom: idx !== bankAccounts.length - 1 ? '1px dashed #eee' : 'none' }}>
                   {bank.paymentMethod === 'UPI' || (bank.upiId && !bank.bankName) ? (
                     <Box>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>UPI ID</Typography>
-                      <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>{bank.upiId || 'N/A'}</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>UPI ID</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>{bank.upiId || 'N/A'}</Typography>
                     </Box>
                   ) : (
                     <>
                       <Box sx={{ mb: 2 }}>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>Bank Name</Typography>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>{bank.bankName || 'N/A'}</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>Bank Name</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>{bank.bankName || 'N/A'}</Typography>
                       </Box>
                       <Box sx={{ mb: 2 }}>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>Account Holder</Typography>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>{bank.accountHolderName || 'N/A'}</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>Account Holder</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>{bank.accountHolderName || 'N/A'}</Typography>
                       </Box>
                       <Box sx={{ mb: 2 }}>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>Account Number</Typography>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>{bank.accountNumber || 'N/A'}</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>Account Number</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>{bank.accountNumber || 'N/A'}</Typography>
                       </Box>
                       <Box>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>IFSC Code</Typography>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>{bank.ifscCode || 'N/A'}</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase' }}>IFSC Code</Typography>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>{bank.ifscCode || 'N/A'}</Typography>
                       </Box>
                     </>
                   )}
@@ -184,33 +202,33 @@ export default function PortalProfileDetailsContent() {
           {/* Documents Card */}
           <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-              <DescriptionIcon sx={{ color: '#FF6200' }} />
-              <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+              <DescriptionIcon sx={{ color: COLORS.PRIMARY }} />
+              <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
                 Documents
               </Typography>
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {profile?.aadhaarDocUrl && (
+              {(profile?.aadhaarDocUrl || profile?.panDocUrl) && (
                 <Button 
                   variant="outlined" 
-                  onClick={() => handleOpenDoc(profile.aadhaarDocUrl)} 
+                  onClick={() => handleOpenDoc(profile.aadhaarDocUrl || profile.panDocUrl)} 
                   sx={{ justifyContent: 'space-between', textTransform: 'none', color: '#1A1A1A', borderColor: '#eee', borderRadius: '8px' }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionIcon sx={{ mr: 1, color: '#FF6200' }} fontSize="small" /> Aadhaar Card
+                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" /> {profile?.aadhaarDocUrl ? 'Aadhaar Card' : 'PAN Card'}
                   </Box>
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
               )}
-              {profile?.panDocUrl && (
+              {false && profile?.panDocUrl && (
                 <Button 
                   variant="outlined" 
                   onClick={() => handleOpenDoc(profile.panDocUrl)} 
                   sx={{ justifyContent: 'space-between', textTransform: 'none', color: '#1A1A1A', borderColor: '#eee', borderRadius: '8px' }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionIcon sx={{ mr: 1, color: '#FF6200' }} fontSize="small" /> PAN Card
+                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" /> PAN Card
                   </Box>
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
@@ -222,7 +240,7 @@ export default function PortalProfileDetailsContent() {
                   sx={{ justifyContent: 'space-between', textTransform: 'none', color: '#1A1A1A', borderColor: '#eee', borderRadius: '8px' }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionIcon sx={{ mr: 1, color: '#FF6200' }} fontSize="small" /> Qualification Certificate
+                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" /> Qualification Certificate
                   </Box>
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
@@ -234,13 +252,13 @@ export default function PortalProfileDetailsContent() {
                   sx={{ justifyContent: 'space-between', textTransform: 'none', color: '#1A1A1A', borderColor: '#eee', borderRadius: '8px' }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionIcon sx={{ mr: 1, color: '#FF6200' }} fontSize="small" /> Temple Affiliation Proof
+                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" /> Temple Affiliation Proof
                   </Box>
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
               )}
               {!profile?.aadhaarDocUrl && !profile?.panDocUrl && !profile?.certificateUrl && !profile?.templeAffiliationProofUrl && (
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px' }}>No documents uploaded.</Typography>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No documents uploaded.</Typography>
               )}
             </Box>
           </Paper>
@@ -251,15 +269,15 @@ export default function PortalProfileDetailsContent() {
           <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
             
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-              <WorkIcon sx={{ color: '#FF6200' }} />
-              <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+              <WorkIcon sx={{ color: COLORS.PRIMARY }} />
+              <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
                 Professional Profile
               </Typography>
             </Box>
 
             <Box sx={{ mb: 4 }}>
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Biography</Typography>
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#333', lineHeight: 1.6 }}>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Biography</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#333', lineHeight: 1.6 }}>
                 {profile?.bio || 'No biography provided.'}
               </Typography>
             </Box>
@@ -268,14 +286,14 @@ export default function PortalProfileDetailsContent() {
 
             <Grid container spacing={4} sx={{ mb: 4 }}>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Qualifications</Typography>
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Qualifications</Typography>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>
                   {profile?.qualification || 'N/A'}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Experience</Typography>
-                <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', fontWeight: 600 }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Experience</Typography>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>
                   {profile?.experienceYears ? `${profile.experienceYears} Years` : 'N/A'}
                 </Typography>
               </Grid>
@@ -284,23 +302,23 @@ export default function PortalProfileDetailsContent() {
             <Divider sx={{ my: 3 }} />
 
             <Box sx={{ mb: 4 }}>
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>Languages Spoken</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>Languages Spoken</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {languages.length > 0 ? languages.map((lang: string, idx: number) => (
-                  <Chip key={idx} label={lang} sx={{ bgcolor: '#FFF0E6', color: '#FF6200', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif', textTransform: 'capitalize' }} />
+                  <Chip key={idx} label={lang} sx={{ bgcolor: '#FFF0E6', color: COLORS.PRIMARY, fontWeight: 600, fontFamily: FONTS.OUTFIT, textTransform: 'capitalize' }} />
                 )) : (
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px' }}>N/A</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>N/A</Typography>
                 )}
               </Box>
             </Box>
 
             <Box>
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>Specialized Rituals</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>Specialized Rituals</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {specializations.length > 0 ? specializations.map((spec: string, idx: number) => (
-                  <Chip key={idx} label={spec} sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif', textTransform: 'capitalize' }} />
+                  <Chip key={idx} label={spec} sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 600, fontFamily: FONTS.OUTFIT, textTransform: 'capitalize' }} />
                 )) : (
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px' }}>N/A</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>N/A</Typography>
                 )}
               </Box>
             </Box>
@@ -309,8 +327,8 @@ export default function PortalProfileDetailsContent() {
           {/* Purohit Services Card */}
           <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mt: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-              <AssignmentIcon sx={{ color: '#FF6200' }} />
-              <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+              <AssignmentIcon sx={{ color: COLORS.PRIMARY }} />
+              <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
                 Services Offered
               </Typography>
             </Box>
@@ -350,7 +368,7 @@ export default function PortalProfileDetailsContent() {
                       >
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             color: "#1A1A1A",
                             mb: 1,
@@ -368,7 +386,7 @@ export default function PortalProfileDetailsContent() {
                         >
                           <Typography
                             sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "13px",
                               color: "#666",
                             }}
@@ -378,7 +396,7 @@ export default function PortalProfileDetailsContent() {
                           </Typography>
                           <Typography
                             sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "13px",
                               color: "#666",
                             }}
@@ -393,15 +411,15 @@ export default function PortalProfileDetailsContent() {
                 })}
               </Grid>
             ) : (
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px' }}>No services added yet.</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No services added yet.</Typography>
             )}
           </Paper>
 
           {/* Service Areas Card */}
           <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mt: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-              <LocationOnIcon sx={{ color: '#FF6200' }} />
-              <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A' }}>
+              <LocationOnIcon sx={{ color: COLORS.PRIMARY }} />
+              <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
                 Service Areas
               </Typography>
             </Box>
@@ -411,15 +429,15 @@ export default function PortalProfileDetailsContent() {
                 {serviceAreas.map((area: any) => (
                   <Grid size={{ xs: 12 }} key={area.id}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, p: 2, borderRadius: '12px', border: '1px solid #eee' }}>
-                      <LocationOnIcon sx={{ color: '#FF6200', mt: 0.5 }} fontSize="small" />
+                      <LocationOnIcon sx={{ color: COLORS.PRIMARY, mt: 0.5 }} fontSize="small" />
                       <Box>
-                        <Typography component="div" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, color: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 1 }}>
-                          {area.addressLabel} {area.isDefault && <Chip label="Default" size="small" sx={{ bgcolor: '#FFF0E6', color: '#FF6200', fontSize: '10px', height: '20px' }} />}
+                        <Typography component="div" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 1 }}>
+                          {area.addressLabel} {area.isDefault && <Chip label="Default" size="small" sx={{ bgcolor: '#FFF0E6', color: COLORS.PRIMARY, fontSize: '10px', height: '20px' }} />}
                         </Typography>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '14px', color: '#666', mt: 0.5 }}>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', color: '#666', mt: 0.5 }}>
                           {area.fullAddress}
                         </Typography>
-                        <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontSize: '13px', color: '#999', mt: 0.5 }}>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#999', mt: 0.5 }}>
                           {area.city}, {area.pincode}
                         </Typography>
                       </Box>
@@ -428,7 +446,7 @@ export default function PortalProfileDetailsContent() {
                 ))}
               </Grid>
             ) : (
-              <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', fontSize: '14px' }}>No service areas added.</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No service areas added.</Typography>
             )}
           </Paper>
         </Grid>
@@ -442,8 +460,43 @@ export default function PortalProfileDetailsContent() {
             <CloseIcon />
           </IconButton>
         </Box>
-        <DialogContent sx={{ p: 0, display: 'flex', justifyContent: 'center', bgcolor: '#f5f5f5' }}>
-          <img src={currentDocUrl} alt="Document" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+        <DialogContent sx={{ p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#f8fafc', height: '75vh' }}>
+          {currentDocUrl &&
+            (checkIsImage(currentDocUrl) ? (
+              <Box
+                component="img"
+                src={currentDocUrl}
+                alt="Document Preview"
+                sx={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                }}
+              />
+            ) : (
+              <object
+                data={getPdfUrlWithParams(currentDocUrl)}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: '8px' }}
+              >
+                <iframe
+                  src={
+                    currentDocUrl.startsWith('blob:') || currentDocUrl.startsWith('data:')
+                      ? getPdfUrlWithParams(currentDocUrl)
+                      : `https://docs.google.com/gview?url=${encodeURIComponent(currentDocUrl)}&embedded=true`
+                  }
+                  style={{ width: '100%', height: '100%', border: 'none', borderRadius: '8px' }}
+                  title="Document Preview"
+                >
+                  <Typography sx={{ p: 2, fontFamily: FONTS.OUTFIT }}>
+                    Unable to display PDF preview.
+                  </Typography>
+                </iframe>
+              </object>
+            ))}
         </DialogContent>
       </Dialog>
     </Box>

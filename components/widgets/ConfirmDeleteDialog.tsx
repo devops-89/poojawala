@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import React from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface ConfirmDeleteDialogProps {
   open: boolean;
@@ -46,9 +48,9 @@ export default function ConfirmDeleteDialog({
     >
       <DialogTitle
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT_ONLY,
           fontWeight: 700,
-          color: "#1e293b",
+          color: COLORS.SLATE_DARK,
         }}
       >
         {title}
@@ -57,7 +59,7 @@ export default function ConfirmDeleteDialog({
         <DialogContentText
           component="div"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT_ONLY,
             color: "#475569",
           }}
         >
@@ -77,7 +79,7 @@ export default function ConfirmDeleteDialog({
           onClick={onClose}
           disabled={loading}
           sx={{
-            color: "#64748b",
+            color: COLORS.SLATE_MUTED,
             textTransform: "none",
             fontWeight: 600,
             borderRadius: "8px",

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   getCustomerOrderByIdAPI,
@@ -151,7 +153,7 @@ export default function AdminOrderDetailsContent() {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -162,14 +164,14 @@ export default function AdminOrderDetailsContent() {
         <Typography
           color="error"
           variant="h6"
-          sx={{ fontFamily: "var(--font-outfit), sans-serif" }}
+          sx={{ fontFamily: FONTS.OUTFIT }}
         >
           Order not found or could not be loaded.
         </Typography>
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => router.push("/admin/orders")}
-          sx={{ mt: 2, color: "#FF6200" }}
+          sx={{ mt: 2, color: COLORS.PRIMARY }}
         >
           Back to Orders
         </Button>
@@ -222,7 +224,7 @@ export default function AdminOrderDetailsContent() {
                 fontWeight: 600,
                 color: "#475569",
                 fontSize: "0.9rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               Order Status:
@@ -257,7 +259,7 @@ export default function AdminOrderDetailsContent() {
             display: "flex",
             alignItems: "center",
             gap: 0.75,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           <CalendarTodayIcon sx={{ fontSize: 16 }} />

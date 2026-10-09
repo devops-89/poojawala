@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CheckIcon from '@mui/icons-material/Check';
 import {
@@ -65,7 +67,7 @@ export default function AddBookingServiceSection({
       {/* Service Summary Card */}
       <Typography
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 1,
           color: '#1e293b',
@@ -122,7 +124,7 @@ export default function AddBookingServiceSection({
         <Box sx={{ flex: 1 }}>
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: '#1e293b',
               fontSize: '1.1rem',
@@ -132,7 +134,7 @@ export default function AddBookingServiceSection({
           </Typography>
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
               color: '#64748b',
               fontSize: '0.9rem',
               display: '-webkit-box',
@@ -147,7 +149,7 @@ export default function AddBookingServiceSection({
         <Box sx={{ textAlign: 'right' }}>
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: '#10b981',
               fontSize: '1.3rem',
@@ -157,7 +159,7 @@ export default function AddBookingServiceSection({
           </Typography>
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
               color: '#64748b',
               fontSize: '0.85rem',
               mt: 0.5,
@@ -171,7 +173,7 @@ export default function AddBookingServiceSection({
       {/* Select Package Plan Section */}
       <Typography
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 1.5,
           color: '#1e293b',
@@ -205,7 +207,7 @@ export default function AddBookingServiceSection({
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    '&:hover': { borderColor: '#FF6200' },
+                    '&:hover': { borderColor: COLORS.PRIMARY },
                   }}
                 >
                   <Box>
@@ -220,10 +222,10 @@ export default function AddBookingServiceSection({
                     >
                       <Typography
                         sx={{
-                          fontFamily: 'var(--font-outfit), sans-serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
                           fontSize: '1.05rem',
-                          color: isSelected ? '#FF6200' : '#1e293b',
+                          color: isSelected ? COLORS.PRIMARY : '#1e293b',
                           textTransform: 'uppercase',
                         }}
                       >
@@ -231,7 +233,7 @@ export default function AddBookingServiceSection({
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily: 'var(--font-outfit), sans-serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
                           fontSize: '1.25rem',
                           color: '#10b981',
@@ -293,7 +295,7 @@ export default function AddBookingServiceSection({
                                     fontSize: '13px',
                                     color: '#334155',
                                     fontWeight: 600,
-                                    fontFamily: 'var(--font-outfit), sans-serif',
+                                    fontFamily: FONTS.OUTFIT,
                                   }}
                                 >
                                   {label}
@@ -318,7 +320,7 @@ export default function AddBookingServiceSection({
                                 sx={{
                                   fontSize: '13px',
                                   color: '#475569',
-                                  fontFamily: 'var(--font-outfit), sans-serif',
+                                  fontFamily: FONTS.OUTFIT,
                                 }}
                               >
                                 <span style={{ color: '#64748b' }}>
@@ -341,7 +343,7 @@ export default function AddBookingServiceSection({
                       sx={{
                         fontSize: '12px',
                         fontWeight: 700,
-                        color: isSelected ? '#FF6200' : '#94a3b8',
+                        color: isSelected ? COLORS.PRIMARY : '#94a3b8',
                       }}
                     >
                       {isSelected ? '✓ SELECTED' : 'SELECT THIS PLAN'}
@@ -366,7 +368,7 @@ export default function AddBookingServiceSection({
             sx={{
               fontSize: '14px',
               color: '#64748b',
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Basic Plan selected by default.

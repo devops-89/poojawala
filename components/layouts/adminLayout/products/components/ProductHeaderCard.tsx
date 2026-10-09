@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { Box, Chip, Paper, Typography } from "@mui/material";
 import Image from "next/image";
@@ -74,9 +76,9 @@ export default function ProductHeaderCard({
               label={`P-${product.id}`}
               sx={{
                 bgcolor: "#FFF0E6",
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 fontWeight: 800,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 borderRadius: "8px",
               }}
             />
@@ -86,7 +88,7 @@ export default function ProductHeaderCard({
                 bgcolor: isActive ? "#d1fae5" : "#fee2e2",
                 color: isActive ? "#065f46" : "#991b1b",
                 fontWeight: 700,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 borderRadius: "8px",
               }}
             />
@@ -97,7 +99,7 @@ export default function ProductHeaderCard({
                   bgcolor: "#e0f2fe",
                   color: "#0369a1",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                 }}
               />
@@ -106,7 +108,7 @@ export default function ProductHeaderCard({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
               fontSize: { xs: "1.75rem", md: "2.25rem" },

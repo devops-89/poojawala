@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { TempleItem } from "@/utils/types";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 // Swiper Imports
 import "swiper/css";
@@ -141,7 +143,7 @@ export default function TemplesSection() {
               borderRadius: "12px",
               fontSize: "12px",
               fontWeight: 600,
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               border: "1px solid rgba(255, 255, 255, 0.2)",
             }}
           >
@@ -169,7 +171,7 @@ export default function TemplesSection() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "22px",
               color: "#FFFFFF",
@@ -183,7 +185,7 @@ export default function TemplesSection() {
           {temple.description && (
             <Typography
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 color: "rgba(255, 255, 255, 0.85)",
                 fontSize: "13px",
                 lineHeight: 1.5,
@@ -250,7 +252,7 @@ export default function TemplesSection() {
               transform: "scale(1.06)",
             },
             "& .h-cta-btn": {
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               color: "#FFFFFF",
             },
           },
@@ -305,7 +307,7 @@ export default function TemplesSection() {
                 borderRadius: "10px",
                 fontSize: "12px",
                 fontWeight: 600,
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 border: "1px solid rgba(255, 255, 255, 0.2)",
               }}
             >
@@ -335,13 +337,13 @@ export default function TemplesSection() {
               gap: 0.8,
               alignSelf: "flex-start",
               bgcolor: "#FFF0E6",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               px: 1.4,
               py: 0.35,
               borderRadius: "10px",
               fontSize: "11px",
               fontWeight: 700,
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             <TempleHinduIcon sx={{ fontSize: 14 }} />
@@ -351,7 +353,7 @@ export default function TemplesSection() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: { xs: "20px", sm: "22px", md: "24px" },
               color: "#1A1A1A",
@@ -369,10 +371,10 @@ export default function TemplesSection() {
                 gap: 0.6,
                 color: "#777",
                 fontSize: "13px",
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
               }}
             >
-              <LocationOnIcon sx={{ fontSize: 14, color: "#FF6200" }} />
+              <LocationOnIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} />
               <span>{temple.address}</span>
             </Box>
           )}
@@ -380,7 +382,7 @@ export default function TemplesSection() {
           {temple.description && (
             <Typography
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 color: "#555",
                 fontSize: { xs: "13px", sm: "13.5px", md: "14px" },
                 lineHeight: 1.6,
@@ -401,7 +403,7 @@ export default function TemplesSection() {
               endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
               sx={{
                 bgcolor: "#FFF0E6",
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 boxShadow: "none",
                 borderRadius: "30px",
                 px: 2.8,
@@ -409,10 +411,10 @@ export default function TemplesSection() {
                 textTransform: "none",
                 fontWeight: 700,
                 fontSize: "13px",
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 transition: "all 0.3s ease",
                 "&:hover": {
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "#FFFFFF",
                   boxShadow: "0 6px 16px rgba(255, 98, 0, 0.25)",
                 },
@@ -450,13 +452,13 @@ export default function TemplesSection() {
               alignItems: "center",
               gap: 1,
               bgcolor: "#FFF0E6",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               px: 2,
               py: 0.5,
               borderRadius: "20px",
               fontSize: "13px",
               fontWeight: 700,
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               mb: 1.5,
             }}
           >
@@ -468,7 +470,7 @@ export default function TemplesSection() {
             variant="h3"
             component="h2"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: { xs: "28px", sm: "36px", md: "44px" },
               color: "#1A1A1A",
@@ -495,7 +497,7 @@ export default function TemplesSection() {
 
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: { xs: "14px", md: "16px" },
               maxWidth: "640px",
@@ -528,7 +530,7 @@ export default function TemplesSection() {
                   px: 3,
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    background: "#FF6200",
+                    background: COLORS.PRIMARY,
                     color: "#FFFFFF",
                   },
                 }}
@@ -555,7 +557,7 @@ export default function TemplesSection() {
               transition: "all 0.3s ease",
             },
             "& .swiper-pagination-bullet-active": {
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               opacity: 1,
               width: "24px",
               borderRadius: "6px",

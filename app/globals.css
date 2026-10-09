@@ -1,4 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
+}
 
 html {
   padding: 0;
@@ -7,7 +14,7 @@ html {
   overflow-x: hidden;
   overflow-y: scroll;
   scroll-behavior: smooth;
-  font-family: "DM Sans", var(--font-dm-sans), sans-serif;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 
 body {
@@ -17,7 +24,7 @@ body {
   box-sizing: border-box;
   background-color: #FFFDF9;
   color: #2D2926;
-  font-family: "DM Sans", var(--font-dm-sans), sans-serif;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 
 .MuiAppBar-root {
@@ -41,3 +48,13 @@ input[type="number"] {
   appearance: textfield !important;
 }
 
+/* Hide default browser password reveal & clear icons (Edge/IE/Chrome) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}

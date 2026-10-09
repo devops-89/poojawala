@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { Box, Button, Typography } from "@mui/material";
@@ -41,7 +43,7 @@ export default function CustomerOrdersBannerCTA() {
         <Box sx={{ maxWidth: 620 }}>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: { xs: "11px", sm: "12px" },
               letterSpacing: "1.5px",
@@ -56,7 +58,7 @@ export default function CustomerOrdersBannerCTA() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#FFFFFF",
               fontSize: { xs: "24px", sm: "34px", md: "42px" },
@@ -69,7 +71,7 @@ export default function CustomerOrdersBannerCTA() {
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#D6C2B4",
               fontSize: { xs: "13.5px", sm: "15px" },
               lineHeight: 1.6,
@@ -96,14 +98,14 @@ export default function CustomerOrdersBannerCTA() {
             startIcon={<ShoppingCartOutlinedIcon />}
             sx={{
               width: "fit-content",
-              bgcolor: "#C84B16",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               py: { xs: 1.2, sm: 1.5 },
               px: { xs: 3, sm: 3.5 },
               borderRadius: "12px",
               fontWeight: 800,
               fontSize: { xs: "13.5px", sm: "15px" },
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               textTransform: "none",
               boxShadow: "0 6px 20px rgba(200, 75, 22, 0.4)",
               "&:hover": {

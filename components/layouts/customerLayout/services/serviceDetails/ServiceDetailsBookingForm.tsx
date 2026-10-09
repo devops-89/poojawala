@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { customerCreateBookingAPI } from "@/api/bookingControllers";
 import { getCustomerAddressesAPI } from "@/api/userControllers";
@@ -313,7 +315,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1,
             }}
@@ -323,7 +325,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "22px", sm: "28px" },
@@ -377,7 +379,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       "&:hover": {
                         transform: "translateY(-3px)",
                         boxShadow: "0 8px 24px rgba(200, 75, 22, 0.15)",
-                        borderColor: "#C84B16",
+                        borderColor: COLORS.PRIMARY,
                       },
                     }}
                   >
@@ -393,7 +395,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                         <Typography
                           variant="h6"
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 800,
                             color: "#2C1810",
                             fontSize: "20px",
@@ -406,7 +408,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                             label="SELECTED"
                             size="small"
                             sx={{
-                              bgcolor: "#C84B16",
+                              bgcolor: COLORS.PRIMARY,
                               color: "#FFF",
                               fontWeight: 700,
                               fontSize: "11px",
@@ -419,9 +421,9 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       <Typography
                         variant="h4"
                         sx={{
-                          fontFamily: '"Georgia", "Times New Roman", serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
-                          color: "#C84B16",
+                          color: COLORS.PRIMARY,
                           mb: 2.5,
                         }}
                       >
@@ -446,14 +448,14 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                           >
                             <CheckCircleIcon
                               sx={{
-                                color: "#C84B16",
+                                color: COLORS.PRIMARY,
                                 fontSize: 18,
                                 flexShrink: 0,
                               }}
                             />
                             <Typography
                               sx={{
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontSize: "14px",
                                 color: "#5C4A40",
                                 fontWeight: 500,
@@ -485,8 +487,8 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                               color: "white !important",
                             }
                           : {
-                              borderColor: "#C84B16",
-                              color: "#C84B16",
+                              borderColor: COLORS.PRIMARY,
+                              color: COLORS.PRIMARY,
                               "&:hover": { bgcolor: "#FFFBF7" },
                             }),
                       }}
@@ -509,7 +511,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -520,7 +522,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "28px", sm: "36px", md: "40px" },
@@ -533,7 +535,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "15px",
               lineHeight: 1.7,
@@ -571,10 +573,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     borderRadius: "10px",
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     },
                     "& .MuiInputLabel-root": {
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                     },
                   }}
@@ -595,10 +597,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     borderRadius: "10px",
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     },
                     "& .MuiInputLabel-root": {
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                     },
                   }}
@@ -613,7 +615,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   <InputLabel
                     id="booking-mode-label"
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                     }}
                   >
@@ -626,7 +628,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     onChange={(e) => handleInputChange("bookingMode", e.target.value)}
                     sx={{
                       borderRadius: "10px",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     <MenuItem value="OFFLINE">Offline (In-Person / Home)</MenuItem>
@@ -647,10 +649,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     borderRadius: "10px",
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     },
                     "& .MuiInputLabel-root": {
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                     },
                   }}
@@ -678,9 +680,9 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       onClick={() => setAddressModalOpen(true)}
                       startIcon={<AddIcon sx={{ fontSize: { xs: "16px", sm: "18px" } }} />}
                       sx={{
-                        bgcolor: "#FF6200",
+                        bgcolor: COLORS.PRIMARY,
                         color: "#ffffff",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 700,
                         fontSize: { xs: "12px", sm: "13px" },
                         textTransform: "none",
@@ -704,7 +706,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     <InputLabel
                       id="customer-address-label"
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#64534A",
                       }}
                     >
@@ -735,7 +737,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       }}
                       sx={{
                         borderRadius: "10px",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         "& .MuiSelect-select": {
                           whiteSpace: "normal",
                           wordBreak: "break-word",
@@ -766,7 +768,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                               wordBreak: "break-word",
                               py: 1.5,
                               px: 2,
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontSize: "14px",
                               lineHeight: 1.5,
                               borderBottom: "1px solid #F5ECE3",
@@ -782,10 +784,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                         sx={{
                           py: 1.5,
                           px: 2,
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontSize: "14px",
                           fontWeight: 700,
-                          color: "#FF6200",
+                          color: COLORS.PRIMARY,
                           display: "flex",
                           alignItems: "center",
                           gap: 1,
@@ -794,7 +796,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                           "&:hover": { bgcolor: "#FFEFE2" },
                         }}
                       >
-                        <AddIcon sx={{ fontSize: "18px", color: "#FF6200" }} />
+                        <AddIcon sx={{ fontSize: "18px", color: COLORS.PRIMARY }} />
                         + Add New Address
                       </MenuItem>
                     </Select>
@@ -815,10 +817,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   }}
                 >
                   <Box>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: "14px", color: "#2C1810" }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "14px", color: "#2C1810" }}>
                       No Saved Address Found
                     </Typography>
-                    <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: "13px", color: "#64534A" }}>
+                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#64534A" }}>
                       Please add a delivery / pooja address to complete your booking.
                     </Typography>
                   </Box>
@@ -830,7 +832,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     sx={{
                       bgcolor: "#FF6200 !important",
                       color: "white !important",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       fontSize: "13px",
                       textTransform: "none",
@@ -868,12 +870,12 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   <FormLabel
                     component="legend"
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       fontSize: "14px",
                       color: "#2C1810",
                       mb: 0.5,
-                      "&.Mui-focused": { color: "#C84B16" },
+                      "&.Mui-focused": { color: COLORS.PRIMARY },
                     }}
                   >
                     Payment Option
@@ -889,15 +891,15 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       control={
                         <Radio
                           sx={{
-                            color: "#C84B16",
-                            "&.Mui-checked": { color: "#C84B16" },
+                            color: COLORS.PRIMARY,
+                            "&.Mui-checked": { color: COLORS.PRIMARY },
                           }}
                         />
                       }
                       label={
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14px",
                             fontWeight: 600,
                             color: "#2C1810",
@@ -913,15 +915,15 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       control={
                         <Radio
                           sx={{
-                            color: "#C84B16",
-                            "&.Mui-checked": { color: "#C84B16" },
+                            color: COLORS.PRIMARY,
+                            "&.Mui-checked": { color: COLORS.PRIMARY },
                           }}
                         />
                       }
                       label={
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "14px",
                             fontWeight: 600,
                             color: "#2C1810",
@@ -950,10 +952,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                 borderRadius: "10px",
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                 },
                 "& .MuiInputLabel-root": {
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#64534A",
                 },
               }}
@@ -974,7 +976,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                 }
                 sx={{
                   width: { xs: "100%", sm: "auto" },
-                  bgcolor: "#C84B16",
+                  bgcolor: COLORS.PRIMARY,
                   color: "white",
                   px: 4,
                   py: 1.5,
@@ -984,7 +986,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   textTransform: "none",
                   boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
                   "&:hover": {
-                    bgcolor: "#FF6200",
+                    bgcolor: COLORS.PRIMARY,
                     boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
                   },
                 }}

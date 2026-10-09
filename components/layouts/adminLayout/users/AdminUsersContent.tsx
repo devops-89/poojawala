@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { getCustomersListAPI, updateUserStatusAPI } from "@/api/userControllers";
 import AdminDataTable, {
@@ -175,8 +177,8 @@ export default function AdminUsersContent() {
         <Typography
           sx={{
             fontWeight: 700,
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
+            color: COLORS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           C-{row.userId || row.id}
@@ -196,7 +198,7 @@ export default function AdminUsersContent() {
             sx={{
               fontWeight: 700,
               color: "#1e293b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {name}
@@ -214,7 +216,7 @@ export default function AdminUsersContent() {
               color: "#1e293b",
               fontWeight: 500,
               fontSize: "0.9rem",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {row.email || "-"}
@@ -223,7 +225,7 @@ export default function AdminUsersContent() {
             sx={{
               color: "#64748b",
               fontSize: "0.85rem",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {row.phone || row.mobileNumber || "-"}

@@ -37,6 +37,8 @@ import SubjectIcon from '@mui/icons-material/Subject';
 import DescriptionIcon from '@mui/icons-material/Description';
 import BookIcon from '@mui/icons-material/Book';
 import { getComplaintsAPI, getComplaintByIdAPI } from '@/api/bookingControllers';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export enum COMPLAINT_STATUS {
   OPEN = 'OPEN',
@@ -122,7 +124,7 @@ function ComplaintsTable() {
           { label: "Get Support" },
         ]}
       />
-      <Typography variant="h4" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b', mb: 3 }}>
+      <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT_ONLY, fontWeight: 800, color: COLORS.SLATE_DARK, mb: 3 }}>
         Support Complaints
       </Typography>
 
@@ -136,9 +138,9 @@ function ComplaintsTable() {
             allowScrollButtonsMobile
             sx={{ 
               minHeight: '48px',
-              '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', minHeight: '48px' },
-              '& .Mui-selected': { color: '#FF6200 !important' },
-              '& .MuiTabs-indicator': { backgroundColor: '#FF6200' }
+              '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontFamily: FONTS.OUTFIT_ONLY, color: COLORS.SLATE_MUTED, minHeight: '48px' },
+              '& .Mui-selected': { color: `${COLORS.PRIMARY} !important` },
+              '& .MuiTabs-indicator': { backgroundColor: COLORS.PRIMARY }
             }}
           >
             <Tab label="All" value="ALL" />
@@ -153,7 +155,7 @@ function ComplaintsTable() {
       <Box sx={{ p: 3 }}>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-            <CircularProgress sx={{ color: '#FF6200' }} />
+            <CircularProgress sx={{ color: COLORS.PRIMARY }} />
           </Box>
         ) : complaints.length > 0 ? (
           <>
@@ -194,7 +196,7 @@ function ComplaintsTable() {
                             </span>
                           </TableCell>
                           <TableCell align="center">
-                            <IconButton size="small" onClick={() => handleViewComplaint(complaint.id)} sx={{ color: '#FF6200' }}>
+                            <IconButton size="small" onClick={() => handleViewComplaint(complaint.id)} sx={{ color: COLORS.PRIMARY }}>
                               <VisibilityIcon fontSize="small" />
                             </IconButton>
                           </TableCell>
@@ -231,7 +233,7 @@ function ComplaintsTable() {
                       <Typography variant="caption" color="text.secondary">
                         Date: {dateStr}
                       </Typography>
-                      <Button size="small" onClick={() => handleViewComplaint(complaint.id)} sx={{ color: '#FF6200', textTransform: 'none', fontWeight: 600 }}>
+                      <Button size="small" onClick={() => handleViewComplaint(complaint.id)} sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 600 }}>
                         View Details
                       </Button>
                     </Box>
@@ -252,7 +254,23 @@ function ComplaintsTable() {
                   setPage(1);
                 }}
                 rowsPerPageOptions={[5, 10, 25, 50]}
-                sx={{ borderTop: '1px solid #e2e8f0', p: 1 }}
+          slotProps={{
+            select: {
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                disableScrollLock: true,
+              },
+            },
+          }}
+          sx={{ borderTop: '1px solid #e2e8f0', p: 1 }}
               />
             )}
           </>
@@ -265,21 +283,21 @@ function ComplaintsTable() {
     </Box>
 
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1e293b' }}>
+        <DialogTitle sx={{ fontFamily: FONTS.OUTFIT_ONLY, fontWeight: 800, color: COLORS.SLATE_DARK }}>
           Complaint Details
         </DialogTitle>
         <DialogContent dividers>
           {loadingDetails ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress sx={{ color: '#FF6200' }} />
+              <CircularProgress sx={{ color: COLORS.PRIMARY }} />
             </Box>
           ) : selectedComplaint ? (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {/* Header */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1, bgcolor: '#f8fafc', p: 2, borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                 <Box>
-                  <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'block', mb: 0.5 }}>COMPLAINT ID</Typography>
-                  <Typography sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 700, fontSize: '18px', color: '#0f172a' }}>
+                  <Typography variant="caption" sx={{ color: COLORS.SLATE_MUTED, fontWeight: 600, display: 'block', mb: 0.5 }}>COMPLAINT ID</Typography>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT_ONLY, fontWeight: 700, fontSize: '18px', color: COLORS.SLATE_DARK }}>
                     C-{selectedComplaint.id}
                   </Typography>
                 </Box>
@@ -291,7 +309,7 @@ function ComplaintsTable() {
                 {selectedComplaint.booking && (
                   <Grid size={{ xs: 12 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#334155', mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <BookIcon fontSize="small" sx={{ color: '#FF6200' }} /> Booking Details
+                      <BookIcon fontSize="small" sx={{ color: COLORS.PRIMARY }} /> Booking Details
                     </Typography>
                     <Box sx={{ p: 2, bgcolor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                       <Box>
@@ -322,7 +340,7 @@ function ComplaintsTable() {
                 {/* Complaint details */}
                 <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#334155', mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <SubjectIcon fontSize="small" sx={{ color: '#FF6200' }} /> Issue Details
+                    <SubjectIcon fontSize="small" sx={{ color: COLORS.PRIMARY }} /> Issue Details
                   </Typography>
                   
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2, bgcolor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
@@ -411,7 +429,7 @@ function ComplaintsTable() {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 2, bgcolor: '#f8fafc' }}>
-          <Button onClick={() => setModalOpen(false)} sx={{ color: '#FF6200', textTransform: 'none', fontWeight: 600 }}>
+          <Button onClick={() => setModalOpen(false)} sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 600 }}>
             Close
           </Button>
         </DialogActions>

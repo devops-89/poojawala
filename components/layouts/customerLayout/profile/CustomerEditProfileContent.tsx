@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import {
   addCustomerAddressAPI,
   deleteCustomerAddressAPI,
@@ -335,7 +337,7 @@ function CustomerEditProfileContentInner() {
           minHeight: "60vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -354,7 +356,7 @@ function CustomerEditProfileContentInner() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               color: "#0f172a",
             }}
@@ -362,7 +364,7 @@ function CustomerEditProfileContentInner() {
             Edit Profile
           </Typography>
           <Typography
-            sx={{ color: "#64748b", fontFamily: '"DM Sans", sans-serif' }}
+            sx={{ color: "#64748b", fontFamily: FONTS.PRIMARY }}
           >
             Update your personal information and addresses
           </Typography>
@@ -392,7 +394,7 @@ function CustomerEditProfileContentInner() {
                   cursor: "pointer",
                   borderBottom: "1px solid #e2e8f0",
                   bgcolor: activeTab === tab.id ? "#FFF0E6" : "white",
-                  color: activeTab === tab.id ? "#FF6200" : "#475569",
+                  color: activeTab === tab.id ? COLORS.PRIMARY : "#475569",
                   borderLeft:
                     activeTab === tab.id
                       ? "4px solid #FF6200"
@@ -406,7 +408,7 @@ function CustomerEditProfileContentInner() {
                 {tab.icon}
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: activeTab === tab.id ? 700 : 500,
                   }}
                 >
@@ -433,7 +435,7 @@ function CustomerEditProfileContentInner() {
                 <Typography
                   variant="h6"
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 700,
                     mb: 4,
                   }}
@@ -462,7 +464,7 @@ function CustomerEditProfileContentInner() {
                         position: "absolute",
                         bottom: -5,
                         right: -5,
-                        bgcolor: "#FF6200",
+                        bgcolor: COLORS.PRIMARY,
                         color: "white",
                         "&:hover": { bgcolor: "#ea580c" },
                         width: 36,
@@ -482,7 +484,7 @@ function CustomerEditProfileContentInner() {
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 600,
                         color: "#1e293b",
                         mb: 0.5,
@@ -492,7 +494,7 @@ function CustomerEditProfileContentInner() {
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: "0.875rem",
                         color: "#64748b",
                       }}
@@ -573,7 +575,7 @@ function CustomerEditProfileContentInner() {
                       borderRadius: "8px",
                       border: "none",
                       cursor: saving ? "not-allowed" : "pointer",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       fontSize: "0.95rem",
                       transition: "background-color 0.2s",
@@ -604,7 +606,7 @@ function CustomerEditProfileContentInner() {
                   <Typography
                     variant="h6"
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                     }}
                   >
@@ -620,7 +622,7 @@ function CustomerEditProfileContentInner() {
                       cursor: "pointer",
                       px: 3,
                       py: 1,
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 600,
                       borderRadius: "8px",
                       transition: "background-color 0.2s",
@@ -648,7 +650,7 @@ function CustomerEditProfileContentInner() {
                         />
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             color: "#64748b",
                           }}
                         >
@@ -664,7 +666,7 @@ function CustomerEditProfileContentInner() {
                           sx={{
                             border: "1px solid",
                             borderColor: address.isDefault
-                              ? "#FF6200"
+                              ? COLORS.PRIMARY
                               : "#e2e8f0",
                             borderRadius: "12px",
                             position: "relative",
@@ -686,7 +688,7 @@ function CustomerEditProfileContentInner() {
                               <Typography
                                 component="div"
                                 sx={{
-                                  fontFamily: '"DM Sans", sans-serif',
+                                  fontFamily: FONTS.PRIMARY,
                                   fontWeight: 700,
                                   color: "#1e293b",
                                   mb: 1,
@@ -705,7 +707,7 @@ function CustomerEditProfileContentInner() {
                                       bgcolor: "#e6f4ea",
                                       color: "#1e8e3e",
                                       fontWeight: 700,
-                                      fontFamily: '"DM Sans", sans-serif',
+                                      fontFamily: FONTS.PRIMARY,
                                       height: "22px",
                                       fontSize: "0.75rem",
                                     }}
@@ -714,7 +716,7 @@ function CustomerEditProfileContentInner() {
                               </Typography>
                               <Typography
                                 sx={{
-                                  fontFamily: '"DM Sans", sans-serif',
+                                  fontFamily: FONTS.PRIMARY,
                                   color: "#475569",
                                   mb: 1,
                                 }}
@@ -730,7 +732,7 @@ function CustomerEditProfileContentInner() {
                               >
                                 <Typography
                                   sx={{
-                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontFamily: FONTS.PRIMARY,
                                     color: "#64748b",
                                     fontSize: "0.875rem",
                                   }}
@@ -748,7 +750,7 @@ function CustomerEditProfileContentInner() {
                                 {address.state && (
                                   <Typography
                                     sx={{
-                                      fontFamily: '"DM Sans", sans-serif',
+                                      fontFamily: FONTS.PRIMARY,
                                       color: "#64748b",
                                       fontSize: "0.875rem",
                                     }}
@@ -766,7 +768,7 @@ function CustomerEditProfileContentInner() {
                                 )}
                                 <Typography
                                   sx={{
-                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontFamily: FONTS.PRIMARY,
                                     color: "#64748b",
                                     fontSize: "0.875rem",
                                   }}
@@ -847,7 +849,7 @@ function CustomerEditProfileContentInner() {
       >
         <DialogTitle
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             pb: 1,
             color: "#ef4444",
@@ -857,7 +859,7 @@ function CustomerEditProfileContentInner() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography
-            sx={{ fontFamily: '"DM Sans", sans-serif', color: "#475569" }}
+            sx={{ fontFamily: FONTS.PRIMARY, color: "#475569" }}
           >
             Are you sure you want to delete this address? This action cannot be
             undone.
@@ -868,7 +870,7 @@ function CustomerEditProfileContentInner() {
             onClick={() => setDeleteConfirmOpen(false)}
             sx={{
               color: "#64748b",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 600,
             }}
           >
@@ -880,7 +882,7 @@ function CustomerEditProfileContentInner() {
             sx={{
               bgcolor: "#ef4444 !important",
               color: "white !important",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 600,
               border: "none",
               cursor: "pointer",

@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import EmailIcon from "@mui/icons-material/Email";
 import HandymanIcon from "@mui/icons-material/Handyman";
@@ -56,7 +57,7 @@ export default function BookingPurohitCard({
           sx={{
             fontWeight: 700,
             color: "#0f172a",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           Purohit Assigned
@@ -158,7 +159,7 @@ export default function BookingPurohitCard({
             sx={{
               color: "#64748b",
               fontWeight: 600,
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             Purohit not yet assigned

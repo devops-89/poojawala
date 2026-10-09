@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
@@ -44,7 +46,7 @@ export default function CustomerProductsHero() {
           <Typography
             variant="h1"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               fontSize: { xs: "24px", sm: "36px", md: "52px" },
               lineHeight: 1.15,
@@ -56,7 +58,7 @@ export default function CustomerProductsHero() {
             <Typography
               component="span"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: FONTS.OUTFIT,
                 fontStyle: "italic",
                 fontWeight: 800,
                 color: "#D9531E",
@@ -70,7 +72,7 @@ export default function CustomerProductsHero() {
           {/* Description */}
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#C5B7AE",
               fontSize: { xs: "13px", md: "15px" },
               lineHeight: 1.5,
@@ -96,7 +98,7 @@ export default function CustomerProductsHero() {
               variant="contained"
               startIcon={<ShoppingBagOutlinedIcon />}
               sx={{
-                bgcolor: "#C84B16",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 px: 3,
                 py: 1,
@@ -106,7 +108,7 @@ export default function CustomerProductsHero() {
                 textTransform: "none",
                 boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
                 "&:hover": {
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
                 },
               }}

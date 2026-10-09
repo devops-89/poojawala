@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import { Avatar, Box, Grid, TextField, Typography } from "@mui/material";
@@ -28,14 +30,14 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
         <Avatar
           src={values.profilePhotoUrl}
           alt={values.fullName}
-          sx={{ width: 44, height: 44, bgcolor: "#fff7ed", color: "#FF6200" }}
+          sx={{ width: 44, height: 44, bgcolor: "#fff7ed", color: COLORS.PRIMARY }}
         >
           <PersonIcon />
         </Avatar>
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
           }}
@@ -103,8 +105,18 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
                   : "+91"
               );
             }}
-            error={touched.phone && Boolean(errors.phone)}
-            helperText={touched.phone && (errors.phone as string)}
+            error={
+              (touched.phone || Boolean(values.phone)) &&
+              (Boolean(errors.phone) ||
+                (values.phone && values.phone.length > 0 && !/^[6-9]/.test(values.phone)))
+            }
+            helperText={
+              values.phone && values.phone.length > 0 && !/^[6-9]/.test(values.phone)
+                ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                : touched.phone
+                ? (errors.phone as string)
+                : undefined
+            }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />
         </Grid>

@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import React from "react";
 import {
@@ -45,7 +46,7 @@ export const BookingProofModal: React.FC<BookingProofModalProps> = ({
         fullWidth
       >
         <DialogTitle
-          sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800 }}
+          sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800 }}
         >
           Submit Proof Image
         </DialogTitle>

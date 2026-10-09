@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteProductAPI,
@@ -225,8 +227,8 @@ export default function AdminProductsContent() {
         <Typography
           sx={{
             fontWeight: 700,
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
+            color: COLORS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontSize: "0.85rem",
           }}
         >
@@ -260,7 +262,7 @@ export default function AdminProductsContent() {
                 sx={{
                   fontWeight: 700,
                   color: "#1e293b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "0.95rem",
                 }}
               >
@@ -270,7 +272,7 @@ export default function AdminProductsContent() {
                 variant="body2"
                 sx={{
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "0.8rem",
                 }}
               >
@@ -289,7 +291,7 @@ export default function AdminProductsContent() {
           sx={{
             fontWeight: 700,
             color: "#1e293b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           ₹{product.price}
@@ -303,7 +305,7 @@ export default function AdminProductsContent() {
         <Typography
           sx={{
             color: "#475569",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 500,
             fontSize: "0.9rem",
           }}
@@ -345,6 +347,8 @@ export default function AdminProductsContent() {
             component={NextLink}
             href={`/admin/products/${product.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
@@ -356,9 +360,11 @@ export default function AdminProductsContent() {
             component={NextLink}
             href={`/admin/products/edit/${product.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
-              "&:hover": { color: "#FF6200", bgcolor: "#FFF0E6" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
             }}
           >
             <EditIcon fontSize="small" />
@@ -366,6 +372,8 @@ export default function AdminProductsContent() {
           <IconButton
             onClick={() => setDeleteTarget(product.id)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },

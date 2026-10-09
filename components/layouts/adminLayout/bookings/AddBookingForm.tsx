@@ -1,4 +1,5 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import {
@@ -215,58 +216,62 @@ export default function AddBookingForm() {
     handleBlur,
     handleSubmit,
     setFieldValue,
+    setFieldTouched,
   } = formik;
 
-  // Fetch Services filtered by Selected Customer's Default Address City
+  // Fetch Services filtered by Selected Customer's Default Address City (Debounced)
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        let customerCity = '';
-        if (values.customerId) {
-          const selectedCustomer = customers.find(
-            (c) => c.id === Number(values.customerId)
-          );
-          const defaultAddress =
-            selectedCustomer?.addresses?.find(
-              (a: any) =>
-                a.isDefault === true ||
-                a.isdefault === true ||
-                a.is_default === true ||
-                String(a.isDefault).toLowerCase() === 'true' ||
-                String(a.isdefault).toLowerCase() === 'true'
-            ) || selectedCustomer?.addresses?.[0];
-          customerCity =
-            defaultAddress?.city || selectedCustomer?.city || '';
-        } else if (values.isNewCustomer && values.newCustomerCity) {
-          customerCity = values.newCustomerCity;
-        }
+    const timer = setTimeout(() => {
+      const fetchServices = async () => {
+        try {
+          let customerCity = '';
+          if (values.customerId) {
+            const selectedCustomer = customers.find(
+              (c) => c.id === Number(values.customerId)
+            );
+            const defaultAddress =
+              selectedCustomer?.addresses?.find(
+                (a: any) =>
+                  a.isDefault === true ||
+                  a.isdefault === true ||
+                  a.is_default === true ||
+                  String(a.isDefault).toLowerCase() === 'true' ||
+                  String(a.isdefault).toLowerCase() === 'true'
+              ) || selectedCustomer?.addresses?.[0];
+            customerCity =
+              defaultAddress?.city || selectedCustomer?.city || '';
+          } else if (values.isNewCustomer && values.newCustomerCity) {
+            customerCity = values.newCustomerCity;
+          }
 
-        const res = await getServicesAPI(
-          1,
-          100,
-          '',
-          undefined,
-          undefined,
-          undefined,
-          true,
-          undefined,
-          customerCity
-        );
-        if (res.success) {
-          const list = Array.isArray(res.data?.data)
-            ? res.data.data
-            : Array.isArray(res.data)
-            ? res.data
-            : Array.isArray(res.services)
-            ? res.services
-            : [];
-          setAllServices(list);
+          const res = await getServicesAPI(
+            1,
+            100,
+            '',
+            undefined,
+            undefined,
+            undefined,
+            true,
+            undefined,
+            customerCity
+          );
+          if (res.success) {
+            const list = Array.isArray(res.data?.data)
+              ? res.data.data
+              : Array.isArray(res.data)
+              ? res.data
+              : Array.isArray(res.services)
+              ? res.services
+              : [];
+            setAllServices(list);
+          }
+        } catch (error) {
+          console.error('Error fetching services:', error);
         }
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      }
-    };
-    fetchServices();
+      };
+      fetchServices();
+    }, 500);
+    return () => clearTimeout(timer);
   }, [values.customerId, values.newCustomerCity, values.isNewCustomer, customers]);
 
   // Update Plan default selection when Service changes
@@ -435,7 +440,7 @@ export default function AddBookingForm() {
                 style={{
                   textDecoration: 'none',
                   color: '#64748b',
-                  fontFamily: 'var(--font-outfit), sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
                   fontSize: '14px',
                 }}
@@ -445,7 +450,7 @@ export default function AddBookingForm() {
               <Typography
                 sx={{
                   color: '#10b981',
-                  fontFamily: 'var(--font-outfit), sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: '14px',
                 }}
@@ -456,7 +461,7 @@ export default function AddBookingForm() {
             <Typography
               variant="h1"
               sx={{
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: '#1e293b',
                 fontSize: { xs: '1.8rem', md: '2.2rem' },
@@ -466,7 +471,7 @@ export default function AddBookingForm() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 color: '#64748b',
                 mt: 0.5,
               }}
@@ -496,6 +501,7 @@ export default function AddBookingForm() {
                 handleChange={handleChange}
                 handleBlur={handleBlur}
                 setFieldValue={setFieldValue}
+                setFieldTouched={setFieldTouched}
                 setCustomerSearchText={setCustomerSearchText}
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
@@ -507,7 +513,7 @@ export default function AddBookingForm() {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     mb: 1,
                     color: '#1e293b',
@@ -538,19 +544,19 @@ export default function AddBookingForm() {
                   <MenuItem
                     value=""
                     disabled
-                    sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#94a3b8' }}
+                    sx={{ fontFamily: FONTS.OUTFIT, color: '#94a3b8' }}
                   >
                     Select Booking Mode
                   </MenuItem>
                   <MenuItem
                     value="ONLINE"
-                    sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                    sx={{ fontFamily: FONTS.OUTFIT }}
                   >
                     Online
                   </MenuItem>
                   <MenuItem
                     value="OFFLINE"
-                    sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                    sx={{ fontFamily: FONTS.OUTFIT }}
                   >
                     Offline
                   </MenuItem>
@@ -560,7 +566,7 @@ export default function AddBookingForm() {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     mb: 1,
                     color: '#1e293b',
@@ -606,7 +612,7 @@ export default function AddBookingForm() {
                   <MenuItem
                     value=""
                     disabled
-                    sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#94a3b8' }}
+                    sx={{ fontFamily: FONTS.OUTFIT, color: '#94a3b8' }}
                   >
                     Select Service
                   </MenuItem>
@@ -614,7 +620,7 @@ export default function AddBookingForm() {
                     <MenuItem
                       disabled
                       value=""
-                      sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                      sx={{ fontFamily: FONTS.OUTFIT }}
                     >
                       No services available for selected city
                     </MenuItem>
@@ -623,7 +629,7 @@ export default function AddBookingForm() {
                     <MenuItem
                       key={s.id}
                       value={s.id}
-                      sx={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                      sx={{ fontFamily: FONTS.OUTFIT }}
                     >
                       {s.name}
                     </MenuItem>

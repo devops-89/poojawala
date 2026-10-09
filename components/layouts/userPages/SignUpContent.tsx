@@ -7,12 +7,15 @@ import SignUpStep2Address from "@/components/layouts/userPages/components/SignUp
 import SignUpStepperHeader from "@/components/layouts/userPages/components/SignUpStepperHeader";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { extractBackendErrorMessage } from "@/utils/helpers";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 const emailTldRegex =
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
@@ -34,7 +37,7 @@ const step1ValidationSchema = Yup.object().shape({
     )
     .required("Email is required"),
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number must be exactly 10 digits")
+    .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
     .required("Phone number is required"),
   dob: Yup.date()
     .max(fifteenYearsAgo, "Date of birth must be at least 15 years ago")
@@ -276,9 +279,7 @@ export default function SignUpContent() {
                       }
                     } catch (error: any) {
                       showSnackbar(
-                        error?.response?.data?.message ||
-                          error.message ||
-                          "Failed to send OTP",
+                        extractBackendErrorMessage(error, "Failed to send OTP"),
                         "error"
                       );
                     } finally {
@@ -357,7 +358,7 @@ export default function SignUpContent() {
 
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT_ONLY,
                     color: "#666",
                     textAlign: "center",
                     mt: 2.5,
@@ -368,7 +369,7 @@ export default function SignUpContent() {
                   <Link
                     href="/sign-in"
                     style={{
-                      color: "#FF6200",
+                      color: COLORS.PRIMARY,
                       fontWeight: 700,
                       textDecoration: "none",
                     }}

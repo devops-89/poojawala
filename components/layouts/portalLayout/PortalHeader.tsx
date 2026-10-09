@@ -4,6 +4,8 @@ import { AppBar, Toolbar, IconButton, Typography, Box, Badge, Menu, MenuItem, Li
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useSocketStore } from '@/stores/socketStore';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 interface PortalHeaderProps {
   mobileOpen: boolean;
@@ -63,7 +65,7 @@ export default function PortalHeader({ mobileOpen, setMobileOpen }: PortalHeader
         
         <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
           <IconButton onClick={handleOpenNotif} sx={{ color: '#64748b', bgcolor: '#f8fafc', '&:hover': { bgcolor: '#f1f5f9' } }}>
-            <Badge badgeContent={unreadCount} color="error" invisible={unreadCount === 0} sx={{ '& .MuiBadge-badge': { bgcolor: '#FF6200', color: 'white' } }}>
+            <Badge badgeContent={unreadCount} color="error" invisible={unreadCount === 0} sx={{ '& .MuiBadge-badge': { bgcolor: COLORS.PRIMARY, color: 'white' } }}>
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -93,13 +95,13 @@ export default function PortalHeader({ mobileOpen, setMobileOpen }: PortalHeader
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
             <Box sx={{ p: 2, borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, fontSize: '16px' }}>
+              <Typography variant="h6" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, fontSize: '16px' }}>
                 Notifications
               </Typography>
               {notifications.length > 0 && (
                 <Typography 
                   variant="caption" 
-                  sx={{ color: '#FF6200', cursor: 'pointer', fontWeight: 600 }}
+                  sx={{ color: COLORS.PRIMARY, cursor: 'pointer', fontWeight: 600 }}
                   onClick={clearNotifications}
                 >
                   Clear All
@@ -108,7 +110,7 @@ export default function PortalHeader({ mobileOpen, setMobileOpen }: PortalHeader
             </Box>
             {notifications.length === 0 ? (
               <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Typography sx={{ color: '#94a3b8', fontSize: '14px', fontFamily: '"DM Sans", sans-serif' }}>
+                <Typography sx={{ color: '#94a3b8', fontSize: '14px', fontFamily: FONTS.PRIMARY }}>
                   No new notifications
                 </Typography>
               </Box>
@@ -119,7 +121,7 @@ export default function PortalHeader({ mobileOpen, setMobileOpen }: PortalHeader
                     primary={notif.message} 
                     secondary={notif.time}
                     slotProps={{
-                      primary: { sx: { fontFamily: '"DM Sans", sans-serif', fontSize: '14px', color: '#1e293b' } },
+                      primary: { sx: { fontFamily: FONTS.PRIMARY, fontSize: '14px', color: COLORS.SLATE_DARK } },
                       secondary: { sx: { fontSize: '12px', mt: 0.5 } }
                     }}
                   />

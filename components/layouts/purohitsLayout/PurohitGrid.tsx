@@ -7,12 +7,22 @@ import PurohitCard from './PurohitCard';
 import { getPublicPurohitsListAPI } from '@/api/userControllers';
 import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 export default function PurohitGrid() {
   const [purohits, setPurohits] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   const [totalPurohits, setTotalPurohits] = useState(0);
   const itemsPerPage = 6;
   const gridTopRef = useRef<HTMLDivElement>(null);
@@ -22,7 +32,7 @@ export default function PurohitGrid() {
     const fetchPurohits = async () => {
       try {
         setLoading(true);
-        const response = await getPublicPurohitsListAPI(page, itemsPerPage, searchQuery);
+        const response = await getPublicPurohitsListAPI(page, itemsPerPage, debouncedQuery);
         
         let fetchedPurohits = [];
         if (response?.data?.data && Array.isArray(response.data.data)) {
@@ -90,7 +100,7 @@ export default function PurohitGrid() {
     };
 
     fetchPurohits();
-  }, [page, searchQuery]);
+  }, [page, debouncedQuery]);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -112,10 +122,10 @@ export default function PurohitGrid() {
       {/* Header Row */}
       {/* Top Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1A1A1A', mr: 2 }}>
+        <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A', mr: 2 }}>
           Top Purohits for You
         </Typography>
-        <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '13px', color: '#666', mr: 3 }}>
+        <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#666', mr: 3 }}>
           {totalPurohits} Purohits available
         </Typography>
         
@@ -135,7 +145,7 @@ export default function PurohitGrid() {
         >
           <SearchIcon sx={{ color: '#999', fontSize: '20px' }} />
           <InputBase
-            sx={{ ml: 1, flex: 1, py: 0.5, fontFamily: '"DM Sans", sans-serif', fontSize: '14px' }}
+            sx={{ ml: 1, flex: 1, py: 0.5, fontFamily: FONTS.PRIMARY, fontSize: '14px' }}
             placeholder="Search by name or language..."
             inputProps={{ 'aria-label': 'search for purohits' }}
             value={searchQuery}
@@ -147,7 +157,7 @@ export default function PurohitGrid() {
       {/* List Content */}
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-          <CircularProgress sx={{ color: '#FF6200' }} />
+          <CircularProgress sx={{ color: COLORS.PRIMARY }} />
         </Box>
       ) : purohits.length === 0 ? (
         <EmptyStateCard
@@ -185,11 +195,11 @@ export default function PurohitGrid() {
             shape="rounded" 
             sx={{
               '& .MuiPaginationItem-root': {
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 '&.Mui-selected': {
-                  bgcolor: '#FF6200',
+                  bgcolor: COLORS.PRIMARY,
                   color: 'white',
-                  '&:hover': { bgcolor: '#E65800' }
+                  '&:hover': { bgcolor: COLORS.PRIMARY_DARK }
                 }
               }
             }}

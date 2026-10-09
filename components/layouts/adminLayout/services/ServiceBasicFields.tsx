@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import { getTemplesAPI } from "@/api/templeControllers";
@@ -112,7 +113,7 @@ export default function ServiceBasicFields({
             onBlur={handleBlur}
             sx={{
               borderRadius: "12px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             <MenuItem value="" disabled>
@@ -153,7 +154,7 @@ export default function ServiceBasicFields({
             onBlur={handleBlur}
             sx={{
               borderRadius: "12px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             <MenuItem value="">

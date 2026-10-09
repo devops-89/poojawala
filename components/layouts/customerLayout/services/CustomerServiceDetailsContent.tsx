@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
@@ -67,7 +68,7 @@ export default function CustomerServiceDetailsContent() {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
-        <CircularProgress sx={{ color: "#C84B16" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -95,7 +96,7 @@ export default function CustomerServiceDetailsContent() {
           variant="contained"
           onClick={() => router.push("/customer/services")}
           sx={{
-            background: "#C84B16",
+            background: COLORS.PRIMARY,
             color: "white",
             borderRadius: "30px",
             textTransform: "none",

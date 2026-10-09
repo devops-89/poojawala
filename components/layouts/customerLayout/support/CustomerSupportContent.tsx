@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AddIcon from "@mui/icons-material/Add";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ClassIcon from "@mui/icons-material/Class";
@@ -174,7 +176,7 @@ export default function CustomerSupportContent() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               color: "#1A1A1A",
               mb: 1,
@@ -183,7 +185,7 @@ export default function CustomerSupportContent() {
             Support Tickets
           </Typography>
           <Typography
-            sx={{ fontFamily: '"DM Sans", sans-serif', color: "#666" }}
+            sx={{ fontFamily: FONTS.PRIMARY, color: "#666" }}
           >
             Manage your issues and contact our support team.
           </Typography>
@@ -198,9 +200,9 @@ export default function CustomerSupportContent() {
             gap: "8px",
             border: "none",
             cursor: "pointer",
-            backgroundColor: "#FF6200",
+            backgroundColor: COLORS.PRIMARY,
             color: "#ffffff",
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             textTransform: "none",
             borderRadius: "30px",
             fontWeight: 700,
@@ -266,12 +268,12 @@ export default function CustomerSupportContent() {
                 "& .MuiTab-root": {
                   textTransform: "none",
                   fontWeight: 600,
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#64748b",
                   minHeight: "48px",
                 },
                 "& .Mui-selected": { color: "#FF6200 !important" },
-                "& .MuiTabs-indicator": { backgroundColor: "#FF6200" },
+                "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY },
               }}
             >
               <Tab label="All" value="ALL" />
@@ -287,7 +289,7 @@ export default function CustomerSupportContent() {
         <Box sx={{ p: 3 }}>
           {loading ? (
             <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-              <CircularProgress sx={{ color: "#FF6200" }} />
+              <CircularProgress sx={{ color: COLORS.PRIMARY }} />
             </Box>
           ) : complaints.length > 0 ? (
             <>
@@ -302,7 +304,7 @@ export default function CustomerSupportContent() {
                             fontWeight: 700,
                             fontSize: 13,
                             color: "#64748b",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                           }}
                         >
                           TICKET ID
@@ -312,7 +314,7 @@ export default function CustomerSupportContent() {
                             fontWeight: 700,
                             fontSize: 13,
                             color: "#64748b",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                           }}
                         >
                           B-ID
@@ -322,7 +324,7 @@ export default function CustomerSupportContent() {
                             fontWeight: 700,
                             fontSize: 13,
                             color: "#64748b",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                           }}
                         >
                           SUBJECT
@@ -332,7 +334,7 @@ export default function CustomerSupportContent() {
                             fontWeight: 700,
                             fontSize: 13,
                             color: "#64748b",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                           }}
                         >
                           DATE
@@ -342,7 +344,7 @@ export default function CustomerSupportContent() {
                             fontWeight: 700,
                             fontSize: 13,
                             color: "#64748b",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                           }}
                         >
                           STATUS
@@ -353,7 +355,7 @@ export default function CustomerSupportContent() {
                             fontWeight: 700,
                             fontSize: 13,
                             color: "#64748b",
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                           }}
                         >
                           ACTION
@@ -384,7 +386,7 @@ export default function CustomerSupportContent() {
                                 fontSize: 13,
                                 fontWeight: 600,
                                 color: "#1e293b",
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               }}
                             >
                               C-{complaint.id}
@@ -393,7 +395,7 @@ export default function CustomerSupportContent() {
                               sx={{
                                 fontSize: 13,
                                 color: "#475569",
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               }}
                             >
                               B-{complaint.bookingId}
@@ -402,7 +404,7 @@ export default function CustomerSupportContent() {
                               sx={{
                                 fontSize: 13,
                                 color: "#475569",
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               }}
                             >
                               {complaint.subject || complaint.category || "N/A"}
@@ -411,7 +413,7 @@ export default function CustomerSupportContent() {
                               sx={{
                                 fontSize: 13,
                                 color: "#475569",
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                               }}
                             >
                               {dateStr}
@@ -430,7 +432,7 @@ export default function CustomerSupportContent() {
                                   handleViewComplaint(complaint.id)
                                 }
                                 sx={{
-                                  color: "#FF6200",
+                                  color: COLORS.PRIMARY,
                                   bgcolor: "#fff5f0",
                                   "&:hover": { bgcolor: "#ffe4d6" },
                                   width: 32,
@@ -487,7 +489,7 @@ export default function CustomerSupportContent() {
                         <Box>
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontWeight: 700,
                               color: "#1e293b",
                               fontSize: "1.1rem",
@@ -497,7 +499,7 @@ export default function CustomerSupportContent() {
                           </Typography>
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               color: "#64748b",
                               fontSize: "13px",
                               mt: 0.5,
@@ -516,7 +518,7 @@ export default function CustomerSupportContent() {
                           size="small"
                           sx={{
                             fontWeight: 700,
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "11px",
                             height: "22px",
                             bgcolor: statusStyle.bg,
@@ -594,7 +596,7 @@ export default function CustomerSupportContent() {
                             onClick={() => handleViewComplaint(complaint.id)}
                             size="small"
                             sx={{
-                              color: "#FF6200",
+                              color: COLORS.PRIMARY,
                               bgcolor: "#FFF5F0",
                               "&:hover": { bgcolor: "#FFE0D0" },
                             }}
@@ -617,7 +619,7 @@ export default function CustomerSupportContent() {
                     color="primary"
                     sx={{
                       "& .MuiPaginationItem-root.Mui-selected": {
-                        backgroundColor: "#FF6200",
+                        backgroundColor: COLORS.PRIMARY,
                         color: "#fff",
                       },
                     }}
@@ -631,7 +633,7 @@ export default function CustomerSupportContent() {
                 sx={{
                   color: "#64748b",
                   fontSize: 15,
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                 }}
               >
                 No complaints found for the selected status.
@@ -646,7 +648,7 @@ export default function CustomerSupportContent() {
         <Typography
           variant="h5"
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             color: "#1A1A1A",
             mb: 3,
@@ -677,7 +679,7 @@ export default function CustomerSupportContent() {
               >
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     fontWeight: 700,
                     color: "#334155",
                   }}
@@ -688,7 +690,7 @@ export default function CustomerSupportContent() {
               <AccordionDetails sx={{ px: 3, py: 3, bgcolor: "#ffffff" }}>
                 <Typography
                   sx={{
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                     color: "#475569",
                     lineHeight: 1.6,
                   }}
@@ -724,7 +726,7 @@ export default function CustomerSupportContent() {
               fontSize: "1.25rem",
               fontWeight: 700,
               color: "#0f172a",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
             }}
           >
             Complaint Details
@@ -741,7 +743,7 @@ export default function CustomerSupportContent() {
         <DialogContent sx={{ p: 3 }}>
           {loadingDetails ? (
             <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-              <CircularProgress sx={{ color: "#FF6200" }} />
+              <CircularProgress sx={{ color: COLORS.PRIMARY }} />
             </Box>
           ) : selectedComplaint ? (
             <Grid container spacing={3}>
@@ -754,7 +756,7 @@ export default function CustomerSupportContent() {
                         fontWeight: 700,
                         color: "#64748b",
                         mb: 0.5,
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       STATUS
@@ -772,7 +774,7 @@ export default function CustomerSupportContent() {
                         fontWeight: 700,
                         color: "#64748b",
                         mb: 0.5,
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       COMPLAINT ID
@@ -782,7 +784,7 @@ export default function CustomerSupportContent() {
                         fontSize: 14,
                         fontWeight: 600,
                         color: "#1e293b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       C-{selectedComplaint.id}
@@ -795,7 +797,7 @@ export default function CustomerSupportContent() {
                         fontWeight: 700,
                         color: "#64748b",
                         mb: 0.5,
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       BOOKING ID
@@ -805,7 +807,7 @@ export default function CustomerSupportContent() {
                         fontSize: 14,
                         fontWeight: 600,
                         color: "#1e293b",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       B-{selectedComplaint.bookingId}
@@ -822,7 +824,7 @@ export default function CustomerSupportContent() {
                         fontWeight: 700,
                         color: "#64748b",
                         mb: 0.5,
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       CATEGORY
@@ -833,7 +835,7 @@ export default function CustomerSupportContent() {
                         sx={{
                           fontSize: 14,
                           color: "#334155",
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                         }}
                       >
                         {selectedComplaint.category?.replace("_", " ") || "N/A"}
@@ -847,7 +849,7 @@ export default function CustomerSupportContent() {
                         fontWeight: 700,
                         color: "#64748b",
                         mb: 0.5,
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       DATE RAISED
@@ -860,7 +862,7 @@ export default function CustomerSupportContent() {
                         sx={{
                           fontSize: 14,
                           color: "#334155",
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                         }}
                       >
                         {selectedComplaint.createdAt
@@ -885,7 +887,7 @@ export default function CustomerSupportContent() {
                     fontWeight: 700,
                     color: "#64748b",
                     mb: 1,
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   SUBJECT
@@ -908,7 +910,7 @@ export default function CustomerSupportContent() {
                       fontSize: 14,
                       color: "#1e293b",
                       fontWeight: 600,
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {selectedComplaint.subject || "No subject provided"}
@@ -923,7 +925,7 @@ export default function CustomerSupportContent() {
                     fontWeight: 700,
                     color: "#64748b",
                     mb: 1,
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   DESCRIPTION
@@ -946,7 +948,7 @@ export default function CustomerSupportContent() {
                       fontSize: 14,
                       color: "#334155",
                       whiteSpace: "pre-wrap",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                     }}
                   >
                     {selectedComplaint.description || "No description provided"}
@@ -963,7 +965,7 @@ export default function CustomerSupportContent() {
                         fontWeight: 700,
                         color: "#64748b",
                         mb: 1,
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       ATTACHED EVIDENCE
@@ -1011,7 +1013,7 @@ export default function CustomerSupportContent() {
                 textAlign: "center",
                 py: 4,
                 color: "#64748b",
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
               }}
             >
               Complaint details not available.
@@ -1027,7 +1029,7 @@ export default function CustomerSupportContent() {
               borderColor: "#cbd5e1",
               textTransform: "none",
               fontWeight: 600,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
             }}
           >
             Close

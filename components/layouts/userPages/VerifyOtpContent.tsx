@@ -7,6 +7,9 @@ import { useLoaderStore } from '@/stores/loaderStore';
 import { verifyOtpAPI, registerPurohitAPI, sendOtpAPI } from '@/api/userControllers';
 import { extractRoleCsrfToken, saveRoleCsrfToken } from '@/api/config';
 import Link from 'next/link';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
+import { extractBackendErrorMessage } from '@/utils/helpers';
 
 export default function VerifyOtpContent() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -46,7 +49,7 @@ export default function VerifyOtpContent() {
         }
       }
     } catch (err: any) {
-      showSnackbar(err?.response?.data?.message || err.message || 'Failed to resend OTP', 'error');
+      showSnackbar(extractBackendErrorMessage(err, 'Failed to resend OTP'), 'error');
     }
   };
 
@@ -179,7 +182,7 @@ export default function VerifyOtpContent() {
         showSnackbar(verifyRes.message || 'Invalid OTP', 'error');
       }
     } catch (error: any) {
-      showSnackbar(error?.response?.data?.message || error.message || 'Verification failed', 'error');
+      showSnackbar(extractBackendErrorMessage(error, 'Verification failed'), 'error');
     } finally {
       hideLoader();
       setIsSubmitting(false);
@@ -236,10 +239,10 @@ export default function VerifyOtpContent() {
                   color: 'white'
                 }}
               >
-                <Typography variant="h3" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, mb: 2 }}>
+                <Typography variant="h3" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, mb: 2 }}>
                   Verify Email
                 </Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontSize: '16px', lineHeight: 1.6, opacity: 0.9, mb: 4 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '16px', lineHeight: 1.6, opacity: 0.9, mb: 4 }}>
                   Please enter the 6-digit one-time password sent to your email address to securely complete your registration.
                 </Typography>
                 <Box component="img" src="/images/home/poojaPackages/dhanush.webp" sx={{ width: '250px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
@@ -247,10 +250,10 @@ export default function VerifyOtpContent() {
 
               {/* Right Side Form */}
               <Box sx={{ flex: 1.2, p: { xs: 3, md: 5 }, bgcolor: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Typography variant="h5" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
+                <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
                   Enter OTP
                 </Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', mb: 4 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', mb: 4 }}>
                   Code sent to <span style={{ fontWeight: 700, color: '#1A1A1A' }}>{signupData?.email || 'your email'}</span>
                 </Typography>
 
@@ -277,7 +280,7 @@ export default function VerifyOtpContent() {
                         '& .MuiOutlinedInput-root': {
                           borderRadius: '8px',
                           '&.Mui-focused fieldset': {
-                            borderColor: '#FF6200',
+                            borderColor: COLORS.PRIMARY,
                           },
                         },
                       }}
@@ -291,7 +294,7 @@ export default function VerifyOtpContent() {
                   disabled={isSubmitting || otp.join('').length !== 6}
                   variant="contained" 
                   sx={{
-                    background: '#FF6200',
+                    background: COLORS.PRIMARY,
                     color: 'white',
                     py: 1.5,
                     borderRadius: '31px',
@@ -300,7 +303,7 @@ export default function VerifyOtpContent() {
                     fontSize: '16px',
                     boxShadow: '0 8px 20px rgba(255, 98, 0, 0.3)',
                     '&:hover': {
-                      background: '#E65800',
+                      background: COLORS.PRIMARY_DARK,
                       boxShadow: '0 8px 25px rgba(255, 98, 0, 0.4)',
                     }
                   }}
@@ -308,7 +311,7 @@ export default function VerifyOtpContent() {
                   {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Verify & Create Account'}
                 </Button>
                 
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', textAlign: 'center', mt: 4, fontSize: '14px' }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', textAlign: 'center', mt: 4, fontSize: '14px' }}>
                   Didn't receive the code?{' '}
                   {resendTimer > 0 ? (
                     <span style={{ color: '#999', fontWeight: 600 }}>Resend in {resendTimer}s</span>
@@ -316,13 +319,13 @@ export default function VerifyOtpContent() {
                     <MuiLink 
                       component="button"
                       onClick={handleResendOtp} 
-                      sx={{ color: '#FF6200', fontWeight: 700, textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', fontFamily: '"DM Sans", sans-serif', fontSize: '14px' }}
+                      sx={{ color: COLORS.PRIMARY, fontWeight: 700, textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', fontFamily: FONTS.PRIMARY, fontSize: '14px' }}
                     >
                       Resend
                     </MuiLink>
                   )}
                 </Typography>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', textAlign: 'center', mt: 1, fontSize: '14px' }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', textAlign: 'center', mt: 1, fontSize: '14px' }}>
                   <Link href="/sign-up" style={{ color: '#64748b', textDecoration: 'none' }}>
                     ← Back to Sign Up
                   </Link>

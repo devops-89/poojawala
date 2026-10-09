@@ -12,6 +12,8 @@ import {
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 const getCategoryTag = (blog: any) => {
   const cat = blog.category || blog.categoryName;
@@ -101,7 +103,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
       {/* Loading State */}
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-          <CircularProgress sx={{ color: "#FF6200" }} />
+          <CircularProgress sx={{ color: COLORS.PRIMARY }} />
         </Box>
       ) : displayBlogs.length === 0 ? (
         /* Empty State */
@@ -118,7 +120,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
           <Typography
             variant="h5"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               color: "#2D2926",
               mb: 1,
@@ -226,11 +228,11 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                           {/* Category Tag */}
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontWeight: 800,
                               fontSize: "0.75rem",
                               letterSpacing: "0.1em",
-                              color: "#FF6200",
+                              color: COLORS.PRIMARY,
                               mb: 1.5,
                               textTransform: "uppercase",
                             }}
@@ -242,11 +244,11 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                           <Typography
                             variant="h5"
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontWeight: 700,
                               fontSize: { xs: "1.35rem", md: "1.6rem" },
                               lineHeight: 1.35,
-                              color: "#1E293B",
+                              color: COLORS.SLATE_DARK,
                               mb: 1.75,
                               display: "-webkit-box",
                               WebkitLineClamp: 3,
@@ -260,9 +262,9 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                           {/* Content Snippet */}
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontSize: "0.92rem",
-                              color: "#64748B",
+                              color: COLORS.SLATE_MUTED,
                               lineHeight: 1.7,
                               display: "-webkit-box",
                               WebkitLineClamp: 3,
@@ -288,7 +290,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                           <Box>
                             <Typography
                               sx={{
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontWeight: 700,
                                 fontSize: "0.85rem",
                                 color: "#1E293B",
@@ -298,7 +300,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                             </Typography>
                             <Typography
                               sx={{
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontSize: "0.75rem",
                                 color: "#94A3B8",
                               }}
@@ -315,7 +317,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                               borderRadius: "6px",
                               fontSize: "0.75rem",
                               fontWeight: 600,
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               color: "#64748B",
                               bgcolor: "#F8FAFC",
                             }}
@@ -397,11 +399,11 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                         {/* Category Tag */}
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 800,
                             fontSize: "0.75rem",
                             letterSpacing: "0.1em",
-                            color: "#FF6200",
+                            color: COLORS.PRIMARY,
                             mb: 1.25,
                             textTransform: "uppercase",
                           }}
@@ -413,11 +415,11 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                         <Typography
                           variant="h5"
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontWeight: 700,
                             fontSize: "1.25rem",
                             lineHeight: 1.35,
-                            color: "#1E293B",
+                            color: COLORS.SLATE_DARK,
                             mb: 1.5,
                             display: "-webkit-box",
                             WebkitLineClamp: 2,
@@ -431,9 +433,9 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                         {/* Excerpt Content Snippet */}
                         <Typography
                           sx={{
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             fontSize: "0.9rem",
-                            color: "#64748B",
+                            color: COLORS.SLATE_MUTED,
                             lineHeight: 1.65,
                             display: "-webkit-box",
                             WebkitLineClamp: 3,
@@ -460,7 +462,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                         <Box>
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontWeight: 700,
                               fontSize: "0.85rem",
                               color: "#1E293B",
@@ -470,7 +472,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                           </Typography>
                           <Typography
                             sx={{
-                              fontFamily: '"DM Sans", sans-serif',
+                              fontFamily: FONTS.PRIMARY,
                               fontSize: "0.75rem",
                               color: "#94A3B8",
                             }}
@@ -487,7 +489,7 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
                             borderRadius: "6px",
                             fontSize: "0.75rem",
                             fontWeight: 600,
-                            fontFamily: '"DM Sans", sans-serif',
+                            fontFamily: FONTS.PRIMARY,
                             color: "#64748B",
                             bgcolor: "#F8FAFC",
                           }}

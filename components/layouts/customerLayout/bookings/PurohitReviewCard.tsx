@@ -1,3 +1,4 @@
+import { FONTS } from "@/utils/fonts";
 import React from 'react';
 import { Box, Typography, Paper, Rating } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
@@ -15,7 +16,7 @@ export default function PurohitReviewCard({ booking }: Props) {
 
   return (
     <Paper sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', height: '100%' }}>
-      <Typography variant="h6" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#0f172a', mb: 2 }}>
+      <Typography variant="h6" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 2 }}>
         Purohit Review
       </Typography>
 
@@ -24,7 +25,7 @@ export default function PurohitReviewCard({ booking }: Props) {
           <Rating value={Number(booking.purohitRating) || 5} readOnly size="small" emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />} />
         </Box>
         {booking.purohitReview && (
-          <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
             "{booking.purohitReview}"
           </Typography>
         )}

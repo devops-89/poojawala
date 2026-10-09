@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SparklesIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -72,7 +73,7 @@ export default function ServiceDetailsHeroSection({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "24px", sm: "34px", md: "42px" },
@@ -86,7 +87,7 @@ export default function ServiceDetailsHeroSection({
           {/* Service Description */}
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#5C4A40",
               fontSize: { xs: "14px", sm: "15px", md: "16px" },
               lineHeight: 1.65,
@@ -188,7 +189,7 @@ export default function ServiceDetailsHeroSection({
             <Typography
               variant="h3"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#2C1810",
                 fontSize: { xs: "28px", sm: "34px", md: "40px" },

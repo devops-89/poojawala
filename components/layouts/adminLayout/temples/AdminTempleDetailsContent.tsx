@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { getTempleByIdAPI } from "@/api/templeControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
@@ -64,7 +66,7 @@ export default function AdminTempleDetailsContent() {
           minHeight: "50vh",
         }}
       >
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -78,7 +80,7 @@ export default function AdminTempleDetailsContent() {
         <Button
           component={NextLink}
           href="/admin/temples"
-          sx={{ mt: 2, color: "#FF6200" }}
+          sx={{ mt: 2, color: COLORS.PRIMARY }}
         >
           Back to Temples
         </Button>
@@ -103,7 +105,7 @@ export default function AdminTempleDetailsContent() {
             href={`/admin/temples/edit/${temple.id}`}
             variant="contained"
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               textTransform: "none",
               borderRadius: "12px",
@@ -112,7 +114,7 @@ export default function AdminTempleDetailsContent() {
               px: 3,
               boxShadow: "0 4px 14px 0 rgba(255, 98, 0, 0.39)",
               "&:hover": {
-                background: "#E65800",
+                background: COLORS.PRIMARY_DARK,
                 boxShadow: "0 6px 20px rgba(255, 98, 0, 0.23)",
               },
             }}
@@ -174,7 +176,7 @@ export default function AdminTempleDetailsContent() {
                   <Typography
                     variant="h4"
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 800,
                       color: "#1e293b",
                     }}
@@ -191,7 +193,7 @@ export default function AdminTempleDetailsContent() {
 
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     color: "#475569",
                     fontSize: "1rem",
                     lineHeight: 1.6,
@@ -227,11 +229,11 @@ export default function AdminTempleDetailsContent() {
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                  <BookOnlineIcon sx={{ color: "#FF6200", fontSize: 26 }} />
+                  <BookOnlineIcon sx={{ color: COLORS.PRIMARY, fontSize: 26 }} />
                   <Typography
                     variant="h6"
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       color: "#1e293b",
                     }}
@@ -244,7 +246,7 @@ export default function AdminTempleDetailsContent() {
                   size="small"
                   sx={{
                     bgcolor: "#FFF0E6",
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     fontWeight: 700,
                     borderRadius: "8px",
                   }}
@@ -268,7 +270,7 @@ export default function AdminTempleDetailsContent() {
                         gap: 1.25,
                         transition: "all 0.2s",
                         "&:hover": {
-                          borderColor: "#FF6200",
+                          borderColor: COLORS.PRIMARY,
                           bgcolor: "#fffdfa",
                         },
                       }}
@@ -284,7 +286,7 @@ export default function AdminTempleDetailsContent() {
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                           <Typography
                             sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                               fontWeight: 700,
                               fontSize: "0.85rem",
                               color: "#64748b",
@@ -294,7 +296,7 @@ export default function AdminTempleDetailsContent() {
                           </Typography>
                           <Typography
                             sx={{
-                              fontFamily: "var(--font-outfit), sans-serif",
+                              fontFamily: FONTS.OUTFIT,
                               fontWeight: 700,
                               fontSize: "1rem",
                               color: "#1e293b",
@@ -322,7 +324,7 @@ export default function AdminTempleDetailsContent() {
                             endIcon={<OpenInNewIcon fontSize="small" />}
                             sx={{
                               textTransform: "none",
-                              color: "#FF6200",
+                              color: COLORS.PRIMARY,
                               fontWeight: 600,
                               fontSize: "0.8rem",
                               minWidth: "auto",
@@ -337,7 +339,7 @@ export default function AdminTempleDetailsContent() {
                       {svc.description && (
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "0.875rem",
                             color: "#64748b",
                             lineHeight: 1.5,
@@ -361,7 +363,7 @@ export default function AdminTempleDetailsContent() {
                 >
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       color: "#64748b",
                       fontSize: "0.95rem",
                     }}
@@ -392,7 +394,7 @@ export default function AdminTempleDetailsContent() {
               <Typography
                 variant="h6"
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   color: "#1e293b",
                 }}
@@ -402,12 +404,12 @@ export default function AdminTempleDetailsContent() {
 
               <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
                 <LocationOnIcon
-                  sx={{ color: "#FF6200", mt: 0.3, fontSize: "1.25rem" }}
+                  sx={{ color: COLORS.PRIMARY, mt: 0.3, fontSize: "1.25rem" }}
                 />
                 <Box>
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "0.95rem",
                       color: "#1e293b",
@@ -419,7 +421,7 @@ export default function AdminTempleDetailsContent() {
                   {temple.address && (
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontSize: "0.875rem",
                         color: "#64748b",
                         mt: 0.5,
@@ -447,7 +449,7 @@ export default function AdminTempleDetailsContent() {
               <Typography
                 variant="h6"
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   color: "#1e293b",
                 }}

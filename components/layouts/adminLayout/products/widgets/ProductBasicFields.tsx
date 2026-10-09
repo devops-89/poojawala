@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import { PRODUCT_PRICING_UNIT } from "@/api/productControllers";
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
@@ -78,17 +79,17 @@ export default function ProductBasicFields() {
             onBlur={handleBlur}
             sx={{
               borderRadius: "12px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
-            <MenuItem value="" disabled sx={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+            <MenuItem value="" disabled sx={{ fontFamily: FONTS.OUTFIT }}>
               Select Product Category
             </MenuItem>
             {categories.map((cat) => (
               <MenuItem
                 key={cat.id || cat._id}
                 value={cat.id || cat._id}
-                sx={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                sx={{ fontFamily: FONTS.OUTFIT }}
               >
                 {cat.name || cat.title}
               </MenuItem>
@@ -138,14 +139,14 @@ export default function ProductBasicFields() {
             onBlur={handleBlur}
             sx={{
               borderRadius: "12px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {PRICING_UNITS.map((unit) => (
               <MenuItem
                 key={unit}
                 value={unit}
-                sx={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                sx={{ fontFamily: FONTS.OUTFIT }}
               >
                 {unit}
               </MenuItem>

@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 import { customerCreateBookingAPI } from "@/api/bookingControllers";
 import { getAllServicesAPI } from "@/api/serviceControllers";
 import { getCustomerAddressesAPI } from "@/api/userControllers";
@@ -417,7 +418,7 @@ export const ServicesPage = () => {
 
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-          <CircularProgress sx={{ color: "#FF6200" }} />
+          <CircularProgress sx={{ color: COLORS.PRIMARY }} />
         </Box>
       ) : filteredServices.length === 0 ? (
         <CustomerServicesEmptyState
@@ -452,9 +453,9 @@ export const ServicesPage = () => {
             }}
             sx={{
               "& .MuiPaginationItem-root.Mui-selected": {
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
-                "&:hover": { bgcolor: "#F05A00" },
+                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
               },
             }}
           />

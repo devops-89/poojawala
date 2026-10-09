@@ -1,4 +1,7 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { formatPhoneNumber } from "@/utils/helpers";
 
 import {
   getPurohitsAPI,
@@ -151,7 +154,7 @@ export default function AdminPurohitsContent() {
             email: u.email || "-",
             city: profile.city || "-",
             status: uiStatus,
-            phone: u.phone || "-",
+            phone: formatPhoneNumber(u.phone, u.countryCode),
             appliedAt: new Date(u.createdAt).toLocaleDateString(),
           };
         });
@@ -217,8 +220,8 @@ export default function AdminPurohitsContent() {
         <Typography
           sx={{
             fontWeight: 700,
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
+            color: COLORS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           P-{purohit.id}
@@ -236,7 +239,7 @@ export default function AdminPurohitsContent() {
             sx={{
               fontWeight: 700,
               color: "#1e293b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {purohit.name}
@@ -245,7 +248,7 @@ export default function AdminPurohitsContent() {
             sx={{
               color: "#64748b",
               fontSize: "0.85rem",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {purohit.email}
@@ -264,7 +267,7 @@ export default function AdminPurohitsContent() {
             color: "#1e293b",
             fontWeight: 500,
             fontSize: "0.9rem",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           {purohit.city}
@@ -316,7 +319,7 @@ export default function AdminPurohitsContent() {
         <Typography
           sx={{
             color: "#1e293b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontSize: "0.85rem",
           }}
         >
@@ -334,7 +337,7 @@ export default function AdminPurohitsContent() {
           sx={{
             color: "#64748b",
             fontSize: "0.85rem",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           {purohit.appliedAt}
@@ -361,8 +364,11 @@ export default function AdminPurohitsContent() {
             href={`/admin/purohits/${purohit.id}`}
             title="View Details"
             sx={{
-              color: "#94a3b8",
-              "&:hover": { color: "#FF6200", bgcolor: "#fff7ed" },
+              width: 32,
+              height: 32,
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
             }}
           >
             <VisibilityIcon fontSize="small" />
@@ -373,8 +379,11 @@ export default function AdminPurohitsContent() {
             href={`/admin/purohits/edit/${purohit.id}`}
             title="Edit Profile"
             sx={{
-              color: "#94a3b8",
-              "&:hover": { color: "#FF6200", bgcolor: "#fff7ed" },
+              width: 32,
+              height: 32,
+              color: "#64748b",
+              bgcolor: "#f8fafc",
+              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
             }}
           >
             <EditIcon fontSize="small" />
@@ -430,7 +439,7 @@ export default function AdminPurohitsContent() {
         customMessage={
           statusChangeTarget?.newStatus === "Rejected" ? (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 1 }}>
-              <Typography sx={{ color: "#475569", fontFamily: "var(--font-outfit), sans-serif" }}>
+              <Typography sx={{ color: "#475569", fontFamily: FONTS.OUTFIT }}>
                 Please provide a rejection reason for <strong>{statusChangeTarget?.purohit?.name}</strong>:
               </Typography>
               <TextField

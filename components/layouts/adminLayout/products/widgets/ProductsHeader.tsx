@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
 import { Box, Button, Typography } from "@mui/material";
@@ -20,7 +22,7 @@ export default function ProductsHeader() {
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -29,7 +31,7 @@ export default function ProductsHeader() {
         </Typography>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#64748b",
             mt: 0.5,
           }}
@@ -43,7 +45,7 @@ export default function ProductsHeader() {
         variant="contained"
         startIcon={<AddIcon />}
         sx={{
-          bgcolor: "#FF6200",
+          bgcolor: COLORS.PRIMARY,
           color: "white",
           textTransform: "none",
           borderRadius: "12px",
@@ -51,7 +53,7 @@ export default function ProductsHeader() {
           py: 1.2,
           px: 2.5,
           boxShadow: "none",
-          "&:hover": { bgcolor: "#E65800", boxShadow: "none" },
+          "&:hover": { bgcolor: COLORS.PRIMARY_DARK, boxShadow: "none" },
           alignSelf: { xs: "flex-start", sm: "auto" },
         }}
       >

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -44,7 +46,7 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
         <Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               fontSize: "22px",
               color: "#1A1A1A",
@@ -55,7 +57,7 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: "14px",
             }}
@@ -67,16 +69,16 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
           variant="outlined"
           onClick={onAddNew}
           sx={{
-            borderColor: "#FF6200",
-            color: "#FF6200",
+            borderColor: COLORS.PRIMARY,
+            color: COLORS.PRIMARY,
             borderRadius: "10px",
             textTransform: "none",
             fontWeight: 700,
             px: 2.5,
             py: 0.8,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             "&:hover": {
-              borderColor: "#E65800",
+              borderColor: COLORS.PRIMARY_DARK,
               bgcolor: "#FFF8F2",
             },
           }}
@@ -90,7 +92,7 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
           variant="outlined"
           sx={{ borderRadius: "14px", p: 4, textAlign: "center", borderStyle: "dashed" }}
         >
-          <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#666" }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#666" }}>
             No service areas added yet. Click "Add New Address" to add one.
           </Typography>
         </Card>
@@ -136,10 +138,10 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <LocationOnIcon sx={{ color: "#FF6200", fontSize: 20 }} />
+                        <LocationOnIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             fontSize: "16px",
                             color: "#1A1A1A",
@@ -186,7 +188,7 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
 
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         color: "#64748b",
                         fontSize: "13px",
                         lineHeight: 1.5,
@@ -204,10 +206,10 @@ export const ServiceAreaTab: React.FC<ServiceAreaTabProps> = ({
                     <Box sx={{ mt: 2, pt: 1.5, borderTop: "1px dashed #f1f5f9" }}>
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "12px",
                           fontWeight: 700,
-                          color: "#FF6200",
+                          color: COLORS.PRIMARY,
                         }}
                       >
                         Radius: {area.serviceRadiusKm} km

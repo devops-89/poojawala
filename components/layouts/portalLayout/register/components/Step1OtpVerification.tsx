@@ -3,6 +3,8 @@
 import React from 'react';
 import { Box, Typography, TextField, Link as MuiLink } from '@mui/material';
 import { FormikProps } from 'formik';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 interface Step1Props {
   formik: FormikProps<any>;
@@ -71,7 +73,7 @@ export default function Step1OtpVerification({
       <Typography
         variant="h5"
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 2,
         }}
@@ -79,9 +81,9 @@ export default function Step1OtpVerification({
         Verify your Identity
       </Typography>
       <Typography
-        sx={{ fontFamily: 'var(--font-outfit), sans-serif', color: '#666', mb: 4 }}
+        sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT, mb: 4 }}
       >
-        We've sent a 6-digit OTP to {formik.values.email}.
+        We've sent a 6-digit OTP to {formik.values.email}{formik.values.mobileNumber ? ` and ${formik.values.countryCode} ${formik.values.mobileNumber}` : ''}.
       </Typography>
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 4 }}>
         {formik.values.otp.map((val: string, idx: number) => (
@@ -106,8 +108,8 @@ export default function Step1OtpVerification({
       </Box>
       <Typography
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
-          color: '#666',
+          fontFamily: FONTS.OUTFIT,
+          color: COLORS.MUTED_TEXT,
           textAlign: 'center',
           mt: 3,
           fontSize: '14px',
@@ -124,13 +126,13 @@ export default function Step1OtpVerification({
             type="button"
             onClick={handlePortalResendOtp}
             sx={{
-              color: '#FF6200',
+              color: COLORS.PRIMARY,
               fontWeight: 700,
               textDecoration: 'none',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontSize: '14px',
             }}
           >

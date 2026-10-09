@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { downloadOrderInvoiceAPI } from "@/api/paymentControllers";
 import { ORDER_PAYMENT_STATUS, ORDER_STATUS } from "@/utils/enums";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
@@ -187,7 +189,7 @@ export default function CustomerOrdersCard({
             <AutorenewIcon sx={{ fontSize: 18, color: "#1976D2" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -204,7 +206,7 @@ export default function CustomerOrdersCard({
             <AutorenewIcon sx={{ fontSize: 18, color: "#E65100" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -223,7 +225,7 @@ export default function CustomerOrdersCard({
             />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12px", sm: "13px" },
                 fontWeight: 600,
@@ -243,7 +245,7 @@ export default function CustomerOrdersCard({
             />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -262,7 +264,7 @@ export default function CustomerOrdersCard({
             />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -279,7 +281,7 @@ export default function CustomerOrdersCard({
             <CheckIcon sx={{ fontSize: 18, color: "#2E7D32" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -296,7 +298,7 @@ export default function CustomerOrdersCard({
             <CancelOutlinedIcon sx={{ fontSize: 18, color: "#D32F2F" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -313,7 +315,7 @@ export default function CustomerOrdersCard({
             <AutorenewIcon sx={{ fontSize: 18, color: "#512DA8" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -330,7 +332,7 @@ export default function CustomerOrdersCard({
             <CancelOutlinedIcon sx={{ fontSize: 18, color: "#4E342E" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -347,7 +349,7 @@ export default function CustomerOrdersCard({
             <AutorenewIcon sx={{ fontSize: 18, color: "#1976D2" }} />
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "12.5px", sm: "13.5px" },
                 fontWeight: 600,
@@ -404,7 +406,7 @@ export default function CustomerOrdersCard({
         >
           <Typography
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "15px", sm: "17px" },
@@ -422,7 +424,7 @@ export default function CustomerOrdersCard({
               bgcolor: statusConfig.bgcolor,
               color: statusConfig.color,
               border: `1px solid ${statusConfig.borderColor}`,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: { xs: "10px", sm: "11px" },
               letterSpacing: "0.5px",
@@ -442,7 +444,7 @@ export default function CustomerOrdersCard({
                 bgcolor: paymentStatusConfig.bgcolor,
                 color: paymentStatusConfig.color,
                 border: `1px solid ${paymentStatusConfig.borderColor}`,
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 fontSize: { xs: "10px", sm: "11px" },
                 letterSpacing: "0.5px",
@@ -457,7 +459,7 @@ export default function CustomerOrdersCard({
         {/* Right Corner: Order Date */}
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             color: "#64534A",
             fontSize: { xs: "12.5px", sm: "13.5px" },
             fontWeight: 600,
@@ -517,7 +519,7 @@ export default function CustomerOrdersCard({
                 <Box sx={{ minWidth: 0 }}>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       color: "#2C1810",
                       fontSize: { xs: "14px", sm: "15px" },
@@ -531,7 +533,7 @@ export default function CustomerOrdersCard({
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
                       fontSize: { xs: "12px", sm: "13px" },
                       mt: 0.3,
@@ -546,7 +548,7 @@ export default function CustomerOrdersCard({
             {hiddenCount > 0 && (
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#8C7A70",
                   fontSize: "13px",
                   fontWeight: 600,
@@ -576,7 +578,7 @@ export default function CustomerOrdersCard({
         >
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: "11px",
               letterSpacing: "1.2px",
@@ -590,7 +592,7 @@ export default function CustomerOrdersCard({
 
           <Typography
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "22px", sm: "28px" },
@@ -674,7 +676,7 @@ export default function CustomerOrdersCard({
                 }
               }}
               sx={{
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 bgcolor: "#FFF0E6",
                 borderColor: "#FFE0D0",
                 borderStyle: "solid",
@@ -682,9 +684,9 @@ export default function CustomerOrdersCard({
                 borderRadius: "10px",
                 p: 0.7,
                 "&:hover": {
-                  bgcolor: "#C84B16",
+                  bgcolor: COLORS.PRIMARY,
                   color: "white",
-                  borderColor: "#C84B16",
+                  borderColor: COLORS.PRIMARY,
                 },
               }}
             >
@@ -709,14 +711,14 @@ export default function CustomerOrdersCard({
               borderRadius: "10px",
               px: { xs: 1.2, sm: 1.8 },
               py: 0.6,
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               fontSize: { xs: "12px", sm: "13px" },
               whiteSpace: "nowrap",
               textTransform: "none",
               "&:hover": {
-                borderColor: "#FF6200",
-                color: "#FF6200",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
                 bgcolor: "white",
               },
             }}
@@ -746,7 +748,7 @@ export default function CustomerOrdersCard({
                 borderRadius: "10px",
                 px: { xs: 1.5, sm: 2 },
                 py: 0.6,
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 fontSize: { xs: "12px", sm: "13px" },
                 whiteSpace: "nowrap",
@@ -767,12 +769,12 @@ export default function CustomerOrdersCard({
               variant="contained"
               sx={{
                 flex: { xs: 1, sm: "none" },
-                bgcolor: "#C84B16",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 borderRadius: "10px",
                 px: { xs: 1.5, sm: 2 },
                 py: 0.6,
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 fontSize: { xs: "12px", sm: "13px" },
                 whiteSpace: "nowrap",

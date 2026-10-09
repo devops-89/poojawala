@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Box, Typography } from "@mui/material";
@@ -20,7 +22,7 @@ export default function ProductImageUpload({
     <Box>
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 1,
           color: "#1e293b",
@@ -41,7 +43,7 @@ export default function ProductImageUpload({
           py: 1.5,
           cursor: "pointer",
           transition: "all 0.2s",
-          "&:hover": { borderColor: "#FF6200", bgcolor: "#fff7ed" },
+          "&:hover": { borderColor: COLORS.PRIMARY, bgcolor: "#fff7ed" },
         }}
       >
         <input type="file" hidden accept="image/*" onChange={onImageChange} />
@@ -93,7 +95,7 @@ export default function ProductImageUpload({
               width: "100%",
             }}
           >
-            <CloudUploadIcon sx={{ color: "#FF6200", fontSize: 24 }} />
+            <CloudUploadIcon sx={{ color: COLORS.PRIMARY, fontSize: 24 }} />
             <Typography sx={{ color: "#64748b", fontSize: "15px" }}>
               Click to upload product image
             </Typography>

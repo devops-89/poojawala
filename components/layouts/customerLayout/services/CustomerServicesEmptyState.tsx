@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import LocationOffIcon from "@mui/icons-material/LocationOff";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
@@ -56,12 +58,12 @@ export default function CustomerServicesEmptyState({
           mb: 2,
         }}
       >
-        <LocationOffIcon sx={{ fontSize: 36, color: "#FF6200" }} />
+        <LocationOffIcon sx={{ fontSize: 36, color: COLORS.PRIMARY }} />
       </Box>
       <Typography
         variant="h6"
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           fontWeight: 800,
           color: "#1A1A1A",
           mb: 1,
@@ -71,7 +73,7 @@ export default function CustomerServicesEmptyState({
       </Typography>
       <Typography
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.PRIMARY,
           color: "#666",
           fontSize: "14px",
           lineHeight: 1.6,
@@ -86,14 +88,14 @@ export default function CustomerServicesEmptyState({
         variant="outlined"
         onClick={onReset}
         sx={{
-          borderColor: "#FF6200",
-          color: "#FF6200",
+          borderColor: COLORS.PRIMARY,
+          color: COLORS.PRIMARY,
           borderRadius: "30px",
           textTransform: "none",
           fontWeight: 700,
           px: 3,
           "&:hover": {
-            borderColor: "#F05A00",
+            borderColor: COLORS.PRIMARY_DARK,
             bgcolor: "#FFF0E6",
           },
         }}

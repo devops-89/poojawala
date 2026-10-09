@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -34,10 +36,10 @@ export default function ServicePlanCard({
     ? {
         boxBg: "#fffbf7",
         boxBorder: "#fed7aa",
-        badgeBg: "#FF6200",
-        priceColor: "#FF6200",
+        badgeBg: COLORS.PRIMARY,
+        priceColor: COLORS.PRIMARY,
         dividerBorder: "#ffedd5",
-        featureIconColor: "#FF6200",
+        featureIconColor: COLORS.PRIMARY,
         featureChipBorder: "#fdba74",
         featureChipColor: "#9a3412",
         carryIconColor: "#c2410c",
@@ -96,7 +98,7 @@ export default function ServicePlanCard({
             sx={{
               fontWeight: 800,
               color: "#1e293b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
             {planTitle}
@@ -107,7 +109,7 @@ export default function ServicePlanCard({
           sx={{
             fontWeight: 800,
             color: themeConfig.priceColor,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           ₹{price}

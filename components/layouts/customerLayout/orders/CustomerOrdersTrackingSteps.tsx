@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React from "react";
 import { Box, Grid, Typography } from "@mui/material";
 
@@ -56,11 +58,11 @@ export default function CustomerOrdersTrackingSteps() {
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 fontSize: { xs: "11px", sm: "12px" },
                 letterSpacing: "1.5px",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 textTransform: "uppercase",
                 mb: 1.2,
               }}
@@ -71,7 +73,7 @@ export default function CustomerOrdersTrackingSteps() {
             <Typography
               variant="h3"
               sx={{
-                fontFamily: '"Georgia", "Times New Roman", serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#2C1810",
                 fontSize: { xs: "24px", sm: "36px", md: "42px" },
@@ -93,7 +95,7 @@ export default function CustomerOrdersTrackingSteps() {
 
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: { xs: "13.5px", sm: "15px" },
                 lineHeight: 1.6,
@@ -124,11 +126,11 @@ export default function CustomerOrdersTrackingSteps() {
                       height: { xs: 34, sm: 38 },
                       borderRadius: "50%",
                       bgcolor: "#FCECE0",
-                      color: "#C84B16",
+                      color: COLORS.PRIMARY,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 800,
                       fontSize: { xs: "13.5px", sm: "15px" },
                       flexShrink: 0,
@@ -142,7 +144,7 @@ export default function CustomerOrdersTrackingSteps() {
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 800,
                         color: "#2C1810",
                         fontSize: { xs: "14.5px", sm: "16px" },
@@ -154,7 +156,7 @@ export default function CustomerOrdersTrackingSteps() {
 
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#64534A",
                         fontSize: { xs: "13px", sm: "14px" },
                         lineHeight: 1.4,

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import CategoryIcon from "@mui/icons-material/Category";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -53,7 +55,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
               p: 1.5,
               bgcolor: "#FFF0E6",
               borderRadius: "12px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -70,7 +72,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
                 fontWeight: 800,
                 color: "#1e293b",
                 fontSize: "1.1rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {categoryName}
@@ -95,7 +97,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
               p: 1.5,
               bgcolor: "#FFF0E6",
               borderRadius: "12px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -112,7 +114,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
                 fontWeight: 800,
                 color: "#1e293b",
                 fontSize: "1.25rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               ₹{price}
@@ -137,7 +139,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
               p: 1.5,
               bgcolor: "#FFF0E6",
               borderRadius: "12px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -154,7 +156,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
                 fontWeight: 800,
                 color: "#1e293b",
                 fontSize: "1.1rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {pricingUnit}
@@ -179,7 +181,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
               p: 1.5,
               bgcolor: "#FFF0E6",
               borderRadius: "12px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -196,7 +198,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
                 fontWeight: 800,
                 color: "#1e293b",
                 fontSize: "1.1rem",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {product.quantity ?? 0}
@@ -215,7 +217,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
               p: 1,
               bgcolor: "#fff7ed",
               borderRadius: "8px",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
               display: "flex",
             }}
           >
@@ -224,7 +226,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
           <Typography
             variant="h6"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
             }}
@@ -234,7 +236,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
         </Box>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#475569",
             fontSize: "1.05rem",
             lineHeight: 1.7,

@@ -15,6 +15,9 @@ import React, { useEffect, useMemo } from "react";
 import AddressLocationButton from "@/components/widgets/addressModal/AddressLocationButton";
 import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPreview";
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
 
 export interface SignUpStep2AddressProps {
   isFetchingLocation?: boolean;
@@ -25,12 +28,12 @@ export interface SignUpStep2AddressProps {
 
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    fontFamily: '"DM Sans", sans-serif',
+    fontFamily: FONTS.PRIMARY,
     borderRadius: "10px",
     fontSize: "0.875rem",
   },
   "& .MuiInputLabel-root": {
-    fontFamily: '"DM Sans", sans-serif',
+    fontFamily: FONTS.PRIMARY,
     fontSize: "0.875rem",
   },
   "& .MuiFormHelperText-root": {
@@ -119,7 +122,7 @@ export default function SignUpStep2Address({
       >
         <Typography
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 700,
             fontSize: "0.95rem",
             color: "#1e293b",
@@ -142,7 +145,17 @@ export default function SignUpStep2Address({
             size="small"
             label="Pincode *"
             value={addressData.pincode}
-            onChange={(e) => handlePincodeChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (
+                !/\d/.test(e.key) &&
+                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key) &&
+                !e.ctrlKey &&
+                !e.metaKey
+              ) {
+                e.preventDefault();
+              }
+            }}
+            onChange={(e) => handlePincodeChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
             slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
             variant="outlined"
             error={touched.pincode && Boolean(errors.pincode)}
@@ -199,9 +212,11 @@ export default function SignUpStep2Address({
             size="small"
             label="City *"
             value={addressData.city}
+            onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) => {
-              setAddressData((prev) => ({ ...prev, city: e.target.value }));
-              setFieldValue("city", e.target.value);
+              const cleanVal = sanitizeLettersOnly(e.target.value);
+              setAddressData((prev) => ({ ...prev, city: cleanVal }));
+              setFieldValue("city", cleanVal);
             }}
             variant="outlined"
             error={touched.city && Boolean(errors.city)}
@@ -216,9 +231,11 @@ export default function SignUpStep2Address({
             size="small"
             label="State *"
             value={addressData.state}
+            onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) => {
-              setAddressData((prev) => ({ ...prev, state: e.target.value }));
-              setFieldValue("state", e.target.value);
+              const cleanVal = sanitizeLettersOnly(e.target.value);
+              setAddressData((prev) => ({ ...prev, state: cleanVal }));
+              setFieldValue("state", cleanVal);
             }}
             variant="outlined"
             error={touched.state && Boolean(errors.state)}
@@ -237,15 +254,15 @@ export default function SignUpStep2Address({
                 size="small"
                 sx={{
                   py: 0.25,
-                  color: "#FF6200",
-                  "&.Mui-checked": { color: "#FF6200" },
+                  color: COLORS.PRIMARY,
+                  "&.Mui-checked": { color: COLORS.PRIMARY },
                 }}
               />
             }
             label={
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontSize: "0.825rem",
                 }}
               >
@@ -278,14 +295,14 @@ export default function SignUpStep2Address({
               borderRadius: "24px",
               borderColor: "#FFE0D0",
               color: "#475569",
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 600,
               fontSize: "14px",
               textTransform: "none",
               "&:hover": {
                 bgcolor: "#FFF0E6",
-                color: "#FF6200",
-                borderColor: "#FF6200",
+                color: COLORS.PRIMARY,
+                borderColor: COLORS.PRIMARY,
               },
             }}
           >
@@ -300,7 +317,7 @@ export default function SignUpStep2Address({
             disabled={isSubmitting}
             variant="contained"
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               py: 1,
               borderRadius: "24px",
@@ -309,7 +326,7 @@ export default function SignUpStep2Address({
               fontSize: "15px",
               boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
               "&:hover": {
-                background: "#E65800",
+                background: COLORS.PRIMARY_DARK,
                 boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
               },
             }}

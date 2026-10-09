@@ -12,6 +12,8 @@ import React, { useEffect, useMemo } from "react";
 import AddressLocationButton from "@/components/widgets/addressModal/AddressLocationButton";
 import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPreview";
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface Step5ServiceAreaProps {
   formik: any;
@@ -99,9 +101,9 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
         <Typography
           variant="h6"
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 700,
-            color: "#1e293b",
+            color: COLORS.SLATE_DARK,
           }}
         >
           Define Primary Service Location & Radius
@@ -252,10 +254,10 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
           >
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 fontSize: "0.95rem",
-                color: "#1e293b",
+                color: COLORS.SLATE_DARK,
                 mb: 0.5,
               }}
             >
@@ -280,7 +282,7 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
               max={100}
               valueLabelDisplay="auto"
               sx={{
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 "& .MuiSlider-thumb": { width: 22, height: 22 },
               }}
             />

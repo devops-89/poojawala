@@ -1,4 +1,5 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Box, Typography } from "@mui/material";
@@ -17,7 +18,7 @@ export default function ServiceIconUploadField({
     <Box>
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 1,
           color: "#1e293b",

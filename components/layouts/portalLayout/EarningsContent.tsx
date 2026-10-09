@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import { getPaymentsAPI, getPayoutStatsAPI } from '@/api/bookingControllers';
@@ -134,9 +136,9 @@ function TransactionsTable() {
           onChange={(e, val) => { setStatusTab(val); setPage(1); }} 
           sx={{ 
             minHeight: '48px',
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontFamily: 'var(--font-outfit), sans-serif', color: '#64748b', minHeight: '48px' },
+            '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontFamily: FONTS.OUTFIT, color: '#64748b', minHeight: '48px' },
             '& .Mui-selected': { color: '#FF6200 !important' },
-            '& .MuiTabs-indicator': { backgroundColor: '#FF6200' }
+            '& .MuiTabs-indicator': { backgroundColor: COLORS.PRIMARY }
           }}
         >
           <Tab label="All" value="ALL" />
@@ -240,7 +242,7 @@ function TransactionsTable() {
                   page={page}
                   onChange={(e, v) => setPage(v)}
                   sx={{ 
-                    '& .MuiPaginationItem-root': { fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600 },
+                    '& .MuiPaginationItem-root': { fontFamily: FONTS.OUTFIT, fontWeight: 600 },
                     '& .Mui-selected': { bgcolor: '#FF6200 !important', color: 'white' }
                   }}
                 />
@@ -271,7 +273,7 @@ export default function EarningsContent() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
             }}
@@ -279,7 +281,7 @@ export default function EarningsContent() {
             Earnings & Payouts
           </Typography>
           <Typography
-            sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#64748b", mt: 0.5 }}
+            sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", mt: 0.5 }}
           >
             Track your completed booking payouts and transaction history.
           </Typography>

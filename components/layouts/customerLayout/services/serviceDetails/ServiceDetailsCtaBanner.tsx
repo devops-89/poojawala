@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
@@ -75,7 +77,7 @@ export default function ServiceDetailsCtaBanner({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#FFFBF7",
               fontSize: { xs: "28px", sm: "36px", md: "40px" },
@@ -88,7 +90,7 @@ export default function ServiceDetailsCtaBanner({
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#D5C4B9",
               fontSize: "15px",
               lineHeight: 1.7,
@@ -107,7 +109,7 @@ export default function ServiceDetailsCtaBanner({
             <Box>
               <Typography
                 sx={{
-                  fontFamily: '"Georgia", "Times New Roman", serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   fontSize: { xs: "24px", sm: "28px" },
                   color: "#FFFBF7",
@@ -134,7 +136,7 @@ export default function ServiceDetailsCtaBanner({
             <Box>
               <Typography
                 sx={{
-                  fontFamily: '"Georgia", "Times New Roman", serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   fontSize: { xs: "24px", sm: "28px" },
                   color: "#FFFBF7",
@@ -161,7 +163,7 @@ export default function ServiceDetailsCtaBanner({
             <Box>
               <Typography
                 sx={{
-                  fontFamily: '"Georgia", "Times New Roman", serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
                   fontSize: { xs: "24px", sm: "28px" },
                   color: "#FFFBF7",
@@ -203,7 +205,7 @@ export default function ServiceDetailsCtaBanner({
             startIcon={<CalendarMonthIcon />}
             sx={{
               width: { xs: "100%", sm: "auto" },
-              bgcolor: "#C84B16",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               px: 4,
               py: 1.8,
@@ -213,7 +215,7 @@ export default function ServiceDetailsCtaBanner({
               textTransform: "none",
               boxShadow: "0 8px 24px rgba(200, 75, 22, 0.4)",
               "&:hover": {
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 boxShadow: "0 10px 28px rgba(200, 75, 22, 0.5)",
               },
             }}
@@ -223,7 +225,7 @@ export default function ServiceDetailsCtaBanner({
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontSize: "12px",
               color: "#A39288",
               mt: 2,

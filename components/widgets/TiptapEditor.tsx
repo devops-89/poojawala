@@ -16,6 +16,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
@@ -123,10 +125,10 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
       {label && (
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT_ONLY,
             fontWeight: 700,
             fontSize: "0.95rem",
-            color: "#1e293b",
+            color: COLORS.SLATE_DARK,
             mb: 1,
           }}
         >
@@ -142,7 +144,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
           overflow: "hidden",
           transition: "border-color 0.2s ease",
           "&:focus-within": {
-            borderColor: error ? "#ef4444" : "#FF6200",
+            borderColor: error ? "#ef4444" : COLORS.PRIMARY,
             boxShadow: error
               ? "0 0 0 3px rgba(239, 68, 68, 0.15)"
               : "0 0 0 3px rgba(255, 98, 0, 0.15)",
@@ -168,7 +170,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleBold().run()}
               sx={{
                 bgcolor: editor.isActive("bold") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("bold") ? "#FF6200" : "#475569",
+                color: editor.isActive("bold") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -183,7 +185,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleItalic().run()}
               sx={{
                 bgcolor: editor.isActive("italic") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("italic") ? "#FF6200" : "#475569",
+                color: editor.isActive("italic") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -198,7 +200,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleUnderline().run()}
               sx={{
                 bgcolor: editor.isActive("underline") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("underline") ? "#FF6200" : "#475569",
+                color: editor.isActive("underline") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -215,7 +217,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
               sx={{
                 bgcolor: editor.isActive("heading", { level: 1 }) ? "#FFE0D0" : "transparent",
-                color: editor.isActive("heading", { level: 1 }) ? "#FF6200" : "#475569",
+                color: editor.isActive("heading", { level: 1 }) ? COLORS.PRIMARY : "#475569",
                 fontWeight: "bold",
                 fontSize: "13px",
                 px: 1,
@@ -232,7 +234,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
               sx={{
                 bgcolor: editor.isActive("heading", { level: 2 }) ? "#FFE0D0" : "transparent",
-                color: editor.isActive("heading", { level: 2 }) ? "#FF6200" : "#475569",
+                color: editor.isActive("heading", { level: 2 }) ? COLORS.PRIMARY : "#475569",
                 fontWeight: "bold",
                 fontSize: "13px",
                 px: 1,
@@ -249,7 +251,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
               sx={{
                 bgcolor: editor.isActive("heading", { level: 3 }) ? "#FFE0D0" : "transparent",
-                color: editor.isActive("heading", { level: 3 }) ? "#FF6200" : "#475569",
+                color: editor.isActive("heading", { level: 3 }) ? COLORS.PRIMARY : "#475569",
                 fontWeight: "bold",
                 fontSize: "13px",
                 px: 1,
@@ -269,7 +271,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleBulletList().run()}
               sx={{
                 bgcolor: editor.isActive("bulletList") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("bulletList") ? "#FF6200" : "#475569",
+                color: editor.isActive("bulletList") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -284,7 +286,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
               sx={{
                 bgcolor: editor.isActive("orderedList") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("orderedList") ? "#FF6200" : "#475569",
+                color: editor.isActive("orderedList") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -299,7 +301,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
               sx={{
                 bgcolor: editor.isActive("blockquote") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("blockquote") ? "#FF6200" : "#475569",
+                color: editor.isActive("blockquote") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -314,7 +316,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().toggleCode().run()}
               sx={{
                 bgcolor: editor.isActive("code") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("code") ? "#FF6200" : "#475569",
+                color: editor.isActive("code") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -331,7 +333,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().setTextAlign("left").run()}
               sx={{
                 bgcolor: editor.isActive({ textAlign: "left" }) ? "#FFE0D0" : "transparent",
-                color: editor.isActive({ textAlign: "left" }) ? "#FF6200" : "#475569",
+                color: editor.isActive({ textAlign: "left" }) ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -345,7 +347,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().setTextAlign("center").run()}
               sx={{
                 bgcolor: editor.isActive({ textAlign: "center" }) ? "#FFE0D0" : "transparent",
-                color: editor.isActive({ textAlign: "center" }) ? "#FF6200" : "#475569",
+                color: editor.isActive({ textAlign: "center" }) ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -359,7 +361,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={() => editor.chain().focus().setTextAlign("right").run()}
               sx={{
                 bgcolor: editor.isActive({ textAlign: "right" }) ? "#FFE0D0" : "transparent",
-                color: editor.isActive({ textAlign: "right" }) ? "#FF6200" : "#475569",
+                color: editor.isActive({ textAlign: "right" }) ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -376,7 +378,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               onClick={setLink}
               sx={{
                 bgcolor: editor.isActive("link") ? "#FFE0D0" : "transparent",
-                color: editor.isActive("link") ? "#FF6200" : "#475569",
+                color: editor.isActive("link") ? COLORS.PRIMARY : "#475569",
                 "&:hover": { bgcolor: "#FFF0E6" },
               }}
             >
@@ -445,10 +447,10 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
             "& .tiptap": {
               minHeight: typeof minHeight === "number" ? `${minHeight - 32}px` : "200px",
               outline: "none",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT_ONLY,
               fontSize: "1rem",
               lineHeight: 1.7,
-              color: "#1e293b",
+              color: COLORS.SLATE_DARK,
               "& p.is-editor-empty:first-child::before": {
                 color: "#94a3b8",
                 content: "attr(data-placeholder)",
@@ -466,14 +468,14 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               "& h2": {
                 fontSize: "1.5rem",
                 fontWeight: 700,
-                color: "#FF6200",
+                color: COLORS.BRAND_ORANGE,
                 mt: 2,
                 mb: 1,
               },
               "& h3": {
                 fontSize: "1.25rem",
                 fontWeight: 700,
-                color: "#1e293b",
+                color: COLORS.SLATE_DARK,
                 mt: 1.5,
                 mb: 0.75,
               },
@@ -485,7 +487,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
                 mb: 0.5,
               },
               "& blockquote": {
-                borderLeft: "4px solid #FF6200",
+                borderLeft: `4px solid ${COLORS.BRAND_ORANGE}`,
                 pl: 2,
                 ml: 0,
                 my: 2,
@@ -501,7 +503,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
                 px: 0.8,
                 py: 0.2,
                 borderRadius: "4px",
-                fontFamily: "monospace",
+                fontFamily: FONTS.MONOSPACE,
                 fontSize: "0.9em",
               },
             },
@@ -515,7 +517,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
       {error && helperText && (
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT_ONLY,
             fontSize: "0.75rem",
             color: "#ef4444",
             mt: 0.75,

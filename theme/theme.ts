@@ -1,52 +1,54 @@
 import { createTheme } from '@mui/material/styles';
+import { COLORS } from '@/utils/enums';
+import { FONTS } from '@/utils/fonts';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FF6200',
+      main: COLORS.BRAND_ORANGE,
     },
     background: {
-      default: '#FFFBF5',
+      default: COLORS.BG_CREAM,
     }
   },
   typography: {
-    fontFamily: '"DM Sans", var(--font-dm-sans), var(--font-outfit), sans-serif',
+    fontFamily: FONTS.THEME_DEFAULT,
     h1: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       fontWeight: 700,
       letterSpacing: '-0.04em',
     },
     h2: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       fontWeight: 700,
       letterSpacing: '-0.04em',
     },
     h3: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       fontWeight: 700,
       letterSpacing: '-0.02em',
     },
     h4: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       fontWeight: 700,
       letterSpacing: '-0.02em',
     },
     h5: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       fontWeight: 700,
     },
     h6: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       fontWeight: 700,
     },
     body1: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
     },
     body2: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
     },
     button: {
-      fontFamily: '"DM Sans", sans-serif',
+      fontFamily: FONTS.PRIMARY,
       textTransform: 'none',
     },
   },
@@ -88,10 +90,10 @@ const theme = createTheme({
         {
           props: { variant: 'contained', color: 'primary' },
           style: {
-            background: '#FF6200',
-            color: '#FFFFFF',
+            background: COLORS.BRAND_ORANGE,
+            color: COLORS.WHITE,
             '&:hover': {
-              boxShadow: '0 8px 24px rgba(255, 98, 0, 0.25)',
+              boxShadow: `0 8px 24px ${COLORS.PRIMARY_SHADOW}`,
               transform: 'translateY(-2px)',
             },
             transition: 'all 0.3s ease',
@@ -100,11 +102,11 @@ const theme = createTheme({
         {
           props: { variant: 'outlined', color: 'primary' },
           style: {
-            borderColor: 'rgba(255, 98, 0, 0.3)',
-            color: '#FF6200',
+            borderColor: COLORS.LIGHT_BORDER,
+            color: COLORS.BRAND_ORANGE,
             '&:hover': {
-              borderColor: '#FF6200',
-              background: 'rgba(255, 98, 0, 0.05)',
+              borderColor: COLORS.BRAND_ORANGE,
+              background: COLORS.LIGHT_BG_HOVER,
             }
           }
         }

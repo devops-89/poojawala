@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import React from "react";
@@ -118,7 +120,7 @@ export default function ServiceSpecsPricingCard({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
               mb: 3,
@@ -132,7 +134,7 @@ export default function ServiceSpecsPricingCard({
               sx={{
                 width: 8,
                 height: 24,
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 borderRadius: 4,
                 display: "inline-block",
               }}

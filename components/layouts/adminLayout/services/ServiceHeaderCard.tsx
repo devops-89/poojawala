@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
@@ -73,7 +75,7 @@ export default function ServiceHeaderCard({
           <Typography
             variant="h3"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
               fontSize: { xs: "1.75rem", md: "2.25rem" },
@@ -98,7 +100,7 @@ export default function ServiceHeaderCard({
                 bgcolor: service.isActive ? "#10b981" : "#f1f5f9",
                 color: service.isActive ? "#ffffff" : "#94a3b8",
                 fontWeight: 700,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 borderRadius: "8px",
                 boxShadow: service.isActive
                   ? "0 4px 14px 0 rgba(16, 185, 129, 0.39)"
@@ -116,10 +118,10 @@ export default function ServiceHeaderCard({
                 }
                 label="Temple Service"
                 sx={{
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "#ffffff",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                   boxShadow: "0 4px 14px 0 rgba(255, 98, 0, 0.35)",
                 }}
@@ -135,7 +137,7 @@ export default function ServiceHeaderCard({
                   bgcolor: service.isUpcomingFestival ? "#8b5cf6" : "#f1f5f9",
                   color: service.isUpcomingFestival ? "#ffffff" : "#64748b",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                   boxShadow: service.isUpcomingFestival
                     ? "0 4px 14px 0 rgba(139, 92, 246, 0.39)"
@@ -160,7 +162,7 @@ export default function ServiceHeaderCard({
                   bgcolor: "#fef3c7",
                   color: "#b45309",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                   border: "1px solid #fde68a",
                   transition: "all 0.2s",
@@ -174,15 +176,15 @@ export default function ServiceHeaderCard({
             <Chip
               icon={
                 <AccessTimeIcon
-                  style={{ color: "#FF6200", fontSize: "1.1rem" }}
+                  style={{ color: COLORS.PRIMARY, fontSize: "1.1rem" }}
                 />
               }
               label={`${service.durationMinutes} Mins`}
               sx={{
                 bgcolor: "#FFF0E6",
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 fontWeight: 700,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 borderRadius: "8px",
                 border: "1px solid #ffedd5",
               }}
@@ -195,7 +197,7 @@ export default function ServiceHeaderCard({
                   bgcolor: "#e0f2fe",
                   color: "#0369a1",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                   border: "1px solid #bae6fd",
                 }}
@@ -210,7 +212,7 @@ export default function ServiceHeaderCard({
                   bgcolor: "#8b5cf6",
                   color: "#ffffff",
                   fontWeight: 700,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                   boxShadow: "0 4px 14px 0 rgba(139, 92, 246, 0.39)",
                 }}
@@ -221,7 +223,7 @@ export default function ServiceHeaderCard({
           {languagesText && (
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 color: "#64748b",
                 fontSize: "0.95rem",
                 fontWeight: 600,
@@ -240,7 +242,7 @@ export default function ServiceHeaderCard({
           {templeName && (
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 color: "#64748b",
                 fontSize: "0.95rem",
                 fontWeight: 600,
@@ -257,7 +259,7 @@ export default function ServiceHeaderCard({
                 <NextLink
                   href={`/admin/temples/${templeId}`}
                   style={{
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     textDecoration: "none",
                     fontWeight: 700,
                   }}
@@ -267,7 +269,7 @@ export default function ServiceHeaderCard({
               ) : (
                 <Box
                   component="span"
-                  sx={{ color: "#FF6200", fontWeight: 700 }}
+                  sx={{ color: COLORS.PRIMARY, fontWeight: 700 }}
                 >
                   {templeName}
                 </Box>

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { getAllOrdersAPI, updateOrderStatusAPI } from "@/api/orderControllers";
 import AdminDataTable, {
@@ -243,8 +245,8 @@ export default function AdminOrdersContent() {
         <Typography
           sx={{
             fontWeight: 700,
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
+            color: COLORS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           ORD-{order.id || order.orderId}
@@ -268,7 +270,7 @@ export default function AdminOrdersContent() {
               sx={{
                 fontWeight: 700,
                 color: "#1e293b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {name}
@@ -277,7 +279,7 @@ export default function AdminOrdersContent() {
               variant="body2"
               sx={{
                 color: "#64748b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "0.8rem",
               }}
             >
@@ -299,7 +301,7 @@ export default function AdminOrdersContent() {
           <Typography
             sx={{
               color: "#1e293b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               fontSize: "0.9rem",
             }}
@@ -318,7 +320,7 @@ export default function AdminOrdersContent() {
         <Typography
           sx={{
             color: "#64748b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontSize: "0.9rem",
           }}
         >
@@ -345,7 +347,7 @@ export default function AdminOrdersContent() {
           sx={{
             fontWeight: 700,
             color: "#1e293b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           ₹{order.totalAmount || order.amount || 0}
@@ -372,7 +374,7 @@ export default function AdminOrdersContent() {
               color: theme.text,
               fontWeight: 700,
               borderRadius: "6px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
             }}
           />
         );
@@ -420,9 +422,9 @@ export default function AdminOrdersContent() {
             router.push(`/admin/orders/${order.id || order.orderId}`)
           }
           sx={{
-            color: "#FF6200",
+            color: COLORS.PRIMARY,
             bgcolor: "#fff7ed",
-            "&:hover": { color: "#E65800", bgcolor: "#ffedd5" },
+            "&:hover": { color: COLORS.PRIMARY_DARK, bgcolor: "#ffedd5" },
           }}
         >
           <VisibilityIcon fontSize="small" />

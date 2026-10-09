@@ -58,7 +58,7 @@ export const validationSchema = [
       .required('Full Name is required'),
     mobileNumber: yup
       .string()
-      .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+      .matches(/^[6-9][0-9]{9}$/, 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9')
       .required('Mobile Number is required'),
     email: yup
       .string()

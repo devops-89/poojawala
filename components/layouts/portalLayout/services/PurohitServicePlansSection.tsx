@@ -2,6 +2,8 @@
 
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { Box, Chip, Grid, Paper, Typography } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export interface PurohitServicePlansSectionProps {
   service: any;
@@ -80,9 +82,9 @@ export default function PurohitServicePlansSection({
         <Typography
           variant="h5"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
-            color: "#1e293b",
+            color: COLORS.SLATE_DARK,
             display: "flex",
             alignItems: "center",
             gap: 1.5,
@@ -93,7 +95,7 @@ export default function PurohitServicePlansSection({
             sx={{
               width: 8,
               height: 28,
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               borderRadius: 4,
               display: "inline-block",
             }}
@@ -102,8 +104,8 @@ export default function PurohitServicePlansSection({
         </Typography>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
-            color: "#64748b",
+            fontFamily: FONTS.OUTFIT,
+            color: COLORS.SLATE_MUTED,
             fontSize: "0.95rem",
             mt: 0.5,
             ml: 2.5,
@@ -145,7 +147,7 @@ export default function PurohitServicePlansSection({
                   label="BASIC PLAN"
                   size="small"
                   sx={{
-                    bgcolor: "#FF6200",
+                    bgcolor: COLORS.PRIMARY,
                     color: "white",
                     fontWeight: 800,
                     fontSize: "0.75rem",
@@ -156,8 +158,8 @@ export default function PurohitServicePlansSection({
                   variant="h6"
                   sx={{
                     fontWeight: 800,
-                    color: "#1e293b",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    color: COLORS.SLATE_DARK,
+                    fontFamily: FONTS.OUTFIT,
                   }}
                 >
                   Basic Ritual Package
@@ -167,7 +169,7 @@ export default function PurohitServicePlansSection({
                 <Typography
                   sx={{
                     fontSize: "0.72rem",
-                    color: "#64748b",
+                    color: COLORS.SLATE_MUTED,
                     fontWeight: 700,
                     textTransform: "uppercase",
                     letterSpacing: "0.5px",
@@ -180,7 +182,7 @@ export default function PurohitServicePlansSection({
                   sx={{
                     fontWeight: 800,
                     color: "#16a34a",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                   }}
                 >
                   ₹{Number(basicPayout).toLocaleString("en-IN")}
@@ -193,12 +195,12 @@ export default function PurohitServicePlansSection({
               sx={{
                 fontWeight: 700,
                 fontSize: "0.95rem",
-                color: "#1e293b",
+                color: COLORS.SLATE_DARK,
                 mb: 2,
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               <InventoryIcon sx={{ color: "#c2410c", fontSize: "1.15rem" }} />
@@ -222,13 +224,13 @@ export default function PurohitServicePlansSection({
                           width: 6,
                           height: 6,
                           borderRadius: "50%",
-                          bgcolor: "#FF6200",
+                          bgcolor: COLORS.PRIMARY,
                           flexShrink: 0,
                         }}
                       />
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "0.88rem",
                           fontWeight: 600,
                           color: "#334155",
@@ -298,8 +300,8 @@ export default function PurohitServicePlansSection({
                   variant="h6"
                   sx={{
                     fontWeight: 800,
-                    color: "#1e293b",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    color: COLORS.SLATE_DARK,
+                    fontFamily: FONTS.OUTFIT,
                   }}
                 >
                   Standard Complete Package
@@ -309,7 +311,7 @@ export default function PurohitServicePlansSection({
                 <Typography
                   sx={{
                     fontSize: "0.72rem",
-                    color: "#64748b",
+                    color: COLORS.SLATE_MUTED,
                     fontWeight: 700,
                     textTransform: "uppercase",
                     letterSpacing: "0.5px",
@@ -322,7 +324,7 @@ export default function PurohitServicePlansSection({
                   sx={{
                     fontWeight: 800,
                     color: "#16a34a",
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                   }}
                 >
                   ₹{Number(standardPayout).toLocaleString("en-IN")}
@@ -335,12 +337,12 @@ export default function PurohitServicePlansSection({
               sx={{
                 fontWeight: 700,
                 fontSize: "0.95rem",
-                color: "#1e293b",
+                color: COLORS.SLATE_DARK,
                 mb: 2,
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               <InventoryIcon sx={{ color: "#15803d", fontSize: "1.15rem" }} />
@@ -370,7 +372,7 @@ export default function PurohitServicePlansSection({
                       />
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "0.88rem",
                           fontWeight: 600,
                           color: "#334155",

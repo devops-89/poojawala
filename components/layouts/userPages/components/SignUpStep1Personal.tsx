@@ -12,6 +12,9 @@ import {
 import { Field } from "formik";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import { useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
 
 const today = new Date();
 const fifteenYearsAgo = new Date(
@@ -29,7 +32,7 @@ export interface SignUpStep1PersonalProps {
 
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+    fontFamily: FONTS.OUTFIT,
     borderRadius: "12px",
     fontSize: "0.9rem",
     bgcolor: "#FFFDF9",
@@ -37,11 +40,11 @@ const inputStyles = {
       borderColor: "#FF9100",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#FF6200",
+      borderColor: COLORS.BRAND_ORANGE,
     },
   },
   "& .MuiInputLabel-root": {
-    fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+    fontFamily: FONTS.OUTFIT,
     fontSize: "0.875rem",
   },
   "& .MuiFormHelperText-root": {
@@ -60,13 +63,17 @@ export default function SignUpStep1Personal({
     <Grid container spacing={2.25}>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="firstName">
-          {({ field, meta }: any) => (
+          {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
               label="First Name *"
               variant="outlined"
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                form.setFieldValue("firstName", sanitizeLettersOnly(e.target.value));
+              }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
               sx={inputStyles}
@@ -77,13 +84,17 @@ export default function SignUpStep1Personal({
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="lastName">
-          {({ field, meta }: any) => (
+          {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
               label="Last Name *"
               variant="outlined"
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                form.setFieldValue("lastName", sanitizeLettersOnly(e.target.value));
+              }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
               sx={inputStyles}
@@ -142,8 +153,17 @@ export default function SignUpStep1Personal({
                   }
                 }
               }}
-              error={meta.touched && !!meta.error}
-              helperText={meta.touched && meta.error}
+              error={
+                (meta.touched || Boolean(field.value)) &&
+                (Boolean(meta.error) || (field.value && field.value.length > 0 && !/^[6-9]/.test(field.value)))
+              }
+              helperText={
+                field.value && field.value.length > 0 && !/^[6-9]/.test(field.value)
+                  ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                  : meta.touched
+                  ? meta.error
+                  : undefined
+              }
               sx={{
                 ...inputStyles,
                 "& .MuiTelInput-IconButton": {
@@ -184,13 +204,17 @@ export default function SignUpStep1Personal({
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="birthPlace">
-          {({ field, meta }: any) => (
+          {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
               label="Place of Birth *"
               variant="outlined"
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                form.setFieldValue("birthPlace", sanitizeLettersOnly(e.target.value));
+              }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
               sx={inputStyles}
@@ -201,13 +225,17 @@ export default function SignUpStep1Personal({
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="rashi">
-          {({ field, meta }: any) => (
+          {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
               label="Rashi"
               variant="outlined"
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                form.setFieldValue("rashi", sanitizeLettersOnly(e.target.value));
+              }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
               sx={inputStyles}
@@ -218,13 +246,17 @@ export default function SignUpStep1Personal({
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="gotra">
-          {({ field, meta }: any) => (
+          {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
               label="Gotra"
               variant="outlined"
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                form.setFieldValue("gotra", sanitizeLettersOnly(e.target.value));
+              }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
               sx={inputStyles}

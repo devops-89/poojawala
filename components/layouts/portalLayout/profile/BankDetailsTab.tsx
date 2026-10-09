@@ -15,6 +15,8 @@ import {
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface BankDetailsTabProps {
   bankAccounts: any[];
@@ -44,10 +46,10 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
         <Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               fontSize: "22px",
-              color: "#1A1A1A",
+              color: COLORS.DARK,
               mb: 0.5,
             }}
           >
@@ -55,8 +57,8 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
-              color: "#666",
+              fontFamily: FONTS.OUTFIT,
+              color: COLORS.MUTED_TEXT,
               fontSize: "14px",
             }}
           >
@@ -67,16 +69,16 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
           variant="outlined"
           onClick={onAddNew}
           sx={{
-            borderColor: "#FF6200",
-            color: "#FF6200",
+            borderColor: COLORS.PRIMARY,
+            color: COLORS.PRIMARY,
             borderRadius: "10px",
             textTransform: "none",
             fontWeight: 700,
             px: 2.5,
             py: 0.8,
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             "&:hover": {
-              borderColor: "#E65800",
+              borderColor: COLORS.PRIMARY_DARK,
               bgcolor: "#FFF8F2",
             },
           }}
@@ -90,7 +92,7 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
           variant="outlined"
           sx={{ borderRadius: "14px", p: 4, textAlign: "center", borderStyle: "dashed" }}
         >
-          <Typography sx={{ fontFamily: "var(--font-outfit), sans-serif", color: "#666" }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT }}>
             No bank accounts added yet. Click "Add Bank Account" to add your payout details.
           </Typography>
         </Card>
@@ -136,13 +138,13 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <AccountBalanceIcon sx={{ color: "#FF6200", fontSize: 20 }} />
+                        <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             fontSize: "16px",
-                            color: "#1A1A1A",
+                            color: COLORS.DARK,
                           }}
                         >
                           {bank.paymentMethod === "UPI"
@@ -189,7 +191,7 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
                     {bank.paymentMethod === "UPI" ? (
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           color: "#64748b",
                           fontSize: "13px",
                           mt: 1,
@@ -201,7 +203,7 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
                       <Box sx={{ mt: 1 }}>
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             color: "#1E293B",
                             fontSize: "14px",
                             fontWeight: 600,
@@ -212,7 +214,7 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
                         </Typography>
                         <Typography
                           sx={{
-                            fontFamily: "var(--font-outfit), sans-serif",
+                            fontFamily: FONTS.OUTFIT,
                             color: "#64748b",
                             fontSize: "13px",
                           }}

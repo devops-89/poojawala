@@ -27,6 +27,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function CustomerCartDrawer() {
   const router = useRouter();
@@ -173,7 +175,7 @@ export default function CustomerCartDrawer() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
             }}
           >
             <ShoppingBagOutlinedIcon />
@@ -182,7 +184,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 color: "#2C1810",
                 fontSize: "18px",
@@ -194,7 +196,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="caption"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: "12px",
               }}
@@ -208,7 +210,7 @@ export default function CustomerCartDrawer() {
           onClick={closeCart}
           sx={{
             color: "#64534A",
-            "&:hover": { bgcolor: "#FAF4EE", color: "#C84B16" },
+            "&:hover": { bgcolor: "#FAF4EE", color: COLORS.PRIMARY },
           }}
         >
           <CloseIcon />
@@ -248,7 +250,7 @@ export default function CustomerCartDrawer() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 mb: 2.5,
               }}
             >
@@ -257,7 +259,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#2C1810",
                 mb: 1,
@@ -267,7 +269,7 @@ export default function CustomerCartDrawer() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64534A",
                 fontSize: "14px",
                 maxWidth: 260,
@@ -281,7 +283,7 @@ export default function CustomerCartDrawer() {
               onClick={handleProceedToBooking}
               variant="contained"
               sx={{
-                bgcolor: "#C84B16",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 borderRadius: "30px",
                 px: 3.5,
@@ -289,7 +291,7 @@ export default function CustomerCartDrawer() {
                 fontWeight: 700,
                 fontSize: "14px",
                 textTransform: "none",
-                "&:hover": { bgcolor: "#FF6200" },
+                "&:hover": { bgcolor: COLORS.PRIMARY },
               }}
             >
               Browse Pooja Samagri
@@ -332,7 +334,7 @@ export default function CustomerCartDrawer() {
                   <Typography
                     variant="subtitle2"
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       color: "#2C1810",
                       fontSize: "15px",
@@ -348,9 +350,9 @@ export default function CustomerCartDrawer() {
 
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
-                      color: "#C84B16",
+                      color: COLORS.PRIMARY,
                       fontSize: "14px",
                       mb: 1,
                     }}
@@ -417,7 +419,7 @@ export default function CustomerCartDrawer() {
                         fontWeight: 700,
                         fontSize: "13px",
                         color: "#2C1810",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                       }}
                     >
                       {item.quantity}
@@ -427,7 +429,7 @@ export default function CustomerCartDrawer() {
                       onClick={() =>
                         handleQuantityChange(item.id, item.quantity + 1)
                       }
-                      sx={{ p: 0.5, color: "#C84B16" }}
+                      sx={{ p: 0.5, color: COLORS.PRIMARY }}
                     >
                       <AddIcon sx={{ fontSize: 16 }} />
                     </IconButton>
@@ -459,7 +461,7 @@ export default function CustomerCartDrawer() {
 
                   <Typography
                     sx={{
-                      fontFamily: '"DM Sans", sans-serif',
+                      fontFamily: FONTS.PRIMARY,
                       fontWeight: 800,
                       color: "#2C1810",
                       fontSize: "16px",
@@ -511,7 +513,7 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
                 color: "#2C1810",
                 fontSize: "18px",
@@ -522,9 +524,9 @@ export default function CustomerCartDrawer() {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 800,
-                color: "#C84B16",
+                color: COLORS.PRIMARY,
                 fontSize: "24px",
               }}
             >
@@ -537,7 +539,7 @@ export default function CustomerCartDrawer() {
             onClick={handleProceedToBooking}
             variant="contained"
             sx={{
-              bgcolor: "#C84B16",
+              bgcolor: COLORS.PRIMARY,
               color: "white",
               py: 1.5,
               borderRadius: "12px",
@@ -546,7 +548,7 @@ export default function CustomerCartDrawer() {
               textTransform: "none",
               boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
               "&:hover": {
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
               },
             }}
@@ -573,7 +575,7 @@ export default function CustomerCartDrawer() {
       >
         <DialogTitle
           sx={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 800,
             color: "#2C1810",
             fontSize: "20px",
@@ -588,7 +590,7 @@ export default function CustomerCartDrawer() {
           <DialogContentText
             component="div"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "14px",
             }}

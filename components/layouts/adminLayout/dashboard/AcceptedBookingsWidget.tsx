@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Skeleton, Box, Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -31,7 +33,7 @@ export default function AcceptedBookingsWidget() {
   return (
     <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6" sx={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, color: '#1A1A1A' }}>
+        <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A' }}>
           Accepted Bookings
         </Typography>
         <Button 
@@ -41,8 +43,8 @@ export default function AcceptedBookingsWidget() {
           sx={{ 
             textTransform: 'none', 
             fontWeight: 700, 
-            fontFamily: 'var(--font-outfit), sans-serif',
-            color: '#FF6200',
+            fontFamily: FONTS.OUTFIT,
+            color: COLORS.PRIMARY,
             '&:hover': { bgcolor: 'rgba(255, 98, 0, 0.05)' }
           }}
         >
@@ -52,7 +54,7 @@ export default function AcceptedBookingsWidget() {
       <TableContainer sx={{ flexGrow: 1 }}>
         <Table>
           <TableHead>
-            <TableRow sx={{ '& th': { borderBottom: '2px solid #eee', fontWeight: 700, color: '#666', fontFamily: 'var(--font-outfit), sans-serif', pb: 1.5 } }}>
+            <TableRow sx={{ '& th': { borderBottom: '2px solid #eee', fontWeight: 700, color: '#666', fontFamily: FONTS.OUTFIT, pb: 1.5 } }}>
               <TableCell>Booking ID</TableCell>
               <TableCell>Details</TableCell>
               <TableCell>Time</TableCell>
@@ -83,7 +85,7 @@ export default function AcceptedBookingsWidget() {
                     onClick={() => router.push(`/admin/bookings/${booking.id}`)}
                     sx={{ 
                       cursor: 'pointer',
-                      '& td': { borderBottom: '1px solid #f5f5f5', fontFamily: 'var(--font-outfit), sans-serif', color: '#1A1A1A', transition: 'all 0.2s' },
+                      '& td': { borderBottom: '1px solid #f5f5f5', fontFamily: FONTS.OUTFIT, color: '#1A1A1A', transition: 'all 0.2s' },
                       '&:hover td': { bgcolor: '#fafafa' }
                     }}
                   >
@@ -111,7 +113,7 @@ export default function AcceptedBookingsWidget() {
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={4} align="center" sx={{ py: 4, color: '#999', fontFamily: 'var(--font-outfit), sans-serif', border: 'none' }}>
+                <TableCell colSpan={4} align="center" sx={{ py: 4, color: '#999', fontFamily: FONTS.OUTFIT, border: 'none' }}>
                   No accepted bookings at this time
                 </TableCell>
               </TableRow>

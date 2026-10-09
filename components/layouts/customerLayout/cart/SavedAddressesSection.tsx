@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import AddIcon from "@mui/icons-material/Add";
 import { Box, Button, Grid, Paper, Skeleton, Typography } from "@mui/material";
 import { CustomerAddress } from "./CustomerCartContent";
@@ -33,7 +35,7 @@ export default function SavedAddressesSection({
         <Box>
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               fontWeight: 800,
               fontSize: "12px",
               letterSpacing: "1.2px",
@@ -47,7 +49,7 @@ export default function SavedAddressesSection({
           <Typography
             variant="h4"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "22px", sm: "26px" },
@@ -61,20 +63,20 @@ export default function SavedAddressesSection({
           onClick={onOpenAddModal}
           startIcon={<AddIcon />}
           sx={{
-            color: "#FF6200",
-            borderColor: "#FF6200",
+            color: COLORS.PRIMARY,
+            borderColor: COLORS.PRIMARY,
             borderStyle: "dashed",
             borderWidth: "1.5px",
             borderRadius: "12px",
             px: 2.5,
             py: 1,
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: FONTS.PRIMARY,
             fontWeight: 700,
             fontSize: "14px",
             textTransform: "none",
             "&:hover": {
               bgcolor: "rgba(255, 98, 0, 0.08)",
-              borderColor: "#FF6200",
+              borderColor: COLORS.PRIMARY,
               borderStyle: "solid",
             },
           }}
@@ -109,7 +111,7 @@ export default function SavedAddressesSection({
             >
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   color: "#64534A",
                   mb: 2,
                 }}
@@ -120,7 +122,7 @@ export default function SavedAddressesSection({
                 onClick={onOpenAddModal}
                 variant="contained"
                 sx={{
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "white",
                   fontWeight: 700,
                   borderRadius: "10px",
@@ -167,9 +169,9 @@ export default function SavedAddressesSection({
                         position: "absolute",
                         top: -12,
                         left: 20,
-                        bgcolor: "#FF6200",
+                        bgcolor: COLORS.PRIMARY,
                         color: "white",
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 800,
                         fontSize: "11px",
                         letterSpacing: "0.8px",
@@ -188,7 +190,7 @@ export default function SavedAddressesSection({
                     <Typography
                       variant="h6"
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontWeight: 800,
                         color: "#2C1810",
                         fontSize: "17px",
@@ -200,7 +202,7 @@ export default function SavedAddressesSection({
 
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         color: "#64534A",
                         fontSize: "14px",
                         lineHeight: 1.5,
@@ -214,7 +216,7 @@ export default function SavedAddressesSection({
                     {(addr.city || addr.state || addr.pincode) && (
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#2C1810",
                           fontWeight: 700,
                           fontSize: "13.5px",
@@ -241,13 +243,13 @@ export default function SavedAddressesSection({
                         sx={{
                           bgcolor: "#FFF0E6",
                           border: "1px solid #FF6200",
-                          color: "#FF6200",
+                          color: COLORS.PRIMARY,
                           px: 2,
                           py: 0.6,
                           borderRadius: "8px",
                           fontSize: "13px",
                           fontWeight: 700,
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                         }}
                       >
                         Selected
@@ -267,12 +269,12 @@ export default function SavedAddressesSection({
                           borderRadius: "8px",
                           fontSize: "13px",
                           fontWeight: 600,
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           textTransform: "none",
                           bgcolor: "white",
                           "&:hover": {
-                            borderColor: "#FF6200",
-                            color: "#FF6200",
+                            borderColor: COLORS.PRIMARY,
+                            color: COLORS.PRIMARY,
                             bgcolor: "#FFF9F5",
                           },
                         }}

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -150,7 +152,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
           >
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 fontSize: "18px",
                 color: "#1A1A1A",
@@ -164,7 +166,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 size="small"
                 sx={{
                   bgcolor: isStandard ? "#F0FDF4" : "#FFF8F5",
-                  color: isStandard ? "#16A34A" : "#FF6200",
+                  color: isStandard ? "#16A34A" : COLORS.PRIMARY,
                   border: isStandard ? "1px solid #BBF7D0" : "1px solid #FFD8C2",
                   fontWeight: 700,
                   fontSize: "11px",
@@ -214,7 +216,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
           </Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: "14px",
             }}
@@ -237,7 +239,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
               size="small"
               onClick={() => onVerifyOtpClick(jobId)}
               sx={{
-                background: "#FF6200",
+                background: COLORS.PRIMARY,
                 color: "white",
                 textTransform: "none",
                 fontWeight: 600,
@@ -388,7 +390,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 600,
                 color: "#333",
@@ -413,7 +415,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 800,
                 color: "#333",
@@ -452,7 +454,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
             </Typography>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 600,
                 color: "#333",
@@ -478,10 +480,10 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
           alternativeLabel
           sx={{
             "& .MuiStepIcon-root.Mui-active": {
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
             },
             "& .MuiStepIcon-root.Mui-completed": {
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
             },
           }}
         >
@@ -492,7 +494,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 <StepLabel>
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 600,
                       fontSize: "12px",
                     }}

@@ -9,6 +9,8 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CloseIcon from '@mui/icons-material/Close';
 import { FormikProps } from 'formik';
 import { documentFields } from '../constants';
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
 
 interface Step4Props {
   formik: FormikProps<any>;
@@ -42,7 +44,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
       <Typography
         variant="h5"
         sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           mb: 3,
         }}
@@ -92,7 +94,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                   transition: 'all 0.3s',
                   position: 'relative',
                   '&:hover': {
-                    borderColor: file ? '#4CAF50' : '#FF6200',
+                    borderColor: file ? '#4CAF50' : COLORS.PRIMARY,
                     bgcolor: file ? '#E8F5E9' : '#FFF8F4',
                   },
                 }}
@@ -161,7 +163,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                     <CloudUploadIcon
                       sx={{
                         fontSize: 44,
-                        color: error ? 'error.main' : '#FF6200',
+                        color: error ? 'error.main' : COLORS.PRIMARY,
                       }}
                     />
                   )}
@@ -170,10 +172,10 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                 {/* Title */}
                 <Typography
                   sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     fontSize: '15px',
-                    color: '#1A1A1A',
+                    color: COLORS.DARK,
                     mb: 0.5,
                   }}
                 >
@@ -184,7 +186,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                 <Typography
                   onClick={() => file && setPreviewFile(file)}
                   sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                     color: file ? '#1976D2' : '#777',
                     fontSize: '12px',
                     mb: 1.5,
@@ -210,9 +212,9 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                   variant={file ? 'outlined' : 'contained'}
                   size="small"
                   sx={{
-                    borderColor: file ? '#4CAF50' : '#FF6200',
+                    borderColor: file ? '#4CAF50' : COLORS.PRIMARY,
                     color: file ? '#2E7D32' : 'white',
-                    background: file ? 'transparent' : '#FF6200',
+                    background: file ? 'transparent' : COLORS.PRIMARY,
                     textTransform: 'none',
                     borderRadius: '30px',
                     px: 3,
@@ -220,8 +222,8 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                     fontSize: '13px',
                     boxShadow: 'none',
                     '&:hover': {
-                      background: file ? '#E8F5E9' : '#F05A00',
-                      borderColor: file ? '#388E3C' : '#F05A00',
+                      background: file ? '#E8F5E9' : COLORS.PRIMARY_DARK,
+                      borderColor: file ? '#388E3C' : COLORS.PRIMARY_DARK,
                       boxShadow: 'none',
                     },
                   }}

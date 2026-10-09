@@ -1,6 +1,10 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
+import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly, extractBackendErrorMessage } from "@/utils/helpers";
 
 import { addPurohitByAdminAPI } from "@/api/userControllers";
+import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Visibility from "@mui/icons-material/Visibility";
@@ -17,7 +21,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { useFormik } from "formik";
+import { FormikProvider, useFormik } from "formik";
 import { MuiTelInput, matchIsValidTel } from "@/components/widgets/MuiTelInput";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
@@ -35,13 +39,26 @@ const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(twentyYearsAgo.getM
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required").trim(),
   lastName: Yup.string().required("Last name is required").trim(),
-  email: Yup.string().email("Invalid email format").nullable(),
+  email: Yup.string()
+    .required("Email is required")
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Invalid email format"
+    ),
   mobileNumber: Yup.string()
     .required("Mobile Number is required")
-    .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
-  dob: Yup.date()
-    .max(twentyYearsAgo, "Date of birth must be at least 20 years ago")
-    .required("Date of Birth is required"),
+    .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"),
+  dob: Yup.string()
+    .required("Date of Birth is required")
+    .test(
+      "is-20-years-old",
+      "Date of birth must be at least 20 years ago",
+      (val) => {
+        if (!val) return false;
+        const selectedDate = new Date(val);
+        return !isNaN(selectedDate.getTime()) && selectedDate <= twentyYearsAgo;
+      }
+    ),
   password: Yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters")
@@ -99,7 +116,7 @@ export default function AddPurohitForm() {
         }
       } catch (error: any) {
         showSnackbar(
-          error.response?.data?.message || "Error onboarding purohit",
+          extractBackendErrorMessage(error, "Error onboarding purohit"),
           "error",
         );
       } finally {
@@ -108,39 +125,22 @@ export default function AddPurohitForm() {
     },
   });
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const errors = await formik.validateForm();
-    if (Object.keys(errors).length > 0) {
-      formik.setTouched(
-        Object.keys(errors).reduce((acc: any, key: string) => {
-          acc[key] = true;
-          return acc;
-        }, {}),
-      );
-      const firstMsg =
-        (Object.values(errors)[0] as string) ||
-        "Please fill in all mandatory fields";
-      showSnackbar(firstMsg, "error");
-    } else {
-      formik.handleSubmit(e);
-    }
-  };
-
-  const { values, errors, touched, handleChange, handleBlur } = formik;
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = formik;
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleFormSubmit}
-      sx={{
-        maxWidth: 900,
-        mx: "auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: 4,
-      }}
-    >
+    <FormikProvider value={formik}>
+      <FormikValidationSnackbar />
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          maxWidth: 900,
+          mx: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
+        }}
+      >
       <Box>
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
@@ -151,7 +151,7 @@ export default function AddPurohitForm() {
             style={{
               textDecoration: "none",
               color: "#64748b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               fontSize: "14px",
             }}
@@ -160,8 +160,8 @@ export default function AddPurohitForm() {
           </NextLink>
           <Typography
             sx={{
-              color: "#FF6200",
-              fontFamily: "var(--font-outfit), sans-serif",
+              color: COLORS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "14px",
             }}
@@ -172,7 +172,7 @@ export default function AddPurohitForm() {
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -181,7 +181,7 @@ export default function AddPurohitForm() {
         </Typography>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#64748b",
             mt: 0.5,
           }}
@@ -208,7 +208,10 @@ export default function AddPurohitForm() {
               label="First Name *"
               variant="outlined"
               value={values.firstName}
-              onChange={handleChange}
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                formik.setFieldValue("firstName", sanitizeLettersOnly(e.target.value));
+              }}
               onBlur={handleBlur}
               error={touched.firstName && Boolean(errors.firstName)}
               helperText={touched.firstName && errors.firstName}
@@ -222,7 +225,10 @@ export default function AddPurohitForm() {
               label="Last Name *"
               variant="outlined"
               value={values.lastName}
-              onChange={handleChange}
+              onKeyDown={allowOnlyLettersOnKeyDown}
+              onChange={(e) => {
+                formik.setFieldValue("lastName", sanitizeLettersOnly(e.target.value));
+              }}
               onBlur={handleBlur}
               error={touched.lastName && Boolean(errors.lastName)}
               helperText={touched.lastName && errors.lastName}
@@ -270,9 +276,17 @@ export default function AddPurohitForm() {
                   }
                 }
               }}
-              error={touched.mobileNumber && Boolean(errors.mobileNumber)}
+              error={
+                (touched.mobileNumber || Boolean(values.mobileNumber)) &&
+                (Boolean(errors.mobileNumber) ||
+                  (values.mobileNumber.length > 0 && !/^[6-9]/.test(values.mobileNumber)))
+              }
               helperText={
-                touched.mobileNumber && (errors.mobileNumber as string)
+                values.mobileNumber.length > 0 && !/^[6-9]/.test(values.mobileNumber)
+                  ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                  : touched.mobileNumber
+                  ? (errors.mobileNumber as string)
+                  : undefined
               }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             />
@@ -390,7 +404,7 @@ export default function AddPurohitForm() {
             type="submit"
             disabled={isSubmitting}
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               px: 4,
               py: 1.5,
@@ -398,7 +412,7 @@ export default function AddPurohitForm() {
               textTransform: "none",
               fontWeight: 600,
               boxShadow: "none",
-              "&:hover": { background: "#F05A00", boxShadow: "none" },
+              "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
             }}
           >
             {isSubmitting ? "Onboarding..." : "Onboard Purohit"}
@@ -406,5 +420,6 @@ export default function AddPurohitForm() {
         </Box>
       </Paper>
     </Box>
+    </FormikProvider>
   );
 }

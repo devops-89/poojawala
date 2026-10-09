@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
@@ -69,9 +71,9 @@ export default function CustomerServicesBookingModal({
           maxHeight: "90vh",
           overflowY: "auto",
           "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-            borderColor: "#FF6200",
+            borderColor: COLORS.PRIMARY,
           },
-          "& .MuiInputLabel-root.Mui-focused": { color: "#FF6200" },
+          "& .MuiInputLabel-root.Mui-focused": { color: COLORS.PRIMARY },
         }}
       >
         <Box
@@ -84,7 +86,7 @@ export default function CustomerServicesBookingModal({
         >
           <Typography
             variant="h6"
-            sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700 }}
+            sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700 }}
           >
             Book Service
           </Typography>
@@ -148,12 +150,12 @@ export default function CustomerServicesBookingModal({
               <FormLabel
                 component="legend"
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   fontSize: "14px",
                   color: "#2C1810",
                   mb: 0.5,
-                  "&.Mui-focused": { color: "#FF6200" },
+                  "&.Mui-focused": { color: COLORS.PRIMARY },
                 }}
               >
                 Payment Option
@@ -174,15 +176,15 @@ export default function CustomerServicesBookingModal({
                   control={
                     <Radio
                       sx={{
-                        color: "#FF6200",
-                        "&.Mui-checked": { color: "#FF6200" },
+                        color: COLORS.PRIMARY,
+                        "&.Mui-checked": { color: COLORS.PRIMARY },
                       }}
                     />
                   }
                   label={
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: "14px",
                         fontWeight: 600,
                         color: "#2C1810",
@@ -198,15 +200,15 @@ export default function CustomerServicesBookingModal({
                   control={
                     <Radio
                       sx={{
-                        color: "#FF6200",
-                        "&.Mui-checked": { color: "#FF6200" },
+                        color: COLORS.PRIMARY,
+                        "&.Mui-checked": { color: COLORS.PRIMARY },
                       }}
                     />
                   }
                   label={
                     <Typography
                       sx={{
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: "14px",
                         fontWeight: 600,
                         color: "#2C1810",
@@ -244,13 +246,13 @@ export default function CustomerServicesBookingModal({
           disabled={submitting}
           sx={{
             mt: 4,
-            background: "#FF6200",
+            background: COLORS.PRIMARY,
             color: "white",
             textTransform: "none",
             borderRadius: "8px",
             fontWeight: 600,
             py: 1.5,
-            "&:hover": { background: "#F05A00" },
+            "&:hover": { background: COLORS.PRIMARY_DARK },
           }}
         >
           {submitting ? (

@@ -7,6 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import { AddressFormData } from "@/utils/types";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface AddressFormInputsProps {
   addressData: AddressFormData;
@@ -133,15 +135,15 @@ export default function AddressFormInputs({
                 })
               }
               sx={{
-                color: "#FF6200",
-                "&.Mui-checked": { color: "#FF6200" },
+                color: COLORS.PRIMARY,
+                "&.Mui-checked": { color: COLORS.PRIMARY },
               }}
             />
           }
           label={
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 fontWeight: 600,
                 fontSize: { xs: "0.9rem", sm: "1rem" },
               }}

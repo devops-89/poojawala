@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { createTempleAPI, getTempleByIdAPI, updateTempleAPI } from "@/api/templeControllers";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
@@ -187,7 +189,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-        <CircularProgress sx={{ color: "#FF6200" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -221,7 +223,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1e293b",
             }}
@@ -230,7 +232,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
               mt: 0.5,
             }}
@@ -258,7 +260,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
             <Box>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   mb: 1,
                   color: "#1e293b",
@@ -281,7 +283,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                   cursor: "pointer",
                   transition: "all 0.2s",
                   "&:hover": {
-                    borderColor: "#FF6200",
+                    borderColor: COLORS.PRIMARY,
                     bgcolor: "#FFF0E6",
                   },
                 }}
@@ -316,7 +318,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                     <Box sx={{ flex: 1 }}>
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 600,
                           color: "#1e293b",
                           fontSize: "0.95rem",
@@ -338,11 +340,11 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                       width: "100%",
                     }}
                   >
-                    <CloudUploadIcon sx={{ color: "#FF6200", fontSize: 28 }} />
+                    <CloudUploadIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />
                     <Box>
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 600,
                           fontSize: "0.95rem",
                           color: "#334155",
@@ -408,7 +410,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "1.05rem",
                   color: "#1e293b",
@@ -528,7 +530,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                   fontWeight: 600,
                   px: 3.5,
                   py: 1.2,
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   "&:hover": { borderColor: "#94a3b8", bgcolor: "#f8fafc" },
                 }}
               >
@@ -541,13 +543,13 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                 sx={{
                   borderRadius: "12px",
                   textTransform: "none",
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "white",
                   fontWeight: 600,
                   px: 4,
                   py: 1.2,
-                  fontFamily: "var(--font-outfit), sans-serif",
-                  "&:hover": { bgcolor: "#E65800" },
+                  fontFamily: FONTS.OUTFIT,
+                  "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
                 }}
               >
                 {isSubmitting ? (

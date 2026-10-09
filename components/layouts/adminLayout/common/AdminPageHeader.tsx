@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -10,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import React, { ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 
 import { AdminPageHeaderProps } from "@/utils/types";
 export type { AdminPageHeaderProps };
@@ -26,6 +28,21 @@ export default function AdminPageHeader({
   actionButtonIcon = <AddIcon />,
   onActionButtonClick,
 }: AdminPageHeaderProps) {
+  const [localSearch, setLocalSearch] = useState(searchValue || "");
+
+  useEffect(() => {
+    setLocalSearch(searchValue || "");
+  }, [searchValue]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (onSearchChange && localSearch !== (searchValue || "")) {
+        onSearchChange(localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [localSearch, onSearchChange, searchValue]);
+
   return (
     <Box
       sx={{
@@ -40,7 +57,7 @@ export default function AdminPageHeader({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -50,7 +67,7 @@ export default function AdminPageHeader({
         {subtitle && (
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
               mt: 0.5,
               fontSize: "0.95rem",
@@ -66,8 +83,8 @@ export default function AdminPageHeader({
           <TextField
             size="small"
             placeholder={searchPlaceholder || "Search..."}
-            value={searchValue || ""}
-            onChange={(e) => onSearchChange(e.target.value)}
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             slotProps={{
               input: {
                 startAdornment: (
@@ -82,7 +99,7 @@ export default function AdminPageHeader({
               "& .MuiOutlinedInput-root": {
                 borderRadius: "12px",
                 bgcolor: "white",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               },
             }}
           />
@@ -95,7 +112,7 @@ export default function AdminPageHeader({
             onClick={onActionButtonClick}
             variant="contained"
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               textTransform: "none",
               borderRadius: "12px",
@@ -103,9 +120,9 @@ export default function AdminPageHeader({
               py: 1,
               px: 3,
               boxShadow: "none",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               whiteSpace: "nowrap",
-              "&:hover": { background: "#E65800", boxShadow: "none" },
+              "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
             }}
             startIcon={actionButtonIcon}
           >

@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   assignBookingAPI,
@@ -225,26 +227,31 @@ export default function AdminBookingsContent() {
   };
 
   const handleAssignPurohit = async () => {
-    if (assignTarget && selectedPurohit) {
-      try {
-        setIsLoading(true);
-        const res = await assignBookingAPI(assignTarget, selectedPurohit);
-        if (res.success) {
-          showSnackbar("Purohit assigned successfully", "success");
-          setAssignTarget(null);
-          setSelectedPurohit("");
-          fetchBookings();
-        } else {
-          showSnackbar(res.message || "Failed to assign purohit", "error");
-        }
-      } catch (error: any) {
-        showSnackbar(
-          error.response?.data?.message || "Error assigning purohit",
-          "error"
-        );
-      } finally {
-        setIsLoading(false);
+    if (!assignTarget) return;
+
+    if (!selectedPurohit) {
+      showSnackbar("Please select a Purohit to assign", "error");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const res = await assignBookingAPI(assignTarget, selectedPurohit);
+      if (res.success) {
+        showSnackbar("Purohit assigned successfully", "success");
+        setAssignTarget(null);
+        setSelectedPurohit("");
+        fetchBookings();
+      } else {
+        showSnackbar(res.message || "Failed to assign purohit", "error");
       }
+    } catch (error: any) {
+      showSnackbar(
+        error.response?.data?.message || "Error assigning purohit",
+        "error"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -258,8 +265,8 @@ export default function AdminBookingsContent() {
         <Typography
           sx={{
             fontWeight: 700,
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
+            color: COLORS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           B-{booking.id}
@@ -281,7 +288,7 @@ export default function AdminBookingsContent() {
               sx={{
                 fontWeight: 700,
                 color: "#1e293b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {customerName}
@@ -290,7 +297,7 @@ export default function AdminBookingsContent() {
               variant="body2"
               sx={{
                 color: "#64748b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "0.8rem",
               }}
             >
@@ -309,7 +316,7 @@ export default function AdminBookingsContent() {
         <Typography
           sx={{
             color: "#1e293b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 500,
           }}
         >
@@ -332,7 +339,7 @@ export default function AdminBookingsContent() {
               sx={{
                 color: "#f59e0b",
                 fontStyle: "italic",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "0.9rem",
               }}
             >
@@ -346,7 +353,7 @@ export default function AdminBookingsContent() {
               sx={{
                 fontWeight: 600,
                 color: "#1e293b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
               }}
             >
               {technicianName}
@@ -355,7 +362,7 @@ export default function AdminBookingsContent() {
               variant="body2"
               sx={{
                 color: "#64748b",
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "0.8rem",
               }}
             >
@@ -374,7 +381,7 @@ export default function AdminBookingsContent() {
         <Typography
           sx={{
             color: "#64748b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontSize: "0.9rem",
           }}
         >
@@ -404,7 +411,7 @@ export default function AdminBookingsContent() {
           sx={{
             fontWeight: 700,
             color: "#1e293b",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           {booking.finalAmount ? `₹${booking.finalAmount}` : "-"}
@@ -443,31 +450,39 @@ export default function AdminBookingsContent() {
           ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`
           : "Unassigned";
         return (
-          <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
-            <IconButton
-              component={NextLink}
-              href={`/admin/bookings/${booking.id}`}
-              sx={{
-                color: "#FF6200",
-                bgcolor: "#fff7ed",
-                "&:hover": { color: "#E65800", bgcolor: "#ffedd5" },
-              }}
-            >
-              <VisibilityIcon fontSize="small" />
-            </IconButton>
-            {technicianName === "Unassigned" && booking.status === "PENDING" && (
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: 72 }}>
               <IconButton
-                onClick={() => handleOpenAssignModal(booking.id)}
-                title="Assign Purohit"
+                component={NextLink}
+                href={`/admin/bookings/${booking.id}`}
                 sx={{
-                  color: "#2563eb",
-                  bgcolor: "#eff6ff",
-                  "&:hover": { color: "#1d4ed8", bgcolor: "#dbeafe" },
+                  width: 32,
+                  height: 32,
+                  color: COLORS.PRIMARY,
+                  bgcolor: "#fff7ed",
+                  "&:hover": { color: COLORS.PRIMARY_DARK, bgcolor: "#ffedd5" },
                 }}
               >
-                <PersonAddIcon fontSize="small" />
+                <VisibilityIcon fontSize="small" />
               </IconButton>
-            )}
+              {technicianName === "Unassigned" && booking.status === "PENDING" ? (
+                <IconButton
+                  onClick={() => handleOpenAssignModal(booking.id)}
+                  title="Assign Purohit"
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    color: "#2563eb",
+                    bgcolor: "#eff6ff",
+                    "&:hover": { color: "#1d4ed8", bgcolor: "#dbeafe" },
+                  }}
+                >
+                  <PersonAddIcon fontSize="small" />
+                </IconButton>
+              ) : (
+                <Box sx={{ width: 32, height: 32 }} />
+              )}
+            </Box>
           </Box>
         );
       },
@@ -520,7 +535,7 @@ export default function AdminBookingsContent() {
       >
         <DialogTitle
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
           }}
@@ -568,7 +583,7 @@ export default function AdminBookingsContent() {
                 <TextField
                   {...params}
                   label="Select Purohit *"
-                  sx={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                  sx={{ fontFamily: FONTS.OUTFIT }}
                 />
               )}
             />
@@ -582,22 +597,17 @@ export default function AdminBookingsContent() {
             Cancel
           </Button>
           <Button
-            onClick={(e) => {
-              if (!selectedPurohit || isLoading) {
-                e.preventDefault();
-                return;
-              }
-              handleAssignPurohit();
-            }}
+            onClick={handleAssignPurohit}
+            disabled={isLoading}
             variant="contained"
             sx={{
-              background: "#FF6200",
+              background: COLORS.PRIMARY,
               color: "white",
               textTransform: "none",
               borderRadius: "8px",
               fontWeight: 600,
               boxShadow: "none",
-              "&:hover": { background: "#E65800" },
+              "&:hover": { background: COLORS.PRIMARY_DARK },
             }}
           >
             Assign & Accept

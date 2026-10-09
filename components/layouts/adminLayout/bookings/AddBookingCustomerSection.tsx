@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -25,6 +27,7 @@ interface AddBookingCustomerSectionProps {
   handleChange: any;
   handleBlur: any;
   setFieldValue: any;
+  setFieldTouched?: any;
   setCustomerSearchText: (text: string) => void;
   showPassword: boolean;
   setShowPassword: (val: boolean) => void;
@@ -42,6 +45,7 @@ export default function AddBookingCustomerSection({
   handleChange,
   handleBlur,
   setFieldValue,
+  setFieldTouched,
   setCustomerSearchText,
   showPassword,
   setShowPassword,
@@ -60,7 +64,7 @@ export default function AddBookingCustomerSection({
       >
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
           }}
@@ -82,11 +86,22 @@ export default function AddBookingCustomerSection({
             setFieldValue("newCustomerAddress", "");
             setFieldValue("newCustomerCity", "");
             setFieldValue("newCustomerPassword", "");
+
+            // Reset touched status so validation errors are not displayed immediately
+            if (setFieldTouched) {
+              setFieldTouched("newCustomerName", false, false);
+              setFieldTouched("newCustomerMobile", false, false);
+              setFieldTouched("newCustomerEmail", false, false);
+              setFieldTouched("newCustomerAddress", false, false);
+              setFieldTouched("newCustomerCity", false, false);
+              setFieldTouched("newCustomerPassword", false, false);
+              setFieldTouched("customerId", false, false);
+            }
           }}
           sx={{
             textTransform: "none",
             fontWeight: 600,
-            color: "#FF6200",
+            color: COLORS.PRIMARY,
           }}
         >
           {showAddCustomer ? "Use Existing Customer" : "+ Add New Customer"}
@@ -212,11 +227,16 @@ export default function AddBookingCustomerSection({
                   }
                 }}
                 error={
-                  touched.newCustomerMobile && Boolean(errors.newCustomerMobile)
+                  (touched.newCustomerMobile || Boolean(values.newCustomerMobile)) &&
+                  (Boolean(errors.newCustomerMobile) ||
+                    (values.newCustomerMobile && values.newCustomerMobile.length > 0 && !/^[6-9]/.test(values.newCustomerMobile)))
                 }
                 helperText={
-                  touched.newCustomerMobile &&
-                  (errors.newCustomerMobile as string)
+                  values.newCustomerMobile && values.newCustomerMobile.length > 0 && !/^[6-9]/.test(values.newCustomerMobile)
+                    ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                    : touched.newCustomerMobile
+                    ? (errors.newCustomerMobile as string)
+                    : undefined
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -351,9 +371,9 @@ export default function AddBookingCustomerSection({
               onClick={handleCreateCustomer}
               disabled={isCreatingCustomer}
               sx={{
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
-                "&:hover": { bgcolor: "#E65800" },
+                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
                 borderRadius: "8px",
                 textTransform: "none",
                 fontWeight: 600,

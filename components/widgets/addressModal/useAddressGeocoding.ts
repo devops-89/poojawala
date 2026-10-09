@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import { AddressFormData, StatusMessage } from "@/utils/types";
@@ -164,7 +165,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     if (!markerRef.current) {
       const marker = new mapboxgl.Marker({
         draggable: true,
-        color: "#FF6200",
+        color: COLORS.PRIMARY,
       })
         .setLngLat([lng, lat])
         .addTo(mapInstanceRef.current);

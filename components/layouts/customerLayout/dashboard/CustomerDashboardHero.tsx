@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { useUserStore } from "@/stores/userStore";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -100,10 +102,10 @@ export default function CustomerDashboardHero() {
             {/* Namaste Greeting */}
             <Typography
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 fontSize: { xs: "12px", md: "15px" },
-                color: "#FF6200",
+                color: COLORS.PRIMARY,
                 letterSpacing: "1.5px",
                 textTransform: "uppercase",
                 mb: 0.8,
@@ -117,7 +119,7 @@ export default function CustomerDashboardHero() {
             <Typography
               variant="h1"
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#1E293B",
                 fontSize: { xs: "1.5rem", sm: "2.3rem", md: "3.2rem" },
@@ -127,7 +129,7 @@ export default function CustomerDashboardHero() {
               }}
             >
               Book sacred{" "}
-              <Box component="span" sx={{ color: "#FF6200" }}>
+              <Box component="span" sx={{ color: COLORS.PRIMARY }}>
                 pooja services
               </Box>{" "}
               near you
@@ -136,7 +138,7 @@ export default function CustomerDashboardHero() {
             {/* Subtitle */}
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64748B",
                 fontSize: { xs: "13px", md: "17px" },
                 lineHeight: 1.5,
@@ -166,7 +168,7 @@ export default function CustomerDashboardHero() {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#1E293B",
                 fontSize: { xs: "20px", md: "24px" },
@@ -177,7 +179,7 @@ export default function CustomerDashboardHero() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
                 color: "#64748B",
                 fontSize: "14px",
                 mb: 3,
@@ -230,7 +232,7 @@ export default function CustomerDashboardHero() {
                               <>
                                 <InputAdornment position="start">
                                   <LocationOnIcon
-                                    sx={{ color: "#FF6200", fontSize: 20 }}
+                                    sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
                                   />
                                 </InputAdornment>
                                 {params.InputProps?.startAdornment}
@@ -247,12 +249,12 @@ export default function CustomerDashboardHero() {
                               bgcolor: "#FFFFFF",
                               "& .MuiOutlinedInput-root": {
                                 borderRadius: "12px",
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontSize: "14px",
                                 "& fieldset": { borderColor: "#E2E8F0" },
-                                "&:hover fieldset": { borderColor: "#FF6200" },
+                                "&:hover fieldset": { borderColor: COLORS.PRIMARY },
                                 "&.Mui-focused fieldset": {
-                                  borderColor: "#FF6200",
+                                  borderColor: COLORS.PRIMARY,
                                 },
                               },
                             }}
@@ -293,7 +295,7 @@ export default function CustomerDashboardHero() {
                               <>
                                 <InputAdornment position="start">
                                   <LocationOnIcon
-                                    sx={{ color: "#FF6200", fontSize: 20 }}
+                                    sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
                                   />
                                 </InputAdornment>
                                 {params.InputProps?.startAdornment}
@@ -310,12 +312,12 @@ export default function CustomerDashboardHero() {
                               bgcolor: "#FFFFFF",
                               "& .MuiOutlinedInput-root": {
                                 borderRadius: "12px",
-                                fontFamily: '"DM Sans", sans-serif',
+                                fontFamily: FONTS.PRIMARY,
                                 fontSize: "14px",
                                 "& fieldset": { borderColor: "#E2E8F0" },
-                                "&:hover fieldset": { borderColor: "#FF6200" },
+                                "&:hover fieldset": { borderColor: COLORS.PRIMARY },
                                 "&.Mui-focused fieldset": {
-                                  borderColor: "#FF6200",
+                                  borderColor: COLORS.PRIMARY,
                                 },
                               },
                             }}
@@ -336,9 +338,9 @@ export default function CustomerDashboardHero() {
                   mt: 1,
                   py: 1.6,
                   borderRadius: "12px",
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   color: "#FFFFFF",
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 700,
                   fontSize: "16px",
                   textTransform: "none",

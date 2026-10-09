@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -38,7 +40,7 @@ export const BookingReviewModal: React.FC<BookingReviewModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle
-        sx={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 800 }}
+        sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800 }}
       >
         Add Review
       </DialogTitle>
@@ -54,7 +56,7 @@ export const BookingReviewModal: React.FC<BookingReviewModalProps> = ({
         >
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               mb: 1,
               color: "#333",
@@ -83,9 +85,9 @@ export const BookingReviewModal: React.FC<BookingReviewModalProps> = ({
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               "&.Mui-focused fieldset": {
-                borderColor: "#FF6200",
+                borderColor: COLORS.PRIMARY,
               },
             },
           }}

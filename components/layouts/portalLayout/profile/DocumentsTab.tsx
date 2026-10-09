@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -159,7 +161,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
       id: "aadhaarDoc",
       title: "Aadhaar / PAN Card Document",
       desc: "Upload front & back scan of your Aadhaar card or PAN card.",
-      icon: <BadgeIcon sx={{ color: "#FF6200", fontSize: 28 }} />,
+      icon: <BadgeIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
       file: aadhaarDoc || panDoc,
       setFile: setAadhaarDoc,
       url: aadhaarDocUrl || panDocUrl,
@@ -168,7 +170,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
       id: "certificate",
       title: "Qualification / Degree Certificate",
       desc: "Upload Shastri / Acharya / Ph.D Sanskrit degree certificate.",
-      icon: <SchoolIcon sx={{ color: "#FF6200", fontSize: 28 }} />,
+      icon: <SchoolIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
       file: certificateDoc,
       setFile: setCertificateDoc,
       url: certificateUrl,
@@ -177,7 +179,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
       id: "templeAffiliationProof",
       title: "Temple / Vedic Sansthan Proof",
       desc: "Upload proof of temple affiliation or gurukul certification.",
-      icon: <AccountBalanceIcon sx={{ color: "#FF6200", fontSize: 28 }} />,
+      icon: <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
       file: templeAffiliationProofDoc,
       setFile: setTempleAffiliationProofDoc,
       url: templeAffiliationProofUrl,
@@ -200,7 +202,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
         <Box>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               fontSize: "20px",
             }}
@@ -209,7 +211,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
           </Typography>
           <Typography
             sx={{
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: "14px",
               mt: 0.5,
@@ -255,7 +257,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
           <Grid size={{ xs: 12, md: 4 }}>
             <Typography
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "13px",
                 color: "#666",
               }}
@@ -269,7 +271,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
       {/* Documents Grid */}
       <Typography
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
           fontSize: "16px",
           mb: 2,
@@ -302,7 +304,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                   justifyContent: "space-between",
                   transition: "all 0.2s ease",
                   "&:hover": {
-                    borderColor: "#FF6200",
+                    borderColor: COLORS.PRIMARY,
                     boxShadow: "0 4px 16px rgba(255, 98, 0, 0.08)",
                   },
                 }}
@@ -312,7 +314,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                     {doc.icon}
                     <Typography
                       sx={{
-                        fontFamily: "var(--font-outfit), sans-serif",
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 700,
                         fontSize: "16px",
                         color: "#1e293b",
@@ -324,7 +326,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
 
                   <Typography
                     sx={{
-                      fontFamily: "var(--font-outfit), sans-serif",
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: "13px",
                       color: "#64748b",
                       mb: 2,
@@ -372,7 +374,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                           textTransform: "none",
                           fontSize: "13px",
                           fontWeight: 600,
-                          color: "#FF6200",
+                          color: COLORS.PRIMARY,
                           "&:hover": { bgcolor: "#FFF5EF" },
                         }}
                       >
@@ -386,7 +388,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                     <Typography
                       sx={{
                         fontSize: "12px",
-                        color: "#FF6200",
+                        color: COLORS.PRIMARY,
                         fontWeight: 600,
                         mb: 1.5,
                         wordBreak: "break-all",
@@ -406,12 +408,12 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                       borderRadius: "10px",
                       textTransform: "none",
                       fontWeight: 700,
-                      borderColor: "#FF6200",
-                      color: hasNewFile ? "white" : "#FF6200",
-                      bgcolor: hasNewFile ? "#FF6200" : "transparent",
+                      borderColor: COLORS.PRIMARY,
+                      color: hasNewFile ? "white" : COLORS.PRIMARY,
+                      bgcolor: hasNewFile ? COLORS.PRIMARY : "transparent",
                       "&:hover": {
-                        bgcolor: hasNewFile ? "#F05A00" : "#FFF5EF",
-                        borderColor: "#F05A00",
+                        bgcolor: hasNewFile ? COLORS.PRIMARY_DARK : "#FFF5EF",
+                        borderColor: COLORS.PRIMARY_DARK,
                       },
                     }}
                   >
@@ -472,7 +474,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             fontSize: "18px",
             color: "#1e293b",
@@ -480,7 +482,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <VisibilityIcon sx={{ color: "#FF6200" }} />
+            <VisibilityIcon sx={{ color: COLORS.PRIMARY }} />
             {previewItem?.title || "Document Preview"}
           </Box>
           <IconButton
@@ -488,7 +490,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
             onClick={() => setPreviewItem(null)}
             sx={{
               color: (theme) => theme.palette.grey[500],
-              "&:hover": { color: "#FF6200", bgcolor: "#FFF5EF" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF5EF" },
             }}
           >
             <CloseIcon />
@@ -511,7 +513,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
             isPdf ? (
               <Box sx={{ width: "100%", height: "65vh" }}>
                 <iframe
-                  src={previewSrc}
+                  src={previewSrc ? (previewSrc.includes('#') ? previewSrc : `${previewSrc}#toolbar=0&navpanes=0&view=FitH`) : ''}
                   title={previewItem?.title || "Document Preview"}
                   style={{
                     width: "100%",

@@ -37,6 +37,8 @@ import {
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function CustomerHeader() {
   const pathname = usePathname();
@@ -209,10 +211,10 @@ export default function CustomerHeader() {
                 component={NextLink}
                 href={item.path}
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: isActive ? 700 : 500,
                   fontSize: { xs: "0.85rem", sm: "0.95rem" },
-                  color: isActive ? "#FF6200" : "#475569",
+                  color: isActive ? COLORS.PRIMARY : COLORS.SLATE_MUTED,
                   textDecoration: "none",
                   px: { xs: 1.2, sm: 2 },
                   py: 0.8,
@@ -220,7 +222,7 @@ export default function CustomerHeader() {
                   backgroundColor: isActive ? "#FFF0E6" : "transparent",
                   transition: "all 0.2s ease",
                   "&:hover": {
-                    color: "#FF6200",
+                    color: COLORS.PRIMARY,
                     backgroundColor: isActive ? "#FFF0E6" : "#f8fafc",
                   },
                 }}
@@ -249,7 +251,7 @@ export default function CustomerHeader() {
                 color: "#64748b",
                 bgcolor: "#f8fafc",
                 p: { xs: 1, sm: 1.2 },
-                "&:hover": { bgcolor: "#f1f5f9", color: "#FF6200" },
+                "&:hover": { bgcolor: "#f1f5f9", color: COLORS.PRIMARY },
                 transition: "all 0.2s ease",
               }}
             >
@@ -259,7 +261,7 @@ export default function CustomerHeader() {
                 invisible={cartTotalItems === 0}
                 sx={{
                   "& .MuiBadge-badge": {
-                    bgcolor: "#FF6200",
+                    bgcolor: COLORS.PRIMARY,
                     color: "white",
                     fontWeight: 700,
                   },
@@ -279,7 +281,7 @@ export default function CustomerHeader() {
                 color: "#64748b",
                 bgcolor: "#f8fafc",
                 p: { xs: 1, sm: 1.2 },
-                "&:hover": { bgcolor: "#f1f5f9", color: "#FF6200" },
+                "&:hover": { bgcolor: "#f1f5f9", color: COLORS.PRIMARY },
               }}
             >
               <Badge
@@ -287,7 +289,7 @@ export default function CustomerHeader() {
                 color="error"
                 invisible={displayUnreadCount === 0}
                 sx={{
-                  "& .MuiBadge-badge": { bgcolor: "#FF6200", color: "white" },
+                  "& .MuiBadge-badge": { bgcolor: COLORS.PRIMARY, color: "white" },
                 }}
               >
                 <NotificationsIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
@@ -303,7 +305,7 @@ export default function CustomerHeader() {
                 sx={{
                   width: { xs: 34, sm: 40 },
                   height: { xs: 34, sm: 40 },
-                  bgcolor: "#FF6200",
+                  bgcolor: COLORS.PRIMARY,
                   boxShadow: "0 2px 8px rgba(255, 98, 0, 0.25)",
                   cursor: "pointer",
                   border: "2px solid #ffffff",
@@ -374,7 +376,7 @@ export default function CustomerHeader() {
               <Typography
                 variant="h6"
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 800,
                   fontSize: "16px",
                 }}
@@ -384,7 +386,7 @@ export default function CustomerHeader() {
               {notifications.length > 0 && (
                 <Typography
                   variant="caption"
-                  sx={{ color: "#FF6200", cursor: "pointer", fontWeight: 600 }}
+                  sx={{ color: COLORS.PRIMARY, cursor: "pointer", fontWeight: 600 }}
                   onClick={clearNotifications}
                 >
                   Clear All
@@ -397,7 +399,7 @@ export default function CustomerHeader() {
                   sx={{
                     color: "#94a3b8",
                     fontSize: "14px",
-                    fontFamily: '"DM Sans", sans-serif',
+                    fontFamily: FONTS.PRIMARY,
                   }}
                 >
                   No new notifications
@@ -419,7 +421,7 @@ export default function CustomerHeader() {
                     slotProps={{
                       primary: {
                         sx: {
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           fontSize: "14px",
                           color: "#1e293b",
                         },
@@ -453,10 +455,10 @@ export default function CustomerHeader() {
             <Box sx={{ px: 2, py: 1.5 }}>
               <Typography
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "0.92rem",
-                  color: "#1e293b",
+                  color: COLORS.SLATE_DARK,
                 }}
               >
                 {profile?.firstName
@@ -465,8 +467,8 @@ export default function CustomerHeader() {
               </Typography>
               <Typography
                 sx={{
-                  fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
-                  color: "#64748b",
+                  fontFamily: FONTS.OUTFIT,
+                  color: COLORS.SLATE_MUTED,
                   fontSize: "0.78rem",
                 }}
               >
@@ -481,11 +483,11 @@ export default function CustomerHeader() {
               sx={{
                 borderRadius: "8px",
                 py: 1.2,
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 500,
                 color: "#334155",
-                "&:hover": { bgcolor: "#FFF0E6", color: "#FF6200" },
+                "&:hover": { bgcolor: "#FFF0E6", color: COLORS.PRIMARY },
               }}
             >
               <ListItemIcon sx={{ color: "inherit", minWidth: "34px" }}>
@@ -502,7 +504,7 @@ export default function CustomerHeader() {
               sx={{
                 borderRadius: "8px",
                 py: 1.2,
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "14px",
                 fontWeight: 500,
                 color: "#334155",
@@ -567,15 +569,15 @@ export default function CustomerHeader() {
                   sx={{
                     borderRadius: "10px",
                     bgcolor: isActive ? "#FFF0E6" : "transparent",
-                    color: isActive ? "#FF6200" : "#475569",
+                    color: isActive ? COLORS.PRIMARY : "#475569",
                     "&:hover": {
                       bgcolor: isActive ? "#FFF0E6" : "#f8fafc",
-                      color: "#FF6200",
+                      color: COLORS.PRIMARY,
                     },
                   }}
                 >
                   <ListItemIcon
-                    sx={{ color: isActive ? "#FF6200" : "#64748b", minWidth: 38 }}
+                    sx={{ color: isActive ? COLORS.PRIMARY : "#64748b", minWidth: 38 }}
                   >
                     {item.icon}
                   </ListItemIcon>
@@ -586,8 +588,7 @@ export default function CustomerHeader() {
                         sx: {
                           fontWeight: isActive ? 700 : 500,
                           fontSize: "0.95rem",
-                          fontFamily:
-                            'var(--font-outfit), "DM Sans", sans-serif',
+                          fontFamily: FONTS.OUTFIT,
                         },
                       },
                     }}

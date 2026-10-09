@@ -1,4 +1,5 @@
 "use client";
+import { COLORS } from "@/utils/enums";
 
 import {
   Box,
@@ -94,7 +95,7 @@ export default function PurohitServiceDetailsContent() {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
-        <CircularProgress sx={{ color: "#C84B16" }} />
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
@@ -122,7 +123,7 @@ export default function PurohitServiceDetailsContent() {
           variant="contained"
           onClick={() => router.push("/purohit/services")}
           sx={{
-            background: "#C84B16",
+            background: COLORS.PRIMARY,
             color: "white",
             borderRadius: "30px",
             textTransform: "none",

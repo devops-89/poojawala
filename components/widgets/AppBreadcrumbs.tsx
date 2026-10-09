@@ -3,6 +3,8 @@ import React from "react";
 import { Breadcrumbs, Typography } from "@mui/material";
 import Link from "next/link";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import { BreadcrumbItem } from "@/utils/types";
 export type { BreadcrumbItem };
@@ -25,7 +27,7 @@ export default function AppBreadcrumbs({ items, sx }: AppBreadcrumbsProps) {
       aria-label="breadcrumb"
       sx={{
         mb: 1.5,
-        fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+        fontFamily: FONTS.THEME_DEFAULT,
         fontSize: "14px",
         ...sx,
       }}
@@ -37,10 +39,10 @@ export default function AppBreadcrumbs({ items, sx }: AppBreadcrumbsProps) {
             <Typography
               key={index}
               sx={{
-                fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+                fontFamily: FONTS.THEME_DEFAULT,
                 fontSize: "14px",
                 fontWeight: 700,
-                color: "#FF6200",
+                color: COLORS.BRAND_ORANGE,
               }}
             >
               {item.label}
@@ -54,8 +56,8 @@ export default function AppBreadcrumbs({ items, sx }: AppBreadcrumbsProps) {
             href={item.href}
             style={{
               textDecoration: "none",
-              color: "#64748b",
-              fontFamily: '"DM Sans", var(--font-outfit), sans-serif',
+              color: COLORS.SLATE_MUTED,
+              fontFamily: FONTS.THEME_DEFAULT,
               fontSize: "14px",
               fontWeight: 600,
               transition: "color 0.2s ease",

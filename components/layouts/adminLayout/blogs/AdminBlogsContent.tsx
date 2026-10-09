@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import {
   deleteBlogAPI,
@@ -266,8 +268,8 @@ export default function AdminBlogsContent() {
         <Typography
           sx={{
             fontWeight: 700,
-            color: "#FF6200",
-            fontFamily: "var(--font-outfit), sans-serif",
+            color: COLORS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontSize: "0.85rem",
           }}
         >
@@ -285,7 +287,7 @@ export default function AdminBlogsContent() {
             sx={{
               fontWeight: 700,
               color: "#1e293b",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontSize: "0.95rem",
             }}
           >
@@ -303,7 +305,7 @@ export default function AdminBlogsContent() {
           <Typography
             sx={{
               color: "#475569",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               fontSize: "0.875rem",
             }}
@@ -348,6 +350,8 @@ export default function AdminBlogsContent() {
             component={NextLink}
             href={`/admin/blogs/${blog.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
@@ -359,9 +363,11 @@ export default function AdminBlogsContent() {
             component={NextLink}
             href={`/admin/blogs/edit/${blog.id}`}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
-              "&:hover": { color: "#FF6200", bgcolor: "#fff7ed" },
+              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#fff7ed" },
             }}
           >
             <EditIcon fontSize="small" />
@@ -369,6 +375,8 @@ export default function AdminBlogsContent() {
           <IconButton
             onClick={() => setDeleteTarget(blog.id)}
             sx={{
+              width: 32,
+              height: 32,
               color: "#64748b",
               bgcolor: "#f8fafc",
               "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },

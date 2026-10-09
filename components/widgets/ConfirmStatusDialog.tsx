@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import React from "react";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface ConfirmStatusDialogProps {
   open: boolean;
@@ -32,6 +34,10 @@ export default function ConfirmStatusDialog({
   onConfirm,
   loading = false,
 }: ConfirmStatusDialogProps) {
+  const formattedStatus = newStatus
+    ? newStatus.replace(/_/g, " ").toUpperCase()
+    : undefined;
+
   return (
     <Dialog
       open={open}
@@ -48,9 +54,9 @@ export default function ConfirmStatusDialog({
     >
       <DialogTitle
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT_ONLY,
           fontWeight: 700,
-          color: "#1e293b",
+          color: COLORS.SLATE_DARK,
         }}
       >
         {title}
@@ -59,7 +65,7 @@ export default function ConfirmStatusDialog({
         <DialogContentText
           component="div"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT_ONLY,
             color: "#475569",
           }}
         >
@@ -69,7 +75,7 @@ export default function ConfirmStatusDialog({
             <>
               Are you sure you want to change status of{" "}
               {itemName ? <strong>&quot;{itemName}&quot;</strong> : "this item"}{" "}
-              to {newStatus ? <strong>{newStatus}</strong> : "the selected status"}?
+              to {formattedStatus ? <strong>{formattedStatus}</strong> : "the selected status"}?
             </>
           )}
         </DialogContentText>
@@ -79,7 +85,7 @@ export default function ConfirmStatusDialog({
           onClick={onClose}
           disabled={loading}
           sx={{
-            color: "#64748b",
+            color: COLORS.SLATE_MUTED,
             textTransform: "none",
             fontWeight: 600,
             borderRadius: "8px",
@@ -93,12 +99,12 @@ export default function ConfirmStatusDialog({
           variant="contained"
           startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
           sx={{
-            bgcolor: "#FF6200",
-            color: "white",
+            bgcolor: COLORS.BRAND_ORANGE,
+            color: COLORS.WHITE,
             textTransform: "none",
             borderRadius: "8px",
             fontWeight: 600,
-            "&:hover": { bgcolor: "#E65800" },
+            "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
           }}
         >
           {loading ? "Updating..." : "Confirm"}

@@ -1,5 +1,7 @@
 "use client";
 import { Box, Button, Container, Typography } from "@mui/material";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function HeroSection() {
   return (
@@ -30,9 +32,9 @@ export default function HeroSection() {
             variant="h2"
             component="h1"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.DM_SANS,
               fontWeight: 700,
-              color: "#0f172a",
+              color: COLORS.SLATE_DARK,
               mb: 0.5,
               fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
               lineHeight: { xs: 1.15, md: 1.2 },
@@ -45,9 +47,9 @@ export default function HeroSection() {
             variant="h2"
             component="h1"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.DM_SANS,
               fontWeight: 700,
-              color: "#0f172a",
+              color: COLORS.SLATE_DARK,
               mb: 0.5,
               fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
               lineHeight: { xs: 1.15, md: 1.2 },
@@ -60,9 +62,9 @@ export default function HeroSection() {
             variant="h2"
             component="h1"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.DM_SANS,
               fontWeight: 800,
-              color: "#D32F2F",
+              color: COLORS.RED_DARK,
               mb: { xs: 1.5, md: 3 },
               fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
               lineHeight: { xs: 1.15, md: 1.2 },
@@ -74,8 +76,8 @@ export default function HeroSection() {
           <Typography
             variant="body1"
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
-              color: "#0f172a",
+              fontFamily: FONTS.DM_SANS,
+              color: COLORS.SLATE_DARK,
               fontWeight: 600,
               mb: { xs: 2.5, md: 4 },
               fontSize: { xs: "14px", sm: "15px", md: "16px" },
@@ -95,9 +97,9 @@ export default function HeroSection() {
               flexWrap: "wrap",
               "&:has(.talk-to:hover) .book-now": {
                 background: "transparent",
-                color: "#FF6200",
-                borderColor: "#FF6200",
-                border: "2px solid #FF6200",
+                color: COLORS.PRIMARY,
+                borderColor: COLORS.PRIMARY,
+                border: `2px solid ${COLORS.PRIMARY}`,
                 boxShadow: "none",
               },
             }}
@@ -107,9 +109,9 @@ export default function HeroSection() {
               variant="contained"
               href="/sign-up?from=book-now"
               sx={{
-                background: "#FF6200",
-                border: "2px solid #FF6200",
-                color: "#fff",
+                background: COLORS.PRIMARY,
+                border: `2px solid ${COLORS.PRIMARY}`,
+                color: COLORS.WHITE,
                 px: { xs: 2.5, md: 4 },
                 py: { xs: 0.9, md: 1.5 },
                 borderRadius: "30px",
@@ -119,8 +121,8 @@ export default function HeroSection() {
                 boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
                 transition: "all 0.3s ease",
                 "&:hover": {
-                  background: "#F05A00",
-                  borderColor: "#F05A00",
+                  background: COLORS.PRIMARY_HOVER,
+                  borderColor: COLORS.PRIMARY_HOVER,
                   boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
                 },
               }}
@@ -132,8 +134,8 @@ export default function HeroSection() {
               variant="outlined"
               href="/purohits#top-purohits"
               sx={{
-                borderColor: "#1A1A1A",
-                color: "#1A1A1A",
+                borderColor: COLORS.CHARCOAL_DARK,
+                color: COLORS.CHARCOAL_DARK,
                 background: "transparent",
                 px: { xs: 2.5, md: 4 },
                 py: { xs: 0.9, md: 1.5 },
@@ -144,9 +146,9 @@ export default function HeroSection() {
                 borderWidth: "2px",
                 transition: "all 0.3s ease",
                 "&:hover": {
-                  borderColor: "#FF6200",
-                  background: "#FF6200",
-                  color: "#FFFFFF",
+                  borderColor: COLORS.PRIMARY,
+                  background: COLORS.PRIMARY,
+                  color: COLORS.WHITE,
                   borderWidth: "2px",
                 },
               }}

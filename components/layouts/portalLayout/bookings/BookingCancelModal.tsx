@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React from "react";
 import {
@@ -32,7 +34,7 @@ export const BookingCancelModal: React.FC<BookingCancelModalProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle
         sx={{
-          fontFamily: "var(--font-outfit), sans-serif",
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#D32F2F",
         }}
@@ -42,7 +44,7 @@ export const BookingCancelModal: React.FC<BookingCancelModalProps> = ({
       <DialogContent>
         <Typography
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             color: "#666",
             mb: 3,
             mt: 1,
@@ -63,9 +65,9 @@ export const BookingCancelModal: React.FC<BookingCancelModalProps> = ({
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
-              fontFamily: "var(--font-outfit), sans-serif",
+              fontFamily: FONTS.OUTFIT,
               "&.Mui-focused fieldset": {
-                borderColor: "#FF6200",
+                borderColor: COLORS.PRIMARY,
               },
             },
           }}

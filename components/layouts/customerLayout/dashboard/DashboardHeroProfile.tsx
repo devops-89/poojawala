@@ -1,4 +1,5 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -60,7 +61,7 @@ export default function DashboardHeroProfile({ profile }: DashboardHeroProfilePr
             <Typography
               variant="h3"
               sx={{
-                fontFamily: 'var(--font-outfit), sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 fontSize: { xs: '24px', md: '32px' },
               }}
@@ -78,7 +79,7 @@ export default function DashboardHeroProfile({ profile }: DashboardHeroProfilePr
           </Box>
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), sans-serif',
+              fontFamily: FONTS.OUTFIT,
               opacity: 0.9,
               fontSize: '16px',
               mb: 2,
@@ -101,7 +102,7 @@ export default function DashboardHeroProfile({ profile }: DashboardHeroProfilePr
                 <EmailIcon fontSize="small" />
                 <Typography
                   sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: '14px',
                     fontWeight: 500,
                   }}
@@ -115,7 +116,7 @@ export default function DashboardHeroProfile({ profile }: DashboardHeroProfilePr
                 <PhoneIcon fontSize="small" />
                 <Typography
                   sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: '14px',
                     fontWeight: 500,
                   }}

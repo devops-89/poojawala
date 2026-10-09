@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CategoryItem } from "@/utils/types";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 // SwiperImports
 import "swiper/css";
@@ -94,7 +96,7 @@ export default function ServiceCategoriesSection() {
             },
             "& .cta-arrow": {
               transform: "translateX(6px)",
-              color: "#FF6200",
+              color: COLORS.PRIMARY,
             },
           },
         }}
@@ -142,7 +144,7 @@ export default function ServiceCategoriesSection() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "22px",
               color: "#FFFFFF",
@@ -156,7 +158,7 @@ export default function ServiceCategoriesSection() {
           {cat.description && (
             <Typography
               sx={{
-                fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+                fontFamily: FONTS.OUTFIT,
                 color: "rgba(255, 255, 255, 0.85)",
                 fontSize: "13px",
                 lineHeight: 1.5,
@@ -219,7 +221,7 @@ export default function ServiceCategoriesSection() {
             variant="h3"
             component="h2"
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: { xs: "28px", sm: "36px", md: "44px" },
               color: "#1A1A1A",
@@ -246,7 +248,7 @@ export default function ServiceCategoriesSection() {
 
           <Typography
             sx={{
-              fontFamily: 'var(--font-outfit), "DM Sans", sans-serif',
+              fontFamily: FONTS.OUTFIT,
               color: "#666",
               fontSize: { xs: "14px", md: "16px" },
               maxWidth: "640px",
@@ -279,7 +281,7 @@ export default function ServiceCategoriesSection() {
                   px: 3,
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    background: "#FF6200",
+                    background: COLORS.PRIMARY,
                     color: "#FFFFFF",
                   },
                 }}
@@ -306,7 +308,7 @@ export default function ServiceCategoriesSection() {
               transition: "all 0.3s ease",
             },
             "& .swiper-pagination-bullet-active": {
-              bgcolor: "#FF6200",
+              bgcolor: COLORS.PRIMARY,
               opacity: 1,
               width: "24px",
               borderRadius: "6px",

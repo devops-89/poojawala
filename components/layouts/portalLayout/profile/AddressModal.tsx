@@ -18,6 +18,8 @@ import {
 import AddressLocationButton from "@/components/widgets/addressModal/AddressLocationButton";
 import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPreview";
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface AddressModalProps {
   open: boolean;
@@ -86,7 +88,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
     >
       <DialogTitle
         sx={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           fontSize: { xs: "1.2rem", sm: "1.45rem" },
           pb: 1.5,
@@ -206,7 +208,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
             <Grid size={{ xs: 12 }}>
               <Typography
                 sx={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: FONTS.PRIMARY,
                   fontWeight: 600,
                   fontSize: "14px",
                   mb: 1,
@@ -226,7 +228,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 min={1}
                 max={100}
                 valueLabelDisplay="auto"
-                sx={{ color: "#FF6200" }}
+                sx={{ color: COLORS.PRIMARY }}
               />
             </Grid>
 
@@ -243,8 +245,8 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                       }))
                     }
                     sx={{
-                      color: "#FF6200",
-                      "&.Mui-checked": { color: "#FF6200" },
+                      color: COLORS.PRIMARY,
+                      "&.Mui-checked": { color: COLORS.PRIMARY },
                     }}
                   />
                 }

@@ -1,4 +1,6 @@
 'use client';
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, TablePagination, Pagination, Card, Divider, Tooltip, IconButton, CircularProgress } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -118,10 +120,10 @@ export default function CustomerPaymentsContent() {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 800, color: '#1e293b', mb: 0.5 }}>
+      <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1e293b', mb: 0.5 }}>
         My Payments
       </Typography>
-      <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', mb: 4 }}>
+      <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', mb: 4 }}>
         View and manage your payment history.
       </Typography>
 
@@ -132,19 +134,19 @@ export default function CustomerPaymentsContent() {
             <Table sx={{ minWidth: 800 }}>
               <TableHead sx={{ bgcolor: '#f8fafc' }}>
                 <TableRow>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>ID</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Type</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Method</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Date</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
-                  <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Status</TableCell>
-                  <TableCell align="center" sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Actions</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>ID</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Type</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Method</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Date</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
+                  <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Status</TableCell>
+                  <TableCell align="center" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {payments.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 8, fontFamily: '"DM Sans", sans-serif', color: '#64748b' }}>
+                    <TableCell colSpan={7} align="center" sx={{ py: 8, fontFamily: FONTS.PRIMARY, color: '#64748b' }}>
                       No payments found.
                     </TableCell>
                   </TableRow>
@@ -156,17 +158,17 @@ export default function CustomerPaymentsContent() {
                     
                     return (
                       <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b' }}>P-{row.id}</TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#334155' }}>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>P-{row.id}</TableCell>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>
                           {row.paymentType ? row.paymentType.replace(/_/g, ' ') : 'N/A'}
                         </TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#475569' }}>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
                           {row.paymentMethod || 'N/A'}
                         </TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', color: '#475569' }}>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
                           {dateToShow ? new Date(dateToShow).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                         </TableCell>
-                        <TableCell sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 600, color: '#1e293b' }}>{displayAmt}</TableCell>
+                        <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>{displayAmt}</TableCell>
                         <TableCell>
                           {(() => {
                             const statusStyle = getStatusColor(row.status);
@@ -176,7 +178,7 @@ export default function CustomerPaymentsContent() {
                                 size="small" 
                                 sx={{ 
                                   fontWeight: 600, 
-                                  fontFamily: '"DM Sans", sans-serif',
+                                  fontFamily: FONTS.PRIMARY,
                                   fontSize: '12px',
                                   bgcolor: statusStyle.bg,
                                   color: statusStyle.text
@@ -187,8 +189,8 @@ export default function CustomerPaymentsContent() {
                         </TableCell>
                         <TableCell align="center">
                           <Tooltip title="Download Invoice">
-                            <IconButton onClick={() => handleDownloadInvoice(row)} size="small" disabled={downloadingId === row.id} sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
-                              {downloadingId === row.id ? <CircularProgress size={20} sx={{ color: '#FF6200' }} /> : <DownloadIcon fontSize="small" />}
+                            <IconButton onClick={() => handleDownloadInvoice(row)} size="small" disabled={downloadingId === row.id} sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                              {downloadingId === row.id ? <CircularProgress size={20} sx={{ color: COLORS.PRIMARY }} /> : <DownloadIcon fontSize="small" />}
                             </IconButton>
                           </Tooltip>
                         </TableCell>
@@ -207,10 +209,26 @@ export default function CustomerPaymentsContent() {
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}
-              sx={{
+          slotProps={{
+            select: {
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                disableScrollLock: true,
+              },
+            },
+          }}
+          sx={{
                 borderTop: '1px solid #e2e8f0',
                 '& .MuiTablePagination-toolbar': { minHeight: '60px' },
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: FONTS.PRIMARY,
               }}
             />
           )}
@@ -221,7 +239,7 @@ export default function CustomerPaymentsContent() {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mt: 3 }}>
         {payments.length === 0 ? (
           <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
-            <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#666', fontSize: '16px', fontWeight: 600 }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
               No payments found.
             </Typography>
           </Paper>
@@ -235,7 +253,7 @@ export default function CustomerPaymentsContent() {
             return (
               <Card key={row.id} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: 'white', borderColor: '#e2e8f0' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                  <Typography sx={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
+                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
                     P-{row.id}
                   </Typography>
                   {(() => {
@@ -246,7 +264,7 @@ export default function CustomerPaymentsContent() {
                       size="small" 
                       sx={{ 
                         fontWeight: 700, 
-                        fontFamily: '"DM Sans", sans-serif',
+                        fontFamily: FONTS.PRIMARY,
                         fontSize: '11px',
                         height: '22px',
                         bgcolor: statusStyle.bg,
@@ -256,7 +274,7 @@ export default function CustomerPaymentsContent() {
                     );
                   })()}
                 </Box>
-                <Typography sx={{ fontFamily: '"DM Sans", sans-serif', color: '#64748b', fontSize: '14px', mb: 1.5 }}>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
                   {row.paymentType ? row.paymentType.replace(/_/g, ' ') : 'N/A'}
                 </Typography>
                 
@@ -295,8 +313,8 @@ export default function CustomerPaymentsContent() {
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
                   <Tooltip title="Download Invoice">
-                    <IconButton onClick={() => handleDownloadInvoice(row)} size="small" disabled={downloadingId === row.id} sx={{ color: '#FF6200', bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
-                      {downloadingId === row.id ? <CircularProgress size={20} sx={{ color: '#FF6200' }} /> : <DownloadIcon fontSize="small" />}
+                    <IconButton onClick={() => handleDownloadInvoice(row)} size="small" disabled={downloadingId === row.id} sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                      {downloadingId === row.id ? <CircularProgress size={20} sx={{ color: COLORS.PRIMARY }} /> : <DownloadIcon fontSize="small" />}
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -315,7 +333,7 @@ export default function CustomerPaymentsContent() {
               color="primary"
               size="medium"
               sx={{ 
-                '& .MuiPaginationItem-root': { fontFamily: '"DM Sans", sans-serif', fontWeight: 600 },
+                '& .MuiPaginationItem-root': { fontFamily: FONTS.PRIMARY, fontWeight: 600 },
                 '& .Mui-selected': { bgcolor: '#FF6200 !important', color: 'white', '&:hover': { bgcolor: '#E65800 !important' } }
               }}
             />

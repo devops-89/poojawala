@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -151,7 +153,7 @@ export default function ProductForm({
                 style={{
                   textDecoration: "none",
                   color: "#64748b",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
                   fontSize: "14px",
                 }}
@@ -160,8 +162,8 @@ export default function ProductForm({
               </NextLink>
               <Typography
                 sx={{
-                  color: "#FF6200",
-                  fontFamily: "var(--font-outfit), sans-serif",
+                  color: COLORS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "14px",
                 }}
@@ -172,7 +174,7 @@ export default function ProductForm({
             <Typography
               variant="h4"
               sx={{
-                fontFamily: "var(--font-outfit), sans-serif",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#1e293b",
               }}
@@ -234,14 +236,14 @@ export default function ProductForm({
                 )
               }
               sx={{
-                bgcolor: "#FF6200",
+                bgcolor: COLORS.PRIMARY,
                 color: "white",
                 textTransform: "none",
                 borderRadius: "12px",
                 fontWeight: 700,
                 px: 4,
                 py: 1.2,
-                "&:hover": { bgcolor: "#E65800" },
+                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
               }}
             >
               {isSubmitting

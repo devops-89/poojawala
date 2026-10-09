@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import React, { useState } from "react";
 import {
@@ -18,6 +20,23 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+
+const checkIsImage = (url: string) => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.startsWith("data:image/") || lowerUrl.startsWith("blob:")) {
+    return !lowerUrl.includes("pdf");
+  }
+  const cleanUrl = lowerUrl.split("?")[0].split("#")[0];
+  return /\.(jpeg|jpg|gif|png|webp|svg|bmp)$/i.test(cleanUrl);
+};
+
+const getPdfUrlWithParams = (url: string) => {
+  if (!url) return "";
+  if (url.includes("#")) return url;
+  return `${url}#toolbar=0&navpanes=0&view=FitH`;
+};
 
 interface VerificationDocsSectionProps {
   values: any;
@@ -87,11 +106,11 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2.5 }}>
-        <DescriptionIcon sx={{ color: "#FF6200" }} />
+        <DescriptionIcon sx={{ color: COLORS.PRIMARY }} />
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "var(--font-outfit), sans-serif",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
           }}
@@ -122,7 +141,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                   transition: "all 0.3s",
                   position: "relative",
                   "&:hover": {
-                    borderColor: "#FF6200",
+                    borderColor: COLORS.PRIMARY,
                     bgcolor: "#FFF8F4",
                   },
                 }}
@@ -157,7 +176,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                   {file || url ? (
                     <CheckCircleIcon sx={{ fontSize: 44, color: "#4CAF50" }} />
                   ) : (
-                    <CloudUploadIcon sx={{ fontSize: 44, color: "#FF6200" }} />
+                    <CloudUploadIcon sx={{ fontSize: 44, color: COLORS.PRIMARY }} />
                   )}
                 </Box>
 
@@ -165,7 +184,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                   variant="subtitle2"
                   sx={{
                     fontWeight: 700,
-                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontFamily: FONTS.OUTFIT,
                     color: "#1e293b",
                     mb: 0.5,
                   }}
@@ -240,7 +259,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
                     sx={{
                       borderRadius: "8px",
                       textTransform: "none",
-                      bgcolor: "#FF6200",
+                      bgcolor: COLORS.PRIMARY,
                       "&:hover": { bgcolor: "#e05600" },
                     }}
                   >
@@ -275,6 +294,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
             justifyContent: "space-between",
             alignItems: "center",
             fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
           }}
         >
           {previewModal.title}
@@ -284,27 +304,67 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent dividers>
-          {previewModal.url.endsWith(".pdf") ? (
-            <iframe
-              src={previewModal.url}
-              width="100%"
-              height="500px"
-              style={{ border: "none" }}
-            />
-          ) : (
-            <Box
-              component="img"
-              src={previewModal.url}
-              alt={previewModal.title}
-              sx={{
-                width: "100%",
-                maxHeight: "500px",
-                objectFit: "contain",
-                borderRadius: "8px",
-              }}
-            />
-          )}
+        <DialogContent
+          dividers
+          sx={{
+            p: 2,
+            height: "70vh",
+            bgcolor: "#f8fafc",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {previewModal.url &&
+            (checkIsImage(previewModal.url) ? (
+              <Box
+                component="img"
+                src={previewModal.url}
+                alt={previewModal.title}
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+              />
+            ) : (
+              <object
+                data={getPdfUrlWithParams(previewModal.url)}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              >
+                <iframe
+                  src={
+                    previewModal.url.startsWith("blob:") || previewModal.url.startsWith("data:")
+                      ? getPdfUrlWithParams(previewModal.url)
+                      : `https://docs.google.com/gview?url=${encodeURIComponent(previewModal.url)}&embedded=true`
+                  }
+                  width="100%"
+                  height="100%"
+                  style={{ border: "none", borderRadius: "8px" }}
+                  title={previewModal.title}
+                >
+                  <Box sx={{ p: 3, textAlign: "center" }}>
+                    <Typography sx={{ mb: 2, fontFamily: FONTS.OUTFIT }}>
+                      Unable to display PDF preview directly in browser dialog.
+                    </Typography>
+                    <Button
+                      component="a"
+                      href={previewModal.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="contained"
+                      sx={{ bgcolor: COLORS.PRIMARY }}
+                    >
+                      Open / Download Document
+                    </Button>
+                  </Box>
+                </iframe>
+              </object>
+            ))}
         </DialogContent>
       </Dialog>
     </Box>

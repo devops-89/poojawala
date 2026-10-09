@@ -1,4 +1,6 @@
 "use client";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SpaIcon from "@mui/icons-material/Spa";
@@ -15,10 +17,10 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
   }
 
   const cardIcons = [
-    <SpaIcon key="1" sx={{ color: "#C84B16", fontSize: 20 }} />,
-    <MenuBookIcon key="2" sx={{ color: "#C84B16", fontSize: 20 }} />,
-    <PersonOutlinedIcon key="3" sx={{ color: "#C84B16", fontSize: 20 }} />,
-    <StarBorderIcon key="4" sx={{ color: "#C84B16", fontSize: 20 }} />,
+    <SpaIcon key="1" sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />,
+    <MenuBookIcon key="2" sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />,
+    <PersonOutlinedIcon key="3" sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />,
+    <StarBorderIcon key="4" sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />,
   ];
 
   return (
@@ -31,7 +33,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#C84B16",
+              color: COLORS.PRIMARY,
               textTransform: "uppercase",
               mb: 1.5,
             }}
@@ -42,7 +44,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
               fontSize: { xs: "28px", sm: "34px", md: "38px" },
@@ -55,7 +57,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
 
           <Typography
             sx={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: FONTS.PRIMARY,
               color: "#64534A",
               fontSize: "15px",
               lineHeight: 1.7,
@@ -117,7 +119,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
                       <Typography
                         variant="h6"
                         sx={{
-                          fontFamily: '"Georgia", "Times New Roman", serif',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           color: "#2C1810",
                           fontSize: "17px",
@@ -131,7 +133,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
                     {desc && (
                       <Typography
                         sx={{
-                          fontFamily: '"DM Sans", sans-serif',
+                          fontFamily: FONTS.PRIMARY,
                           color: "#64534A",
                           fontSize: "13px",
                           lineHeight: 1.6,
