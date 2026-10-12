@@ -32,6 +32,7 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "ALL", label: "All Messages" },
@@ -213,17 +214,22 @@ export default function AdminContactMessagesContent() {
       minWidth: 80,
       align: "right",
       render: (msg) => (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5 }}>
-          <Tooltip title="View Message">
-            <IconButton onClick={() => fetchMessageById(msg.id)} sx={{ color: "#3b82f6" }}>
-              <VisibilityIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton onClick={() => setMessageToDelete(msg.id)} sx={{ color: "#ef4444" }}>
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Message",
+                icon: <VisibilityIcon fontSize="small" />,
+                onClick: () => fetchMessageById(msg.id),
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setMessageToDelete(msg.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

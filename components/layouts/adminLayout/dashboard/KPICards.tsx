@@ -8,7 +8,8 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
-import { Box, Chip, Grid, Paper, Skeleton, Typography } from "@mui/material";
+import { Box, Grid, Paper, Skeleton, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 interface KPICardsProps {
   stats: any;
@@ -16,6 +17,8 @@ interface KPICardsProps {
 }
 
 export default function KPICards({ stats, loading }: KPICardsProps) {
+  const router = useRouter();
+
   const revenueKPIs = [
     {
       title: "Total Revenue",
@@ -32,13 +35,11 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
       bgcolor: "#E8F5E9",
       borderColor: "#C8E6C9",
       valueColor: "#1B5E20",
-      badgeText: "All Revenue",
-      badgeColor: "#2E7D32",
-      badgeBg: "#DCEDC8",
     },
     {
       title: "Total Booking Revenue",
       subtitle: "Pooja & Services",
+      route: "/admin/finance/bookings",
       value:
         typeof stats?.totalBookingRevenue === "number"
           ? `₹${stats.totalBookingRevenue.toLocaleString("en-IN")}`
@@ -49,13 +50,11 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
       bgcolor: "#FFF0E6",
       borderColor: "#FFE0D0",
       valueColor: "#9C330B",
-      badgeText: "Bookings",
-      badgeColor: COLORS.PRIMARY,
-      badgeBg: "#FFDBC8",
     },
     {
       title: "Total Order Revenue",
       subtitle: "Pooja Samagri Items",
+      route: "/admin/orders",
       value:
         typeof stats?.totalOrderRevenue === "number"
           ? `₹${stats.totalOrderRevenue.toLocaleString("en-IN")}`
@@ -66,18 +65,16 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
       bgcolor: "#E0F7FA",
       borderColor: "#B2EBF2",
       valueColor: "#006064",
-      badgeText: "Orders",
-      badgeColor: "#00838F",
-      badgeBg: "#B2EBF2",
     },
   ];
 
   const countKPIs = [
     {
       title: "Total Bookings",
+      route: "/admin/bookings",
       value:
         stats?.totalBookingCount !== undefined &&
-        stats?.totalBookingCount !== null
+          stats?.totalBookingCount !== null
           ? Number(stats.totalBookingCount).toLocaleString("en-IN")
           : "0",
       icon: (
@@ -89,6 +86,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
     },
     {
       title: "Total Orders",
+      route: "/admin/orders",
       value:
         stats?.totalOrderCount !== undefined && stats?.totalOrderCount !== null
           ? Number(stats.totalOrderCount).toLocaleString("en-IN")
@@ -100,6 +98,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
     },
     {
       title: "Active Purohits",
+      route: "/admin/purohits",
       value:
         stats?.activePurohits !== undefined && stats?.activePurohits !== null
           ? Number(stats.activePurohits).toLocaleString("en-IN")
@@ -111,6 +110,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
     },
     {
       title: "Active Customers",
+      route: "/admin/users",
       value:
         stats?.activeCustomers !== undefined && stats?.activeCustomers !== null
           ? Number(stats.activeCustomers).toLocaleString("en-IN")
@@ -130,6 +130,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
             <Paper
               elevation={0}
+              onClick={() => kpi.route && router.push(kpi.route)}
               sx={{
                 p: { xs: 2.5, sm: 3 },
                 borderRadius: "20px",
@@ -142,18 +143,18 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
                 transition: "all 0.25s ease-in-out",
                 position: "relative",
                 overflow: "hidden",
+                cursor: kpi.route ? "pointer" : "default",
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: "0 12px 28px rgba(44, 24, 16, 0.08)",
-                  borderColor: kpi.badgeColor,
+                  borderColor: kpi.valueColor,
                 },
               }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                   mb: 2,
                 }}
               >
@@ -172,19 +173,6 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
                 >
                   {kpi.icon}
                 </Box>
-                <Chip
-                  label={kpi.badgeText}
-                  size="small"
-                  sx={{
-                    bgcolor: kpi.badgeBg,
-                    color: kpi.badgeColor,
-                    fontWeight: 800,
-                    fontSize: "11px",
-                    fontFamily: FONTS.PRIMARY,
-                    height: 22,
-                    borderRadius: "12px",
-                  }}
-                />
               </Box>
 
               <Box>
@@ -241,6 +229,7 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={idx}>
             <Paper
               elevation={0}
+              onClick={() => kpi.route && router.push(kpi.route)}
               sx={{
                 p: 2.2,
                 px: 2.5,
@@ -252,9 +241,11 @@ export default function KPICards({ stats, loading }: KPICardsProps) {
                 alignItems: "center",
                 gap: 2,
                 transition: "all 0.25s ease-in-out",
+                cursor: kpi.route ? "pointer" : "default",
                 "&:hover": {
                   transform: "translateY(-3px)",
                   boxShadow: "0 10px 24px rgba(44, 24, 16, 0.07)",
+                  borderColor: kpi.valueColor,
                 },
               }}
             >

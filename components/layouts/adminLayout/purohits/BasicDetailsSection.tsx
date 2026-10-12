@@ -58,8 +58,15 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
               setFieldValue("fullName", val);
             }}
             onBlur={handleBlur}
-            error={touched.fullName && Boolean(errors.fullName)}
-            helperText={touched.fullName && (errors.fullName as string)}
+            error={
+              Boolean(errors.fullName) &&
+              (touched.fullName || Boolean(values.fullName))
+            }
+            helperText={
+              (touched.fullName || Boolean(values.fullName))
+                ? (errors.fullName as string)
+                : undefined
+            }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />
         </Grid>
@@ -74,8 +81,15 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
             value={values.email}
             onChange={handleChange}
             onBlur={handleBlur}
-            error={touched.email && Boolean(errors.email)}
-            helperText={touched.email && errors.email}
+            error={
+              Boolean(errors.email) &&
+              (touched.email || Boolean(values.email))
+            }
+            helperText={
+              (touched.email || Boolean(values.email))
+                ? (errors.email as string)
+                : undefined
+            }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />
         </Grid>

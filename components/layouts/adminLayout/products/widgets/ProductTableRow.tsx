@@ -2,6 +2,7 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import AdminStatusSelect from "../../common/AdminStatusSelect";
+import AdminTableActionMenu from "../../common/AdminTableActionMenu";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -116,53 +117,28 @@ export default function ProductTableRow({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 1,
           }}
         >
-          <IconButton
-            component={NextLink}
-            href={`/admin/products/${product.id}`}
-            size="small"
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-            title="View Product"
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            component={NextLink}
-            href={`/admin/products/edit/${product.id}`}
-            size="small"
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
-            }}
-            title="Edit Product"
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => onDeleteClick(product.id)}
-            size="small"
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#ef4444", bgcolor: "#fee2e2" },
-            }}
-            title="Delete Product"
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/products/${product.id}`,
+              },
+              {
+                label: "Edit",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/products/edit/${product.id}`,
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => onDeleteClick(product.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       </TableCell>
     </TableRow>

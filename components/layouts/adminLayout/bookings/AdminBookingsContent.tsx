@@ -33,6 +33,7 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 import React, { useEffect, useState } from "react";
 
 const STATUS_TABS = [
@@ -442,47 +443,33 @@ export default function AdminBookingsContent() {
     {
       id: "actions",
       label: "ACTIONS",
-      width: "10%",
-      minWidth: 100,
+      width: "8%",
+      minWidth: 70,
       align: "center",
       render: (booking) => {
         const technicianName = booking.purohit?.user?.firstName
           ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`
           : "Unassigned";
+        const canAssign =
+          technicianName === "Unassigned" && booking.status === "PENDING";
+
         return (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: 72 }}>
-              <IconButton
-                component={NextLink}
-                href={`/admin/bookings/${booking.id}`}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  color: COLORS.PRIMARY,
-                  bgcolor: "#fff7ed",
-                  "&:hover": { color: COLORS.PRIMARY_DARK, bgcolor: "#ffedd5" },
-                }}
-              >
-                <VisibilityIcon fontSize="small" />
-              </IconButton>
-              {technicianName === "Unassigned" && booking.status === "PENDING" ? (
-                <IconButton
-                  onClick={() => handleOpenAssignModal(booking.id)}
-                  title="Assign Purohit"
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    color: "#2563eb",
-                    bgcolor: "#eff6ff",
-                    "&:hover": { color: "#1d4ed8", bgcolor: "#dbeafe" },
-                  }}
-                >
-                  <PersonAddIcon fontSize="small" />
-                </IconButton>
-              ) : (
-                <Box sx={{ width: 32, height: 32 }} />
-              )}
-            </Box>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <AdminTableActionMenu
+              actions={[
+                {
+                  label: "View Details",
+                  icon: <VisibilityIcon fontSize="small" />,
+                  href: `/admin/bookings/${booking.id}`,
+                },
+                canAssign && {
+                  label: "Assign Purohit",
+                  icon: <PersonAddIcon fontSize="small" />,
+                  onClick: () => handleOpenAssignModal(booking.id),
+                  color: "#2563eb",
+                },
+              ]}
+            />
           </Box>
         );
       },

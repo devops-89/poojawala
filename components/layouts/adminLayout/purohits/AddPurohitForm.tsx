@@ -37,8 +37,16 @@ const twentyYearsAgo = new Date(
 const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(twentyYearsAgo.getMonth() + 1).padStart(2, "0")}-${String(twentyYearsAgo.getDate()).padStart(2, "0")}`;
 
 const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required("First name is required").trim(),
-  lastName: Yup.string().required("Last name is required").trim(),
+  firstName: Yup.string()
+    .trim()
+    .required("First name is required")
+    .min(2, "First name must be at least 2 characters")
+    .matches(/^[a-zA-Z\s.]+$/, "First name should only contain letters and spaces"),
+  lastName: Yup.string()
+    .trim()
+    .required("Last name is required")
+    .min(2, "Last name must be at least 2 characters")
+    .matches(/^[a-zA-Z\s.]+$/, "Last name should only contain letters and spaces"),
   email: Yup.string()
     .required("Email is required")
     .matches(
@@ -211,10 +219,18 @@ export default function AddPurohitForm() {
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
                 formik.setFieldValue("firstName", sanitizeLettersOnly(e.target.value));
+                formik.setFieldTouched("firstName", true, false);
               }}
               onBlur={handleBlur}
-              error={touched.firstName && Boolean(errors.firstName)}
-              helperText={touched.firstName && errors.firstName}
+              error={
+                Boolean(errors.firstName) &&
+                (touched.firstName || Boolean(values.firstName))
+              }
+              helperText={
+                (touched.firstName || Boolean(values.firstName))
+                  ? errors.firstName
+                  : undefined
+              }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             />
           </Grid>
@@ -228,10 +244,18 @@ export default function AddPurohitForm() {
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
                 formik.setFieldValue("lastName", sanitizeLettersOnly(e.target.value));
+                formik.setFieldTouched("lastName", true, false);
               }}
               onBlur={handleBlur}
-              error={touched.lastName && Boolean(errors.lastName)}
-              helperText={touched.lastName && errors.lastName}
+              error={
+                Boolean(errors.lastName) &&
+                (touched.lastName || Boolean(values.lastName))
+              }
+              helperText={
+                (touched.lastName || Boolean(values.lastName))
+                  ? errors.lastName
+                  : undefined
+              }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             />
           </Grid>
@@ -256,6 +280,7 @@ export default function AddPurohitForm() {
                   .slice(0, 10);
                 formik.setFieldValue("countryCode", "+91");
                 formik.setFieldValue("mobileNumber", natNum);
+                formik.setFieldTouched("mobileNumber", true, false);
               }}
               onKeyDown={(e) => {
                 if (values.mobileNumber && values.mobileNumber.length >= 10) {
@@ -284,7 +309,7 @@ export default function AddPurohitForm() {
               helperText={
                 values.mobileNumber.length > 0 && !/^[6-9]/.test(values.mobileNumber)
                   ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
-                  : touched.mobileNumber
+                  : (touched.mobileNumber || Boolean(values.mobileNumber))
                   ? (errors.mobileNumber as string)
                   : undefined
               }
@@ -299,10 +324,20 @@ export default function AddPurohitForm() {
               type="date"
               variant="outlined"
               value={values.dob}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                formik.setFieldTouched("dob", true, false);
+              }}
               onBlur={handleBlur}
-              error={touched.dob && Boolean(errors.dob)}
-              helperText={touched.dob && (errors.dob as string)}
+              error={
+                Boolean(errors.dob) &&
+                (touched.dob || Boolean(values.dob))
+              }
+              helperText={
+                (touched.dob || Boolean(values.dob))
+                  ? (errors.dob as string)
+                  : undefined
+              }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               slotProps={{
                 inputLabel: { shrink: true },
@@ -320,10 +355,18 @@ export default function AddPurohitForm() {
               variant="outlined"
               type="email"
               value={values.email}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                formik.setFieldTouched("email", true, false);
+              }}
               onBlur={handleBlur}
-              error={touched.email && Boolean(errors.email)}
-              helperText={touched.email && errors.email}
+              error={
+                Boolean(errors.email) &&
+                (touched.email || Boolean(values.email))
+              }
+              helperText={
+                (touched.email || Boolean(values.email)) ? errors.email : undefined
+              }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             />
           </Grid>
@@ -337,10 +380,20 @@ export default function AddPurohitForm() {
               variant="outlined"
               type={showPassword ? "text" : "password"}
               value={values.password}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                formik.setFieldTouched("password", true, false);
+              }}
               onBlur={handleBlur}
-              error={touched.password && Boolean(errors.password)}
-              helperText={touched.password && (errors.password as string)}
+              error={
+                Boolean(errors.password) &&
+                (touched.password || Boolean(values.password))
+              }
+              helperText={
+                (touched.password || Boolean(values.password))
+                  ? (errors.password as string)
+                  : undefined
+              }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               slotProps={{
                 input: {
@@ -366,11 +419,19 @@ export default function AddPurohitForm() {
               variant="outlined"
               type={showConfirmPassword ? "text" : "password"}
               value={values.confirmPassword}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                formik.setFieldTouched("confirmPassword", true, false);
+              }}
               onBlur={handleBlur}
-              error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+              error={
+                Boolean(errors.confirmPassword) &&
+                (touched.confirmPassword || Boolean(values.confirmPassword))
+              }
               helperText={
-                touched.confirmPassword && (errors.confirmPassword as string)
+                (touched.confirmPassword || Boolean(values.confirmPassword))
+                  ? (errors.confirmPassword as string)
+                  : undefined
               }
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               slotProps={{

@@ -60,6 +60,40 @@ export default function CategoryModal({
   const [touched, setTouched] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
+  const getCategoryNameError = (value: string, isTouched: boolean): string => {
+    if (!value) {
+      return isTouched ? "Category name is required" : "";
+    }
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return isTouched ? "Category name cannot be only spaces" : "";
+    }
+
+    const hasNumbers = /\d/.test(value);
+    const hasSpecialChars = /[^a-zA-Z\s&'-]/.test(value);
+
+    if (hasNumbers && hasSpecialChars) {
+      return "Numbers and special characters are not allowed. Only letters and spaces are permitted.";
+    }
+    if (hasNumbers) {
+      return "Numbers are not allowed in category name. Only letters and spaces are permitted.";
+    }
+    if (hasSpecialChars) {
+      return "Special characters are not allowed. Only letters and spaces are permitted.";
+    }
+    if (trimmed.length < 2 && isTouched) {
+      return "Category name must be at least 2 characters long";
+    }
+    if (trimmed.length > 50) {
+      return "Category name cannot exceed 50 characters";
+    }
+
+    return "";
+  };
+
+  const nameError = getCategoryNameError(nameInput, touched);
+  const isDescriptionError = descriptionInput.length > 500;
+
   useEffect(() => {
     if (open) {
       setTouched(false);
@@ -104,8 +138,13 @@ export default function CategoryModal({
 
   const handleSave = async () => {
     setTouched(true);
-    if (!nameInput.trim()) {
-      showSnackbar("Please fill in all mandatory fields", "error");
+    const errorMsg = getCategoryNameError(nameInput, true);
+    if (errorMsg) {
+      showSnackbar(errorMsg, "error");
+      return;
+    }
+    if (descriptionInput.length > 500) {
+      showSnackbar("Description cannot exceed 500 characters", "error");
       return;
     }
     setSaving(true);
@@ -393,15 +432,24 @@ export default function CategoryModal({
               placeholder="e.g. Festival Poojas"
               fullWidth
               value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
+              onChange={(e) => {
+                setNameInput(e.target.value);
+                if (!touched) setTouched(true);
+              }}
               onBlur={() => setTouched(true)}
-              error={touched && !nameInput.trim()}
-              helperText={
-                touched && !nameInput.trim()
-                  ? "Category name is required"
-                  : undefined
-              }
-              slotProps={{ inputLabel: { shrink: true } }}
+              error={Boolean(nameError)}
+              helperText={nameError || undefined}
+              slotProps={{
+                inputLabel: { shrink: true },
+                formHelperText: {
+                  sx: {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    mt: 0.5,
+                  },
+                },
+              }}
             />
 
             <TextField
@@ -426,7 +474,23 @@ export default function CategoryModal({
               rows={3}
               value={descriptionInput}
               onChange={(e) => setDescriptionInput(e.target.value)}
-              slotProps={{ inputLabel: { shrink: true } }}
+              error={isDescriptionError}
+              helperText={
+                isDescriptionError
+                  ? "Description cannot exceed 500 characters"
+                  : undefined
+              }
+              slotProps={{
+                inputLabel: { shrink: true },
+                formHelperText: {
+                  sx: {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    mt: 0.5,
+                  },
+                },
+              }}
             />
 
             <CategoryImageUpload
@@ -467,7 +531,7 @@ export default function CategoryModal({
             </Button>
             <Button
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || Boolean(nameInput && nameError)}
               variant="contained"
               sx={{
                 bgcolor: COLORS.PRIMARY,
@@ -477,6 +541,10 @@ export default function CategoryModal({
                 borderRadius: "8px",
                 px: 3,
                 "&:hover": { bgcolor: "#e55800" },
+                "&.Mui-disabled": {
+                  bgcolor: "#fed7aa",
+                  color: "#ffffff",
+                },
               }}
             >
               {saving ? (

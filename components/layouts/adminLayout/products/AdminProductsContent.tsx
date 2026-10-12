@@ -19,10 +19,11 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Avatar, Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "All", label: "All Products" },
@@ -239,49 +240,18 @@ export default function AdminProductsContent() {
     {
       id: "product",
       label: "PRODUCT",
-      render: (product) => {
-        const imageSrc =
-          product.productImage ||
-          product.imageUrl ||
-          product.image ||
-          "/images/productsHero.webp";
-        return (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar
-              src={imageSrc}
-              variant="rounded"
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: "8px",
-                bgcolor: "#fff7ed",
-              }}
-            />
-            <Box>
-              <Typography
-                sx={{
-                  fontWeight: 700,
-                  color: "#1e293b",
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: "0.95rem",
-                }}
-              >
-                {product.name}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: "#64748b",
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: "0.8rem",
-                }}
-              >
-                {product.category?.name || "Samagri Product"}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      },
+      render: (product) => (
+        <Typography
+          sx={{
+            fontWeight: 700,
+            color: "#1e293b",
+            fontFamily: FONTS.OUTFIT,
+            fontSize: "0.95rem",
+          }}
+        >
+          {product.name || "Untitled Product"}
+        </Typography>
+      ),
     },
     {
       id: "price",
@@ -342,45 +312,27 @@ export default function AdminProductsContent() {
       label: "ACTIONS",
       align: "center",
       render: (product) => (
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
-          <IconButton
-            component={NextLink}
-            href={`/admin/products/${product.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            component={NextLink}
-            href={`/admin/products/edit/${product.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => setDeleteTarget(product.id)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/products/${product.id}`,
+              },
+              {
+                label: "Edit",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/products/edit/${product.id}`,
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setDeleteTarget(product.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

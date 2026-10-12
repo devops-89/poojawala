@@ -4,6 +4,7 @@ import { COLORS } from "@/utils/enums";
 
 import { createTempleAPI, getTempleByIdAPI, updateTempleAPI } from "@/api/templeControllers";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
+import { TiptapEditor } from "@/components/widgets/TiptapEditor";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -28,12 +29,32 @@ import React, { useEffect, useMemo, useState } from "react";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Temple name is required"),
+  name: Yup.string()
+    .trim()
+    .required("Temple name is required")
+    .min(3, "Temple name must be at least 3 characters")
+    .max(100, "Temple name cannot exceed 100 characters")
+    .matches(
+      /^[a-zA-Z\s&',.-]+$/,
+      "Temple name should only contain letters and spaces (no numbers or special characters)"
+    ),
   description: Yup.string()
     .required("Description is required")
-    .min(10, "Description must be at least 10 characters"),
-  city: Yup.string().required("City is required"),
-  address: Yup.string().required("Address is required"),
+    .test("meaningful-html", "Description must contain meaningful text with letters (at least 10 characters), not just symbols", (val) => {
+      if (!val) return false;
+      const stripped = val.replace(/<[^>]*>/g, "").trim();
+      const letters = (stripped.match(/[a-zA-Z]/g) || []).length;
+      return stripped.length >= 10 && letters >= 5;
+    }),
+  city: Yup.string().trim().required("City is required"),
+  address: Yup.string()
+    .trim()
+    .required("Address is required")
+    .min(5, "Address must be at least 5 characters")
+    .test("meaningful-address", "Address must contain letters, not just numbers or symbols", (val) => {
+      if (!val) return false;
+      return /[a-zA-Z]/.test(val);
+    }),
 });
 
 import { TempleFormProps } from "@/utils/types";
@@ -374,36 +395,45 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               placeholder="e.g., Shri Hanuman Mandir"
               variant="outlined"
               value={formik.values.name}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                formik.handleChange(e);
+                formik.setFieldTouched("name", true, false);
+              }}
               onBlur={formik.handleBlur}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
+              error={
+                Boolean(formik.errors.name) &&
+                (formik.touched.name || Boolean(formik.values.name))
+              }
+              helperText={
+                (formik.touched.name || Boolean(formik.values.name))
+                  ? formik.errors.name
+                  : undefined
+              }
               sx={{
                 "& .MuiOutlinedInput-root": { borderRadius: "12px" },
               }}
             />
 
-            {/* 3. Description */}
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              name="description"
+            {/* 3. Description (Rich Text Editor) */}
+            <TiptapEditor
               label="Description *"
-              placeholder="Enter detailed description of the temple..."
-              variant="outlined"
               value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onChange={(html) => {
+                formik.setFieldValue("description", html);
+                formik.setFieldTouched("description", true, false);
+              }}
+              onBlur={() => formik.setFieldTouched("description", true, true)}
+              placeholder="Enter detailed description of the temple with rich formatting..."
+              minHeight={250}
               error={
-                formik.touched.description && Boolean(formik.errors.description)
+                Boolean(formik.errors.description) &&
+                (formik.touched.description || Boolean(formik.values.description))
               }
               helperText={
-                formik.touched.description && formik.errors.description
+                (formik.touched.description || Boolean(formik.values.description))
+                  ? (formik.errors.description as string)
+                  : undefined
               }
-              sx={{
-                "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-              }}
             />
 
             {/* 4. Location Details */}
@@ -479,9 +509,9 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                             : "Select or type City"
                         }
                         variant="outlined"
-                        error={formik.touched.city && Boolean(formik.errors.city)}
+                        error={(formik.touched.city || Boolean(formik.values.city)) && Boolean(formik.errors.city)}
                         helperText={
-                          formik.touched.city
+                          (formik.touched.city || Boolean(formik.values.city)) && formik.errors.city
                             ? (formik.errors.city as string)
                             : !formik.values.state
                             ? "Select state to enable city selection"
@@ -504,10 +534,20 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                 placeholder="e.g., Sector 62, Near Central Market"
                 variant="outlined"
                 value={formik.values.address}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  formik.setFieldTouched("address", true, false);
+                }}
                 onBlur={formik.handleBlur}
-                error={formik.touched.address && Boolean(formik.errors.address)}
-                helperText={formik.touched.address && formik.errors.address}
+                error={
+                  Boolean(formik.errors.address) &&
+                  (formik.touched.address || Boolean(formik.values.address))
+                }
+                helperText={
+                  (formik.touched.address || Boolean(formik.values.address))
+                    ? formik.errors.address
+                    : undefined
+                }
                 sx={{
                   "& .MuiOutlinedInput-root": { borderRadius: "12px" },
                 }}

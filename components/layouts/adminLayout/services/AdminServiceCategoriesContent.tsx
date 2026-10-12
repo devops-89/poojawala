@@ -17,17 +17,13 @@ import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
 import ConfirmStatusDialog from "@/components/widgets/ConfirmStatusDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import AddIcon from "@mui/icons-material/Add";
-import CategoryIcon from "@mui/icons-material/Category";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, Chip, IconButton, Typography } from "@mui/material";
-import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import CategoryModal, { CategoryModalMode } from "./categories/CategoryModal";
-
-const PLACEHOLDER =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='8' fill='%23e2e8f0'/%3E%3Cpath d='M16 30 Q24 18 32 30' stroke='%2394a3b8' stroke-width='2' fill='none'/%3E%3Ccircle cx='20' cy='22' r='3' fill='%2394a3b8'/%3E%3C/svg%3E";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "All Status", label: "All" },
@@ -226,54 +222,17 @@ export default function AdminServiceCategoriesContent() {
       label: "CATEGORY NAME",
       render: (category) => {
         const title = category.name || category.title || "Untitled Category";
-        const imageSrc =
-          category.iconDownloadurl ||
-          category.iconUrl ||
-          category.image ||
-          category.imageUrl ||
-          PLACEHOLDER;
-
         return (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: "10px",
-                overflow: "hidden",
-                bgcolor: "#fff0e6",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-                position: "relative",
-                border: "1px solid #fed7aa",
-              }}
-            >
-              {imageSrc && imageSrc !== PLACEHOLDER ? (
-                <Image
-                  src={imageSrc}
-                  alt={title}
-                  fill
-                  sizes="44px"
-                  style={{ objectFit: "cover" }}
-                  unoptimized
-                />
-              ) : (
-                <CategoryIcon sx={{ color: COLORS.PRIMARY }} />
-              )}
-            </Box>
-            <Typography
-              sx={{
-                fontFamily: FONTS.OUTFIT,
-                fontWeight: 700,
-                fontSize: "0.95rem",
-                color: "#1e293b",
-              }}
-            >
-              {title}
-            </Typography>
-          </Box>
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              color: "#1e293b",
+            }}
+          >
+            {title}
+          </Typography>
         );
       },
     },
@@ -326,43 +285,27 @@ export default function AdminServiceCategoriesContent() {
       label: "ACTIONS",
       align: "right",
       render: (category) => (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          <IconButton
-            onClick={() => handleOpenViewModal(category)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => handleOpenEditModal(category)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => setDeleteTarget(category)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                onClick: () => handleOpenViewModal(category),
+              },
+              {
+                label: "Edit",
+                icon: <EditIcon fontSize="small" />,
+                onClick: () => handleOpenEditModal(category),
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setDeleteTarget(category),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

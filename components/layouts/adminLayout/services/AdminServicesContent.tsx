@@ -23,6 +23,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const PLACEHOLDER =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='8' fill='%23e2e8f0'/%3E%3Cpath d='M16 30 Q24 18 32 30' stroke='%2394a3b8' stroke-width='2' fill='none'/%3E%3Ccircle cx='20' cy='22' r='3' fill='%2394a3b8'/%3E%3C/svg%3E";
@@ -262,45 +263,27 @@ export default function AdminServicesContent() {
       label: "ACTIONS",
       align: "right",
       render: (service) => (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          <IconButton
-            component={NextLink}
-            href={`/admin/services/${service.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            component={NextLink}
-            href={`/admin/services/edit/${service.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => setDeleteTarget(service.id)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/services/${service.id}`,
+              },
+              {
+                label: "Edit",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/services/edit/${service.id}`,
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setDeleteTarget(service.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

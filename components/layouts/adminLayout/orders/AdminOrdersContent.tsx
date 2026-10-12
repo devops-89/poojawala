@@ -18,6 +18,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, Chip, IconButton, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "All Orders", label: "All Orders" },
@@ -417,18 +418,17 @@ export default function AdminOrdersContent() {
       minWidth: 70,
       align: "center",
       render: (order) => (
-        <IconButton
-          onClick={() =>
-            router.push(`/admin/orders/${order.id || order.orderId}`)
-          }
-          sx={{
-            color: COLORS.PRIMARY,
-            bgcolor: "#fff7ed",
-            "&:hover": { color: COLORS.PRIMARY_DARK, bgcolor: "#ffedd5" },
-          }}
-        >
-          <VisibilityIcon fontSize="small" />
-        </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/orders/${order.id || order.orderId}`,
+              },
+            ]}
+          />
+        </Box>
       ),
     },
   ];

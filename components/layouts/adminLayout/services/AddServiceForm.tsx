@@ -37,11 +37,33 @@ import ServicePricingFields from "./ServicePricingFields";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Service name is required"),
+  name: Yup.string()
+    .trim()
+    .required("Service name is required")
+    .min(3, "Service name must be at least 3 characters")
+    .max(100, "Service name cannot exceed 100 characters")
+    .matches(
+      /^[a-zA-Z\s&',.\-()]+$/,
+      "Service name should only contain letters and standard characters (no numbers or special symbols)"
+    )
+    .test("has-letters", "Service name must contain letters", (val) => {
+      if (!val) return false;
+      return /[a-zA-Z]/.test(val);
+    }),
   categoryId: Yup.string().required("Category is required"),
   description: Yup.string()
+    .trim()
     .required("Description is required")
-    .min(10, "Description must be at least 10 characters"),
+    .min(10, "Description must be at least 10 characters")
+    .test(
+      "meaningful-text",
+      "Description must contain meaningful text with letters, not just symbols",
+      (val) => {
+        if (!val) return false;
+        const letters = (val.match(/[a-zA-Z]/g) || []).length;
+        return val.trim().length >= 10 && letters >= 5;
+      }
+    ),
   tokenPercentage: Yup.number()
     .required("Token percentage is required")
     .min(0, "Cannot be negative")
@@ -259,6 +281,7 @@ export default function AddServiceForm() {
     handleBlur,
     handleSubmit,
     setFieldValue,
+    setFieldTouched,
   } = formik;
 
   const handleNext = async () => {
@@ -374,6 +397,7 @@ export default function AddServiceForm() {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   setFieldValue={setFieldValue}
+                  setFieldTouched={setFieldTouched}
                 />
 
                 <ServiceBenefitsFields

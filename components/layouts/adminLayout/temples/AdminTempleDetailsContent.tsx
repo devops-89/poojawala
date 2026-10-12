@@ -191,18 +191,22 @@ export default function AdminTempleDetailsContent() {
                   />
                 </Box>
 
-                <Typography
+                <Box
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     color: "#475569",
                     fontSize: "1rem",
                     lineHeight: 1.6,
-                    whiteSpace: "pre-line",
                     mt: 1.5,
+                    "& p": { m: 0, mb: 1 },
+                    "& ul, & ol": { pl: 3, mb: 1 },
+                    "& strong": { color: "#1e293b", fontWeight: 700 },
+                    "& a": { color: COLORS.PRIMARY, textDecoration: "underline" },
                   }}
-                >
-                  {temple.description || "No description available."}
-                </Typography>
+                  dangerouslySetInnerHTML={{
+                    __html: temple.description || "No description available.",
+                  }}
+                />
               </Box>
             </Paper>
 

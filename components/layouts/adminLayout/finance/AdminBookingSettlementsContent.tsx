@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 export default function AdminBookingSettlementsContent() {
   const [page, setPage] = useState(0);
@@ -320,17 +321,17 @@ export default function AdminBookingSettlementsContent() {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton
-                          component={NextLink}
-                          href={`/admin/bookings/${item.id}`}
-                          sx={{
-                            color: "#10b981",
-                            bgcolor: "#f8fafc",
-                            "&:hover": { color: "#059669", bgcolor: "#d1fae5" },
-                          }}
-                        >
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
+                        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                          <AdminTableActionMenu
+                            actions={[
+                              {
+                                label: "View Booking",
+                                icon: <VisibilityIcon fontSize="small" />,
+                                href: `/admin/bookings/${item.id}`,
+                              },
+                            ]}
+                          />
+                        </Box>
                       </TableCell>
                     </TableRow>
                   );

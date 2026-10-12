@@ -34,8 +34,10 @@ interface EditPurohitFormProps {
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string()
+    .trim()
     .required("Full Name is required")
-    .trim(),
+    .min(2, "Full Name must be at least 2 characters")
+    .matches(/^[a-zA-Z\s.]+$/, "Full Name should only contain letters and spaces"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
@@ -44,7 +46,14 @@ const validationSchema = Yup.object().shape({
     .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
     .trim(),
   dob: Yup.mixed().required("Date of Birth is required"),
-  bio: Yup.string().required("Bio is required"),
+  bio: Yup.string()
+    .trim()
+    .required("Bio is required")
+    .min(10, "Bio must be at least 10 characters")
+    .test("meaningful-bio", "Bio must contain letters", (val) => {
+      if (!val) return false;
+      return /[a-zA-Z]/.test(val);
+    }),
   qualification: Yup.string().required("Qualification is required"),
   experienceYears: Yup.number()
     .typeError("Experience Years must be a number")
@@ -52,7 +61,8 @@ const validationSchema = Yup.object().shape({
     .max(99, "Experience cannot exceed 99 years")
     .required("Experience Years is required"),
   aadhaarNumber: Yup.string()
-    .required("Aadhaar Number is required"),
+    .required("Aadhaar Number is required")
+    .matches(/^\d{12}$/, "Aadhaar number must be exactly 12 digits"),
   state: Yup.string().required("State is required"),
   city: Yup.string().required("City is required"),
 });

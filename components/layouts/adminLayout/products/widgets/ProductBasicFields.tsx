@@ -19,7 +19,7 @@ interface FormValues {
 }
 
 export default function ProductBasicFields() {
-  const { values, handleChange, handleBlur, touched, errors } =
+  const { values, handleChange, handleBlur, touched, errors, setFieldTouched } =
     useFormikContext<FormValues>();
   const [categories, setCategories] = useState<any[]>([]);
 
@@ -58,24 +58,44 @@ export default function ProductBasicFields() {
           placeholder="e.g. Pure Brass Pooja Thali Set"
           variant="outlined"
           value={values.name}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setFieldTouched("name", true, false);
+          }}
           onBlur={handleBlur}
-          error={touched.name && Boolean(errors.name)}
-          helperText={touched.name && (errors.name as string)}
+          error={
+            Boolean(errors.name) &&
+            (touched.name || Boolean(values.name))
+          }
+          helperText={
+            (touched.name || Boolean(values.name))
+              ? (errors.name as string)
+              : undefined
+          }
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
       </Grid>
 
       {/* Product Category */}
       <Grid size={{ xs: 12, md: 6 }}>
-        <FormControl fullWidth variant="outlined" error={touched.categoryId && Boolean(errors.categoryId)}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          error={
+            Boolean(errors.categoryId) &&
+            (touched.categoryId || Boolean(values.categoryId))
+          }
+        >
           <InputLabel id="product-category-label">Category *</InputLabel>
           <Select
             labelId="product-category-label"
             label="Category *"
             name="categoryId"
             value={values.categoryId || ""}
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e);
+              setFieldTouched("categoryId", true, false);
+            }}
             onBlur={handleBlur}
             sx={{
               borderRadius: "12px",
@@ -95,7 +115,7 @@ export default function ProductBasicFields() {
               </MenuItem>
             ))}
           </Select>
-          {touched.categoryId && errors.categoryId && (
+          {(touched.categoryId || Boolean(values.categoryId)) && errors.categoryId && (
             <FormHelperText>{errors.categoryId as string}</FormHelperText>
           )}
         </FormControl>
@@ -114,13 +134,21 @@ export default function ProductBasicFields() {
           onChange={(e: any) => {
             if (Number(e.target.value) < 0) return;
             handleChange(e as any);
+            setFieldTouched("price", true, false);
           }}
           onKeyDown={(e) => {
             if (e.key === "-" || e.key === "e") e.preventDefault();
           }}
           onBlur={handleBlur}
-          error={touched.price && Boolean(errors.price)}
-          helperText={touched.price && (errors.price as string)}
+          error={
+            Boolean(errors.price) &&
+            (touched.price || Boolean(values.price !== ""))
+          }
+          helperText={
+            (touched.price || Boolean(values.price !== ""))
+              ? (errors.price as string)
+              : undefined
+          }
           slotProps={{ htmlInput: { min: 0 } }}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
@@ -135,7 +163,10 @@ export default function ProductBasicFields() {
             label="Pricing Unit *"
             name="pricingUnit"
             value={values.pricingUnit}
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e);
+              setFieldTouched("pricingUnit", true, false);
+            }}
             onBlur={handleBlur}
             sx={{
               borderRadius: "12px",
@@ -152,6 +183,9 @@ export default function ProductBasicFields() {
               </MenuItem>
             ))}
           </Select>
+          {touched.pricingUnit && errors.pricingUnit && (
+            <FormHelperText>{errors.pricingUnit as string}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
 
@@ -168,13 +202,21 @@ export default function ProductBasicFields() {
           onChange={(e: any) => {
             if (Number(e.target.value) < 0) return;
             handleChange(e as any);
+            setFieldTouched("quantity", true, false);
           }}
           onKeyDown={(e) => {
             if (e.key === "-" || e.key === "e") e.preventDefault();
           }}
           onBlur={handleBlur}
-          error={touched.quantity && Boolean(errors.quantity)}
-          helperText={touched.quantity && (errors.quantity as string)}
+          error={
+            Boolean(errors.quantity) &&
+            (touched.quantity || Boolean(values.quantity !== ""))
+          }
+          helperText={
+            (touched.quantity || Boolean(values.quantity !== ""))
+              ? (errors.quantity as string)
+              : undefined
+          }
           slotProps={{ htmlInput: { min: 0 } }}
           sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />

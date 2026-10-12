@@ -148,9 +148,14 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
             slotProps={{
               htmlInput: { maxLength: 12, inputMode: "numeric" },
             }}
-            error={touched.aadhaarNumber && Boolean(errors.aadhaarNumber)}
+            error={
+              Boolean(errors.aadhaarNumber) &&
+              (touched.aadhaarNumber || Boolean(values.aadhaarNumber))
+            }
             helperText={
-              touched.aadhaarNumber && (errors.aadhaarNumber as string)
+              (touched.aadhaarNumber || Boolean(values.aadhaarNumber))
+                ? (errors.aadhaarNumber as string)
+                : undefined
             }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />
@@ -281,8 +286,15 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="Write a brief introduction about yourself and your experience..."
-            error={touched.bio && Boolean(errors.bio)}
-            helperText={touched.bio && (errors.bio as string)}
+            error={
+              Boolean(errors.bio) &&
+              (touched.bio || Boolean(values.bio))
+            }
+            helperText={
+              (touched.bio || Boolean(values.bio))
+                ? (errors.bio as string)
+                : undefined
+            }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />
         </Grid>

@@ -33,6 +33,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "All", label: "All Reviews" },
@@ -244,13 +245,22 @@ export default function AdminReviewsContent() {
       label: "ACTIONS",
       align: "center",
       render: (item) => (
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
-          <IconButton onClick={() => handleViewReview(item)} sx={{ color: "#10b981", "&:hover": { bgcolor: "#d1fae5" } }}>
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton onClick={() => setReviewToDelete(item)} sx={{ color: "#ef4444", "&:hover": { bgcolor: "#fee2e2" } }}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                onClick: () => handleViewReview(item),
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setReviewToDelete(item),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

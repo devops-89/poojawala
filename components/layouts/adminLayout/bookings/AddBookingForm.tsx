@@ -44,7 +44,12 @@ const validationSchema = Yup.object().shape({
   }),
   newCustomerName: Yup.string().when('isNewCustomer', {
     is: true,
-    then: (schema) => schema.required('Name is required'),
+    then: (schema) =>
+      schema
+        .trim()
+        .required('Name is required')
+        .min(2, 'Name must be at least 2 characters')
+        .matches(/^[a-zA-Z\s.]+$/, 'Name should only contain letters and spaces'),
     otherwise: (schema) => schema.notRequired(),
   }),
   newCustomerMobile: Yup.string().when('isNewCustomer', {

@@ -259,6 +259,7 @@ export interface ServiceBasicFieldsProps {
   handleChange: any;
   handleBlur: any;
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
+  setFieldTouched?: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void;
 }
 
 // ==========================================

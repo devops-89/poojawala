@@ -33,6 +33,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 export enum COMPLAINT_STATUS {
   OPEN = "OPEN",
@@ -226,13 +227,22 @@ export default function AdminComplaintsContent() {
       label: "ACTIONS",
       align: "right",
       render: (item) => (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          <IconButton onClick={() => handleViewDetails(item.id)} sx={{ color: "#10b981", "&:hover": { bgcolor: "#d1fae5" } }}>
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton onClick={() => setDeleteTarget(item.id)} sx={{ color: "#ef4444", "&:hover": { bgcolor: "#fee2e2" } }}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                onClick: () => handleViewDetails(item.id),
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setDeleteTarget(item.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

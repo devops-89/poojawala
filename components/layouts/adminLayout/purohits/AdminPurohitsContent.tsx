@@ -21,6 +21,7 @@ import { Box, IconButton, TextField, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "All", label: "All" },
@@ -356,38 +357,22 @@ export default function AdminPurohitsContent() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 0.5,
           }}
         >
-          <IconButton
-            component={NextLink}
-            href={`/admin/purohits/${purohit.id}`}
-            title="View Details"
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-
-          <IconButton
-            component={NextLink}
-            href={`/admin/purohits/edit/${purohit.id}`}
-            title="Edit Profile"
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/purohits/${purohit.id}`,
+              },
+              {
+                label: "Edit Profile",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/purohits/edit/${purohit.id}`,
+              },
+            ]}
+          />
         </Box>
       ),
     },

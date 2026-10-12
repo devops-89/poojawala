@@ -23,6 +23,7 @@ export default function ServiceBasicFields({
   handleChange,
   handleBlur,
   setFieldValue,
+  setFieldTouched,
 }: ServiceBasicFieldsProps) {
   const [categories, setCategories] = useState<any[]>([]);
   const [temples, setTemples] = useState<any[]>([]);
@@ -80,10 +81,18 @@ export default function ServiceBasicFields({
           placeholder="e.g., Satyanarayan Katha"
           variant="outlined"
           value={values.name}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            if (setFieldTouched) setFieldTouched("name", true, false);
+          }}
           onBlur={handleBlur}
-          error={touched.name && Boolean(errors.name)}
-          helperText={touched.name && errors.name}
+          error={
+            Boolean(errors.name) &&
+            (touched.name || Boolean(values.name))
+          }
+          helperText={
+            (touched.name || Boolean(values.name)) ? errors.name : undefined
+          }
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}
@@ -95,7 +104,10 @@ export default function ServiceBasicFields({
         <FormControl
           fullWidth
           variant="outlined"
-          error={touched.categoryId && Boolean(errors.categoryId)}
+          error={
+            Boolean(errors.categoryId) &&
+            (touched.categoryId || Boolean(values.categoryId))
+          }
         >
           <InputLabel id="service-category-label">Select Category *</InputLabel>
           <Select
@@ -109,6 +121,7 @@ export default function ServiceBasicFields({
               } else {
                 handleChange(e);
               }
+              if (setFieldTouched) setFieldTouched("categoryId", true, false);
             }}
             onBlur={handleBlur}
             sx={{
@@ -125,7 +138,7 @@ export default function ServiceBasicFields({
               </MenuItem>
             ))}
           </Select>
-          {touched.categoryId && errors.categoryId && (
+          {(touched.categoryId || Boolean(values.categoryId)) && errors.categoryId && (
             <FormHelperText>{errors.categoryId}</FormHelperText>
           )}
         </FormControl>
@@ -182,10 +195,20 @@ export default function ServiceBasicFields({
           placeholder="Describe the ritual..."
           variant="outlined"
           value={values.description}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            if (setFieldTouched) setFieldTouched("description", true, false);
+          }}
           onBlur={handleBlur}
-          error={touched.description && Boolean(errors.description)}
-          helperText={touched.description && errors.description}
+          error={
+            Boolean(errors.description) &&
+            (touched.description || Boolean(values.description))
+          }
+          helperText={
+            (touched.description || Boolean(values.description))
+              ? errors.description
+              : undefined
+          }
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}

@@ -32,16 +32,42 @@ import ProductImageUpload from "./widgets/ProductImageUpload";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Product name is required"),
-  description: Yup.string().required("Description is required"),
+  name: Yup.string()
+    .trim()
+    .required("Product name is required")
+    .min(2, "Product name must be at least 2 characters")
+    .max(120, "Product name cannot exceed 120 characters")
+    .matches(
+      /^[a-zA-Z0-9\s&',.\-()%/]+$/,
+      "Product name should contain valid words and letters (no disallowed symbols)"
+    )
+    .test("has-letters", "Product name must contain letters, not just numbers or symbols", (val) => {
+      if (!val) return false;
+      return /[a-zA-Z]/.test(val);
+    }),
+  description: Yup.string()
+    .trim()
+    .required("Description is required")
+    .min(10, "Description must be at least 10 characters")
+    .test(
+      "meaningful-text",
+      "Description must contain meaningful text with letters, not just symbols",
+      (val) => {
+        if (!val) return false;
+        const letters = (val.match(/[a-zA-Z]/g) || []).length;
+        return val.trim().length >= 10 && letters >= 5;
+      }
+    ),
   price: Yup.number()
+    .typeError("Price must be a valid number")
     .required("Price is required")
     .min(0, "Cannot be negative"),
   pricingUnit: Yup.string().required("Pricing unit is required"),
   quantity: Yup.number()
+    .typeError("Quantity must be a valid number")
     .required("Quantity is required")
     .min(0, "Cannot be negative"),
-  categoryId: Yup.mixed().nullable(),
+  categoryId: Yup.mixed().required("Please select a product category"),
 });
 
 export interface ProductFormValues {

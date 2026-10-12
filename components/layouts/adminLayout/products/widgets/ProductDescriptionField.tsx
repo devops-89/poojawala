@@ -9,7 +9,7 @@ interface FormValues {
 }
 
 export default function ProductDescriptionField() {
-  const { values, handleChange, handleBlur, touched, errors } =
+  const { values, handleChange, handleBlur, touched, errors, setFieldTouched } =
     useFormikContext<FormValues>();
 
   return (
@@ -23,10 +23,20 @@ export default function ProductDescriptionField() {
         placeholder="Enter product features, materials, and description..."
         variant="outlined"
         value={values.description}
-        onChange={handleChange}
+        onChange={(e) => {
+          handleChange(e);
+          setFieldTouched("description", true, false);
+        }}
         onBlur={handleBlur}
-        error={touched.description && Boolean(errors.description)}
-        helperText={touched.description && errors.description}
+        error={
+          Boolean(errors.description) &&
+          (touched.description || Boolean(values.description))
+        }
+        helperText={
+          (touched.description || Boolean(values.description))
+            ? (errors.description as string)
+            : undefined
+        }
         sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
       />
     </Grid>

@@ -39,6 +39,7 @@ import FormatClearIcon from "@mui/icons-material/FormatClear";
 interface TiptapEditorProps {
   value: string;
   onChange: (content: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   minHeight?: number | string;
   error?: boolean;
@@ -49,6 +50,7 @@ interface TiptapEditorProps {
 export const TiptapEditor: React.FC<TiptapEditorProps> = ({
   value,
   onChange,
+  onBlur,
   placeholder = "Write blog content here...",
   minHeight = 260,
   error = false,
@@ -83,6 +85,9 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange(html === "<p></p>" ? "" : html);
+    },
+    onBlur: () => {
+      onBlur?.();
     },
   });
 

@@ -196,7 +196,7 @@ export default function TemplesSection() {
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {temple.description}
+              {temple.description.replace(/<[^>]*>/g, "")}
             </Typography>
           )}
 

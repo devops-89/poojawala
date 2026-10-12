@@ -23,6 +23,7 @@ import { Avatar, Box, Chip, IconButton, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const getAuthorName = (blog: any) => {
   const authorData = blog.author || blog.authorName || blog.createdBy || blog.user;
@@ -345,45 +346,27 @@ export default function AdminBlogsContent() {
       label: "ACTIONS",
       align: "center",
       render: (blog) => (
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
-          <IconButton
-            component={NextLink}
-            href={`/admin/blogs/${blog.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            component={NextLink}
-            href={`/admin/blogs/edit/${blog.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#fff7ed" },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => setDeleteTarget(blog.id)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/blogs/${blog.id}`,
+              },
+              {
+                label: "Edit",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/blogs/edit/${blog.id}`,
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setDeleteTarget(blog.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

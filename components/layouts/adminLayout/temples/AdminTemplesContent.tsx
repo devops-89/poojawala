@@ -23,6 +23,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import NextLink from "next/link";
 import { ITemple } from "@/utils/types";
+import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
   { id: "All Status", label: "All" },
@@ -204,45 +205,27 @@ export default function AdminTemplesContent() {
       label: "ACTIONS",
       align: "right",
       render: (temple: ITemple) => (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          <IconButton
-            component={NextLink}
-            href={`/admin/temples/${temple.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#0ea5e9", bgcolor: "#e0f2fe" },
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            component={NextLink}
-            href={`/admin/temples/edit/${temple.id}`}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF0E6" },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            onClick={() => setDeleteTarget(temple.id)}
-            sx={{
-              width: 32,
-              height: 32,
-              color: "#64748b",
-              bgcolor: "#f8fafc",
-              "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/temples/${temple.id}`,
+              },
+              {
+                label: "Edit",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/temples/edit/${temple.id}`,
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setDeleteTarget(temple.id),
+                color: "#ef4444",
+              },
+            ]}
+          />
         </Box>
       ),
     },

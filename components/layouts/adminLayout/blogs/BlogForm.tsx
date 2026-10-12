@@ -54,10 +54,46 @@ export interface BlogFormValues {
 }
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required("Title is required"),
-  content: Yup.string().required("Content is required"),
-  category: Yup.string().required("Category is required"),
-  authorName: Yup.string().optional(),
+  title: Yup.string()
+    .trim()
+    .required("Title is required")
+    .min(5, "Title must be at least 5 characters")
+    .max(200, "Title cannot exceed 200 characters")
+    .matches(
+      /^[a-zA-Z0-9\s&',.\-()?!:;"/]+$/,
+      "Title contains invalid special characters"
+    )
+    .test("has-letters", "Title must contain letters, not just symbols or numbers", (val) => {
+      if (!val) return false;
+      return /[a-zA-Z]/.test(val);
+    }),
+  content: Yup.string()
+    .required("Content is required")
+    .test(
+      "meaningful-html",
+      "Content must contain meaningful text with letters (at least 20 characters), not just symbols",
+      (val) => {
+        if (!val) return false;
+        const stripped = val.replace(/<[^>]*>/g, "").trim();
+        const letters = (stripped.match(/[a-zA-Z]/g) || []).length;
+        return stripped.length >= 20 && letters >= 10;
+      }
+    ),
+  category: Yup.string()
+    .trim()
+    .required("Category is required")
+    .min(2, "Category must be at least 2 characters")
+    .matches(
+      /^[a-zA-Z\s&',.\-/]+$/,
+      "Category should only contain letters and standard characters"
+    ),
+  authorName: Yup.string()
+    .trim()
+    .test("valid-author", "Author name should only contain letters and spaces", (val) => {
+      if (!val) return true;
+      return /^[a-zA-Z\s.]+$/.test(val);
+    })
+    .optional(),
   readTime: Yup.number()
     .typeError("Read time must be a number")
     .min(1, "Must be at least 1 min")
@@ -252,10 +288,20 @@ export default function BlogForm({
                 name="title"
                 placeholder="e.g., Complete Satyanarayan Puja Vidhi: Samagri and Procedure"
                 value={formik.values.title}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  formik.setFieldTouched("title", true, false);
+                }}
                 onBlur={formik.handleBlur}
-                error={formik.touched.title && Boolean(formik.errors.title)}
-                helperText={formik.touched.title && formik.errors.title}
+                error={
+                  Boolean(formik.errors.title) &&
+                  (formik.touched.title || Boolean(formik.values.title))
+                }
+                helperText={
+                  (formik.touched.title || Boolean(formik.values.title))
+                    ? formik.errors.title
+                    : undefined
+                }
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -273,8 +319,20 @@ export default function BlogForm({
                 name="authorName"
                 placeholder="e.g., Pt. Ramesh Sharma"
                 value={formik.values.authorName}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  formik.setFieldTouched("authorName", true, false);
+                }}
                 onBlur={formik.handleBlur}
+                error={
+                  Boolean(formik.errors.authorName) &&
+                  (formik.touched.authorName || Boolean(formik.values.authorName))
+                }
+                helperText={
+                  (formik.touched.authorName || Boolean(formik.values.authorName))
+                    ? formik.errors.authorName
+                    : undefined
+                }
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -292,12 +350,20 @@ export default function BlogForm({
                 name="category"
                 placeholder="e.g., Puja & Rituals / Festivals"
                 value={formik.values.category}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  formik.setFieldTouched("category", true, false);
+                }}
                 onBlur={formik.handleBlur}
                 error={
-                  formik.touched.category && Boolean(formik.errors.category)
+                  Boolean(formik.errors.category) &&
+                  (formik.touched.category || Boolean(formik.values.category))
                 }
-                helperText={formik.touched.category && formik.errors.category}
+                helperText={
+                  (formik.touched.category || Boolean(formik.values.category))
+                    ? formik.errors.category
+                    : undefined
+                }
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -315,12 +381,20 @@ export default function BlogForm({
                 name="readTime"
                 placeholder="e.g., 4"
                 value={formik.values.readTime}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  formik.setFieldTouched("readTime", true, false);
+                }}
                 onBlur={formik.handleBlur}
                 error={
-                  formik.touched.readTime && Boolean(formik.errors.readTime)
+                  Boolean(formik.errors.readTime) &&
+                  (formik.touched.readTime || Boolean(formik.values.readTime !== "" && formik.values.readTime !== undefined))
                 }
-                helperText={formik.touched.readTime && formik.errors.readTime}
+                helperText={
+                  (formik.touched.readTime || Boolean(formik.values.readTime !== "" && formik.values.readTime !== undefined))
+                    ? (formik.errors.readTime as string)
+                    : undefined
+                }
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -493,11 +567,22 @@ export default function BlogForm({
               <TiptapEditor
                 label="Blog Main Content *"
                 value={formik.values.content}
-                onChange={(html) => formik.setFieldValue("content", html)}
+                onChange={(html) => {
+                  formik.setFieldValue("content", html);
+                  formik.setFieldTouched("content", true, false);
+                }}
+                onBlur={() => formik.setFieldTouched("content", true, true)}
                 placeholder="Write detailed blog article content with rich formatting..."
                 minHeight={300}
-                error={formik.touched.content && Boolean(formik.errors.content)}
-                helperText={formik.touched.content ? (formik.errors.content as string) : undefined}
+                error={
+                  Boolean(formik.errors.content) &&
+                  (formik.touched.content || Boolean(formik.values.content))
+                }
+                helperText={
+                  (formik.touched.content || Boolean(formik.values.content))
+                    ? (formik.errors.content as string)
+                    : undefined
+                }
               />
             </Grid>
           </Grid>

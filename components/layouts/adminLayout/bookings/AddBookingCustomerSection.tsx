@@ -175,12 +175,21 @@ export default function AddBookingCustomerSection({
                 name="newCustomerName"
                 variant="outlined"
                 value={values.newCustomerName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^a-zA-Z\s.]/g, "");
+                  setFieldValue("newCustomerName", val);
+                  if (setFieldTouched) setFieldTouched("newCustomerName", true, false);
+                }}
                 onBlur={handleBlur}
                 error={
-                  touched.newCustomerName && Boolean(errors.newCustomerName)
+                  Boolean(errors.newCustomerName) &&
+                  (touched.newCustomerName || Boolean(values.newCustomerName))
                 }
-                helperText={touched.newCustomerName && errors.newCustomerName}
+                helperText={
+                  (touched.newCustomerName || Boolean(values.newCustomerName))
+                    ? errors.newCustomerName
+                    : undefined
+                }
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px",
