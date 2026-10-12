@@ -16,8 +16,17 @@ export default function EmptyStateCard({
   description,
   actionText,
   actionHref,
+  onAction,
 }: EmptyStateCardProps) {
   const router = useRouter();
+
+  const handleAction = () => {
+    if (onAction) {
+      onAction();
+    } else if (actionHref) {
+      router.push(actionHref);
+    }
+  };
 
   return (
     <Box
@@ -95,9 +104,9 @@ export default function EmptyStateCard({
       </Box>
 
       {/* Optional Action Button */}
-      {actionText && actionHref && (
+      {actionText && (actionHref || onAction) && (
         <Button
-          onClick={() => router.push(actionHref)}
+          onClick={handleAction}
           sx={{
             mt: 1,
             px: 3.5,
