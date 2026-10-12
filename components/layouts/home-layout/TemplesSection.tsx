@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { TempleItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { stripHtml } from "@/utils/helpers";
 
 // Swiper Imports
 import "swiper/css";
@@ -196,7 +197,7 @@ export default function TemplesSection() {
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {temple.description.replace(/<[^>]*>/g, "")}
+              {stripHtml(temple.description)}
             </Typography>
           )}
 
@@ -392,7 +393,7 @@ export default function TemplesSection() {
                 overflow: "hidden",
               }}
             >
-              {temple.description}
+              {stripHtml(temple.description)}
             </Typography>
           )}
 

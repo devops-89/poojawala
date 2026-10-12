@@ -104,10 +104,10 @@ export default function CategoryModal({
         setIconFile(null);
         setIconPreview(
           category?.iconDownloadurl ||
-            category?.iconUrl ||
-            category?.image ||
-            category?.imageUrl ||
-            "",
+          category?.iconUrl ||
+          category?.image ||
+          category?.imageUrl ||
+          "",
         );
       } else {
         // Add mode reset
@@ -147,6 +147,41 @@ export default function CategoryModal({
       showSnackbar("Description cannot exceed 500 characters", "error");
       return;
     }
+
+    if (mode === "edit" && category) {
+      const origName = (category?.name || category?.title || "").trim();
+      const origDesc = (category?.description || category?.details || "").trim();
+      const origType = category?.categoryType || "SERVICE";
+      const origIcon =
+        category?.iconDownloadurl ||
+        category?.iconUrl ||
+        category?.image ||
+        category?.imageUrl ||
+        "";
+
+      const currentName = nameInput.trim();
+      const currentDesc = descriptionInput.trim();
+      const currentType = categoryType;
+
+      const isNameChanged = currentName !== origName;
+      const isDescChanged = currentDesc !== origDesc;
+      const isTypeChanged = currentType !== origType;
+      const isImageRemoved = Boolean(origIcon) && !iconPreview && !iconFile;
+      const isImageAddedOrChanged = Boolean(iconFile);
+
+      const hasChanges =
+        isNameChanged ||
+        isDescChanged ||
+        isTypeChanged ||
+        isImageRemoved ||
+        isImageAddedOrChanged;
+
+      if (!hasChanges) {
+        showSnackbar("No changes have been made to the category", "info");
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       if (mode === "add") {
@@ -170,6 +205,12 @@ export default function CategoryModal({
         }
       } else if (mode === "edit" && category) {
         const targetId = category.id || category._id;
+        const origIcon =
+          category?.iconDownloadurl ||
+          category?.iconUrl ||
+          "";
+        const isImageRemoved = Boolean(origIcon) && !iconPreview && !iconFile;
+
         let data: any;
 
         if (iconFile) {
@@ -186,6 +227,11 @@ export default function CategoryModal({
             name: nameInput.trim(),
             description: descriptionInput.trim(),
             categoryType: categoryType,
+            ...(isImageRemoved
+              ? {
+                iconUrl: "",
+              }
+              : {}),
           };
         }
 
@@ -202,7 +248,7 @@ export default function CategoryModal({
       console.error(err);
       showSnackbar(
         err.response?.data?.message ||
-          `Error ${mode === "add" ? "creating" : "updating"} category`,
+        `Error ${mode === "add" ? "creating" : "updating"} category`,
         "error",
       );
     } finally {

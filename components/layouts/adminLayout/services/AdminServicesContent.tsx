@@ -32,6 +32,7 @@ const STATUS_TABS = [
   { id: "All Status", label: "All" },
   { id: "Active", label: "Active" },
   { id: "Inactive", label: "Inactive" },
+  { id: "Temple", label: "Temple" },
 ];
 
 export default function AdminServicesContent() {
@@ -50,12 +51,14 @@ export default function AdminServicesContent() {
   const fetchServices = useCallback(async () => {
     try {
       setLoading(true);
+      const isTempleTab = statusFilter === "Temple";
       const isActiveParam =
         statusFilter === "Active"
           ? true
           : statusFilter === "Inactive"
             ? false
             : undefined;
+
       const res = await getServicesAPI(
         page + 1,
         rowsPerPage,
@@ -64,10 +67,23 @@ export default function AdminServicesContent() {
         undefined,
         undefined,
         isActiveParam,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        isTempleTab ? true : undefined
       );
       if (res.success && res.data?.data) {
-        setServices(res.data.data);
-        setTotalCount(res.data.pagination?.total || 0);
+        let list = res.data.data;
+        let count = res.data.pagination?.total || list.length;
+
+        if (isTempleTab) {
+          list = list.filter((s: any) => Boolean(s.templeId || s.temple));
+          count = list.length;
+        }
+
+        setServices(list);
+        setTotalCount(count);
       }
     } catch (err) {
       console.error("Failed to fetch services", err);
@@ -237,6 +253,45 @@ export default function AdminServicesContent() {
       ),
     },
     {
+      id: "temple",
+      label: "TEMPLE",
+      render: (service) => {
+        const templeObj = service.temple;
+        const templeName =
+          templeObj?.name ||
+          (typeof templeObj === "string" ? templeObj : null) ||
+          service.templeName;
+
+        if (templeName) {
+          return (
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                fontSize: "0.92rem",
+                color: "#1e293b",
+              }}
+            >
+              {templeName}
+            </Typography>
+          );
+        }
+
+        return (
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 500,
+              fontSize: "0.85rem",
+              color: "#94a3b8",
+            }}
+          >
+            No temple associated
+          </Typography>
+        );
+      },
+    },
+    {
       id: "status",
       label: "STATUS",
       render: (service) => {
@@ -324,7 +379,11 @@ export default function AdminServicesContent() {
           setPage(0);
         }}
         keyExtractor={(service) => service.id}
-        emptyMessage="No services found matching your criteria."
+        emptyMessage={
+          statusFilter === "Temple"
+            ? "No temple-associated services found."
+            : "No services found matching your criteria."
+        }
       />
 
       <ConfirmDeleteDialog

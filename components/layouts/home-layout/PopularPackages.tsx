@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { stripHtml } from "@/utils/helpers";
 
 const formatDuration = (mins: number) => {
   if (!mins) return "2-3 hrs";
@@ -374,7 +375,7 @@ export default function PopularPackages() {
                           textOverflow: "ellipsis",
                         }}
                       >
-                        {pkg.description}
+                        {stripHtml(pkg.description)}
                       </Typography>
                     </Box>
 

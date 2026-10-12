@@ -52,6 +52,14 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
     }
   }, [blogId, showSnackbar]);
 
+  useEffect(() => {
+    if (!loading && blog) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    }
+  }, [loading, blog]);
+
   if (loading) {
     return (
       <Box

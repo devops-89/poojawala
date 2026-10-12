@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { stripHtml } from "@/utils/helpers";
 
 export default function UpcomingFestivals() {
   const router = useRouter();
@@ -268,7 +269,7 @@ export default function UpcomingFestivals() {
                       overflow: "hidden",
                     }}
                   >
-                    {fest.description}
+                    {stripHtml(fest.description)}
                   </Typography>
                   <Button
                     variant="contained"

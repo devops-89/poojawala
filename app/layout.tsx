@@ -9,6 +9,7 @@ import Footer from "@/components/widgets/Footer";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
+import ScrollToTop from "@/components/widgets/ScrollToTop";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -39,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -50,6 +51,7 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9]">
         <ThemeRegistry>
+          <ScrollToTop />
           <Navbar />
           <main className="flex-grow flex flex-col w-full relative">
             {children}

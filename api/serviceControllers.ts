@@ -59,7 +59,8 @@ export const getServicesAPI = async (
   isUpcomingFestival?: boolean,
   city?: string,
   templeId?: string | number,
-  categoryId?: string | number
+  categoryId?: string | number,
+  includeTemple?: boolean
 ) => {
   try {
     const params = new URLSearchParams();
@@ -91,6 +92,9 @@ export const getServicesAPI = async (
     }
     if (categoryId && categoryId !== 'All') {
       params.append('categoryId', String(categoryId));
+    }
+    if (includeTemple !== undefined) {
+      params.append('includeTemple', String(includeTemple));
     }
     const response = await userPublicApi.get(`/service`, { params });
     return response.data;

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ServiceCardProps } from '@/utils/types';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
+import { stripHtml } from '@/utils/helpers';
 
 export default function ServiceCard({
   id,
@@ -20,6 +21,7 @@ export default function ServiceCard({
 
   const handleCardClick = (e?: React.MouseEvent) => {
     if (!id) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     router.push(`/services/${id}`);
   };
 
@@ -149,7 +151,7 @@ export default function ServiceCard({
               whiteSpace: 'pre-wrap',
             }}
           >
-            {description || 'Traditional Vedic pooja performed by an experienced Purohit.'}
+            {stripHtml(description) || 'Traditional Vedic pooja performed by an experienced Purohit.'}
           </Typography>
         </Box>
 

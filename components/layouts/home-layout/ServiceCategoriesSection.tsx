@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { CategoryItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { stripHtml } from "@/utils/helpers";
 
 // SwiperImports
 import "swiper/css";
@@ -169,7 +170,7 @@ export default function ServiceCategoriesSection() {
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {cat.description}
+              {stripHtml(cat.description)}
             </Typography>
           )}
 

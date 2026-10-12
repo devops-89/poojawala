@@ -591,6 +591,7 @@ export default function EditServiceForm() {
                   benefits={values.benefits}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
                 />
 
                 <ServiceCitiesFields
@@ -602,6 +603,7 @@ export default function EditServiceForm() {
                   languages={values.languages}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
                 />
 
                 <ServiceAvailabilityFields

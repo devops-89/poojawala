@@ -21,6 +21,7 @@ import { COLORS } from "@/utils/enums";
 const quickLinks = [
   { name: "Home", href: "/" },
   { name: "Pooja Packages", href: "/services" },
+  { name: "Temples & Dhams", href: "/temples" },
   { name: "Purohits", href: "/purohits" },
   { name: "Blogs & Articles", href: "/blogs" },
   { name: "Help Center", href: "/contact" },
@@ -28,7 +29,7 @@ const quickLinks = [
 
 // Top Cities (static, no routes)
 const citiesColumn1 = ["Mumbai", "Bangalore", "New Delhi", "Pune", "Hyderabad", "Chennai"];
-const citiesColumn2 = ["Kolkata", "Ahmedabad", "Jaipur", "Lucknow", "Indore", "View All Cities"];
+const citiesColumn2 = ["Kolkata", "Ahmedabad", "Jaipur", "Lucknow", "Indore"];
 
 // Social media links
 const socialLinks = [

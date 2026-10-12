@@ -91,7 +91,6 @@ export const validateBankForm = (bankForm: BankFormValues): string | null => {
 export const formatPhoneNumber = (phone?: string, countryCode?: string): string => {
   if (!phone) return "N/A";
   const p = phone.trim();
-  if (!p) return "N/A";
   if (!countryCode) {
     return p.startsWith("+") ? p : `+91 ${p}`;
   }
@@ -102,3 +101,19 @@ export const formatPhoneNumber = (phone?: string, countryCode?: string): string 
   }
   return `${formattedCc} ${p}`;
 };
+
+export const stripHtml = (html?: string | null): string => {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+

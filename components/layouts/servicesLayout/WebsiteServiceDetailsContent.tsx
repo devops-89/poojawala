@@ -22,6 +22,9 @@ export default function WebsiteServiceDetailsContent() {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
 
   useEffect(() => {
+    // Scroll window immediately to top when navigating to service details
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
     const fetchService = async () => {
       setLoading(true);
       try {
@@ -36,6 +39,8 @@ export default function WebsiteServiceDetailsContent() {
             rawData = rawData.data;
           }
           setService(rawData);
+          // Keep viewport at top after content loads
+          window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         } else {
           showSnackbar(res.message || "Failed to load service details", "error");
         }
@@ -48,6 +53,14 @@ export default function WebsiteServiceDetailsContent() {
     };
     fetchService();
   }, [params.id, showSnackbar]);
+
+  useEffect(() => {
+    if (!loading && service) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    }
+  }, [loading, service]);
 
   const handleBookClick = () => {
     const el = document.getElementById("puja-plans-section");

@@ -60,6 +60,14 @@ export default function PurohitProfileLayout({ id }: PurohitProfileLayoutProps) 
     fetchPurohit();
   }, [id]);
 
+  useEffect(() => {
+    if (!loading && purohit) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    }
+  }, [loading, purohit]);
+
   if (loading || !purohit) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 10, bgcolor: '#fff' }}>

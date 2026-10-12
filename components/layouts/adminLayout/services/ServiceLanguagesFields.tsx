@@ -3,122 +3,243 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button, Grid, IconButton, TextField, Typography } from "@mui/material";
-import { FieldArray } from "formik";
-import React from "react";
+import TranslateIcon from "@mui/icons-material/Translate";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Chip,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useFormikContext } from "formik";
+import React, { useState } from "react";
+
+const COMMON_LANGUAGES = [
+  "Hindi",
+  "Sanskrit",
+  "English",
+  "Marathi",
+  "Gujarati",
+  "Bengali",
+  "Tamil",
+  "Telugu",
+  "Kannada",
+  "Malayalam",
+  "Odia",
+  "Punjabi",
+  "Bhojpuri",
+  "Maithili",
+  "Assamese",
+  "Marwari",
+];
 
 interface ServiceLanguagesFieldsProps {
   languages: Array<{ name: string; code?: string }>;
-  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-  handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  handleChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  handleBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
 export default function ServiceLanguagesFields({
-  languages,
-  handleChange,
-  handleBlur,
+  languages = [],
+  setFieldValue,
 }: ServiceLanguagesFieldsProps) {
+  const formik = useFormikContext<any>();
+  const updateLanguages = (newList: Array<{ name: string; code?: string }>) => {
+    if (setFieldValue) {
+      setFieldValue("languages", newList);
+    } else if (formik?.setFieldValue) {
+      formik.setFieldValue("languages", newList);
+    }
+  };
+
+  const [inputVal, setInputVal] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleSaveLanguage = () => {
+    const trimmed = inputVal.trim();
+    if (!trimmed) {
+      setErrorMsg("Please enter or select a language");
+      return;
+    }
+
+    const alreadyExists = languages.some(
+      (l) => l.name?.toLowerCase().trim() === trimmed.toLowerCase()
+    );
+    if (alreadyExists) {
+      setErrorMsg("This language is already added");
+      return;
+    }
+
+    const updated = [
+      ...languages,
+      {
+        name: trimmed,
+      },
+    ];
+
+    updateLanguages(updated);
+    setInputVal("");
+    setErrorMsg(null);
+  };
+
+  const handleDeleteLanguage = (index: number) => {
+    const updated = languages.filter((_, i) => i !== index);
+    updateLanguages(updated);
+  };
+
   return (
     <Grid size={{ xs: 12 }}>
-      <FieldArray name="languages">
-        {({ push, remove }) => (
-          <Box
+      <Box
+        sx={{
+          border: "1px solid #e2e8f0",
+          borderRadius: "16px",
+          p: 3,
+          bgcolor: "#f8fafc",
+        }}
+      >
+        {/* Header */}
+        <Box sx={{ mb: 2.5 }}>
+          <Typography
             sx={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "12px",
-              p: 3,
-              bgcolor: "#f8fafc",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              color: "#1e293b",
+              fontSize: "1.05rem",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: languages.length > 0 ? 2 : 0,
+            Languages
+          </Typography>
+          <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
+            Add languages supported for this ritual. Type or choose from common Vedic languages.
+          </Typography>
+        </Box>
+
+        {/* Input Row with Save Button & Enter Key */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 1.5,
+            alignItems: { xs: "stretch", sm: "flex-start" },
+            mb: 2.5,
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Autocomplete
+              freeSolo
+              forcePopupIcon
+              options={COMMON_LANGUAGES}
+              value={inputVal}
+              onChange={(_, newValue) => {
+                const clean = (newValue || "").replace(/[^a-zA-Z\s]/g, "");
+                setInputVal(clean);
+                if (errorMsg) setErrorMsg(null);
               }}
-            >
-              <Box>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    fontWeight: 700,
-                    color: "#1e293b",
+              onInputChange={(_, newInputValue) => {
+                const clean = (newInputValue || "").replace(/[^a-zA-Z\s]/g, "");
+                setInputVal(clean);
+                if (errorMsg) setErrorMsg(null);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  label="Add Language *"
+                  placeholder="e.g. Hindi, Sanskrit, English"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSaveLanguage();
+                    }
                   }}
-                >
-                  Languages
-                </Typography>
-                <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
-                  Add languages supported for this ritual.
-                </Typography>
-              </Box>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<AddIcon />}
-                onClick={() => push({ name: "" })}
+                  error={Boolean(errorMsg)}
+                  helperText={errorMsg || undefined}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                      bgcolor: "white",
+                    },
+                  }}
+                />
+              )}
+            />
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleSaveLanguage}
+            sx={{
+              bgcolor: COLORS.PRIMARY,
+              color: "white",
+              textTransform: "none",
+              borderRadius: "10px",
+              fontWeight: 600,
+              fontFamily: FONTS.OUTFIT,
+              px: 3,
+              py: 1,
+              whiteSpace: "nowrap",
+              boxShadow: "none",
+              "&:hover": {
+                bgcolor: COLORS.PRIMARY_DARK,
+                boxShadow: "none",
+              },
+            }}
+          >
+            Save Language
+          </Button>
+        </Box>
+
+        {/* Saved Languages List */}
+        {languages.length === 0 ? (
+          <Box
+            sx={{
+              p: 3,
+              textAlign: "center",
+              bgcolor: "white",
+              borderRadius: "12px",
+              border: "1px dashed #cbd5e1",
+            }}
+          >
+            <Typography sx={{ color: "#94a3b8", fontSize: "0.9rem", fontFamily: FONTS.OUTFIT }}>
+              No languages added yet. Type a language name above and click &quot;Save Language&quot; or press Enter.
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+            {languages.map((lang, index) => (
+              <Chip
+                key={`lang-chip-${index}`}
+                icon={<TranslateIcon sx={{ fontSize: 16, color: `${COLORS.PRIMARY} !important` }} />}
+                label={lang.name}
+                onDelete={() => handleDeleteLanguage(index)}
                 sx={{
-                  borderColor: COLORS.PRIMARY,
-                  color: COLORS.PRIMARY,
-                  textTransform: "none",
-                  borderRadius: "8px",
+                  borderRadius: "10px",
+                  bgcolor: "white",
+                  border: "1px solid #e2e8f0",
+                  py: 2.2,
+                  px: 0.5,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
+                  fontSize: "0.88rem",
+                  color: "#1e293b",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                  "& .MuiChip-deleteIcon": {
+                    color: "#94a3b8",
+                    "&:hover": { color: "#ef4444" },
+                  },
                   "&:hover": {
-                    borderColor: COLORS.PRIMARY_DARK,
-                    bgcolor: "#fff7ed",
+                    borderColor: "#cbd5e1",
+                    bgcolor: "#fffbf5",
                   },
                 }}
-              >
-                Add Language
-              </Button>
-            </Box>
-
-            {languages.map((lang: any, index: number) => (
-              <Box
-                key={`lang-${index}`}
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  alignItems: "center",
-                  mt: 2,
-                  p: 2,
-                  bgcolor: "white",
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <Box sx={{ flex: 1 }}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name={`languages.${index}.name`}
-                    label="Language *"
-                    placeholder="e.g. Hindi, Sanskrit, English"
-                    value={lang.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "8px",
-                      },
-                    }}
-                  />
-                </Box>
-                <IconButton
-                  onClick={() => remove(index)}
-                  sx={{
-                    color: "#ef4444",
-                    "&:hover": { bgcolor: "#fee2e2" },
-                  }}
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Box>
+              />
             ))}
           </Box>
         )}
-      </FieldArray>
+      </Box>
     </Grid>
   );
 }
