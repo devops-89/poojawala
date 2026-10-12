@@ -240,6 +240,7 @@ export default function PopularPackages() {
                   elevation={0}
                   onClick={() => router.push("/services")}
                   sx={{
+                    width: "100%",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -261,7 +262,7 @@ export default function PopularPackages() {
                   <Box
                     sx={{
                       bgcolor: "#FAF4E8",
-                      p: { xs: 2.5, sm: 3 },
+                      p: { xs: 2, sm: 2.5 },
                       borderBottom: "1px solid #EFE6D5",
                       display: "flex",
                       flexDirection: "column",
@@ -269,30 +270,42 @@ export default function PopularPackages() {
                     }}
                   >
                     <Box
-                      component="img"
-                      src={pkg.image}
-                      alt={pkg.title}
                       sx={{
                         width: "100%",
-                        height: "150px",
-                        objectFit: "contain",
-                        borderRadius: "12px",
-                        mb: 2,
+                        height: "160px",
+                        borderRadius: "14px",
+                        overflow: "hidden",
+                        mb: 1.5,
+                        bgcolor: "#FAF4EE",
                       }}
-                    />
+                    >
+                      <Box
+                        component="img"
+                        src={pkg.image}
+                        alt={pkg.title}
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                        }}
+                      />
+                    </Box>
                     <Typography
                       component="h3"
                       sx={{
                         fontFamily: FONTS.OUTFIT,
                         fontWeight: 700,
-                        fontSize: { xs: "17px", sm: "18px" },
+                        fontSize: { xs: "16px", sm: "17px" },
                         color: "#2C1810",
                         textAlign: "center",
                         lineHeight: 1.3,
-                        minHeight: "44px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        height: "44px",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        alignContent: "center",
                       }}
                     >
                       {pkg.title}
@@ -302,7 +315,7 @@ export default function PopularPackages() {
                   {/* Card Body Section */}
                   <Box
                     sx={{
-                      p: { xs: 2.5, sm: 3 },
+                      p: { xs: 2, sm: 2.5 },
                       flexGrow: 1,
                       display: "flex",
                       flexDirection: "column",
@@ -330,18 +343,25 @@ export default function PopularPackages() {
                         sx={{
                           display: "flex",
                           alignItems: "baseline",
-                          flexWrap: "wrap",
+                          flexWrap: "nowrap",
                           gap: 0.5,
-                          mb: 2,
+                          mb: 1.5,
+                          height: "26px",
                         }}
                       >
                         <Typography
                           sx={{
                             fontFamily: FONTS.OUTFIT,
                             fontWeight: 800,
-                            fontSize: pkg.price.length > 12 ? { xs: "17px", sm: "18px" } : { xs: "22px", sm: "24px" },
+                            fontSize:
+                              pkg.price.length > 13
+                                ? { xs: "15px", sm: "16.5px" }
+                                : pkg.price.length > 9
+                                ? { xs: "17px", sm: "18.5px" }
+                                : { xs: "20px", sm: "22px" },
                             color: "#2C1810",
                             lineHeight: 1.2,
+                            whiteSpace: "nowrap",
                           }}
                         >
                           {pkg.price.startsWith("₹") || pkg.price.startsWith("Price") ? pkg.price : `₹${pkg.price}`}
@@ -350,29 +370,31 @@ export default function PopularPackages() {
                           component="span"
                           sx={{
                             fontFamily: FONTS.OUTFIT,
-                            fontSize: "12px",
+                            fontSize: "11px",
                             fontWeight: 500,
                             color: "#8C6D53",
                             whiteSpace: "nowrap",
+                            flexShrink: 0,
                           }}
                         >
                           {pkg.unit || "/ ceremony"}
                         </Typography>
                       </Box>
 
-                      {/* Service Description truncated to 3 lines */}
+                      {/* Service Description truncated to 3 lines with uniform height */}
                       <Typography
                         sx={{
                           fontFamily: FONTS.OUTFIT,
-                          fontSize: "13.5px",
+                          fontSize: "13px",
                           color: "#5C4A40",
                           lineHeight: 1.6,
-                          mb: 3,
+                          height: "62px",
                           display: "-webkit-box",
                           WebkitLineClamp: 3,
                           WebkitBoxOrient: "vertical",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
+                          mb: 2.5,
                         }}
                       >
                         {stripHtml(pkg.description)}
