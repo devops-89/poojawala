@@ -70,6 +70,11 @@ const theme = createTheme({
         slotProps: {
           htmlInput: {
             min: 0,
+            onWheel: (e: any) => {
+              if (e.target && e.target.type === "number") {
+                e.target.blur();
+              }
+            },
           },
         },
       },

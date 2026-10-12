@@ -33,6 +33,14 @@ export default function ThemeRegistry({
           if (e.key === "-" || e.key === "e" || e.key === "E") {
             e.preventDefault();
           }
+          const nameLower = (input.name || "").toLowerCase();
+          const isPercentage =
+            nameLower.includes("percentage") ||
+            nameLower.includes("percent") ||
+            input.getAttribute("max") === "100";
+          if (isPercentage && e.key === "ArrowUp" && Number(input.value) >= 100) {
+            e.preventDefault();
+          }
         }
       }
     };
@@ -43,11 +51,41 @@ export default function ThemeRegistry({
         if (target.value && (target.value.includes("-") || Number(target.value) < 0)) {
           target.value = target.value.replace(/-/g, "");
         }
+        const nameLower = (target.name || "").toLowerCase();
+        const placeholderLower = (target.placeholder || "").toLowerCase();
+        const labelLower = (target.getAttribute("aria-label") || "").toLowerCase();
+        if (
+          nameLower.includes("percentage") ||
+          nameLower.includes("percent") ||
+          placeholderLower.includes("percentage") ||
+          labelLower.includes("percentage") ||
+          target.getAttribute("max") === "100"
+        ) {
+          if (Number(target.value) > 100) {
+            target.value = "100";
+            target.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.tagName === "INPUT" && (target as HTMLInputElement).type === "number") {
+        (target as HTMLInputElement).blur();
+      }
+      if (
+        document.activeElement &&
+        document.activeElement.tagName === "INPUT" &&
+        (document.activeElement as HTMLInputElement).type === "number"
+      ) {
+        (document.activeElement as HTMLInputElement).blur();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown, true);
     window.addEventListener("input", handleInput, true);
+    window.addEventListener("wheel", handleWheel, { passive: true, capture: true });
 
     const interval = setInterval(async () => {
       const userStr = sessionStorage.getItem("user");
@@ -69,6 +107,7 @@ export default function ThemeRegistry({
     return () => {
       window.removeEventListener("keydown", handleKeyDown, true);
       window.removeEventListener("input", handleInput, true);
+      window.removeEventListener("wheel", handleWheel, true);
       clearInterval(interval);
     };
   }, []);

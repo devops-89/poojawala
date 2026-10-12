@@ -44,6 +44,7 @@ export default function ServicePlansTabConfig({
     "basic",
   );
 
+
   return (
     <Grid size={{ xs: 12 }}>
       <Divider sx={{ my: 2 }} />
@@ -80,8 +81,8 @@ export default function ServicePlansTabConfig({
                   color: "white !important",
                 }
               : {
-                  borderColor: "#cbd5e1",
-                  color: "#475569",
+                  borderColor: errors.basicPrice ? "#ef4444" : "#cbd5e1",
+                  color: errors.basicPrice ? "#ef4444" : "#475569",
                 }),
           }}
         >
@@ -103,8 +104,8 @@ export default function ServicePlansTabConfig({
                   color: "white !important",
                 }
               : {
-                  borderColor: "#cbd5e1",
-                  color: "#475569",
+                  borderColor: errors.standardPrice ? "#ef4444" : "#cbd5e1",
+                  color: errors.standardPrice ? "#ef4444" : "#475569",
                 }),
           }}
         >
@@ -152,6 +153,7 @@ export default function ServicePlansTabConfig({
                 onKeyDown={(e) => {
                   if (e.key === "-" || e.key === "e") e.preventDefault();
                 }}
+                onWheel={(e: any) => e.target.blur()}
                 onBlur={handleBlur}
                 error={touched.basicPrice && Boolean(errors.basicPrice)}
                 helperText={touched.basicPrice && errors.basicPrice}
@@ -398,6 +400,7 @@ export default function ServicePlansTabConfig({
                 onKeyDown={(e) => {
                   if (e.key === "-" || e.key === "e") e.preventDefault();
                 }}
+                onWheel={(e: any) => e.target.blur()}
                 onBlur={handleBlur}
                 error={touched.standardPrice && Boolean(errors.standardPrice)}
                 helperText={touched.standardPrice && errors.standardPrice}

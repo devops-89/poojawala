@@ -146,32 +146,7 @@ export default function ServiceHeaderCard({
               />
             )}
 
-            {/* Temple Name Chip if available */}
-            {templeName && (
-              <Chip
-                icon={
-                  <TempleHinduIcon
-                    sx={{ color: "#b45309 !important", fontSize: "1.1rem" }}
-                  />
-                }
-                label={templeName}
-                component={templeId ? NextLink : "div"}
-                href={templeId ? `/admin/temples/${templeId}` : undefined}
-                clickable={Boolean(templeId)}
-                sx={{
-                  bgcolor: "#fef3c7",
-                  color: "#b45309",
-                  fontWeight: 700,
-                  fontFamily: FONTS.OUTFIT,
-                  borderRadius: "8px",
-                  border: "1px solid #fde68a",
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    bgcolor: "#fde68a",
-                  },
-                }}
-              />
-            )}
+
 
             <Chip
               icon={

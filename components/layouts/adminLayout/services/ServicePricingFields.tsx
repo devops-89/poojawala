@@ -35,16 +35,23 @@ export default function ServicePricingFields({
           type="number"
           value={values.tokenPercentage}
           onChange={(e: any) => {
-            if (Number(e.target.value) < 0) return;
+            const val = e.target.value;
+            if (val === "") {
+              handleChange(e);
+              return;
+            }
+            const num = Number(val);
+            if (isNaN(num) || num < 0 || num > 100) return;
             handleChange(e as any);
           }}
           onKeyDown={(e) => {
             if (e.key === "-" || e.key === "e") e.preventDefault();
           }}
+          onWheel={(e: any) => e.target.blur()}
           onBlur={handleBlur}
           error={touched.tokenPercentage && Boolean(errors.tokenPercentage)}
           helperText={touched.tokenPercentage && errors.tokenPercentage}
-          slotProps={{ htmlInput: { min: 0 } }}
+          slotProps={{ htmlInput: { min: 0, max: 100 } }}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}
@@ -62,12 +69,19 @@ export default function ServicePricingFields({
           type="number"
           value={values.commissionPercentage}
           onChange={(e: any) => {
-            if (Number(e.target.value) < 0) return;
+            const val = e.target.value;
+            if (val === "") {
+              handleChange(e);
+              return;
+            }
+            const num = Number(val);
+            if (isNaN(num) || num < 0 || num > 100) return;
             handleChange(e as any);
           }}
           onKeyDown={(e) => {
             if (e.key === "-" || e.key === "e") e.preventDefault();
           }}
+          onWheel={(e: any) => e.target.blur()}
           onBlur={handleBlur}
           error={
             touched.commissionPercentage &&
@@ -76,7 +90,7 @@ export default function ServicePricingFields({
           helperText={
             touched.commissionPercentage && errors.commissionPercentage
           }
-          slotProps={{ htmlInput: { min: 0 } }}
+          slotProps={{ htmlInput: { min: 0, max: 100 } }}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}
@@ -100,6 +114,7 @@ export default function ServicePricingFields({
           onKeyDown={(e) => {
             if (e.key === "-" || e.key === "e") e.preventDefault();
           }}
+          onWheel={(e: any) => e.target.blur()}
           onBlur={handleBlur}
           error={touched.durationMinutes && Boolean(errors.durationMinutes)}
           helperText={touched.durationMinutes && errors.durationMinutes}

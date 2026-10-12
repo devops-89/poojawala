@@ -73,7 +73,8 @@ const validationSchema = Yup.object().shape({
     .required("Basic plan price is required")
     .min(0, "Cannot be negative"),
   standardPrice: Yup.number()
-    .required("Standard plan price is required")
+    .required("Please fill in all required Standard Plan details.")
+    .typeError("Please fill in all required Standard Plan details.")
     .min(0, "Cannot be negative")
     .test(
       "is-greater-than-basic",
@@ -458,18 +459,36 @@ export default function EditServiceForm() {
 
   const handleNext = async () => {
     if (activeStep === 0) {
-      const step0Fields = ["name", "categoryId", "description"];
+      const fieldLabels: Record<string, string> = {
+        name: "Service Name",
+        categoryId: "Category",
+        description: "Description",
+        festivalStartDate: "Festival Start Date",
+        festivalEndDate: "Festival End Date",
+      };
+
+      const step0Fields = [
+        "name",
+        "categoryId",
+        "description",
+        "festivalStartDate",
+        "festivalEndDate",
+      ];
       const step0Errors = await formik.validateForm();
 
-      const hasStep0Errors = step0Fields.some(
-        (field) => step0Errors[field as keyof typeof step0Errors],
-      );
-
-      if (hasStep0Errors) {
-        step0Fields.forEach((field) => {
+      const invalidFields: string[] = [];
+      step0Fields.forEach((field) => {
+        if (step0Errors[field as keyof typeof step0Errors]) {
           formik.setFieldTouched(field, true, true);
-        });
-        showSnackbar("Please fix errors in Basic Information", "error");
+          invalidFields.push(fieldLabels[field] || field);
+        }
+      });
+
+      if (invalidFields.length > 0) {
+        showSnackbar(
+          `Please complete all required fields in Basic Information before continuing: ${invalidFields.join(", ")}`,
+          "error",
+        );
         return;
       }
       setActiveStep((prevStep) => prevStep + 1);
