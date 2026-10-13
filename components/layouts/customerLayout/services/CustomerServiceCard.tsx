@@ -151,20 +151,42 @@ export default function CustomerServiceCard({
               >
                 {serviceTitle}
               </Typography>
-              {service?.isUpcomingFestival && (
-                <Chip
-                  label="Festival"
-                  size="small"
-                  sx={{
-                    bgcolor: "#FFF0E6",
-                    color: COLORS.PRIMARY,
-                    fontWeight: 700,
-                    fontSize: "11px",
-                    height: 22,
-                    borderRadius: "6px",
-                  }}
-                />
-              )}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap", flexShrink: 0 }}>
+                {(service?.isOnline || service?.isOffline) && (
+                  <Chip
+                    label={
+                      service.isOnline && service.isOffline
+                        ? "Online & Offline"
+                        : service.isOnline
+                          ? "Online"
+                          : "Offline"
+                    }
+                    size="small"
+                    sx={{
+                      bgcolor: "#e0f2fe",
+                      color: "#0369a1",
+                      fontWeight: 700,
+                      fontSize: "11px",
+                      height: 22,
+                      borderRadius: "6px",
+                    }}
+                  />
+                )}
+                {service?.isUpcomingFestival && (
+                  <Chip
+                    label="Festival"
+                    size="small"
+                    sx={{
+                      bgcolor: "#FFF0E6",
+                      color: COLORS.PRIMARY,
+                      fontWeight: 700,
+                      fontSize: "11px",
+                      height: 22,
+                      borderRadius: "6px",
+                    }}
+                  />
+                )}
+              </Box>
             </Box>
 
             <Typography

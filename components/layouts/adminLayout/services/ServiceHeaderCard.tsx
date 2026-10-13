@@ -4,6 +4,9 @@ import { COLORS } from "@/utils/enums";
 
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
+import WifiIcon from "@mui/icons-material/Wifi";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import LanguageIcon from "@mui/icons-material/Language";
 import { Box, Chip, Paper, Typography } from "@mui/material";
 import Image from "next/image";
 import NextLink from "next/link";
@@ -108,8 +111,8 @@ export default function ServiceHeaderCard({
               }}
             />
 
-            {/* Service Type Chip (Temple Service vs Regular/Festival Service) */}
-            {isTempleService ? (
+            {/* Temple Service Chip */}
+            {isTempleService && (
               <Chip
                 icon={
                   <TempleHinduIcon
@@ -126,27 +129,58 @@ export default function ServiceHeaderCard({
                   boxShadow: "0 4px 14px 0 rgba(255, 98, 0, 0.35)",
                 }}
               />
-            ) : (
+            )}
+
+            {/* Upcoming Festival Chip (only when isUpcomingFestival is true) */}
+            {service.isUpcomingFestival && (
               <Chip
-                label={
-                  service.isUpcomingFestival
-                    ? "Upcoming Festival"
-                    : "Regular Service"
-                }
+                label="Upcoming Festival"
                 sx={{
-                  bgcolor: service.isUpcomingFestival ? "#8b5cf6" : "#f1f5f9",
-                  color: service.isUpcomingFestival ? "#ffffff" : "#64748b",
+                  bgcolor: "#8b5cf6",
+                  color: "#ffffff",
                   fontWeight: 700,
                   fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
-                  boxShadow: service.isUpcomingFestival
-                    ? "0 4px 14px 0 rgba(139, 92, 246, 0.39)"
-                    : "none",
+                  boxShadow: "0 4px 14px 0 rgba(139, 92, 246, 0.39)",
                 }}
               />
             )}
 
-
+            {/* Service Mode Chip (Online / Offline / Online & Offline) */}
+            {(service.isOnline || service.isOffline) && (
+              <Chip
+                icon={
+                  service.isOnline && service.isOffline ? (
+                    <LanguageIcon
+                      sx={{ color: "#0d9488 !important", fontSize: "1.05rem" }}
+                    />
+                  ) : service.isOnline ? (
+                    <WifiIcon
+                      sx={{ color: "#0d9488 !important", fontSize: "1.05rem" }}
+                    />
+                  ) : (
+                    <LocationOnIcon
+                      sx={{ color: "#0d9488 !important", fontSize: "1.05rem" }}
+                    />
+                  )
+                }
+                label={
+                  service.isOnline && service.isOffline
+                    ? "Online & Offline"
+                    : service.isOnline
+                      ? "Online Only"
+                      : "Offline Only"
+                }
+                sx={{
+                  bgcolor: "#ccfbf1",
+                  color: "#0f766e",
+                  fontWeight: 700,
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "8px",
+                  border: "1px solid #99f6e4",
+                }}
+              />
+            )}
 
             <Chip
               icon={
@@ -175,21 +209,6 @@ export default function ServiceHeaderCard({
                   fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                   border: "1px solid #bae6fd",
-                }}
-              />
-            )}
-
-            {/* Show Upcoming Festival Chip if also marked as festival */}
-            {isTempleService && service.isUpcomingFestival && (
-              <Chip
-                label="Upcoming Festival"
-                sx={{
-                  bgcolor: "#8b5cf6",
-                  color: "#ffffff",
-                  fontWeight: 700,
-                  fontFamily: FONTS.OUTFIT,
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 14px 0 rgba(139, 92, 246, 0.39)",
                 }}
               />
             )}

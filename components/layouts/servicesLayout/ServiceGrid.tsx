@@ -77,7 +77,8 @@ export default function ServiceGrid({
           cityParam,
           stateParam,
           selectedCategoryId || undefined,
-          templeParam
+          templeParam,
+          false
         );
 
         let fetchedServices = [];
@@ -180,7 +181,9 @@ export default function ServiceGrid({
             experience: s.experience || 'all',
             location: s.location || 'all',
             availability: s.availability || s.serviceMode || 'All',
-            rituals: s.rituals || 'all'
+            rituals: s.rituals || 'all',
+            isOnline: Boolean(s.isOnline),
+            isOffline: Boolean(s.isOffline)
           };
         });
 
@@ -244,6 +247,8 @@ export default function ServiceGrid({
                 price={service.price}
                 duration={service.duration}
                 category={service.category}
+                isOnline={service.isOnline}
+                isOffline={service.isOffline}
               />
             </Grid>
           ))}

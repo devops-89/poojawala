@@ -140,6 +140,13 @@ export const ServicesPage = () => {
 
   const handleOpenBooking = (serviceId: number) => {
     setSelectedServiceId(serviceId);
+    const targetService = filteredServices.find((s) => s.id === serviceId);
+    const defaultMode =
+      targetService?.isOnline && !targetService?.isOffline ? "ONLINE" : "OFFLINE";
+    setBookingForm((prev) => ({
+      ...prev,
+      bookingMode: defaultMode,
+    }));
     setBookingModalOpen(true);
   };
 
@@ -189,7 +196,7 @@ export const ServicesPage = () => {
         specialInstructions: bookingForm.specialInstructions || "",
         plan: "BASIC",
         paymentOption: bookingForm.paymentOption || "TOKEN",
-        bookingMode: bookingForm.bookingMode || "OFFLINE",
+        bookingMode: bookingForm.bookingMode === "ONLINE" ? "ONLINE" : "OFFLINE",
         customFields: {
           language: bookingForm.language || "Hindi",
         },
@@ -290,7 +297,9 @@ export const ServicesPage = () => {
           true,
           cityParam,
           stateParam,
-          catIdParam
+          catIdParam,
+          undefined,
+          false
         );
         let rawList: any[] = [];
         if (res.success) {

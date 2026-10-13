@@ -224,6 +224,8 @@ export interface ServiceCardProps {
   experience?: string;
   rating?: string;
   availability?: string;
+  isOnline?: boolean;
+  isOffline?: boolean;
 }
 
 export interface ServiceGridProps {

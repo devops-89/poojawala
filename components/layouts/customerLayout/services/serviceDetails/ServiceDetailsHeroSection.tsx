@@ -5,6 +5,7 @@ import SparklesIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import WifiIcon from "@mui/icons-material/Wifi";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
 interface Props {
@@ -46,26 +47,64 @@ export default function ServiceDetailsHeroSection({
       <Grid container spacing={4} sx={{ alignItems: "center" }}>
         {/* Hero Left Content */}
         <Grid size={{ xs: 12, md: 7 }}>
-          {/* Upcoming Festival Badge */}
-          {service.isUpcomingFestival && (
+          {/* Top Badges Row */}
+          {(service.isUpcomingFestival || service.isOnline || service.isOffline) && (
             <Box
               sx={{
-                display: "inline-flex",
+                display: "flex",
+                flexWrap: "wrap",
                 alignItems: "center",
-                gap: 1,
-                px: 2,
-                py: 0.75,
-                bgcolor: "#FEF3C7",
-                border: "1px solid #FCD34D",
-                borderRadius: "20px",
-                color: "#B45309",
-                fontWeight: 700,
-                fontSize: "13px",
+                gap: 1.5,
                 mb: 2,
               }}
             >
-              <SparklesIcon sx={{ fontSize: 16, color: "#D97706" }} />
-              <span>UPCOMING FESTIVAL</span>
+              {service.isUpcomingFestival && (
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 1,
+                    px: 2,
+                    py: 0.75,
+                    bgcolor: "#FEF3C7",
+                    border: "1px solid #FCD34D",
+                    borderRadius: "20px",
+                    color: "#B45309",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                  }}
+                >
+                  <SparklesIcon sx={{ fontSize: 16, color: "#D97706" }} />
+                  <span>UPCOMING FESTIVAL</span>
+                </Box>
+              )}
+
+              {(service.isOnline || service.isOffline) && (
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 1,
+                    px: 2,
+                    py: 0.75,
+                    bgcolor: "#E0F2FE",
+                    border: "1px solid #BAE6FD",
+                    borderRadius: "20px",
+                    color: "#0369A1",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                  }}
+                >
+                  <WifiIcon sx={{ fontSize: 16, color: "#0284C7" }} />
+                  <span>
+                    {service.isOnline && service.isOffline
+                      ? "ONLINE & OFFLINE"
+                      : service.isOnline
+                        ? "ONLINE SERVICE"
+                        : "OFFLINE SERVICE"}
+                  </span>
+                </Box>
+              )}
             </Box>
           )}
 
@@ -170,6 +209,33 @@ export default function ServiceDetailsHeroSection({
                 <span>{formattedLanguages}</span>
               </Box>
             ) : null}
+
+            {(service?.isOnline || service?.isOffline) && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.75,
+                  px: 2,
+                  py: 0.85,
+                  bgcolor: "#F0F9FF",
+                  border: "1px solid #BAE6FD",
+                  borderRadius: "8px",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#0369A1",
+                }}
+              >
+                <WifiIcon sx={{ fontSize: 16, color: "#0284C7" }} />
+                <span>
+                  {service.isOnline && service.isOffline
+                    ? "Online & Offline"
+                    : service.isOnline
+                      ? "Online Service"
+                      : "Offline Service"}
+                </span>
+              </Box>
+            )}
           </Box>
 
           {/* Price Section */}

@@ -157,13 +157,23 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
   const [bookingForm, setBookingForm] = useState({
     scheduledDate: "",
     scheduledTime: "",
-    bookingMode: "OFFLINE",
+    bookingMode: service?.isOnline && !service?.isOffline ? "ONLINE" : "OFFLINE",
     paymentOption: "TOKEN",
     language: "Hindi",
     specialInstructions: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (service) {
+      if (service.isOnline && !service.isOffline) {
+        setBookingForm((prev) => ({ ...prev, bookingMode: "ONLINE" }));
+      } else if (!service.isOnline && service.isOffline) {
+        setBookingForm((prev) => ({ ...prev, bookingMode: "OFFLINE" }));
+      }
+    }
+  }, [service]);
 
   useEffect(() => {
     fetchProfile();
@@ -241,7 +251,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         specialInstructions: bookingForm.specialInstructions || "",
         plan: selectedPlan ? selectedPlan.toUpperCase() : "BASIC",
         paymentOption: bookingForm.paymentOption || "TOKEN",
-        bookingMode: bookingForm.bookingMode || "OFFLINE",
+        bookingMode: bookingForm.bookingMode === "ONLINE" ? "ONLINE" : "OFFLINE",
         customFields: {
           language: bookingForm.language || "Hindi",
         },
@@ -253,7 +263,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
-          bookingMode: "OFFLINE",
+          bookingMode: service?.isOnline && !service?.isOffline ? "ONLINE" : "OFFLINE",
           paymentOption: "TOKEN",
           language: "Hindi",
           specialInstructions: "",
@@ -631,8 +641,8 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       fontFamily: FONTS.PRIMARY,
                     }}
                   >
-                    <MenuItem value="OFFLINE">Offline (In-Person / Home)</MenuItem>
-                    <MenuItem value="ONLINE">Online (Virtual / Video Call)</MenuItem>
+                    <MenuItem value="ONLINE">Online</MenuItem>
+                    <MenuItem value="OFFLINE">Offline</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

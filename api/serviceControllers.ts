@@ -155,7 +155,8 @@ export const getAllServicesAPI = async (
   city?: string,
   state?: string,
   categoryId?: string | number,
-  templeId?: string | number
+  templeId?: string | number,
+  includeTemple?: boolean
 ) => {
   try {
     const params: Record<string, any> = {};
@@ -167,6 +168,7 @@ export const getAllServicesAPI = async (
     if (state && state !== 'All' && state !== 'All States') params.state = state;
     if (categoryId && categoryId !== 'All') params.categoryId = categoryId;
     if (templeId && templeId !== 'All') params.templeId = templeId;
+    if (includeTemple !== undefined) params.includeTemple = includeTemple;
 
     const response = await userPublicApi.get('/service', { params });
     return response.data;

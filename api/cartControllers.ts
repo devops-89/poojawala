@@ -1,4 +1,4 @@
-import { userSecuredApi } from "./config";
+import { attachCsrfHeaders, userSecuredApi } from "./config";
 
 export interface AddToCartPayload {
   productId: number | string;
@@ -8,13 +8,8 @@ export interface AddToCartPayload {
 export const addToCartAPI = async (productId: number | string, quantity: number = 1) => {
   try {
     const parsedProductId = typeof productId === "string" && !isNaN(Number(productId)) ? Number(productId) : productId;
-    const csrfToken = typeof window !== "undefined" ? sessionStorage.getItem("csrfToken") : null;
-    
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const response = await userSecuredApi.post(
       "/cart/items",
@@ -32,12 +27,8 @@ export const addToCartAPI = async (productId: number | string, quantity: number 
 
 export const getCartAPI = async () => {
   try {
-    const csrfToken = typeof window !== "undefined" ? sessionStorage.getItem("csrfToken") : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const response = await userSecuredApi.get("/cart", { headers });
     return response.data;
@@ -48,12 +39,8 @@ export const getCartAPI = async () => {
 
 export const updateCartItemQuantityAPI = async (itemId: number | string, quantity: number) => {
   try {
-    const csrfToken = typeof window !== "undefined" ? sessionStorage.getItem("csrfToken") : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const parsedItemId = typeof itemId === "string" && !isNaN(Number(itemId)) ? Number(itemId) : itemId;
     const response = await userSecuredApi.patch(
@@ -69,12 +56,8 @@ export const updateCartItemQuantityAPI = async (itemId: number | string, quantit
 
 export const deleteCartItemAPI = async (itemId: number | string) => {
   try {
-    const csrfToken = typeof window !== "undefined" ? sessionStorage.getItem("csrfToken") : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const parsedItemId = typeof itemId === "string" && !isNaN(Number(itemId)) ? Number(itemId) : itemId;
     const response = await userSecuredApi.delete(`/cart/items/${parsedItemId}`, { headers });
@@ -86,12 +69,8 @@ export const deleteCartItemAPI = async (itemId: number | string) => {
 
 export const clearCartAPI = async () => {
   try {
-    const csrfToken = typeof window !== "undefined" ? sessionStorage.getItem("csrfToken") : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const response = await userSecuredApi.delete("/cart/clear-all", { headers });
     return response.data;
@@ -102,12 +81,8 @@ export const clearCartAPI = async () => {
 
 export const checkoutCartAPI = async (addressId: string | number) => {
   try {
-    const csrfToken = typeof window !== "undefined" ? sessionStorage.getItem("csrfToken") : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const payload = {
       paymentMethod: "ONLINE",

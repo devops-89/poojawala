@@ -138,6 +138,52 @@ export default function ServiceDetailsInfoGrid({
                 </Typography>
               </Box>
 
+              {/* SERVICE MODE */}
+              {(service.isOnline || service.isOffline) && (
+                <Box
+                  sx={{
+                    p: 2.5,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderBottom: "1px solid #EADCCF",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      letterSpacing: "1px",
+                      color: "#64534A",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    SERVICE MODE
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 0.75,
+                      px: 1.5,
+                      py: 0.5,
+                      bgcolor: "#E0F2FE",
+                      border: "1px solid #BAE6FD",
+                      borderRadius: "6px",
+                      color: "#0369A1",
+                      fontWeight: 700,
+                      fontSize: "13px",
+                    }}
+                  >
+                    {service.isOnline && service.isOffline
+                      ? "Online & Offline"
+                      : service.isOnline
+                        ? "Online Only"
+                        : "Offline Only"}
+                  </Box>
+                </Box>
+              )}
+
               {/* VENUE */}
               <Box
                 sx={{

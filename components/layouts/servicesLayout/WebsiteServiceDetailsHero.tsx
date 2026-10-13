@@ -6,6 +6,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ShieldCheckIcon from "@mui/icons-material/VerifiedUser";
+import WifiIcon from "@mui/icons-material/Wifi";
 import { Box, Button, Grid, Typography } from "@mui/material";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -168,6 +169,48 @@ export default function WebsiteServiceDetailsHero({
               mb: 4,
             }}
           >
+            {/* Service Mode Badge */}
+            {(service?.isOnline || service?.isOffline) && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.85,
+                  px: 2,
+                  py: 0.8,
+                  bgcolor: "rgba(255, 251, 247, 0.9)",
+                  border: "1px solid #BAE6FD",
+                  borderRadius: "10px",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.5px",
+                  color: "#0369A1",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "#E0F2FE",
+                    borderColor: "#0284C7",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                {service.isOnline && service.isOffline ? (
+                  <LanguageIcon sx={{ fontSize: 17, color: "#0284C7" }} />
+                ) : service.isOnline ? (
+                  <WifiIcon sx={{ fontSize: 17, color: "#0284C7" }} />
+                ) : (
+                  <LocationOnIcon sx={{ fontSize: 17, color: "#0284C7" }} />
+                )}
+                <span>
+                  {service.isOnline && service.isOffline
+                    ? "ONLINE & OFFLINE"
+                    : service.isOnline
+                      ? "ONLINE POOJA"
+                      : "OFFLINE POOJA"}
+                </span>
+              </Box>
+            )}
+
             {/* Duration Badge */}
             <Box
               sx={{

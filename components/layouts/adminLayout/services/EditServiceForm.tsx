@@ -96,6 +96,22 @@ const validationSchema = Yup.object().shape({
     .required("Duration is required")
     .min(1, "Duration must be at least 1 minute"),
   requiresVenue: Yup.boolean(),
+  isOnline: Yup.boolean().test(
+    "at-least-one-mode",
+    "Please select at least one service mode: Online or Offline",
+    function (value) {
+      const { isOffline } = this.parent;
+      return Boolean(value || isOffline);
+    }
+  ),
+  isOffline: Yup.boolean().test(
+    "at-least-one-mode",
+    "Please select at least one service mode: Online or Offline",
+    function (value) {
+      const { isOnline } = this.parent;
+      return Boolean(isOnline || value);
+    }
+  ),
   isActive: Yup.boolean(),
   isUpcomingFestival: Yup.boolean(),
   festivalStartDate: Yup.string().when("isUpcomingFestival", {
@@ -151,6 +167,8 @@ export default function EditServiceForm() {
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
+      isOnline: true,
+      isOffline: true,
       isActive: true,
       isUpcomingFestival: false,
       festivalStartDate: "",
@@ -167,6 +185,14 @@ export default function EditServiceForm() {
         !iconFile
       ) {
         showSnackbar("No changes detected", "info");
+        return;
+      }
+
+      if (!values.isOnline && !values.isOffline) {
+        showSnackbar(
+          "Please select at least one service mode: Online or Offline",
+          "error",
+        );
         return;
       }
 
@@ -218,6 +244,14 @@ export default function EditServiceForm() {
         formData.append(
           "requiresVenue",
           values.requiresVenue ? "true" : "false",
+        );
+        formData.append(
+          "isOnline",
+          values.isOnline ? "true" : "false",
+        );
+        formData.append(
+          "isOffline",
+          values.isOffline ? "true" : "false",
         );
         formData.append(
           "isUpcomingFestival",
@@ -416,6 +450,14 @@ export default function EditServiceForm() {
             commissionPercentage: service.commissionPercentage || "",
             durationMinutes: service.durationMinutes || "",
             requiresVenue: service.requiresVenue ?? false,
+            isOnline:
+              service.isOnline !== undefined
+                ? Boolean(service.isOnline)
+                : service.mode === "ONLINE" || service.mode === "BOTH" || true,
+            isOffline:
+              service.isOffline !== undefined
+                ? Boolean(service.isOffline)
+                : service.mode === "OFFLINE" || service.mode === "BOTH" || true,
             isActive: service.isActive ?? true,
             isUpcomingFestival: service.isUpcomingFestival ?? false,
             festivalStartDate: service.festivalStartDate
@@ -487,6 +529,16 @@ export default function EditServiceForm() {
       if (invalidFields.length > 0) {
         showSnackbar(
           `Please complete all required fields in Basic Information before continuing: ${invalidFields.join(", ")}`,
+          "error",
+        );
+        return;
+      }
+
+      if (!values.isOnline && !values.isOffline) {
+        formik.setFieldTouched("isOnline", true, true);
+        formik.setFieldTouched("isOffline", true, true);
+        showSnackbar(
+          "Please select at least one service mode: Online or Offline",
           "error",
         );
         return;

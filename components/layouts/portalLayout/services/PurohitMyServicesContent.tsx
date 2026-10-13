@@ -247,7 +247,29 @@ export default function PurohitMyServicesContent() {
                 filteredServices.map((ps: any, index: number) => (
                   <TableRow key={ps.id || index} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: '#FFFaf5' } }}>
                     <TableCell component="th" scope="row" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: COLORS.SLATE_DARK }}>
-                      {ps.service?.name || 'Unknown Service'}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                        <span>{ps.service?.name || 'Unknown Service'}</span>
+                        {(ps.service?.isOnline || ps.service?.isOffline || ps.isOnline || ps.isOffline) && (
+                          <Chip
+                            label={
+                              (ps.service?.isOnline ?? ps.isOnline) && (ps.service?.isOffline ?? ps.isOffline)
+                                ? 'Online & Offline'
+                                : (ps.service?.isOnline ?? ps.isOnline)
+                                  ? 'Online'
+                                  : 'Offline'
+                            }
+                            size="small"
+                            sx={{
+                              bgcolor: '#e0f2fe',
+                              color: '#0369a1',
+                              fontWeight: 700,
+                              fontSize: '11px',
+                              height: 22,
+                              borderRadius: '6px',
+                            }}
+                          />
+                        )}
+                      </Box>
                     </TableCell>
                     <TableCell>
                       <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '15px', fontWeight: 800, color: '#16a34a' }}>
@@ -330,10 +352,33 @@ export default function PurohitMyServicesContent() {
         ) : (
           filteredServices.map((ps: any, index: number) => (
             <Card key={ps.id || index} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: COLORS.WHITE, borderColor: '#e2e8f0' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.SLATE_DARK, fontSize: '1.1rem' }}>
-                  {ps.service?.name || 'Unknown Service'}
-                </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1 }}>
+                <Box>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.SLATE_DARK, fontSize: '1.1rem' }}>
+                    {ps.service?.name || 'Unknown Service'}
+                  </Typography>
+                  {(ps.service?.isOnline || ps.service?.isOffline || ps.isOnline || ps.isOffline) && (
+                    <Chip
+                      label={
+                        (ps.service?.isOnline ?? ps.isOnline) && (ps.service?.isOffline ?? ps.isOffline)
+                          ? 'Online & Offline'
+                          : (ps.service?.isOnline ?? ps.isOnline)
+                            ? 'Online'
+                            : 'Offline'
+                      }
+                      size="small"
+                      sx={{
+                        bgcolor: '#e0f2fe',
+                        color: '#0369a1',
+                        fontWeight: 700,
+                        fontSize: '11px',
+                        height: 20,
+                        borderRadius: '6px',
+                        mt: 0.5,
+                      }}
+                    />
+                  )}
+                </Box>
                 <Chip label={`${ps.durationMinutes || ps.service?.durationMinutes || 60} mins`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 600 }} />
               </Box>
               <Divider sx={{ mb: 1.5, borderColor: '#f1f5f9' }} />

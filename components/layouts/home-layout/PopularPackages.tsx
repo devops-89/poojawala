@@ -102,6 +102,8 @@ export default function PopularPackages() {
                 item.iconDownloadurl ||
                 item.iconUrl ||
                 "/images/home/poojaPackages/satyanarayan.webp",
+              isOnline: item.isOnline,
+              isOffline: item.isOffline,
             };
           });
           setPackages(apiPackages.slice(0, 4));
@@ -271,6 +273,7 @@ export default function PopularPackages() {
                   >
                     <Box
                       sx={{
+                        position: "relative",
                         width: "100%",
                         height: "160px",
                         borderRadius: "14px",
@@ -290,6 +293,31 @@ export default function PopularPackages() {
                           display: "block",
                         }}
                       />
+                      {(pkg.isOnline || pkg.isOffline) && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: 8,
+                            left: 8,
+                            bgcolor: "rgba(255, 255, 255, 0.95)",
+                            backdropFilter: "blur(4px)",
+                            color: "#0369a1",
+                            px: 1.25,
+                            py: 0.35,
+                            borderRadius: "6px",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            border: "1px solid #bae6fd",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.06)",
+                          }}
+                        >
+                          {pkg.isOnline && pkg.isOffline
+                            ? "Online & Offline"
+                            : pkg.isOnline
+                              ? "Online"
+                              : "Offline"}
+                        </Box>
+                      )}
                     </Box>
                     <Typography
                       component="h3"

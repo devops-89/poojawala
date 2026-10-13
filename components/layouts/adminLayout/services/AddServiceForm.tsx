@@ -95,6 +95,22 @@ const validationSchema = Yup.object().shape({
     .required("Duration is required")
     .min(1, "Duration must be at least 1 minute"),
   requiresVenue: Yup.boolean(),
+  isOnline: Yup.boolean().test(
+    "at-least-one-mode",
+    "Please select at least one service mode: Online or Offline",
+    function (value) {
+      const { isOffline } = this.parent;
+      return Boolean(value || isOffline);
+    }
+  ),
+  isOffline: Yup.boolean().test(
+    "at-least-one-mode",
+    "Please select at least one service mode: Online or Offline",
+    function (value) {
+      const { isOnline } = this.parent;
+      return Boolean(isOnline || value);
+    }
+  ),
   isUpcomingFestival: Yup.boolean(),
   festivalStartDate: Yup.string().when("isUpcomingFestival", {
     is: true,
@@ -140,6 +156,8 @@ export default function AddServiceForm() {
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
+      isOnline: true,
+      isOffline: true,
       isUpcomingFestival: false,
       festivalStartDate: "",
       festivalEndDate: "",
@@ -151,6 +169,14 @@ export default function AddServiceForm() {
     onSubmit: async (values) => {
       if (!iconFile) {
         showSnackbar("Please upload a service icon", "error");
+        return;
+      }
+
+      if (!values.isOnline && !values.isOffline) {
+        showSnackbar(
+          "Please select at least one service mode: Online or Offline",
+          "error",
+        );
         return;
       }
 
@@ -202,6 +228,14 @@ export default function AddServiceForm() {
         formData.append(
           "requiresVenue",
           values.requiresVenue ? "true" : "false",
+        );
+        formData.append(
+          "isOnline",
+          values.isOnline ? "true" : "false",
+        );
+        formData.append(
+          "isOffline",
+          values.isOffline ? "true" : "false",
         );
         formData.append(
           "isUpcomingFestival",
@@ -315,6 +349,16 @@ export default function AddServiceForm() {
       if (invalidFields.length > 0) {
         showSnackbar(
           `Please complete all required fields in Basic Information before continuing: ${invalidFields.join(", ")}`,
+          "error",
+        );
+        return;
+      }
+
+      if (!values.isOnline && !values.isOffline) {
+        formik.setFieldTouched("isOnline", true, true);
+        formik.setFieldTouched("isOffline", true, true);
+        showSnackbar(
+          "Please select at least one service mode: Online or Offline",
           "error",
         );
         return;

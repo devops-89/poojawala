@@ -127,10 +127,8 @@ export default function CustomerServicesBookingModal({
                   })
                 }
               >
-                <MenuItem value="OFFLINE">
-                  Offline (Purohit visits location)
-                </MenuItem>
-                <MenuItem value="ONLINE">Online (Video Call)</MenuItem>
+                <MenuItem value="ONLINE">Online</MenuItem>
+                <MenuItem value="OFFLINE">Offline</MenuItem>
               </Select>
             </FormControl>
           </Grid>

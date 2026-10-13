@@ -1,4 +1,4 @@
-import { userSecuredApi } from "./config";
+import { attachCsrfHeaders, userSecuredApi } from "./config";
 import { ORDER_STATUS } from "@/utils/enums";
 
 export const getCustomerOrdersAPI = async (
@@ -7,15 +7,8 @@ export const getCustomerOrdersAPI = async (
   orderStatus?: string
 ) => {
   try {
-    const csrfToken =
-      typeof window !== "undefined"
-        ? sessionStorage.getItem("csrfToken")
-        : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const params: Record<string, any> = {
       page,
@@ -46,15 +39,8 @@ export const getAllOrdersAPI = async (
   search?: string
 ) => {
   try {
-    const csrfToken =
-      typeof window !== "undefined"
-        ? sessionStorage.getItem("csrfToken")
-        : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "ADMIN");
 
     const params: Record<string, any> = {
       page,
@@ -81,15 +67,8 @@ export const getAllOrdersAPI = async (
 
 export const getCustomerOrderByIdAPI = async (id: string | number) => {
   try {
-    const csrfToken =
-      typeof window !== "undefined"
-        ? sessionStorage.getItem("csrfToken")
-        : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
 
     const response = await userSecuredApi.get(`/orders/${id}`, {
       headers,
@@ -105,15 +84,8 @@ export const updateOrderStatusAPI = async (
   orderStatus: string
 ) => {
   try {
-    const csrfToken =
-      typeof window !== "undefined"
-        ? sessionStorage.getItem("csrfToken")
-        : null;
     const headers: Record<string, string> = {};
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-      headers["csrftoken"] = csrfToken;
-    }
+    attachCsrfHeaders(headers, undefined, "ADMIN");
 
     let validStatus = orderStatus.toUpperCase();
     if (validStatus === "PENDING") validStatus = ORDER_STATUS.PENDING_PAYMENT;

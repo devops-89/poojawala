@@ -256,8 +256,6 @@ export default function ServicesLayout() {
             }}
             selectedCategory={selectedCategoryName}
             onCategoryChange={handleCategoryChange}
-            selectedTemple={selectedTempleName}
-            onTempleChange={handleTempleChange}
             cityOptions={cityOptions}
             selectedCity={selectedCity}
             onCityChange={handleCityChange}

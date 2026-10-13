@@ -12,6 +12,8 @@ interface ServiceAvailabilityFieldsProps {
     isUpcomingFestival: boolean;
     festivalStartDate: string;
     festivalEndDate: string;
+    isOnline?: boolean;
+    isOffline?: boolean;
   };
   errors: Record<string, any>;
   touched: Record<string, any>;
@@ -28,6 +30,8 @@ export default function ServiceAvailabilityFields({
   handleBlur,
   showStatusSwitch = false,
 }: ServiceAvailabilityFieldsProps) {
+  const hasModeError = !values.isOnline && !values.isOffline;
+
   return (
     <Grid size={{ xs: 12 }}>
       <Typography
@@ -38,9 +42,67 @@ export default function ServiceAvailabilityFields({
           color: "#1e293b",
         }}
       >
-        Availability Settings
+        Availability & Service Modes
       </Typography>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, mt: 1 }}>
+        <FormControlLabel
+          control={
+            <Switch
+              name="isOnline"
+              checked={Boolean(values.isOnline)}
+              onChange={handleChange}
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked": {
+                  color: COLORS.PRIMARY,
+                },
+                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                  backgroundColor: COLORS.PRIMARY,
+                },
+              }}
+            />
+          }
+          label={
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                color: "#475569",
+              }}
+            >
+              Online Mode
+            </Typography>
+          }
+        />
+
+        <FormControlLabel
+          control={
+            <Switch
+              name="isOffline"
+              checked={Boolean(values.isOffline)}
+              onChange={handleChange}
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked": {
+                  color: COLORS.PRIMARY,
+                },
+                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                  backgroundColor: COLORS.PRIMARY,
+                },
+              }}
+            />
+          }
+          label={
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                color: "#475569",
+              }}
+            >
+              Offline Mode
+            </Typography>
+          }
+        />
+
         <FormControlLabel
           control={
             <Switch
@@ -69,8 +131,6 @@ export default function ServiceAvailabilityFields({
             </Typography>
           }
         />
-
-
 
         <FormControlLabel
           control={
@@ -101,6 +161,21 @@ export default function ServiceAvailabilityFields({
           }
         />
       </Box>
+
+      {/* Mode validation error in English */}
+      {hasModeError && (
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            color: "#d32f2f",
+            fontSize: "0.8rem",
+            fontWeight: 500,
+            mt: 1,
+          }}
+        >
+          {errors.isOnline || errors.isOffline || "Please select at least one service mode: Online or Offline."}
+        </Typography>
+      )}
 
       {values.isUpcomingFestival && (
         <Grid container spacing={3} sx={{ mt: 2 }}>

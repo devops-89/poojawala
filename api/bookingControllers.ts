@@ -1,8 +1,10 @@
-import { paymentSecuredApi, userSecuredApi } from "./config";
+import { attachCsrfHeaders, paymentSecuredApi, userSecuredApi } from "./config";
 
 export const createBookingByAdminAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post('/bookings/admin/add', data);
+    const headers: Record<string, string> = {};
+    attachCsrfHeaders(headers, undefined, "ADMIN");
+    const response = await userSecuredApi.post('/bookings/admin/add', data, { headers });
     return response.data;
   } catch (error) {
     throw error;
@@ -11,7 +13,9 @@ export const createBookingByAdminAPI = async (data: any) => {
 
 export const customerCreateBookingAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post('/bookings/add', data);
+    const headers: Record<string, string> = {};
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
+    const response = await userSecuredApi.post('/bookings/add', data, { headers });
     return response.data;
   } catch (error) {
     throw error;

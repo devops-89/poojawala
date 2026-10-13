@@ -119,6 +119,8 @@ export default function WebsiteTempleServicesSection({
             ? `${Math.round(s.durationMinutes / 60)} hr`
             : s.duration || "2 hrs",
           category: s.category?.name || "Temple Pooja",
+          isOnline: Boolean(s.isOnline),
+          isOffline: Boolean(s.isOffline),
         };
       });
   };
@@ -209,6 +211,8 @@ export default function WebsiteTempleServicesSection({
                 price={srv.price}
                 duration={srv.duration}
                 category={srv.category}
+                isOnline={srv.isOnline}
+                isOffline={srv.isOffline}
               />
             </Grid>
           ))}

@@ -173,6 +173,66 @@ export default function ServiceSpecsAvailabilityCard({
           </Box>
         </Grid>
 
+        {/* Service Mode (Online / Offline) */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Box
+            sx={{
+              p: 3,
+              bgcolor: "#f8fafc",
+              borderRadius: "16px",
+              border: "1px solid #e2e8f0",
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 2,
+              transition: "all 0.2s",
+              "&:hover": {
+                borderColor: COLORS.PRIMARY,
+                boxShadow: "0 4px 20px rgba(255,98,0,0.05)",
+                bgcolor: "#fff",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                p: 1.5,
+                bgcolor: "#FFF0E6",
+                borderRadius: "12px",
+                color: COLORS.PRIMARY,
+                display: "flex",
+              }}
+            >
+              {service.isOnline ? <WifiIcon /> : <WifiOffIcon />}
+            </Box>
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: "0.9rem",
+                  color: "#64748b",
+                  fontWeight: 600,
+                  mb: 0.5,
+                }}
+              >
+                Service Mode
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: 800,
+                  color: COLORS.PRIMARY,
+                  fontSize: "1.1rem",
+                }}
+              >
+                {service.isOnline && service.isOffline
+                  ? "Online & Offline"
+                  : service.isOnline
+                    ? "Online Only"
+                    : service.isOffline
+                      ? "Offline Only"
+                      : "Not Specified"}
+              </Typography>
+            </Box>
+          </Box>
+        </Grid>
+
         {/* Total Bookings */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Box

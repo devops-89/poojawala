@@ -15,6 +15,8 @@ export default function ServiceCard({
   description,
   price,
   duration,
+  isOnline,
+  isOffline,
 }: ServiceCardProps) {
   const router = useRouter();
   const { profile } = useUserStore();
@@ -110,6 +112,27 @@ export default function ServiceCard({
             }}
           >
             {duration}
+          </Box>
+        )}
+        {(isOnline || isOffline) && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 12,
+              left: 12,
+              bgcolor: 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid #BAE6FD',
+              px: 1.2,
+              py: 0.3,
+              borderRadius: '20px',
+              fontSize: '11px',
+              fontWeight: 700,
+              color: '#0369A1',
+              fontFamily: FONTS.PRIMARY,
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            {isOnline && isOffline ? 'Online & Offline' : isOnline ? 'Online' : 'Offline'}
           </Box>
         )}
       </Box>

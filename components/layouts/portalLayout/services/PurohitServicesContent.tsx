@@ -291,19 +291,40 @@ export default function PurohitServicesContent() {
                         >
                           {service.name}
                         </Typography>
-                        {service.isUpcomingFestival && (
-                          <Chip
-                            label="Festival"
-                            size="small"
-                            sx={{
-                              bgcolor: '#fff7ed',
-                              color: COLORS.PRIMARY,
-                              fontWeight: 700,
-                              fontSize: '0.75rem',
-                              borderRadius: '12px',
-                            }}
-                          />
-                        )}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', flexShrink: 0 }}>
+                          {(service.isOnline || service.isOffline) && (
+                            <Chip
+                              label={
+                                service.isOnline && service.isOffline
+                                  ? 'Online & Offline'
+                                  : service.isOnline
+                                    ? 'Online'
+                                    : 'Offline'
+                              }
+                              size="small"
+                              sx={{
+                                bgcolor: '#e0f2fe',
+                                color: '#0369a1',
+                                fontWeight: 700,
+                                fontSize: '0.75rem',
+                                borderRadius: '12px',
+                              }}
+                            />
+                          )}
+                          {service.isUpcomingFestival && (
+                            <Chip
+                              label="Festival"
+                              size="small"
+                              sx={{
+                                bgcolor: '#fff7ed',
+                                color: COLORS.PRIMARY,
+                                fontWeight: 700,
+                                fontSize: '0.75rem',
+                                borderRadius: '12px',
+                              }}
+                            />
+                          )}
+                        </Box>
                       </Box>
 
                       <Typography
