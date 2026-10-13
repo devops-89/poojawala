@@ -16,6 +16,7 @@ import {
   CircularProgress,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   Grid,
   InputLabel,
@@ -154,10 +155,24 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     }
   };
 
+  const isOnlineAllowed = service?.isOnline === true;
+  const isOfflineAllowed = service?.isOffline === true;
+  const isBothAllowed = isOnlineAllowed && isOfflineAllowed;
+  const isSingleMode =
+    (isOnlineAllowed && !isOfflineAllowed) ||
+    (!isOnlineAllowed && isOfflineAllowed);
+
+  const initialBookingMode =
+    isOnlineAllowed && !isOfflineAllowed
+      ? "ONLINE"
+      : isOfflineAllowed && !isOnlineAllowed
+        ? "OFFLINE"
+        : "OFFLINE";
+
   const [bookingForm, setBookingForm] = useState({
     scheduledDate: "",
     scheduledTime: "",
-    bookingMode: service?.isOnline && !service?.isOffline ? "ONLINE" : "OFFLINE",
+    bookingMode: initialBookingMode,
     paymentOption: "TOKEN",
     language: "Hindi",
     specialInstructions: "",
@@ -228,7 +243,15 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
     let customerAddressId = selectedAddressId ? Number(selectedAddressId) : null;
 
-    if (!customerAddressId && bookingForm.bookingMode === "OFFLINE") {
+    const activeBookingMode = isSingleMode
+      ? isOnlineAllowed
+        ? "ONLINE"
+        : "OFFLINE"
+      : bookingForm.bookingMode === "ONLINE"
+        ? "ONLINE"
+        : "OFFLINE";
+
+    if (!customerAddressId && activeBookingMode === "OFFLINE") {
       showSnackbar(
         "No address found. Please add an address in your profile first.",
         "error"
@@ -251,7 +274,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         specialInstructions: bookingForm.specialInstructions || "",
         plan: selectedPlan ? selectedPlan.toUpperCase() : "BASIC",
         paymentOption: bookingForm.paymentOption || "TOKEN",
-        bookingMode: bookingForm.bookingMode === "ONLINE" ? "ONLINE" : "OFFLINE",
+        bookingMode: activeBookingMode,
         customFields: {
           language: bookingForm.language || "Hindi",
         },
@@ -263,7 +286,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
-          bookingMode: service?.isOnline && !service?.isOffline ? "ONLINE" : "OFFLINE",
+          bookingMode: initialBookingMode,
           paymentOption: "TOKEN",
           language: "Hindi",
           specialInstructions: "",
@@ -621,12 +644,22 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
             {/* Row 2: Booking Mode & Preferred Language */}
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth sx={{ bgcolor: "#FFFBF7", borderRadius: "10px" }}>
+                <FormControl
+                  fullWidth
+                  disabled={isSingleMode}
+                  sx={{
+                    bgcolor: isSingleMode ? "#F5EFE9" : "#FFFBF7",
+                    borderRadius: "10px",
+                  }}
+                >
                   <InputLabel
                     id="booking-mode-label"
                     sx={{
                       fontFamily: FONTS.PRIMARY,
                       color: "#64534A",
+                      "&.Mui-disabled": {
+                        color: "#8C7A6B",
+                      },
                     }}
                   >
                     Booking Mode
@@ -634,16 +667,41 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   <Select
                     labelId="booking-mode-label"
                     label="Booking Mode"
-                    value={bookingForm.bookingMode}
+                    disabled={isSingleMode}
+                    value={
+                      isSingleMode
+                        ? isOnlineAllowed
+                          ? "ONLINE"
+                          : "OFFLINE"
+                        : bookingForm.bookingMode || "OFFLINE"
+                    }
                     onChange={(e) => handleInputChange("bookingMode", e.target.value)}
                     sx={{
                       borderRadius: "10px",
                       fontFamily: FONTS.PRIMARY,
+                      "&.Mui-disabled": {
+                        color: "#2C2013",
+                        WebkitTextFillColor: "#2C2013",
+                        bgcolor: "rgba(0, 0, 0, 0.02)",
+                      },
                     }}
                   >
-                    <MenuItem value="ONLINE">Online</MenuItem>
-                    <MenuItem value="OFFLINE">Offline</MenuItem>
+                    {(isBothAllowed ||
+                      (isOnlineAllowed && !isOfflineAllowed) ||
+                      (!isOnlineAllowed && !isOfflineAllowed)) && (
+                      <MenuItem value="ONLINE">Online</MenuItem>
+                    )}
+                    {(isBothAllowed ||
+                      (!isOnlineAllowed && isOfflineAllowed) ||
+                      (!isOnlineAllowed && !isOfflineAllowed)) && (
+                      <MenuItem value="OFFLINE">Offline</MenuItem>
+                    )}
                   </Select>
+                  {isSingleMode && (
+                    <FormHelperText sx={{ fontFamily: FONTS.PRIMARY, color: "#8C7A6B" }}>
+                      This service is available in {isOnlineAllowed ? "Online" : "Offline"} mode only
+                    </FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
 

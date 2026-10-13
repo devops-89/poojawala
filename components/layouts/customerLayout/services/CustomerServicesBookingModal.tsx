@@ -8,6 +8,7 @@ import {
   CircularProgress,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   Grid,
   IconButton,
@@ -35,6 +36,7 @@ interface CustomerServicesBookingModalProps {
   setBookingForm: (form: any) => void;
   onSubmit: () => void;
   submitting: boolean;
+  service?: any;
 }
 
 export default function CustomerServicesBookingModal({
@@ -44,7 +46,22 @@ export default function CustomerServicesBookingModal({
   setBookingForm,
   onSubmit,
   submitting,
+  service,
 }: CustomerServicesBookingModalProps) {
+  const isOnlineAllowed = service?.isOnline === true;
+  const isOfflineAllowed = service?.isOffline === true;
+  const isBothAllowed = isOnlineAllowed && isOfflineAllowed;
+  const isSingleMode =
+    (isOnlineAllowed && !isOfflineAllowed) ||
+    (!isOnlineAllowed && isOfflineAllowed);
+
+  const currentBookingMode =
+    isOnlineAllowed && !isOfflineAllowed
+      ? "ONLINE"
+      : !isOnlineAllowed && isOfflineAllowed
+        ? "OFFLINE"
+        : bookingForm.bookingMode || "OFFLINE";
+
   const now = new Date();
   const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
     .toISOString()
@@ -115,11 +132,12 @@ export default function CustomerServicesBookingModal({
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth disabled={isSingleMode}>
               <InputLabel>Booking Mode</InputLabel>
               <Select
-                value={bookingForm.bookingMode}
+                value={currentBookingMode}
                 label="Booking Mode"
+                disabled={isSingleMode}
                 onChange={(e) =>
                   setBookingForm({
                     ...bookingForm,
@@ -127,9 +145,22 @@ export default function CustomerServicesBookingModal({
                   })
                 }
               >
-                <MenuItem value="ONLINE">Online</MenuItem>
-                <MenuItem value="OFFLINE">Offline</MenuItem>
+                {(isBothAllowed ||
+                  (isOnlineAllowed && !isOfflineAllowed) ||
+                  (!isOnlineAllowed && !isOfflineAllowed)) && (
+                  <MenuItem value="ONLINE">Online</MenuItem>
+                )}
+                {(isBothAllowed ||
+                  (!isOnlineAllowed && isOfflineAllowed) ||
+                  (!isOnlineAllowed && !isOfflineAllowed)) && (
+                  <MenuItem value="OFFLINE">Offline</MenuItem>
+                )}
               </Select>
+              {isSingleMode && (
+                <FormHelperText>
+                  Available in {isOnlineAllowed ? "Online" : "Offline"} mode only
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>

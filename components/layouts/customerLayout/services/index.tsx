@@ -141,8 +141,14 @@ export const ServicesPage = () => {
   const handleOpenBooking = (serviceId: number) => {
     setSelectedServiceId(serviceId);
     const targetService = filteredServices.find((s) => s.id === serviceId);
+    const isOnlineAllowed = targetService?.isOnline === true;
+    const isOfflineAllowed = targetService?.isOffline === true;
     const defaultMode =
-      targetService?.isOnline && !targetService?.isOffline ? "ONLINE" : "OFFLINE";
+      isOnlineAllowed && !isOfflineAllowed
+        ? "ONLINE"
+        : !isOnlineAllowed && isOfflineAllowed
+          ? "OFFLINE"
+          : "OFFLINE";
     setBookingForm((prev) => ({
       ...prev,
       bookingMode: defaultMode,
@@ -180,7 +186,19 @@ export const ServicesPage = () => {
         customerAddressId = defaultAddr.id;
       }
 
-      if (!customerAddressId && bookingForm.bookingMode === "OFFLINE") {
+      const targetService = filteredServices.find((s) => s.id === selectedServiceId);
+      const isOnlineAllowed = targetService?.isOnline === true;
+      const isOfflineAllowed = targetService?.isOffline === true;
+      const finalBookingMode =
+        isOnlineAllowed && !isOfflineAllowed
+          ? "ONLINE"
+          : !isOnlineAllowed && isOfflineAllowed
+            ? "OFFLINE"
+            : bookingForm.bookingMode === "ONLINE"
+              ? "ONLINE"
+              : "OFFLINE";
+
+      if (!customerAddressId && finalBookingMode === "OFFLINE") {
         showSnackbar(
           "No address found. Please add an address in your profile first.",
           "error",
@@ -196,7 +214,7 @@ export const ServicesPage = () => {
         specialInstructions: bookingForm.specialInstructions || "",
         plan: "BASIC",
         paymentOption: bookingForm.paymentOption || "TOKEN",
-        bookingMode: bookingForm.bookingMode === "ONLINE" ? "ONLINE" : "OFFLINE",
+        bookingMode: finalBookingMode,
         customFields: {
           language: bookingForm.language || "Hindi",
         },
@@ -478,6 +496,7 @@ export const ServicesPage = () => {
         setBookingForm={setBookingForm}
         onSubmit={handleBookNowSubmit}
         submitting={submittingBooking}
+        service={filteredServices.find((s) => s.id === selectedServiceId)}
       />
     </Box>
   );
