@@ -399,6 +399,12 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
       if (res.success && res.data) {
         const wrapper = res.data.data || res.data;
         const u = wrapper.user || wrapper;
+
+        if (u?.isAdminCreated || u?.is_admin_created || u?.isadmincreated) {
+          showSnackbar("Admin created purohits cannot be edited", "warning");
+          router.push("/admin/purohits");
+          return;
+        }
         const profile = u.profile || u.purohitProfile || {};
         const areas =
           u.serviceAreas ||

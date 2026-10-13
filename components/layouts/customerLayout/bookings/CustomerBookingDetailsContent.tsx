@@ -33,6 +33,7 @@ import BookingReviewCard from "./BookingReviewCard";
 import BookingSummaryCard from "./BookingSummaryCard";
 import PurohitReviewCard from "./PurohitReviewCard";
 import ServiceDetailsCard from "./ServiceDetailsCard";
+import { getBookingPaymentDetails } from "./bookingPaymentHelper";
 
 import { useSocketStore } from "@/stores/socketStore";
 
@@ -94,7 +95,7 @@ export default function CustomerBookingDetailsContent({
       const paymentStatusStr = booking?.paymentStatus?.toUpperCase() || "";
       let paymentUrl: string | null = null;
 
-      if (paymentStatusStr === "PARTIAL" || paymentStatusStr === "PARTIALLY_PAID") {
+      if (paymentStatusStr === "PARTIAL" || paymentStatusStr === "PARTIALLY_PAID" || booking?.paidAmount > 0) {
         const res = await settleBookingPaymentAPI(bookingId);
         const resData = res?.data?.data || res?.data || res;
         paymentUrl =
@@ -108,7 +109,7 @@ export default function CustomerBookingDetailsContent({
           res?.short_url ||
           (typeof res === "string" ? res : null);
       } else {
-        const callbackUrl = "https://poojawala.com/customer/bookings";
+        const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/customer/bookings/${bookingId}` : "https://poojawala.com/customer/bookings";
         const res = await getPaymentLinkAPI(bookingId, callbackUrl);
         const resData = res?.data?.data || res?.data || res;
         paymentUrl =
@@ -293,12 +294,13 @@ export default function CustomerBookingDetailsContent({
     : "Pending";
 
   const isActive = statusStr === "PENDING" || statusStr === "ACCEPTED";
-  const paymentStatusStr = booking.paymentStatus?.toUpperCase() || "";
-  const isPaymentPending =
+  const paymentDetails = getBookingPaymentDetails(booking);
+  const isPaymentPending = getBookingPaymentDetails(booking).canMakePayment;
+  const _unusedPaymentPending = false; /*
     statusStr !== "CANCELLED" &&
     paymentStatusStr !== "SUCCESS" &&
     paymentStatusStr !== "PAID" &&
-    paymentStatusStr !== "COMPLETED";
+    statusStr !== "CANCELLED"; */
 
   return (
     <Box sx={{ maxWidth: "1100px", mx: "auto", pb: 8 }}>

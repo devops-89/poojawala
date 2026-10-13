@@ -351,30 +351,38 @@ export default function AdminPurohitsContent() {
       width: "8%",
       minWidth: 80,
       align: "center",
-      render: (purohit) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <AdminTableActionMenu
-            actions={[
-              {
-                label: "View Details",
-                icon: <VisibilityIcon fontSize="small" />,
-                href: `/admin/purohits/${purohit.id}`,
-              },
-              {
-                label: "Edit Profile",
-                icon: <EditIcon fontSize="small" />,
-                href: `/admin/purohits/edit/${purohit.id}`,
-              },
-            ]}
-          />
-        </Box>
-      ),
+      render: (purohit) => {
+        const isAdminCreated = Boolean(
+          purohit?.isAdminCreated ||
+            purohit?.is_admin_created ||
+            purohit?.isadmincreated
+        );
+
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <AdminTableActionMenu
+              actions={[
+                {
+                  label: "View Details",
+                  icon: <VisibilityIcon fontSize="small" />,
+                  href: `/admin/purohits/${purohit.id}`,
+                },
+                !isAdminCreated && {
+                  label: "Edit Profile",
+                  icon: <EditIcon fontSize="small" />,
+                  href: `/admin/purohits/edit/${purohit.id}`,
+                },
+              ]}
+            />
+          </Box>
+        );
+      },
     },
   ];
 
