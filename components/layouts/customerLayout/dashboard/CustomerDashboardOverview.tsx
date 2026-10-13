@@ -58,11 +58,6 @@ export default function CustomerDashboardOverview() {
       {/* Hero Section */}
       <CustomerDashboardHero />
 
-      {/* Recent Bookings Section (Shown if user has recent bookings) */}
-      {recentBookings.length > 0 && (
-        <DashboardRecentBookings recentBookings={recentBookings} />
-      )}
-
       {/* Sacred Puja Services (Max 3) */}
       <DashboardServicesSection
         services={services}
@@ -76,6 +71,11 @@ export default function CustomerDashboardOverview() {
         subtitle="Explore essential pooja items, kits, and sacred offerings for your rituals. Add what you need — we'll arrange delivery right to your doorstep."
         showSummaryBar={false}
       />
+
+      {/* Recent Bookings Section (Shown if user has recent bookings) */}
+      {recentBookings.length > 0 && (
+        <DashboardRecentBookings recentBookings={recentBookings} />
+      )}
     </Box>
   );
 }
