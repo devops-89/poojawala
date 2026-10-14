@@ -354,6 +354,7 @@ export default function BookingsContent() {
         otpValue={b.otpValue}
         onOtpChange={b.handleOtpChange}
         onOtpKeyDown={b.handleOtpKeyDown}
+        onOtpPaste={b.handleOtpPaste}
         onResendOtp={b.handleResendOtp}
         isResendingOtp={b.isResendingOtp}
         onVerifyOtp={b.handleVerifyOtp}

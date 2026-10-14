@@ -80,9 +80,51 @@ export default function BookingDetailHero({
           <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 1 }}>
             {booking?.service?.name ?? 'Service'}
           </Typography>
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 3 }}>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
             Scheduled on {formattedDate}
           </Typography>
+
+          {/* Booking Mode & Plan Badges */}
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', mb: 3 }}>
+            {booking?.bookingMode && (
+              <Chip
+                label={
+                  booking.bookingMode === 'OFFLINE'
+                    ? 'In-Person (Offline)'
+                    : booking.bookingMode === 'ONLINE'
+                    ? 'Virtual (Online)'
+                    : booking.bookingMode
+                }
+                size="small"
+                sx={{
+                  fontWeight: 600,
+                  fontFamily: FONTS.PRIMARY,
+                  bgcolor: '#F0F9FF',
+                  color: '#0284C7',
+                  border: '1px solid #BAE6FD',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  height: '28px',
+                }}
+              />
+            )}
+            {booking?.plan && (
+              <Chip
+                label={`${booking.plan.charAt(0).toUpperCase() + booking.plan.slice(1).toLowerCase()} Plan`}
+                size="small"
+                sx={{
+                  fontWeight: 600,
+                  fontFamily: FONTS.PRIMARY,
+                  bgcolor: '#FFF7ED',
+                  color: '#C2410C',
+                  border: '1px solid #FED7AA',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  height: '28px',
+                }}
+              />
+            )}
+          </Box>
 
           {(statusStr === 'PENDING' || statusStr === 'ACCEPTED') && (
             <Box
@@ -242,28 +284,7 @@ export default function BookingDetailHero({
               </Box>
             )}
 
-            {payDetails.isFullyPaid && (
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                  bgcolor: '#f0fdf4',
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: '8px',
-                  border: '1px solid #bbf7d0',
-                  mt: 0.25,
-                }}
-              >
-                <CheckCircleIcon sx={{ fontSize: 14, color: '#16a34a' }} />
-                <Typography
-                  sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#15803d' }}
-                >
-                  Payment Settled in Full
-                </Typography>
-              </Box>
-            )}
+
 
             {!payDetails.isTokenPaid && !payDetails.isFullyPaid && statusStr !== 'CANCELLED' && (
               <Box

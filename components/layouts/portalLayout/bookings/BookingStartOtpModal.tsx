@@ -20,6 +20,7 @@ interface BookingStartOtpModalProps {
   otpValue: string;
   onOtpChange: (index: number, val: string) => void;
   onOtpKeyDown: (index: number, e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onOtpPaste?: (e: React.ClipboardEvent<HTMLDivElement>) => void;
   onResendOtp: () => void;
   isResendingOtp: boolean;
   onVerifyOtp: () => void;
@@ -31,6 +32,7 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
   otpValue,
   onOtpChange,
   onOtpKeyDown,
+  onOtpPaste,
   onResendOtp,
   isResendingOtp,
   onVerifyOtp,
@@ -60,8 +62,11 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
               id={`otp-input-${idx}`}
               variant="outlined"
               value={otpValue[idx] || ""}
+              autoFocus={idx === 0}
               onChange={(e) => onOtpChange(idx, e.target.value)}
               onKeyDown={(e) => onOtpKeyDown(idx, e)}
+              onPaste={onOtpPaste}
+              slotProps={{ htmlInput: { maxLength: 6 } }}
               sx={{
                 width: "50px",
                 "& .MuiInputBase-input": {

@@ -288,12 +288,34 @@ export function useBookings() {
   };
 
   const handleOtpChange = (index: number, val: string) => {
-    if (!/^\d*$/.test(val)) return;
+    const cleaned = val.replace(/\D/g, "");
+    if (!cleaned) {
+      let newOtp = otpValue.split("");
+      while (newOtp.length < 6) newOtp.push("");
+      newOtp[index] = "";
+      setOtpValue(newOtp.join(""));
+      return;
+    }
+
+    if (cleaned.length > 1) {
+      const pastedDigits = cleaned.slice(0, 6);
+      let newOtp = otpValue.split("");
+      while (newOtp.length < 6) newOtp.push("");
+      for (let i = 0; i < pastedDigits.length && index + i < 6; i++) {
+        newOtp[index + i] = pastedDigits[i];
+      }
+      const finalOtp = newOtp.join("").slice(0, 6);
+      setOtpValue(finalOtp);
+      const nextFocus = Math.min(5, index + pastedDigits.length - 1);
+      document.getElementById(`otp-input-${nextFocus}`)?.focus();
+      return;
+    }
+
     let newOtp = otpValue.split("");
     while (newOtp.length < 6) newOtp.push("");
-    newOtp[index] = val.slice(-1);
+    newOtp[index] = cleaned.slice(-1);
     setOtpValue(newOtp.join(""));
-    if (val && index < 5) {
+    if (index < 5) {
       document.getElementById(`otp-input-${index + 1}`)?.focus();
     }
   };
@@ -302,6 +324,15 @@ export function useBookings() {
     if (e.key === "Backspace" && (!otpValue[index] || otpValue[index] === "") && index > 0) {
       document.getElementById(`otp-input-${index - 1}`)?.focus();
     }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!pastedText) return;
+    setOtpValue(pastedText);
+    const nextFocus = Math.min(5, pastedText.length - 1);
+    document.getElementById(`otp-input-${nextFocus}`)?.focus();
   };
 
   const handleVerifyOtp = async () => {
@@ -532,6 +563,7 @@ export function useBookings() {
     isResendingOtp,
     handleOtpChange,
     handleOtpKeyDown,
+    handleOtpPaste,
     handleVerifyOtp,
     handleResendOtp,
     handleVerifyOtpClick,
