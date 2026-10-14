@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import AddAddressModal from "@/components/widgets/AddAddressModal";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 interface Props {
   serviceId: number;
@@ -110,6 +110,56 @@ const formatFeatureKey = (key: string, value: any): string | null => {
   return `${keyLabel}: ${value}`;
 };
 
+const normalizeCity = (cityName: string): string => {
+  if (!cityName) return "";
+  let s = cityName.toLowerCase().trim();
+  s = s.replace(/\b(urban|rural|district)\b/gi, "").trim();
+  if (s.replace(/\bcity\b/gi, "").trim()) {
+    s = s.replace(/\bcity\b/gi, "").trim();
+  }
+  if (s === "bangalore" || s === "bengaluru") return "bengaluru";
+  if (s === "gurgaon" || s === "gurugram") return "gurugram";
+  if (s === "delhi" || s === "new delhi") return "delhi";
+  if (s === "bombay" || s === "mumbai") return "mumbai";
+  if (s === "calcutta" || s === "kolkata") return "kolkata";
+  if (s === "madras" || s === "chennai") return "chennai";
+  if (s === "prayagraj" || s === "allahabad") return "prayagraj";
+  if (s === "varanasi" || s === "banaras" || s === "kashi") return "varanasi";
+  if (s === "mysore" || s === "mysuru") return "mysuru";
+  if (s === "mangalore" || s === "mangaluru") return "mangaluru";
+  if (s === "belgaum" || s === "belagavi") return "belagavi";
+  if (s === "hubli" || s === "hubballi") return "hubballi";
+  if (s === "pondicherry" || s === "puducherry") return "puducherry";
+  if (s === "cochin" || s === "kochi") return "kochi";
+  if (s === "trivandrum" || s === "thiruvananthapuram") return "thiruvananthapuram";
+  if (s === "baroda" || s === "vadodara") return "vadodara";
+  return s.replace(/[^a-z0-9]/g, " ").replace(/\s+/g, " ").trim();
+};
+
+const checkCityMatch = (addr: any, serviceCity: { name: string; state?: string }): boolean => {
+  if (!serviceCity?.name) return false;
+  const sNorm = normalizeCity(serviceCity.name);
+  if (!sNorm) return false;
+
+  if (addr?.city) {
+    const aNorm = normalizeCity(addr.city);
+    if (aNorm === sNorm) return true;
+    if (aNorm.length >= 4 && sNorm.length >= 4) {
+      if (aNorm.includes(sNorm) || sNorm.includes(aNorm)) return true;
+    }
+  }
+
+  if (addr?.fullAddress && typeof addr.fullAddress === "string") {
+    const fullLower = addr.fullAddress.toLowerCase();
+    const rawLower = serviceCity.name.toLowerCase().trim();
+    if (fullLower.includes(rawLower) || (sNorm.length >= 4 && fullLower.includes(sNorm))) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export default function ServiceDetailsBookingForm({ serviceId, service }: Props) {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
@@ -155,24 +205,78 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     }
   };
 
-  const isOnlineAllowed = service?.isOnline === true;
-  const isOfflineAllowed = service?.isOffline === true;
-  const isBothAllowed = isOnlineAllowed && isOfflineAllowed;
-  const isSingleMode =
-    (isOnlineAllowed && !isOfflineAllowed) ||
-    (!isOnlineAllowed && isOfflineAllowed);
+  const serviceCities = useMemo(() => {
+    const raw = service?.cities;
+    if (!raw) return [];
+    let list = raw;
+    if (typeof raw === "string") {
+      try {
+        list = JSON.parse(raw);
+      } catch {
+        list = [];
+      }
+    }
+    if (!Array.isArray(list)) return [];
+    return list
+      .map((c: any) => {
+        if (typeof c === "string") return { name: c.trim(), state: "" };
+        return {
+          name: (c?.name || c?.city || c?.cityName || "").trim(),
+          state: (c?.state || "").trim(),
+        };
+      })
+      .filter((c) => Boolean(c.name));
+  }, [service?.cities]);
 
-  const initialBookingMode =
-    isOnlineAllowed && !isOfflineAllowed
-      ? "ONLINE"
-      : isOfflineAllowed && !isOnlineAllowed
-        ? "OFFLINE"
-        : "OFFLINE";
+  const serviceCityNamesText = useMemo(() => {
+    if (!serviceCities || serviceCities.length === 0) return "";
+    return serviceCities.map((c) => c.name).join(", ");
+  }, [serviceCities]);
+
+  const selectedAddress = useMemo(() => {
+    if (!addresses || addresses.length === 0) return null;
+    if (selectedAddressId) {
+      const found = addresses.find((a: any) => String(a.id) === String(selectedAddressId));
+      if (found) return found;
+    }
+    return (
+      addresses.find(
+        (a: any) =>
+          a.isDefault === true ||
+          String(a.isDefault).toLowerCase() === "true" ||
+          a.isdefault === true ||
+          a.is_default === true
+      ) ||
+      addresses[0] ||
+      null
+    );
+  }, [addresses, selectedAddressId]);
+
+  const isGlobal =
+    service?.isGlobal === true ||
+    !serviceCities ||
+    serviceCities.length === 0;
+
+  const isAddressCityCoveredForOffline = useMemo(() => {
+    // If no specific cities listed or isGlobal is true, service is globally available everywhere
+    if (isGlobal) return true;
+    if (!service?.isOffline) return false;
+    // If user has not selected an address or has no address, cannot verify offline coverage yet
+    if (!selectedAddress) return false;
+    // Check if the selected address matches any of the service cities
+    return serviceCities.some((sc) => checkCityMatch(selectedAddress, sc));
+  }, [isGlobal, service?.isOffline, serviceCities, selectedAddress]);
+
+  const isOnlineAllowed = isGlobal || service?.isOnline !== false;
+  const isOfflineAllowed =
+    isGlobal || (service?.isOffline === true && isAddressCityCoveredForOffline);
+  const isBothAllowed = isOnlineAllowed && isOfflineAllowed;
+  const isSingleMode = !isBothAllowed;
 
   const [bookingForm, setBookingForm] = useState({
     scheduledDate: "",
     scheduledTime: "",
-    bookingMode: initialBookingMode,
+    bookingMode: "ONLINE",
     paymentOption: "TOKEN",
     language: "Hindi",
     specialInstructions: "",
@@ -180,15 +284,20 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
   const [submitting, setSubmitting] = useState(false);
 
+  // Sync booking mode whenever allowed modes or address selection changes
   useEffect(() => {
-    if (service) {
-      if (service.isOnline && !service.isOffline) {
-        setBookingForm((prev) => ({ ...prev, bookingMode: "ONLINE" }));
-      } else if (!service.isOnline && service.isOffline) {
-        setBookingForm((prev) => ({ ...prev, bookingMode: "OFFLINE" }));
-      }
+    if (!isOfflineAllowed && isOnlineAllowed) {
+      setBookingForm((prev) =>
+        prev.bookingMode !== "ONLINE" ? { ...prev, bookingMode: "ONLINE" } : prev
+      );
+    } else if (isOfflineAllowed && !isOnlineAllowed) {
+      setBookingForm((prev) =>
+        prev.bookingMode !== "OFFLINE" ? { ...prev, bookingMode: "OFFLINE" } : prev
+      );
+    } else if (isBothAllowed && !bookingForm.bookingMode) {
+      setBookingForm((prev) => ({ ...prev, bookingMode: "OFFLINE" }));
     }
-  }, [service]);
+  }, [isOfflineAllowed, isOnlineAllowed, isBothAllowed, bookingForm.bookingMode]);
 
   useEffect(() => {
     fetchProfile();
@@ -251,12 +360,21 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         ? "ONLINE"
         : "OFFLINE";
 
-    if (!customerAddressId && activeBookingMode === "OFFLINE") {
-      showSnackbar(
-        "No address found. Please add an address in your profile first.",
-        "error"
-      );
-      return;
+    if (activeBookingMode === "OFFLINE") {
+      if (!customerAddressId) {
+        showSnackbar(
+          "No address found. Please add an address in your profile first.",
+          "error"
+        );
+        return;
+      }
+      if (!isGlobal && !isAddressCityCoveredForOffline) {
+        showSnackbar(
+          `Offline service is only available in: ${serviceCityNamesText}. Please select a supported address or book Online.`,
+          "error"
+        );
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -286,7 +404,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
-          bookingMode: initialBookingMode,
+          bookingMode: isOfflineAllowed && !isOnlineAllowed ? "OFFLINE" : "ONLINE",
           paymentOption: "TOKEN",
           language: "Hindi",
           specialInstructions: "",
@@ -672,8 +790,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       isSingleMode
                         ? isOnlineAllowed
                           ? "ONLINE"
-                          : "OFFLINE"
-                        : bookingForm.bookingMode || "OFFLINE"
+                          : isOfflineAllowed
+                            ? "OFFLINE"
+                            : ""
+                        : bookingForm.bookingMode || (isOfflineAllowed ? "OFFLINE" : "ONLINE")
                     }
                     onChange={(e) => handleInputChange("bookingMode", e.target.value)}
                     sx={{
@@ -686,20 +806,26 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       },
                     }}
                   >
-                    {(isBothAllowed ||
-                      (isOnlineAllowed && !isOfflineAllowed) ||
-                      (!isOnlineAllowed && !isOfflineAllowed)) && (
+                    {isOnlineAllowed && (
                       <MenuItem value="ONLINE">Online</MenuItem>
                     )}
-                    {(isBothAllowed ||
-                      (!isOnlineAllowed && isOfflineAllowed) ||
-                      (!isOnlineAllowed && !isOfflineAllowed)) && (
+                    {isOfflineAllowed && (
                       <MenuItem value="OFFLINE">Offline</MenuItem>
                     )}
                   </Select>
                   {isSingleMode && (
                     <FormHelperText sx={{ fontFamily: FONTS.PRIMARY, color: "#8C7A6B" }}>
-                      This service is available in {isOnlineAllowed ? "Online" : "Offline"} mode only
+                      {service?.isOffline && !isAddressCityCoveredForOffline ? (
+                        <>
+                          Offline mode is only available in{" "}
+                          <strong>{serviceCityNamesText}</strong>. Since your
+                          selected address is in{" "}
+                          <strong>{selectedAddress?.city || "another city"}</strong>,
+                          only Online mode is available.
+                        </>
+                      ) : (
+                        `This service is available in ${isOnlineAllowed ? "Online" : "Offline"} mode only`
+                      )}
                     </FormHelperText>
                   )}
                 </FormControl>
@@ -869,6 +995,37 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       </MenuItem>
                     </Select>
                   </FormControl>
+                  {selectedAddress && service?.isOffline && serviceCities.length > 0 && (
+                    <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 0.5 }}>
+                      {isAddressCityCoveredForOffline ? (
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.PRIMARY,
+                            fontSize: "12px",
+                            color: "#16a34a",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            fontWeight: 600,
+                          }}
+                        >
+                          <CheckCircleIcon sx={{ fontSize: "14px", color: "#16a34a" }} />
+                          Offline pooja is available at this address ({selectedAddress.city})
+                        </Typography>
+                      ) : (
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.PRIMARY,
+                            fontSize: "12px",
+                            color: "#C84B16",
+                            fontWeight: 500,
+                          }}
+                        >
+                          ⓘ Offline pooja is available only in {serviceCityNamesText}. Since your selected address is in {selectedAddress.city || "this city"}, only Online mode is enabled.
+                        </Typography>
+                      )}
+                    </Box>
+                  )}
                 </Box>
               ) : (
                 <Box

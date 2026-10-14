@@ -141,14 +141,33 @@ export const ServicesPage = () => {
   const handleOpenBooking = (serviceId: number) => {
     setSelectedServiceId(serviceId);
     const targetService = filteredServices.find((s) => s.id === serviceId);
-    const isOnlineAllowed = targetService?.isOnline === true;
-    const isOfflineAllowed = targetService?.isOffline === true;
+    const isGlobal =
+      targetService?.isGlobal === true ||
+      !targetService?.cities ||
+      (Array.isArray(targetService.cities) && targetService.cities.length === 0);
+
+    const isOnlineAllowed = isGlobal || targetService?.isOnline !== false;
+    let isOfflineAllowed = isGlobal || targetService?.isOffline === true;
+
+    if (!isGlobal && targetService?.cities && Array.isArray(targetService.cities) && targetService.cities.length > 0) {
+      const cityToCheck = userDefaultCity || selectedCity;
+      if (cityToCheck && cityToCheck !== "All" && cityToCheck !== "All Cities") {
+        const cCheck = cityToCheck.toLowerCase().trim();
+        isOfflineAllowed = isOfflineAllowed && targetService.cities.some((c: any) => {
+          const cName = (typeof c === "string" ? c : c?.name || "").toLowerCase().trim();
+          return cName.includes(cCheck) || cCheck.includes(cName);
+        });
+      } else {
+        isOfflineAllowed = false;
+      }
+    }
+
     const defaultMode =
       isOnlineAllowed && !isOfflineAllowed
         ? "ONLINE"
         : !isOnlineAllowed && isOfflineAllowed
           ? "OFFLINE"
-          : "OFFLINE";
+          : "ONLINE";
     setBookingForm((prev) => ({
       ...prev,
       bookingMode: defaultMode,
@@ -162,7 +181,7 @@ export const ServicesPage = () => {
     setBookingForm({
       scheduledAt: "",
       specialInstructions: "",
-      bookingMode: "OFFLINE",
+      bookingMode: "ONLINE",
       paymentOption: "TOKEN",
       language: "Hindi",
     });
@@ -176,19 +195,38 @@ export const ServicesPage = () => {
     setSubmittingBooking(true);
     try {
       let customerAddressId = null;
+      let defaultAddr: any = null;
       const currentProfile = useUserStore.getState().profile;
       const userObj = currentProfile?.data || currentProfile;
       const addresses = userObj?.addresses || profile?.addresses;
       if (addresses && addresses.length > 0) {
-        const defaultAddr =
+        defaultAddr =
           addresses.find((a: any) => a.isDefault === true) ||
           addresses[0];
         customerAddressId = defaultAddr.id;
       }
 
       const targetService = filteredServices.find((s) => s.id === selectedServiceId);
-      const isOnlineAllowed = targetService?.isOnline === true;
-      const isOfflineAllowed = targetService?.isOffline === true;
+      const isGlobal =
+        targetService?.isGlobal === true ||
+        !targetService?.cities ||
+        (Array.isArray(targetService.cities) && targetService.cities.length === 0);
+
+      const isOnlineAllowed = isGlobal || targetService?.isOnline !== false;
+      let isOfflineAllowed = isGlobal || targetService?.isOffline === true;
+
+      if (!isGlobal && targetService?.cities && Array.isArray(targetService.cities) && targetService.cities.length > 0) {
+        if (!defaultAddr?.city) {
+          isOfflineAllowed = false;
+        } else {
+          const aCity = (defaultAddr.city || "").toLowerCase().trim();
+          isOfflineAllowed = isOfflineAllowed && targetService.cities.some((c: any) => {
+            const cName = (typeof c === "string" ? c : c?.name || "").toLowerCase().trim();
+            return cName.includes(aCity) || aCity.includes(cName);
+          });
+        }
+      }
+
       const finalBookingMode =
         isOnlineAllowed && !isOfflineAllowed
           ? "ONLINE"

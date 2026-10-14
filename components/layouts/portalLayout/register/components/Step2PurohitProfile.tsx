@@ -22,6 +22,36 @@ import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from '@/utils/helpers'
 
 const CustomAutocomplete = Autocomplete as any;
 
+const fieldSx = {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '10px',
+    fontFamily: FONTS.PRIMARY,
+    fontSize: '14px',
+    bgcolor: '#FFFFFF',
+    '& fieldset': {
+      borderColor: '#D1D5DB',
+    },
+    '&:hover fieldset': {
+      borderColor: COLORS.PRIMARY,
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: COLORS.PRIMARY,
+    },
+  },
+  '& .MuiInputLabel-root': {
+    fontFamily: FONTS.PRIMARY,
+    fontSize: '14px',
+    '&.Mui-focused': {
+      color: COLORS.PRIMARY,
+    },
+  },
+  '& .MuiFormHelperText-root': {
+    fontFamily: FONTS.PRIMARY,
+    fontSize: '12px',
+    mt: 0.5,
+  },
+};
+
 interface Step2Props {
   formik: FormikProps<any>;
 }
@@ -30,7 +60,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
   // All Indian States from country-state-city
   const stateOptions = useMemo(() => {
     const states = State.getStatesOfCountry('IN') || [];
-    return states.map((s) => s.name);
+    return states.map((s) => s.name).sort((a, b) => a.localeCompare(b));
   }, []);
 
   // Dynamically filter cities based on selected state
@@ -60,40 +90,37 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         Purohit Profile
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2.5}>
         {/* State */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
-            freeSolo
+            openOnFocus
+            autoHighlight
             forcePopupIcon
+            size="small"
             options={stateOptions}
-            value={formik.values.state || ''}
+            value={formik.values.state || null}
             onChange={(_, newValue) => {
-              const val = sanitizeLettersOnly(newValue || '');
-              formik.setFieldValue('state', val);
+              formik.setFieldValue('state', newValue || '');
               // Reset city if state changes
               formik.setFieldValue('city', '');
             }}
-            onInputChange={(_, newInputValue) => {
-              const val = sanitizeLettersOnly(newInputValue || '');
-              formik.setFieldValue('state', val);
+            isOptionEqualToValue={(option, value) => {
+              if (!value) return false;
+              return option.toLowerCase().trim() === String(value).toLowerCase().trim();
             }}
             renderInput={(params: any) => (
               <TextField
                 {...params}
                 fullWidth
+                size="small"
                 name="state"
                 label="State *"
+                placeholder="Select State"
                 variant="outlined"
-                slotProps={{
-                  htmlInput: {
-                    ...params.inputProps,
-                    onKeyDown: allowOnlyLettersOnKeyDown,
-                  },
-                }}
                 error={formik.touched.state && Boolean(formik.errors.state)}
                 helperText={formik.touched.state && (formik.errors.state as string)}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={fieldSx}
               />
             )}
           />
@@ -102,33 +129,29 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         {/* City */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
-            freeSolo
+            openOnFocus
+            autoHighlight
             forcePopupIcon
+            size="small"
             disabled={!formik.values.state}
             options={cityOptions}
-            value={formik.values.city || ''}
+            value={formik.values.city || null}
             onChange={(_, newValue) => {
-              const val = sanitizeLettersOnly(newValue || '');
-              formik.setFieldValue('city', val);
+              formik.setFieldValue('city', newValue || '');
             }}
-            onInputChange={(_, newInputValue) => {
-              const val = sanitizeLettersOnly(newInputValue || '');
-              formik.setFieldValue('city', val);
+            isOptionEqualToValue={(option, value) => {
+              if (!value) return false;
+              return option.toLowerCase().trim() === String(value).toLowerCase().trim();
             }}
             renderInput={(params: any) => (
               <TextField
                 {...params}
                 fullWidth
+                size="small"
                 name="city"
                 label="City *"
-                placeholder={!formik.values.state ? 'Select State first' : 'Select or type City'}
+                placeholder={!formik.values.state ? 'Select State first' : 'Select City'}
                 variant="outlined"
-                slotProps={{
-                  htmlInput: {
-                    ...params.inputProps,
-                    onKeyDown: allowOnlyLettersOnKeyDown,
-                  },
-                }}
                 error={formik.touched.city && Boolean(formik.errors.city)}
                 helperText={
                   formik.touched.city
@@ -137,7 +160,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                     ? 'Select state to enable city selection'
                     : undefined
                 }
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={fieldSx}
               />
             )}
           />
@@ -147,8 +170,10 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
+            size="small"
             name="aadhaarNumber"
             label="Aadhaar Number *"
+            placeholder="Enter 12-digit Aadhaar number"
             variant="outlined"
             value={formik.values.aadhaarNumber || ''}
             onKeyDown={(e) => {
@@ -175,38 +200,35 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
               formik.touched.aadhaarNumber &&
               (formik.errors.aadhaarNumber as string)
             }
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            sx={fieldSx}
           />
         </Grid>
 
         {/* Qualification */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
-            freeSolo
+            openOnFocus
+            autoHighlight
             forcePopupIcon
+            size="small"
             options={QUALIFICATIONS}
-            value={formik.values.qualification || ''}
+            value={formik.values.qualification || null}
             onChange={(_, newValue) => {
-              const val = sanitizeLettersOnly(newValue || '');
-              formik.setFieldValue('qualification', val);
+              formik.setFieldValue('qualification', newValue || '');
             }}
-            onInputChange={(_, newInputValue) => {
-              const val = sanitizeLettersOnly(newInputValue || '');
-              formik.setFieldValue('qualification', val);
+            isOptionEqualToValue={(option, value) => {
+              if (!value) return false;
+              return option.toLowerCase().trim() === String(value).toLowerCase().trim();
             }}
             renderInput={(params: any) => (
               <TextField
                 {...params}
                 fullWidth
+                size="small"
                 name="qualification"
                 label="Qualification *"
+                placeholder="Select Qualification"
                 variant="outlined"
-                slotProps={{
-                  htmlInput: {
-                    ...params.inputProps,
-                    onKeyDown: allowOnlyLettersOnKeyDown,
-                  },
-                }}
                 error={
                   formik.touched.qualification &&
                   Boolean(formik.errors.qualification)
@@ -215,7 +237,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                   formik.touched.qualification &&
                   (formik.errors.qualification as string)
                 }
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={fieldSx}
               />
             )}
           />
@@ -225,9 +247,11 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
+            size="small"
             type="text"
             name="experienceYears"
             label="Experience (Years) *"
+            placeholder="e.g. 5"
             variant="outlined"
             value={formik.values.experienceYears || ''}
             onKeyDown={(e) => {
@@ -252,7 +276,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
               formik.touched.experienceYears &&
               (formik.errors.experienceYears as string)
             }
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            sx={fieldSx}
           />
         </Grid>
 
@@ -260,7 +284,9 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12, sm: 6 }}>
           <CustomAutocomplete
             multiple
+            openOnFocus
             forcePopupIcon
+            size="small"
             options={LANGUAGES}
             value={formik.values.languages || []}
             onChange={(_: any, newValue: any) => {
@@ -278,6 +304,15 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                     variant="outlined"
                     label={option}
                     size="small"
+                    sx={{
+                      borderRadius: '6px',
+                      fontFamily: FONTS.PRIMARY,
+                      fontSize: '12px',
+                      height: '24px',
+                      bgcolor: '#FFF7ED',
+                      borderColor: '#FFDBBD',
+                      color: COLORS.PRIMARY,
+                    }}
                     {...tagProps}
                   />
                 );
@@ -287,10 +322,11 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
               <TextField
                 {...params}
                 fullWidth
+                size="small"
                 name="languages"
                 label="Languages *"
                 variant="outlined"
-                placeholder="Select languages"
+                placeholder={formik.values.languages?.length ? '' : 'Select languages'}
                 error={
                   formik.touched.languages && Boolean(formik.errors.languages)
                 }
@@ -298,7 +334,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                   formik.touched.languages &&
                   (formik.errors.languages as string)
                 }
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={fieldSx}
               />
             )}
           />
@@ -308,7 +344,9 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12, sm: 6 }}>
           <CustomAutocomplete
             multiple
+            openOnFocus
             forcePopupIcon
+            size="small"
             options={SPECIALIZATIONS}
             value={formik.values.specializations || []}
             onChange={(_: any, newValue: any) => {
@@ -326,6 +364,15 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                     variant="outlined"
                     label={option}
                     size="small"
+                    sx={{
+                      borderRadius: '6px',
+                      fontFamily: FONTS.PRIMARY,
+                      fontSize: '12px',
+                      height: '24px',
+                      bgcolor: '#FFF7ED',
+                      borderColor: '#FFDBBD',
+                      color: COLORS.PRIMARY,
+                    }}
                     {...tagProps}
                   />
                 );
@@ -335,10 +382,11 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
               <TextField
                 {...params}
                 fullWidth
+                size="small"
                 name="specializations"
                 label="Specializations *"
                 variant="outlined"
-                placeholder="Select specializations"
+                placeholder={formik.values.specializations?.length ? '' : 'Select specializations'}
                 error={
                   formik.touched.specializations &&
                   Boolean(formik.errors.specializations)
@@ -347,7 +395,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                   formik.touched.specializations &&
                   (formik.errors.specializations as string)
                 }
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={fieldSx}
               />
             )}
           />
@@ -357,16 +405,18 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
+            size="small"
             multiline
             rows={3}
             name="bio"
             label="Bio (About Yourself) *"
+            placeholder="Tell us about your background, Vedic education, and ritual experience..."
             variant="outlined"
             value={formik.values.bio || ''}
             onChange={formik.handleChange}
             error={formik.touched.bio && Boolean(formik.errors.bio)}
             helperText={formik.touched.bio && (formik.errors.bio as string)}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            sx={fieldSx}
           />
         </Grid>
 
