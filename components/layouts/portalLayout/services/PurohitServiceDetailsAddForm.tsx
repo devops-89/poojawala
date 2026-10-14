@@ -195,8 +195,9 @@ export default function PurohitServiceDetailsAddForm({
               <Box
                 sx={{
                   display: "flex",
-                  justify: "space-between",
+                  justifyContent: "space-between",
                   alignItems: "center",
+                  width: "100%",
                   pb: 2,
                   borderBottom: "1px dashed #EADCCF",
                 }}
@@ -225,7 +226,7 @@ export default function PurohitServiceDetailsAddForm({
                   </Typography>
                 </Box>
 
-                <Box sx={{ textAlign: "right" }}>
+                <Box sx={{ textAlign: "right", ml: "auto" }}>
                   <Typography
                     sx={{
                       fontSize: "11px",

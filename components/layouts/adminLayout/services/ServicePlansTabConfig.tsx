@@ -9,22 +9,33 @@ import {
   Box,
   Button,
   Divider,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import { FieldArray } from "formik";
 import React, { useState } from "react";
 
+export interface PlanFeatureItem {
+  title?: string;
+  type?: "NORMAL" | "PRICE" | string;
+  value?: string | number;
+  [key: string]: any;
+}
+
 interface ServicePlansTabConfigProps {
   values: {
     basicPrice: string | number;
-    basicFeatures: Array<{ key: string; value: string }>;
+    basicFeatures: Array<PlanFeatureItem | any>;
     basicPurohitCarryItems?: string[];
 
     standardPrice: string | number;
-    standardFeatures: Array<{ key: string; value: string }>;
+    standardFeatures: Array<PlanFeatureItem | any>;
     standardPurohitCarryItems?: string[];
   };
   errors: Record<string, any>;
@@ -195,7 +206,9 @@ export default function ServicePlansTabConfig({
                         size="small"
                         variant="outlined"
                         startIcon={<AddIcon />}
-                        onClick={() => push({ key: "" })}
+                        onClick={() =>
+                          push({ title: "", type: "NORMAL", value: "true" })
+                        }
                         sx={{
                           ml: "auto",
                           borderColor: COLORS.PRIMARY,
@@ -213,49 +226,111 @@ export default function ServicePlansTabConfig({
                       </Button>
                     </Box>
 
-                    {(values.basicFeatures || []).map((item: any, index: number) => {
-                      const valKey = typeof item === "string" ? item : item.key;
-                      return (
-                        <Box
-                          key={`basic-feat-${index}`}
-                          sx={{
-                            display: "flex",
-                            gap: 2,
-                            alignItems: "center",
-                            mb: 1.5,
-                          }}
-                        >
-                          <TextField
-                            fullWidth
-                            size="small"
-                            name={
-                              typeof item === "string"
-                                ? `basicFeatures.${index}`
-                                : `basicFeatures.${index}.key`
-                            }
-                            placeholder="Feature Key (e.g. durgaPuja, kalashSthapana, havan)"
-                            value={valKey}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
+                    {(values.basicFeatures || []).map(
+                      (item: any, index: number) => {
+                        const featTitle =
+                          item?.title ??
+                          (typeof item === "string" ? item : item?.key ?? "");
+                        const featType = item?.type || "NORMAL";
+                        const featValue =
+                          item?.value !== undefined ? item.value : "";
+
+                        return (
+                          <Box
+                            key={`basic-feat-${index}`}
                             sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: "8px",
-                                bgcolor: "white",
-                              },
-                            }}
-                          />
-                          <IconButton
-                            onClick={() => remove(index)}
-                            sx={{
-                              color: "#ef4444",
-                              "&:hover": { bgcolor: "#fee2e2" },
+                              display: "flex",
+                              flexDirection: { xs: "column", sm: "row" },
+                              gap: 1.5,
+                              alignItems: { xs: "stretch", sm: "center" },
+                              mb: 1.5,
+                              p: { xs: 1.5, sm: 0 },
+                              bgcolor: { xs: "#f8fafc", sm: "transparent" },
+                              borderRadius: "8px",
                             }}
                           >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      );
-                    })}
+                            <TextField
+                              size="small"
+                              name={`basicFeatures.${index}.title`}
+                              placeholder="Feature Title (e.g. 1 Vedic Purohit)"
+                              value={featTitle}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              sx={{
+                                flex:
+                                  featType === "PRICE"
+                                    ? { xs: "1", sm: "3" }
+                                    : { xs: "1", sm: "4" },
+                                "& .MuiOutlinedInput-root": {
+                                  borderRadius: "8px",
+                                  bgcolor: "white",
+                                },
+                              }}
+                            />
+                            <FormControl
+                              size="small"
+                              sx={{
+                                flex: { xs: "1", sm: "1.2" },
+                                minWidth: "120px",
+                              }}
+                            >
+                              <InputLabel id={`basic-type-label-${index}`}>
+                                Type
+                              </InputLabel>
+                              <Select
+                                labelId={`basic-type-label-${index}`}
+                                label="Type"
+                                name={`basicFeatures.${index}.type`}
+                                value={featType}
+                                onChange={handleChange as any}
+                                onBlur={handleBlur as any}
+                                sx={{ borderRadius: "8px", bgcolor: "white" }}
+                              >
+                                <MenuItem value="NORMAL">NORMAL</MenuItem>
+                                <MenuItem value="PRICE">PRICE</MenuItem>
+                              </Select>
+                            </FormControl>
+                            {featType === "PRICE" && (
+                              <TextField
+                                size="small"
+                                name={`basicFeatures.${index}.value`}
+                                placeholder="Price (₹) e.g. 500"
+                                type="number"
+                                value={featValue === "true" ? "" : featValue}
+                                onChange={(e: any) => {
+                                  if (Number(e.target.value) < 0) return;
+                                  handleChange(e);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "-" || e.key === "e")
+                                    e.preventDefault();
+                                }}
+                                onWheel={(e: any) => e.target.blur()}
+                                onBlur={handleBlur}
+                                slotProps={{ htmlInput: { min: 0 } }}
+                                sx={{
+                                  flex: { xs: "1", sm: "1.5" },
+                                  "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    bgcolor: "white",
+                                  },
+                                }}
+                              />
+                            )}
+                            <IconButton
+                              onClick={() => remove(index)}
+                              sx={{
+                                color: "#ef4444",
+                                alignSelf: { xs: "flex-end", sm: "center" },
+                                "&:hover": { bgcolor: "#fee2e2" },
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        );
+                      },
+                    )}
                   </Box>
                 )}
               </FieldArray>
@@ -442,7 +517,9 @@ export default function ServicePlansTabConfig({
                         size="small"
                         variant="outlined"
                         startIcon={<AddIcon />}
-                        onClick={() => push({ key: "" })}
+                        onClick={() =>
+                          push({ title: "", type: "NORMAL", value: "true" })
+                        }
                         sx={{
                           ml: "auto",
                           borderColor: "#16a34a",
@@ -460,49 +537,111 @@ export default function ServicePlansTabConfig({
                       </Button>
                     </Box>
 
-                    {(values.standardFeatures || []).map((item: any, index: number) => {
-                      const valKey = typeof item === "string" ? item : item.key;
-                      return (
-                        <Box
-                          key={`std-feat-${index}`}
-                          sx={{
-                            display: "flex",
-                            gap: 2,
-                            alignItems: "center",
-                            mb: 1.5,
-                          }}
-                        >
-                          <TextField
-                            fullWidth
-                            size="small"
-                            name={
-                              typeof item === "string"
-                                ? `standardFeatures.${index}`
-                                : `standardFeatures.${index}.key`
-                            }
-                            placeholder="Feature Key (e.g. durgaPuja, kalashSthapana, havan)"
-                            value={valKey}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
+                    {(values.standardFeatures || []).map(
+                      (item: any, index: number) => {
+                        const featTitle =
+                          item?.title ??
+                          (typeof item === "string" ? item : item?.key ?? "");
+                        const featType = item?.type || "NORMAL";
+                        const featValue =
+                          item?.value !== undefined ? item.value : "";
+
+                        return (
+                          <Box
+                            key={`std-feat-${index}`}
                             sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: "8px",
-                                bgcolor: "white",
-                              },
-                            }}
-                          />
-                          <IconButton
-                            onClick={() => remove(index)}
-                            sx={{
-                              color: "#ef4444",
-                              "&:hover": { bgcolor: "#fee2e2" },
+                              display: "flex",
+                              flexDirection: { xs: "column", sm: "row" },
+                              gap: 1.5,
+                              alignItems: { xs: "stretch", sm: "center" },
+                              mb: 1.5,
+                              p: { xs: 1.5, sm: 0 },
+                              bgcolor: { xs: "#f8fafc", sm: "transparent" },
+                              borderRadius: "8px",
                             }}
                           >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      );
-                    })}
+                            <TextField
+                              size="small"
+                              name={`standardFeatures.${index}.title`}
+                              placeholder="Feature Title (e.g. 2 Senior Vedic Purohits)"
+                              value={featTitle}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              sx={{
+                                flex:
+                                  featType === "PRICE"
+                                    ? { xs: "1", sm: "3" }
+                                    : { xs: "1", sm: "4" },
+                                "& .MuiOutlinedInput-root": {
+                                  borderRadius: "8px",
+                                  bgcolor: "white",
+                                },
+                              }}
+                            />
+                            <FormControl
+                              size="small"
+                              sx={{
+                                flex: { xs: "1", sm: "1.2" },
+                                minWidth: "120px",
+                              }}
+                            >
+                              <InputLabel id={`std-type-label-${index}`}>
+                                Type
+                              </InputLabel>
+                              <Select
+                                labelId={`std-type-label-${index}`}
+                                label="Type"
+                                name={`standardFeatures.${index}.type`}
+                                value={featType}
+                                onChange={handleChange as any}
+                                onBlur={handleBlur as any}
+                                sx={{ borderRadius: "8px", bgcolor: "white" }}
+                              >
+                                <MenuItem value="NORMAL">NORMAL</MenuItem>
+                                <MenuItem value="PRICE">PRICE</MenuItem>
+                              </Select>
+                            </FormControl>
+                            {featType === "PRICE" && (
+                              <TextField
+                                size="small"
+                                name={`standardFeatures.${index}.value`}
+                                placeholder="Price (₹) e.g. 800"
+                                type="number"
+                                value={featValue === "true" ? "" : featValue}
+                                onChange={(e: any) => {
+                                  if (Number(e.target.value) < 0) return;
+                                  handleChange(e);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "-" || e.key === "e")
+                                    e.preventDefault();
+                                }}
+                                onWheel={(e: any) => e.target.blur()}
+                                onBlur={handleBlur}
+                                slotProps={{ htmlInput: { min: 0 } }}
+                                sx={{
+                                  flex: { xs: "1", sm: "1.5" },
+                                  "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    bgcolor: "white",
+                                  },
+                                }}
+                              />
+                            )}
+                            <IconButton
+                              onClick={() => remove(index)}
+                              sx={{
+                                color: "#ef4444",
+                                alignSelf: { xs: "flex-end", sm: "center" },
+                                "&:hover": { bgcolor: "#fee2e2" },
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        );
+                      },
+                    )}
                   </Box>
                 )}
               </FieldArray>

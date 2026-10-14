@@ -120,6 +120,15 @@ const validationSchema = Yup.object().shape({
     is: true,
     then: (schema) => schema.required("End date is required"),
   }),
+  sortOrder: Yup.mixed().test(
+    "is-valid-number",
+    "Sort order must be a valid non-negative number",
+    (val) => {
+      if (val === "" || val === undefined || val === null) return true;
+      const num = Number(val);
+      return !isNaN(num) && num >= 0;
+    }
+  ),
 });
 
 export default function AddServiceForm() {
@@ -145,13 +154,18 @@ export default function AddServiceForm() {
       name: "",
       categoryId: "",
       templeId: "",
+      sortOrder: "",
       description: "",
       tokenPercentage: "",
       basicPrice: "",
-      basicFeatures: [] as Array<{ key: string; value: string }>,
+      basicFeatures: [
+        { title: "", type: "NORMAL", value: "true" },
+      ] as Array<{ title: string; type: string; value: string }>,
       basicPurohitCarryItems: [] as string[],
       standardPrice: "",
-      standardFeatures: [] as Array<{ key: string; value: string }>,
+      standardFeatures: [
+        { title: "", type: "NORMAL", value: "true" },
+      ] as Array<{ title: string; type: string; value: string }>,
       standardPurohitCarryItems: [] as string[],
       commissionPercentage: "",
       durationMinutes: "",
@@ -195,20 +209,50 @@ export default function AddServiceForm() {
         );
         formData.append("durationMinutes", String(values.durationMinutes));
 
-        // Append plans nested form data
-        formData.append("plans[basic][price]", String(values.basicPrice));
-        values.basicFeatures.forEach((item: any) => {
-          const k = (typeof item === "string" ? item : item?.key)?.trim();
-          if (!k) return;
-          formData.append(`plans[basic][features][${k}]`, "true");
-        });
+        // Build plans JSON payload
+        const plansPayload = {
+          basic: {
+            price: Number(values.basicPrice) || 0,
+            features: (values.basicFeatures || [])
+              .filter((f: any) => f && (f.title?.trim() || f.key?.trim()))
+              .map((f: any) => ({
+                title: (f.title || f.key || "").trim(),
+                type: f.type || "NORMAL",
+                value:
+                  f.type === "PRICE"
+                    ? f.value !== undefined && f.value !== "" && f.value !== "true"
+                      ? String(f.value).trim()
+                      : "0"
+                    : "true",
+                isActive: true,
+              })),
+          },
+          standard: {
+            price: Number(values.standardPrice) || 0,
+            features: (values.standardFeatures || [])
+              .filter((f: any) => f && (f.title?.trim() || f.key?.trim()))
+              .map((f: any) => ({
+                title: (f.title || f.key || "").trim(),
+                type: f.type || "NORMAL",
+                value:
+                  f.type === "PRICE"
+                    ? f.value !== undefined && f.value !== "" && f.value !== "true"
+                      ? String(f.value).trim()
+                      : "0"
+                    : "true",
+                isActive: true,
+              })),
+          },
+        };
+        formData.append("plans", JSON.stringify(plansPayload));
 
-        formData.append("plans[standard][price]", String(values.standardPrice));
-        values.standardFeatures.forEach((item: any) => {
-          const k = (typeof item === "string" ? item : item?.key)?.trim();
-          if (!k) return;
-          formData.append(`plans[standard][features][${k}]`, "true");
-        });
+        if (
+          values.sortOrder !== "" &&
+          values.sortOrder !== undefined &&
+          values.sortOrder !== null
+        ) {
+          formData.append("sortOrder", String(values.sortOrder));
+        }
 
         // 3. Purohit Carry Items
         const validBasicCarry = (values.basicPurohitCarryItems || [])

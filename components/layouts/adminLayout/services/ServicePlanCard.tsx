@@ -173,26 +173,34 @@ export default function ServicePlanCard({
         Included Features ({featureList.length})
       </Typography>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
-        {featureList.map((feat: string, idx: number) => (
-          <Chip
-            key={`${planType}-feat-${idx}`}
-            label={formatFeatureName(feat)}
-            size="small"
-            icon={
-              <CheckCircleIcon
-                style={{ color: themeConfig.featureIconColor, fontSize: 16 }}
-              />
-            }
-            sx={{
-              bgcolor: "white",
-              border: `1px solid ${themeConfig.featureChipBorder}`,
-              color: themeConfig.featureChipColor,
-              fontWeight: 600,
-              fontSize: "0.82rem",
-              py: 0.5,
-            }}
-          />
-        ))}
+        {featureList.map((feat: string, idx: number) => {
+          const isPriceFeature = feat.includes("₹");
+          return (
+            <Chip
+              key={`${planType}-feat-${idx}`}
+              label={feat}
+              size="small"
+              icon={
+                <CheckCircleIcon
+                  style={{
+                    color: isPriceFeature ? "#d97706" : themeConfig.featureIconColor,
+                    fontSize: 16,
+                  }}
+                />
+              }
+              sx={{
+                bgcolor: isPriceFeature ? "#fffbeb" : "white",
+                border: `1px solid ${
+                  isPriceFeature ? "#fde68a" : themeConfig.featureChipBorder
+                }`,
+                color: isPriceFeature ? "#b45309" : themeConfig.featureChipColor,
+                fontWeight: isPriceFeature ? 700 : 600,
+                fontSize: "0.82rem",
+                py: 0.5,
+              }}
+            />
+          );
+        })}
         {featureList.length === 0 && (
           <Typography
             sx={{ fontSize: "0.85rem", color: "#94a3b8", fontStyle: "italic" }}

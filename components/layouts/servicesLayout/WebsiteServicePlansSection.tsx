@@ -23,6 +23,26 @@ export default function WebsiteServicePlansSection({
 
   // Format camelCase key to Title Case (e.g. "kalashSthapana" -> "Kalash Sthapana")
   const formatKeyName = (key: string) => {
+    if (!key) return "";
+    const formatMap: Record<string, string> = {
+      kalashSthapana: "Kalash Sthapana",
+      durgaSaptashatiPath: "Durga Saptashati Path",
+      decorativeKalash: "Decorative Kalash",
+      specialNaivedyam: "Special Naivedyam",
+      additionalMantraChanting: "Additional Mantra Chanting",
+      fruits: "Fruits",
+      flowers: "Flowers",
+      prasad: "Prasad",
+      havan: "Havan",
+      aarti: "Aarti",
+      durgaPuja: "Durga Puja",
+      abhishekam: "Abhishekam",
+      pujaSamagri: "Puja Samagri",
+      durationMinutes: "Duration",
+      numberOfPurohits: "Number of Purohits",
+    };
+    if (formatMap[key]) return formatMap[key];
+    if (key.includes(" ")) return key;
     return key
       .replace(/([A-Z])/g, " $1")
       .replace(/^./, (str) => str.toUpperCase())
@@ -30,8 +50,27 @@ export default function WebsiteServicePlansSection({
   };
 
   // Helper to extract dynamic features directly from plan object keys or plan.features
-  const getDynamicPlanFeatures = (plan: any) => {
+  // NOTE: On website service details page, only NORMAL features are shown (PRICE features are excluded)
+  const getDynamicPlanFeatures = (plan: any, planKey?: string) => {
     if (!plan || typeof plan !== "object") return [];
+
+    const rawFeatures =
+      plan.features ||
+      (planKey && service?.serviceFeatures
+        ? service.serviceFeatures.filter(
+            (sf: any) => sf.plan === planKey.toUpperCase(),
+          )
+        : null);
+
+    if (Array.isArray(rawFeatures)) {
+      return rawFeatures
+        .filter((f: any) => f && f.isActive !== false && f.type !== "PRICE")
+        .map((f: any) => {
+          const title = f.title || f.name || f.key || "";
+          return formatKeyName(title);
+        })
+        .filter(Boolean);
+    }
 
     const targetObj =
       plan.features && typeof plan.features === "object"
@@ -46,7 +85,8 @@ export default function WebsiteServicePlansSection({
       if (
         lowerKey === "price" ||
         lowerKey === "tokenamount" ||
-        lowerKey.includes("payout")
+        lowerKey.includes("payout") ||
+        lowerKey === "features"
       ) {
         return;
       }
@@ -59,16 +99,14 @@ export default function WebsiteServicePlansSection({
 
       if (valStr === "true" || val === true) {
         result.push(formattedKey);
-      } else {
-        result.push(`${formattedKey}: ${valStr}`);
       }
     });
 
     return result;
   };
 
-  const basicFeatures = getDynamicPlanFeatures(basicPlan);
-  const standardFeatures = getDynamicPlanFeatures(standardPlan);
+  const basicFeatures = getDynamicPlanFeatures(basicPlan, "basic");
+  const standardFeatures = getDynamicPlanFeatures(standardPlan, "standard");
 
   const handleBookPlan = (planName: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();

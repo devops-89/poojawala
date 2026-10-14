@@ -100,7 +100,7 @@ export default function ServiceBasicFields({
       </Grid>
 
       {/* Select Category */}
-      <Grid size={{ xs: 12, md: 6 }}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <FormControl
           fullWidth
           variant="outlined"
@@ -145,7 +145,7 @@ export default function ServiceBasicFields({
       </Grid>
 
       {/* Select Temple */}
-      <Grid size={{ xs: 12, md: 6 }}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <FormControl
           fullWidth
           variant="outlined"
@@ -183,6 +183,34 @@ export default function ServiceBasicFields({
             <FormHelperText>{errors.templeId}</FormHelperText>
           )}
         </FormControl>
+      </Grid>
+
+      {/* Sort Order */}
+      <Grid size={{ xs: 12, md: 4 }}>
+        <TextField
+          fullWidth
+          name="sortOrder"
+          label="Sort Order"
+          placeholder="e.g. 1, 2, 3..."
+          variant="outlined"
+          type="number"
+          value={values.sortOrder ?? ""}
+          onChange={(e: any) => {
+            if (Number(e.target.value) < 0) return;
+            handleChange(e);
+            if (setFieldTouched) setFieldTouched("sortOrder", true, false);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
+          onWheel={(e: any) => e.target.blur()}
+          onBlur={handleBlur}
+          error={touched.sortOrder && Boolean(errors.sortOrder)}
+          slotProps={{ htmlInput: { min: 0 } }}
+          sx={{
+            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+          }}
+        />
       </Grid>
 
       <Grid size={{ xs: 12 }}>

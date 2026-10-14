@@ -263,7 +263,7 @@ export default function PurohitServicesContent() {
                       flex: 1,
                       display: 'flex',
                       flexDirection: 'column',
-                      justify: 'space-between',
+                      justifyContent: 'space-between',
                       width: '100%',
                       height: '100%',
                     }}
@@ -273,7 +273,7 @@ export default function PurohitServicesContent() {
                       <Box
                         sx={{
                           display: 'flex',
-                          justify: 'space-between',
+                          justifyContent: 'space-between',
                           alignItems: 'flex-start',
                           gap: 1,
                           mb: 0.5,
@@ -348,7 +348,7 @@ export default function PurohitServicesContent() {
                     <Box
                       sx={{
                         display: 'flex',
-                        justify: 'space-between',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
                         gap: 2,
                         flexWrap: 'wrap',

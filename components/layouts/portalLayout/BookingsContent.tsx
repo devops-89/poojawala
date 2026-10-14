@@ -325,26 +325,29 @@ export default function BookingsContent() {
           },
         }}
       >
-        {(b.updatingJobId
-          ? b.getValidTransitions(
-              b.activeBookings.find(
-                (j) => (j.originalData?.id || j.id) === b.updatingJobId,
-              )?.status || "",
-            )
-          : []
-        ).map((status) => (
-          <MenuItem
-            key={status}
-            onClick={() => b.handleStatusChange(status)}
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontSize: "14px",
-              fontWeight: 500,
-            }}
-          >
-            {status}
-          </MenuItem>
-        ))}
+        {(() => {
+          if (!b.updatingJobId) return null;
+          const target = b.activeBookings.find(
+            (j) => (j.originalData?.id || j.id) === b.updatingJobId,
+          );
+          const currentStatus = target?.status || "";
+          const mode = target?.bookingMode || target?.originalData?.bookingMode || "";
+          const transitions = b.getValidTransitions(currentStatus, mode);
+
+          return transitions.map((status) => (
+            <MenuItem
+              key={status}
+              onClick={() => b.handleStatusChange(status)}
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "14px",
+                fontWeight: 500,
+              }}
+            >
+              {status}
+            </MenuItem>
+          ));
+        })()}
       </Menu>
 
       {/* OTP Verification Modal */}

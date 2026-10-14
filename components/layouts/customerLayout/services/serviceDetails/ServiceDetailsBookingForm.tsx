@@ -12,6 +12,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
   Box,
   Button,
+  Checkbox,
   Chip,
   CircularProgress,
   FormControl,
@@ -31,6 +32,33 @@ import {
 import AddAddressModal from "@/components/widgets/AddAddressModal";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
+
+const formatKeyName = (key: string) => {
+  if (!key) return "";
+  const formatMap: Record<string, string> = {
+    kalashSthapana: "Kalash Sthapana",
+    durgaSaptashatiPath: "Durga Saptashati Path",
+    decorativeKalash: "Decorative Kalash",
+    specialNaivedyam: "Special Naivedyam",
+    additionalMantraChanting: "Additional Mantra Chanting",
+    fruits: "Fruits",
+    flowers: "Flowers",
+    prasad: "Prasad",
+    havan: "Havan",
+    aarti: "Aarti",
+    durgaPuja: "Durga Puja",
+    abhishekam: "Abhishekam",
+    pujaSamagri: "Puja Samagri",
+    durationMinutes: "Duration",
+    numberOfPurohits: "Number of Purohits",
+  };
+  if (formatMap[key]) return formatMap[key];
+  if (key.includes(" ")) return key;
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
 
 interface Props {
   serviceId: number;
@@ -169,9 +197,28 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
   const plans = service?.plans;
   const [selectedPlan, setSelectedPlan] = useState<string>("basic");
+  const [selectedFeatureIds, setSelectedFeatureIds] = useState<number[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<number | string>("");
   const [addressModalOpen, setAddressModalOpen] = useState(false);
+
+  const toggleFeatureId = (id: number, planKey: string) => {
+    if (selectedPlan !== planKey) {
+      setSelectedPlan(planKey);
+      setSelectedFeatureIds([id]);
+    } else {
+      setSelectedFeatureIds((prev) =>
+        prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
+      );
+    }
+  };
+
+  const handleSelectPlan = (planKey: string) => {
+    if (selectedPlan !== planKey) {
+      setSelectedPlan(planKey);
+      setSelectedFeatureIds([]);
+    }
+  };
 
   const handleAddressAdded = async (newAddrResponse?: any) => {
     let addrList: any[] = [];
@@ -261,8 +308,8 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     // If no specific cities listed or isGlobal is true, service is globally available everywhere
     if (isGlobal) return true;
     if (!service?.isOffline) return false;
-    // If user has not selected an address or has no address, cannot verify offline coverage yet
-    if (!selectedAddress) return false;
+    // If user has not selected an address or has no address yet, default to true so OFFLINE is default
+    if (!selectedAddress) return true;
     // Check if the selected address matches any of the service cities
     return serviceCities.some((sc) => checkCityMatch(selectedAddress, sc));
   }, [isGlobal, service?.isOffline, serviceCities, selectedAddress]);
@@ -276,13 +323,31 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
   const [bookingForm, setBookingForm] = useState({
     scheduledDate: "",
     scheduledTime: "",
-    bookingMode: "ONLINE",
+    bookingMode: "OFFLINE",
     paymentOption: "TOKEN",
     language: "Hindi",
     specialInstructions: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
+
+  const activeBookingMode = useMemo(() => {
+    if (isSingleMode) {
+      if (isOfflineAllowed && !isOnlineAllowed) return "OFFLINE";
+      if (isOnlineAllowed && !isOfflineAllowed) return "ONLINE";
+      return isOfflineAllowed ? "OFFLINE" : "ONLINE";
+    }
+    return bookingForm.bookingMode === "ONLINE" ? "ONLINE" : "OFFLINE";
+  }, [isSingleMode, isOfflineAllowed, isOnlineAllowed, bookingForm.bookingMode]);
+
+  const showAddons = activeBookingMode === "OFFLINE";
+
+  // When online mode is active, clear any selected add-ons
+  useEffect(() => {
+    if (!showAddons && selectedFeatureIds.length > 0) {
+      setSelectedFeatureIds([]);
+    }
+  }, [showAddons, selectedFeatureIds.length]);
 
   // Sync booking mode whenever allowed modes or address selection changes
   useEffect(() => {
@@ -294,10 +359,8 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
       setBookingForm((prev) =>
         prev.bookingMode !== "OFFLINE" ? { ...prev, bookingMode: "OFFLINE" } : prev
       );
-    } else if (isBothAllowed && !bookingForm.bookingMode) {
-      setBookingForm((prev) => ({ ...prev, bookingMode: "OFFLINE" }));
     }
-  }, [isOfflineAllowed, isOnlineAllowed, isBothAllowed, bookingForm.bookingMode]);
+  }, [isOfflineAllowed, isOnlineAllowed]);
 
   useEffect(() => {
     fetchProfile();
@@ -352,14 +415,6 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
     let customerAddressId = selectedAddressId ? Number(selectedAddressId) : null;
 
-    const activeBookingMode = isSingleMode
-      ? isOnlineAllowed
-        ? "ONLINE"
-        : "OFFLINE"
-      : bookingForm.bookingMode === "ONLINE"
-        ? "ONLINE"
-        : "OFFLINE";
-
     if (activeBookingMode === "OFFLINE") {
       if (!customerAddressId) {
         showSnackbar(
@@ -385,18 +440,45 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           : bookingForm.scheduledTime;
       const scheduledAtIso = `${bookingForm.scheduledDate}T${timeFormatted}.000Z`;
 
-      const payload = {
+      const finalFeatureIds = showAddons
+        ? selectedFeatureIds.map((id) => Number(id)).filter((id) => !isNaN(id))
+        : [];
+
+      const payload: any = {
         serviceId: Number(serviceId),
+        bookingMode: activeBookingMode,
         scheduledAt: scheduledAtIso,
-        customerAddressId: customerAddressId,
-        specialInstructions: bookingForm.specialInstructions || "",
         plan: selectedPlan ? selectedPlan.toUpperCase() : "BASIC",
         paymentOption: bookingForm.paymentOption || "TOKEN",
-        bookingMode: activeBookingMode,
+        featureIds: finalFeatureIds,
+        specialInstructions: bookingForm.specialInstructions || "",
         customFields: {
           language: bookingForm.language || "Hindi",
+          ...(profile?.gotra ? { gotra: profile.gotra } : {}),
         },
       };
+
+      if (customerAddressId) {
+        payload.customerAddressId = Number(customerAddressId);
+      }
+
+      if (selectedAddress) {
+        payload.address = {
+          venueType: selectedAddress.venueType || selectedAddress.addressType || "HOME",
+          addressLabel: selectedAddress.addressLabel || selectedAddress.label || "Home",
+          fullAddress:
+            selectedAddress.fullAddress ||
+            [selectedAddress.addressLine1 || selectedAddress.street, selectedAddress.city, selectedAddress.state, selectedAddress.pincode || selectedAddress.postalCode]
+              .filter(Boolean)
+              .join(", "),
+          city: selectedAddress.city || "",
+          state: selectedAddress.state || "",
+          pincode: String(selectedAddress.pincode || selectedAddress.postalCode || ""),
+          latitude: selectedAddress.latitude != null ? Number(selectedAddress.latitude) : 0,
+          longitude: selectedAddress.longitude != null ? Number(selectedAddress.longitude) : 0,
+          isDefault: Boolean(selectedAddress.isDefault),
+        };
+      }
 
       const res = await customerCreateBookingAPI(payload);
       if (res.success || res.statusCode === 201 || res.statusCode === 200) {
@@ -404,7 +486,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
-          bookingMode: isOfflineAllowed && !isOnlineAllowed ? "OFFLINE" : "ONLINE",
+          bookingMode: !isOfflineAllowed && isOnlineAllowed ? "ONLINE" : "OFFLINE",
           paymentOption: "TOKEN",
           language: "Hindi",
           specialInstructions: "",
@@ -494,22 +576,67 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               const planTitle =
                 planKey === "basic" ? "Basic Plan" : "Standard Plan";
 
-              const targetObj =
-                plan.features && typeof plan.features === "object"
-                  ? plan.features
-                  : plan;
+              const rawFeatures =
+                plan.features ||
+                (service?.serviceFeatures
+                  ? service.serviceFeatures.filter(
+                      (sf: any) => sf.plan === planKey.toUpperCase(),
+                    )
+                  : null);
 
-              const features: string[] = [];
-              Object.entries(targetObj).forEach(([k, v]) => {
-                const formatted = formatFeatureKey(k, v);
-                if (formatted) features.push(formatted);
-              });
+              const normalFeatures: string[] = [];
+              const priceFeatures: Array<{ id: number; title: string; price: number; plan: string }> = [];
+
+              if (Array.isArray(rawFeatures)) {
+                rawFeatures.forEach((f: any, idx: number) => {
+                  if (f && f.isActive !== false) {
+                    const title = formatKeyName(f.title || f.name || f.key || "");
+                    if (f.type === "PRICE") {
+                      const matchedSf = service?.serviceFeatures?.find(
+                        (sf: any) =>
+                          sf.id === f.id ||
+                          (sf.plan === planKey.toUpperCase() &&
+                            (sf.title || "").trim().toLowerCase() ===
+                              (f.title || f.name || "").trim().toLowerCase())
+                      );
+                      const resolvedId =
+                        f.id != null
+                          ? Number(f.id)
+                          : matchedSf?.id != null
+                            ? Number(matchedSf.id)
+                            : idx + 1;
+                      priceFeatures.push({
+                        id: resolvedId,
+                        title: title || f.title || "Add-on",
+                        price: Number(f.value || f.price || 0),
+                        plan: planKey,
+                      });
+                    } else if (title) {
+                      normalFeatures.push(title);
+                    }
+                  }
+                });
+              } else if (plan.features && typeof plan.features === "object") {
+                const targetObj = plan.features;
+                Object.entries(targetObj).forEach(([k, v]) => {
+                  const formatted = formatFeatureKey(k, v);
+                  if (formatted) normalFeatures.push(formatted);
+                });
+              }
+
+              const planAddonTotal = showAddons
+                ? priceFeatures
+                    .filter((pf) => selectedFeatureIds.includes(pf.id))
+                    .reduce((sum, pf) => sum + Number(pf.price || 0), 0)
+                : 0;
+
+              const totalCardPrice = Number(plan.price || 0) + planAddonTotal;
 
               return (
                 <Grid size={{ xs: 12, sm: 6 }} key={planKey} sx={{ display: "flex" }}>
                   <Paper
                     elevation={0}
-                    onClick={() => setSelectedPlan(planKey)}
+                    onClick={() => handleSelectPlan(planKey)}
                     sx={{
                       width: "100%",
                       p: 3,
@@ -578,9 +705,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                           mb: 2.5,
                         }}
                       >
-                        ₹{Number(plan.price || 0).toLocaleString("en-IN")}
+                        ₹{totalCardPrice.toLocaleString("en-IN")}
                       </Typography>
 
+                      {/* Normal Features (Title only) */}
                       <Box
                         sx={{
                           display: "flex",
@@ -588,7 +716,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                           gap: 1.2,
                         }}
                       >
-                        {features.map((feat, idx) => (
+                        {normalFeatures.map((feat, idx) => (
                           <Box
                             key={idx}
                             sx={{
@@ -617,6 +745,93 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                           </Box>
                         ))}
                       </Box>
+
+                      {/* Price Features with Right-Tick Checkboxes (Only in OFFLINE mode) */}
+                      {showAddons && priceFeatures.length > 0 && (
+                        <Box sx={{ mt: 2.5, pt: 2, borderTop: "1px dashed #EADCCF" }}>
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontSize: "12px",
+                              fontWeight: 700,
+                              color: "#8C7A6B",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.5px",
+                              mb: 1.2,
+                            }}
+                          >
+                            Optional Add-ons
+                          </Typography>
+                          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                            {priceFeatures.map((pf) => {
+                              const isChecked = selectedFeatureIds.includes(pf.id);
+
+                              return (
+                                <Box
+                                  key={pf.id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFeatureId(pf.id, planKey);
+                                  }}
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    p: "8px 12px",
+                                    borderRadius: "10px",
+                                    bgcolor: isChecked ? "#FFF7ED" : "#F8FAFC",
+                                    border: `1.5px solid ${
+                                      isChecked ? COLORS.PRIMARY : "#E2E8F0"
+                                    }`,
+                                    cursor: "pointer",
+                                    transition: "all 0.2s ease",
+                                    "&:hover": {
+                                      borderColor: COLORS.PRIMARY,
+                                      bgcolor: "#FFF7ED",
+                                    },
+                                  }}
+                                >
+                                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                                    <Checkbox
+                                      checked={isChecked}
+                                      onChange={() => toggleFeatureId(pf.id, planKey)}
+                                      onClick={(e) => e.stopPropagation()}
+                                      size="small"
+                                      sx={{
+                                        p: 0,
+                                        color: "#94A3B8",
+                                        "&.Mui-checked": {
+                                          color: COLORS.PRIMARY,
+                                        },
+                                      }}
+                                    />
+                                    <Typography
+                                      sx={{
+                                        fontFamily: FONTS.PRIMARY,
+                                        fontSize: "13.5px",
+                                        color: isChecked ? "#2C1810" : "#475569",
+                                        fontWeight: isChecked ? 700 : 500,
+                                      }}
+                                    >
+                                      {pf.title}
+                                    </Typography>
+                                  </Box>
+                                  <Typography
+                                    sx={{
+                                      fontFamily: FONTS.OUTFIT,
+                                      fontSize: "13.5px",
+                                      fontWeight: 700,
+                                      color: COLORS.PRIMARY,
+                                    }}
+                                  >
+                                    +₹{Number(pf.price || 0).toLocaleString("en-IN")}
+                                  </Typography>
+                                </Box>
+                              );
+                            })}
+                          </Box>
+                        </Box>
+                      )}
                     </Box>
 
                     <Button
@@ -624,7 +839,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       fullWidth
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedPlan(planKey);
+                        handleSelectPlan(planKey);
                       }}
                       sx={{
                         mt: 3,
@@ -786,15 +1001,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     labelId="booking-mode-label"
                     label="Booking Mode"
                     disabled={isSingleMode}
-                    value={
-                      isSingleMode
-                        ? isOnlineAllowed
-                          ? "ONLINE"
-                          : isOfflineAllowed
-                            ? "OFFLINE"
-                            : ""
-                        : bookingForm.bookingMode || (isOfflineAllowed ? "OFFLINE" : "ONLINE")
-                    }
+                    value={activeBookingMode}
                     onChange={(e) => handleInputChange("bookingMode", e.target.value)}
                     sx={{
                       borderRadius: "10px",
@@ -1036,20 +1243,63 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               )}
             </Box>
 
-            {/* Row 4: Payment Option (Radio buttons: TOKEN vs FULL) */}
             {(() => {
               const currentPlanObj = plans?.[selectedPlan];
-              const tokenAmt =
-                currentPlanObj?.tokenAmount ??
-                (currentPlanObj?.price && service?.tokenPercentage
-                  ? Math.round((currentPlanObj.price * Number(service.tokenPercentage)) / 100)
-                  : null);
-              const tokenLabelText = tokenAmt
-                ? `Token Amount (Advance - ₹${Number(tokenAmt).toLocaleString("en-IN")})`
-                : "Token Amount (Advance)";
-              const fullLabelText = currentPlanObj?.price
-                ? `Full Payment (₹${Number(currentPlanObj.price).toLocaleString("en-IN")})`
-                : "Full Payment";
+              const basePrice = Number(currentPlanObj?.price || 0);
+
+              let currentPlanAddonTotal = 0;
+              if (showAddons) {
+                const currentRawFeats =
+                  currentPlanObj?.features ||
+                  (service?.serviceFeatures
+                    ? service.serviceFeatures.filter(
+                        (sf: any) => sf.plan === selectedPlan.toUpperCase(),
+                      )
+                    : null);
+
+                if (Array.isArray(currentRawFeats)) {
+                  currentRawFeats.forEach((f: any, idx: number) => {
+                    if (f && f.isActive !== false && f.type === "PRICE") {
+                      const matchedSf = service?.serviceFeatures?.find(
+                        (sf: any) =>
+                          sf.id === f.id ||
+                          (sf.plan === selectedPlan.toUpperCase() &&
+                            (sf.title || "").trim().toLowerCase() ===
+                              (f.title || f.name || "").trim().toLowerCase())
+                      );
+                      const fId =
+                        f.id != null
+                          ? Number(f.id)
+                          : matchedSf?.id != null
+                            ? Number(matchedSf.id)
+                            : idx + 1;
+                      if (selectedFeatureIds.includes(fId)) {
+                        currentPlanAddonTotal += Number(f.value || f.price || 0);
+                      }
+                    }
+                  });
+                }
+              }
+
+              const totalPrice = basePrice + currentPlanAddonTotal;
+
+              const tokenPercent = Number(
+                service?.tokenPercentage ||
+                  (basePrice > 0 && currentPlanObj?.tokenAmount
+                    ? Math.round((Number(currentPlanObj.tokenAmount) / basePrice) * 100)
+                    : 40)
+              );
+
+              const tokenAmt = Math.round((totalPrice * tokenPercent) / 100);
+
+              const tokenLabelText =
+                tokenAmt > 0
+                  ? `Token Amount (Advance - ₹${Number(tokenAmt).toLocaleString("en-IN")})`
+                  : "Token Amount (Advance)";
+              const fullLabelText =
+                totalPrice > 0
+                  ? `Full Payment (₹${Number(totalPrice).toLocaleString("en-IN")})`
+                  : "Full Payment";
 
               return (
                 <FormControl component="fieldset">

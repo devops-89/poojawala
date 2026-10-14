@@ -14,6 +14,24 @@ export interface ServiceSpecsPricingCardProps {
 
 const formatFeatureName = (key: string) => {
   if (!key) return "";
+  const formatMap: Record<string, string> = {
+    kalashSthapana: "Kalash Sthapana",
+    durgaSaptashatiPath: "Durga Saptashati Path",
+    decorativeKalash: "Decorative Kalash",
+    specialNaivedyam: "Special Naivedyam",
+    additionalMantraChanting: "Additional Mantra Chanting",
+    fruits: "Fruits",
+    flowers: "Flowers",
+    prasad: "Prasad",
+    havan: "Havan",
+    aarti: "Aarti",
+    durgaPuja: "Durga Puja",
+    abhishekam: "Abhishekam",
+    pujaSamagri: "Puja Samagri",
+    durationMinutes: "Duration (Mins)",
+    numberOfPurohits: "Number of Purohits",
+  };
+  if (formatMap[key]) return formatMap[key];
   if (key.includes(" ")) return key;
   const result = key.replace(/([A-Z])/g, " $1");
   return result.charAt(0).toUpperCase() + result.slice(1);
@@ -37,10 +55,22 @@ export default function ServiceSpecsPricingCard({
 
   const rawBasicFeatures =
     service.plans?.basic?.features ||
+    service.serviceFeatures?.filter((sf: any) => sf.plan === "BASIC") ||
     (typeof service.plans?.basic === "object" ? service.plans.basic : {});
-  const basicFeatureList =
-    typeof rawBasicFeatures === "object" && rawBasicFeatures !== null
-      ? Object.keys(rawBasicFeatures).filter(
+  const basicFeatureList: string[] = Array.isArray(rawBasicFeatures)
+    ? rawBasicFeatures
+        .filter((f: any) => f && f.isActive !== false)
+        .map((f: any) => {
+          const t = formatFeatureName(f.title || f.name || f.key || "");
+          if (f.type === "PRICE" && f.value) {
+            return `${t} (+₹${f.value})`;
+          }
+          return t;
+        })
+        .filter(Boolean)
+    : typeof rawBasicFeatures === "object" && rawBasicFeatures !== null
+    ? Object.keys(rawBasicFeatures)
+        .filter(
           (k) =>
             k !== "price" &&
             k !== "tokenAmount" &&
@@ -50,7 +80,8 @@ export default function ServiceSpecsPricingCard({
             k !== "features" &&
             k !== "bulletPoints"
         )
-      : [];
+        .map((k) => formatFeatureName(k))
+    : [];
 
   // Extract Standard Plan details
   const standardPrice =
@@ -67,10 +98,22 @@ export default function ServiceSpecsPricingCard({
 
   const rawStandardFeatures =
     service.plans?.standard?.features ||
+    service.serviceFeatures?.filter((sf: any) => sf.plan === "STANDARD") ||
     (typeof service.plans?.standard === "object" ? service.plans.standard : {});
-  const standardFeatureList =
-    typeof rawStandardFeatures === "object" && rawStandardFeatures !== null
-      ? Object.keys(rawStandardFeatures).filter(
+  const standardFeatureList: string[] = Array.isArray(rawStandardFeatures)
+    ? rawStandardFeatures
+        .filter((f: any) => f && f.isActive !== false)
+        .map((f: any) => {
+          const t = formatFeatureName(f.title || f.name || f.key || "");
+          if (f.type === "PRICE" && f.value) {
+            return `${t} (+₹${f.value})`;
+          }
+          return t;
+        })
+        .filter(Boolean)
+    : typeof rawStandardFeatures === "object" && rawStandardFeatures !== null
+    ? Object.keys(rawStandardFeatures)
+        .filter(
           (k) =>
             k !== "price" &&
             k !== "tokenAmount" &&
@@ -80,7 +123,8 @@ export default function ServiceSpecsPricingCard({
             k !== "features" &&
             k !== "bulletPoints"
         )
-      : [];
+        .map((k) => formatFeatureName(k))
+    : [];
 
   // Carry items
   const basicCarryItems: string[] = Array.isArray(service.purohitCarryItems?.basic)

@@ -420,38 +420,8 @@ export const ServicesPage = () => {
     return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
   }, [selectedStateObj]);
 
-  // Secondary safety filter on services by selected state, city & category
-  const filteredServices = services.filter((service: any) => {
-    const matchCategory =
-      !selectedCategoryId ||
-      selectedCategoryId === "All" ||
-      selectedCategoryId === "" ||
-      String(service.categoryId || service.category?.id || "") === String(selectedCategoryId) ||
-      (selectedCategoryName && selectedCategoryName !== "All Categories" && (
-        service.category?.name?.toLowerCase().trim() === selectedCategoryName.toLowerCase().trim() ||
-        (typeof service.category === "string" && service.category.toLowerCase().trim() === selectedCategoryName.toLowerCase().trim())
-      ));
-
-    if (
-      !service.cities ||
-      !Array.isArray(service.cities) ||
-      service.cities.length === 0
-    )
-      return matchCategory;
-
-    const matchCity =
-      !selectedCity ||
-      selectedCity === "All" ||
-      selectedCity === "All Cities" ||
-      service.cities.some((c: any) => {
-        const cityName = (typeof c === "string" ? c : c.name || "")
-          .toLowerCase()
-          .trim();
-        return cityName === selectedCity.toLowerCase().trim();
-      });
-
-    return matchCategory && matchCity;
-  });
+  // Display services returned directly by the paginated API (6 per page)
+  const filteredServices = services;
 
   return (
     <Box>

@@ -197,6 +197,7 @@ export interface IService {
   temple?: ITemple | null;
   cities?: Array<{ name: string; state: string }>;
   plans?: IServicePlan[] | Record<string, any>;
+  sortOrder?: number;
   [key: string]: any;
 }
 
@@ -254,6 +255,7 @@ export interface ServiceBasicFieldsProps {
     description: string;
     categoryId?: string | number;
     templeId?: string | number;
+    sortOrder?: string | number;
     [key: string]: any;
   };
   errors: Record<string, any>;

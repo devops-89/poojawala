@@ -8,6 +8,8 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import EventIcon from "@mui/icons-material/Event";
 import TimerIcon from "@mui/icons-material/Timer";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 
 interface BookingNewRequestCardProps {
   req: {
@@ -22,6 +24,7 @@ interface BookingNewRequestCardProps {
     urgency?: string;
     price: string;
     plan?: string;
+    bookingMode?: string;
     originalData?: any;
   };
   onRespond: (bookingId: number | string, action: "ACCEPT" | "DISMISS") => void;
@@ -31,10 +34,49 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
   req,
   onRespond,
 }) => {
-  const bookingId = req.originalData?.id || req.id;
+  const rawData = req.originalData || req;
+  const bookingId = rawData?.id || req.id;
   const rawPlan = (req.plan || req.originalData?.plan || "").toString().toUpperCase();
   const isStandard = rawPlan.includes("STANDARD");
   const planLabel = rawPlan ? (isStandard ? "STANDARD PLAN" : "BASIC PLAN") : null;
+  const bookingMode = (req.bookingMode || rawData?.bookingMode || "").toString().toUpperCase();
+
+  // Extract selected add-on features (no price shown to purohit)
+  const selectedAddons: string[] = [];
+  if (Array.isArray(rawData?.priceBreakDown?.selectedFeatures)) {
+    rawData.priceBreakDown.selectedFeatures.forEach((f: any) => {
+      const t = f?.title || f?.name;
+      if (t && !selectedAddons.includes(t)) selectedAddons.push(t);
+    });
+  }
+  if (Array.isArray(rawData?.customFields?.selectedAddons)) {
+    rawData.customFields.selectedAddons.forEach((t: any) => {
+      const title = typeof t === "string" ? t : t?.title || t?.name;
+      if (title && !selectedAddons.includes(title)) selectedAddons.push(title);
+    });
+  }
+  if (Array.isArray(rawData?.selectedFeatures)) {
+    rawData.selectedFeatures.forEach((f: any) => {
+      const t = typeof f === "string" ? f : f?.title || f?.name;
+      if (t && !selectedAddons.includes(t)) selectedAddons.push(t);
+    });
+  }
+  if (Array.isArray(rawData?.features)) {
+    rawData.features.forEach((f: any) => {
+      const t = typeof f === "string" ? f : f?.title || f?.name;
+      if (t && !selectedAddons.includes(t)) selectedAddons.push(t);
+    });
+  }
+
+  // Extract standard carry items
+  const carryItems: string[] = [];
+  if (Array.isArray(rawData?.service?.purohitCarryItems)) {
+    rawData.service.purohitCarryItems.forEach((item: any) => {
+      if (typeof item === "string" && item.trim() && !carryItems.includes(item.trim())) {
+        carryItems.push(item.trim());
+      }
+    });
+  }
 
   return (
     <Paper
@@ -87,6 +129,22 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
                   fontSize: "11px",
                   height: "22px",
                   borderRadius: "6px",
+                }}
+              />
+            )}
+            {bookingMode && (
+              <Chip
+                label={bookingMode}
+                size="small"
+                sx={{
+                  bgcolor: bookingMode === "OFFLINE" ? "#FEF3C7" : "#E0F2FE",
+                  color: bookingMode === "OFFLINE" ? "#92400E" : "#0369A1",
+                  border: bookingMode === "OFFLINE" ? "1px solid #FDE68A" : "1px solid #BAE6FD",
+                  fontWeight: 700,
+                  fontSize: "11px",
+                  height: "22px",
+                  borderRadius: "6px",
+                  letterSpacing: "0.5px",
                 }}
               />
             )}
@@ -230,6 +288,94 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
           </Box>
         </Box>
       </Box>
+
+      {(selectedAddons.length > 0 || carryItems.length > 0) && (
+        <Box
+          sx={{
+            mb: 3,
+            p: 2,
+            bgcolor: "#FFFDF5",
+            borderRadius: "10px",
+            border: "1px dashed #FCD34D",
+          }}
+        >
+          {selectedAddons.length > 0 && (
+            <Box sx={{ mb: carryItems.length > 0 ? 1.5 : 0 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, mb: 1 }}>
+                <InventoryIcon sx={{ fontSize: 16, color: "#D97706" }} />
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#92400E",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Customer Selected Add-ons (Bring with you):
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {selectedAddons.map((addon, idx) => (
+                  <Chip
+                    key={idx}
+                    label={addon}
+                    size="small"
+                    sx={{
+                      bgcolor: "#FEF3C7",
+                      color: "#92400E",
+                      border: "1px solid #FDE68A",
+                      fontWeight: 600,
+                      fontSize: "12px",
+                      height: "26px",
+                      borderRadius: "6px",
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {carryItems.length > 0 && (
+            <Box sx={{ mt: selectedAddons.length > 0 ? 1.5 : 0 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, mb: 1 }}>
+                <CheckCircleOutlinedIcon sx={{ fontSize: 16, color: "#4B5563" }} />
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#4B5563",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Standard Samagri to Carry:
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {carryItems.map((item, idx) => (
+                  <Chip
+                    key={idx}
+                    label={item}
+                    size="small"
+                    sx={{
+                      bgcolor: "#F3F4F6",
+                      color: "#374151",
+                      border: "1px solid #E5E7EB",
+                      fontWeight: 500,
+                      fontSize: "12px",
+                      height: "26px",
+                      borderRadius: "6px",
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
 
       <Box sx={{ display: "flex", gap: 2 }}>
         <Button

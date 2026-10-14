@@ -227,6 +227,7 @@ export default function PurohitMyServicesContent() {
             <TableHead sx={{ bgcolor: COLORS.SURFACE_LIGHT }}>
               <TableRow>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.DARK }}>Service Name</TableCell>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.DARK }}>Mode</TableCell>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.DARK }}>Service Payout</TableCell>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.DARK }}>Duration (Mins)</TableCell>
                 <TableCell align="right" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: COLORS.DARK }}>Actions</TableCell>
@@ -235,7 +236,7 @@ export default function PurohitMyServicesContent() {
             <TableBody>
               {filteredServices.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
+                  <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                     <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT }}>
                       {services.length === 0
                         ? "You haven't added any services yet. Go to \"Add Services\" to add some!"
@@ -247,29 +248,31 @@ export default function PurohitMyServicesContent() {
                 filteredServices.map((ps: any, index: number) => (
                   <TableRow key={ps.id || index} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: '#FFFaf5' } }}>
                     <TableCell component="th" scope="row" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: COLORS.SLATE_DARK }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                        <span>{ps.service?.name || 'Unknown Service'}</span>
-                        {(ps.service?.isOnline || ps.service?.isOffline || ps.isOnline || ps.isOffline) && (
-                          <Chip
-                            label={
-                              (ps.service?.isOnline ?? ps.isOnline) && (ps.service?.isOffline ?? ps.isOffline)
-                                ? 'Online & Offline'
-                                : (ps.service?.isOnline ?? ps.isOnline)
-                                  ? 'Online'
-                                  : 'Offline'
-                            }
-                            size="small"
-                            sx={{
-                              bgcolor: '#e0f2fe',
-                              color: '#0369a1',
-                              fontWeight: 700,
-                              fontSize: '11px',
-                              height: 22,
-                              borderRadius: '6px',
-                            }}
-                          />
-                        )}
-                      </Box>
+                      {ps.service?.name || 'Unknown Service'}
+                    </TableCell>
+                    <TableCell>
+                      {(ps.service?.isOnline || ps.service?.isOffline || ps.isOnline || ps.isOffline) ? (
+                        <Chip
+                          label={
+                            (ps.service?.isOnline ?? ps.isOnline) && (ps.service?.isOffline ?? ps.isOffline)
+                              ? 'Online & Offline'
+                              : (ps.service?.isOnline ?? ps.isOnline)
+                                ? 'Online'
+                                : 'Offline'
+                          }
+                          size="small"
+                          sx={{
+                            bgcolor: '#e0f2fe',
+                            color: '#0369a1',
+                            fontWeight: 700,
+                            fontSize: '11px',
+                            height: 22,
+                            borderRadius: '6px',
+                          }}
+                        />
+                      ) : (
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: COLORS.MUTED_TEXT }}>-</Typography>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '15px', fontWeight: 800, color: '#16a34a' }}>

@@ -187,8 +187,29 @@ export function useBookings() {
     }
   };
 
-  const getValidTransitions = (currentStatus: string) => {
-    switch (currentStatus.toUpperCase()) {
+  const getValidTransitions = (currentStatus: string, bookingMode?: string) => {
+    let mode = bookingMode;
+    if (!mode && updatingJobId) {
+      const target = activeBookings.find(
+        (j) => (j.originalData?.id || j.id) === updatingJobId,
+      );
+      mode = target?.bookingMode || target?.originalData?.bookingMode;
+    }
+    const isOnline = (mode || "").toUpperCase() === "ONLINE";
+    const status = (currentStatus || "").toUpperCase();
+
+    if (isOnline) {
+      switch (status) {
+        case "ACCEPTED":
+          return ["Ongoing", "Cancelled"];
+        case "ONGOING":
+          return ["Completed"];
+        default:
+          return [];
+      }
+    }
+
+    switch (status) {
       case "ACCEPTED":
         return ["Enroute", "Cancelled"];
       case "ENROUTE":
@@ -470,6 +491,7 @@ export function useBookings() {
             urgency: "Normal",
             price: getPriceDisplay(booking),
             plan: booking.plan,
+            bookingMode: booking.bookingMode,
             originalData: booking,
           }));
           setNewRequests(mappedBookings);
@@ -520,6 +542,7 @@ export function useBookings() {
             price: getPriceDisplay(booking),
             status: activeStatus.toUpperCase(),
             plan: booking.plan,
+            bookingMode: booking.bookingMode,
             originalData: booking,
           }));
           setActiveBookings(mappedBookings);
