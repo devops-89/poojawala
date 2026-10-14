@@ -815,17 +815,9 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   </Select>
                   {isSingleMode && (
                     <FormHelperText sx={{ fontFamily: FONTS.PRIMARY, color: "#8C7A6B" }}>
-                      {service?.isOffline && !isAddressCityCoveredForOffline ? (
-                        <>
-                          Offline mode is only available in{" "}
-                          <strong>{serviceCityNamesText}</strong>. Since your
-                          selected address is in{" "}
-                          <strong>{selectedAddress?.city || "another city"}</strong>,
-                          only Online mode is available.
-                        </>
-                      ) : (
-                        `This service is available in ${isOnlineAllowed ? "Online" : "Offline"} mode only`
-                      )}
+                      {service?.isOffline && !isAddressCityCoveredForOffline
+                        ? "Only online mode is available in your city"
+                        : `This service is available in ${isOnlineAllowed ? "Online" : "Offline"} mode only`}
                     </FormHelperText>
                   )}
                 </FormControl>

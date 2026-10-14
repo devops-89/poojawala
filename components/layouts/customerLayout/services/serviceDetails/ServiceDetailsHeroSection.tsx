@@ -209,33 +209,6 @@ export default function ServiceDetailsHeroSection({
                 <span>{formattedLanguages}</span>
               </Box>
             ) : null}
-
-            {(service?.isOnline || service?.isOffline) && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.75,
-                  px: 2,
-                  py: 0.85,
-                  bgcolor: "#F0F9FF",
-                  border: "1px solid #BAE6FD",
-                  borderRadius: "8px",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "#0369A1",
-                }}
-              >
-                <WifiIcon sx={{ fontSize: 16, color: "#0284C7" }} />
-                <span>
-                  {service.isOnline && service.isOffline
-                    ? "Online & Offline"
-                    : service.isOnline
-                      ? "Online Service"
-                      : "Offline Service"}
-                </span>
-              </Box>
-            )}
           </Box>
 
           {/* Price Section */}

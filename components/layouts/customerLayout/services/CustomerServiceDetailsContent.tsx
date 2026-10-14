@@ -8,11 +8,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ServiceDetailsBookingForm from "./serviceDetails/ServiceDetailsBookingForm";
 import ServiceDetailsBreadcrumbs from "./serviceDetails/ServiceDetailsBreadcrumbs";
-import ServiceDetailsCtaBanner from "./serviceDetails/ServiceDetailsCtaBanner";
 import ServiceDetailsFaqSection from "./serviceDetails/ServiceDetailsFaqSection";
 import ServiceDetailsHeroSection from "./serviceDetails/ServiceDetailsHeroSection";
 import ServiceDetailsIncludedSection from "./serviceDetails/ServiceDetailsIncludedSection";
-import ServiceDetailsInfoGrid from "./serviceDetails/ServiceDetailsInfoGrid";
 import ServiceDetailsPujaSamagri from "./serviceDetails/ServiceDetailsPujaSamagri";
 
 const DEFAULT_BANNER = "/images/home/poojaPackages/satyanarayan.webp";
@@ -173,51 +171,6 @@ export default function CustomerServiceDetailsContent() {
     service.iconUrl ||
     DEFAULT_BANNER;
 
-  const getFormattedFestivalDate = () => {
-    if (!service?.isUpcomingFestival) return "";
-    let startStr = "";
-    let endStr = "";
-
-    if (service?.festivalStartDate) {
-      try {
-        const dStart = new Date(service.festivalStartDate);
-        startStr = dStart.toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        });
-      } catch (e) {
-        startStr = "";
-      }
-    }
-
-    if (service?.festivalEndDate) {
-      try {
-        const dEnd = new Date(service.festivalEndDate);
-        endStr = dEnd.toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        });
-      } catch (e) {
-        endStr = "";
-      }
-    }
-
-    if (startStr && endStr) {
-      if (startStr === endStr) {
-        return startStr;
-      }
-      return `${startStr} – ${endStr}`;
-    } else if (startStr) {
-      return startStr;
-    } else if (endStr) {
-      return endStr;
-    }
-    return "";
-  };
-
-  const displayCities = citiesList;
 
   return (
     <Box sx={{ pb: 6 }}>
@@ -238,28 +191,6 @@ export default function CustomerServiceDetailsContent() {
       {/* What's Included Section */}
       <ServiceDetailsIncludedSection benefitsList={benefitsList} />
 
-      {/* Service Details & Service Areas Section */}
-      <ServiceDetailsInfoGrid
-        service={service}
-        durationText={durationText}
-        priceDisplay={priceDisplay}
-        languagesList={languagesList}
-        displayCities={displayCities}
-        getFormattedFestivalDate={getFormattedFestivalDate}
-      />
-
-      {/* FAQ / Before You Book Section */}
-      <ServiceDetailsFaqSection serviceName={service.name || service.title} />
-
-      {/* Dark Reserve/CTA Banner Section */}
-      <ServiceDetailsCtaBanner
-        service={service}
-        durationText={durationText}
-        priceDisplay={priceDisplay}
-        citiesCount={displayCities.length}
-        onOpenBooking={handleScrollToBookingForm}
-      />
-
       {/* Inline Booking Form Section */}
       <ServiceDetailsBookingForm
         serviceId={Number(params.id)}
@@ -268,6 +199,9 @@ export default function CustomerServiceDetailsContent() {
 
       {/* Puja Samagri Add-on Section */}
       <ServiceDetailsPujaSamagri serviceName={service.name || service.title} />
+
+      {/* FAQ / Before You Book Section (Moved to bottom) */}
+      <ServiceDetailsFaqSection serviceName={service.name || service.title} />
     </Box>
   );
 }
