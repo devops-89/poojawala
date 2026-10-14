@@ -995,37 +995,6 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       </MenuItem>
                     </Select>
                   </FormControl>
-                  {selectedAddress && service?.isOffline && serviceCities.length > 0 && (
-                    <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 0.5 }}>
-                      {isAddressCityCoveredForOffline ? (
-                        <Typography
-                          sx={{
-                            fontFamily: FONTS.PRIMARY,
-                            fontSize: "12px",
-                            color: "#16a34a",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                            fontWeight: 600,
-                          }}
-                        >
-                          <CheckCircleIcon sx={{ fontSize: "14px", color: "#16a34a" }} />
-                          Offline pooja is available at this address ({selectedAddress.city})
-                        </Typography>
-                      ) : (
-                        <Typography
-                          sx={{
-                            fontFamily: FONTS.PRIMARY,
-                            fontSize: "12px",
-                            color: "#C84B16",
-                            fontWeight: 500,
-                          }}
-                        >
-                          ⓘ Offline pooja is available only in {serviceCityNamesText}. Since your selected address is in {selectedAddress.city || "this city"}, only Online mode is enabled.
-                        </Typography>
-                      )}
-                    </Box>
-                  )}
                 </Box>
               ) : (
                 <Box
