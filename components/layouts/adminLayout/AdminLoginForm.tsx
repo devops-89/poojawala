@@ -68,10 +68,13 @@ export default function AdminLoginForm() {
           if (userObj) {
             sessionStorage.setItem('user', JSON.stringify(userObj));
           }
-          const csrf = extractRoleCsrfToken(response, userObj?.role || "ADMIN");
+          const adminRole = userObj?.role || "ADMIN";
+          sessionStorage.setItem('role', adminRole);
+          sessionStorage.setItem('activeRole', adminRole);
+          const csrf = extractRoleCsrfToken(response, adminRole);
 
           if (csrf) {
-            saveRoleCsrfToken(csrf, userObj?.role || "ADMIN");
+            saveRoleCsrfToken(csrf, adminRole);
           }
           showSnackbar('Admin login successful!', 'success');
           router.replace('/admin/dashboard');

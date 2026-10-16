@@ -63,21 +63,27 @@ export default function AdminPurohitDetailsContent() {
       setLoading(true);
       const res = await getPurohitByIdAPI(id);
       if (res.success && res.data) {
-        const userData =
-          res.data.data?.user || res.data.data || res.data.user || res.data;
+        let raw = res.data;
+        while (raw && raw.data && typeof raw.data === "object" && !raw.id && !raw.firstName) {
+          raw = raw.data;
+        }
+        const userData = raw?.user || raw;
         setPurohit(userData);
       } else {
-        showSnackbar("Failed to fetch purohit details", "error");
+        showSnackbar("Failed to fetch details", "error");
       }
     } catch (error: any) {
       showSnackbar(
-        error.response?.data?.message || "Error fetching purohit details",
+        error.response?.data?.message || "Error fetching details",
         "error"
       );
     } finally {
       setLoading(false);
     }
   };
+
+  const isAstrologer =
+    purohit?.role === "ASTROLOGER" || Boolean(purohit?.astrologerProfile);
 
   const confirmStatusChange = async () => {
     if (!newStatusTarget || !purohit) return;
@@ -98,7 +104,10 @@ export default function AdminPurohitDetailsContent() {
         reason
       );
       if (res.success) {
-        showSnackbar("Purohit status updated successfully", "success");
+        showSnackbar(
+          `${isAstrologer ? "Astrologer" : "Purohit"} status updated successfully`,
+          "success"
+        );
         setRejectionReason("");
         if (params.id) {
           fetchPurohitDetails(params.id as string);
@@ -143,16 +152,19 @@ export default function AdminPurohitDetailsContent() {
         }}
       >
         <Typography variant="h6" color="textSecondary">
-          Purohit not found
+          {isAstrologer ? "Astrologer not found" : "Purohit not found"}
         </Typography>
       </Box>
     );
   }
 
-  const profile = purohit.profile || purohit.purohitProfile || {};
+  const profile = isAstrologer
+    ? (purohit.astrologerProfile || purohit.profile || {})
+    : (purohit.profile || purohit.purohitProfile || {});
   const bankAccount = (purohit.bankAccounts && purohit.bankAccounts[0]) || {};
 
-  const verificationStatus = profile.verificationStatus || purohit.status;
+  const verificationStatus =
+    profile.verificationStatus || purohit.verificationStatus || purohit.status;
   let statusColor = { bg: "#f1f5f9", text: "#64748b" };
   let statusLabel = "No Profile";
 
@@ -167,17 +179,20 @@ export default function AdminPurohitDetailsContent() {
     statusLabel = "Rejected";
   }
 
-  const purohitName =
+  const fullName =
     `${purohit.firstName || ""} ${purohit.lastName || ""}`.trim() ||
     purohit.username;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <AdminDetailsHeader
-        title="Purohit Details"
+        title={isAstrologer ? "Astrologer Details" : "Purohit Details"}
         breadcrumbs={[
-          { label: "Purohits", href: "/admin/purohits" },
-          { label: "Purohit Details" },
+          {
+            label: isAstrologer ? "Astrologers" : "Purohits",
+            href: isAstrologer ? "/admin/astrologers" : "/admin/purohits",
+          },
+          { label: isAstrologer ? "Astrologer Details" : "Purohit Details" },
         ]}
       />
 
@@ -299,13 +314,13 @@ export default function AdminPurohitDetailsContent() {
       <ConfirmStatusDialog
         open={Boolean(newStatusTarget)}
         title="Change Verification Status"
-        itemName={purohitName}
+        itemName={fullName}
         newStatus={newStatusTarget || undefined}
         customMessage={
           newStatusTarget === "Rejected" ? (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 1 }}>
               <Typography sx={{ color: "#475569", fontFamily: FONTS.OUTFIT }}>
-                Please provide a rejection reason for <strong>{purohitName}</strong>:
+                Please provide a rejection reason for <strong>{fullName}</strong>:
               </Typography>
               <TextField
                 fullWidth

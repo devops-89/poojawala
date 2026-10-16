@@ -9,6 +9,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import {
   Avatar,
   Box,
@@ -60,6 +61,7 @@ export default function CustomerSidebar({
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, path: "/customer/dashboard" },
     { text: "Services", icon: <EventNoteIcon />, path: "/customer/services" },
+    { text: "Astrologers", icon: <AutoAwesomeIcon />, path: "/customer/astrologers" },
     { text: "Temples", icon: <TempleHinduIcon />, path: "/customer/temples" },
     {
       text: "Pooja Products",

@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+import { COLORS, USER_ROLE } from "@/utils/enums";
+import { useUserStore } from "@/stores/userStore";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 
 import React from "react";
@@ -10,6 +11,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PersonIcon from "@mui/icons-material/Person";
 import WorkIcon from "@mui/icons-material/Work";
 import {
+  Alert,
   Box,
   Breadcrumbs,
   Button,
@@ -57,6 +59,21 @@ const AVAILABLE_RITUALS = [
   "Rudrabhishek",
 ];
 
+const AVAILABLE_ASTROLOGY_SPECIALIZATIONS = [
+  "Vedic Astrology",
+  "Kundali Matching",
+  "Palmistry",
+  "Numerology",
+  "Vastu Shastra",
+  "Tarot Reading",
+  "Prashna Kundali",
+  "Face Reading",
+  "KP Astrology",
+  "Gemology",
+  "Pooja Anushthan",
+  "Karmakand",
+];
+
 const TABS = [
   {
     id: "personal",
@@ -90,23 +107,54 @@ const maxDobDate = (() => {
 export default function ProfileContent() {
   const router = useRouter();
   const p = useProfile();
+  const { profile: userProfile } = useUserStore();
+
+  const isAstrologer =
+    (p as any)?.role === USER_ROLE.ASTROLOGER ||
+    p.isAstrologer ||
+    userProfile?.role === USER_ROLE.ASTROLOGER ||
+    userProfile?.user?.role === USER_ROLE.ASTROLOGER ||
+    (typeof window !== "undefined" &&
+      (sessionStorage.getItem("role") === USER_ROLE.ASTROLOGER ||
+        (() => {
+          try {
+            return JSON.parse(sessionStorage.getItem("user") || "{}")?.role === USER_ROLE.ASTROLOGER;
+          } catch (e) {
+            return false;
+          }
+        })()));
 
   const isRejected =
     p.verificationStatus === "REJECTED" ||
     (p.rejectionReason !== null && p.rejectionReason !== "");
 
+  const canAccessDocuments =
+    isRejected ||
+    Boolean(p.isAdminCreated) ||
+    p.verificationStatus !== "APPROVED";
+
   const visibleTabs = TABS.filter((tab) => {
+    if (isAstrologer && (tab.id === "location" || tab.id === "bank")) {
+      return false;
+    }
     if (tab.id === "documents") {
-      return isRejected;
+      return canAccessDocuments;
     }
     return true;
+  }).map((tab) => {
+    if (tab.id === "skills" && isAstrologer) {
+      return { ...tab, label: "Astrology Details" };
+    }
+    return tab;
   });
 
   React.useEffect(() => {
-    if (!isRejected && p.activeTab === "documents") {
+    if (isAstrologer && (p.activeTab === "location" || p.activeTab === "bank")) {
+      p.setActiveTab("personal");
+    } else if (!canAccessDocuments && p.activeTab === "documents") {
       p.setActiveTab("personal");
     }
-  }, [isRejected, p]);
+  }, [isAstrologer, canAccessDocuments, p]);
 
   if (p.loading) {
     return (
@@ -121,8 +169,11 @@ export default function ProfileContent() {
       <Box>
         <AppBreadcrumbs
           items={[
-            { label: "Dashboard", href: "/purohit/dashboard" },
-            { label: "Profile", href: "/purohit/profile" },
+            {
+              label: isAstrologer ? "Astrology Bookings" : "Dashboard",
+              href: isAstrologer ? "/partner/astrologybookings" : "/partner/dashboard",
+            },
+            { label: "Profile", href: "/partner/profile" },
             { label: "Profile & Settings" },
           ]}
         />
@@ -148,6 +199,25 @@ export default function ProfileContent() {
           </Typography>
         </Box>
       </Box>
+
+      {p.isAdminCreated && p.verificationStatus !== "APPROVED" && !isRejected && (
+        <Alert
+          severity="warning"
+          sx={{
+            borderRadius: "14px",
+            border: "1px solid #FFE082",
+            bgcolor: "#FFF8E1",
+            "& .MuiAlert-icon": { color: "#E65100" },
+          }}
+        >
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#E65100", fontSize: "15px" }}>
+            Profile Incomplete — Action Required
+          </Typography>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#5D4037", fontSize: "13.5px", mt: 0.5 }}>
+            Your account was created by Admin with your basic details prefilled. Please review and complete your professional skills, {isAstrologer ? "astrology specializations, consultation rate" : "rituals, service areas, bank account"}, and upload your identity verification documents to submit your profile for admin verification.
+          </Typography>
+        </Alert>
+      )}
 
       <Paper
         sx={{
@@ -234,8 +304,10 @@ export default function ProfileContent() {
               setExperienceYears={p.setExperienceYears}
               languages={p.languages}
               handleLanguageChange={p.handleLanguageChange}
+              setLanguages={p.setLanguages}
               specializations={p.specializations}
               handleRitualsChange={p.handleRitualsChange}
+              setSpecializations={p.setSpecializations}
               isOnlineAvailable={p.isOnlineAvailable}
               setIsOnlineAvailable={p.setIsOnlineAvailable}
               isOfflineAvailable={p.isOfflineAvailable}
@@ -243,7 +315,10 @@ export default function ProfileContent() {
               saving={p.saving}
               onSave={p.handleSaveProfile}
               availableLanguages={AVAILABLE_LANGUAGES}
-              availableRituals={AVAILABLE_RITUALS}
+              availableRituals={isAstrologer ? AVAILABLE_ASTROLOGY_SPECIALIZATIONS : AVAILABLE_RITUALS}
+              isAstrologer={isAstrologer}
+              ratePerMinute={p.ratePerMinute}
+              setRatePerMinute={p.setRatePerMinute}
             />
           )}
 
@@ -267,6 +342,7 @@ export default function ProfileContent() {
               rejectionReason={p.rejectionReason}
               saving={p.saving}
               onSave={p.handleSaveProfile}
+              isAstrologer={isAstrologer}
             />
           )}
 

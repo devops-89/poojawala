@@ -43,20 +43,22 @@ interface VerificationDocsSectionProps {
   selectedFiles: {
     identityDoc: File | null;
     certificate: File | null;
-    templeAffiliationProof: File | null;
+    templeAffiliationProof?: File | null;
     profilePhoto: File | null;
   };
   handleFileUpload: (
-    key: "identityDoc" | "certificate" | "templeAffiliationProof" | "profilePhoto",
+    key: any,
     urlKey: string,
     file: File | null
   ) => void;
+  isAstrologer?: boolean;
 }
 
 export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = ({
   values,
   selectedFiles,
   handleFileUpload,
+  isAstrologer = false,
 }) => {
   const [previewModal, setPreviewModal] = useState<{
     open: boolean;
@@ -68,40 +70,67 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
     url: "",
   });
 
-  const documentFieldsList = [
-    {
-      id: "identityDoc",
-      label: "Government Identity Proof (Aadhaar/PAN/Voter ID)",
-      urlKey: "identityDocUrl",
-      fileKey: "identityDoc" as keyof typeof selectedFiles,
-      currentUrl: values.identityDocUrl,
-      accept: "image/*,application/pdf",
-    },
-    {
-      id: "certificate",
-      label: "Educational Certificates",
-      urlKey: "certificateUrl",
-      fileKey: "certificate" as keyof typeof selectedFiles,
-      currentUrl: values.certificateUrl,
-      accept: "image/*,application/pdf",
-    },
-    {
-      id: "templeAffiliationProof",
-      label: "Temple Affiliation Proof",
-      urlKey: "templeAffiliationProofUrl",
-      fileKey: "templeAffiliationProof" as keyof typeof selectedFiles,
-      currentUrl: values.templeAffiliationProofUrl,
-      accept: "image/*,application/pdf",
-    },
-    {
-      id: "profilePhoto",
-      label: "Profile Photograph *",
-      urlKey: "profilePhotoUrl",
-      fileKey: "profilePhoto" as keyof typeof selectedFiles,
-      currentUrl: values.profilePhotoUrl,
-      accept: "image/*",
-    },
-  ];
+  const documentFieldsList = isAstrologer
+    ? [
+        {
+          id: "identityDoc",
+          label: "Government Identity Proof (Aadhaar/PAN Card)",
+          urlKey: "identityDocUrl",
+          fileKey: "identityDoc" as keyof typeof selectedFiles,
+          currentUrl: values.identityDocUrl,
+          accept: "image/*,application/pdf",
+        },
+        {
+          id: "certificate",
+          label: "Astrology / Educational Certificates",
+          urlKey: "certificateUrl",
+          fileKey: "certificate" as keyof typeof selectedFiles,
+          currentUrl: values.certificateUrl,
+          accept: "image/*,application/pdf",
+        },
+        {
+          id: "profilePhoto",
+          label: "Profile Photograph",
+          urlKey: "profilePhotoUrl",
+          fileKey: "profilePhoto" as keyof typeof selectedFiles,
+          currentUrl: values.profilePhotoUrl,
+          accept: "image/*",
+        },
+      ]
+    : [
+        {
+          id: "identityDoc",
+          label: "Government Identity Proof (Aadhaar/PAN/Voter ID)",
+          urlKey: "identityDocUrl",
+          fileKey: "identityDoc" as keyof typeof selectedFiles,
+          currentUrl: values.identityDocUrl,
+          accept: "image/*,application/pdf",
+        },
+        {
+          id: "certificate",
+          label: "Educational Certificates",
+          urlKey: "certificateUrl",
+          fileKey: "certificate" as keyof typeof selectedFiles,
+          currentUrl: values.certificateUrl,
+          accept: "image/*,application/pdf",
+        },
+        {
+          id: "templeAffiliationProof",
+          label: "Temple Affiliation Proof",
+          urlKey: "templeAffiliationProofUrl",
+          fileKey: "templeAffiliationProof" as keyof typeof selectedFiles,
+          currentUrl: values.templeAffiliationProofUrl,
+          accept: "image/*,application/pdf",
+        },
+        {
+          id: "profilePhoto",
+          label: "Profile Photograph *",
+          urlKey: "profilePhotoUrl",
+          fileKey: "profilePhoto" as keyof typeof selectedFiles,
+          currentUrl: values.profilePhotoUrl,
+          accept: "image/*",
+        },
+      ];
 
   return (
     <Box>
@@ -124,7 +153,7 @@ export const VerificationDocsSection: React.FC<VerificationDocsSectionProps> = (
           const url = doc.currentUrl;
 
           return (
-            <Grid size={{ xs: 12, sm: 6 }} key={doc.id}>
+            <Grid size={{ xs: 12, sm: isAstrologer ? 4 : 6 }} key={doc.id}>
               <Paper
                 sx={{
                   p: 2.5,

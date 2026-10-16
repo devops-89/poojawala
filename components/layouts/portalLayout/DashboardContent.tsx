@@ -1,6 +1,6 @@
 'use client';
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+import { COLORS, USER_ROLE } from "@/utils/enums";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import ErrorIcon from '@mui/icons-material/Error';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -40,7 +41,7 @@ export default function DashboardContent() {
       const userStr = sessionStorage.getItem("user");
       if (userStr) {
         const localUser = JSON.parse(userStr);
-        if (localUser && (localUser.role === "PUROHIT" || !localUser.role)) {
+        if (localUser && (localUser.role === "PUROHIT" || localUser.role === "ASTROLOGER" || !localUser.role)) {
           setProfile(localUser);
         }
       }
@@ -55,8 +56,13 @@ export default function DashboardContent() {
     getMeAPI().then(res => {
       if (res?.data) {
         const fetchedUser = res.data.user || res.data.data || res.data;
-        if (fetchedUser && (fetchedUser.role === "PUROHIT" || !fetchedUser.role)) {
+        if (fetchedUser && (fetchedUser.role === "PUROHIT" || fetchedUser.role === "ASTROLOGER" || !fetchedUser.role)) {
           setProfile(fetchedUser);
+          try {
+            const userStr = sessionStorage.getItem("user");
+            const localUser = userStr ? JSON.parse(userStr) : {};
+            sessionStorage.setItem("user", JSON.stringify({ ...localUser, ...fetchedUser }));
+          } catch (e) {}
         }
       }
     }).catch(console.error);
@@ -79,13 +85,33 @@ export default function DashboardContent() {
   const isRejected =
     verificationStatus === "REJECTED" || Boolean(rejReason);
 
+  const isAstrologer = profile?.role === USER_ROLE.ASTROLOGER;
+
+  const rawIsAdminCreated =
+    profile?.isAdminCreated !== undefined
+      ? profile.isAdminCreated
+      : profile?.is_admin_created !== undefined
+      ? profile.is_admin_created
+      : profile?.user?.isAdminCreated !== undefined
+      ? profile.user.isAdminCreated
+      : profile?.user?.is_admin_created !== undefined
+      ? profile.user.is_admin_created
+      : false;
+
+  const isAdminCreated = Boolean(rawIsAdminCreated);
+
+  const showIncompleteProfileCard =
+    isAdminCreated && verificationStatus !== "APPROVED" && !isRejected;
+
   const stats = [
-    { title: 'Total Earnings', value: `₹ ${statsData.totalEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/purohit/earnings' },
-    { title: 'This Month Earnings', value: `₹ ${statsData.thisMonthEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/purohit/earnings' },
-    { title: 'This Week Earnings', value: `₹ ${statsData.thisWeekEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/purohit/earnings' },
-    { title: 'Active Bookings', value: statsData.totalActiveBookings, icon: <EventAvailableIcon sx={{ fontSize: 40, color: '#2196F3' }} />, color: '#E3F2FD', link: '/purohit/bookings' },
-    { title: 'Completed Pujas', value: statsData.totalCompletedBookings, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#FF9800' }} />, color: '#FFF3E0', link: '/purohit/bookings' },
-    { title: 'Active Services', value: statsData.totalActiveServices, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/purohit/my-services' }
+    { title: 'Total Earnings', value: `₹ ${statsData.totalEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/partner/earnings' },
+    { title: 'This Month Earnings', value: `₹ ${statsData.thisMonthEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/partner/earnings' },
+    { title: 'This Week Earnings', value: `₹ ${statsData.thisWeekEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/partner/earnings' },
+    { title: 'Active Bookings', value: statsData.totalActiveBookings, icon: <EventAvailableIcon sx={{ fontSize: 40, color: '#2196F3' }} />, color: '#E3F2FD', link: isAstrologer ? '/partner/astrologybookings' : '/partner/bookings' },
+    { title: isAstrologer ? 'Completed Consultations' : 'Completed Pujas', value: statsData.totalCompletedBookings, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#FF9800' }} />, color: '#FFF3E0', link: isAstrologer ? '/partner/astrologybookings' : '/partner/bookings' },
+    ...(!isAstrologer
+      ? [{ title: 'Active Services', value: statsData.totalActiveServices, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/my-services' }]
+      : [{ title: 'Consultation Rate', value: profile?.ratePerMinute ? `₹ ${profile.ratePerMinute}/min` : 'N/A', icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/profile' }])
   ];
 
   return (
@@ -113,12 +139,12 @@ export default function DashboardContent() {
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Typography variant="h3" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '24px', md: '32px' } }}>
-                Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : (profile?.name || 'Purohit')}!
+                Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : (profile?.name || (isAstrologer ? 'Astrologer' : 'Partner'))}!
               </Typography>
               {profile?.status === 'APPROVED' && <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: 28 }} />}
             </Box>
             <Typography sx={{ fontFamily: FONTS.OUTFIT, opacity: 0.9, fontSize: '16px', mb: 2 }}>
-              Here's what's happening with your pujas and bookings today.
+              Here's what's happening with your {isAstrologer ? 'consultations' : 'pujas'} and bookings today.
             </Typography>
             
             <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', opacity: 0.9 }}>
@@ -151,6 +177,94 @@ export default function DashboardContent() {
           }} 
         />
       </Paper>
+
+      {/* Complete Profile Card for Admin Created Partners */}
+      {showIncompleteProfileCard && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            mb: 4,
+            borderRadius: "20px",
+            bgcolor: "#FFF8E1",
+            border: "2px solid #FFE082",
+            boxShadow: "0 6px 24px rgba(255, 143, 0, 0.08)",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2.5, flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                bgcolor: "#FFE8B6",
+                color: "#E65100",
+                p: 1.5,
+                borderRadius: "14px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <PendingActionsIcon sx={{ fontSize: 32 }} />
+            </Box>
+
+            <Box sx={{ flex: 1, minWidth: 260 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    fontSize: "18px",
+                    color: "#E65100",
+                  }}
+                >
+                  Action Required: Complete Your Profile
+                </Typography>
+                <Chip
+                  label="Verification Pending"
+                  color="warning"
+                  size="small"
+                  sx={{ fontWeight: 700, borderRadius: "20px", bgcolor: "#FF9800", color: "#FFF" }}
+                />
+              </Box>
+
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "14px",
+                  color: "#4B5563",
+                  lineHeight: 1.6,
+                  mb: 2,
+                }}
+              >
+                Your account was created by Admin. Please complete your professional details, qualifications, {isAstrologer ? "astrology specializations, consultation rate" : "rituals, service areas, bank account"}, and upload your identity verification documents to submit your profile for admin approval.
+              </Typography>
+
+              <Button
+                variant="contained"
+                onClick={() => {
+                  router.push("/partner/profile/edit");
+                }}
+                startIcon={<EditIcon />}
+                sx={{
+                  bgcolor: "#FF6200",
+                  color: "white",
+                  fontWeight: 700,
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "10px",
+                  textTransform: "none",
+                  px: 3,
+                  py: 1,
+                  boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                  "&:hover": {
+                    bgcolor: "#E05500",
+                  },
+                }}
+              >
+                Complete Profile
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
+      )}
 
       {/* Verification Rejection Alert Card */}
       {isRejected && (
@@ -231,7 +345,7 @@ export default function DashboardContent() {
                 color="error"
                 onClick={() => {
                   sessionStorage.setItem("profileActiveTab", "documents");
-                  router.push("/purohit/profile/edit");
+                  router.push("/partner/profile/edit");
                 }}
                 startIcon={<EditIcon />}
                 sx={{
@@ -276,7 +390,7 @@ export default function DashboardContent() {
         <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
           Active Bookings
         </Typography>
-        <Button component={NextLink} href="/purohit/bookings" sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700 }}>
+        <Button component={NextLink} href={isAstrologer ? "/partner/astrologybookings" : "/partner/bookings"} sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700 }}>
           View All Bookings
         </Button>
       </Box>

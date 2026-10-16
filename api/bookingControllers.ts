@@ -11,11 +11,37 @@ export const createBookingByAdminAPI = async (data: any) => {
   }
 };
 
+export const createAstrologyBookingByAdminAPI = async (data: {
+  customerId: number;
+  astrologerId: number;
+  scheduledAt: string;
+}) => {
+  try {
+    const headers: Record<string, string> = {};
+    attachCsrfHeaders(headers, undefined, "ADMIN");
+    const response = await userSecuredApi.post('/bookings/add/astrology', data, { headers });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const customerCreateBookingAPI = async (data: any) => {
   try {
     const headers: Record<string, string> = {};
     attachCsrfHeaders(headers, undefined, "CUSTOMER");
     const response = await userSecuredApi.post('/bookings/add', data, { headers });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const customerCreateAstrologyBookingAPI = async (data: any) => {
+  try {
+    const headers: Record<string, string> = {};
+    attachCsrfHeaders(headers, undefined, "CUSTOMER");
+    const response = await userSecuredApi.post('/bookings/add/astrology', data, { headers });
     return response.data;
   } catch (error) {
     throw error;
@@ -50,7 +76,8 @@ export const getAllBookingsByAdminAPI = async (
   page: number = 1,
   limit: number = 10,
   status?: string,
-  search?: string
+  search?: string,
+  bookingType: string = 'POOJA'
 ) => {
   try {
     const params = new URLSearchParams({
@@ -59,6 +86,7 @@ export const getAllBookingsByAdminAPI = async (
     });
     if (status && status !== 'All Bookings') params.append('status', status.toUpperCase());
     if (search) params.append('search', search);
+    if (bookingType) params.append('bookingType', bookingType);
 
     const response = await userSecuredApi.get(`/bookings/all?${params.toString()}`);
     return response.data;
@@ -67,9 +95,19 @@ export const getAllBookingsByAdminAPI = async (
   }
 };
 
-export const getCompletedBookingsAPI = async (page: number = 1, limit: number = 10) => {
+export const getCompletedBookingsAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  bookingType: string = "POOJA"
+) => {
   try {
-    const response = await userSecuredApi.get(`/bookings/all?page=${page}&limit=${limit}&status=COMPLETED`);
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      status: "COMPLETED",
+    });
+    if (bookingType) params.append("bookingType", bookingType);
+    const response = await userSecuredApi.get(`/bookings/all?${params.toString()}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -94,9 +132,9 @@ export const assignBookingAPI = async (id: number | string, purohitId: number | 
   }
 };
 
-export const getAvailableBookingsAPI = async () => {
+export const getAvailableBookingsAPI = async (bookingType: string = "POOJA") => {
   try {
-    const response = await userSecuredApi.get('/bookings/available');
+    const response = await userSecuredApi.get(`/bookings/available?bookingType=${bookingType}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -112,15 +150,49 @@ export const respondBookingAPI = async (id: number | string, action: 'ACCEPT' | 
   }
 };
 
-export const getActiveBookingAPI = async (status?: string, page: number = 1, limit: number = 10) => {
+export const getActiveBookingAPI = async (
+  status?: string,
+  page: number = 1,
+  limit: number = 10,
+  bookingType: string = "POOJA"
+) => {
   try {
-    let url = status ? `/bookings/all?status=${status.toUpperCase()}&page=${page}&limit=${limit}` : `/bookings/active?page=${page}&limit=${limit}`;
+    const params = new URLSearchParams();
+    if (status) params.append("status", status.toUpperCase());
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+    if (bookingType) params.append("bookingType", bookingType);
+    let url = `/bookings/all?${params.toString()}`;
     const response = await userSecuredApi.get(url);
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
+
+export const getAstrologyBookingsAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  status?: string,
+  search?: string
+) => {
+  try {
+    const params = new URLSearchParams();
+    params.append("bookingType", "ASTROLOGY");
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+    if (status && status !== "ALL" && status !== "All Bookings") {
+      params.append("status", status.toUpperCase());
+    }
+    if (search && search.trim()) {
+      params.append("search", search.trim());
+    }
+    const response = await userSecuredApi.get(`/bookings/all?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const sendBookingStartOtpAPI = async (id: number | string) => {
   try {

@@ -1,13 +1,43 @@
 import * as yup from 'yup';
+import { USER_ROLE } from '@/utils/enums';
 
-export const steps = [
-  'Basic Details',
-  'Verification (OTP)',
-  'Purohit Profile',
-  'Bank Details',
-  'Document Upload',
-  'Service Area',
+export type StepId =
+  | 'basic'
+  | 'otp'
+  | 'profile'
+  | 'bank'
+  | 'documents'
+  | 'serviceArea';
+
+export interface StepItem {
+  id: StepId;
+  label: string;
+}
+
+export const PUROHIT_STEPS: StepItem[] = [
+  { id: 'basic', label: 'Basic Details' },
+  { id: 'otp', label: 'Verification (OTP)' },
+  { id: 'profile', label: 'Professional Profile' },
+  { id: 'bank', label: 'Bank Details' },
+  { id: 'documents', label: 'Document Upload' },
+  { id: 'serviceArea', label: 'Service Area' },
 ];
+
+export const ASTROLOGER_STEPS: StepItem[] = [
+  { id: 'basic', label: 'Basic Details' },
+  { id: 'otp', label: 'Verification (OTP)' },
+  { id: 'profile', label: 'Professional Profile' },
+  { id: 'documents', label: 'Document Upload' },
+];
+
+export const getStepsForRole = (role?: string): StepItem[] => {
+  if (role === USER_ROLE.ASTROLOGER) {
+    return ASTROLOGER_STEPS;
+  }
+  return PUROHIT_STEPS;
+};
+
+export const steps = PUROHIT_STEPS.map((s) => s.label);
 
 export const LANGUAGES = [
   'Hindi',
@@ -31,7 +61,7 @@ export const SPECIALIZATIONS = [
   'Pooja Anushthan',
 ];
 
-export const QUALIFICATIONS = ['SHASTRI', 'ACHARYA', 'VEDPATHI', 'OTHER'];
+export const QUALIFICATIONS = ['SHASTRI', 'ACHARYA', 'VEDPATHI'];
 
 export const emailTldRegex =
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
@@ -50,8 +80,12 @@ export const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(
   twentyYearsAgo.getMonth() + 1
 ).padStart(2, '0')}-${String(twentyYearsAgo.getDate()).padStart(2, '0')}`;
 
-export const validationSchema = [
-  yup.object({
+export const stepValidationSchemas: Record<StepId, any> = {
+  basic: yup.object({
+    role: yup
+      .string()
+      .oneOf([USER_ROLE.PUROHIT, USER_ROLE.ASTROLOGER], 'Please select a valid role')
+      .required('Role is required'),
     fullName: yup
       .string()
       .matches(alphaSpaceRegex, 'Full Name cannot contain numbers or special characters')
@@ -80,10 +114,10 @@ export const validationSchema = [
       .oneOf([yup.ref('password')], 'Passwords must match')
       .required('Confirm Password is required'),
   }),
-  yup.object({
+  otp: yup.object({
     // OTP validation is handled by string length check
   }),
-  yup.object({
+  profile: yup.object({
     state: yup
       .string()
       .matches(cityStateRegex, 'State cannot contain numbers or special characters')
@@ -107,34 +141,38 @@ export const validationSchema = [
     languages: yup
       .array()
       .of(yup.string())
-      .min(1, 'Select at least one language')
-      .test(
-        'valid-languages',
-        'Only predefined languages are allowed',
-        (values) =>
-          !values || values.every((lang) => LANGUAGES.includes(lang || ''))
-      ),
+      .min(1, 'Select at least one language'),
     specializations: yup
       .array()
       .of(yup.string())
-      .min(1, 'Select at least one specialization')
-      .test(
-        'valid-specializations',
-        'Only predefined specializations are allowed',
-        (values) =>
-          !values || values.every((spec) => SPECIALIZATIONS.includes(spec || ''))
-      ),
+      .min(1, 'Select at least one specialization'),
     isOnlineAvailable: yup.boolean(),
     isOfflineAvailable: yup.boolean().test(
       'at-least-one-availability',
       'Select at least one availability mode (Online or Offline)',
       function () {
-        const { isOnlineAvailable, isOfflineAvailable } = this.parent;
+        const { isOnlineAvailable, isOfflineAvailable, role } = this.parent;
+        if (role === USER_ROLE.ASTROLOGER) return true;
         return Boolean(isOnlineAvailable || isOfflineAvailable);
       }
     ),
+    ratePerMinute: yup.mixed().test(
+      'ratePerMinute-required',
+      'Please enter a valid rate per minute (greater than 0)',
+      function (value) {
+        const role = this.parent?.role;
+        if (role === USER_ROLE.ASTROLOGER) {
+          if (value === undefined || value === null || String(value).trim() === '') {
+            return false;
+          }
+          const num = Number(value);
+          return !isNaN(num) && num > 0;
+        }
+        return true;
+      }
+    ),
   }),
-  yup.object({
+  bank: yup.object({
     paymentMethod: yup.string().required(),
     upiId: yup.string().test('is-upi', 'Invalid UPI ID', function (val) {
       if (this.parent.paymentMethod !== 'UPI') return true;
@@ -194,7 +232,7 @@ export const validationSchema = [
         return true;
       }),
   }),
-  yup.object({
+  documents: yup.object({
     documents: yup.object({
       identityDoc: yup.mixed().required('Aadhaar or PAN Document is required'),
       certificate: yup.mixed().nullable().notRequired(),
@@ -202,7 +240,7 @@ export const validationSchema = [
       profilePhoto: yup.mixed().required('Profile Photograph is required'),
     }),
   }),
-  yup.object({
+  serviceArea: yup.object({
     serviceArea: yup.object({
       pincode: yup
         .string()
@@ -218,6 +256,15 @@ export const validationSchema = [
         .required('Service radius is required'),
     }),
   }),
+};
+
+export const validationSchema = [
+  stepValidationSchemas.basic,
+  stepValidationSchemas.otp,
+  stepValidationSchemas.profile,
+  stepValidationSchemas.bank,
+  stepValidationSchemas.documents,
+  stepValidationSchemas.serviceArea,
 ];
 
 export const selectMenuProps = {

@@ -76,9 +76,14 @@ export default function BookingServiceCard({
     service?.minPrice ||
     0;
 
-  const languagesList = Array.isArray(service?.languages)
-    ? service.languages.map((l: any) => l.name || l.code || l).join(", ")
+  const astroLanguages = Array.isArray(booking?.astrologerProfile?.languages)
+    ? booking.astrologerProfile.languages.join(", ")
     : "";
+
+  const languagesList =
+    (Array.isArray(service?.languages)
+      ? service.languages.map((l: any) => l.name || l.code || l).join(", ")
+      : "") || astroLanguages;
 
   return (
     <Card
@@ -170,9 +175,15 @@ export default function BookingServiceCard({
                 fontFamily: FONTS.OUTFIT,
               }}
             >
-              {service.name || "N/A"}
+              {service.name ||
+                (booking?.bookingType === "ASTROLOGY" || booking?.astrologer
+                  ? "Astrology Consultation"
+                  : "N/A")}
             </Typography>
-            {service.description && (
+            {(service.description ||
+              booking?.astrologerProfile?.specification ||
+              booking?.astrologerProfile?.bio ||
+              booking?.specialInstructions) && (
               <Typography
                 sx={{
                   color: "#64748b",
@@ -182,12 +193,15 @@ export default function BookingServiceCard({
                   lineHeight: 1.5,
                 }}
               >
-                {service.description}
+                {service.description ||
+                  booking?.astrologerProfile?.specification ||
+                  booking?.astrologerProfile?.bio ||
+                  booking?.specialInstructions}
               </Typography>
             )}
 
-            {/* Quick Metadata: Duration & Languages */}
-            {(service.durationMinutes || languagesList) && (
+            {/* Quick Metadata: Duration, Languages & Mode */}
+            {(service.durationMinutes || languagesList || booking?.bookingMode) && (
               <Box
                 sx={{
                   display: "flex",
@@ -198,6 +212,13 @@ export default function BookingServiceCard({
                   borderTop: "1px dashed #f1f5f9",
                 }}
               >
+                {booking?.bookingMode && (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography sx={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>
+                      Mode: <strong style={{ color: "#334155" }}>{booking.bookingMode}</strong>
+                    </Typography>
+                  </Box>
+                )}
                 {service.durationMinutes && (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                     <AccessTimeIcon sx={{ fontSize: 16, color: "#64748b" }} />

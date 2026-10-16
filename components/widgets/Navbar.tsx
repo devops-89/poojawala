@@ -29,8 +29,8 @@ export default function Navbar() {
     pathname === "/forgot-password" ||
     pathname === "/reset-password" ||
     pathname === "/verify-otp" ||
-    pathname === "/purohit" ||
-    pathname.startsWith("/purohit/") ||
+    pathname === "/partner" || pathname === "/purohit" ||
+    pathname.startsWith("/partner/") || pathname.startsWith("/purohit/") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/customer")
   )
@@ -106,7 +106,7 @@ export default function Navbar() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Button
               component={NextLink}
-              href="/purohit"
+              href="/partner"
               variant="outlined"
               sx={{
                 display: { xs: "none", md: "inline-flex" },
@@ -257,7 +257,7 @@ export default function Navbar() {
           </Button>
           <Button
             component={NextLink}
-            href="/purohit"
+            href="/partner"
             variant="outlined"
             fullWidth
             onClick={handleDrawerToggle}

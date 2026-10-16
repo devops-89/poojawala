@@ -43,7 +43,7 @@ export default function RegisterHeader() {
           display: { xs: 'none', sm: 'block' },
         }}
       >
-        Purohit Partner Onboarding
+        Partner Onboarding
       </Typography>
 
       <Button

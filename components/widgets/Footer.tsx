@@ -74,8 +74,8 @@ export default function Footer() {
     pathname === "/forgot-password" ||
     pathname === "/reset-password" ||
     pathname === "/verify-otp" ||
-    pathname === "/purohit" ||
-    pathname.startsWith("/purohit/") ||
+    pathname === "/partner" || pathname === "/purohit" ||
+    pathname.startsWith("/partner/") || pathname.startsWith("/purohit/") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/customer")
   )
@@ -267,7 +267,7 @@ export default function Footer() {
               </Typography>
               <Link
                 component={NextLink}
-                href="/purohit"
+                href="/partner"
                 underline="none"
                 sx={{
                   ...linkSx,

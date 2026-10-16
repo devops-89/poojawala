@@ -7,6 +7,16 @@ import { Avatar, Box, Grid, TextField, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 
+const today = new Date();
+const twentyYearsAgo = new Date(
+  today.getFullYear() - 20,
+  today.getMonth(),
+  today.getDate()
+);
+const maxDobDate = `${twentyYearsAgo.getFullYear()}-${String(
+  twentyYearsAgo.getMonth() + 1
+).padStart(2, "0")}-${String(twentyYearsAgo.getDate()).padStart(2, "0")}`;
+
 interface BasicDetailsSectionProps {
   values: any;
   errors: any;
@@ -141,7 +151,10 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
             name="dob"
             label="Date of Birth *"
             type="date"
-            slotProps={{ inputLabel: { shrink: true } }}
+            slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: { max: maxDobDate },
+            }}
             value={values.dob}
             onChange={handleChange}
             onBlur={handleBlur}

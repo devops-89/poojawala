@@ -104,6 +104,8 @@ export default function AdminBookingDetailsContent() {
       : `${booking.purohit.firstName} ${booking.purohit.lastName || ""}`.trim()
     : "Not Assigned";
 
+  const isAstrology = booking?.bookingType === "ASTROLOGY";
+
   return (
     <Box
       sx={{
@@ -118,7 +120,10 @@ export default function AdminBookingDetailsContent() {
       <AdminDetailsHeader
         title="Booking Details"
         breadcrumbs={[
-          { label: "Bookings", href: "/admin/bookings" },
+          {
+            label: isAstrology ? "Astrology Bookings" : "Bookings",
+            href: isAstrology ? "/admin/astrology-bookings" : "/admin/bookings",
+          },
           { label: "Booking Details" },
         ]}
       >

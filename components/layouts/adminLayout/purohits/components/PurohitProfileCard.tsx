@@ -36,25 +36,62 @@ export default function PurohitProfileCard({
   onPreviewDoc,
   onStatusChange,
 }: PurohitProfileCardProps) {
+  const isAstrologer =
+    purohit?.role === "ASTROLOGER" || Boolean(purohit?.astrologerProfile);
+
   const fullName =
     `${purohit.firstName || ""} ${purohit.lastName || ""}`.trim() ||
     purohit.username ||
-    "Purohit";
+    (isAstrologer ? "Astrologer" : "Purohit");
   const initials =
     `${purohit.firstName?.[0] || ""}${purohit.lastName?.[0] || ""}`.toUpperCase() ||
-    "P";
+    (isAstrologer ? "A" : "P");
 
-  // Parse comma-separated strings or arrays
+  // Parse JSON-stringified arrays, comma-separated strings or native arrays
   const parseList = (data: any): string[] => {
     if (!data) return [];
-    if (Array.isArray(data)) return data;
+    if (Array.isArray(data)) return data.map(String).map((s) => s.trim()).filter(Boolean);
     if (typeof data === "string") {
-      return data
+      const trimmed = data.trim();
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.map(String).map((s) => s.trim()).filter(Boolean);
+          }
+        } catch {
+          // ignore error and fallback below
+        }
+      }
+      return trimmed
+        .replace(/^\[|\]$/g, "")
         .split(",")
-        .map((s) => s.trim())
+        .map((s) => s.replace(/^["']|["']$/g, "").trim())
         .filter(Boolean);
     }
     return [];
+  };
+
+  const formatQualification = (q: any): string => {
+    if (!q) return "N/A";
+    if (Array.isArray(q)) {
+      return q.map(String).map((s) => s.trim()).filter(Boolean).join(", ") || "N/A";
+    }
+    if (typeof q === "string") {
+      const trimmed = q.trim();
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.map(String).map((s) => s.trim()).filter(Boolean).join(", ") || "N/A";
+          }
+        } catch {
+          // fallback
+        }
+      }
+      return trimmed || "N/A";
+    }
+    return String(q);
   };
 
   const specializationsList = parseList(profile.specializations);
@@ -63,10 +100,14 @@ export default function PurohitProfileCard({
     ? purohit.serviceAreas
     : [];
 
-  // Get primary location city or fallback to profile city / birthPlace
+  // Location display
   const primaryArea = serviceAreas.find((a: any) => a.isDefault);
+  const locationParts = [profile.city, profile.state].filter(Boolean);
+  const formattedCityState = locationParts.join(", ");
   const displayCity =
+    (isAstrologer ? formattedCityState : null) ||
     primaryArea?.city ||
+    formattedCityState ||
     profile.city ||
     purohit.birthPlace ||
     "No City specified";
@@ -209,7 +250,7 @@ export default function PurohitProfileCard({
             Qualification
           </Typography>
           <Typography sx={{ color: "#1e293b", mt: 0.5, fontWeight: 600, fontSize: "0.95rem" }}>
-            {profile.qualification || "N/A"}
+            {formatQualification(profile.qualification)}
           </Typography>
         </Grid>
 
@@ -225,30 +266,52 @@ export default function PurohitProfileCard({
           </Box>
         </Grid>
 
-        <Grid size={{ xs: 12 }}>
-          <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600, mb: 0.5 }}>
-            Service Availability
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            {profile.isOnlineAvailable && (
-              <Chip
-                label="Online Pooja Available"
-                size="small"
-                sx={{ bgcolor: "#d1fae5", color: "#059669", fontWeight: 700 }}
-              />
-            )}
-            {profile.isOfflineAvailable && (
-              <Chip
-                label="Offline / In-Person Available"
-                size="small"
-                sx={{ bgcolor: "#e0e7ff", color: "#4338ca", fontWeight: 700 }}
-              />
-            )}
-            {!profile.isOnlineAvailable && !profile.isOfflineAvailable && (
-              <Typography sx={{ color: "#1e293b" }}>N/A</Typography>
-            )}
-          </Box>
-        </Grid>
+        {isAstrologer ? (
+          <>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
+                Rate / Minute
+              </Typography>
+              <Typography sx={{ color: COLORS.PRIMARY, mt: 0.5, fontWeight: 700, fontSize: "1rem" }}>
+                ₹{profile.ratePerMinute !== undefined && profile.ratePerMinute !== null ? profile.ratePerMinute : "0.00"} / min
+              </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
+                Platform Commission
+              </Typography>
+              <Typography sx={{ color: "#1e293b", mt: 0.5, fontWeight: 700, fontSize: "1rem" }}>
+                ₹{profile.commissionPrice !== undefined && profile.commissionPrice !== null ? profile.commissionPrice : "0.00"}
+              </Typography>
+            </Grid>
+          </>
+        ) : (
+          <Grid size={{ xs: 12 }}>
+            <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600, mb: 0.5 }}>
+              Service Availability
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              {profile.isOnlineAvailable && (
+                <Chip
+                  label="Online Pooja Available"
+                  size="small"
+                  sx={{ bgcolor: "#d1fae5", color: "#059669", fontWeight: 700 }}
+                />
+              )}
+              {profile.isOfflineAvailable && (
+                <Chip
+                  label="Offline / In-Person Available"
+                  size="small"
+                  sx={{ bgcolor: "#e0e7ff", color: "#4338ca", fontWeight: 700 }}
+                />
+              )}
+              {!profile.isOnlineAvailable && !profile.isOfflineAvailable && (
+                <Typography sx={{ color: "#1e293b" }}>N/A</Typography>
+              )}
+            </Box>
+          </Grid>
+        )}
 
         <Grid size={{ xs: 12, sm: 6 }}>
           <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600, mb: 0.5 }}>
@@ -291,176 +354,181 @@ export default function PurohitProfileCard({
         </Grid>
       </Grid>
 
-      <Divider sx={{ mb: 4 }} />
+      {/* Services Offered and Service Areas (Only for Purohit) */}
+      {!isAstrologer && (
+        <>
+          <Divider sx={{ mb: 4 }} />
 
-      {/* Services Offered */}
-      <Typography
-        sx={{
-          fontFamily: FONTS.OUTFIT,
-          fontWeight: 700,
-          color: "#1e293b",
-          fontSize: "1.1rem",
-          mb: 2.5,
-        }}
-      >
-        Services Offered ({profile.purohitServices?.length || 0})
-      </Typography>
-      {profile.purohitServices && profile.purohitServices.length > 0 ? (
-        <Grid container spacing={2} sx={{ mb: 4, alignItems: "stretch" }}>
-          {profile.purohitServices.map((ps: any, index: number) => {
-            const duration = ps.durationMinutes || ps.service?.durationMinutes || "N/A";
-            const offlinePrice = ps.offlinePrice || ps.customPrice;
-            const onlinePrice = ps.onlinePrice;
-            const iconImg = ps.service?.iconDownloadurl || ps.service?.iconUrl || "";
+          {/* Services Offered */}
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              color: "#1e293b",
+              fontSize: "1.1rem",
+              mb: 2.5,
+            }}
+          >
+            Services Offered ({profile.purohitServices?.length || 0})
+          </Typography>
+          {profile.purohitServices && profile.purohitServices.length > 0 ? (
+            <Grid container spacing={2} sx={{ mb: 4, alignItems: "stretch" }}>
+              {profile.purohitServices.map((ps: any, index: number) => {
+                const duration = ps.durationMinutes || ps.service?.durationMinutes || "N/A";
+                const offlinePrice = ps.offlinePrice || ps.customPrice;
+                const onlinePrice = ps.onlinePrice;
+                const iconImg = ps.service?.iconDownloadurl || ps.service?.iconUrl || "";
 
-            return (
-              <Grid size={{ xs: 12, sm: 6 }} key={ps.id || index} sx={{ display: "flex" }}>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 2.5,
-                    bgcolor: "#f8fafc",
-                    borderRadius: "14px",
-                    border: "1px solid #e2e8f0",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2, mb: 1.5 }}>
-                    <Avatar
-                      src={iconImg}
-                      sx={{ width: 44, height: 44, borderRadius: "10px", bgcolor: "#fff", border: "1px solid #e2e8f0" }}
+                return (
+                  <Grid size={{ xs: 12, sm: 6 }} key={ps.id || index} sx={{ display: "flex" }}>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        p: 2.5,
+                        bgcolor: "#f8fafc",
+                        borderRadius: "14px",
+                        border: "1px solid #e2e8f0",
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      {ps.service?.name?.[0] || "P"}
-                    </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
-                        {ps.service?.name || "Puja Service"}
-                      </Typography>
-                      <Typography sx={{ fontSize: "0.825rem", color: "#64748b", mt: 0.2 }}>
-                        Duration: <b>{duration} mins</b>
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2, mb: 1.5 }}>
+                        <Avatar
+                          src={iconImg}
+                          sx={{ width: 44, height: 44, borderRadius: "10px", bgcolor: "#fff", border: "1px solid #e2e8f0" }}
+                        >
+                          {ps.service?.name?.[0] || "P"}
+                        </Avatar>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
+                            {ps.service?.name || "Puja Service"}
+                          </Typography>
+                          <Typography sx={{ fontSize: "0.825rem", color: "#64748b", mt: 0.2 }}>
+                            Duration: <b>{duration} mins</b>
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 1.5 }}>
+                        {offlinePrice && (
+                          <Typography sx={{ fontSize: "0.85rem", color: "#1e293b" }}>
+                            Offline Price: <b style={{ color: COLORS.PRIMARY }}>₹{offlinePrice}</b>
+                          </Typography>
+                        )}
+                        {onlinePrice && (
+                          <Typography sx={{ fontSize: "0.85rem", color: "#1e293b" }}>
+                            Online Price: <b style={{ color: "#059669" }}>₹{onlinePrice}</b>
+                          </Typography>
+                        )}
+                        {!offlinePrice && !onlinePrice && (
+                          <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
+                            Price: ₹{ps.customPrice || "N/A"}
+                          </Typography>
+                        )}
+                      </Box>
+
+                      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
+                        {ps.isOffline && (
+                          <Chip
+                            label="Offline"
+                            size="small"
+                            sx={{ bgcolor: "#e0e7ff", color: "#4338ca", fontSize: "0.75rem", fontWeight: 700 }}
+                          />
+                        )}
+                        {ps.isOnline && (
+                          <Chip
+                            label="Online"
+                            size="small"
+                            sx={{ bgcolor: "#d1fae5", color: "#059669", fontSize: "0.75rem", fontWeight: 700 }}
+                          />
+                        )}
+                        {ps.isActive && (
+                          <Chip
+                            label="Active"
+                            size="small"
+                            sx={{ bgcolor: "#d1fae5", color: "#047857", fontSize: "0.75rem", fontWeight: 700 }}
+                          />
+                        )}
+                      </Box>
+                    </Paper>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          ) : (
+            <Typography sx={{ color: "#64748b", fontSize: "0.9rem", mb: 4 }}>
+              No services offered yet.
+            </Typography>
+          )}
+
+          <Divider sx={{ mb: 4 }} />
+
+          {/* Service Areas / Operating Locations */}
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              color: "#1e293b",
+              fontSize: "1.1rem",
+              mb: 2.5,
+            }}
+          >
+            Service Areas & Locations ({serviceAreas.length})
+          </Typography>
+
+          {serviceAreas.length > 0 ? (
+            <Grid container spacing={2} sx={{ mb: 4, alignItems: "stretch" }}>
+              {serviceAreas.map((area: any, index: number) => (
+                <Grid size={{ xs: 12, sm: 6 }} key={area.id || index} sx={{ display: "flex" }}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2.5,
+                      bgcolor: "#f8fafc",
+                      borderRadius: "14px",
+                      border: "1px solid #e2e8f0",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5, gap: 1 }}>
+                        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
+                          {area.addressLabel || "Location"}
+                        </Typography>
+                        {area.isDefault && (
+                          <Chip
+                            label="Primary Location"
+                            size="small"
+                            sx={{ bgcolor: "#ffedd5", color: "#c2410c", fontWeight: 700, fontSize: "0.75rem" }}
+                          />
+                        )}
+                      </Box>
+                      <Typography sx={{ fontSize: "0.85rem", color: "#334155", mb: 1.5, lineHeight: 1.5 }}>
+                        {area.fullAddress || `${area.streetName || ""}, ${area.city || ""}`}
                       </Typography>
                     </Box>
-                  </Box>
-
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 1.5 }}>
-                    {offlinePrice && (
-                      <Typography sx={{ fontSize: "0.85rem", color: "#1e293b" }}>
-                        Offline Price: <b style={{ color: COLORS.PRIMARY }}>₹{offlinePrice}</b>
-                      </Typography>
-                    )}
-                    {onlinePrice && (
-                      <Typography sx={{ fontSize: "0.85rem", color: "#1e293b" }}>
-                        Online Price: <b style={{ color: "#059669" }}>₹{onlinePrice}</b>
-                      </Typography>
-                    )}
-                    {!offlinePrice && !onlinePrice && (
-                      <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
-                        Price: ₹{ps.customPrice || "N/A"}
-                      </Typography>
-                    )}
-                  </Box>
-
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
-                    {ps.isOffline && (
-                      <Chip
-                        label="Offline"
-                        size="small"
-                        sx={{ bgcolor: "#e0e7ff", color: "#4338ca", fontSize: "0.75rem", fontWeight: 700 }}
-                      />
-                    )}
-                    {ps.isOnline && (
-                      <Chip
-                        label="Online"
-                        size="small"
-                        sx={{ bgcolor: "#d1fae5", color: "#059669", fontSize: "0.75rem", fontWeight: 700 }}
-                      />
-                    )}
-                    {ps.isActive && (
-                      <Chip
-                        label="Active"
-                        size="small"
-                        sx={{ bgcolor: "#d1fae5", color: "#047857", fontSize: "0.75rem", fontWeight: 700 }}
-                      />
-                    )}
-                  </Box>
-                </Paper>
-              </Grid>
-            );
-          })}
-        </Grid>
-      ) : (
-        <Typography sx={{ color: "#64748b", fontSize: "0.9rem", mb: 4 }}>
-          No services offered yet.
-        </Typography>
-      )}
-
-      <Divider sx={{ mb: 4 }} />
-
-      {/* Service Areas / Operating Locations */}
-      <Typography
-        sx={{
-          fontFamily: FONTS.OUTFIT,
-          fontWeight: 700,
-          color: "#1e293b",
-          fontSize: "1.1rem",
-          mb: 2.5,
-        }}
-      >
-        Service Areas & Locations ({serviceAreas.length})
-      </Typography>
-
-      {serviceAreas.length > 0 ? (
-        <Grid container spacing={2} sx={{ mb: 4, alignItems: "stretch" }}>
-          {serviceAreas.map((area: any, index: number) => (
-            <Grid size={{ xs: 12, sm: 6 }} key={area.id || index} sx={{ display: "flex" }}>
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 2.5,
-                  bgcolor: "#f8fafc",
-                  borderRadius: "14px",
-                  border: "1px solid #e2e8f0",
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Box>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5, gap: 1 }}>
-                    <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
-                      {area.addressLabel || "Location"}
-                    </Typography>
-                    {area.isDefault && (
-                      <Chip
-                        label="Primary Location"
-                        size="small"
-                        sx={{ bgcolor: "#ffedd5", color: "#c2410c", fontWeight: 700, fontSize: "0.75rem" }}
-                      />
-                    )}
-                  </Box>
-                  <Typography sx={{ fontSize: "0.85rem", color: "#334155", mb: 1.5, lineHeight: 1.5 }}>
-                    {area.fullAddress || `${area.streetName || ""}, ${area.city || ""}`}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: "flex", gap: 1.5, color: "#64748b", fontSize: "0.8rem", flexWrap: "wrap", borderTop: "1px dashed #cbd5e1", pt: 1.5, mt: 1 }}>
-                  <span>City: <b>{area.city || "N/A"}</b></span>
-                  <span>Pincode: <b>{area.pincode || "N/A"}</b></span>
-                  {area.serviceRadiusKm && (
-                    <span>Radius: <b>{area.serviceRadiusKm} km</b></span>
-                  )}
-                </Box>
-              </Paper>
+                    <Box sx={{ display: "flex", gap: 1.5, color: "#64748b", fontSize: "0.8rem", flexWrap: "wrap", borderTop: "1px dashed #cbd5e1", pt: 1.5, mt: 1 }}>
+                      <span>City: <b>{area.city || "N/A"}</b></span>
+                      <span>Pincode: <b>{area.pincode || "N/A"}</b></span>
+                      {area.serviceRadiusKm && (
+                        <span>Radius: <b>{area.serviceRadiusKm} km</b></span>
+                      )}
+                    </Box>
+                  </Paper>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <Typography sx={{ color: "#64748b", fontSize: "0.9rem", mb: 4 }}>
-          No service areas added yet.
-        </Typography>
+          ) : (
+            <Typography sx={{ color: "#64748b", fontSize: "0.9rem", mb: 4 }}>
+              No service areas added yet.
+            </Typography>
+          )}
+        </>
       )}
 
       <Divider sx={{ mb: 4 }} />
@@ -479,7 +547,7 @@ export default function PurohitProfileCard({
       </Typography>
 
       <Grid container spacing={2}>
-        {(profile.aadhaarDocUrl || profile.panDocUrl) && (
+        {profile.aadhaarDocUrl && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Box
               sx={{
@@ -494,26 +562,22 @@ export default function PurohitProfileCard({
             >
               <Box>
                 <Typography sx={{ fontWeight: 700, color: "#1e293b" }}>
-                  {profile.aadhaarDocUrl ? "Aadhaar Card" : "PAN Card"}
+                  Aadhaar Card
                 </Typography>
                 <Typography sx={{ fontSize: "0.85rem", color: "#64748b", mt: 0.5 }}>
-                  {profile.aadhaarDocUrl ? (profile.aadhaarNumber || "Uploaded") : "Uploaded"}
+                  {profile.aadhaarNumber || "Uploaded"}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", gap: 1 }}>
                 <IconButton
-                  onClick={() => onPreviewDoc(profile.aadhaarDocUrl || profile.panDocUrl)}
+                  onClick={() => onPreviewDoc(profile.aadhaarDocUrl)}
                   sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
                 >
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   component="a"
-                  href={
-                    profile.aadhaarDocUrl
-                      ? (profile.aadhaarDocDownloadUrl || profile.aadhaarDocUrl)
-                      : (profile.panDocDownloadUrl || profile.panDocUrl)
-                  }
+                  href={profile.aadhaarDocDownloadUrl || profile.aadhaarDocUrl}
                   target="_blank"
                   download
                   sx={{ color: COLORS.PRIMARY, bgcolor: "#FFF0E6", "&:hover": { bgcolor: "#FFE0CC" } }}
@@ -525,7 +589,7 @@ export default function PurohitProfileCard({
           </Grid>
         )}
 
-        {!profile.aadhaarDocUrl && profile.panDocUrl && (
+        {profile.panDocUrl && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Box
               sx={{
@@ -585,7 +649,9 @@ export default function PurohitProfileCard({
                   Certificate
                 </Typography>
                 <Typography sx={{ fontSize: "0.85rem", color: "#64748b", mt: 0.5 }}>
-                  {profile.qualification || "Uploaded"}
+                  {formatQualification(profile.qualification) !== "N/A"
+                    ? formatQualification(profile.qualification)
+                    : "Uploaded"}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", gap: 1 }}>

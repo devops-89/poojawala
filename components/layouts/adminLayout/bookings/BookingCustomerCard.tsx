@@ -17,6 +17,8 @@ export default function BookingCustomerCard({
   booking,
   customerName,
 }: BookingCustomerCardProps) {
+  const isAstrology = booking?.bookingType === "ASTROLOGY";
+
   return (
     <Card
       elevation={0}
@@ -143,41 +145,43 @@ export default function BookingCustomerCard({
           </Typography>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            alignItems: "flex-start",
-          }}
-        >
-          <Typography
+        {!isAstrology && (
+          <Box
             sx={{
-              fontWeight: 500,
-              color: "#64748b",
-              minWidth: "80px",
               display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              mt: 0.2,
-              fontSize: "0.95rem",
+              flexWrap: "wrap",
+              gap: 1,
+              alignItems: "flex-start",
             }}
           >
-            <LocationOnIcon sx={{ fontSize: 16 }} /> Address:
-          </Typography>
-          <Typography
-            sx={{
-              fontWeight: 500,
-              color: "#334155",
-              flex: 1,
-              lineHeight: 1.5,
-            }}
-          >
-            {booking.customerAddress?.fullAddress ||
-              booking.addressSnapshot?.city ||
-              "Address unavailable"}
-          </Typography>
-        </Box>
+            <Typography
+              sx={{
+                fontWeight: 500,
+                color: "#64748b",
+                minWidth: "80px",
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                mt: 0.2,
+                fontSize: "0.95rem",
+              }}
+            >
+              <LocationOnIcon sx={{ fontSize: 16 }} /> Address:
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 500,
+                color: "#334155",
+                flex: 1,
+                lineHeight: 1.5,
+              }}
+            >
+              {booking.customerAddress?.fullAddress ||
+                booking.addressSnapshot?.city ||
+                "Address unavailable"}
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Card>
   );

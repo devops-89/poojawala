@@ -401,7 +401,7 @@ export function useBookings() {
   const handleMakePaymentClick = async (jobId: number) => {
     try {
       showLoader("Redirecting to payment...");
-      const callbackUrl = "https://poojawala.com/purohit/bookings";
+      const callbackUrl = "https://poojawala.com/partner/bookings";
       const res = await getPaymentLinkAPI(jobId, callbackUrl);
       if (res.success && res.data?.paymentUrl) {
         window.location.href = res.data.paymentUrl;
@@ -459,7 +459,7 @@ export function useBookings() {
     const fetchAvailableBookings = async () => {
       setIsFetchingBookings(true);
       try {
-        const response = await getAvailableBookingsAPI();
+        const response = await getAvailableBookingsAPI("POOJA");
         if (!isMounted) return;
         if (response?.data?.bookings) {
           const getPriceDisplay = (booking: any) => getBookingPurohitPayoutDisplay(booking);
@@ -506,7 +506,7 @@ export function useBookings() {
     const fetchActiveBookings = async () => {
       setIsFetchingBookings(true);
       try {
-        const response = await getActiveBookingAPI(activeStatus, activePage, 10);
+        const response = await getActiveBookingAPI(activeStatus, activePage, 10, "POOJA");
         if (!isMounted) return;
         if (response?.data?.bookings) {
           const getPriceDisplay = (booking: any) => getBookingPurohitPayoutDisplay(booking);

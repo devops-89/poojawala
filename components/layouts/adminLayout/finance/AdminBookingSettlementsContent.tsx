@@ -36,7 +36,7 @@ export default function AdminBookingSettlementsContent() {
   const fetchSettlements = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCompletedBookingsAPI(page + 1, rowsPerPage);
+      const res = await getCompletedBookingsAPI(page + 1, rowsPerPage, "POOJA");
       if (res.success && res.data?.bookings) {
         setSettlements(res.data.bookings);
         setTotalCount(

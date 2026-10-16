@@ -28,6 +28,8 @@ export default function BookingPaymentMatrix({
   isPaying,
   onInitiatePayout,
 }: BookingPaymentMatrixProps) {
+  const isAstrology = booking?.bookingType === "ASTROLOGY";
+
   const primaryAccount =
     booking.purohit?.bankAccounts?.find((acc: any) => acc.isPrimary) ||
     booking.purohit?.bankAccounts?.[0];
@@ -42,7 +44,11 @@ export default function BookingPaymentMatrix({
 
   // Customer booking payments list
   const customerPayments = Array.isArray(booking.payments)
-    ? booking.payments.filter((p: any) => p.paymentType === "BOOKING_PAYMENT")
+    ? booking.payments.filter(
+        (p: any) =>
+          p.paymentType === "BOOKING_PAYMENT" ||
+          p.paymentType === "ASTROLOGY_PAYMENT"
+      )
     : booking.bookingPayment
     ? [booking.bookingPayment]
     : [];
@@ -115,13 +121,13 @@ export default function BookingPaymentMatrix({
             fontFamily: FONTS.OUTFIT,
           }}
         >
-          Payment & Payout Matrix
+          {isAstrology ? "Payment Summary" : "Payment & Payout Matrix"}
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
         {/* Customer Payment */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: isAstrology ? 6 : 4 }}>
           <Paper
             sx={{
               p: 3,
@@ -437,7 +443,7 @@ export default function BookingPaymentMatrix({
         </Grid>
 
         {/* Platform Revenue */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: isAstrology ? 6 : 4 }}>
           <Paper
             sx={{
               p: 3,
@@ -522,21 +528,22 @@ export default function BookingPaymentMatrix({
           </Paper>
         </Grid>
 
-        {/* Purohit Payout */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              border: "2px solid",
-              borderColor:
-                booking.purohitPayoutStatus === "PAID" ? "#10b981" : "#e2e8f0",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
-            }}
-          >
+        {/* Purohit Payout - Hidden for Astrology bookings */}
+        {!isAstrology && (
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Paper
+              sx={{
+                p: 3,
+                borderRadius: 3,
+                border: "2px solid",
+                borderColor:
+                  booking.purohitPayoutStatus === "PAID" ? "#10b981" : "#e2e8f0",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+              }}
+            >
             <Box
               sx={{
                 display: "flex",
@@ -732,6 +739,7 @@ export default function BookingPaymentMatrix({
             </Box>
           </Paper>
         </Grid>
+        )}
       </Grid>
     </Card>
   );

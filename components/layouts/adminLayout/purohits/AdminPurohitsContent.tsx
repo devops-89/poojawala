@@ -157,6 +157,13 @@ export default function AdminPurohitsContent() {
             status: uiStatus,
             phone: formatPhoneNumber(u.phone, u.countryCode),
             appliedAt: new Date(u.createdAt).toLocaleDateString(),
+            isAdminCreated: Boolean(
+              u.isAdminCreated ??
+              u.is_admin_created ??
+              u.isadmincreated ??
+              profile.isAdminCreated ??
+              profile.is_admin_created
+            ),
           };
         });
         setPurohits(mapped);

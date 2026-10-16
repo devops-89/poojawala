@@ -164,7 +164,7 @@ export default function PurohitServiceDetailsAddForm({
               </Typography>
               <Button
                 variant="contained"
-                onClick={() => router.push("/purohit/my-services")}
+                onClick={() => router.push("/partner/my-services")}
                 sx={{
                   background: `${COLORS.PRIMARY} !important`,
                   color: `${COLORS.WHITE} !important`,

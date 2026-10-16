@@ -5,7 +5,10 @@ import { COLORS } from "@/utils/enums";
 import React from "react";
 import {
   Autocomplete,
+  AutocompleteRenderValueGetItemProps,
   Box,
+  Chip,
+  createFilterOptions,
   FormControlLabel,
   Grid,
   Switch,
@@ -18,6 +21,9 @@ import {
   QUALIFICATIONS,
   SPECIALIZATIONS,
 } from "@/components/layouts/portalLayout/register/constants";
+import { cleanItem } from "@/components/layouts/adminLayout/astrologers/EditAstrologerForm";
+
+const filter = createFilterOptions<string>();
 
 interface PurohitProfileSectionProps {
   values: any;
@@ -165,14 +171,32 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
             freeSolo
+            autoHighlight
             forcePopupIcon
             options={QUALIFICATIONS}
             value={values.qualification || ""}
-            onChange={(_, newValue) => {
-              setFieldValue("qualification", newValue || "");
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              const { inputValue } = params;
+              const trimmed = cleanItem(inputValue);
+              const isExisting = options.some(
+                (opt) => opt.toLowerCase() === trimmed.toLowerCase()
+              );
+              if (trimmed !== "" && !isExisting) {
+                filtered.push(trimmed);
+              }
+              return filtered;
             }}
-            onInputChange={(_, newInputValue) => {
-              setFieldValue("qualification", newInputValue || "");
+            onChange={(_, newValue) => {
+              const val = cleanItem(
+                typeof newValue === "string" ? newValue : newValue || ""
+              );
+              setFieldValue("qualification", val);
+            }}
+            onInputChange={(_, newInputValue, reason) => {
+              if (reason === "input") {
+                setFieldValue("qualification", cleanItem(newInputValue));
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -180,6 +204,7 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
                 fullWidth
                 name="qualification"
                 label="Qualification *"
+                placeholder="Select or type qualification and press Enter"
                 variant="outlined"
                 error={touched.qualification && Boolean(errors.qualification)}
                 helperText={
@@ -215,14 +240,67 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
 
         {/* Languages Multi-Select Dropdown */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Autocomplete<string, true>
+          <Autocomplete<string, true, false, true>
             multiple
+            freeSolo
+            autoHighlight
             forcePopupIcon
             options={LANGUAGES}
             value={values.languages || []}
-            onChange={(_, newValue) => {
-              setFieldValue("languages", newValue);
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              const { inputValue } = params;
+              const trimmed = cleanItem(inputValue);
+              const isExisting = options.some(
+                (opt) => opt.toLowerCase() === trimmed.toLowerCase()
+              );
+              const isAlreadySelected = (values.languages || []).some(
+                (val: string) => val.toLowerCase() === trimmed.toLowerCase()
+              );
+              if (trimmed !== "" && !isExisting && !isAlreadySelected) {
+                filtered.push(trimmed);
+              }
+              return filtered;
             }}
+            onChange={(_, newValue) => {
+              const cleaned = Array.from(
+                new Set(
+                  (newValue || [])
+                    .map((item: any) =>
+                      cleanItem(
+                        typeof item === "string"
+                          ? item
+                          : item?.value || item?.inputValue || String(item)
+                      )
+                    )
+                    .filter(Boolean)
+                )
+              );
+              setFieldValue("languages", cleaned);
+            }}
+            renderValue={(
+              value: readonly string[],
+              getItemProps: AutocompleteRenderValueGetItemProps<true>
+            ) =>
+              value.map((option: string, index: number) => {
+                const { key, ...tagProps } = getItemProps({ index });
+                return (
+                  <Chip
+                    key={key}
+                    label={cleanItem(option)}
+                    size="small"
+                    sx={{
+                      borderRadius: "6px",
+                      bgcolor: "#FFF7ED",
+                      borderColor: "#FFDBBD",
+                      color: COLORS.PRIMARY,
+                      fontWeight: 600,
+                    }}
+                    {...tagProps}
+                  />
+                );
+              })
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -230,7 +308,11 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
                 name="languages"
                 label="Languages Spoken *"
                 variant="outlined"
-                placeholder="Select languages"
+                placeholder={
+                  values.languages?.length
+                    ? ""
+                    : "Select or type language (e.g. Malayalam) and press Enter"
+                }
                 error={touched.languages && Boolean(errors.languages)}
                 helperText={touched.languages && (errors.languages as string)}
                 sx={{
@@ -243,14 +325,67 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
 
         {/* Specializations Multi-Select Dropdown */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Autocomplete<string, true>
+          <Autocomplete<string, true, false, true>
             multiple
+            freeSolo
+            autoHighlight
             forcePopupIcon
             options={SPECIALIZATIONS}
             value={values.specializations || []}
-            onChange={(_, newValue) => {
-              setFieldValue("specializations", newValue);
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              const { inputValue } = params;
+              const trimmed = cleanItem(inputValue);
+              const isExisting = options.some(
+                (opt) => opt.toLowerCase() === trimmed.toLowerCase()
+              );
+              const isAlreadySelected = (values.specializations || []).some(
+                (val: string) => val.toLowerCase() === trimmed.toLowerCase()
+              );
+              if (trimmed !== "" && !isExisting && !isAlreadySelected) {
+                filtered.push(trimmed);
+              }
+              return filtered;
             }}
+            onChange={(_, newValue) => {
+              const cleaned = Array.from(
+                new Set(
+                  (newValue || [])
+                    .map((item: any) =>
+                      cleanItem(
+                        typeof item === "string"
+                          ? item
+                          : item?.value || item?.inputValue || String(item)
+                      )
+                    )
+                    .filter(Boolean)
+                )
+              );
+              setFieldValue("specializations", cleaned);
+            }}
+            renderValue={(
+              value: readonly string[],
+              getItemProps: AutocompleteRenderValueGetItemProps<true>
+            ) =>
+              value.map((option: string, index: number) => {
+                const { key, ...tagProps } = getItemProps({ index });
+                return (
+                  <Chip
+                    key={key}
+                    label={cleanItem(option)}
+                    size="small"
+                    sx={{
+                      borderRadius: "6px",
+                      bgcolor: "#FFF7ED",
+                      borderColor: "#FFDBBD",
+                      color: COLORS.PRIMARY,
+                      fontWeight: 600,
+                    }}
+                    {...tagProps}
+                  />
+                );
+              })
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -258,7 +393,11 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
                 name="specializations"
                 label="Specializations *"
                 variant="outlined"
-                placeholder="Select specializations"
+                placeholder={
+                  values.specializations?.length
+                    ? ""
+                    : "Select or type specialization and press Enter"
+                }
                 error={
                   touched.specializations && Boolean(errors.specializations)
                 }

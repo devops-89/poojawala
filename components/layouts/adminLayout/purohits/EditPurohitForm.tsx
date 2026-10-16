@@ -27,10 +27,18 @@ import { PurohitProfileSection } from "./PurohitProfileSection";
 import { VerificationDocsSection } from "./VerificationDocsSection";
 import { ServiceAreasSection } from "./ServiceAreasSection";
 import { BankAccountsSection } from "./BankAccountsSection";
+import { cleanItem, parseList } from "../astrologers/EditAstrologerForm";
 
 interface EditPurohitFormProps {
   id: string | number;
 }
+
+const today = new Date();
+const twentyYearsAgo = new Date(
+  today.getFullYear() - 20,
+  today.getMonth(),
+  today.getDate()
+);
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string()
@@ -45,7 +53,17 @@ const validationSchema = Yup.object().shape({
     .required("Mobile Number is required")
     .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
     .trim(),
-  dob: Yup.mixed().required("Date of Birth is required"),
+  dob: Yup.string()
+    .required("Date of Birth is required")
+    .test(
+      "is-20-years-old",
+      "Purohit must be at least 20 years old",
+      (val) => {
+        if (!val) return false;
+        const selectedDate = new Date(val);
+        return !isNaN(selectedDate.getTime()) && selectedDate <= twentyYearsAgo;
+      }
+    ),
   bio: Yup.string()
     .trim()
     .required("Bio is required")
@@ -219,14 +237,14 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
               : null,
           profile: {
             bio: values.bio,
-            qualification: values.qualification ? [values.qualification] : [],
+            qualification: cleanItem(values.qualification) ? [cleanItem(values.qualification)] : [],
             experienceYears: Number(values.experienceYears || 0),
-            languages: Array.isArray(values.languages)
-              ? values.languages.join(",")
-              : values.languages,
-            specializations: Array.isArray(values.specializations)
-              ? values.specializations.join(",")
-              : values.specializations,
+            languages: Array.from(
+              new Set((values.languages || []).map(cleanItem).filter(Boolean))
+            ).join(","),
+            specializations: Array.from(
+              new Set((values.specializations || []).map(cleanItem).filter(Boolean))
+            ).join(","),
             aadhaarNumber: values.aadhaarNumber,
             city: values.city,
             state: values.state,
@@ -268,14 +286,14 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
 
           const profileObj: any = {
             bio: values.bio,
-            qualification: values.qualification ? [values.qualification] : [],
+            qualification: cleanItem(values.qualification) ? [cleanItem(values.qualification)] : [],
             experienceYears: Number(values.experienceYears || 0),
-            languages: Array.isArray(values.languages)
-              ? values.languages.join(",")
-              : values.languages,
-            specializations: Array.isArray(values.specializations)
-              ? values.specializations.join(",")
-              : values.specializations,
+            languages: Array.from(
+              new Set((values.languages || []).map(cleanItem).filter(Boolean))
+            ).join(","),
+            specializations: Array.from(
+              new Set((values.specializations || []).map(cleanItem).filter(Boolean))
+            ).join(","),
             aadhaarNumber: values.aadhaarNumber,
             city: values.city,
             state: values.state,
@@ -302,18 +320,23 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
 
           // Scalar fields for backend compatibility
           fd.append("bio", values.bio);
-          if (values.qualification) fd.append("qualification", values.qualification);
+          if (cleanItem(values.qualification))
+            fd.append("qualification", cleanItem(values.qualification));
           fd.append("experienceYears", String(values.experienceYears || 0));
           if (values.languages) {
             fd.append(
               "languages",
-              Array.isArray(values.languages) ? values.languages.join(",") : values.languages
+              Array.from(
+                new Set((values.languages || []).map(cleanItem).filter(Boolean))
+              ).join(",")
             );
           }
           if (values.specializations) {
             fd.append(
               "specializations",
-              Array.isArray(values.specializations) ? values.specializations.join(",") : values.specializations
+              Array.from(
+                new Set((values.specializations || []).map(cleanItem).filter(Boolean))
+              ).join(",")
             );
           }
           if (values.aadhaarNumber) fd.append("aadhaarNumber", values.aadhaarNumber);
@@ -441,33 +464,17 @@ export default function EditPurohitForm({ id }: EditPurohitFormProps) {
         setBankAccounts(bankAccountsList);
 
         // Process languages string or array
-        let parsedLangs: string[] = [];
-        if (Array.isArray(profile.languages)) {
-          parsedLangs = profile.languages;
-        } else if (typeof profile.languages === "string") {
-          parsedLangs = profile.languages
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter(Boolean);
-        }
+        const parsedLangs = parseList(profile.languages);
 
         // Process specializations string or array
-        let parsedSpecs: string[] = [];
-        if (Array.isArray(profile.specializations)) {
-          parsedSpecs = profile.specializations;
-        } else if (typeof profile.specializations === "string") {
-          parsedSpecs = profile.specializations
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter(Boolean);
-        }
+        const parsedSpecs = parseList(profile.specializations);
 
         // Process qualification
         let qual = "";
         if (Array.isArray(profile.qualification)) {
-          qual = profile.qualification[0] || "";
+          qual = cleanItem(profile.qualification[0] || "");
         } else if (profile.qualification) {
-          qual = String(profile.qualification);
+          qual = cleanItem(profile.qualification);
         }
 
         const combinedName = `${u.firstName || ""} ${u.lastName || ""}`.trim();

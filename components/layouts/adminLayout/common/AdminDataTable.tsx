@@ -80,7 +80,7 @@ export default function AdminDataTable<T = any>({
 
       {/* Table Container */}
       <TableContainer>
-        <Table sx={{ minWidth, tableLayout: 'fixed' }}>
+        <Table sx={{ minWidth, width: '100%', tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow sx={{ bgcolor: '#f8fafc' }}>
               {columns.map((col) => (

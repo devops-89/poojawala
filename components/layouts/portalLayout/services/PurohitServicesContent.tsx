@@ -120,7 +120,7 @@ export default function PurohitServicesContent() {
   }, [page, debouncedSearch, selectedCity, selectedState]);
 
   const handleCardClick = (serviceId: number, _isAlreadyAdded?: boolean) => {
-    router.push(`/purohit/services/${serviceId}`);
+    router.push(`/partner/services/${serviceId}`);
   };
 
   // Indian States & Cities calculation
@@ -150,8 +150,8 @@ export default function PurohitServicesContent() {
       <Box>
         <AppBreadcrumbs
           items={[
-            { label: "Dashboard", href: "/purohit/dashboard" },
-            { label: "My Services", href: "/purohit/my-services" },
+            { label: "Dashboard", href: "/partner/dashboard" },
+            { label: "My Services", href: "/partner/my-services" },
             { label: "Available Services" },
           ]}
         />

@@ -14,8 +14,8 @@ export default function AcceptedBookingsWidget() {
   useEffect(() => {
     const fetchAcceptedBookings = async () => {
       try {
-        // Fetch page 1, limit 5, status ACCEPTED
-        const res = await getAllBookingsByAdminAPI(1, 5, 'ACCEPTED');
+        // Fetch page 1, limit 5, status ACCEPTED, bookingType POOJA
+        const res = await getAllBookingsByAdminAPI(1, 5, 'ACCEPTED', undefined, 'POOJA');
         if (res.success && res.data?.bookings) {
           setBookings(res.data.bookings);
         } else if (res.data) {

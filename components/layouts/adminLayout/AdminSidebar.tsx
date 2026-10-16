@@ -72,11 +72,23 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
 
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon fontSize="small" />, path: "/admin/dashboard" },
-    { text: "Bookings", icon: <EventNoteIcon fontSize="small" />, path: "/admin/bookings" },
     {
-      text: "Purohits",
+      text: "Bookings",
+      icon: <EventNoteIcon fontSize="small" />,
+      path: "/admin/bookings",
+      children: [
+        { text: "Pooja Bookings", path: "/admin/bookings" },
+        { text: "Astrology Bookings", path: "/admin/astrology-bookings" },
+      ],
+    },
+    {
+      text: "Partners",
       icon: <SupervisorAccountIcon fontSize="small" />,
-      path: "/admin/purohits",
+      path: "/admin/partners",
+      children: [
+        { text: "Purohits", path: "/admin/purohits" },
+        { text: "Astrologers", path: "/admin/astrologers" },
+      ],
     },
     { text: "Customers", icon: <GroupsIcon fontSize="small" />, path: "/admin/users" },
     {
@@ -110,6 +122,19 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       path: "/admin/contact-messages",
     },
   ];
+
+  React.useEffect(() => {
+    menuItems.forEach((item: any) => {
+      if (
+        item.children &&
+        (pathname === item.path ||
+          pathname.startsWith(item.path) ||
+          item.children.some((c: any) => pathname === c.path || pathname.startsWith(c.path)))
+      ) {
+        setExpandedItems((prev) => ({ ...prev, [item.path]: true }));
+      }
+    });
+  }, [pathname]);
 
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
@@ -148,8 +173,11 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
         >
           {menuItems.map((item: any) => {
             const hasChildren = !!item.children && item.children.length > 0;
-            const isExactActive = pathname === item.path;
-            const isChildActive = hasChildren && pathname.startsWith(item.path);
+            const isExactActive = pathname === item.path && !hasChildren;
+            const isChildActive =
+              hasChildren &&
+              (pathname.startsWith(item.path) ||
+                item.children.some((c: any) => pathname === c.path || pathname.startsWith(c.path)));
             const active = isExactActive || isChildActive;
             const isExpanded = !!expandedItems[item.path];
 

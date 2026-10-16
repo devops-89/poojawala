@@ -172,7 +172,7 @@ export default function PurohitMyServicesContent() {
       <Box>
         <AppBreadcrumbs
           items={[
-            { label: "Dashboard", href: "/purohit/dashboard" },
+            { label: "Dashboard", href: "/partner/dashboard" },
             { label: "My Services" },
           ]}
         />
@@ -206,7 +206,7 @@ export default function PurohitMyServicesContent() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/purohit/services')}
+          onClick={() => router.push('/partner/services')}
           sx={{
             textTransform: 'none',
             borderRadius: '8px',
@@ -287,7 +287,7 @@ export default function PurohitMyServicesContent() {
                         <IconButton
                           size="small"
                           sx={{ color: COLORS.PRIMARY, mr: 0.5 }}
-                          onClick={() => router.push(`/purohit/services/${ps.serviceId || ps.service?.id || ps.id}`)}
+                          onClick={() => router.push(`/partner/services/${ps.serviceId || ps.service?.id || ps.id}`)}
                         >
                           <VisibilityIcon fontSize="small" />
                         </IconButton>
@@ -394,7 +394,7 @@ export default function PurohitMyServicesContent() {
                   size="small"
                   variant="outlined"
                   startIcon={<VisibilityIcon />}
-                  onClick={() => router.push(`/purohit/services/${ps.serviceId || ps.service?.id || ps.id}`)}
+                  onClick={() => router.push(`/partner/services/${ps.serviceId || ps.service?.id || ps.id}`)}
                   sx={{
                     borderRadius: '8px',
                     textTransform: 'none',

@@ -13,6 +13,16 @@ export const getActiveRole = (): string | null => {
   if (typeof window === "undefined") return null;
 
   try {
+    const activeRole = sessionStorage.getItem("activeRole");
+    if (activeRole) return activeRole.toUpperCase();
+  } catch (e) {}
+
+  try {
+    const roleStored = sessionStorage.getItem("role");
+    if (roleStored) return roleStored.toUpperCase();
+  } catch (e) {}
+
+  try {
     const userStr = sessionStorage.getItem("user");
     if (userStr) {
       const user = JSON.parse(userStr);
@@ -23,7 +33,31 @@ export const getActiveRole = (): string | null => {
   const path = window.location.pathname;
   if (path.startsWith("/admin")) return "ADMIN";
   if (path.startsWith("/purohit")) return "PUROHIT";
+  if (path.startsWith("/partner")) {
+    if (path.startsWith("/partner/astrologybookings")) return "ASTROLOGER";
+    try {
+      const u = JSON.parse(sessionStorage.getItem("user") || "{}");
+      if (u?.role) return String(u.role).toUpperCase();
+    } catch (e) {}
+    return "PUROHIT";
+  }
+  if (path.startsWith("/astrologer")) return "ASTROLOGER";
   if (path.startsWith("/customer")) return "CUSTOMER";
+
+  try {
+    if (sessionStorage.getItem("purohitcsrftoken") || localStorage.getItem("purohitcsrftoken") || sessionStorage.getItem("poojawala-purohit-csrf-token")) {
+      return "PUROHIT";
+    }
+    if (sessionStorage.getItem("astrologercsrftoken") || localStorage.getItem("astrologercsrftoken") || sessionStorage.getItem("poojawala-astrologer-csrf-token")) {
+      return "ASTROLOGER";
+    }
+    if (sessionStorage.getItem("admincsrftoken") || localStorage.getItem("admincsrftoken") || sessionStorage.getItem("poojawala-admin-csrf-token")) {
+      return "ADMIN";
+    }
+    if (sessionStorage.getItem("customercsrftoken") || localStorage.getItem("customercsrftoken") || sessionStorage.getItem("poojawala-customer-csrf-token")) {
+      return "CUSTOMER";
+    }
+  } catch (e) {}
 
   return null;
 };
@@ -59,6 +93,17 @@ export const saveRoleCsrfToken = (token: string | null, roleHint?: string | null
       localStorage.setItem("poojawala-purohit-csrf-token", token);
       localStorage.setItem("poojawalaPurohitCsrfToken", token);
     } catch (e) {}
+  } else if (role === "ASTROLOGER") {
+    try {
+      sessionStorage.setItem("astrologercsrftoken", token);
+      sessionStorage.setItem("astrologerCsrfToken", token);
+      sessionStorage.setItem("poojawala-astrologer-csrf-token", token);
+      sessionStorage.setItem("poojawalaAstrologerCsrfToken", token);
+      localStorage.setItem("astrologercsrftoken", token);
+      localStorage.setItem("astrologerCsrfToken", token);
+      localStorage.setItem("poojawala-astrologer-csrf-token", token);
+      localStorage.setItem("poojawalaAstrologerCsrfToken", token);
+    } catch (e) {}
   } else if (role === "CUSTOMER") {
     try {
       sessionStorage.setItem("customercsrftoken", token);
@@ -90,6 +135,10 @@ export const clearRoleCsrfToken = () => {
     sessionStorage.removeItem("purohitCsrfToken");
     sessionStorage.removeItem("poojawala-purohit-csrf-token");
     sessionStorage.removeItem("poojawalaPurohitCsrfToken");
+    sessionStorage.removeItem("astrologercsrftoken");
+    sessionStorage.removeItem("astrologerCsrfToken");
+    sessionStorage.removeItem("poojawala-astrologer-csrf-token");
+    sessionStorage.removeItem("poojawalaAstrologerCsrfToken");
 
     localStorage.removeItem("csrfToken");
     localStorage.removeItem("customercsrftoken");
@@ -104,6 +153,10 @@ export const clearRoleCsrfToken = () => {
     localStorage.removeItem("purohitCsrfToken");
     localStorage.removeItem("poojawala-purohit-csrf-token");
     localStorage.removeItem("poojawalaPurohitCsrfToken");
+    localStorage.removeItem("astrologercsrftoken");
+    localStorage.removeItem("astrologerCsrfToken");
+    localStorage.removeItem("poojawala-astrologer-csrf-token");
+    localStorage.removeItem("poojawalaAstrologerCsrfToken");
   } catch (e) {}
 };
 
@@ -155,6 +208,16 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
       lowerMap["poojawalapurohitcsrftoken"] ||
       lowerMap["poojawala-purohit-csrf-token"] ||
       null;
+  } else if (role === "ASTROLOGER") {
+    tokenFromCookie =
+      map["astrologercsrftoken"] ||
+      map["astrologerCsrfToken"] ||
+      lowerMap["astrologercsrftoken"] ||
+      map["poojawala-astrologer-csrf-token"] ||
+      map["poojawalaAstrologerCsrfToken"] ||
+      lowerMap["poojawalaastrologercsrftoken"] ||
+      lowerMap["poojawala-astrologer-csrf-token"] ||
+      null;
   } else if (role === "CUSTOMER") {
     tokenFromCookie =
       map["customercsrftoken"] ||
@@ -188,7 +251,7 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
         map["poojawalaAdminCsrfToken"] ||
         lowerMap["poojawalaadmincsrftoken"] ||
         null;
-    } else if (path.startsWith("/purohit")) {
+    } else if (path.startsWith("/purohit") || path.startsWith("/partner")) {
       tokenFromCookie =
         map["purohitcsrftoken"] ||
         map["purohitCsrfToken"] ||
@@ -196,6 +259,15 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
         map["poojawala-purohit-csrf-token"] ||
         map["poojawalaPurohitCsrfToken"] ||
         lowerMap["poojawalapurohitcsrftoken"] ||
+        null;
+    } else if (path.startsWith("/astrologer")) {
+      tokenFromCookie =
+        map["astrologercsrftoken"] ||
+        map["astrologerCsrfToken"] ||
+        lowerMap["astrologercsrftoken"] ||
+        map["poojawala-astrologer-csrf-token"] ||
+        map["poojawalaAstrologerCsrfToken"] ||
+        lowerMap["poojawalaastrologercsrftoken"] ||
         null;
     }
   }
@@ -218,6 +290,12 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
       lowerMap["purohitcsrftoken"] ||
       map["poojawala-purohit-csrf-token"] ||
       map["poojawalaPurohitCsrfToken"] ||
+      map["astrologercsrftoken"] ||
+      map["astrologerCsrfToken"] ||
+      lowerMap["astrologercsrftoken"] ||
+      map["poojawala-astrologer-csrf-token"] ||
+      map["poojawalaAstrologerCsrfToken"] ||
+      lowerMap["poojawalaastrologercsrftoken"] ||
       map["csrfToken"] ||
       map["csrftoken"] ||
       lowerMap["csrftoken"] ||
@@ -254,6 +332,13 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
       getStored("poojawala-purohit-csrf-token") ||
       getStored("poojawalaPurohitCsrfToken");
     if (purohitToken) return purohitToken;
+  } else if (role === "ASTROLOGER") {
+    const astrologerToken =
+      getStored("astrologercsrftoken") ||
+      getStored("astrologerCsrfToken") ||
+      getStored("poojawala-astrologer-csrf-token") ||
+      getStored("poojawalaAstrologerCsrfToken");
+    if (astrologerToken) return astrologerToken;
   } else if (role === "CUSTOMER") {
     const customerToken =
       getStored("customercsrftoken") ||
@@ -276,6 +361,10 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
     getStored("purohitCsrfToken") ||
     getStored("poojawala-purohit-csrf-token") ||
     getStored("poojawalaPurohitCsrfToken") ||
+    getStored("astrologercsrftoken") ||
+    getStored("astrologerCsrfToken") ||
+    getStored("poojawala-astrologer-csrf-token") ||
+    getStored("poojawalaAstrologerCsrfToken") ||
     getStored("csrfToken")
   );
 };
@@ -296,6 +385,12 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
     if (lowerMap["purohitcsrftoken"]) return lowerMap["purohitcsrftoken"];
     if (map["poojawala-purohit-csrf-token"]) return map["poojawala-purohit-csrf-token"];
     if (map["poojawalaPurohitCsrfToken"]) return map["poojawalaPurohitCsrfToken"];
+  } else if (role === "ASTROLOGER") {
+    if (map["astrologercsrftoken"]) return map["astrologercsrftoken"];
+    if (map["astrologerCsrfToken"]) return map["astrologerCsrfToken"];
+    if (lowerMap["astrologercsrftoken"]) return lowerMap["astrologercsrftoken"];
+    if (map["poojawala-astrologer-csrf-token"]) return map["poojawala-astrologer-csrf-token"];
+    if (map["poojawalaAstrologerCsrfToken"]) return map["poojawalaAstrologerCsrfToken"];
   } else if (role === "CUSTOMER") {
     if (map["customercsrftoken"]) return map["customercsrftoken"];
     if (map["customerCsrfToken"]) return map["customerCsrfToken"];
@@ -306,13 +401,22 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
 
   if (!res) return null;
   const target = res.data || res;
+  const headers = res.headers || {};
+  const innerData = target.data || {};
+  const innerTokens = target.tokens || {};
 
   if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
     const val =
+      headers.admincsrftoken ||
+      headers.adminCsrfToken ||
+      headers["poojawala-admin-csrf-token"] ||
+      headers["x-admin-csrf-token"] ||
       target.admincsrftoken ||
       target.adminCsrfToken ||
       target.poojawalaAdminCsrfToken ||
       target["poojawala-admin-csrf-token"] ||
+      innerData.admincsrftoken ||
+      innerData.adminCsrfToken ||
       res.admincsrftoken ||
       res.adminCsrfToken ||
       res.poojawalaAdminCsrfToken ||
@@ -320,21 +424,50 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
     if (val) return val;
   } else if (role === "PUROHIT") {
     const val =
+      headers.purohitcsrftoken ||
+      headers.purohitCsrfToken ||
+      headers["poojawala-purohit-csrf-token"] ||
+      headers["x-purohit-csrf-token"] ||
       target.purohitcsrftoken ||
       target.purohitCsrfToken ||
       target.poojawalaPurohitCsrfToken ||
       target["poojawala-purohit-csrf-token"] ||
+      innerData.purohitcsrftoken ||
+      innerData.purohitCsrfToken ||
       res.purohitcsrftoken ||
       res.purohitCsrfToken ||
       res.poojawalaPurohitCsrfToken ||
       res["poojawala-purohit-csrf-token"];
     if (val) return val;
+  } else if (role === "ASTROLOGER") {
+    const val =
+      headers.astrologercsrftoken ||
+      headers.astrologerCsrfToken ||
+      headers["poojawala-astrologer-csrf-token"] ||
+      headers["x-astrologer-csrf-token"] ||
+      target.astrologercsrftoken ||
+      target.astrologerCsrfToken ||
+      target.poojawalaAstrologerCsrfToken ||
+      target["poojawala-astrologer-csrf-token"] ||
+      innerData.astrologercsrftoken ||
+      innerData.astrologerCsrfToken ||
+      res.astrologercsrftoken ||
+      res.astrologerCsrfToken ||
+      res.poojawalaAstrologerCsrfToken ||
+      res["poojawala-astrologer-csrf-token"];
+    if (val) return val;
   } else if (role === "CUSTOMER") {
     const val =
+      headers.customercsrftoken ||
+      headers.customerCsrfToken ||
+      headers["poojawala-customer-csrf-token"] ||
+      headers["x-customer-csrf-token"] ||
       target.customercsrftoken ||
       target.customerCsrfToken ||
       target.poojawalaCustomerCsrfToken ||
       target["poojawala-customer-csrf-token"] ||
+      innerData.customercsrftoken ||
+      innerData.customerCsrfToken ||
       res.customercsrftoken ||
       res.customerCsrfToken ||
       res.poojawalaCustomerCsrfToken ||
@@ -343,6 +476,14 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
   }
 
   return (
+    headers["x-csrf-token"] ||
+    headers["X-CSRF-Token"] ||
+    headers.csrftoken ||
+    headers["csrf-token"] ||
+    headers.customercsrftoken ||
+    headers.admincsrftoken ||
+    headers.purohitcsrftoken ||
+    headers.astrologercsrftoken ||
     target.customercsrftoken ||
     target.customerCsrfToken ||
     target.poojawalaCustomerCsrfToken ||
@@ -352,7 +493,13 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
     target.purohitcsrftoken ||
     target.purohitCsrfToken ||
     target.poojawalaPurohitCsrfToken ||
+    target.astrologercsrftoken ||
+    target.astrologerCsrfToken ||
+    target.poojawalaAstrologerCsrfToken ||
     target.csrfToken ||
+    target.csrf ||
+    innerTokens.csrf ||
+    innerData.csrfToken ||
     res.customercsrftoken ||
     res.customerCsrfToken ||
     res.poojawalaCustomerCsrfToken ||
@@ -362,6 +509,9 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
     res.purohitcsrftoken ||
     res.purohitCsrfToken ||
     res.poojawalaPurohitCsrfToken ||
+    res.astrologercsrftoken ||
+    res.astrologerCsrfToken ||
+    res.poojawalaAstrologerCsrfToken ||
     res.csrfToken ||
     null
   );
@@ -405,6 +555,13 @@ export const attachCsrfHeaders = (headers: any, token?: string | null, roleHint?
     setHeader("poojawala-purohit-csrf-token", activeToken);
     setHeader("poojawalaPurohitCsrfToken", activeToken);
     setHeader("x-purohit-csrf-token", activeToken);
+  } else if (role === "ASTROLOGER") {
+    setHeader("astrologercsrftoken", activeToken);
+    setHeader("astrologerCsrfToken", activeToken);
+    setHeader("AstrologerCsrfToken", activeToken);
+    setHeader("poojawala-astrologer-csrf-token", activeToken);
+    setHeader("poojawalaAstrologerCsrfToken", activeToken);
+    setHeader("x-astrologer-csrf-token", activeToken);
   } else {
     setHeader("customercsrftoken", activeToken);
     setHeader("poojawala-customer-csrf-token", activeToken);
@@ -412,6 +569,8 @@ export const attachCsrfHeaders = (headers: any, token?: string | null, roleHint?
     setHeader("poojawala-admin-csrf-token", activeToken);
     setHeader("purohitcsrftoken", activeToken);
     setHeader("poojawala-purohit-csrf-token", activeToken);
+    setHeader("astrologercsrftoken", activeToken);
+    setHeader("poojawala-astrologer-csrf-token", activeToken);
   }
 };
 
@@ -452,6 +611,14 @@ const authPublicApi = axios.create({
   },
 });
 
+authPublicApi.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    attachRoleAndCsrfHeader(config);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 const userSecuredApi = axios.create({
   baseURL: SERVER_ENDPOINTS.USER_BASEURL,
   withCredentials: true,
@@ -475,6 +642,14 @@ const userPublicApi = axios.create({
     'ngrok-skip-browser-warning': 'true',
   },
 });
+
+userPublicApi.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    attachRoleAndCsrfHeader(config);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 const paymentSecuredApi = axios.create({
   baseURL: SERVER_ENDPOINTS.PAYMENT_BASEURL,
@@ -566,6 +741,12 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
           const currentRole = getActiveRole();
           const csrfToken = getCsrfToken(currentRole);
           const refreshHeaders: any = {};
+          if (currentRole) {
+            refreshHeaders["X-Role"] = currentRole;
+            refreshHeaders["role"] = currentRole;
+            refreshHeaders["x-role"] = currentRole;
+            refreshHeaders["Poojawala-Role"] = currentRole;
+          }
           if (csrfToken) {
             attachCsrfHeaders(refreshHeaders, csrfToken, currentRole);
           }
@@ -593,9 +774,16 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
         } catch (refreshError) {
           const typedError = refreshError as AxiosError | Error;
           processQueue(typedError, null);
-          clearRoleCsrfToken();
           if (typeof window !== "undefined") {
-            window.location.href = "/";
+            const path = window.location.pathname;
+            const isProtected =
+              path.startsWith("/admin") ||
+              path.startsWith("/partner") ||
+              path.startsWith("/customer");
+            if (isProtected) {
+              clearRoleCsrfToken();
+              window.location.href = path.startsWith("/admin") ? "/admin" : "/sign-in";
+            }
           }
           return Promise.reject(typedError);
         } finally {
@@ -610,3 +798,5 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
 setupResponseInterceptor(authSecuredApi);
 setupResponseInterceptor(userSecuredApi);
 setupResponseInterceptor(paymentSecuredApi);
+setupResponseInterceptor(authPublicApi);
+setupResponseInterceptor(userPublicApi);

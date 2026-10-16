@@ -120,7 +120,7 @@ function ComplaintsTable() {
     <Box sx={{ width: '100%', mt: 2 }}>
       <AppBreadcrumbs
         items={[
-          { label: "Dashboard", href: "/purohit/dashboard" },
+          { label: "Dashboard", href: "/partner/dashboard" },
           { label: "Get Support" },
         ]}
       />

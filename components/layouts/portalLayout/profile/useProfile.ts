@@ -14,6 +14,7 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
 import { validateBankForm, extractBackendErrorMessage } from "@/utils/helpers";
+import { cleanItem, parseList } from "@/components/layouts/adminLayout/astrologers/EditAstrologerForm";
 
 export function useProfile() {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
@@ -46,6 +47,7 @@ export function useProfile() {
   const [experienceYears, setExperienceYears] = useState("");
   const [isOnlineAvailable, setIsOnlineAvailable] = useState(true);
   const [isOfflineAvailable, setIsOfflineAvailable] = useState(false);
+  const [ratePerMinute, setRatePerMinute] = useState("");
 
   // --- Documents & Registration Info State ---
   const [aadhaarNumber, setAadhaarNumber] = useState("");
@@ -128,25 +130,19 @@ export function useProfile() {
       setState(p.state || profile.state || "");
 
       const rawLangs = p.languages || profile.languages;
-      const parsedLangs = Array.isArray(rawLangs)
-        ? rawLangs.map((l: any) => String(l).trim()).filter(Boolean)
-        : typeof rawLangs === "string"
-        ? rawLangs.split(",").map((l: string) => l.trim()).filter(Boolean)
-        : [];
-      setLanguages(parsedLangs);
+      setLanguages(parseList(rawLangs));
 
       const rawSpecs = p.specializations || p.specialization || profile.specializations;
-      const parsedSpecs = Array.isArray(rawSpecs)
-        ? rawSpecs.map((s: any) => String(s).trim()).filter(Boolean)
-        : typeof rawSpecs === "string"
-        ? rawSpecs.split(",").map((s: string) => s.trim()).filter(Boolean)
-        : [];
-      setSpecializations(parsedSpecs);
+      setSpecializations(parseList(rawSpecs));
 
-      setQualification(p.qualification || profile.qualification || "");
+      const rawQual = p.qualification || profile.qualification || "";
+      const cleanedQual = cleanItem(Array.isArray(rawQual) ? rawQual[0] || "" : String(rawQual));
+      setQualification(cleanedQual);
       setExperienceYears((p.experienceYears || profile.experienceYears) ? (p.experienceYears || profile.experienceYears).toString() : "");
       setIsOnlineAvailable(p.isOnlineAvailable ?? profile.isOnlineAvailable ?? true);
       setIsOfflineAvailable(p.isOfflineAvailable ?? profile.isOfflineAvailable ?? false);
+      const rawRate = p.ratePerMinute ?? profile.ratePerMinute;
+      setRatePerMinute(rawRate !== undefined && rawRate !== null ? String(rawRate) : "");
 
       setAadhaarNumber(p.aadhaarNumber || profile.aadhaarNumber || "");
       setAadhaarDocUrl(p.aadhaarDocUrl || profile.aadhaarDocUrl || null);
@@ -195,6 +191,41 @@ export function useProfile() {
     setSpecializations(typeof value === "string" ? value.split(",") : value);
   };
 
+  const role =
+    profile?.role ||
+    profile?.user?.role ||
+    (typeof window !== "undefined"
+      ? sessionStorage.getItem("role") ||
+      (() => {
+        try {
+          return JSON.parse(sessionStorage.getItem("user") || "{}")?.role;
+        } catch (e) {
+          return null;
+        }
+      })()
+      : null);
+  const isAstrologer = role === "ASTROLOGER";
+
+  const rawIsAdminCreated =
+    profile?.isAdminCreated !== undefined
+      ? profile.isAdminCreated
+      : profile?.is_admin_created !== undefined
+      ? profile.is_admin_created
+      : profile?.user?.isAdminCreated !== undefined
+      ? profile.user.isAdminCreated
+      : profile?.user?.is_admin_created !== undefined
+      ? profile.user.is_admin_created
+      : (typeof window !== "undefined" && (() => {
+          try {
+            const u = JSON.parse(sessionStorage.getItem("user") || "{}");
+            return u?.isAdminCreated ?? u?.is_admin_created ?? false;
+          } catch {
+            return false;
+          }
+        })());
+
+  const isAdminCreated = Boolean(rawIsAdminCreated);
+
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
@@ -206,14 +237,22 @@ export function useProfile() {
       formData.append("bio", bio);
       formData.append("city", city);
       formData.append("state", state);
-      formData.append("languages", languages.join(","));
-      formData.append("specializations", specializations.join(","));
-      formData.append("qualification", qualification);
+      const cleanLangs = Array.from(new Set(languages.map(cleanItem).filter(Boolean)));
+      const cleanSpecs = Array.from(new Set(specializations.map(cleanItem).filter(Boolean)));
+      formData.append("languages", cleanLangs.join(","));
+      formData.append("specializations", cleanSpecs.join(","));
+      formData.append("qualification", cleanItem(qualification));
       formData.append("experienceYears", experienceYears);
       formData.append("aadhaarNumber", aadhaarNumber);
 
-      formData.append("isOnlineAvailable", isOnlineAvailable ? "true" : "false");
-      formData.append("isOfflineAvailable", isOfflineAvailable ? "true" : "false");
+      if (isAstrologer) {
+        if (ratePerMinute) {
+          formData.append("ratePerMinute", ratePerMinute);
+        }
+      } else {
+        formData.append("isOnlineAvailable", isOnlineAvailable ? "true" : "false");
+        formData.append("isOfflineAvailable", isOfflineAvailable ? "true" : "false");
+      }
 
       if (profileImage) {
         const webpImage = await convertImageToWebP(profileImage);
@@ -557,6 +596,9 @@ export function useProfile() {
     experienceYears, setExperienceYears,
     isOnlineAvailable, setIsOnlineAvailable,
     isOfflineAvailable, setIsOfflineAvailable,
+    ratePerMinute, setRatePerMinute,
+    role, isAstrologer,
+    isAdminCreated,
     profileImage, setProfileImage,
     profileImageUrl,
 

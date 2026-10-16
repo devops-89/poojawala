@@ -142,20 +142,26 @@ export default function AddBookingCustomerSection({
             setFieldValue("serviceId", "");
             setFieldValue("purohitId", "");
           }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              placeholder="Search customer by name, email or phone"
-              error={touched.customerId && Boolean(errors.customerId)}
-              helperText={
-                touched.customerId ? (errors.customerId as string) : undefined
-              }
-              sx={{
-                "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-              }}
-            />
-          )}
+          renderInput={(params) => {
+            if (params.slotProps?.htmlInput) {
+              params.slotProps.htmlInput.autoComplete = "new-password";
+            }
+            return (
+              <TextField
+                {...params}
+                name="search_customer_input"
+                variant="outlined"
+                placeholder="Search customer..."
+                error={touched.customerId && Boolean(errors.customerId)}
+                helperText={
+                  touched.customerId ? (errors.customerId as string) : undefined
+                }
+                sx={{
+                  "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+                }}
+              />
+            );
+          }}
         />
       ) : (
         <Card

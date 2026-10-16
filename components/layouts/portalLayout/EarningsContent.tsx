@@ -265,7 +265,7 @@ export default function EarningsContent() {
       <Box>
         <AppBreadcrumbs
           items={[
-            { label: "Dashboard", href: "/purohit/dashboard" },
+            { label: "Dashboard", href: "/partner/dashboard" },
             { label: "Payouts & Earnings" },
           ]}
         />

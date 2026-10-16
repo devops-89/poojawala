@@ -10,17 +10,22 @@ import {
   FormControlLabel,
   Chip,
   FormHelperText,
-  AutocompleteRenderGetTagProps,
+  AutocompleteRenderValueGetItemProps,
+  createFilterOptions,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { FormikProps } from 'formik';
 import { State, City } from 'country-state-city';
 import { QUALIFICATIONS, LANGUAGES, SPECIALIZATIONS } from '../constants';
+import {
+  cleanItem,
+  ASTROLOGY_SPECIALIZATIONS,
+} from '@/components/layouts/adminLayout/astrologers/EditAstrologerForm';
 import { FONTS } from '@/utils/fonts';
-import { COLORS } from '@/utils/enums';
+import { COLORS, USER_ROLE } from '@/utils/enums';
 import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from '@/utils/helpers';
 
-const CustomAutocomplete = Autocomplete as any;
+const filter = createFilterOptions<string>();
 
 const fieldSx = {
   '& .MuiOutlinedInput-root': {
@@ -87,7 +92,11 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
           mb: 3,
         }}
       >
-        Purohit Profile
+        {formik.values.role === USER_ROLE.ASTROLOGER
+          ? 'Astrologer Profile'
+          : formik.values.role === USER_ROLE.PUROHIT
+          ? 'Purohit Profile'
+          : 'Professional Profile'}
       </Typography>
 
       <Grid container spacing={2.5}>
@@ -207,18 +216,33 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
         {/* Qualification */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
+            freeSolo
             openOnFocus
             autoHighlight
             forcePopupIcon
             size="small"
             options={QUALIFICATIONS}
-            value={formik.values.qualification || null}
-            onChange={(_, newValue) => {
-              formik.setFieldValue('qualification', newValue || '');
+            value={formik.values.qualification || ''}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              const { inputValue } = params;
+              const trimmed = cleanItem(inputValue);
+              const isExisting = options.some(
+                (opt) => opt.toLowerCase() === trimmed.toLowerCase()
+              );
+              if (trimmed !== '' && !isExisting) {
+                filtered.push(trimmed);
+              }
+              return filtered;
             }}
-            isOptionEqualToValue={(option, value) => {
-              if (!value) return false;
-              return option.toLowerCase().trim() === String(value).toLowerCase().trim();
+            onChange={(_, newValue) => {
+              const val = cleanItem(typeof newValue === 'string' ? newValue : newValue || '');
+              formik.setFieldValue('qualification', val);
+            }}
+            onInputChange={(_, newInputValue, reason) => {
+              if (reason === 'input') {
+                formik.setFieldValue('qualification', cleanItem(newInputValue));
+              }
             }}
             renderInput={(params: any) => (
               <TextField
@@ -227,7 +251,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 size="small"
                 name="qualification"
                 label="Qualification *"
-                placeholder="Select Qualification"
+                placeholder="Select or type qualification and press Enter"
                 variant="outlined"
                 error={
                   formik.touched.qualification &&
@@ -282,27 +306,54 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
 
         {/* Languages */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <CustomAutocomplete
+          <Autocomplete<string, true, false, true>
             multiple
+            freeSolo
+            autoHighlight
             openOnFocus
             forcePopupIcon
             size="small"
             options={LANGUAGES}
             value={formik.values.languages || []}
-            onChange={(_: any, newValue: any) => {
-              const validOnly = (newValue || []).filter((l: string) =>
-                LANGUAGES.includes(l)
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              const { inputValue } = params;
+              const trimmed = cleanItem(inputValue);
+              const isExisting = options.some(
+                (opt) => opt.toLowerCase() === trimmed.toLowerCase()
               );
-              formik.setFieldValue('languages', validOnly);
+              const isAlreadySelected = (formik.values.languages || []).some(
+                (val: string) => val.toLowerCase() === trimmed.toLowerCase()
+              );
+              if (trimmed !== '' && !isExisting && !isAlreadySelected) {
+                filtered.push(trimmed);
+              }
+              return filtered;
             }}
-            renderTags={(value: readonly string[], getTagProps: AutocompleteRenderGetTagProps) =>
+            onChange={(_: any, newValue: any) => {
+              const cleaned = Array.from(
+                new Set(
+                  (newValue || [])
+                    .map((item: any) =>
+                      cleanItem(
+                        typeof item === 'string'
+                          ? item
+                          : item?.value || item?.inputValue || String(item)
+                      )
+                    )
+                    .filter(Boolean)
+                )
+              );
+              formik.setFieldValue('languages', cleaned);
+            }}
+            renderValue={(value: readonly string[], getItemProps: AutocompleteRenderValueGetItemProps<true>) =>
               value.map((option: string, index: number) => {
-                const { key, ...tagProps } = getTagProps({ index });
+                const { key, ...tagProps } = getItemProps({ index });
                 return (
                   <Chip
-                    key={key || option + index}
+                    key={key}
                     variant="outlined"
-                    label={option}
+                    label={cleanItem(option)}
                     size="small"
                     sx={{
                       borderRadius: '6px',
@@ -326,7 +377,7 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 name="languages"
                 label="Languages *"
                 variant="outlined"
-                placeholder={formik.values.languages?.length ? '' : 'Select languages'}
+                placeholder={formik.values.languages?.length ? '' : 'Select or type language (e.g. Malayalam) and press Enter'}
                 error={
                   formik.touched.languages && Boolean(formik.errors.languages)
                 }
@@ -342,27 +393,54 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
 
         {/* Specializations */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <CustomAutocomplete
+          <Autocomplete<string, true, false, true>
             multiple
+            freeSolo
+            autoHighlight
             openOnFocus
             forcePopupIcon
             size="small"
-            options={SPECIALIZATIONS}
+            options={formik.values.role === USER_ROLE.ASTROLOGER ? ASTROLOGY_SPECIALIZATIONS : SPECIALIZATIONS}
             value={formik.values.specializations || []}
-            onChange={(_: any, newValue: any) => {
-              const validOnly = (newValue || []).filter((s: string) =>
-                SPECIALIZATIONS.includes(s)
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              const { inputValue } = params;
+              const trimmed = cleanItem(inputValue);
+              const isExisting = options.some(
+                (opt) => opt.toLowerCase() === trimmed.toLowerCase()
               );
-              formik.setFieldValue('specializations', validOnly);
+              const isAlreadySelected = (formik.values.specializations || []).some(
+                (val: string) => val.toLowerCase() === trimmed.toLowerCase()
+              );
+              if (trimmed !== '' && !isExisting && !isAlreadySelected) {
+                filtered.push(trimmed);
+              }
+              return filtered;
             }}
-            renderTags={(value: readonly string[], getTagProps: AutocompleteRenderGetTagProps) =>
+            onChange={(_: any, newValue: any) => {
+              const cleaned = Array.from(
+                new Set(
+                  (newValue || [])
+                    .map((s: any) =>
+                      cleanItem(
+                        typeof s === 'string'
+                          ? s
+                          : s?.value || s?.inputValue || String(s)
+                      )
+                    )
+                    .filter(Boolean)
+                )
+              );
+              formik.setFieldValue('specializations', cleaned);
+            }}
+            renderValue={(value: readonly string[], getItemProps: AutocompleteRenderValueGetItemProps<true>) =>
               value.map((option: string, index: number) => {
-                const { key, ...tagProps } = getTagProps({ index });
+                const { key, ...tagProps } = getItemProps({ index });
                 return (
                   <Chip
-                    key={key || option + index}
+                    key={key}
                     variant="outlined"
-                    label={option}
+                    label={cleanItem(option)}
                     size="small"
                     sx={{
                       borderRadius: '6px',
@@ -384,9 +462,9 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
                 fullWidth
                 size="small"
                 name="specializations"
-                label="Specializations *"
+                label={formik.values.role === USER_ROLE.ASTROLOGER ? "Specializations (Astrology) *" : "Specializations *"}
                 variant="outlined"
-                placeholder={formik.values.specializations?.length ? '' : 'Select specializations'}
+                placeholder={formik.values.specializations?.length ? '' : 'Select or type specializations and press Enter'}
                 error={
                   formik.touched.specializations &&
                   Boolean(formik.errors.specializations)
@@ -400,6 +478,36 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             )}
           />
         </Grid>
+
+        {/* Rate Per Minute (Only for Astrologer) */}
+        {formik.values.role === USER_ROLE.ASTROLOGER && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              size="small"
+              name="ratePerMinute"
+              label="Rate Per Minute (₹) *"
+              placeholder="e.g. 25.00"
+              variant="outlined"
+              value={formik.values.ratePerMinute || ''}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9.]/g, '');
+                const parts = val.split('.');
+                const sanitized = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : val;
+                formik.setFieldValue('ratePerMinute', sanitized);
+              }}
+              error={
+                formik.touched.ratePerMinute &&
+                Boolean(formik.errors.ratePerMinute)
+              }
+              helperText={
+                formik.touched.ratePerMinute &&
+                (formik.errors.ratePerMinute as string)
+              }
+              sx={fieldSx}
+            />
+          </Grid>
+        )}
 
         {/* Bio */}
         <Grid size={{ xs: 12 }}>
@@ -420,56 +528,58 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
           />
         </Grid>
 
-        {/* Availability */}
-        <Grid size={{ xs: 12 }}>
-          <Typography
-            sx={{
-              fontSize: '14px',
-              fontWeight: 600,
-              color:
-                !formik.values.isOnlineAvailable &&
-                !formik.values.isOfflineAvailable &&
-                (formik.submitCount > 0 || Boolean(formik.errors.isOfflineAvailable))
-                  ? '#d32f2f'
-                  : '#333',
-              mb: 0.5,
-            }}
-          >
-            Service Availability *
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(formik.values.isOnlineAvailable)}
-                  onChange={formik.handleChange}
-                  name="isOnlineAvailable"
-                  sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
-                />
-              }
-              label="Available for Online Pooja"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(formik.values.isOfflineAvailable)}
-                  onChange={formik.handleChange}
-                  name="isOfflineAvailable"
-                  sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
-                />
-              }
-              label="Available for Offline Pooja"
-            />
-          </Box>
-          {!formik.values.isOnlineAvailable &&
-            !formik.values.isOfflineAvailable &&
-            (formik.submitCount > 0 || Boolean(formik.errors.isOfflineAvailable)) && (
-              <FormHelperText error sx={{ ml: 0, mt: 0.5 }}>
-                {(formik.errors.isOfflineAvailable as string) ||
-                  'Select at least one availability mode (Online or Offline)'}
-              </FormHelperText>
-            )}
-        </Grid>
+        {/* Availability (Only for Purohit) */}
+        {formik.values.role !== USER_ROLE.ASTROLOGER && (
+          <Grid size={{ xs: 12 }}>
+            <Typography
+              sx={{
+                fontSize: '14px',
+                fontWeight: 600,
+                color:
+                  !formik.values.isOnlineAvailable &&
+                  !formik.values.isOfflineAvailable &&
+                  (formik.submitCount > 0 || Boolean(formik.errors.isOfflineAvailable))
+                    ? '#d32f2f'
+                    : '#333',
+                mb: 0.5,
+              }}
+            >
+              Service Availability *
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(formik.values.isOnlineAvailable)}
+                    onChange={formik.handleChange}
+                    name="isOnlineAvailable"
+                    sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
+                  />
+                }
+                label="Available for Online Pooja"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(formik.values.isOfflineAvailable)}
+                    onChange={formik.handleChange}
+                    name="isOfflineAvailable"
+                    sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
+                  />
+                }
+                label="Available for Offline Pooja"
+              />
+            </Box>
+            {!formik.values.isOnlineAvailable &&
+              !formik.values.isOfflineAvailable &&
+              (formik.submitCount > 0 || Boolean(formik.errors.isOfflineAvailable)) && (
+                <FormHelperText error sx={{ ml: 0, mt: 0.5 }}>
+                  {(formik.errors.isOfflineAvailable as string) ||
+                    'Select at least one availability mode (Online or Offline)'}
+                </FormHelperText>
+              )}
+          </Grid>
+        )}
       </Grid>
     </Box>
   );

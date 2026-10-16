@@ -87,7 +87,7 @@ export default function SignUpContent() {
         if (role === "CUSTOMER") {
           router.replace("/customer/dashboard");
         } else if (role === "PUROHIT") {
-          router.replace("/purohit/dashboard");
+          router.replace("/partner/dashboard");
         } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
           router.replace("/admin/dashboard");
         }

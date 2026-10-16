@@ -62,7 +62,10 @@ export default function VerifyOtpContent() {
           router.replace('/customer/dashboard');
           return;
         } else if (userObj?.role === 'PUROHIT') {
-          router.replace('/purohit/dashboard');
+          router.replace('/partner/dashboard');
+          return;
+        } else if (userObj?.role === 'ASTROLOGER') {
+          router.replace('/partner/astrologybookings');
           return;
         } else if (userObj?.role === 'ADMIN' || userObj?.role === 'SUPERADMIN') {
           router.replace('/admin/dashboard');

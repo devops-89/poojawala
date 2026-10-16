@@ -41,6 +41,15 @@ export const addPurohitByAdminAPI = async (data: any) => {
   }
 };
 
+export const addAstrologerByAdminAPI = async (data: any) => {
+  try {
+    const response = await userSecuredApi.post("/users/admin/add-astrologer", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const createCustomerByAdminAPI = async (data: any) => {
   try {
     const response = await userSecuredApi.post("/users/admin/create-customer", data);
@@ -78,7 +87,42 @@ export const getPurohitsAPI = async (
   }
 };
 
+export const getAstrologersAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  verificationStatus?: string,
+  status?: string,
+  city?: string
+) => {
+  try {
+    const params = new URLSearchParams({
+      role: 'ASTROLOGER',
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    if (search) params.append('search', search);
+    if (verificationStatus) params.append('verificationStatus', verificationStatus);
+    if (status) params.append('status', status);
+    if (city) params.append('city', city);
+
+    const response = await userSecuredApi.get(`/users/get?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getPurohitByIdAPI = async (id: string | number) => {
+  try {
+    const response = await userSecuredApi.get(`/users/get/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAstrologerByIdAPI = async (id: string | number) => {
   try {
     const response = await userSecuredApi.get(`/users/get/${id}`);
     return response.data;
@@ -137,7 +181,7 @@ export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMod
     params.append('verificationStatus', 'APPROVED');
     params.append('page', '1');
     params.append('limit', '100');
-    
+
     if (search) params.append('search', search);
     if (serviceId && !isNaN(Number(serviceId))) {
       params.append('serviceId', String(Number(serviceId)));
@@ -387,12 +431,35 @@ export const updateUserByAdminAPI = async (id: string | number, data: any) => {
     data,
     isFormData
       ? {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
       : undefined
   );
   return response.data;
 };
+
+export const getPlatformSettingsAPI = async () => {
+  try {
+    const response = await userSecuredApi.get("/users/platform-setting");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const upsertPlatformSettingAPI = async (data: {
+  key: string;
+  value: string | number;
+  description?: string;
+}) => {
+  try {
+    const response = await userSecuredApi.patch("/users/platform-upsert", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 

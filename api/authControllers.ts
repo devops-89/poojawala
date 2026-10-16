@@ -1,4 +1,4 @@
-import { authPublicApi, authSecuredApi, attachCsrfHeaders, getCsrfToken } from "./config";
+import { authPublicApi, authSecuredApi, attachCsrfHeaders, getCsrfToken, getActiveRole } from "./config";
 
 export const loginAPI = async (data: any) => {
   try {
@@ -38,26 +38,42 @@ export const resendOtpAPI = async (data: { email?: string; phone?: string; otpTy
 
 export const logoutAPI = async () => {
   try {
-    const csrfToken = getCsrfToken();
+    const role = getActiveRole();
+    const csrfToken = getCsrfToken(role);
     const headers: any = {};
+    if (role) {
+      headers["X-Role"] = role;
+      headers["role"] = role;
+      headers["x-role"] = role;
+      headers["Poojawala-Role"] = role;
+    }
     if (csrfToken) {
-      attachCsrfHeaders(headers, csrfToken);
+      attachCsrfHeaders(headers, csrfToken, role);
     }
     const res = await authSecuredApi.post("auth/logout", {}, { headers });
     return res.data;
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    // Gracefully handle 401 on logout (e.g. token already expired/invalid on server)
+    console.warn("Logout notice (session may already be expired on server):", error?.message);
+    return null;
   }
 };
 
 export const refreshTokenAPI = async () => {
   try {
-    const csrfToken = getCsrfToken();
+    const role = getActiveRole();
+    const csrfToken = getCsrfToken(role);
     const headers: any = {};
-    if (csrfToken) {
-      attachCsrfHeaders(headers, csrfToken);
+    if (role) {
+      headers["X-Role"] = role;
+      headers["role"] = role;
+      headers["x-role"] = role;
+      headers["Poojawala-Role"] = role;
     }
-    const res = await authSecuredApi.post("auth/refresh-token", {}, { headers });
+    if (csrfToken) {
+      attachCsrfHeaders(headers, csrfToken, role);
+    }
+    const res = await authPublicApi.post("auth/refresh-token", {}, { headers });
     return res.data;
   } catch (error) {
     throw error;

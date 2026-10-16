@@ -59,23 +59,23 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
   };
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/purohit/dashboard" },
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/partner/dashboard" },
     {
       text: "Pooja Bookings",
       icon: <AssignmentIcon />,
-      path: "/purohit/bookings",
+      path: "/partner/bookings",
     },
     {
       text: "Earnings",
       icon: <AccountBalanceWalletIcon />,
-      path: "/purohit/earnings",
+      path: "/partner/earnings",
     },
     {
       text: "My Services",
       icon: <LocalOfferIcon />,
-      path: "/purohit/my-services",
+      path: "/partner/my-services",
     },
-    { text: "Get Support", icon: <HelpIcon />, path: "/purohit/support" },
+    { text: "Get Support", icon: <HelpIcon />, path: "/partner/support" },
   ];
 
   return (
@@ -118,8 +118,8 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
         {menuItems.map((item: any) => {
           const isActive =
             pathname === item.path ||
-            (item.path === "/purohit/my-services" &&
-              pathname === "/purohit/services");
+            (item.path === "/partner/my-services" &&
+              pathname === "/partner/services");
           return (
             <ListItem key={item.text} disablePadding>
               <ListItemButton
@@ -233,7 +233,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
       >
         <MenuItem
           component={NextLink}
-          href="/purohit/profile"
+          href="/partner/profile"
           onClick={() => setAnchorEl(null)}
         >
           <ListItemIcon>

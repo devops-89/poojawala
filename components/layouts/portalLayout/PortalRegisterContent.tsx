@@ -1,6 +1,6 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+import { COLORS, USER_ROLE } from "@/utils/enums";
 import { extractBackendErrorMessage } from "@/utils/helpers";
 
 import { getMeAPI, resendOtpAPI } from "@/api/authControllers";
@@ -9,6 +9,7 @@ import {
   sendOtpAPI,
   verifyOtpAPI,
 } from "@/api/userControllers";
+import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
 import {
@@ -20,7 +21,7 @@ import {
   StepLabel,
   Stepper,
 } from "@mui/material";
-import { useFormik } from "formik";
+import { useFormik, yupToFormErrors } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -32,7 +33,12 @@ import Step2PurohitProfile from "./register/components/Step2PurohitProfile";
 import Step3BankDetails from "./register/components/Step3BankDetails";
 import Step4DocumentUpload from "./register/components/Step4DocumentUpload";
 import Step5ServiceArea from "./register/components/Step5ServiceArea";
-import { maxDobDate, steps, validationSchema } from "./register/constants";
+import {
+  maxDobDate,
+  getStepsForRole,
+  stepValidationSchemas,
+} from "./register/constants";
+import { cleanItem } from "@/components/layouts/adminLayout/astrologers/EditAstrologerForm";
 
 const DRAFT_STORAGE_KEY = "purohit_register_draft";
 
@@ -109,9 +115,13 @@ export default function PortalRegisterContent() {
     if (userStr) {
       try {
         const userObj = JSON.parse(userStr);
-        if (userObj.role === "PUROHIT") {
+        if (userObj.role === "PUROHIT" || userObj.role === "ASTROLOGER") {
           if (!userObj.isAdminCreated && !userObj.is_admin_created) {
-            router.replace("/purohit/dashboard");
+            if (userObj.role === "ASTROLOGER") {
+              router.replace("/partner/astrologybookings");
+            } else {
+              router.replace("/partner/dashboard");
+            }
           }
         } else if (userObj.role === "CUSTOMER") {
           router.replace("/customer/dashboard");
@@ -139,6 +149,7 @@ export default function PortalRegisterContent() {
 
   const formik = useFormik({
     initialValues: {
+      role: "",
       fullName: "",
       countryCode: "+91",
       mobileNumber: "",
@@ -157,12 +168,14 @@ export default function PortalRegisterContent() {
       specializations: [],
       isOnlineAvailable: true,
       isOfflineAvailable: true,
+      ratePerMinute: "",
       paymentMethod: "BANK",
       upiId: "",
       bankName: "",
       accountName: "",
       accountNumber: "",
       ifscCode: "",
+      identityDocType: "aadhaar",
       documents: {
         identityDoc: null,
         certificate: null,
@@ -181,9 +194,26 @@ export default function PortalRegisterContent() {
         serviceRadiusKm: 15,
       },
     },
-    validationSchema: validationSchema[activeStep],
+    validate: (values) => {
+      const stepList = getStepsForRole(values.role);
+      const safeStep = Math.min(activeStep, Math.max(0, stepList.length - 1));
+      const stepObj = stepList[safeStep] || stepList[0];
+      const schema = stepValidationSchemas[stepObj.id];
+      if (!schema) return {};
+      try {
+        schema.validateSync(values, { abortEarly: false, context: { role: values.role } });
+        return {};
+      } catch (err: any) {
+        return yupToFormErrors(err);
+      }
+    },
     onSubmit: async (values) => {
-      if (activeStep === 0) {
+      const stepList = getStepsForRole(values.role);
+      const safeStep = Math.min(activeStep, Math.max(0, stepList.length - 1));
+      const stepObj = stepList[safeStep] || stepList[0];
+      const isLastStep = safeStep === stepList.length - 1;
+
+      if (stepObj.id === "basic") {
         if (isOtpVerified && !checkOtpExpiration()) {
           setActiveStep(2);
           formik.setTouched({});
@@ -194,7 +224,7 @@ export default function PortalRegisterContent() {
           const res = await sendOtpAPI({
             phone: values.mobileNumber,
             email: values.email,
-            role: "PUROHIT",
+            role: values.role,
             countryCode: values.countryCode,
           });
           if (res.success || res.message) {
@@ -204,17 +234,13 @@ export default function PortalRegisterContent() {
           }
         } catch (error: any) {
           showSnackbar(extractBackendErrorMessage(error, "Failed to send OTP"), "error");
-
-
-
-
         } finally {
           setIsSendingOtp(false);
         }
         return;
       }
 
-      if (activeStep === 1) {
+      if (stepObj.id === "otp") {
         setIsVerifyingOtp(true);
         try {
           const otpStr = values.otp.join("");
@@ -227,7 +253,7 @@ export default function PortalRegisterContent() {
             phone: values.mobileNumber,
             email: values.email,
             otp: otpStr,
-            role: "PUROHIT",
+            role: values.role,
             countryCode: values.countryCode,
           });
           if (res.success || res.message) {
@@ -239,17 +265,13 @@ export default function PortalRegisterContent() {
           }
         } catch (error: any) {
           showSnackbar(extractBackendErrorMessage(error, "Invalid OTP"), "error");
-
-
-
-
         } finally {
           setIsVerifyingOtp(false);
         }
         return;
       }
 
-      if (activeStep === steps.length - 1) {
+      if (isLastStep) {
         if (checkOtpExpiration()) return;
         setIsSubmittingForm(true);
         try {
@@ -270,7 +292,7 @@ export default function PortalRegisterContent() {
           }
 
           fd.append("bio", values.bio);
-          fd.append("qualification", values.qualification);
+          fd.append("qualification", cleanItem(values.qualification));
           fd.append("experienceYears", values.experienceYears.toString());
           fd.append("aadhaarNumber", values.aadhaarNumber);
           fd.append("state", values.state);
@@ -290,10 +312,17 @@ export default function PortalRegisterContent() {
             }
           }
 
-          values.languages.forEach((l) => fd.append("languages", l as never));
-          values.specializations.forEach((s) =>
-            fd.append("specializations", s as never),
+          const cleanLangs = Array.from(
+            new Set((values.languages || []).map(cleanItem).filter(Boolean))
           );
+          cleanLangs.forEach((l) => fd.append("languages", l as never));
+
+          const cleanSpecs = Array.from(
+            new Set(
+              (values.specializations || []).map(cleanItem).filter(Boolean)
+            )
+          );
+          cleanSpecs.forEach((s) => fd.append("specializations", s as never));
 
           fd.append(
             "isOnlineAvailable",
@@ -304,21 +333,30 @@ export default function PortalRegisterContent() {
             values.isOfflineAvailable ? "true" : "false",
           );
 
-          fd.append("paymentMethod", values.paymentMethod);
-          if (values.paymentMethod === "UPI") {
-            fd.append("upiId", values.upiId);
-          } else {
-            fd.append("accountHolderName", values.accountName);
-            fd.append("accountNumber", values.accountNumber);
-            fd.append("ifscCode", values.ifscCode);
-            fd.append("bankName", values.bankName);
+          if (values.role === USER_ROLE.ASTROLOGER && values.ratePerMinute) {
+            fd.append("ratePerMinute", values.ratePerMinute.toString());
           }
 
-          if (values.documents.identityDoc)
+          if (values.role !== USER_ROLE.ASTROLOGER) {
+            fd.append("paymentMethod", values.paymentMethod);
+            if (values.paymentMethod === "UPI") {
+              fd.append("upiId", values.upiId);
+            } else {
+              fd.append("accountHolderName", values.accountName);
+              fd.append("accountNumber", values.accountNumber);
+              fd.append("ifscCode", values.ifscCode);
+              fd.append("bankName", values.bankName);
+            }
+          }
+
+          if (values.documents.identityDoc) {
+            const docField =
+              values.identityDocType === "pan" ? "panDoc" : "aadhaarDoc";
             fd.append(
-              "aadhaarDoc",
+              docField,
               await convertImageToWebP(values.documents.identityDoc),
             );
+          }
           if (values.documents.certificate)
             fd.append(
               "certificate",
@@ -335,39 +373,48 @@ export default function PortalRegisterContent() {
               await convertImageToWebP(values.documents.profilePhoto),
             );
 
-          const sa = values.serviceArea || {};
-          const serviceAreaObj = {
-            addressLabel: sa.addressLabel || "Primary Service Area",
-            streetName: sa.streetName || "",
-            fullAddress: sa.fullAddress || "",
-            city: sa.city || values.city || "",
-            state: sa.state || values.state || "",
-            pincode: sa.pincode || "",
-            latitude: Number(sa.latitude) || 0,
-            longitude: Number(sa.longitude) || 0,
-            serviceRadiusKm: Number(sa.serviceRadiusKm || 15),
-          };
+          if (values.role !== USER_ROLE.ASTROLOGER) {
+            const sa = values.serviceArea || {};
+            const serviceAreaObj = {
+              addressLabel: sa.addressLabel || "Primary Service Area",
+              streetName: sa.streetName || "",
+              fullAddress: sa.fullAddress || "",
+              city: sa.city || values.city || "",
+              state: sa.state || values.state || "",
+              pincode: sa.pincode || "",
+              latitude: Number(sa.latitude) || 0,
+              longitude: Number(sa.longitude) || 0,
+              serviceRadiusKm: Number(sa.serviceRadiusKm || 15),
+            };
 
-          fd.append("serviceArea", JSON.stringify(serviceAreaObj));
-          fd.append("serviceRadiusKm", serviceAreaObj.serviceRadiusKm.toString());
+            fd.append("serviceArea", JSON.stringify(serviceAreaObj));
+            fd.append("serviceRadiusKm", serviceAreaObj.serviceRadiusKm.toString());
+          }
 
           const res = await registerPurohitAPI(fd);
           if (res.success || res.message) {
             const token =
               res.tokens?.access?.token || res.token || res.accessToken;
-            try {
-              const meResponse = await getMeAPI(token);
-              sessionStorage.setItem(
-                "user",
-                JSON.stringify(
+            let userObj = res.user;
+            if (token) {
+              try {
+                const meResponse = await getMeAPI(token);
+                userObj =
                   meResponse?.user ||
-                    meResponse?.data ||
-                    meResponse ||
-                    res.user,
-                ),
-              );
-            } catch (e) {
-              sessionStorage.setItem("user", JSON.stringify(res.user));
+                  meResponse?.data ||
+                  meResponse ||
+                  res.user;
+              } catch (e) {
+                console.error("Error fetching user after register", e);
+              }
+            }
+            if (userObj) {
+              sessionStorage.setItem("user", JSON.stringify(userObj));
+            }
+            const activeRole = userObj?.role || res.user?.role || values.role;
+            const csrf = extractRoleCsrfToken(res, activeRole);
+            if (csrf) {
+              saveRoleCsrfToken(csrf, activeRole);
             }
             if (res.csrfToken) {
               sessionStorage.setItem("csrfToken", res.csrfToken);
@@ -379,7 +426,11 @@ export default function PortalRegisterContent() {
               console.error("Failed to remove draft", e);
             }
             showSnackbar("Registration successful!", "success");
-            router.replace("/purohit/dashboard");
+            if (activeRole === "ASTROLOGER") {
+              router.replace("/partner/astrologybookings");
+            } else {
+              router.replace("/partner/dashboard");
+            }
           }
         } catch (error: any) {
           const errMsg = extractBackendErrorMessage(error, "Registration failed");
@@ -422,8 +473,12 @@ export default function PortalRegisterContent() {
     if (userStr) {
       try {
         const userObj = JSON.parse(userStr);
-        if (userObj.role === "PUROHIT" && !(userObj.isAdminCreated || userObj.is_admin_created)) {
-          router.replace("/purohit/dashboard");
+        if ((userObj.role === "PUROHIT" || userObj.role === "ASTROLOGER") && !(userObj.isAdminCreated || userObj.is_admin_created)) {
+          if (userObj.role === "ASTROLOGER") {
+            router.replace("/partner/astrologybookings");
+          } else {
+            router.replace("/partner/dashboard");
+          }
           return;
         }
       } catch (e) {}
@@ -439,6 +494,7 @@ export default function PortalRegisterContent() {
           formik.setValues({
             ...formik.initialValues,
             ...parsed.values,
+            identityDocType: parsed.values.identityDocType || "aadhaar",
             otp: parsed.values.otp || ["", "", "", "", "", ""],
             documents: {
               identityDoc: null,
@@ -487,6 +543,8 @@ export default function PortalRegisterContent() {
     try {
       const draft = {
         values: {
+          role: formik.values.role,
+          ratePerMinute: formik.values.ratePerMinute,
           fullName: formik.values.fullName,
           countryCode: formik.values.countryCode,
           mobileNumber: formik.values.mobileNumber,
@@ -542,7 +600,7 @@ export default function PortalRegisterContent() {
       await sendOtpAPI({
         phone: formik.values.mobileNumber,
         email: formik.values.email,
-        role: "PUROHIT",
+        role: formik.values.role,
         countryCode: formik.values.countryCode,
       });
       showSnackbar("OTP resent successfully!", "success");
@@ -660,6 +718,14 @@ export default function PortalRegisterContent() {
     }
   };
 
+  const currentStepList = getStepsForRole(formik.values.role);
+  const safeActiveStep = Math.min(
+    activeStep,
+    Math.max(0, currentStepList.length - 1)
+  );
+  const currentStep = currentStepList[safeActiveStep] || currentStepList[0];
+  const isLastStep = safeActiveStep === currentStepList.length - 1;
+
   return (
     <Box
       sx={{
@@ -681,7 +747,7 @@ export default function PortalRegisterContent() {
           }}
         >
           <Stepper
-            activeStep={isAdminFlow ? activeStep - 2 : activeStep}
+            activeStep={isAdminFlow ? Math.max(0, safeActiveStep - 2) : safeActiveStep}
             alternativeLabel
             sx={{
               mb: 6,
@@ -690,33 +756,35 @@ export default function PortalRegisterContent() {
               "& .MuiStep-root": { cursor: "pointer" },
             }}
           >
-            {(isAdminFlow ? steps.slice(2) : steps).map((label, index) => {
-              const stepIdx = isAdminFlow ? index + 2 : index;
-              return (
-                <Step
-                  key={label}
-                  onClick={() => handleStepClick(stepIdx)}
-                  sx={{ cursor: "pointer" }}
-                >
-                  <StepLabel
-                    sx={{
-                      cursor: "pointer",
-                      "& .MuiStepLabel-label": {
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 600,
-                        cursor: "pointer",
-                      },
-                    }}
+            {(isAdminFlow ? currentStepList.slice(2) : currentStepList).map(
+              (stepItem, index) => {
+                const stepIdx = isAdminFlow ? index + 2 : index;
+                return (
+                  <Step
+                    key={stepItem.id}
+                    onClick={() => handleStepClick(stepIdx)}
+                    sx={{ cursor: "pointer" }}
                   >
-                    {label}
-                  </StepLabel>
-                </Step>
-              );
-            })}
+                    <StepLabel
+                      sx={{
+                        cursor: "pointer",
+                        "& .MuiStepLabel-label": {
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      {stepItem.label}
+                    </StepLabel>
+                  </Step>
+                );
+              },
+            )}
           </Stepper>
 
           <form onSubmit={handleStepSubmit}>
-            {activeStep === 0 && (
+            {currentStep.id === "basic" && (
               <Step0BasicDetails
                 formik={formik}
                 showPassword={showPassword}
@@ -727,7 +795,7 @@ export default function PortalRegisterContent() {
               />
             )}
 
-            {activeStep === 1 && (
+            {currentStep.id === "otp" && (
               <Step1OtpVerification
                 formik={formik}
                 resendTimer={resendTimer}
@@ -736,29 +804,36 @@ export default function PortalRegisterContent() {
               />
             )}
 
-            {activeStep === 2 && <Step2PurohitProfile formik={formik} />}
+            {currentStep.id === "profile" && (
+              <Step2PurohitProfile formik={formik} />
+            )}
 
-            {activeStep === 3 && <Step3BankDetails formik={formik} />}
+            {currentStep.id === "bank" && (
+              <Step3BankDetails formik={formik} />
+            )}
 
-            {activeStep === 4 && (
+            {currentStep.id === "documents" && (
               <Step4DocumentUpload
                 formik={formik}
                 setPreviewFile={setPreviewFile}
               />
             )}
 
-            {activeStep === 5 && <Step5ServiceArea formik={formik} />}
+            {currentStep.id === "serviceArea" && (
+              <Step5ServiceArea formik={formik} />
+            )}
 
             <Box
               sx={{
                 display: "flex",
-                justifyContent: activeStep === 0 ? "flex-end" : "space-between",
+                justifyContent:
+                  currentStep.id === "basic" ? "flex-end" : "space-between",
                 alignItems: "center",
                 width: "100%",
                 mt: 6,
               }}
             >
-              {activeStep > 0 && (
+              {safeActiveStep > 0 && (
                 <Button
                   disabled={isSendingOtp || isVerifyingOtp || isSubmittingForm}
                   onClick={handleBack}
@@ -771,7 +846,10 @@ export default function PortalRegisterContent() {
                     borderRadius: "30px",
                     px: 4,
                     boxShadow: "none",
-                    "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
+                    "&:hover": {
+                      background: COLORS.PRIMARY_DARK,
+                      boxShadow: "none",
+                    },
                     "&.Mui-disabled": {
                       background: "#FFE0D0",
                       color: "#FFA07A",
@@ -792,24 +870,27 @@ export default function PortalRegisterContent() {
                   borderRadius: "30px",
                   px: 4,
                   boxShadow: "none",
-                  "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
+                  "&:hover": {
+                    background: COLORS.PRIMARY_DARK,
+                    boxShadow: "none",
+                  },
                   "&.Mui-disabled": {
                     background: "#FFE0D0",
                     color: "#FFA07A",
                   },
                 }}
               >
-                {activeStep === steps.length - 1
+                {isLastStep
                   ? isSubmittingForm
                     ? "Submitting..."
                     : "Submit Registration"
-                  : activeStep === 0
+                  : currentStep.id === "basic"
                     ? isOtpVerified
                       ? "Next Step"
                       : isSendingOtp
                         ? "Sending OTP..."
                         : "Next Step"
-                    : activeStep === 1
+                    : currentStep.id === "otp"
                       ? isVerifyingOtp
                         ? "Verifying..."
                         : "Verify OTP"

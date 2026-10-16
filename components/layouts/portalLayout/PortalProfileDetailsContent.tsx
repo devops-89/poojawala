@@ -19,6 +19,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
+import { parseList, cleanItem } from '@/components/layouts/adminLayout/astrologers/EditAstrologerForm';
 
 const checkIsImage = (url: string) => {
   if (!url) return false;
@@ -38,6 +39,18 @@ const getPdfUrlWithParams = (url: string) => {
 
 export default function PortalProfileDetailsContent() {
   const { profile: profileData, fetchProfile } = useUserStore();
+  const isAstrologer =
+    profileData?.role === "ASTROLOGER" ||
+    profileData?.user?.role === "ASTROLOGER" ||
+    (typeof window !== "undefined" &&
+      (sessionStorage.getItem("role") === "ASTROLOGER" ||
+        (() => {
+          try {
+            return JSON.parse(sessionStorage.getItem("user") || "{}")?.role === "ASTROLOGER";
+          } catch (e) {
+            return false;
+          }
+        })()));
   const [loading, setLoading] = useState(true);
   const [docModalOpen, setDocModalOpen] = useState(false);
   const [currentDocUrl, setCurrentDocUrl] = useState('');
@@ -69,18 +82,10 @@ export default function PortalProfileDetailsContent() {
 
   const { profile, bankAccounts, purohitServices, serviceAreas } = profileData;
   const rawLangs = profile?.languages;
-  const languages = Array.isArray(rawLangs)
-    ? rawLangs.map((l: any) => String(l).trim()).filter(Boolean)
-    : typeof rawLangs === 'string'
-    ? rawLangs.split(',').map((l: string) => l.trim()).filter(Boolean)
-    : [];
+  const languages = parseList(rawLangs);
 
   const rawSpecs = profile?.specializations || profile?.specialization;
-  const specializations = Array.isArray(rawSpecs)
-    ? rawSpecs.map((s: any) => String(s).trim()).filter(Boolean)
-    : typeof rawSpecs === 'string'
-    ? rawSpecs.split(',').map((s: string) => s.trim()).filter(Boolean)
-    : [];
+  const specializations = parseList(rawSpecs);
 
   return (
     <Box>
@@ -88,7 +93,10 @@ export default function PortalProfileDetailsContent() {
         <Box>
           <AppBreadcrumbs
             items={[
-              { label: "Dashboard", href: "/purohit/dashboard" },
+              {
+                label: isAstrologer ? "Astrology Bookings" : "Dashboard",
+                href: isAstrologer ? "/partner/astrologybookings" : "/partner/dashboard",
+              },
               { label: "Profile" },
             ]}
           />
@@ -99,7 +107,7 @@ export default function PortalProfileDetailsContent() {
             View your complete public profile and contact information.
           </Typography>
         </Box>
-        <NextLink href="/purohit/profile/edit" passHref>
+        <NextLink href="/partner/profile/edit" passHref>
           <Button 
             variant="contained" 
             sx={{ 
@@ -130,10 +138,14 @@ export default function PortalProfileDetailsContent() {
             </Avatar>
             <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A', mb: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
               {profileData.firstName} {profileData.lastName}
-              {profile?.verificationStatus === 'APPROVED' && <VerifiedIcon sx={{ color: '#4CAF50', fontSize: 24 }} />}
+              {(profile?.verificationStatus === 'APPROVED' || profileData.verificationStatus === 'APPROVED') && <VerifiedIcon sx={{ color: '#4CAF50', fontSize: 24 }} />}
             </Typography>
-            <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', mb: 3, fontWeight: 500 }}>
-              {profile?.verificationStatus === 'APPROVED' ? 'Verified Partner' : 'Pending Verification'}
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', mb: 2, fontWeight: 500 }}>
+              {(profile?.verificationStatus === 'APPROVED' || profileData.verificationStatus === 'APPROVED')
+                ? (isAstrologer ? 'Verified Astrologer' : 'Verified Partner')
+                : (profile?.verificationStatus === 'REJECTED' || profileData.verificationStatus === 'REJECTED')
+                ? 'Verification Rejected'
+                : 'Pending Verification'}
             </Typography>
             
             <Divider sx={{ my: 2 }} />
@@ -155,10 +167,19 @@ export default function PortalProfileDetailsContent() {
                 </Typography>
               </Box>
             )}
+
+            {(profile?.city || profileData?.city) && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mt: 2 }}>
+                <LocationOnIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontWeight: 500, fontSize: '14px' }}>
+                  {[profile?.city || profileData?.city, profile?.state || profileData?.state].filter(Boolean).join(', ')}
+                </Typography>
+              </Box>
+            )}
           </Paper>
 
-          {/* Bank Details Card */}
-          {bankAccounts && bankAccounts.length > 0 && (
+          {/* Bank Details Card (Only for Purohit) */}
+          {!isAstrologer && bankAccounts && bankAccounts.length > 0 && (
             <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                 <AccountBalanceIcon sx={{ color: COLORS.PRIMARY }} />
@@ -209,26 +230,28 @@ export default function PortalProfileDetailsContent() {
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {(profile?.aadhaarDocUrl || profile?.panDocUrl) && (
+              {profile?.aadhaarDocUrl && (
                 <Button 
                   variant="outlined" 
-                  onClick={() => handleOpenDoc(profile.aadhaarDocUrl || profile.panDocUrl)} 
+                  onClick={() => handleOpenDoc(profile.aadhaarDocUrl)} 
                   sx={{ justifyContent: 'space-between', textTransform: 'none', color: '#1A1A1A', borderColor: '#eee', borderRadius: '8px' }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" /> {profile?.aadhaarDocUrl ? 'Aadhaar Card' : 'PAN Card'}
+                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" />
+                    {profile?.aadhaarNumber ? `Aadhaar Card (${profile.aadhaarNumber})` : 'Aadhaar Card'}
                   </Box>
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
               )}
-              {false && profile?.panDocUrl && (
+              {profile?.panDocUrl && (
                 <Button 
                   variant="outlined" 
                   onClick={() => handleOpenDoc(profile.panDocUrl)} 
                   sx={{ justifyContent: 'space-between', textTransform: 'none', color: '#1A1A1A', borderColor: '#eee', borderRadius: '8px' }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" /> PAN Card
+                    <DescriptionIcon sx={{ mr: 1, color: COLORS.PRIMARY }} fontSize="small" />
+                    PAN Card
                   </Box>
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
@@ -245,7 +268,7 @@ export default function PortalProfileDetailsContent() {
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
               )}
-              {profile?.templeAffiliationProofUrl && (
+              {!isAstrologer && profile?.templeAffiliationProofUrl && (
                 <Button 
                   variant="outlined" 
                   onClick={() => handleOpenDoc(profile.templeAffiliationProofUrl)} 
@@ -257,7 +280,7 @@ export default function PortalProfileDetailsContent() {
                   <VisibilityIcon fontSize="small" sx={{ color: '#999' }} />
                 </Button>
               )}
-              {!profile?.aadhaarDocUrl && !profile?.panDocUrl && !profile?.certificateUrl && !profile?.templeAffiliationProofUrl && (
+              {!profile?.aadhaarDocUrl && !profile?.panDocUrl && !profile?.certificateUrl && (!isAstrologer ? !profile?.templeAffiliationProofUrl : true) && (
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No documents uploaded.</Typography>
               )}
             </Box>
@@ -271,7 +294,7 @@ export default function PortalProfileDetailsContent() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
               <WorkIcon sx={{ color: COLORS.PRIMARY }} />
               <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
-                Professional Profile
+                {isAstrologer ? 'Astrologer Profile' : 'Professional Profile'}
               </Typography>
             </Box>
 
@@ -284,19 +307,39 @@ export default function PortalProfileDetailsContent() {
 
             <Divider sx={{ my: 3 }} />
 
-            <Grid container spacing={4} sx={{ mb: 4 }}>
-              <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid size={{ xs: 12, sm: isAstrologer ? 4 : 6 }}>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Qualifications</Typography>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>
-                  {profile?.qualification || 'N/A'}
+                  {Array.isArray(profile?.qualification)
+                    ? profile.qualification.join(", ")
+                    : (profile?.qualification || 'N/A')}
                 </Typography>
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ xs: 12, sm: isAstrologer ? 4 : 6 }}>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Experience</Typography>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>
                   {profile?.experienceYears ? `${profile.experienceYears} Years` : 'N/A'}
                 </Typography>
               </Grid>
+              {isAstrologer && (
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Consultation Rate</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.PRIMARY, fontWeight: 800, fontSize: '20px' }}>
+                      ₹{profile?.ratePerMinute || '0.00'}
+                    </Typography>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '13px', fontWeight: 500 }}>
+                      / min
+                    </Typography>
+                  </Box>
+                  {profile?.commissionPrice && (
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#888', fontSize: '12px', mt: 0.5 }}>
+                      Commission: ₹{profile.commissionPrice}
+                    </Typography>
+                  )}
+                </Grid>
+              )}
             </Grid>
             
             <Divider sx={{ my: 3 }} />
@@ -305,7 +348,7 @@ export default function PortalProfileDetailsContent() {
               <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>Languages Spoken</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {languages.length > 0 ? languages.map((lang: string, idx: number) => (
-                  <Chip key={idx} label={lang} sx={{ bgcolor: '#FFF0E6', color: COLORS.PRIMARY, fontWeight: 600, fontFamily: FONTS.OUTFIT, textTransform: 'capitalize' }} />
+                  <Chip key={idx} label={cleanItem(lang)} sx={{ bgcolor: '#FFF0E6', color: COLORS.PRIMARY, fontWeight: 600, fontFamily: FONTS.OUTFIT, textTransform: 'capitalize' }} />
                 )) : (
                   <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>N/A</Typography>
                 )}
@@ -313,10 +356,12 @@ export default function PortalProfileDetailsContent() {
             </Box>
 
             <Box>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>Specialized Rituals</Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1.5, textTransform: 'uppercase' }}>
+                {isAstrologer ? 'Astrology Specializations' : 'Specialized Rituals'}
+              </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {specializations.length > 0 ? specializations.map((spec: string, idx: number) => (
-                  <Chip key={idx} label={spec} sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 600, fontFamily: FONTS.OUTFIT, textTransform: 'capitalize' }} />
+                  <Chip key={idx} label={cleanItem(spec)} sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 600, fontFamily: FONTS.OUTFIT, textTransform: 'capitalize' }} />
                 )) : (
                   <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>N/A</Typography>
                 )}
@@ -324,7 +369,8 @@ export default function PortalProfileDetailsContent() {
             </Box>
           </Paper>
 
-          {/* Purohit Services Card */}
+          {/* Purohit Services Card (Only for Purohit) */}
+          {!isAstrologer && (
           <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mt: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
               <AssignmentIcon sx={{ color: COLORS.PRIMARY }} />
@@ -414,41 +460,44 @@ export default function PortalProfileDetailsContent() {
               <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No services added yet.</Typography>
             )}
           </Paper>
+        )}
 
           {/* Service Areas Card */}
-          <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mt: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-              <LocationOnIcon sx={{ color: COLORS.PRIMARY }} />
-              <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
-                Service Areas
-              </Typography>
-            </Box>
+          {!isAstrologer && (
+            <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mt: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                <LocationOnIcon sx={{ color: COLORS.PRIMARY }} />
+                <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A' }}>
+                  Service Areas
+                </Typography>
+              </Box>
 
-            {serviceAreas && serviceAreas.length > 0 ? (
-              <Grid container spacing={2}>
-                {serviceAreas.map((area: any) => (
-                  <Grid size={{ xs: 12 }} key={area.id}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, p: 2, borderRadius: '12px', border: '1px solid #eee' }}>
-                      <LocationOnIcon sx={{ color: COLORS.PRIMARY, mt: 0.5 }} fontSize="small" />
-                      <Box>
-                        <Typography component="div" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 1 }}>
-                          {area.addressLabel} {area.isDefault && <Chip label="Default" size="small" sx={{ bgcolor: '#FFF0E6', color: COLORS.PRIMARY, fontSize: '10px', height: '20px' }} />}
-                        </Typography>
-                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', color: '#666', mt: 0.5 }}>
-                          {area.fullAddress}
-                        </Typography>
-                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#999', mt: 0.5 }}>
-                          {area.city}, {area.pincode}
-                        </Typography>
+              {serviceAreas && serviceAreas.length > 0 ? (
+                <Grid container spacing={2}>
+                  {serviceAreas.map((area: any) => (
+                    <Grid size={{ xs: 12 }} key={area.id}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, p: 2, borderRadius: '12px', border: '1px solid #eee' }}>
+                        <LocationOnIcon sx={{ color: COLORS.PRIMARY, mt: 0.5 }} fontSize="small" />
+                        <Box>
+                          <Typography component="div" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 1 }}>
+                            {area.addressLabel} {area.isDefault && <Chip label="Default" size="small" sx={{ bgcolor: '#FFF0E6', color: COLORS.PRIMARY, fontSize: '10px', height: '20px' }} />}
+                          </Typography>
+                          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', color: '#666', mt: 0.5 }}>
+                            {area.fullAddress}
+                          </Typography>
+                          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#999', mt: 0.5 }}>
+                            {area.city}, {area.pincode}
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
-            ) : (
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No service areas added.</Typography>
-            )}
-          </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '14px' }}>No service areas added.</Typography>
+              )}
+            </Paper>
+          )}
         </Grid>
 
       </Grid>

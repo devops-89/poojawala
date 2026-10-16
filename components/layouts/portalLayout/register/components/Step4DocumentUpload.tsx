@@ -77,7 +77,8 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
               <Paper
                 sx={{
                   p: 2.5,
-                  height: '230px',
+                  minHeight: '250px',
+                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -169,18 +170,110 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                   )}
                 </Box>
 
-                {/* Title */}
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    fontWeight: 700,
-                    fontSize: '15px',
-                    color: COLORS.DARK,
-                    mb: 0.5,
-                  }}
-                >
-                  {doc.title}
-                </Typography>
+                {/* Title & Document Type Toggle */}
+                {doc.id === 'identityDoc' ? (
+                  <Box sx={{ mb: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        bgcolor: '#F1F5F9',
+                        p: '3px',
+                        borderRadius: '24px',
+                        border: '1px solid #E2E8F0',
+                        mb: 1,
+                      }}
+                    >
+                      <Button
+                        size="small"
+                        type="button"
+                        onClick={() => formik.setFieldValue('identityDocType', 'aadhaar')}
+                        sx={{
+                          borderRadius: '20px',
+                          px: 1.8,
+                          py: 0.3,
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          fontFamily: FONTS.OUTFIT,
+                          textTransform: 'none',
+                          boxShadow: 'none',
+                          bgcolor:
+                            (formik.values.identityDocType || 'aadhaar') === 'aadhaar'
+                              ? COLORS.PRIMARY
+                              : 'transparent',
+                          color:
+                            (formik.values.identityDocType || 'aadhaar') === 'aadhaar'
+                              ? '#fff'
+                              : '#64748B',
+                          '&:hover': {
+                            bgcolor:
+                              (formik.values.identityDocType || 'aadhaar') === 'aadhaar'
+                                ? COLORS.PRIMARY_DARK
+                                : 'rgba(0,0,0,0.04)',
+                            boxShadow: 'none',
+                          },
+                        }}
+                      >
+                        Aadhaar Card
+                      </Button>
+                      <Button
+                        size="small"
+                        type="button"
+                        onClick={() => formik.setFieldValue('identityDocType', 'pan')}
+                        sx={{
+                          borderRadius: '20px',
+                          px: 1.8,
+                          py: 0.3,
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          fontFamily: FONTS.OUTFIT,
+                          textTransform: 'none',
+                          boxShadow: 'none',
+                          bgcolor:
+                            formik.values.identityDocType === 'pan'
+                              ? COLORS.PRIMARY
+                              : 'transparent',
+                          color:
+                            formik.values.identityDocType === 'pan'
+                              ? '#fff'
+                              : '#64748B',
+                          '&:hover': {
+                            bgcolor:
+                              formik.values.identityDocType === 'pan'
+                                ? COLORS.PRIMARY_DARK
+                                : 'rgba(0,0,0,0.04)',
+                            boxShadow: 'none',
+                          },
+                        }}
+                      >
+                        PAN Card
+                      </Button>
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 700,
+                        fontSize: '15px',
+                        color: COLORS.DARK,
+                      }}
+                    >
+                      {formik.values.identityDocType === 'pan'
+                        ? 'PAN Card *'
+                        : 'Aadhaar Card *'}
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 700,
+                      fontSize: '15px',
+                      color: COLORS.DARK,
+                      mb: 0.5,
+                    }}
+                  >
+                    {doc.title}
+                  </Typography>
+                )}
 
                 {/* Subtitle / Filename */}
                 <Typography

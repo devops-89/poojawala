@@ -51,6 +51,7 @@ interface DocumentsTabProps {
   rejectionReason: string | null;
   saving: boolean;
   onSave: () => void;
+  isAstrologer?: boolean;
 }
 
 export const DocumentsTab: React.FC<DocumentsTabProps> = ({
@@ -72,6 +73,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
   rejectionReason,
   saving,
   onSave,
+  isAstrologer = false,
 }) => {
   const [previewItem, setPreviewItem] = React.useState<{
     title: string;
@@ -156,34 +158,49 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
     }
   };
 
+  const [idType, setIdType] = React.useState<"aadhaar" | "pan">(() => {
+    if (panDocUrl && !aadhaarDocUrl) return "pan";
+    return "aadhaar";
+  });
+
   const docConfigs = [
     {
-      id: "aadhaarDoc",
-      title: "Aadhaar / PAN Card Document",
-      desc: "Upload front & back scan of your Aadhaar card or PAN card.",
+      id: idType === "pan" ? "panDoc" : "aadhaarDoc",
+      isIdentityDoc: true,
+      title: idType === "pan" ? "PAN Card Document" : "Aadhaar Card Document",
+      desc:
+        idType === "pan"
+          ? "Upload clear front scan of your PAN card."
+          : "Upload front & back scan of your Aadhaar card.",
       icon: <BadgeIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
-      file: aadhaarDoc || panDoc,
-      setFile: setAadhaarDoc,
-      url: aadhaarDocUrl || panDocUrl,
+      file: idType === "pan" ? panDoc : aadhaarDoc,
+      setFile: idType === "pan" ? setPanDoc : setAadhaarDoc,
+      url: idType === "pan" ? panDocUrl : aadhaarDocUrl,
     },
     {
       id: "certificate",
       title: "Qualification / Degree Certificate",
-      desc: "Upload Shastri / Acharya / Ph.D Sanskrit degree certificate.",
+      desc: isAstrologer
+        ? "Upload your Astrology or Acharya / Shastri degree certificate."
+        : "Upload Shastri / Acharya / Ph.D Sanskrit degree certificate.",
       icon: <SchoolIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
       file: certificateDoc,
       setFile: setCertificateDoc,
       url: certificateUrl,
     },
-    {
-      id: "templeAffiliationProof",
-      title: "Temple / Vedic Sansthan Proof",
-      desc: "Upload proof of temple affiliation or gurukul certification.",
-      icon: <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
-      file: templeAffiliationProofDoc,
-      setFile: setTempleAffiliationProofDoc,
-      url: templeAffiliationProofUrl,
-    },
+    ...(!isAstrologer
+      ? [
+          {
+            id: "templeAffiliationProof",
+            title: "Temple / Vedic Sansthan Proof",
+            desc: "Upload proof of temple affiliation or gurukul certification.",
+            icon: <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
+            file: templeAffiliationProofDoc,
+            setFile: setTempleAffiliationProofDoc,
+            url: templeAffiliationProofUrl,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -217,7 +234,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
               mt: 0.5,
             }}
           >
-            Upload official identification & qualification documents to maintain verified Purohit status.
+            Upload official identification & qualification documents to maintain verified {isAstrologer ? "Astrologer" : "Purohit"} status.
           </Typography>
         </Box>
         {getStatusChip()}
@@ -245,13 +262,22 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
           <Grid size={{ xs: 12, md: 8 }}>
             <TextField
               fullWidth
-              label="Aadhaar / Identity Number"
+              label="Aadhaar Card Number"
               value={aadhaarNumber}
-              onChange={(e) => setAadhaarNumber(e.target.value)}
-              placeholder="Enter 12-digit Aadhaar Number or Identity Number"
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 12);
+                setAadhaarNumber(val);
+              }}
+              placeholder="Enter 12-digit Aadhaar Number"
               slotProps={{
                 htmlInput: { maxLength: 12 },
               }}
+              helperText={
+                aadhaarNumber && aadhaarNumber.length < 12
+                  ? "Aadhaar number must be exactly 12 digits"
+                  : ""
+              }
+              error={Boolean(aadhaarNumber && aadhaarNumber.length > 0 && aadhaarNumber.length < 12)}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
@@ -262,7 +288,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                 color: "#666",
               }}
             >
-              Required for identity verification and payout tax processing.
+              Required for government identity verification and payout tax processing.
             </Typography>
           </Grid>
         </Grid>
@@ -323,6 +349,61 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                       {doc.title}
                     </Typography>
                   </Box>
+
+                  {(doc as any).isIdentityDoc && (
+                    <Box sx={{ display: "flex", gap: 1, mb: 1.5 }}>
+                      <Button
+                        size="small"
+                        variant={idType === "aadhaar" ? "contained" : "outlined"}
+                        onClick={() => {
+                          setIdType("aadhaar");
+                          setPanDoc(null);
+                        }}
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 700,
+                          fontSize: "11px",
+                          textTransform: "none",
+                          borderRadius: "16px",
+                          px: 1.5,
+                          py: 0.25,
+                          bgcolor: idType === "aadhaar" ? COLORS.PRIMARY : "transparent",
+                          color: idType === "aadhaar" ? "#fff" : "#555",
+                          borderColor: idType === "aadhaar" ? COLORS.PRIMARY : "#ccc",
+                          "&:hover": {
+                            bgcolor: idType === "aadhaar" ? COLORS.PRIMARY_DARK : "#f5f5f5",
+                          },
+                        }}
+                      >
+                        Aadhaar Card
+                      </Button>
+                      <Button
+                        size="small"
+                        variant={idType === "pan" ? "contained" : "outlined"}
+                        onClick={() => {
+                          setIdType("pan");
+                          setAadhaarDoc(null);
+                        }}
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 700,
+                          fontSize: "11px",
+                          textTransform: "none",
+                          borderRadius: "16px",
+                          px: 1.5,
+                          py: 0.25,
+                          bgcolor: idType === "pan" ? COLORS.PRIMARY : "transparent",
+                          color: idType === "pan" ? "#fff" : "#555",
+                          borderColor: idType === "pan" ? COLORS.PRIMARY : "#ccc",
+                          "&:hover": {
+                            bgcolor: idType === "pan" ? COLORS.PRIMARY_DARK : "#f5f5f5",
+                          },
+                        }}
+                      >
+                        PAN Card
+                      </Button>
+                    </Box>
+                  )}
 
                   <Typography
                     sx={{

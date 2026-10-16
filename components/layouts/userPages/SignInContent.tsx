@@ -49,11 +49,11 @@ export default function SignInContent() {
         const role = userObj?.role;
         if (role === "CUSTOMER") {
           router.replace("/customer/dashboard");
-        } else if (role === "PUROHIT") {
-          if (userObj?.isAdminCreated || userObj?.is_admin_created) {
-            router.replace("/purohit/register?step=2");
+        } else if (role === "PUROHIT" || role === "ASTROLOGER") {
+          if (role === "ASTROLOGER") {
+            router.replace("/partner/astrologybookings");
           } else {
-            router.replace("/purohit/dashboard");
+            router.replace("/partner/dashboard");
           }
         } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
           router.replace("/admin/dashboard");
@@ -198,7 +198,7 @@ export default function SignInContent() {
                         email: values.email,
                         password: values.password,
                       });
-                      if (response.success || response.token || response.accessToken || response.poojawalaPurohitCsrfToken || response.poojawalaCustomerCsrfToken) {
+                      if (response.success || response.token || response.accessToken || response.poojawalaPurohitCsrfToken || response.poojawalaCustomerCsrfToken || response.poojawalaAstrologerCsrfToken) {
                         const token =
                           response.tokens?.access?.token ||
                           response.token ||
@@ -221,25 +221,27 @@ export default function SignInContent() {
                           sessionStorage.setItem("user", JSON.stringify(userObj));
                         }
 
-                        const csrf = extractRoleCsrfToken(response, userObj?.role);
+                        const role = userObj?.role || response?.user?.role || response?.role;
+                        if (role) {
+                          sessionStorage.setItem("role", role);
+                          sessionStorage.setItem("activeRole", role);
+                        }
+
+                        const csrf = extractRoleCsrfToken(response, role);
 
                         if (csrf) {
-                          saveRoleCsrfToken(csrf, userObj?.role);
+                          saveRoleCsrfToken(csrf, role);
                         }
 
                         showSnackbar("Login successful!", "success");
 
-                        const role = userObj?.role || response?.user?.role;
                         if (role === "CUSTOMER") {
                           router.replace("/customer/dashboard");
-                        } else if (role === "PUROHIT") {
-                          if (
-                            userObj?.isAdminCreated ||
-                            userObj?.is_admin_created
-                          ) {
-                            router.replace("/purohit/register?step=2");
+                        } else if (role === "PUROHIT" || role === "ASTROLOGER") {
+                          if (role === "ASTROLOGER") {
+                            router.replace("/partner/astrologybookings");
                           } else {
-                            router.replace("/purohit/dashboard");
+                            router.replace("/partner/dashboard");
                           }
                         } else if (
                           role === "ADMIN" ||

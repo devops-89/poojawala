@@ -180,7 +180,8 @@ export default function AdminBookingsContent() {
         page + 1,
         rowsPerPage,
         statusFilter,
-        searchValue
+        searchValue,
+        "POOJA"
       );
       if (res.success) {
         setBookings(res.data.bookings || []);

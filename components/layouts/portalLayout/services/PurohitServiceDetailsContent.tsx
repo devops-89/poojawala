@@ -121,7 +121,7 @@ export default function PurohitServiceDetailsContent() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.push("/purohit/services")}
+          onClick={() => router.push("/partner/services")}
           sx={{
             background: COLORS.PRIMARY,
             color: "white",
@@ -254,7 +254,7 @@ export default function PurohitServiceDetailsContent() {
       {/* 1. Top Breadcrumbs */}
       <ServiceDetailsBreadcrumbs
         serviceName={service.name || service.title}
-        servicesHref="/purohit/services"
+        servicesHref="/partner/services"
         servicesLabel="Available Services"
       />
 

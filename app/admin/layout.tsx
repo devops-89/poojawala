@@ -19,6 +19,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         const user = JSON.parse(userStr);
         if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || user.role === 'SUPERADMIN') {
           isAuthorized = true;
+          sessionStorage.setItem('activeRole', 'ADMIN');
+          sessionStorage.setItem('role', 'ADMIN');
         }
       } catch (e) {}
     }

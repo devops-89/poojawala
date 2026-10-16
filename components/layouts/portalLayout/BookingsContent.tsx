@@ -56,7 +56,7 @@ export default function BookingsContent() {
     <Box>
       <AppBreadcrumbs
         items={[
-          { label: "Dashboard", href: "/purohit/dashboard" },
+          { label: "Dashboard", href: "/partner/dashboard" },
           { label: "Bookings" },
         ]}
       />

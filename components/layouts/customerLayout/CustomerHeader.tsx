@@ -15,6 +15,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import {
   Alert,
   AppBar,
@@ -132,6 +133,7 @@ export default function CustomerHeader() {
   const mainNavItems = [
     { label: "Dashboard", path: "/customer/dashboard", icon: <HomeIcon /> },
     { label: "Services", path: "/customer/services", icon: <StorefrontIcon /> },
+    { label: "Astrologers", path: "/customer/astrologers", icon: <AutoAwesomeIcon /> },
     { label: "Temples", path: "/customer/temples", icon: <TempleHinduIcon /> },
     { label: "Pooja Products", path: "/customer/products", icon: <ShoppingBagIcon /> },
   ];

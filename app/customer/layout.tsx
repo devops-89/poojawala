@@ -24,6 +24,8 @@ export default function CustomerDashboardLayout({
         const userObj = JSON.parse(userStr);
         if (userObj.role === "CUSTOMER") {
           isAuthorized = true;
+          sessionStorage.setItem("activeRole", "CUSTOMER");
+          sessionStorage.setItem("role", "CUSTOMER");
         }
       } catch (e) {}
     }

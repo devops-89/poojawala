@@ -6,6 +6,7 @@ import {
   Box,
   IconButton,
   InputAdornment,
+  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
@@ -14,7 +15,7 @@ import { FormikProps } from "formik";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import React from "react";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+import { COLORS, USER_ROLE } from "@/utils/enums";
 import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
 
 interface Step0Props {
@@ -47,6 +48,26 @@ export default function Step0BasicDetails({
         Basic & Login Details
       </Typography>
       <Grid container spacing={3}>
+        <Grid size={{ xs: 12 }}>
+          <TextField
+            select
+            fullWidth
+            name="role"
+            label="Role *"
+            variant="outlined"
+            value={formik.values.role}
+            onChange={formik.handleChange}
+            error={formik.touched.role && Boolean(formik.errors.role)}
+            helperText={formik.touched.role && (formik.errors.role as string)}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+          >
+            <MenuItem value="" disabled>
+              Select Role
+            </MenuItem>
+            <MenuItem value={USER_ROLE.PUROHIT}>Purohit</MenuItem>
+            <MenuItem value={USER_ROLE.ASTROLOGER}>Astrologer</MenuItem>
+          </TextField>
+        </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth

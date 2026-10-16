@@ -1,6 +1,20 @@
 // next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/purohit/:path*',
+        destination: '/partner/:path*',
+        permanent: false,
+      },
+      {
+        source: '/purohit',
+        destination: '/partner',
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

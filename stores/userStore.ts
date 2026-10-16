@@ -40,6 +40,12 @@ export const useUserStore = create<UserState>((set, get) => ({
       }
 
       const finalProfile = fetchedUser || localUser;
+      if (fetchedUser && typeof window !== "undefined") {
+        try {
+          const merged = { ...(localUser || {}), ...fetchedUser };
+          sessionStorage.setItem("user", JSON.stringify(merged));
+        } catch (e) {}
+      }
       set({ profile: finalProfile, loading: false });
       return finalProfile;
     } catch (error: any) {
