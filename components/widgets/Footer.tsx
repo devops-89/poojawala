@@ -100,7 +100,11 @@ export default function Footer() {
                   component="img"
                   src="/images/1Poojalogo.webp"
                   alt="1Pooja"
-                  sx={{ height: { xs: "36px", md: "42px" }, objectFit: "contain" }}
+                  sx={{
+                    height: { xs: "38px", md: "46px" },
+                    objectFit: "contain",
+                    filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
+                  }}
                 />
               </Link>
               <Typography

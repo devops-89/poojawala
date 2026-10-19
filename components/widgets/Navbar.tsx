@@ -69,7 +69,13 @@ export default function Navbar() {
               component="img"
               src="/images/1Poojalogo.webp"
               alt="1Pooja"
-              sx={{ height: { xs: "30px", md: "38px" }, objectFit: "contain" }}
+              sx={{
+                height: { xs: "34px", sm: "38px", md: "46px" },
+                objectFit: "contain",
+                filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
+                transition: "transform 0.2s ease",
+                "&:hover": { transform: "scale(1.02)" },
+              }}
             />
           </Link>
 
@@ -191,12 +197,31 @@ export default function Navbar() {
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-end",
-            px: 2,
-            py: 1.5,
+            justifyContent: "space-between",
+            px: 2.5,
+            py: 2,
+            borderBottom: "1px solid #f1f5f9",
           }}
         >
-          <IconButton onClick={handleDrawerToggle} aria-label="close menu">
+          <Link
+            component={NextLink}
+            href="/"
+            onClick={handleDrawerToggle}
+            underline="none"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Box
+              component="img"
+              src="/images/1Poojalogo.webp"
+              alt="1Pooja"
+              sx={{
+                height: "36px",
+                objectFit: "contain",
+                filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
+              }}
+            />
+          </Link>
+          <IconButton onClick={handleDrawerToggle} aria-label="close menu" size="small" sx={{ color: "#64748b" }}>
             <CloseIcon />
           </IconButton>
         </Box>

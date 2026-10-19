@@ -109,12 +109,18 @@ export default function ProfileContent() {
   const p = useProfile();
   const { profile: userProfile } = useUserStore();
 
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isAstrologer =
     (p as any)?.role === USER_ROLE.ASTROLOGER ||
     p.isAstrologer ||
     userProfile?.role === USER_ROLE.ASTROLOGER ||
     userProfile?.user?.role === USER_ROLE.ASTROLOGER ||
-    (typeof window !== "undefined" &&
+    (mounted &&
       (sessionStorage.getItem("role") === USER_ROLE.ASTROLOGER ||
         (() => {
           try {

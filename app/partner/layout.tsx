@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import PortalSidebar from '@/components/layouts/portalLayout/PortalSidebar';
 import PortalHeader from '@/components/layouts/portalLayout/PortalHeader';
 import SocketProvider from '@/components/providers/SocketProvider';
+import RaiseTicketModal from '@/components/widgets/RaiseTicketModal';
 import { useUserStore } from '@/stores/userStore';
 import { USER_ROLE } from '@/utils/enums';
 
@@ -41,17 +42,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const effectiveRole =
     profile?.role ||
     profile?.user?.role ||
-    storedRole ||
-    (typeof window !== 'undefined'
-      ? (() => {
-          try {
-            const u = JSON.parse(sessionStorage.getItem('user') || '{}');
-            return u?.role || sessionStorage.getItem('role') || sessionStorage.getItem('activeRole');
-          } catch (e) {
-            return null;
-          }
-        })()
-      : null);
+    storedRole;
 
   const isAstrologer =
     isAstrologyRoute ||
@@ -62,6 +53,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     '/partner/astrologybookings',
     '/partner/profile',
     '/partner/profile/edit',
+    '/partner/support',
   ];
 
   const isAstrologerRestricted =
@@ -183,6 +175,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         >
           {children}
         </Box>
+        <RaiseTicketModal />
       </Box>
     </SocketProvider>
   );

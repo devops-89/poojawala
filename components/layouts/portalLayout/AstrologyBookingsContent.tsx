@@ -15,6 +15,7 @@ import {
   MenuItem,
   Pagination,
   CircularProgress,
+  Avatar,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -25,6 +26,8 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EmailIcon from '@mui/icons-material/Email';
 import {
   getAstrologyBookingsAPI,
   updateBookingStatusAPI,
@@ -46,6 +49,74 @@ import { getBookingPurohitPayoutDisplay } from '@/utils/payoutHelper';
 import { convertImageToWebP } from '@/utils/imageHelper';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
+
+// Safe date-time parsers that prevent "Invalid Date"
+const formatScheduleDateTime = (booking: any) => {
+  if (booking?.scheduledAt) {
+    try {
+      const d = new Date(booking.scheduledAt);
+      if (!isNaN(d.getTime())) {
+        const dateStr = d.toLocaleDateString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        });
+        const timeStr = d.toLocaleTimeString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        });
+        return { date: dateStr, time: timeStr, full: `${dateStr}, ${timeStr}` };
+      }
+    } catch (e) {}
+  }
+
+  if (booking?.scheduledAtIst && typeof booking.scheduledAtIst === 'string') {
+    const parts = booking.scheduledAtIst.split(',');
+    if (parts.length >= 2) {
+      const dPart = parts[0].trim();
+      const tPart = parts[1].trim();
+      const [dd, mm, yyyy] = dPart.split('/');
+      if (dd && mm && yyyy) {
+        const monthNames = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        const mIdx = parseInt(mm, 10) - 1;
+        const formattedDate = `${parseInt(dd, 10)} ${monthNames[mIdx] || mm} ${yyyy}`;
+        const cleanTime = tPart.replace(/:\d{2}\s/, ' ').toUpperCase();
+        return { date: formattedDate, time: cleanTime, full: `${formattedDate}, ${cleanTime}` };
+      }
+      return { date: dPart, time: tPart, full: booking.scheduledAtIst };
+    }
+    return { date: booking.scheduledAtIst, time: '', full: booking.scheduledAtIst };
+  }
+
+  return { date: 'Flexible', time: 'N/A', full: 'Flexible' };
+};
+
+const formatCreatedDateTime = (booking: any) => {
+  if (booking?.createdAt) {
+    try {
+      const d = new Date(booking.createdAt);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        });
+      }
+    } catch (e) {}
+  }
+  if (booking?.createdAtIst) return booking.createdAtIst;
+  return null;
+};
 
 // The 3 statuses requested by the user
 const ASTROLOGER_STATUSES = ['Accepted', 'Completed', 'Cancelled'];
@@ -184,43 +255,45 @@ export default function AstrologyBookingsContent() {
       const limit = payload?.pagination?.limit || 10;
       setActiveTotalPages(Math.max(1, Math.ceil(total / limit)));
 
-      const mappedBookings = list.map((booking: any) => ({
-        id: booking.bookingNumber || booking.id,
-        customer: booking.customer
-          ? `${booking.customer.firstName || ''} ${booking.customer.lastName || ''}`.trim()
-          : 'Devotee',
-        ritual: booking.service?.name || 'Astrology Consultation',
-        date: booking.scheduledAtIst
-          ? new Date(booking.scheduledAtIst).toLocaleDateString('en-IN', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-            })
-          : booking.scheduledAt
-          ? new Date(booking.scheduledAt).toLocaleDateString('en-IN', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-            })
-          : 'Flexible',
-        time: booking.scheduledAtIst
-          ? new Date(booking.scheduledAtIst).toLocaleTimeString('en-IN', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : booking.scheduledAt
-          ? new Date(booking.scheduledAt).toLocaleTimeString('en-IN', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : 'N/A',
-        location: booking.customerAddress?.fullAddress || booking.bookingMode || 'Online Consultation',
-        price: getPriceDisplay(booking),
-        status: booking.status,
-        plan: booking.plan,
-        bookingMode: booking.bookingMode,
-        originalData: booking,
-      }));
+      const mappedBookings = list.map((booking: any) => {
+        const schedule = formatScheduleDateTime(booking);
+        const bookedAt = formatCreatedDateTime(booking);
+        const ratePerMinute = Number(
+          booking.ratePerMinute ||
+          booking.astrologyTransparency?.ratePerMinute ||
+          booking.astrologerProfile?.ratePerMinute ||
+          40
+        );
+        const platformAccessFee = Number(
+          booking.platformAccessFee ||
+          booking.astrologyTransparency?.platformAccessFee ||
+          booking.finalAmount ||
+          booking.servicePrice ||
+          50
+        );
+
+        return {
+          id: booking.bookingNumber || booking.id,
+          bookingNumber: booking.bookingNumber || `PW-${booking.id}`,
+          customer: booking.customer
+            ? `${booking.customer.firstName || ''} ${booking.customer.lastName || ''}`.trim()
+            : 'Devotee',
+          ritual: booking.service?.name || 'Astrology Consultation',
+          date: schedule.date,
+          time: schedule.time,
+          scheduleFull: schedule.full,
+          bookedAt,
+          location: booking.customerAddress?.fullAddress || (booking.bookingMode ? `${booking.bookingMode} Consultation` : 'Online Consultation'),
+          ratePerMinute,
+          platformAccessFee,
+          paymentStatus: booking.paymentStatus || 'PAID',
+          price: `₹${ratePerMinute}/min`,
+          status: booking.status,
+          plan: booking.plan,
+          bookingMode: booking.bookingMode || 'ONLINE',
+          originalData: booking,
+        };
+      });
 
       setActiveBookings(mappedBookings);
     } catch (error) {
@@ -730,80 +803,116 @@ export default function AstrologyBookingsContent() {
                     justifyContent: 'space-between',
                     alignItems: { xs: 'flex-start', md: 'center' },
                     gap: 2,
-                    mb: 2,
+                    mb: 2.5,
                   }}
                 >
-                  <Box>
-                    <Box
+                  {/* Left: Customer Avatar + Details */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar
+                      src={rawData.customer?.profileImage || undefined}
+                      alt={job.customer}
                       sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1.5,
-                        mb: 0.5,
-                        flexWrap: 'wrap',
+                        width: 54,
+                        height: 54,
+                        bgcolor: '#FFF0E6',
+                        color: COLORS.PRIMARY,
+                        border: '2px solid #FFD8BE',
+                        fontWeight: 700,
+                        fontSize: '20px',
+                        flexShrink: 0,
                       }}
                     >
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontWeight: 700,
-                          fontSize: '18px',
-                          color: '#1A1A1A',
-                        }}
-                      >
-                        {job.ritual}
-                      </Typography>
+                      {(rawData.customer?.firstName?.[0] || 'C').toUpperCase()}
+                    </Avatar>
 
-                      {/* Mode Badge */}
-                      <Chip
-                        label={bookingMode}
-                        size="small"
-                        sx={{
-                          bgcolor: bookingMode === 'OFFLINE' ? '#FEF3C7' : '#E0F2FE',
-                          color: bookingMode === 'OFFLINE' ? '#92400E' : '#0369A1',
-                          border: bookingMode === 'OFFLINE' ? '1px solid #FDE68A' : '1px solid #BAE6FD',
-                          fontWeight: 700,
-                          fontSize: '11px',
-                          height: '22px',
-                          borderRadius: '6px',
-                        }}
-                      />
+                    <Box>
+                      {/* Title & Badges */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.5, flexWrap: 'wrap' }}>
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontWeight: 800,
+                            fontSize: '19px',
+                            color: '#1A1A1A',
+                          }}
+                        >
+                          {job.ritual}
+                        </Typography>
 
-                      {/* Status Chip (Clickable dropdown if Accepted) */}
-                      <Chip
-                        label={
-                          job.status
-                            ? job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase()
-                            : 'Status'
-                        }
-                        size="small"
-                        deleteIcon={isAccepted ? <KeyboardArrowDownIcon /> : undefined}
-                        onDelete={isAccepted ? (e) => handleUpdateStatusClick(e as any, jobId) : undefined}
-                        onClick={isAccepted ? (e) => handleUpdateStatusClick(e, jobId) : undefined}
-                        sx={{
-                          bgcolor: isCancelled ? '#FEE2E2' : isCompleted ? '#DCFCE7' : '#E8F5E9',
-                          color: isCancelled ? '#DC2626' : isCompleted ? '#16A34A' : '#2E7D32',
-                          fontWeight: 700,
-                          fontSize: '11px',
-                          height: '22px',
-                          cursor: isAccepted ? 'pointer' : 'default',
-                          '& .MuiChip-deleteIcon': {
-                            color: '#2E7D32',
-                            fontSize: '16px',
-                          },
-                        }}
-                      />
+                        {/* Status Chip (Clickable dropdown if Accepted) */}
+                        <Chip
+                          label={
+                            job.status
+                              ? job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase()
+                              : 'Status'
+                          }
+                          size="small"
+                          deleteIcon={isAccepted ? <KeyboardArrowDownIcon /> : undefined}
+                          onDelete={isAccepted ? (e) => handleUpdateStatusClick(e as any, jobId) : undefined}
+                          onClick={isAccepted ? (e) => handleUpdateStatusClick(e, jobId) : undefined}
+                          sx={{
+                            bgcolor: isCancelled ? '#FEE2E2' : isCompleted ? '#DCFCE7' : '#E8F5E9',
+                            color: isCancelled ? '#DC2626' : isCompleted ? '#16A34A' : '#2E7D32',
+                            fontWeight: 700,
+                            fontSize: '11px',
+                            height: '24px',
+                            cursor: isAccepted ? 'pointer' : 'default',
+                            '& .MuiChip-deleteIcon': {
+                              color: '#2E7D32',
+                              fontSize: '16px',
+                            },
+                          }}
+                        />
+                      </Box>
+
+                      {/* Customer Details Row */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#334155', fontSize: '14px', fontWeight: 600 }}>
+                          Client: <span style={{ color: '#0F172A', fontWeight: 700 }}>{job.customer}</span>
+                        </Typography>
+
+                        {rawData.customer?.phone && (
+                          <Box
+                            component="a"
+                            href={`tel:${rawData.customer.phone}`}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                              color: COLORS.PRIMARY,
+                              textDecoration: 'none',
+                              fontFamily: FONTS.OUTFIT,
+                              fontSize: '13px',
+                              fontWeight: 600,
+                              '&:hover': { textDecoration: 'underline' },
+                            }}
+                          >
+                            <PhoneIcon sx={{ fontSize: 15 }} />
+                            +91 {rawData.customer.phone}
+                          </Box>
+                        )}
+
+                        {rawData.customer?.email && (
+                          <Box
+                            component="a"
+                            href={`mailto:${rawData.customer.email}`}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                              color: '#64748B',
+                              textDecoration: 'none',
+                              fontFamily: FONTS.OUTFIT,
+                              fontSize: '13px',
+                              fontWeight: 500,
+                            }}
+                          >
+                            <EmailIcon sx={{ fontSize: 15 }} />
+                            {rawData.customer.email}
+                          </Box>
+                        )}
+                      </Box>
                     </Box>
-
-                    <Typography
-                      sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        color: '#666',
-                        fontSize: '14px',
-                      }}
-                    >
-                      Client: <span style={{ fontWeight: 600 }}>{job.customer}</span> • B-{jobId}
-                    </Typography>
                   </Box>
 
                   {/* Top-Right Action Buttons */}
@@ -826,8 +935,10 @@ export default function AstrologyBookingsContent() {
                             background: '#16A34A',
                             color: 'white',
                             textTransform: 'none',
-                            fontWeight: 600,
+                            fontWeight: 700,
                             borderRadius: '8px',
+                            px: 2,
+                            py: 0.8,
                             boxShadow: 'none',
                             '&:hover': {
                               background: '#15803D',
@@ -850,6 +961,8 @@ export default function AstrologyBookingsContent() {
                             textTransform: 'none',
                             fontWeight: 600,
                             borderRadius: '8px',
+                            px: 2,
+                            py: 0.8,
                           }}
                         >
                           Cancel
@@ -896,25 +1009,26 @@ export default function AstrologyBookingsContent() {
                       </>
                     )}
 
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      href={
-                        rawData?.customer?.phone
-                          ? `tel:${rawData.customer.phone}`
-                          : undefined
-                      }
-                      sx={{
-                        color: '#333',
-                        borderColor: '#ccc',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        borderRadius: '8px',
-                        '&:hover': { bgcolor: '#f5f5f5' },
-                      }}
-                    >
-                      Contact Client {rawData?.customer?.phone ? `- ${rawData.customer.phone}` : ''}
-                    </Button>
+                    {rawData?.customer?.phone && (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        href={`tel:${rawData.customer.phone}`}
+                        startIcon={<PhoneIcon sx={{ fontSize: 16 }} />}
+                        sx={{
+                          color: '#1E293B',
+                          borderColor: '#CBD5E1',
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          borderRadius: '8px',
+                          px: 2,
+                          py: 0.8,
+                          '&:hover': { bgcolor: '#F8FAFC', borderColor: '#94A3B8' },
+                        }}
+                      >
+                        Contact Client - {rawData.customer.phone}
+                      </Button>
+                    )}
                   </Box>
                 </Box>
 
@@ -924,90 +1038,70 @@ export default function AstrologyBookingsContent() {
                 <Box
                   sx={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' },
                     gap: 2,
-                    mb: 3,
+                    p: 2,
+                    bgcolor: '#F8FAFC',
+                    borderRadius: '12px',
+                    border: '1px solid #E2E8F0',
+                    mb: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <EventIcon sx={{ color: '#2E7D32', fontSize: 20 }} />
+                  {/* 1. Schedule Date & Time */}
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                    <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: COLORS.PRIMARY, display: 'flex' }}>
+                      <EventIcon sx={{ fontSize: 20 }} />
+                    </Box>
                     <Box>
-                      <Typography
-                        sx={{
-                          fontSize: '11px',
-                          color: '#999',
-                          textTransform: 'uppercase',
-                          fontWeight: 700,
-                        }}
-                      >
-                        Schedule
+                      <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
+                        Schedule Date & Time
                       </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontSize: '14px',
-                          fontWeight: 600,
-                          color: '#333',
-                        }}
-                      >
-                        {job.date}, {job.time}
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 700, color: '#1E293B' }}>
+                        {job.date}
+                      </Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', fontWeight: 600, color: COLORS.PRIMARY }}>
+                        {job.time} (IST)
                       </Typography>
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <AccountBalanceWalletIcon sx={{ color: '#2E7D32', fontSize: 20 }} />
+                  {/* 2. Consultation Rate */}
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                    <Box sx={{ p: 1, bgcolor: '#ECFDF5', borderRadius: '8px', color: '#059669', display: 'flex' }}>
+                      <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />
+                    </Box>
                     <Box>
-                      <Typography
-                        sx={{
-                          fontSize: '11px',
-                          color: '#999',
-                          textTransform: 'uppercase',
-                          fontWeight: 700,
-                        }}
-                      >
-                        Consultation Payout
+                      <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
+                        Consultation Rate
                       </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontSize: '15px',
-                          fontWeight: 800,
-                          color: '#333',
-                        }}
-                      >
-                        {job.price}
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '15px', fontWeight: 800, color: '#059669' }}>
+                        ₹{job.ratePerMinute} / min
+                      </Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
+                        Direct Client Billing
                       </Typography>
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, minWidth: 0 }}>
-                    <LocationOnIcon sx={{ color: '#2E7D32', fontSize: 20, flexShrink: 0, mt: 0.2 }} />
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography
-                        sx={{
-                          fontSize: '11px',
-                          color: '#999',
-                          textTransform: 'uppercase',
-                          fontWeight: 700,
-                        }}
-                      >
-                        Session Mode / Location
+                  {/* 3. Session Mode */}
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                    <Box sx={{ p: 1, bgcolor: '#FEF3C7', borderRadius: '8px', color: '#D97706', display: 'flex' }}>
+                      <LocationOnIcon sx={{ fontSize: 20 }} />
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
+                        Session Mode
                       </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontSize: '14px',
-                          fontWeight: 600,
-                          color: '#333',
-                          wordBreak: 'break-word',
-                        }}
-                      >
-                        {job.location}
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 700, color: '#1E293B' }}>
+                        {bookingMode}
+                      </Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
+                        Call / Audio / Video
                       </Typography>
                     </Box>
                   </Box>
                 </Box>
+
 
                 {/* Client Notes / Kundali Details Box */}
                 {clientNotes && (

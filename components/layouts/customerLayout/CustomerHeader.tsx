@@ -205,6 +205,7 @@ export default function CustomerHeader() {
 
         {/* Center: Desktop Navigation Links (Hidden on Mobile) */}
         <Box
+          suppressHydrationWarning
           sx={{
             display: { xs: "none", md: "flex" },
             alignItems: "center",

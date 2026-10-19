@@ -317,7 +317,7 @@ export default function CustomerSupportContent() {
                             fontFamily: FONTS.PRIMARY,
                           }}
                         >
-                          B-ID
+                          BOOKING ID
                         </TableCell>
                         <TableCell
                           sx={{
@@ -327,7 +327,7 @@ export default function CustomerSupportContent() {
                             fontFamily: FONTS.PRIMARY,
                           }}
                         >
-                          SUBJECT
+                          CATEGORY
                         </TableCell>
                         <TableCell
                           sx={{
@@ -398,16 +398,29 @@ export default function CustomerSupportContent() {
                                 fontFamily: FONTS.PRIMARY,
                               }}
                             >
-                              B-{complaint.bookingId}
+                              {complaint.bookingId ? (
+                                <span style={{ fontWeight: 600, color: COLORS.PRIMARY }}>
+                                  B-{complaint.bookingId}
+                                </span>
+                              ) : (
+                                <Chip label="General" size="small" sx={{ bgcolor: '#f1f5f9', color: '#64748b', fontSize: '11px', height: '22px', fontWeight: 600 }} />
+                              )}
                             </TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: 13,
-                                color: "#475569",
-                                fontFamily: FONTS.PRIMARY,
-                              }}
-                            >
-                              {complaint.subject || complaint.category || "N/A"}
+                            <TableCell sx={{ fontSize: 13 }}>
+                              <Chip
+                                label={complaint.category?.replace(/_/g, ' ') || 'General Query'}
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                  borderColor: '#cbd5e1',
+                                  color: '#334155',
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  height: '24px',
+                                  bgcolor: '#f8fafc',
+                                  fontFamily: FONTS.PRIMARY,
+                                }}
+                              />
                             </TableCell>
                             <TableCell
                               sx={{
@@ -549,10 +562,10 @@ export default function CustomerSupportContent() {
                           sx={{
                             fontSize: "13px",
                             fontWeight: 600,
-                            color: "#333",
+                            color: complaint.bookingId ? COLORS.PRIMARY : "#64748b",
                           }}
                         >
-                          B-{complaint.bookingId}
+                          {complaint.bookingId ? `B-${complaint.bookingId}` : "General"}
                         </Typography>
                       </Box>
 
@@ -787,7 +800,7 @@ export default function CustomerSupportContent() {
                         fontFamily: FONTS.PRIMARY,
                       }}
                     >
-                      C-{selectedComplaint.id}
+                      {selectedComplaint.complaintNumber || `CMP-${selectedComplaint.id}`}
                     </Typography>
                   </Box>
                   <Box>
@@ -810,7 +823,7 @@ export default function CustomerSupportContent() {
                         fontFamily: FONTS.PRIMARY,
                       }}
                     >
-                      B-{selectedComplaint.bookingId}
+                      {selectedComplaint.booking?.bookingNumber || (selectedComplaint.bookingId ? `PW-${selectedComplaint.bookingId}` : "General (No Booking Linked)")}
                     </Typography>
                   </Box>
                 </Box>

@@ -17,6 +17,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import DescriptionIcon from '@mui/icons-material/Description';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { parseList, cleanItem } from '@/components/layouts/adminLayout/astrologers/EditAstrologerForm';
@@ -38,11 +39,18 @@ const getPdfUrlWithParams = (url: string) => {
 };
 
 export default function PortalProfileDetailsContent() {
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { profile: profileData, fetchProfile } = useUserStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isAstrologer =
     profileData?.role === "ASTROLOGER" ||
     profileData?.user?.role === "ASTROLOGER" ||
-    (typeof window !== "undefined" &&
+    (mounted &&
       (sessionStorage.getItem("role") === "ASTROLOGER" ||
         (() => {
           try {
@@ -51,7 +59,6 @@ export default function PortalProfileDetailsContent() {
             return false;
           }
         })()));
-  const [loading, setLoading] = useState(true);
   const [docModalOpen, setDocModalOpen] = useState(false);
   const [currentDocUrl, setCurrentDocUrl] = useState('');
 
@@ -107,22 +114,42 @@ export default function PortalProfileDetailsContent() {
             View your complete public profile and contact information.
           </Typography>
         </Box>
-        <NextLink href="/partner/profile/edit" passHref>
-          <Button 
-            variant="contained" 
-            sx={{ 
-              background: COLORS.PRIMARY, 
-              color: 'white',
-              borderRadius: '8px',
-              textTransform: 'none',
-              fontWeight: 700,
-              px: 3,
-              '&:hover': { background: COLORS.PRIMARY_DARK }
-            }}
-          >
-            Edit Profile
-          </Button>
-        </NextLink>
+        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          <NextLink href="/partner/support" passHref>
+            <Button 
+              variant="outlined" 
+              startIcon={<SupportAgentIcon />}
+              sx={{ 
+                borderColor: COLORS.PRIMARY, 
+                color: COLORS.PRIMARY,
+                borderRadius: '8px',
+                textTransform: 'none',
+                fontWeight: 700,
+                px: 2.5,
+                bgcolor: '#FFF0E6',
+                '&:hover': { borderColor: COLORS.PRIMARY_DARK, bgcolor: '#FFE0CC' }
+              }}
+            >
+              Get Support
+            </Button>
+          </NextLink>
+          <NextLink href="/partner/profile/edit" passHref>
+            <Button 
+              variant="contained" 
+              sx={{ 
+                background: COLORS.PRIMARY, 
+                color: 'white',
+                borderRadius: '8px',
+                textTransform: 'none',
+                fontWeight: 700,
+                px: 3,
+                '&:hover': { background: COLORS.PRIMARY_DARK }
+              }}
+            >
+              Edit Profile
+            </Button>
+          </NextLink>
+        </Box>
       </Box>
 
       <Grid container spacing={4}>
@@ -285,6 +312,39 @@ export default function PortalProfileDetailsContent() {
               )}
             </Box>
           </Paper>
+
+          {/* Help & Support Card (for Astrologer) */}
+          {isAstrologer && (
+            <Paper sx={{ p: 3, borderRadius: '16px', border: '1px solid #FFE2D1', bgcolor: '#FFFDF9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', mt: 3, textAlign: 'center' }}>
+              <Box sx={{ width: 44, height: 44, borderRadius: '50%', bgcolor: '#FFF0E6', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1.5 }}>
+                <SupportAgentIcon sx={{ color: COLORS.PRIMARY, fontSize: 26 }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', mb: 0.5, fontSize: '15px' }}>
+                Need Help or Support?
+              </Typography>
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#64748b', mb: 2, fontSize: '12px', lineHeight: 1.5 }}>
+                Track existing complaint status or raise a new support ticket.
+              </Typography>
+              <NextLink href="/partner/support" passHref>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<SupportAgentIcon />}
+                  sx={{
+                    background: COLORS.PRIMARY,
+                    color: 'white',
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    fontWeight: 700,
+                    py: 1,
+                    '&:hover': { background: COLORS.PRIMARY_DARK },
+                  }}
+                >
+                  Go to Get Support
+                </Button>
+              </NextLink>
+            </Paper>
+          )}
         </Grid>
 
         {/* Right Column - Professional Details */}

@@ -21,6 +21,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocketStore } from '@/stores/socketStore';
@@ -48,6 +49,11 @@ export default function PortalHeader({
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [transientAlert, setTransientAlert] = useState({ show: false, msg: '' });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     fetchProfile();
@@ -115,17 +121,8 @@ export default function PortalHeader({
     >
       <Toolbar sx={{ justifyContent: 'space-between', minHeight: '80px !important' }}>
         {/* Left Side */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} suppressHydrationWarning>
-          {!isAstrologer ? (
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              sx={{ mr: 2, display: { md: 'none' }, color: '#1A1A1A' }}
-            >
-              <MenuIcon />
-            </IconButton>
-          ) : (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {isAstrologer ? (
             <Box
               component={NextLink}
               href="/partner/astrologybookings"
@@ -138,7 +135,16 @@ export default function PortalHeader({
                 sx={{ height: { xs: '30px', md: '38px' }, objectFit: 'contain' }}
               />
             </Box>
-          )}
+          ) : mounted ? (
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              sx={{ mr: 2, display: { md: 'none' }, color: '#1A1A1A' }}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : null}
         </Box>
 
         {/* Right Side: Notifications & Profile Avatar */}
@@ -351,6 +357,24 @@ export default function PortalHeader({
                   <PersonIcon fontSize="small" />
                 </ListItemIcon>
                 My Profile
+              </MenuItem>
+              <MenuItem
+                component={NextLink}
+                href="/partner/support"
+                onClick={handleCloseUserMenu}
+                sx={{
+                  borderRadius: '8px',
+                  py: 1.2,
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  '&:hover': { bgcolor: '#f8fafc' },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: '32px', color: COLORS.PRIMARY }}>
+                  <SupportAgentIcon fontSize="small" />
+                </ListItemIcon>
+                Get Support
               </MenuItem>
               <Divider sx={{ my: 0.5 }} />
               <MenuItem
