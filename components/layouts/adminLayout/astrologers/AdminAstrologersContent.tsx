@@ -248,7 +248,7 @@ export default function AdminAstrologersContent() {
 
       <AdminPageHeader
         title="Astrologers"
-        subtitle="Manage, verify, and view all registered astrologers for Poojawala"
+        subtitle="Manage, verify, and view all registered astrologers for 1Pooja"
         searchPlaceholder="Search astrologers by name, email, phone..."
         searchValue={searchValue}
         onSearchChange={(val: string) => {

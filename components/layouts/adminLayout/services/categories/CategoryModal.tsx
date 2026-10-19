@@ -1,6 +1,12 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import {
+  allowOnlyDescriptionCharsOnKeyDown,
+  sanitizeDescriptionInput,
+  DESCRIPTION_STRICT_REGEX,
+  DESCRIPTION_STRICT_MESSAGE,
+} from "@/utils/helpers";
 
 import {
   createServiceCategoryAPI,
@@ -145,6 +151,10 @@ export default function CategoryModal({
     }
     if (descriptionInput.length > 500) {
       showSnackbar("Description cannot exceed 500 characters", "error");
+      return;
+    }
+    if (descriptionInput.trim() && !DESCRIPTION_STRICT_REGEX.test(descriptionInput.trim())) {
+      showSnackbar(DESCRIPTION_STRICT_MESSAGE, "error");
       return;
     }
 
@@ -519,7 +529,8 @@ export default function CategoryModal({
               multiline
               rows={3}
               value={descriptionInput}
-              onChange={(e) => setDescriptionInput(e.target.value)}
+              onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
+              onChange={(e) => setDescriptionInput(sanitizeDescriptionInput(e.target.value))}
               error={isDescriptionError}
               helperText={
                 isDescriptionError

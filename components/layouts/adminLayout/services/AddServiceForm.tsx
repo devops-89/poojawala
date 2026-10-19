@@ -35,6 +35,12 @@ import ServicePlansTabConfig from "./ServicePlansTabConfig";
 import ServicePricingFields from "./ServicePricingFields";
 
 import { convertImageToWebP } from "@/utils/imageHelper";
+import {
+  TITLE_STRICT_REGEX,
+  TITLE_STRICT_MESSAGE,
+  DESCRIPTION_STRICT_REGEX,
+  DESCRIPTION_STRICT_MESSAGE,
+} from "@/utils/helpers";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -43,8 +49,8 @@ const validationSchema = Yup.object().shape({
     .min(3, "Service name must be at least 3 characters")
     .max(100, "Service name cannot exceed 100 characters")
     .matches(
-      /^[a-zA-Z\s&',.\-()]+$/,
-      "Service name should only contain letters and standard characters (no numbers or special symbols)"
+      TITLE_STRICT_REGEX,
+      TITLE_STRICT_MESSAGE
     )
     .test("has-letters", "Service name must contain letters", (val) => {
       if (!val) return false;
@@ -55,6 +61,10 @@ const validationSchema = Yup.object().shape({
     .trim()
     .required("Description is required")
     .min(10, "Description must be at least 10 characters")
+    .matches(
+      DESCRIPTION_STRICT_REGEX,
+      DESCRIPTION_STRICT_MESSAGE
+    )
     .test(
       "meaningful-text",
       "Description must contain meaningful text with letters, not just symbols",
@@ -451,7 +461,7 @@ export default function AddServiceForm() {
               mt: 0.5,
             }}
           >
-            Configure a new ritual or service to offer on Poojawala.
+            Configure a new ritual or service to offer on 1Pooja.
           </Typography>
         </Box>
 

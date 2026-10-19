@@ -13,11 +13,13 @@ export default function SocketProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     const userStr = sessionStorage.getItem('user');
     let userId = null;
+    let userRole = '';
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
         // Backend might send 'id' or '_id' (MongoDB)
         userId = user.id || user._id || user.userId;
+        userRole = (user.role || sessionStorage.getItem('role') || '').toUpperCase();
       } catch (e) {}
     }
 
@@ -26,14 +28,10 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       return;
     }
 
-    const csrfToken = sessionStorage.getItem('csrfToken');
     // JSON.parse already preserves numbers. parseInt destroys string IDs like UUIDs/ObjectIds.
     const parsedUserId = userId;
 
-    // As requested: relying on backend/proxy to handle it automatically without pointing to a port.
-    // However, Next.js proxy rewrites do not support WebSockets properly.
-    // Falling back to direct backend connection to ensure notifications work.
-    // Extract origin from NEXT_PUBLIC_SOCKET_URL (e.g. "http://200.234.41.149/api" -> "http://200.234.41.149")
+    // Direct backend connection to ensure notifications work.
     const socketUrl = SERVER_ENDPOINTS.SOCKET_URL;
     
     const socket = io(socketUrl, {
@@ -58,9 +56,50 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       console.log('Socket connection error:', err.message);
     });
 
-    socket.on('notification:new', (data) => {
-      const msg = data?.message || 'You have a new notification!';
+    const getAstrologyDefaultMsg = () => {
+      if (userRole === 'ADMIN' || userRole === 'SUPERADMIN' || userRole === 'SUPER_ADMIN') {
+        return 'New Astrology Booking Request';
+      }
+      if (userRole === 'ASTROLOGER') {
+        return 'New Astrology Consultation Scheduled';
+      }
+      // Customer
+      return 'New Astrology Consultation Scheduled';
+    };
+
+    const handleAstrologyNotification = (data?: any) => {
+      const defaultMsg = getAstrologyDefaultMsg();
+      const msg = data?.message || defaultMsg;
       addNotification(msg);
+      incrementUnread();
+      triggerRefresh();
+    };
+
+    // 1. Core Notifications
+    socket.on('notification:new', (data) => {
+      const refType = (data?.referenceType || '').toUpperCase();
+      const type = (data?.type || '').toUpperCase();
+      const bookingType = (data?.bookingType || data?.booking?.bookingType || '').toUpperCase();
+      const rawMsg = data?.message || '';
+      const lowerMsg = rawMsg.toLowerCase();
+
+      const isAstrology =
+        refType === 'ASTROLOGY' ||
+        type.includes('ASTROLOGY') ||
+        bookingType === 'ASTROLOGY' ||
+        lowerMsg.includes('astrology') ||
+        lowerMsg.includes('consultation');
+
+      let finalMsg = rawMsg;
+      if (isAstrology) {
+        if (!finalMsg || finalMsg === 'You have a new notification!') {
+          finalMsg = getAstrologyDefaultMsg();
+        }
+      } else if (!finalMsg) {
+        finalMsg = 'You have a new notification!';
+      }
+
+      addNotification(finalMsg);
       incrementUnread();
       triggerRefresh();
     });
@@ -71,11 +110,35 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       }
     });
 
-    // 2. Booking Flow Events
-    // Note: Backend emits notification:new for all these, so we only triggerRefresh here
-    // to update the UI lists without showing duplicate snackbars/toasts.
+    // 2. Dedicated Astrology Consultation Events
+    socket.on('new_astrology_booking', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    socket.on('astrology_booking_created', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    socket.on('astrology_consultation_scheduled', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    socket.on('astrology:scheduled', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    socket.on('astrology:new_booking', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    // 3. Booking Flow Events
     socket.on('new_booking', (data) => {
-      triggerRefresh();
+      const bookingType = (data?.bookingType || data?.booking?.bookingType || '').toUpperCase();
+      if (bookingType === 'ASTROLOGY' || data?.astrologerId != null) {
+        handleAstrologyNotification(data);
+      } else {
+        triggerRefresh();
+      }
     });
 
     socket.on('booking_taken', (data) => {
@@ -98,7 +161,7 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       triggerRefresh();
     });
 
-    // 3. Admin & Order Events
+    // 4. Admin & Order Events
     socket.on('order:new', () => triggerRefresh());
     socket.on('order_updated', () => triggerRefresh());
     socket.on('order_status_updated', () => triggerRefresh());

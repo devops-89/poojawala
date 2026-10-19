@@ -75,7 +75,7 @@ export default function SignUpBrandingSide() {
         <Box
           component="img"
           src="/images/logo.webp"
-          alt="Poojawala Logo"
+          alt="1Pooja Logo"
           sx={{
             height: { xs: "36px", md: "46px" },
             objectFit: "contain",

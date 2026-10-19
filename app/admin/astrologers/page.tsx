@@ -5,7 +5,7 @@ import { Box, CircularProgress } from '@mui/material';
 
 export const metadata: Metadata = {
   title: 'Astrologers Management | Admin Portal',
-  description: 'Manage and verify astrologers for Poojawala.',
+  description: 'Manage and verify astrologers for 1Pooja.',
 };
 
 export default function AstrologersPage() {

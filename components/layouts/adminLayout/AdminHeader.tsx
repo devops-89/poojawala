@@ -62,11 +62,32 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
       triggerRefresh();
     };
 
+    const handleAstrologyNotification = (message?: string) => {
+      const msg = message || 'New Astrology Booking Request';
+      addNotification(msg);
+      incrementUnread();
+      triggerRefresh();
+    };
+
     socket.on("notification:new", (data: any) => {
       const refType = (data?.referenceType || "").toUpperCase();
       const type = (data?.type || "").toUpperCase();
+      const bookingType = (data?.bookingType || data?.booking?.bookingType || "").toUpperCase();
       const msg = data?.message || "";
       const lowerMsg = msg.toLowerCase();
+
+      // Check if Astrology notification
+      const isAstrology =
+        refType === "ASTROLOGY" ||
+        type.includes("ASTROLOGY") ||
+        bookingType === "ASTROLOGY" ||
+        lowerMsg.includes("astrology") ||
+        lowerMsg.includes("consultation");
+
+      if (isAstrology) {
+        handleAstrologyNotification(msg);
+        return;
+      }
 
       // STRICT FILTER: Only process order placement and payment notifications
       const isOrderOrPayment =
@@ -79,6 +100,37 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
       if (isOrderOrPayment && msg) {
         handleOrderNotification(msg);
+        return;
+      }
+
+      if (refType === "BOOKING" || type.includes("BOOKING") || lowerMsg.includes("booking")) {
+        handleOrderNotification(msg || "New Booking Notification");
+      }
+    });
+
+    // Dedicated Astrology booking events for Admin
+    socket.on("new_astrology_booking", (data: any) => {
+      handleAstrologyNotification(data?.message);
+    });
+
+    socket.on("astrology_booking_created", (data: any) => {
+      handleAstrologyNotification(data?.message);
+    });
+
+    socket.on("astrology_consultation_scheduled", (data: any) => {
+      handleAstrologyNotification(data?.message);
+    });
+
+    socket.on("astrology:new_booking", (data: any) => {
+      handleAstrologyNotification(data?.message);
+    });
+
+    socket.on("new_booking", (data: any) => {
+      const bookingType = (data?.bookingType || data?.booking?.bookingType || "").toUpperCase();
+      if (bookingType === "ASTROLOGY" || data?.astrologerId != null) {
+        handleAstrologyNotification(data?.message);
+      } else {
+        triggerRefresh();
       }
     });
 

@@ -2,7 +2,7 @@ import WebsiteBlogDetailsContent from "@/components/layouts/blogsLayout/WebsiteB
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog Post | Poojawala",
+  title: "Blog Post | 1Pooja",
   description: "Read step-by-step Puja Vidhis, festival guides, and Vedic wisdom.",
 };
 

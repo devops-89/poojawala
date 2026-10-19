@@ -6,6 +6,6 @@ export default function CustomerDashboardPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Dashboard | Poojawala',
-  description: 'Your Poojawala dashboard overview.',
+  title: 'Dashboard | 1Pooja',
+  description: 'Your 1Pooja dashboard overview.',
 };

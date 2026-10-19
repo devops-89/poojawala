@@ -18,7 +18,7 @@ export default function TermsAndConditionsContent() {
             Last Updated: September 15, 2026
           </Typography>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#444', fontSize: '16px', lineHeight: 1.7 }}>
-            Welcome to Poojawala. By accessing or using our website, services, or mobile applications, you agree to comply with and be bound by the following terms and conditions.
+            Welcome to 1Pooja. By accessing or using our website, services, or mobile applications, you agree to comply with and be bound by the following terms and conditions.
           </Typography>
         </Box>
 
@@ -33,7 +33,7 @@ export default function TermsAndConditionsContent() {
               1. Acceptance of Terms
             </Typography>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', lineHeight: 1.8 }}>
-              By creating an account, booking a puja, or registering as a Purohit partner on Poojawala, you acknowledge that you have read, understood, and agreed to these Terms & Conditions. If you do not agree with any part of these terms, please discontinue platform usage.
+              By creating an account, booking a puja, or registering as a Purohit partner on 1Pooja, you acknowledge that you have read, understood, and agreed to these Terms & Conditions. If you do not agree with any part of these terms, please discontinue platform usage.
             </Typography>
           </Box>
 
@@ -45,7 +45,7 @@ export default function TermsAndConditionsContent() {
               2. Platform Services Description
             </Typography>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', lineHeight: 1.8 }}>
-              Poojawala acts as a digital marketplace connecting devotees with verified Pandits and Purohits for offline home rituals, online video pujas, and spiritual consultations. We facilitate scheduling, communication, and secure payment processing.
+              1Pooja acts as a digital marketplace connecting devotees with verified Pandits and Purohits for offline home rituals, online video pujas, and spiritual consultations. We facilitate scheduling, communication, and secure payment processing.
             </Typography>
           </Box>
 
@@ -85,7 +85,7 @@ export default function TermsAndConditionsContent() {
               5. Cancellation & Refund Policy
             </Typography>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', lineHeight: 1.8 }}>
-              Cancellations made prior to 24 hours of the scheduled puja time are eligible for a full or partial refund based on samagri preparation status. Cancellations initiated by Poojawala due to unforeseen Pandit unavailability will receive a 100% full refund or alternative rescheduling.
+              Cancellations made prior to 24 hours of the scheduled puja time are eligible for a full or partial refund based on samagri preparation status. Cancellations initiated by 1Pooja due to unforeseen Pandit unavailability will receive a 100% full refund or alternative rescheduling.
             </Typography>
           </Box>
 
@@ -112,9 +112,9 @@ export default function TermsAndConditionsContent() {
               If you have questions regarding these Terms & Conditions, please contact us:
             </Typography>
             <Box sx={{ mt: 2, p: 3, bgcolor: '#FFF0E6', borderRadius: '12px' }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>Poojawala Legal & Support Team</Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Email: <MuiLink href="mailto:support@poojawala.com" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>support@poojawala.com</MuiLink></Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Support Portal: <MuiLink component={NextLink} href="/contact" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>Poojawala Help Center</MuiLink></Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>1Pooja Legal & Support Team</Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Email: <MuiLink href="mailto:support@1pooja.com" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>support@1pooja.com</MuiLink></Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Support Portal: <MuiLink component={NextLink} href="/contact" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>1Pooja Help Center</MuiLink></Typography>
             </Box>
           </Box>
 

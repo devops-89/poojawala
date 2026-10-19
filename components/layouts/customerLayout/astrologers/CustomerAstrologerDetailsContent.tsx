@@ -42,6 +42,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getAstrologerByIdAPI } from "@/api/userControllers";
 import { customerCreateAstrologyBookingAPI } from "@/api/bookingControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useSocketStore } from "@/stores/socketStore";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
@@ -277,11 +278,36 @@ export default function CustomerAstrologerDetailsContent() {
         return;
       }
 
+      // Add real-time customer notification & emit socket event
+      try {
+        const socketStore = useSocketStore.getState();
+        socketStore.addNotification("New Astrology Consultation Scheduled");
+        socketStore.incrementUnread();
+        socketStore.triggerRefresh();
+
+        const socket = socketStore.socket;
+        if (socket && socket.connected) {
+          socket.emit("new_astrology_booking", {
+            bookingId: resData?.id,
+            astrologerId: Number(astrologer.id),
+            scheduledAt: scheduledDateTime.toISOString(),
+            message: "New Astrology Booking Request",
+          });
+          socket.emit("astrology_booking_created", {
+            bookingId: resData?.id,
+            astrologerId: Number(astrologer.id),
+            scheduledAt: scheduledDateTime.toISOString(),
+          });
+        }
+      } catch (e) {
+        console.warn("Socket notification notice:", e);
+      }
+
       showSnackbar(
         res?.message || "Consultation booked successfully!",
         "success"
       );
-      router.push("/customer/bookings");
+      router.push("/customer/bookings?type=ASTROLOGY");
     } catch (err: any) {
       console.error("Booking error:", err);
       showSnackbar(

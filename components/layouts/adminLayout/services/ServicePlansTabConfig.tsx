@@ -18,8 +18,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { FieldArray } from "formik";
+import { FieldArray, useFormikContext } from "formik";
 import React, { useState } from "react";
+import {
+  allowOnlyTitleCharsOnKeyDown,
+  sanitizeTitleInput,
+} from "@/utils/helpers";
 
 export interface PlanFeatureItem {
   title?: string;
@@ -54,6 +58,7 @@ export default function ServicePlansTabConfig({
   const [selectedPlanTab, setSelectedPlanTab] = useState<"basic" | "standard">(
     "basic",
   );
+  const formik = useFormikContext<any>();
 
 
   return (
@@ -254,7 +259,15 @@ export default function ServicePlansTabConfig({
                               name={`basicFeatures.${index}.title`}
                               placeholder="Feature Title (e.g. 1 Vedic Purohit)"
                               value={featTitle}
-                              onChange={handleChange}
+                              onKeyDown={allowOnlyTitleCharsOnKeyDown}
+                              onChange={(e) => {
+                                const sanitized = sanitizeTitleInput(e.target.value);
+                                if (formik?.setFieldValue) {
+                                  formik.setFieldValue(`basicFeatures.${index}.title`, sanitized);
+                                } else {
+                                  handleChange(e as any);
+                                }
+                              }}
                               onBlur={handleBlur}
                               sx={{
                                 flex:
@@ -406,7 +419,15 @@ export default function ServicePlansTabConfig({
                             name={`basicPurohitCarryItems.${index}`}
                             placeholder="e.g. Ganapati Idol, Puja Thali, Kalash"
                             value={item}
-                            onChange={handleChange}
+                            onKeyDown={allowOnlyTitleCharsOnKeyDown}
+                            onChange={(e) => {
+                              const sanitized = sanitizeTitleInput(e.target.value);
+                              if (formik?.setFieldValue) {
+                                formik.setFieldValue(`basicPurohitCarryItems.${index}`, sanitized);
+                              } else {
+                                handleChange(e as any);
+                              }
+                            }}
                             onBlur={handleBlur}
                             sx={{
                               "& .MuiOutlinedInput-root": {
@@ -565,7 +586,15 @@ export default function ServicePlansTabConfig({
                               name={`standardFeatures.${index}.title`}
                               placeholder="Feature Title (e.g. 2 Senior Vedic Purohits)"
                               value={featTitle}
-                              onChange={handleChange}
+                              onKeyDown={allowOnlyTitleCharsOnKeyDown}
+                              onChange={(e) => {
+                                const sanitized = sanitizeTitleInput(e.target.value);
+                                if (formik?.setFieldValue) {
+                                  formik.setFieldValue(`standardFeatures.${index}.title`, sanitized);
+                                } else {
+                                  handleChange(e as any);
+                                }
+                              }}
                               onBlur={handleBlur}
                               sx={{
                                 flex:
@@ -717,7 +746,15 @@ export default function ServicePlansTabConfig({
                             name={`standardPurohitCarryItems.${index}`}
                             placeholder="e.g. Ganapati Idol, Premium Puja Aasan, Navagraha Puja Items"
                             value={item}
-                            onChange={handleChange}
+                            onKeyDown={allowOnlyTitleCharsOnKeyDown}
+                            onChange={(e) => {
+                              const sanitized = sanitizeTitleInput(e.target.value);
+                              if (formik?.setFieldValue) {
+                                formik.setFieldValue(`standardPurohitCarryItems.${index}`, sanitized);
+                              } else {
+                                handleChange(e as any);
+                              }
+                            }}
                             onBlur={handleBlur}
                             sx={{
                               "& .MuiOutlinedInput-root": {

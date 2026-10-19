@@ -12,7 +12,13 @@ import NextLink from 'next/link';
 import { loginAPI, getMeAPI } from '@/api/authControllers';
 import { extractRoleCsrfToken, saveRoleCsrfToken } from '@/api/config';
 import { useSnackbarStore } from '@/stores/snackbarStore';
-import { extractBackendErrorMessage } from '@/utils/helpers';
+import {
+  extractBackendErrorMessage,
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+} from '@/utils/helpers';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FONTS } from '@/utils/fonts';
@@ -20,7 +26,7 @@ import { COLORS } from '@/utils/enums';
 
 const validationSchema = Yup.object({
   email: Yup.string()
-    .email('Enter a valid email')
+    .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
     .required('Email is required'),
   password: Yup.string()
     .required('Password is required'),
@@ -133,7 +139,7 @@ export default function AdminLoginForm() {
             Admin Control
           </Typography>
           <Typography sx={{ fontFamily: FONTS.OUTFIT_ONLY, color: COLORS.SLATE_MUTED, textAlign: 'center' }}>
-            Sign in to manage the Poojawala platform.
+            Sign in to manage the 1Pooja platform.
           </Typography>
         </Box>
 
@@ -147,7 +153,10 @@ export default function AdminLoginForm() {
             margin="normal"
             type="email"
             value={formik.values.email}
-            onChange={formik.handleChange}
+            onKeyDown={allowOnlyEmailCharsOnKeyDown}
+            onChange={(e) => {
+              formik.setFieldValue("email", sanitizeEmailInput(e.target.value));
+            }}
             onBlur={formik.handleBlur}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}

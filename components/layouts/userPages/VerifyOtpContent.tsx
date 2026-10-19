@@ -1,6 +1,6 @@
 'use client';
 import { Box, Button, Container, Grid, Paper, TextField, Typography, CircularProgress, Link as MuiLink } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useLoaderStore } from '@/stores/loaderStore';
@@ -17,12 +17,19 @@ export default function VerifyOtpContent() {
   const [signupData, setSignupData] = useState<any>(null);
   
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showSnackbar } = useSnackbarStore();
   const { showLoader, hideLoader } = useLoaderStore();
   
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const [resendTimer, setResendTimer] = useState(30);
+
+  const redirectUrl =
+    searchParams.get('redirect') ||
+    (typeof window !== 'undefined'
+      ? sessionStorage.getItem('post_login_redirect')
+      : null);
 
   useEffect(() => {
     let interval: any = null;
@@ -59,7 +66,12 @@ export default function VerifyOtpContent() {
       try {
         const userObj = JSON.parse(userStr);
         if (userObj?.role === 'CUSTOMER') {
-          router.replace('/customer/dashboard');
+          if (redirectUrl && redirectUrl.startsWith('/customer/')) {
+            sessionStorage.removeItem('post_login_redirect');
+            router.replace(redirectUrl);
+          } else {
+            router.replace('/customer/dashboard');
+          }
           return;
         } else if (userObj?.role === 'PUROHIT') {
           router.replace('/partner/dashboard');
@@ -81,7 +93,7 @@ export default function VerifyOtpContent() {
     } else {
       setSignupData(JSON.parse(data));
     }
-  }, [router, showSnackbar]);
+  }, [router, showSnackbar, redirectUrl]);
 
   const handleChange = (index: number, value: string) => {
     // Only allow numbers
@@ -177,7 +189,12 @@ export default function VerifyOtpContent() {
           }
           
           showSnackbar('Account created successfully!', 'success');
-          router.replace('/customer/dashboard');
+          if (redirectUrl && redirectUrl.startsWith('/customer/')) {
+            sessionStorage.removeItem('post_login_redirect');
+            router.replace(redirectUrl);
+          } else {
+            router.replace('/customer/dashboard');
+          }
         } else {
           showSnackbar(registerRes.message || 'Failed to create account', 'error');
         }

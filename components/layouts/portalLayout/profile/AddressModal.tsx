@@ -20,6 +20,7 @@ import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPrevi
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput } from "@/utils/helpers";
 
 interface AddressModalProps {
   open: boolean;
@@ -149,7 +150,8 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 rows={2}
                 label="Full Address *"
                 value={addressData.fullAddress}
-                onChange={(e) => handleAddressInputChange(e.target.value)}
+                onKeyDown={allowOnlyAddressCharsOnKeyDown}
+                onChange={(e) => handleAddressInputChange(sanitizeAddressInput(e.target.value))}
                 onBlur={handleAddressInputBlur}
                 variant="outlined"
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}

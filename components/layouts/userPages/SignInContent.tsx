@@ -20,26 +20,45 @@ import {
 } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { extractBackendErrorMessage } from "@/utils/helpers";
+import {
+  extractBackendErrorMessage,
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+} from "@/utils/helpers";
 
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
-    .email("Invalid email address")
+    .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
     .required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
 
 export default function SignInContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const [showPassword, setShowPassword] = useState(false);
+
+  const redirectParam =
+    searchParams.get("redirect") ||
+    (typeof window !== "undefined"
+      ? sessionStorage.getItem("post_login_redirect")
+      : null);
+
+  useEffect(() => {
+    if (redirectParam && typeof window !== "undefined") {
+      sessionStorage.setItem("post_login_redirect", redirectParam);
+    }
+  }, [redirectParam]);
 
   useEffect(() => {
     const userStr = sessionStorage.getItem("user");
@@ -48,7 +67,15 @@ export default function SignInContent() {
         const userObj = JSON.parse(userStr);
         const role = userObj?.role;
         if (role === "CUSTOMER") {
-          router.replace("/customer/dashboard");
+          const redirectUrl =
+            searchParams.get("redirect") ||
+            sessionStorage.getItem("post_login_redirect");
+          if (redirectUrl && redirectUrl.startsWith("/customer/")) {
+            sessionStorage.removeItem("post_login_redirect");
+            router.replace(redirectUrl);
+          } else {
+            router.replace("/customer/dashboard");
+          }
         } else if (role === "PUROHIT" || role === "ASTROLOGER") {
           if (role === "ASTROLOGER") {
             router.replace("/partner/astrologybookings");
@@ -60,7 +87,7 @@ export default function SignInContent() {
         }
       } catch (e) {}
     }
-  }, [router]);
+  }, [router, searchParams]);
 
   return (
     <Box
@@ -236,7 +263,15 @@ export default function SignInContent() {
                         showSnackbar("Login successful!", "success");
 
                         if (role === "CUSTOMER") {
-                          router.replace("/customer/dashboard");
+                          const redirectUrl =
+                            searchParams.get("redirect") ||
+                            sessionStorage.getItem("post_login_redirect");
+                          if (redirectUrl && redirectUrl.startsWith("/customer/")) {
+                            sessionStorage.removeItem("post_login_redirect");
+                            router.replace(redirectUrl);
+                          } else {
+                            router.replace("/customer/dashboard");
+                          }
                         } else if (role === "PUROHIT" || role === "ASTROLOGER") {
                           if (role === "ASTROLOGER") {
                             router.replace("/partner/astrologybookings");
@@ -275,13 +310,18 @@ export default function SignInContent() {
                     <Box component={Form}>
                       <FormikValidationSnackbar />
                       <Field name="email">
-                        {({ field, meta }: any) => (
+                        {({ field, form, meta }: any) => (
                           <TextField
                             {...field}
                             fullWidth
                             label="Email"
                             variant="outlined"
                             margin="normal"
+                            type="email"
+                            onKeyDown={allowOnlyEmailCharsOnKeyDown}
+                            onChange={(e) => {
+                              form.setFieldValue("email", sanitizeEmailInput(e.target.value));
+                            }}
                             error={meta.touched && !!meta.error}
                             helperText={meta.touched && meta.error}
                             sx={{
@@ -452,7 +492,11 @@ export default function SignInContent() {
                 >
                   Don't have an account?{" "}
                   <Link
-                    href="/sign-up"
+                    href={
+                      redirectParam
+                        ? `/sign-up?redirect=${encodeURIComponent(redirectParam)}`
+                        : "/sign-up"
+                    }
                     style={{
                       color: COLORS.PRIMARY,
                       fontWeight: 700,

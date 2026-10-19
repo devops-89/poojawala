@@ -11,6 +11,6 @@ export default function CustomerServicesPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Services | Poojawala',
-  description: 'Explore and book pujas and services on Poojawala.',
+  title: 'Services | 1Pooja',
+  description: 'Explore and book pujas and services on 1Pooja.',
 };

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Onboard Purohit | Admin Portal',
-  description: 'Add a new purohit to the Poojawala platform.',
+  description: 'Add a new purohit to the 1Pooja platform.',
 };
 
 export default function AddPurohitPage() {

@@ -1,5 +1,11 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
+import {
+  allowOnlyTitleCharsOnKeyDown,
+  sanitizeTitleInput,
+  allowOnlyDescriptionCharsOnKeyDown,
+  sanitizeDescriptionInput,
+} from "@/utils/helpers";
 
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import { getTemplesAPI } from "@/api/templeControllers";
@@ -81,8 +87,14 @@ export default function ServiceBasicFields({
           placeholder="e.g., Satyanarayan Katha"
           variant="outlined"
           value={values.name}
+          onKeyDown={allowOnlyTitleCharsOnKeyDown}
           onChange={(e) => {
-            handleChange(e);
+            const sanitized = sanitizeTitleInput(e.target.value);
+            if (setFieldValue) {
+              setFieldValue("name", sanitized);
+            } else {
+              handleChange(e as any);
+            }
             if (setFieldTouched) setFieldTouched("name", true, false);
           }}
           onBlur={handleBlur}
@@ -223,8 +235,14 @@ export default function ServiceBasicFields({
           placeholder="Describe the ritual..."
           variant="outlined"
           value={values.description}
+          onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
           onChange={(e) => {
-            handleChange(e);
+            const sanitized = sanitizeDescriptionInput(e.target.value);
+            if (setFieldValue) {
+              setFieldValue("description", sanitized);
+            } else {
+              handleChange(e as any);
+            }
             if (setFieldTouched) setFieldTouched("description", true, false);
           }}
           onBlur={handleBlur}

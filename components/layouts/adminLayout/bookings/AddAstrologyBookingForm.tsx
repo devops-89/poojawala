@@ -35,6 +35,13 @@ import AddBookingCustomerSection from './AddBookingCustomerSection';
 import AddBookingAstrologerSection from './AddBookingAstrologerSection';
 import AddBookingScheduleSection from './AddBookingScheduleSection';
 
+import {
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+  ADDRESS_STRICT_REGEX,
+  ADDRESS_STRICT_MESSAGE,
+} from '@/utils/helpers';
+
 const validationSchema = Yup.object().shape({
   customerId: Yup.string().when('isNewCustomer', {
     is: false,
@@ -63,11 +70,9 @@ const validationSchema = Yup.object().shape({
     is: true,
     then: (schema) =>
       schema
+        .trim()
         .required('Email is required')
-        .matches(
-          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-          'Invalid email format'
-        ),
+        .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE),
     otherwise: (schema) => schema.notRequired(),
   }),
   newCustomerPassword: Yup.string().when('isNewCustomer', {
@@ -78,7 +83,11 @@ const validationSchema = Yup.object().shape({
   }),
   newCustomerAddress: Yup.string().when('isNewCustomer', {
     is: true,
-    then: (schema) => schema.required('Address is required'),
+    then: (schema) =>
+      schema
+        .trim()
+        .required('Address is required')
+        .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE),
     otherwise: (schema) => schema.notRequired(),
   }),
   newCustomerCity: Yup.string().when('isNewCustomer', {

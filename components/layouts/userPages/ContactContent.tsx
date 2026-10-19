@@ -11,6 +11,20 @@ import { useSnackbarStore } from '@/stores/snackbarStore';
 import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
+import {
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+  TITLE_STRICT_REGEX,
+  TITLE_STRICT_MESSAGE,
+  DESCRIPTION_STRICT_REGEX,
+  DESCRIPTION_STRICT_MESSAGE,
+  allowOnlyTitleCharsOnKeyDown,
+  sanitizeTitleInput,
+  allowOnlyDescriptionCharsOnKeyDown,
+  sanitizeDescriptionInput,
+} from '@/utils/helpers';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -19,18 +33,17 @@ const validationSchema = Yup.object().shape({
     .matches(/^[a-zA-Z\s]*$/, 'Name can only contain letters and spaces')
     .required('Name is required'),
   email: Yup.string()
-    .matches(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|co\.in|edu|gov|io)$/i,
-      'Invalid email format. Must end with a valid domain (e.g., .com, .in)'
-    )
+    .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
     .required('Email is required'),
   subject: Yup.string()
     .min(5, 'Subject must be at least 5 characters')
     .max(100, 'Subject cannot exceed 100 characters')
+    .matches(TITLE_STRICT_REGEX, TITLE_STRICT_MESSAGE)
     .required('Subject is required'),
   message: Yup.string()
     .min(10, 'Message must be at least 10 characters')
     .max(1000, 'Message cannot exceed 1000 characters')
+    .matches(DESCRIPTION_STRICT_REGEX, DESCRIPTION_STRICT_MESSAGE)
     .required('Message is required'),
 });
 
@@ -93,7 +106,7 @@ export default function ContactContent() {
               </Box>
               <Box>
                 <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Email</Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>support@poojawala.com</Typography>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>support@1pooja.com</Typography>
               </Box>
             </Box>
 
@@ -173,25 +186,64 @@ export default function ContactContent() {
                           />
                         </Grid>
                         <Grid size={{ xs: 12, md: 6 }}>
-                          <Field 
-                            as={TextField} name="email" fullWidth label="Email Address" variant="outlined"
-                            error={touched.email && !!errors.email} helperText={touched.email && errors.email}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
-                          />
+                          <Field name="email">
+                            {({ field, form, meta }: any) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Email Address"
+                                variant="outlined"
+                                type="email"
+                                onKeyDown={allowOnlyEmailCharsOnKeyDown}
+                                onChange={(e) => {
+                                  form.setFieldValue("email", sanitizeEmailInput(e.target.value));
+                                }}
+                                error={meta.touched && !!meta.error}
+                                helperText={meta.touched && meta.error}
+                                sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
+                              />
+                            )}
+                          </Field>
                         </Grid>
                         <Grid size={{ xs: 12 }}>
-                          <Field 
-                            as={TextField} name="subject" fullWidth label="Subject" variant="outlined"
-                            error={touched.subject && !!errors.subject} helperText={touched.subject && errors.subject}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
-                          />
+                          <Field name="subject">
+                            {({ field, form, meta }: any) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Subject"
+                                variant="outlined"
+                                onKeyDown={allowOnlyTitleCharsOnKeyDown}
+                                onChange={(e) => {
+                                  form.setFieldValue("subject", sanitizeTitleInput(e.target.value));
+                                }}
+                                error={meta.touched && !!meta.error}
+                                helperText={meta.touched && meta.error}
+                                sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
+                              />
+                            )}
+                          </Field>
                         </Grid>
                         <Grid size={{ xs: 12 }}>
-                          <Field 
-                            as={TextField} name="message" fullWidth label="Your Message" variant="outlined" multiline rows={4}
-                            error={touched.message && !!errors.message} helperText={touched.message && errors.message}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
-                          />
+                          <Field name="message">
+                            {({ field, form, meta }: any) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Your Message"
+                                variant="outlined"
+                                multiline
+                                rows={4}
+                                onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
+                                onChange={(e) => {
+                                  form.setFieldValue("message", sanitizeDescriptionInput(e.target.value));
+                                }}
+                                error={meta.touched && !!meta.error}
+                                helperText={meta.touched && meta.error}
+                                sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
+                              />
+                            )}
+                          </Field>
                         </Grid>
                       </Grid>
 

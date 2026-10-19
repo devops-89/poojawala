@@ -40,6 +40,107 @@ export const sanitizeLettersOnly = (val: string): string => {
   return (val || '').replace(/[^a-zA-Z\s.-]/g, '');
 };
 
+/**
+ * Strict Email validation regex and helpers:
+ * Strictly allows letters, digits, and special characters only '.' and '@'
+ */
+export const EMAIL_STRICT_REGEX = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+export const EMAIL_STRICT_MESSAGE = "Invalid email format. Only letters, numbers, '.' and '@' are allowed";
+
+export const allowOnlyEmailCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (
+    e.ctrlKey ||
+    e.metaKey ||
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+  ) {
+    return;
+  }
+  // Disallow any character other than alphanumeric, '.' or '@'
+  if (!/^[a-zA-Z0-9.@]$/.test(e.key)) {
+    e.preventDefault();
+  }
+};
+
+export const sanitizeEmailInput = (val: string): string => {
+  return (val || '').replace(/[^a-zA-Z0-9.@]/g, '');
+};
+
+/**
+ * Strict Address validation regex and helpers:
+ * Strictly allows letters, digits, whitespace, and special characters only ',' and '&'
+ */
+export const ADDRESS_STRICT_REGEX = /^[a-zA-Z0-9\s,&]+$/;
+export const ADDRESS_STRICT_MESSAGE = "Address can only contain letters, numbers, spaces, and ',' or '&'";
+
+export const allowOnlyAddressCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (
+    e.ctrlKey ||
+    e.metaKey ||
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+  ) {
+    return;
+  }
+  // Disallow any character other than alphanumeric, whitespace, ',' or '&'
+  if (!/^[a-zA-Z0-9\s,&]$/.test(e.key)) {
+    e.preventDefault();
+  }
+};
+
+export const sanitizeAddressInput = (val: string): string => {
+  return (val || '').replace(/[^a-zA-Z0-9\s,&]/g, '');
+};
+
+/**
+ * Strict Title/Name validation regex and helpers:
+ * Allows letters, numbers, spaces, and standard punctuation (, . - & ' : () /)
+ * Disallows symbols like @ # $ % ^ * < > { } [ ] _ = + | ~ `
+ */
+export const TITLE_STRICT_REGEX = /^[a-zA-Z0-9\s,&.\-':()\/]+$/;
+export const TITLE_STRICT_MESSAGE = "Title can only contain letters, numbers, spaces, and standard punctuation (, . - & ' : () /)";
+
+export const allowOnlyTitleCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (
+    e.ctrlKey ||
+    e.metaKey ||
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+  ) {
+    return;
+  }
+  if (!/^[a-zA-Z0-9\s,&.\-':()\/]$/.test(e.key)) {
+    e.preventDefault();
+  }
+};
+
+export const sanitizeTitleInput = (val: string): string => {
+  return (val || '').replace(/[^a-zA-Z0-9\s,&.\-':()\/]/g, '');
+};
+
+/**
+ * Strict Description validation regex and helpers:
+ * Allows letters, numbers, spaces, newlines, and standard text punctuation (., ! ? ' " : ; () & / % -)
+ * Disallows symbols like @ # $ ^ * < > { } [ ] _ = + | ~ `
+ */
+export const DESCRIPTION_STRICT_REGEX = /^[a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]+$/;
+export const DESCRIPTION_STRICT_MESSAGE = "Description cannot contain special characters like @, #, $, ^, *, <, >, {, }, [, ], =, +, ~, |";
+
+export const allowOnlyDescriptionCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (
+    e.ctrlKey ||
+    e.metaKey ||
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+  ) {
+    return;
+  }
+  if (!/^[a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]$/.test(e.key)) {
+    e.preventDefault();
+  }
+};
+
+export const sanitizeDescriptionInput = (val: string): string => {
+  return (val || '').replace(/[^a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]/g, '');
+};
+
+
 export interface BankFormValues {
   paymentMethod: string;
   accountHolderName?: string;

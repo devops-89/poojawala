@@ -59,14 +59,14 @@ export default function WelcomeLocationModal() {
     if (pathname !== "/") return;
 
     const alreadyShown = sessionStorage.getItem(
-      "poojawala_welcome_modal_shown",
-    );
+      "1pooja_welcome_modal_shown",
+    ) || sessionStorage.getItem("poojawala_welcome_modal_shown");
     if (alreadyShown) return;
 
     // Trigger modal after 15 seconds (15000 ms)
     const timer = setTimeout(() => {
       setOpen(true);
-      sessionStorage.setItem("poojawala_welcome_modal_shown", "true");
+      sessionStorage.setItem("1pooja_welcome_modal_shown", "true");
     }, 10000);
 
     return () => clearTimeout(timer);
@@ -144,7 +144,7 @@ export default function WelcomeLocationModal() {
           <Box
             component="img"
             src="/images/logo.webp"
-            alt="Poojawala"
+            alt="1Pooja"
             sx={{ height: 46, objectFit: "contain", mx: "auto", mb: 1.5 }}
           />
           <Typography
@@ -157,7 +157,7 @@ export default function WelcomeLocationModal() {
               mb: 0.8,
             }}
           >
-            Welcome to Poojawala 🙏
+            Welcome to 1Pooja 🙏
           </Typography>
           <Typography
             sx={{

@@ -7,7 +7,7 @@ import { COLORS } from '@/utils/enums';
 import { FONTS } from '@/utils/fonts';
 
 export default function GlobalSnackbar() {
-  const { open, message, severity, hideSnackbar } = useSnackbarStore();
+  const { open, message, severity, hideSnackbar, key } = useSnackbarStore();
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -18,9 +18,11 @@ export default function GlobalSnackbar() {
 
   return (
     <Snackbar
+      key={key}
       open={open}
       autoHideDuration={5000}
       onClose={handleClose}
+      disableWindowBlurListener
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       sx={{
         bottom: { xs: 20, sm: 24 },

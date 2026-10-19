@@ -35,22 +35,22 @@ const citiesColumn2 = ["Kolkata", "Ahmedabad", "Jaipur", "Lucknow", "Indore"];
 const socialLinks = [
   {
     icon: FacebookIcon,
-    href: "https://facebook.com/poojawala",
+    href: "https://facebook.com/1pooja",
     label: "Facebook",
   },
   {
     icon: TwitterIcon,
-    href: "https://twitter.com/poojawala",
+    href: "https://twitter.com/1pooja",
     label: "Twitter",
   },
   {
     icon: InstagramIcon,
-    href: "https://instagram.com/poojawala",
+    href: "https://instagram.com/1pooja",
     label: "Instagram",
   },
   {
     icon: LinkedInIcon,
-    href: "https://linkedin.com/company/poojawala",
+    href: "https://linkedin.com/company/1pooja",
     label: "LinkedIn",
   },
 ];
@@ -98,7 +98,7 @@ export default function Footer() {
                 <Box
                   component="img"
                   src="/images/logo.webp"
-                  alt="Poojawala"
+                  alt="1Pooja"
                   sx={{ height: { xs: "45px", md: "60px" }, objectFit: "contain" }}
                 />
               </Link>
@@ -241,7 +241,7 @@ export default function Footer() {
                 Contact Us
               </Typography>
               <Link
-                href="mailto:support@poojawala.com"
+                href="mailto:support@1pooja.com"
                 underline="none"
                 sx={{
                   ...linkSx,
@@ -249,7 +249,7 @@ export default function Footer() {
                   mb: 4,
                 }}
               >
-                support@poojawala.com
+                support@1pooja.com
               </Link>
 
               <Typography
@@ -274,7 +274,7 @@ export default function Footer() {
                   display: "block",
                 }}
               >
-                Register as Purohit
+                Register as Purohit / Astrologer
               </Link>
             </Grid>
           </Grid>
@@ -301,7 +301,7 @@ export default function Footer() {
                 fontSize: "12px",
               }}
             >
-              © {new Date().getFullYear()} Poojawala. All rights reserved.
+              © {new Date().getFullYear()} 1Pooja. All rights reserved.
             </Typography>
             <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
               <Link

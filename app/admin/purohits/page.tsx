@@ -3,7 +3,7 @@ import AdminPurohitsContent from '@/components/layouts/adminLayout/purohits/Admi
 
 export const metadata: Metadata = {
   title: 'Purohits Management | Admin Portal',
-  description: 'Manage and onboard purohits for Poojawala.',
+  description: 'Manage and onboard purohits for 1Pooja.',
 };
 
 import { Suspense } from 'react';

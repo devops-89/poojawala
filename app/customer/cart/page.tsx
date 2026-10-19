@@ -2,7 +2,7 @@ import CustomerCartContent from "@/components/layouts/customerLayout/cart/Custom
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Your Sacred Cart & Checkout | Poojawala",
+  title: "Your Sacred Cart & Checkout | 1Pooja",
   description: "Complete your order for sacred pooja samagri, brass diyas, and authentic puja kits.",
 };
 

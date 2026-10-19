@@ -3,6 +3,7 @@ import { COLORS } from "@/utils/enums";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import { AddressFormData, StatusMessage } from "@/utils/types";
+import { sanitizeAddressInput } from "@/utils/helpers";
 
 export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
@@ -600,17 +601,18 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   };
 
   const handleAddressInputChange = (val: string) => {
-    setAddressData((prev) => ({ ...prev, fullAddress: val }));
+    const cleanVal = sanitizeAddressInput(val);
+    setAddressData((prev) => ({ ...prev, fullAddress: cleanVal }));
 
     if (addressDebounceRef.current) {
       clearTimeout(addressDebounceRef.current);
     }
 
-    const trimmed = val.trim();
+    const trimmed = cleanVal.trim();
     if (trimmed.length >= 10 && trimmed !== lastSearchedQueryRef.current) {
       addressDebounceRef.current = setTimeout(() => {
         lastSearchedQueryRef.current = trimmed;
-        geoFromFields(undefined, false, val);
+        geoFromFields(undefined, false, cleanVal);
       }, 1500);
     }
   };

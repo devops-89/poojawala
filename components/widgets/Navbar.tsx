@@ -41,6 +41,7 @@ export default function Navbar() {
     { name: "Services", href: "/services" },
     { name: "Temples", href: "/temples" },
     { name: "Purohits", href: "/purohits" },
+    { name: "Astrologers", href: "/astrologers" },
     { name: "Blogs", href: "/blogs" },
     { name: "Contact Us", href: "/contact" },
   ];
@@ -69,7 +70,7 @@ export default function Navbar() {
             <Box
               component="img"
               src="/images/logo.webp"
-              alt="Poojawala"
+              alt="1Pooja"
               sx={{ height: { xs: "40px", md: "60px" }, objectFit: "contain" }}
             />
           </Link>
@@ -78,7 +79,7 @@ export default function Navbar() {
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
-              gap: 4,
+              gap: 3.5,
               alignItems: "center",
             }}
           >
@@ -93,6 +94,9 @@ export default function Navbar() {
                   sx={{
                     color: isActive ? "#D32F2F" : "#666",
                     fontWeight: isActive ? 600 : 500,
+                    fontSize: "15px",
+                    fontFamily: FONTS.PRIMARY,
+                    transition: "color 0.2s",
                     "&:hover": { color: "#D32F2F" },
                   }}
                 >
@@ -115,9 +119,10 @@ export default function Navbar() {
                 borderRadius: "30px",
                 textTransform: "none",
                 fontWeight: 600,
-                px: 2.5,
+                px: 2.2,
                 py: 0.8,
                 fontSize: "14px",
+                fontFamily: FONTS.PRIMARY,
                 "&:hover": {
                   borderColor: COLORS.PRIMARY_DARK,
                   bgcolor: "#FFF0E6",
@@ -125,7 +130,7 @@ export default function Navbar() {
                 },
               }}
             >
-              Register as Purohit
+              Register as Purohit / Astrologer
             </Button>
             <Button
               component={NextLink}
@@ -141,6 +146,7 @@ export default function Navbar() {
                 px: 3,
                 py: 0.8,
                 fontSize: "14px",
+                fontFamily: FONTS.PRIMARY,
                 "&:hover": { background: COLORS.PRIMARY_DARK },
               }}
             >
@@ -174,7 +180,7 @@ export default function Navbar() {
           },
           "& .MuiDrawer-paper": {
             width: "280px",
-            bgcolor: "rgba(255, 255, 255, 0.85)",
+            bgcolor: "rgba(255, 255, 255, 0.95)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             boxShadow: "-4px 0 30px rgba(0,0,0,0.15)",
@@ -250,6 +256,7 @@ export default function Navbar() {
               py: 1.2,
               fontWeight: 600,
               fontSize: "15px",
+              fontFamily: FONTS.PRIMARY,
               "&:hover": { background: COLORS.PRIMARY_DARK },
             }}
           >
@@ -268,7 +275,8 @@ export default function Navbar() {
               textTransform: "none",
               py: 1.2,
               fontWeight: 600,
-              fontSize: "15px",
+              fontSize: "14px",
+              fontFamily: FONTS.PRIMARY,
               "&:hover": {
                 borderColor: COLORS.PRIMARY_DARK,
                 bgcolor: "#FFF0E6",
@@ -276,7 +284,7 @@ export default function Navbar() {
               },
             }}
           >
-            Register as Purohit
+            Register as Purohit / Astrologer
           </Button>
         </Box>
       </Drawer>

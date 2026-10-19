@@ -3,7 +3,7 @@ import AddBookingForm from '@/components/layouts/adminLayout/bookings/AddBooking
 
 export const metadata: Metadata = {
   title: 'Add Booking | Admin Portal',
-  description: 'Manually create a booking for a customer on Poojawala.',
+  description: 'Manually create a booking for a customer on 1Pooja.',
 };
 
 export default function AddBookingPage() {

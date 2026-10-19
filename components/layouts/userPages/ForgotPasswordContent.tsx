@@ -11,9 +11,17 @@ import { useSnackbarStore } from '@/stores/snackbarStore';
 import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
+import {
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+} from '@/utils/helpers';
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  email: Yup.string()
+    .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
+    .required('Email is required'),
 });
 
 export default function ForgotPasswordContent() {
@@ -84,13 +92,18 @@ export default function ForgotPasswordContent() {
                   <Box component={Form}>
                     <FormikValidationSnackbar />
                     <Field name="email">
-                      {({ field, meta }: any) => (
+                      {({ field, form, meta }: any) => (
                         <TextField
                           {...field}
                           fullWidth 
                           label="Email" 
                           variant="outlined" 
                           margin="normal"
+                          type="email"
+                          onKeyDown={allowOnlyEmailCharsOnKeyDown}
+                          onChange={(e) => {
+                            form.setFieldValue("email", sanitizeEmailInput(e.target.value));
+                          }}
                           error={meta.touched && !!meta.error}
                           helperText={meta.touched && meta.error}
                           sx={{ 

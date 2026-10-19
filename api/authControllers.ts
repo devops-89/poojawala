@@ -1,4 +1,4 @@
-import { authPublicApi, authSecuredApi, attachCsrfHeaders, getCsrfToken, getActiveRole } from "./config";
+import { authPublicApi, authSecuredApi, attachCsrfHeaders, getCsrfToken, getActiveRole, extractRoleCsrfToken, replaceCsrfToken, parseAllCookies } from "./config";
 
 export const loginAPI = async (data: any) => {
   try {
@@ -42,10 +42,7 @@ export const logoutAPI = async () => {
     const csrfToken = getCsrfToken(role);
     const headers: any = {};
     if (role) {
-      headers["X-Role"] = role;
-      headers["role"] = role;
       headers["x-role"] = role;
-      headers["Poojawala-Role"] = role;
     }
     if (csrfToken) {
       attachCsrfHeaders(headers, csrfToken, role);
@@ -62,18 +59,41 @@ export const logoutAPI = async () => {
 export const refreshTokenAPI = async () => {
   try {
     const role = getActiveRole();
-    const csrfToken = getCsrfToken(role);
+    const oldCsrfToken = getCsrfToken(role);
     const headers: any = {};
     if (role) {
-      headers["X-Role"] = role;
-      headers["role"] = role;
       headers["x-role"] = role;
-      headers["Poojawala-Role"] = role;
     }
-    if (csrfToken) {
-      attachCsrfHeaders(headers, csrfToken, role);
+    if (oldCsrfToken) {
+      attachCsrfHeaders(headers, oldCsrfToken, role);
     }
     const res = await authPublicApi.post("auth/refresh-token", {}, { headers });
+
+    // Naye waale CSRF token ko extract karo aur puraane waale ko hataakr store karo
+    const activeRole = role || res.data?.user?.role;
+    let newCsrfToken =
+      extractRoleCsrfToken(res, activeRole) ||
+      extractRoleCsrfToken(res.data, activeRole);
+
+    if (!newCsrfToken) {
+      const { map, lowerMap } = parseAllCookies();
+      const candidate =
+        map["csrftoken"] ||
+        map["csrf-token"] ||
+        lowerMap["csrftoken"] ||
+        map["poojawala-customer-csrf-token"] ||
+        map["poojawala-admin-csrf-token"] ||
+        map["poojawala-purohit-csrf-token"] ||
+        map["poojawala-astrologer-csrf-token"];
+      if (candidate && candidate !== oldCsrfToken) {
+        newCsrfToken = candidate;
+      }
+    }
+
+    if (newCsrfToken) {
+      replaceCsrfToken(newCsrfToken, activeRole);
+    }
+
     return res.data;
   } catch (error) {
     throw error;

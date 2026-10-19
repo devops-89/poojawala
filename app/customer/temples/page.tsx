@@ -11,6 +11,6 @@ export default function CustomerTemplesPage() {
 }
 
 export const metadata: Metadata = {
-  title: "Temples | Poojawala",
-  description: "Explore sacred temples and divine shrines on Poojawala.",
+  title: "Temples | 1Pooja",
+  description: "Explore sacred temples and divine shrines on 1Pooja.",
 };

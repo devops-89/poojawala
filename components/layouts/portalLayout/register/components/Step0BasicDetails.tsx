@@ -16,7 +16,12 @@ import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import React from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS, USER_ROLE } from "@/utils/enums";
-import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
+import {
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+} from "@/utils/helpers";
 
 interface Step0Props {
   formik: FormikProps<any>;
@@ -158,7 +163,10 @@ export default function Step0BasicDetails({
             type="email"
             variant="outlined"
             value={formik.values.email}
-            onChange={formik.handleChange}
+            onKeyDown={allowOnlyEmailCharsOnKeyDown}
+            onChange={(e) => {
+              formik.setFieldValue("email", sanitizeEmailInput(e.target.value));
+            }}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && (formik.errors.email as string)}
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}

@@ -7,7 +7,13 @@ import SignUpStep2Address from "@/components/layouts/userPages/components/SignUp
 import SignUpStepperHeader from "@/components/layouts/userPages/components/SignUpStepperHeader";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import { extractBackendErrorMessage } from "@/utils/helpers";
+import {
+  extractBackendErrorMessage,
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+  ADDRESS_STRICT_REGEX,
+  ADDRESS_STRICT_MESSAGE,
+} from "@/utils/helpers";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
@@ -16,9 +22,6 @@ import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-
-const emailTldRegex =
-  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
 
 const today = new Date();
 const fifteenYearsAgo = new Date(
@@ -31,10 +34,7 @@ const step1ValidationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
   email: Yup.string()
-    .matches(
-      emailTldRegex,
-      "Please enter a valid email address with a valid TLD (e.g. .com, .in)"
-    )
+    .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
     .required("Email is required"),
   phone: Yup.string()
     .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
@@ -56,7 +56,9 @@ const step1ValidationSchema = Yup.object().shape({
 const fullValidationSchema = step1ValidationSchema.concat(
   Yup.object().shape({
     addressLabel: Yup.string().required("Address label is required"),
-    fullAddress: Yup.string().required("Full address is required"),
+    fullAddress: Yup.string()
+      .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
+      .required("Full address is required"),
     city: Yup.string().required("City is required"),
     state: Yup.string().required("State is required"),
     pincode: Yup.string().required("Pincode is required"),
@@ -70,6 +72,25 @@ export default function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showSnackbar } = useSnackbarStore();
+
+  let redirectParam = searchParams?.get("redirect");
+  const serviceIdParam = searchParams?.get("serviceId");
+  const astrologerIdParam = searchParams?.get("astrologerId");
+  if (!redirectParam) {
+    if (astrologerIdParam) {
+      redirectParam = `/customer/astrologers/${astrologerIdParam}`;
+    } else if (serviceIdParam) {
+      redirectParam = `/customer/services/${serviceIdParam}`;
+    } else if (typeof window !== "undefined") {
+      redirectParam = sessionStorage.getItem("post_login_redirect");
+    }
+  }
+
+  useEffect(() => {
+    if (redirectParam && typeof window !== "undefined") {
+      sessionStorage.setItem("post_login_redirect", redirectParam);
+    }
+  }, [redirectParam]);
 
   useEffect(() => {
     const fromParam = searchParams?.get("from");
@@ -85,7 +106,12 @@ export default function SignUpContent() {
         const userObj = JSON.parse(userStr);
         const role = userObj?.role;
         if (role === "CUSTOMER") {
-          router.replace("/customer/dashboard");
+          if (redirectParam && redirectParam.startsWith("/customer/")) {
+            sessionStorage.removeItem("post_login_redirect");
+            router.replace(redirectParam);
+          } else {
+            router.replace("/customer/dashboard");
+          }
         } else if (role === "PUROHIT") {
           router.replace("/partner/dashboard");
         } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
@@ -93,7 +119,7 @@ export default function SignUpContent() {
         }
       } catch (e) {}
     }
-  }, [router]);
+  }, [router, redirectParam]);
 
   const handleFetchCurrentLocation = (setFieldValue: any) => {
     if (!navigator.geolocation) {
@@ -169,6 +195,10 @@ export default function SignUpContent() {
     longitude: "",
     isDefault: true,
   };
+
+  const signInHref = redirectParam
+    ? `/sign-in?redirect=${encodeURIComponent(redirectParam)}`
+    : "/sign-in";
 
   return (
     <Box
@@ -270,7 +300,10 @@ export default function SignUpContent() {
                           JSON.stringify(values)
                         );
                         showSnackbar("OTP sent successfully!", "success");
-                        router.replace("/verify-otp");
+                        const targetOtpUrl = redirectParam
+                          ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
+                          : "/verify-otp";
+                        router.replace(targetOtpUrl);
                       } else {
                         showSnackbar(
                           res.message || "Failed to send OTP",
@@ -367,7 +400,7 @@ export default function SignUpContent() {
                 >
                   Already have an account?{" "}
                   <Link
-                    href="/sign-in"
+                    href={signInHref}
                     style={{
                       color: COLORS.PRIMARY,
                       fontWeight: 700,

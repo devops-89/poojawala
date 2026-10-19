@@ -37,7 +37,7 @@ export default function AddProductForm() {
         name: '',
         description: '',
         price: '',
-        pricingUnit: PRODUCT_PRICING_UNIT.PIECE,
+        pricingUnit: '',
         quantity: '',
         categoryId: '',
       }}

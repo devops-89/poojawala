@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { allowOnlyEmailCharsOnKeyDown, sanitizeEmailInput } from "@/utils/helpers";
 
 import React from "react";
 import { Avatar, Box, Grid, TextField, Typography } from "@mui/material";
@@ -89,7 +90,10 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
             type="email"
             variant="outlined"
             value={values.email}
-            onChange={handleChange}
+            onKeyDown={allowOnlyEmailCharsOnKeyDown}
+            onChange={(e) => {
+              setFieldValue("email", sanitizeEmailInput(e.target.value));
+            }}
             onBlur={handleBlur}
             error={
               Boolean(errors.email) &&

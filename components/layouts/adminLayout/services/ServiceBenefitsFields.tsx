@@ -1,6 +1,16 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import {
+  allowOnlyTitleCharsOnKeyDown,
+  sanitizeTitleInput,
+  allowOnlyDescriptionCharsOnKeyDown,
+  sanitizeDescriptionInput,
+  TITLE_STRICT_REGEX,
+  TITLE_STRICT_MESSAGE,
+  DESCRIPTION_STRICT_REGEX,
+  DESCRIPTION_STRICT_MESSAGE,
+} from "@/utils/helpers";
 
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
@@ -77,6 +87,16 @@ export default function ServiceBenefitsFields({
 
     if (!trimmedTitle) {
       setInputError("Please enter benefit title");
+      return;
+    }
+
+    if (!TITLE_STRICT_REGEX.test(trimmedTitle)) {
+      setInputError(TITLE_STRICT_MESSAGE);
+      return;
+    }
+
+    if (trimmedDesc && !DESCRIPTION_STRICT_REGEX.test(trimmedDesc)) {
+      setInputError(DESCRIPTION_STRICT_MESSAGE);
       return;
     }
 
@@ -217,15 +237,17 @@ export default function ServiceBenefitsFields({
                   label="Title *"
                   placeholder="e.g. Traditional Vedic Rituals & Sankalp"
                   value={titleInput}
-                  onChange={(e) => {
-                    setTitleInput(e.target.value);
-                    if (inputError) setInputError(null);
-                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       handleSave();
+                    } else {
+                      allowOnlyTitleCharsOnKeyDown(e);
                     }
+                  }}
+                  onChange={(e) => {
+                    setTitleInput(sanitizeTitleInput(e.target.value));
+                    if (inputError) setInputError(null);
                   }}
                   error={Boolean(inputError)}
                   helperText={inputError || undefined}
@@ -247,12 +269,17 @@ export default function ServiceBenefitsFields({
                   label="Description"
                   placeholder="e.g. Performed according to Vedic scriptures with certified Purohits and custom Sankalp."
                   value={descInput}
-                  onChange={(e) => setDescInput(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
                       e.preventDefault();
                       handleSave();
+                    } else {
+                      allowOnlyDescriptionCharsOnKeyDown(e);
                     }
+                  }}
+                  onChange={(e) => {
+                    setDescInput(sanitizeDescriptionInput(e.target.value));
+                    if (inputError) setInputError(null);
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "My Orders | Poojawala",
+  title: "My Orders | 1Pooja",
   description: "View and track your sacred purchases, puja samagri orders, and reorder with ease.",
 };
 

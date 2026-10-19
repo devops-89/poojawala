@@ -1,5 +1,6 @@
 "use client";
 import { Box, Button, Container, Typography } from "@mui/material";
+import Link from "next/link";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
@@ -29,49 +30,32 @@ export default function HeroSection() {
         {/* Content */}
         <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
           <Typography
-            variant="h2"
             component="h1"
             sx={{
               fontFamily: FONTS.DM_SANS,
               fontWeight: 700,
               color: COLORS.SLATE_DARK,
-              mb: 0.5,
-              fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
+              mb: { xs: 1.5, md: 3 },
+              fontSize: { xs: "1.75rem", sm: "2.4rem", md: "48px" },
               lineHeight: { xs: 1.15, md: 1.2 },
               letterSpacing: "-0.04em",
             }}
           >
             Sacred Rituals,
-          </Typography>
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontFamily: FONTS.DM_SANS,
-              fontWeight: 700,
-              color: COLORS.SLATE_DARK,
-              mb: 0.5,
-              fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
-              lineHeight: { xs: 1.15, md: 1.2 },
-              letterSpacing: "-0.04em",
-            }}
-          >
-            Trusted Pandits,
-          </Typography>
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontFamily: FONTS.DM_SANS,
-              fontWeight: 800,
-              color: COLORS.RED_DARK,
-              mb: { xs: 1.5, md: 3 },
-              fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
-              lineHeight: { xs: 1.15, md: 1.2 },
-              letterSpacing: "-0.04em",
-            }}
-          >
-            One Booking Away
+            <Box component="span" sx={{ display: "block" }}>
+              Trusted Pandits,
+            </Box>
+            <Box
+              component="span"
+              sx={{
+                display: "block",
+                fontWeight: 800,
+                color: COLORS.RED_DARK,
+                mt: 0.5,
+              }}
+            >
+              One Booking Away
+            </Box>
           </Typography>
           <Typography
             variant="body1"
@@ -106,6 +90,7 @@ export default function HeroSection() {
           >
             <Button
               className="book-now"
+              component={Link}
               variant="contained"
               href="/sign-up?from=book-now"
               sx={{
@@ -131,8 +116,9 @@ export default function HeroSection() {
             </Button>
             <Button
               className="talk-to"
+              component={Link}
               variant="outlined"
-              href="/purohits#top-purohits"
+              href="/astrologers"
               sx={{
                 borderColor: COLORS.CHARCOAL_DARK,
                 color: COLORS.CHARCOAL_DARK,

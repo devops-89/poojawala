@@ -189,7 +189,7 @@ export default function CustomerHeader() {
             <Box
               component="img"
               src="/images/logo.webp"
-              alt="Poojawala"
+              alt="1Pooja"
               sx={{
                 height: { xs: "34px", sm: "42px", md: "52px" },
                 objectFit: "contain",
@@ -553,7 +553,7 @@ export default function CustomerHeader() {
           <Box
             component="img"
             src="/images/logo.webp"
-            alt="Poojawala"
+            alt="1Pooja"
             sx={{ height: "36px", objectFit: "contain" }}
           />
           <IconButton onClick={() => setMobileOpen(false)}>

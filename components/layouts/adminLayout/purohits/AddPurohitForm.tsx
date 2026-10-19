@@ -1,7 +1,15 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly, extractBackendErrorMessage } from "@/utils/helpers";
+import {
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+  extractBackendErrorMessage,
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+} from "@/utils/helpers";
 
 import { addPurohitByAdminAPI } from "@/api/userControllers";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
@@ -50,8 +58,8 @@ const validationSchema = Yup.object().shape({
   email: Yup.string()
     .required("Email is required")
     .matches(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email format"
+      EMAIL_STRICT_REGEX,
+      EMAIL_STRICT_MESSAGE
     ),
   mobileNumber: Yup.string()
     .required("Mobile Number is required")
@@ -355,8 +363,9 @@ export default function AddPurohitForm() {
               variant="outlined"
               type="email"
               value={values.email}
+              onKeyDown={allowOnlyEmailCharsOnKeyDown}
               onChange={(e) => {
-                handleChange(e);
+                formik.setFieldValue("email", sanitizeEmailInput(e.target.value));
                 formik.setFieldTouched("email", true, false);
               }}
               onBlur={handleBlur}

@@ -9,6 +9,7 @@ import {
 import { AddressFormData } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput } from "@/utils/helpers";
 
 interface AddressFormInputsProps {
   addressData: AddressFormData;
@@ -69,7 +70,8 @@ export default function AddressFormInputs({
           rows={2}
           label="Full Address *"
           value={addressData.fullAddress}
-          onChange={(e) => onAddressInputChange(e.target.value)}
+          onKeyDown={allowOnlyAddressCharsOnKeyDown}
+          onChange={(e) => onAddressInputChange(sanitizeAddressInput(e.target.value))}
           onBlur={onAddressInputBlur}
           variant="outlined"
           sx={{

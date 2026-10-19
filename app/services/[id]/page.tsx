@@ -6,6 +6,6 @@ export default function PublicServiceDetailsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Service Details | Poojawala',
-  description: 'View Vedic service details and book verified purohits on Poojawala.',
+  title: 'Service Details | 1Pooja',
+  description: 'View Vedic service details and book verified purohits on 1Pooja.',
 };

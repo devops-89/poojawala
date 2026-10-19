@@ -17,6 +17,6 @@ export default function RegisterPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Register as a Purohit | Poojawala',
-  description: 'Join Poojawala as a verified Purohit partner. Register today to connect with devotees and manage your puja bookings online.',
+  title: 'Register as a Purohit | 1Pooja',
+  description: 'Join 1Pooja as a verified Purohit partner. Register today to connect with devotees and manage your puja bookings online.',
 };

@@ -16,7 +16,7 @@ export default async function CustomerTempleDetailsPage({
 }
 
 export const metadata: Metadata = {
-  title: "Temple Details | Poojawala",
+  title: "Temple Details | 1Pooja",
   description:
-    "Explore sacred temple details, history, legends, and book authenticated Vedic rituals and poojas on Poojawala.",
+    "Explore sacred temple details, history, legends, and book authenticated Vedic rituals and poojas on 1Pooja.",
 };

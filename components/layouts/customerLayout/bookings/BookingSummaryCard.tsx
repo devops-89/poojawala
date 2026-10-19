@@ -2,6 +2,7 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import React from 'react';
 import { Box, Typography, Paper, Chip } from '@mui/material';
+import { formatInr } from './bookingPaymentHelper';
 
 interface Props {
   booking: any;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function BookingSummaryCard({ booking, statusLabel }: Props) {
+  const isAstrology = booking?.bookingType === 'ASTROLOGY' || Boolean(booking?.astrologer);
   const statusStr = (booking?.status || '').toUpperCase();
   const statusBg =
     statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED'
@@ -27,6 +29,22 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
       ? '#C62828'
       : COLORS.PRIMARY;
 
+  const astro = booking?.astrologer;
+  const astroName = astro ? `${astro.firstName || ''} ${astro.lastName || ''}`.trim() : null;
+
+  const ratePerMinute =
+    booking?.astrologer?.astrologerProfile?.ratePerMinute ||
+    booking?.astrologerProfile?.ratePerMinute ||
+    null;
+
+  const tokenAmt = Number(
+    booking?.tokenAmount ??
+    booking?.priceBreakDown?.tokenAmount ??
+    booking?.paidAmount ??
+    booking?.finalAmount ??
+    50
+  );
+
   return (
     <Paper
       sx={{
@@ -43,11 +61,22 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Service</Typography>
+          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+            {isAstrology ? 'Service Type' : 'Service'}
+          </Typography>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
-            {booking?.service?.name ?? 'N/A'}
+            {booking?.service?.name ?? (isAstrology ? 'Astrology Consultation' : 'N/A')}
           </Typography>
         </Box>
+
+        {isAstrology && astroName && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Astrologer</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
+              {astroName}
+            </Typography>
+          </Box>
+        )}
 
         {booking?.bookingNumber && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
@@ -79,16 +108,51 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
             {booking?.bookingMode === 'OFFLINE'
               ? 'In-Person (Offline)'
               : booking?.bookingMode === 'ONLINE'
-              ? 'Virtual (Online)'
+              ? 'Virtual (Online Consultation)'
               : (booking?.bookingMode ?? 'N/A')}
           </Typography>
         </Box>
 
-        {booking?.plan && (
+        {isAstrology && (
+          <>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Token Advance</Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#16a34a', fontSize: '14px' }}>
+                ₹{formatInr(tokenAmt)} (Paid)
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Consultation Fee</Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#ea580c', fontSize: '14px' }}>
+                {ratePerMinute ? `₹${ratePerMinute}/min` : 'As per session'} (Payable after session)
+              </Typography>
+            </Box>
+          </>
+        )}
+
+        {isAstrology && (booking?.scheduledAtIst || booking?.scheduledAt) && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Scheduled Session</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
+              {booking?.scheduledAtIst || new Date(booking.scheduledAt).toLocaleString('en-IN')}
+            </Typography>
+          </Box>
+        )}
+
+        {!isAstrology && booking?.plan && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Package Plan</Typography>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
               {booking.plan.charAt(0).toUpperCase() + booking.plan.slice(1).toLowerCase()} Plan
+            </Typography>
+          </Box>
+        )}
+
+        {isAstrology && booking?.cancellationReason && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#dc2626', fontSize: '14px', fontWeight: 600 }}>Cancellation Reason</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#dc2626', fontSize: '14px' }}>
+              {booking.cancellationReason} {booking.cancelledBy ? `(By ${booking.cancelledBy})` : ''}
             </Typography>
           </Box>
         )}

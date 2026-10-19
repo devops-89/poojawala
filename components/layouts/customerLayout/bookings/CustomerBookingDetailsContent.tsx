@@ -34,7 +34,6 @@ import BookingSummaryCard from "./BookingSummaryCard";
 import PurohitReviewCard from "./PurohitReviewCard";
 import ServiceDetailsCard from "./ServiceDetailsCard";
 import { getBookingPaymentDetails } from "./bookingPaymentHelper";
-
 import { useSocketStore } from "@/stores/socketStore";
 
 export default function CustomerBookingDetailsContent({
@@ -48,27 +47,6 @@ export default function CustomerBookingDetailsContent({
   const { showSnackbar } = useSnackbarStore();
   const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
 
-  useEffect(() => {
-    if (!bookingId) return;
-    const fetchDetails = async () => {
-      try {
-        setLoading(true);
-        const res = await getBookingDetailsAPI(bookingId);
-        if (res.success && res.data) {
-          setBooking(res.data);
-        } else {
-          showSnackbar("Failed to fetch booking details", "error");
-        }
-      } catch (error) {
-        console.error(error);
-        showSnackbar("Error fetching booking details", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetails();
-  }, [bookingId, refreshTrigger]);
-
   const fetchDetails = async () => {
     if (!bookingId) return;
     try {
@@ -76,6 +54,10 @@ export default function CustomerBookingDetailsContent({
       const res = await getBookingDetailsAPI(bookingId);
       if (res.success && res.data) {
         setBooking(res.data);
+        if (typeof window !== "undefined") {
+          const isAstro = res.data.bookingType === "ASTROLOGY" || Boolean(res.data.astrologer);
+          sessionStorage.setItem("customer_bookings_type", isAstro ? "ASTROLOGY" : "POOJA");
+        }
       } else {
         showSnackbar("Failed to fetch booking details", "error");
       }
@@ -86,6 +68,10 @@ export default function CustomerBookingDetailsContent({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDetails();
+  }, [bookingId, refreshTrigger]);
 
   const [isRedirectingPayment, setIsRedirectingPayment] = useState(false);
 
@@ -109,7 +95,7 @@ export default function CustomerBookingDetailsContent({
           res?.short_url ||
           (typeof res === "string" ? res : null);
       } else {
-        const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/customer/bookings/${bookingId}` : "https://poojawala.com/customer/bookings";
+        const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/customer/bookings/${bookingId}` : "https://1pooja.com/customer/bookings";
         const res = await getPaymentLinkAPI(bookingId, callbackUrl);
         const resData = res?.data?.data || res?.data || res;
         paymentUrl =
@@ -294,13 +280,10 @@ export default function CustomerBookingDetailsContent({
     : "Pending";
 
   const isActive = statusStr === "PENDING" || statusStr === "ACCEPTED";
-  const paymentDetails = getBookingPaymentDetails(booking);
   const isPaymentPending = getBookingPaymentDetails(booking).canMakePayment;
-  const _unusedPaymentPending = false; /*
-    statusStr !== "CANCELLED" &&
-    paymentStatusStr !== "SUCCESS" &&
-    paymentStatusStr !== "PAID" &&
-    statusStr !== "CANCELLED"; */
+
+  const isAstrology = booking?.bookingType === "ASTROLOGY" || Boolean(booking?.astrologer);
+  const backHref = isAstrology ? "/customer/bookings?type=ASTROLOGY" : "/customer/bookings?type=POOJA";
 
   return (
     <Box sx={{ maxWidth: "1100px", mx: "auto", pb: 8 }}>
@@ -308,27 +291,65 @@ export default function CustomerBookingDetailsContent({
         <AppBreadcrumbs
           items={[
             { label: "Dashboard", href: "/customer/dashboard" },
-            { label: "Bookings", href: "/customer/bookings" },
+            { label: "Bookings", href: backHref },
             { label: "Booking Details" },
           ]}
         />
-        <Box>
-          <Typography
-            variant="h4"
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", sm: "center" },
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            mt: 1,
+          }}
+        >
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: FONTS.PRIMARY,
+                fontWeight: 800,
+                color: "#0f172a",
+                mb: 0.5,
+              }}
+            >
+              Booking Details
+            </Typography>
+            <Typography
+              sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b" }}
+            >
+              Review the full details for your selected booking.
+            </Typography>
+          </Box>
+
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+            onClick={() => router.push(backHref)}
             sx={{
+              color: "#475569",
+              borderColor: "#e2e8f0",
+              bgcolor: "#fff",
+              borderRadius: "10px",
               fontFamily: FONTS.PRIMARY,
-              fontWeight: 800,
-              color: "#0f172a",
-              mb: 0.5,
+              fontWeight: 600,
+              fontSize: "13px",
+              textTransform: "none",
+              px: 2.5,
+              py: 0.9,
+              boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                bgcolor: "#f8fafc",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
+              },
             }}
           >
-            Booking Details
-          </Typography>
-          <Typography
-            sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b" }}
-          >
-            Review the full details for your selected booking.
-          </Typography>
+            Back to Bookings
+          </Button>
         </Box>
       </Box>
 

@@ -17,6 +17,6 @@ export default function ForgotPasswordPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Forgot Password | Poojawala',
-  description: 'Reset your Poojawala account password.',
+  title: 'Forgot Password | 1Pooja',
+  description: 'Reset your 1Pooja account password.',
 };

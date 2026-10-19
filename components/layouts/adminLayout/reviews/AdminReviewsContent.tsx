@@ -30,9 +30,12 @@ import {
   Grid,
   IconButton,
   Rating,
+  Tab,
+  Tabs,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
@@ -42,6 +45,12 @@ const STATUS_TABS = [
 ];
 
 export default function AdminReviewsContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+
+  const [bookingType, setBookingType] = useState<"POOJA" | "ASTROLOGY">("POOJA");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedReview, setSelectedReview] = useState<any>(null);
 
@@ -60,44 +69,101 @@ export default function AdminReviewsContent() {
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+
+  // Sync bookingType with URL searchParams & sessionStorage
+  useEffect(() => {
+    const typeParam = searchParams.get("type")?.toUpperCase();
+    if (typeParam === "ASTROLOGY" || typeParam === "POOJA") {
+      if (typeParam !== bookingType) {
+        setBookingType(typeParam as "POOJA" | "ASTROLOGY");
+      }
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("admin_reviews_type", typeParam);
+      }
+    } else if (typeof window !== "undefined") {
+      const savedType = sessionStorage.getItem("admin_reviews_type");
+      if (savedType === "ASTROLOGY" || savedType === "POOJA") {
+        if (savedType !== bookingType) {
+          setBookingType(savedType as "POOJA" | "ASTROLOGY");
+        }
+        const params = new URLSearchParams(window.location.search);
+        params.set("type", savedType);
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      }
+    }
+  }, [searchParams, pathname, router, bookingType]);
+
+  const handleBookingTypeChange = (newType: "POOJA" | "ASTROLOGY") => {
+    if (newType === bookingType) return;
+    setBookingType(newType);
+    setPage(0);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("admin_reviews_type", newType);
+      const params = new URLSearchParams(window.location.search);
+      params.set("type", newType);
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+  };
 
   useEffect(() => {
-    fetchReviews(statusFilter);
-  }, [statusFilter]);
+    fetchReviews(statusFilter, bookingType);
+  }, [statusFilter, bookingType]);
 
-  const fetchReviews = async (status: string) => {
+  const fetchReviews = async (status: string, type: "POOJA" | "ASTROLOGY") => {
     try {
       setLoading(true);
-      const response = await getAllReviewsAPI(status);
+      const response = await getAllReviewsAPI(status, type);
       if (response?.success && response?.data?.data) {
         setReviews(
-          response.data.data.map((r: any) => ({
-            ...r,
-            id: `B-${r.bookingId}`,
-            bookingId: r.bookingId,
-            customer: r.customer
-              ? `${r.customer.firstName || ""} ${r.customer.lastName || ""}`.trim()
-              : "Unknown",
-            service: r.service?.name || "Unknown",
-            purohit: r.purohit
-              ? `${r.purohit.firstName || ""} ${r.purohit.lastName || ""}`.trim()
-              : "Unknown",
-            status: r.reviewStatus
-              ? r.reviewStatus.toLowerCase() === "published"
-                ? "Published"
-                : "Draft"
-              : "Draft",
-            customerRating: parseFloat(r.customerRating) || 0,
-            customerComment: r.customerReview || "",
-            purohitRating: parseFloat(r.purohitRating) || 0,
-            purohitComment: r.purohitReview || "",
-          }))
+          response.data.data.map((r: any) => {
+            const rawSpecs = r.astrologer?.specializations;
+            const specStr = Array.isArray(rawSpecs)
+              ? rawSpecs.join(", ")
+              : typeof rawSpecs === "string"
+              ? rawSpecs
+              : "";
+            const city = r.astrologer?.city || "";
+            const consultationDesc = specStr || city || "Astrology Consultation";
+
+            return {
+              ...r,
+              id: `B-${r.bookingId}`,
+              bookingId: r.bookingId,
+              bookingNumber: r.bookingNumber || `PW-${r.bookingId}`,
+              bookingType: r.bookingType || type,
+              customer: r.customer
+                ? `${r.customer.firstName || ""} ${r.customer.lastName || ""}`.trim()
+                : "Unknown",
+              service: r.service?.name || (type === "ASTROLOGY" ? "Astrology Consultation" : "N/A"),
+              purohit: r.purohit
+                ? `${r.purohit.firstName || ""} ${r.purohit.lastName || ""}`.trim()
+                : "N/A",
+              astrologer: r.astrologer
+                ? `${r.astrologer.firstName || ""} ${r.astrologer.lastName || ""}`.trim()
+                : "N/A",
+              specialization: consultationDesc,
+              city: city,
+              status: r.reviewStatus
+                ? r.reviewStatus.toLowerCase() === "published"
+                  ? "Published"
+                  : "Draft"
+                : "Draft",
+              customerRating: parseFloat(r.customerRating) || 0,
+              customerComment: r.customerReview || "",
+              purohitRating: parseFloat(r.purohitRating) || 0,
+              purohitComment: r.purohitReview || "",
+              astrologerRating: parseFloat(r.astrologerRating) || 0,
+              astrologerComment: r.astrologerReview || "",
+            };
+          })
         );
+      } else {
+        setReviews([]);
       }
     } catch (error) {
       console.error("Failed to fetch reviews:", error);
       showSnackbar("Failed to fetch reviews", "error");
+      setReviews([]);
     } finally {
       setLoading(false);
     }
@@ -141,14 +207,19 @@ export default function AdminReviewsContent() {
         setSelectedReview({
           id: `B-${r.bookingId}`,
           bookingId: r.bookingId,
+          bookingNumber: r.bookingNumber || reviewItem.bookingNumber,
+          bookingType: r.bookingType || reviewItem.bookingType,
           customer: r.customer ? `${r.customer.firstName || ""} ${r.customer.lastName || ""}`.trim() : "Unknown",
-          service: r.service?.name || "Unknown",
-          purohit: r.purohit ? `${r.purohit.firstName || ""} ${r.purohit.lastName || ""}`.trim() : "Unknown",
+          service: r.service?.name || (bookingType === "ASTROLOGY" ? "Astrology Consultation" : "N/A"),
+          purohit: r.purohit ? `${r.purohit.firstName || ""} ${r.purohit.lastName || ""}`.trim() : "N/A",
+          astrologer: r.astrologer ? `${r.astrologer.firstName || ""} ${r.astrologer.lastName || ""}`.trim() : "N/A",
           status: r.reviewStatus ? (r.reviewStatus.toLowerCase() === "published" ? "Published" : "Draft") : "Draft",
           customerRating: parseFloat(r.customerRating) || 0,
           customerComment: r.customerReview || "No review left",
           purohitRating: parseFloat(r.purohitRating) || 0,
           purohitComment: r.purohitReview || "No review left",
+          astrologerRating: parseFloat(r.astrologerRating) || 0,
+          astrologerComment: r.astrologerReview || "No review left",
         });
       } else {
         setSelectedReview(reviewItem);
@@ -183,7 +254,7 @@ export default function AdminReviewsContent() {
     return true;
   });
 
-  const columns: Column<any>[] = [
+  const poojaColumns: Column<any>[] = [
     {
       id: "id",
       label: "BOOKING ID",
@@ -266,17 +337,121 @@ export default function AdminReviewsContent() {
     },
   ];
 
+  const astrologyColumns: Column<any>[] = [
+    {
+      id: "id",
+      label: "BOOKING ID",
+      render: (item) => (
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
+          {item.id}
+        </Typography>
+      ),
+    },
+    {
+      id: "customer",
+      label: "CUSTOMER",
+      render: (item) => (
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
+          {item.customer}
+        </Typography>
+      ),
+    },
+    {
+      id: "astrologer",
+      label: "ASTROLOGER",
+      render: (item) => (
+        <Typography sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, fontSize: "0.9rem" }}>
+          {item.astrologer}
+        </Typography>
+      ),
+    },
+    {
+      id: "status",
+      label: "STATUS",
+      render: (item) => (
+        <AdminStatusSelect
+          value={item.status}
+          options={[
+            { value: "Draft", label: "DRAFT" },
+            { value: "Published", label: "PUBLISHED" },
+          ]}
+          onChange={(newStatus) =>
+            setStatusChangeTarget({
+              reviewId: item.id,
+              bookingId: item.bookingId,
+              newStatus,
+            })
+          }
+        />
+      ),
+    },
+    {
+      id: "actions",
+      label: "ACTIONS",
+      align: "center",
+      render: (item) => (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Details",
+                icon: <VisibilityIcon fontSize="small" />,
+                onClick: () => handleViewReview(item),
+              },
+              {
+                label: "Delete",
+                icon: <DeleteIcon fontSize="small" />,
+                onClick: () => setReviewToDelete(item),
+                color: "#ef4444",
+              },
+            ]}
+          />
+        </Box>
+      ),
+    },
+  ];
+
   const paginatedData = filteredReviews.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <AdminPageHeader
-        title="Service Reviews"
+        title="Reviews & Ratings"
         subtitle="Manage feedback, ratings, and publication status for completed bookings"
       />
 
+      {/* Booking Type Tabs: Pooja Reviews vs Astrologer Reviews */}
+      <Box sx={{ borderBottom: "1px solid #E2E8F0" }}>
+        <Tabs
+          value={bookingType}
+          onChange={(_, val) => handleBookingTypeChange(val)}
+          sx={{
+            "& .MuiTab-root": {
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: "15px",
+              textTransform: "none",
+              color: "#64748B",
+              minHeight: "48px",
+              px: 3,
+              "&.Mui-selected": {
+                color: COLORS.PRIMARY,
+              },
+            },
+            "& .MuiTabs-indicator": {
+              bgcolor: COLORS.PRIMARY,
+              height: "3px",
+              borderRadius: "3px 3px 0 0",
+            },
+          }}
+        >
+          <Tab value="POOJA" label="Pooja Reviews" />
+          <Tab value="ASTROLOGY" label="Astrologer Reviews" />
+        </Tabs>
+      </Box>
+
       <AdminDataTable
-        columns={columns}
+        columns={bookingType === "ASTROLOGY" ? astrologyColumns : poojaColumns}
         data={paginatedData}
         isLoading={loading}
         totalCount={filteredReviews.length}
@@ -294,7 +469,7 @@ export default function AdminReviewsContent() {
           setPage(0);
         }}
         keyExtractor={(item) => item.id}
-        emptyMessage="No reviews found matching your criteria."
+        emptyMessage={`No ${bookingType === "ASTROLOGY" ? "astrologer" : "pooja"} reviews found matching your criteria.`}
       />
 
       <ConfirmDeleteDialog
@@ -316,41 +491,95 @@ export default function AdminReviewsContent() {
         loading={isUpdatingStatus}
       />
 
-      <Dialog open={Boolean(selectedReview) || isModalLoading} onClose={() => setSelectedReview(null)} maxWidth="md" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1 } }}>
+      <Dialog
+        open={Boolean(selectedReview) || isModalLoading}
+        onClose={() => setSelectedReview(null)}
+        maxWidth="md"
+        fullWidth
+        sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1 } }}
+      >
         {isModalLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
             <CircularProgress sx={{ color: COLORS.PRIMARY }} />
           </Box>
         ) : selectedReview ? (
           <>
-            <DialogTitle sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <DialogTitle
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: "#1e293b",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <span>Review Details ({selectedReview.id})</span>
-              <IconButton onClick={() => setSelectedReview(null)}><CloseIcon /></IconButton>
+              <IconButton onClick={() => setSelectedReview(null)}>
+                <CloseIcon />
+              </IconButton>
             </DialogTitle>
             <DialogContent dividers sx={{ py: 3 }}>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, mb: 1 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, mb: 1 }}
+                  >
                     Customer Review ({selectedReview.customer})
                   </Typography>
                   <Rating value={selectedReview.customerRating} readOnly precision={0.5} />
-                  <Typography sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 1, whiteSpace: "pre-wrap" }}>
+                  <Typography
+                    sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 1, whiteSpace: "pre-wrap" }}
+                  >
                     &quot;{selectedReview.customerComment || "No comment provided."}&quot;
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, mb: 1 }}>
-                    Purohit Review ({selectedReview.purohit})
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700, color: "#1e293b", fontFamily: FONTS.OUTFIT, mb: 1 }}
+                  >
+                    {selectedReview.bookingType === "ASTROLOGY" || selectedReview.astrologer !== "N/A"
+                      ? `Astrologer Review (${selectedReview.astrologer})`
+                      : `Purohit Review (${selectedReview.purohit})`}
                   </Typography>
-                  <Rating value={selectedReview.purohitRating} readOnly precision={0.5} />
-                  <Typography sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 1, whiteSpace: "pre-wrap" }}>
-                    &quot;{selectedReview.purohitComment || "No comment provided."}&quot;
+                  <Rating
+                    value={
+                      selectedReview.bookingType === "ASTROLOGY" || selectedReview.astrologer !== "N/A"
+                        ? selectedReview.astrologerRating
+                        : selectedReview.purohitRating
+                    }
+                    readOnly
+                    precision={0.5}
+                  />
+                  <Typography
+                    sx={{ color: "#334155", fontFamily: FONTS.OUTFIT, mt: 1, whiteSpace: "pre-wrap" }}
+                  >
+                    &quot;
+                    {(selectedReview.bookingType === "ASTROLOGY" || selectedReview.astrologer !== "N/A"
+                      ? selectedReview.astrologerComment
+                      : selectedReview.purohitComment) || "No review left"}
+                    &quot;
                   </Typography>
                 </Grid>
               </Grid>
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
-              <Button onClick={() => setSelectedReview(null)} variant="contained" sx={{ bgcolor: COLORS.PRIMARY, color: "white", borderRadius: "8px", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: COLORS.PRIMARY_DARK } }}>Close</Button>
+              <Button
+                onClick={() => setSelectedReview(null)}
+                variant="contained"
+                sx={{
+                  bgcolor: COLORS.PRIMARY,
+                  color: "white",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+                }}
+              >
+                Close
+              </Button>
             </DialogActions>
           </>
         ) : null}

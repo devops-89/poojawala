@@ -49,7 +49,7 @@ export default function BlogCtaBanner() {
                 maxWidth: "620px",
               }}
             >
-              Poojawala connects you with verified, experienced purohits for
+              1Pooja connects you with verified, experienced purohits for
               every ceremony &mdash; from Griha Pravesh to Satyanarayan Katha.
             </Typography>
           </Grid>

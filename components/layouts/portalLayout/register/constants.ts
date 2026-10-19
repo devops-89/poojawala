@@ -1,5 +1,13 @@
 import * as yup from 'yup';
 import { USER_ROLE } from '@/utils/enums';
+import {
+  EMAIL_STRICT_REGEX,
+  EMAIL_STRICT_MESSAGE,
+  ADDRESS_STRICT_REGEX,
+  ADDRESS_STRICT_MESSAGE,
+  DESCRIPTION_STRICT_REGEX,
+  DESCRIPTION_STRICT_MESSAGE,
+} from '@/utils/helpers';
 
 export type StepId =
   | 'basic'
@@ -63,8 +71,7 @@ export const SPECIALIZATIONS = [
 
 export const QUALIFICATIONS = ['SHASTRI', 'ACHARYA', 'VEDPATHI'];
 
-export const emailTldRegex =
-  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu|gov|co\.in|info|biz|io|co|us|uk|ca|au)$/i;
+export const emailTldRegex = EMAIL_STRICT_REGEX;
 
 const alphaSpaceRegex = /^[a-zA-Z\s]+$/;
 const cityStateRegex = /^[a-zA-Z\s.-]+$/;
@@ -97,8 +104,8 @@ export const stepValidationSchemas: Record<StepId, any> = {
     email: yup
       .string()
       .matches(
-        emailTldRegex,
-        'Please enter a valid email address with a valid TLD (e.g. .com, .in)'
+        EMAIL_STRICT_REGEX,
+        EMAIL_STRICT_MESSAGE
       )
       .required('Email is required'),
     dob: yup
@@ -126,7 +133,12 @@ export const stepValidationSchemas: Record<StepId, any> = {
       .string()
       .matches(cityStateRegex, 'City cannot contain numbers or special characters')
       .required('City is required'),
-    bio: yup.string().required('Bio is required'),
+    bio: yup
+      .string()
+      .trim()
+      .required('Bio is required')
+      .min(10, 'Bio must be at least 10 characters')
+      .matches(DESCRIPTION_STRICT_REGEX, DESCRIPTION_STRICT_MESSAGE),
     qualification: yup.string().required('Qualification is required'),
     experienceYears: yup
       .number()
@@ -246,7 +258,10 @@ export const stepValidationSchemas: Record<StepId, any> = {
         .string()
         .matches(/^[0-9]{6}$/, 'Pincode must be exactly 6 digits')
         .required('Pincode is required'),
-      fullAddress: yup.string().required('Full Address is required'),
+      fullAddress: yup
+        .string()
+        .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
+        .required('Full Address is required'),
       city: yup.string().required('City is required'),
       state: yup.string().required('State is required'),
       serviceRadiusKm: yup

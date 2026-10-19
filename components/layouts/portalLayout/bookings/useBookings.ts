@@ -401,7 +401,7 @@ export function useBookings() {
   const handleMakePaymentClick = async (jobId: number) => {
     try {
       showLoader("Redirecting to payment...");
-      const callbackUrl = "https://poojawala.com/partner/bookings";
+      const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/partner/bookings` : "https://1pooja.com/partner/bookings";
       const res = await getPaymentLinkAPI(jobId, callbackUrl);
       if (res.success && res.data?.paymentUrl) {
         window.location.href = res.data.paymentUrl;

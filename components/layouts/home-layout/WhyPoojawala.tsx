@@ -21,7 +21,7 @@ export default function WhyPoojawala() {
               mt:-4
             }}
           >
-            Why Poojawala ?
+            Why 1Pooja ?
           </Typography>
           
           <Box 
@@ -41,7 +41,7 @@ export default function WhyPoojawala() {
               mb: '28px'
             }}
           >
-            Poojawala is a trusted online platform that connects families with <span style={{ color: '#CC2E2E', fontStyle: 'italic' }}>verified pandits and purohits</span> for religious ceremonies across India.
+            1Pooja is a trusted online platform that connects families with <span style={{ color: '#CC2E2E', fontStyle: 'italic' }}>verified pandits and purohits</span> for religious ceremonies across India.
           </Typography>
           
           <Typography 

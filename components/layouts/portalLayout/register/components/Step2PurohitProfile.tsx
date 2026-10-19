@@ -23,7 +23,12 @@ import {
 } from '@/components/layouts/adminLayout/astrologers/EditAstrologerForm';
 import { FONTS } from '@/utils/fonts';
 import { COLORS, USER_ROLE } from '@/utils/enums';
-import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from '@/utils/helpers';
+import {
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  allowOnlyDescriptionCharsOnKeyDown,
+  sanitizeDescriptionInput,
+} from '@/utils/helpers';
 
 const filter = createFilterOptions<string>();
 
@@ -521,7 +526,10 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
             placeholder="Tell us about your background, Vedic education, and ritual experience..."
             variant="outlined"
             value={formik.values.bio || ''}
-            onChange={formik.handleChange}
+            onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
+            onChange={(e) => {
+              formik.setFieldValue('bio', sanitizeDescriptionInput(e.target.value));
+            }}
             error={formik.touched.bio && Boolean(formik.errors.bio)}
             helperText={formik.touched.bio && (formik.errors.bio as string)}
             sx={fieldSx}

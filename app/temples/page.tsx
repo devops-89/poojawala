@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Sacred Temples & Dhams | Poojawala",
+  title: "Sacred Temples & Dhams | 1Pooja",
   description:
     "Explore sacred temples and divine pilgrimage sites across India. Discover consecrated rituals and book authenticated temple pooja services directly.",
 };

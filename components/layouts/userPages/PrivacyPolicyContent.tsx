@@ -18,7 +18,7 @@ export default function PrivacyPolicyContent() {
             Last Updated: September 15, 2026
           </Typography>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#444', fontSize: '16px', lineHeight: 1.7 }}>
-            At Poojawala, we value your trust and are committed to protecting your privacy and personal data. This policy outlines how we collect, use, store, and safeguard your information.
+            At 1Pooja, we value your trust and are committed to protecting your privacy and personal data. This policy outlines how we collect, use, store, and safeguard your information.
           </Typography>
         </Box>
 
@@ -113,9 +113,9 @@ export default function PrivacyPolicyContent() {
               If you have questions, concerns, or requests regarding this Privacy Policy, please reach out to us:
             </Typography>
             <Box sx={{ mt: 2, p: 3, bgcolor: '#FFF0E6', borderRadius: '12px' }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>Poojawala Privacy Desk</Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Email: <MuiLink href="mailto:support@poojawala.com" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>support@poojawala.com</MuiLink></Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Help Center: <MuiLink component={NextLink} href="/contact" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>Poojawala Contact Support</MuiLink></Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>1Pooja Privacy Desk</Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Email: <MuiLink href="mailto:support@1pooja.com" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>support@1pooja.com</MuiLink></Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Help Center: <MuiLink component={NextLink} href="/contact" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>1Pooja Contact Support</MuiLink></Typography>
             </Box>
           </Box>
 

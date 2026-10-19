@@ -29,7 +29,20 @@ export default function ServiceCard({
 
   const handleBookNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push('/sign-up?from=book-now');
+    const targetUrl = `/customer/services/${id}`;
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("post_login_redirect", targetUrl);
+      const token =
+        sessionStorage.getItem("token") ||
+        localStorage.getItem("token") ||
+        sessionStorage.getItem("customercsrftoken");
+      const user = sessionStorage.getItem("user");
+      if (token || user) {
+        router.push(targetUrl);
+        return;
+      }
+    }
+    router.push(`/sign-in?redirect=${encodeURIComponent(targetUrl)}`);
   };
 
   const formattedPrice = (() => {

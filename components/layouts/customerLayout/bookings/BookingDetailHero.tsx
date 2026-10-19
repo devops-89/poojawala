@@ -7,6 +7,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { getBookingPaymentDetails, formatInr } from './bookingPaymentHelper';
 
 interface Props {
@@ -38,6 +39,7 @@ export default function BookingDetailHero({
   onCompletePaymentClick,
   isRedirectingPayment,
 }: Props) {
+  const isAstrology = booking?.bookingType === 'ASTROLOGY' || Boolean(booking?.astrologer);
   const payDetails = getBookingPaymentDetails(booking);
 
   // If token is paid, customer pays remaining amount.
@@ -52,6 +54,25 @@ export default function BookingDetailHero({
   }
 
   const showPayButton = payDetails.canMakePayment;
+
+  const serviceHeading = isAstrology
+    ? (booking?.service?.name || (booking?.astrologer ? `Astrology Consultation with ${booking.astrologer.firstName || ''} ${booking.astrologer.lastName || ''}`.trim() : 'Astrology Consultation'))
+    : (booking?.service?.name ?? 'Service');
+
+  const displayDate = booking?.scheduledAtIst || formattedDate;
+
+  const ratePerMinute =
+    booking?.astrologer?.astrologerProfile?.ratePerMinute ||
+    booking?.astrologerProfile?.ratePerMinute ||
+    null;
+
+  const tokenAmt = Number(
+    booking?.tokenAmount ??
+    booking?.priceBreakDown?.tokenAmount ??
+    booking?.paidAmount ??
+    booking?.finalAmount ??
+    50
+  );
 
   return (
     <Paper
@@ -75,14 +96,23 @@ export default function BookingDetailHero({
               mb: 1,
             }}
           >
-            Booking Details
+            {isAstrology ? 'Astrology Consultation Details' : 'Booking Details'}
           </Typography>
           <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 1 }}>
-            {booking?.service?.name ?? 'Service'}
+            {serviceHeading}
           </Typography>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
-            Scheduled on {formattedDate}
+            Scheduled on {displayDate}
           </Typography>
+
+          {/* Cancellation reason if cancelled */}
+          {statusStr === 'CANCELLED' && booking?.cancellationReason && (
+            <Box sx={{ mt: 1, mb: 2, p: 1.5, bgcolor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px' }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#b91c1c', fontWeight: 600 }}>
+                Cancellation Reason: {booking.cancellationReason} {booking.cancelledBy ? `(by ${booking.cancelledBy})` : ''}
+              </Typography>
+            </Box>
+          )}
 
           {/* Booking Mode & Plan Badges */}
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', mb: 3 }}>
@@ -92,7 +122,7 @@ export default function BookingDetailHero({
                   booking.bookingMode === 'OFFLINE'
                     ? 'In-Person (Offline)'
                     : booking.bookingMode === 'ONLINE'
-                    ? 'Virtual (Online)'
+                    ? 'Virtual (Online Consultation)'
                     : booking.bookingMode
                 }
                 size="small"
@@ -108,7 +138,7 @@ export default function BookingDetailHero({
                 }}
               />
             )}
-            {booking?.plan && (
+            {!isAstrology && booking?.plan && (
               <Chip
                 label={`${booking.plan.charAt(0).toUpperCase() + booking.plan.slice(1).toLowerCase()} Plan`}
                 size="small"
@@ -126,7 +156,7 @@ export default function BookingDetailHero({
             )}
           </Box>
 
-          {(statusStr === 'PENDING' || statusStr === 'ACCEPTED') && (
+          {!isAstrology && (statusStr === 'PENDING' || statusStr === 'ACCEPTED') && (
             <Box
               component="button"
               onClick={onRescheduleClick}
@@ -191,7 +221,37 @@ export default function BookingDetailHero({
             />
 
             {/* Payment badge chip */}
-            {payDetails.isFullyPaid ? (
+            {isAstrology ? (
+              booking.paymentStatus === 'PAID' ? (
+                <Chip
+                  icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#16a34a' }} />}
+                  label={`Token Paid: ₹${formatInr(tokenAmt)}`}
+                  size="small"
+                  sx={{
+                    fontWeight: 700,
+                    fontFamily: FONTS.PRIMARY,
+                    bgcolor: '#ecfdf5',
+                    color: '#166534',
+                    border: '1px solid #bbf7d0',
+                    height: '32px',
+                  }}
+                />
+              ) : statusStr !== 'CANCELLED' ? (
+                <Chip
+                  icon={<AccessTimeIcon sx={{ fontSize: '15px !important', color: '#dc2626' }} />}
+                  label="Token Payment Pending"
+                  size="small"
+                  sx={{
+                    fontWeight: 700,
+                    fontFamily: FONTS.PRIMARY,
+                    bgcolor: '#fef2f2',
+                    color: '#b91c1c',
+                    border: '1px solid #fecaca',
+                    height: '32px',
+                  }}
+                />
+              ) : null
+            ) : payDetails.isFullyPaid ? (
               <Chip
                 icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#16a34a' }} />}
                 label="Fully Paid"
@@ -245,68 +305,79 @@ export default function BookingDetailHero({
               gap: 0.5,
             }}
           >
-            <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
-              ₹{formatInr(payDetails.finalAmount)}
-            </Typography>
-
-            {payDetails.isTokenPaid && (
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.5,
-                  flexWrap: 'wrap',
-                  justifyContent: { xs: 'flex-start', md: 'flex-end' },
-                  bgcolor: '#f8fafc',
-                  px: 1.5,
-                  py: 0.6,
-                  borderRadius: '10px',
-                  border: '1px solid #e2e8f0',
-                  mt: 0.25,
-                }}
-              >
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-                  <CheckCircleIcon sx={{ fontSize: 14, color: '#10b981' }} />
-                  <Typography
-                    sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#047857' }}
-                  >
-                    Token Paid: ₹{formatInr(payDetails.paidAmount)}
-                  </Typography>
-                </Box>
-                <Typography sx={{ color: '#cbd5e1', fontSize: '12px' }}>|</Typography>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-                  <Typography
-                    sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 700, color: '#ea580c' }}
-                  >
-                    Remaining Due: ₹{formatInr(payDetails.remainingAmount)}
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-
-
-
-            {!payDetails.isTokenPaid && !payDetails.isFullyPaid && statusStr !== 'CANCELLED' && (
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                  bgcolor: '#fff7ed',
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: '8px',
-                  border: '1px solid #ffedd5',
-                  mt: 0.25,
-                }}
-              >
-                <AccessTimeIcon sx={{ fontSize: 14, color: '#ea580c' }} />
-                <Typography
-                  sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#c2410c' }}
-                >
-                  Full Payment Due: ₹{formatInr(payDetails.finalAmount)}
+            {isAstrology ? (
+              <>
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>
+                  Token Advance Amount
                 </Typography>
-              </Box>
+                <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
+                  ₹{formatInr(tokenAmt)}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
+                  ₹{formatInr(payDetails.finalAmount)}
+                </Typography>
+
+                {payDetails.isTokenPaid && (
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      flexWrap: 'wrap',
+                      justifyContent: { xs: 'flex-start', md: 'flex-end' },
+                      bgcolor: '#f8fafc',
+                      px: 1.5,
+                      py: 0.6,
+                      borderRadius: '10px',
+                      border: '1px solid #e2e8f0',
+                      mt: 0.25,
+                    }}
+                  >
+                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+                      <CheckCircleIcon sx={{ fontSize: 14, color: '#10b981' }} />
+                      <Typography
+                        sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#047857' }}
+                      >
+                        Token Paid: ₹{formatInr(payDetails.paidAmount)}
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: '#cbd5e1', fontSize: '12px' }}>|</Typography>
+                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography
+                        sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 700, color: '#ea580c' }}
+                      >
+                        Remaining Due: ₹{formatInr(payDetails.remainingAmount)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+
+                {!payDetails.isTokenPaid && !payDetails.isFullyPaid && statusStr !== 'CANCELLED' && (
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      bgcolor: '#fff7ed',
+                      px: 1.5,
+                      py: 0.5,
+                      borderRadius: '8px',
+                      border: '1px solid #ffedd5',
+                      mt: 0.25,
+                    }}
+                  >
+                    <AccessTimeIcon sx={{ fontSize: 14, color: '#ea580c' }} />
+                    <Typography
+                      sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#c2410c' }}
+                    >
+                      Full Payment Due: ₹{formatInr(payDetails.finalAmount)}
+                    </Typography>
+                  </Box>
+                )}
+              </>
             )}
           </Box>
 
@@ -410,6 +481,36 @@ export default function BookingDetailHero({
           </Box>
         </Grid>
       </Grid>
+
+      {/* Astrology Token & Per Minute Charge Notice in English */}
+      {isAstrology && (
+        <Box
+          sx={{
+            mt: 3,
+            p: 2.5,
+            bgcolor: '#fff7ed',
+            borderRadius: '14px',
+            border: '1px solid #fed7aa',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 1.5,
+          }}
+        >
+          <InfoOutlinedIcon sx={{ color: '#ea580c', fontSize: 22, mt: 0.2, flexShrink: 0 }} />
+          <Box>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '14px', fontWeight: 700, color: '#9a3412' }}>
+              Token Advance Amount: ₹{formatInr(tokenAmt)} (Paid)
+            </Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#c2410c', mt: 0.5, lineHeight: 1.6 }}>
+              This amount is only a token advance to confirm your booking. The astrologer's consultation rate is{' '}
+              <strong style={{ color: '#9a3412' }}>
+                {ratePerMinute ? `₹${ratePerMinute} / minute` : 'applicable consultation rate'}
+              </strong>
+              , which will be payable directly after the consultation session based on the actual session duration.
+            </Typography>
+          </Box>
+        </Box>
+      )}
     </Paper>
   );
 }

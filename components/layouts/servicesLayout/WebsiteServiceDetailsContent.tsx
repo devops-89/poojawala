@@ -64,10 +64,30 @@ export default function WebsiteServiceDetailsContent() {
 
   const handleBookClick = () => {
     const el = document.getElementById("puja-plans-section");
-    if (el) {
+    const hasPlans =
+      service?.plans &&
+      ((Array.isArray(service.plans) && service.plans.length > 0) ||
+        service.plans.basic ||
+        service.plans.standard);
+    if (el && hasPlans) {
       el.scrollIntoView({ behavior: "smooth" });
+    } else if (service?.id) {
+      const targetUrl = `/customer/services/${service.id}`;
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("post_login_redirect", targetUrl);
+        const token =
+          sessionStorage.getItem("token") ||
+          localStorage.getItem("token") ||
+          sessionStorage.getItem("customercsrftoken");
+        const user = sessionStorage.getItem("user");
+        if (token || user) {
+          router.push(targetUrl);
+          return;
+        }
+      }
+      router.push(`/sign-in?redirect=${encodeURIComponent(targetUrl)}`);
     } else {
-      router.push("/sign-up?from=book-now");
+      router.push("/sign-in");
     }
   };
 

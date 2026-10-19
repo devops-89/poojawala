@@ -93,7 +93,7 @@ export default function ProductForm({
     name: "",
     description: "",
     price: "",
-    pricingUnit: PRODUCT_PRICING_UNIT.PIECE,
+    pricingUnit: "",
     quantity: "",
     categoryId: "",
   },

@@ -3,8 +3,8 @@ import { Metadata } from 'next';
 import CustomerProfileContent from '@/components/layouts/customerLayout/profile/CustomerProfileContent';
 
 export const metadata: Metadata = {
-  title: 'My Profile | Poojawala',
-  description: 'View and manage your Poojawala customer profile',
+  title: 'My Profile | 1Pooja',
+  description: 'View and manage your 1Pooja customer profile',
 };
 
 import { Suspense } from 'react';

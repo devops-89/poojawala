@@ -110,7 +110,20 @@ export default function WebsiteServicePlansSection({
 
   const handleBookPlan = (planName: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    router.push(`/sign-up?from=book-now&serviceId=${service?.id}&plan=${planName}`);
+    const targetUrl = `/customer/services/${service?.id}`;
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("post_login_redirect", targetUrl);
+      const token =
+        sessionStorage.getItem("token") ||
+        localStorage.getItem("token") ||
+        sessionStorage.getItem("customercsrftoken");
+      const user = sessionStorage.getItem("user");
+      if (token || user) {
+        router.push(targetUrl);
+        return;
+      }
+    }
+    router.push(`/sign-in?redirect=${encodeURIComponent(targetUrl)}`);
   };
 
   // If no plans exist in API, don't render section

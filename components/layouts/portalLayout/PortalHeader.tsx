@@ -134,7 +134,7 @@ export default function PortalHeader({
               <Box
                 component="img"
                 src="/images/logo.webp"
-                alt="Poojawala"
+                alt="1Pooja"
                 sx={{ height: { xs: '38px', md: '50px' }, objectFit: 'contain' }}
               />
             </Box>

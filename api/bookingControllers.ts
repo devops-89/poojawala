@@ -48,7 +48,12 @@ export const customerCreateAstrologyBookingAPI = async (data: any) => {
   }
 };
 
-export const getCustomerBookingsAPI = async (status?: string, page: number = 1, limit: number = 10) => {
+export const getCustomerBookingsAPI = async (
+  status?: string,
+  page: number = 1,
+  limit: number = 10,
+  bookingType: string = 'POOJA'
+) => {
   try {
     const params = new URLSearchParams();
     if (status && status !== 'All Bookings') {
@@ -56,6 +61,9 @@ export const getCustomerBookingsAPI = async (status?: string, page: number = 1, 
     }
     params.append('page', page.toString());
     params.append('limit', limit.toString());
+    if (bookingType) {
+      params.append('bookingType', bookingType);
+    }
     const response = await userSecuredApi.get(`/bookings/all?${params.toString()}`);
     return response.data;
   } catch (error) {

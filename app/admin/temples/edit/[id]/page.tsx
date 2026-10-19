@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import EditTempleForm from '@/components/layouts/adminLayout/temples/EditTempleForm';
 
 export const metadata: Metadata = {
-  title: 'Edit Temple | Poojawala Admin',
+  title: 'Edit Temple | 1Pooja Admin',
   description: 'Update temple details and location.',
 };
 

@@ -467,7 +467,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           <Box
             component="img"
             src="/images/logo.webp"
-            alt="Poojawala"
+            alt="1Pooja"
             sx={{
               height: { xs: "36px", sm: "44px" },
               maxWidth: "180px",
@@ -511,7 +511,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           <Box
             component="img"
             src="/images/logo.webp"
-            alt="Poojawala"
+            alt="1Pooja"
             sx={{
               height: { xs: "36px", sm: "44px" },
               maxWidth: "160px",

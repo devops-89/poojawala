@@ -17,7 +17,12 @@ import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPrevi
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
+import {
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  allowOnlyAddressCharsOnKeyDown,
+  sanitizeAddressInput,
+} from "@/utils/helpers";
 
 export interface SignUpStep2AddressProps {
   isFetchingLocation?: boolean;
@@ -193,9 +198,11 @@ export default function SignUpStep2Address({
             rows={2}
             label="Full Address *"
             value={addressData.fullAddress}
+            onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={(e) => {
-              handleAddressInputChange(e.target.value);
-              setFieldValue("fullAddress", e.target.value);
+              const sanitized = sanitizeAddressInput(e.target.value);
+              handleAddressInputChange(sanitized);
+              setFieldValue("fullAddress", sanitized);
             }}
             onBlur={handleAddressInputBlur}
             variant="outlined"

@@ -14,7 +14,12 @@ import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import { useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from "@/utils/helpers";
+import {
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+} from "@/utils/helpers";
 
 const today = new Date();
 const fifteenYearsAgo = new Date(
@@ -105,13 +110,18 @@ export default function SignUpStep1Personal({
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="email">
-          {({ field, meta }: any) => (
+          {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
               label="Email Address *"
               variant="outlined"
+              type="email"
+              onKeyDown={allowOnlyEmailCharsOnKeyDown}
+              onChange={(e) => {
+                form.setFieldValue("email", sanitizeEmailInput(e.target.value));
+              }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
               sx={inputStyles}

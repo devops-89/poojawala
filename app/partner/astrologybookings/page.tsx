@@ -25,6 +25,6 @@ export default function AstrologyBookingsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Astrology Bookings | Partner Portal | Poojawala',
-  description: 'Manage and conduct your live astrology and kundali consultations on Poojawala.',
+  title: 'Astrology Bookings | Partner Portal | 1Pooja',
+  description: 'Manage and conduct your live astrology and kundali consultations on 1Pooja.',
 };

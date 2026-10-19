@@ -6,6 +6,6 @@ export default function AdminLogin() {
 }
 
 export const metadata: Metadata = {
-  title: 'Admin Login | Poojawala Control Centre',
-  description: 'Secure login for Poojawala administrators to access the control centre and dashboard.',
+  title: 'Admin Login | 1Pooja Control Centre',
+  description: 'Secure login for 1Pooja administrators to access the control centre and dashboard.',
 };

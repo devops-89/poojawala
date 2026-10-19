@@ -74,7 +74,7 @@ export default function WebsiteWhyPoojawalaSection() {
               mb: 1.5,
             }}
           >
-            WHY POOJAWALA
+            WHY 1POOJA
           </Typography>
 
           <Typography

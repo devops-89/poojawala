@@ -136,7 +136,13 @@ export default function BlogsLayout() {
       {featuredBlog && <FeaturedBlogSection blog={featuredBlog} />}
 
       {/* Public Blog Cards Grid (No filter/search bar) */}
-      <BlogCardGrid blogs={otherBlogs} loading={loading} />
+      {(!featuredBlog || otherBlogs.length > 0 || loading) && (
+        <BlogCardGrid
+          blogs={otherBlogs}
+          loading={loading}
+          hasFeatured={Boolean(featuredBlog)}
+        />
+      )}
     </Box>
   );
 }

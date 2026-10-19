@@ -6,6 +6,6 @@ export default function EditProfilePage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Edit Profile | Poojawala Partner Portal',
-  description: 'Update your professional profile, biography, qualifications, and the languages you speak as a Poojawala Purohit.',
+  title: 'Edit Profile | 1Pooja Partner Portal',
+  description: 'Update your professional profile, biography, qualifications, and the languages you speak as a 1Pooja Purohit.',
 };

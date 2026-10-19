@@ -6,6 +6,6 @@ export default function CustomerSupportPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Get Support | Poojawala',
-  description: 'Raise tickets and get support for your Poojawala bookings.',
+  title: 'Get Support | 1Pooja',
+  description: 'Raise tickets and get support for your 1Pooja bookings.',
 };

@@ -35,9 +35,18 @@ export default function CustomerPaymentsContent() {
       showLoader('Loading payments...');
       try {
         const res = await getMyPaymentsAPI(page + 1, rowsPerPage);
-        if (res.success && res.data?.items) {
-          setPayments(res.data.items);
-          setTotalPayments(res.pagination?.total || res.data.pagination?.total || res.data.items.length);
+        const rawItems = res.data?.items || res.data?.payments || (Array.isArray(res.data) ? res.data : []);
+        const total = res.pagination?.total || res.data?.pagination?.total || res.data?.total || rawItems.length;
+
+        if (res.success && rawItems.length > 0) {
+          // If backend returns more items than rowsPerPage (unpaginated on server),
+          // paginate on client so the table strictly respects rowsPerPage
+          const paginated = rawItems.length > rowsPerPage
+            ? rawItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : rawItems;
+
+          setPayments(paginated);
+          setTotalPayments(total);
         } else {
           setPayments([]);
           setTotalPayments(0);
@@ -209,23 +218,23 @@ export default function CustomerPaymentsContent() {
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}
-          slotProps={{
-            select: {
-              MenuProps: {
-                variant: "menu",
-                anchorOrigin: {
-                  vertical: "top",
-                  horizontal: "left",
+              slotProps={{
+                select: {
+                  MenuProps: {
+                    variant: "menu",
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "left",
+                    },
+                    transformOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left",
+                    },
+                    disableScrollLock: true,
+                  },
                 },
-                transformOrigin: {
-                  vertical: "bottom",
-                  horizontal: "left",
-                },
-                disableScrollLock: true,
-              },
-            },
-          }}
-          sx={{
+              }}
+              sx={{
                 borderTop: '1px solid #e2e8f0',
                 '& .MuiTablePagination-toolbar': { minHeight: '60px' },
                 fontFamily: FONTS.PRIMARY,

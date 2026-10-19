@@ -31,6 +31,6 @@ export default function Home() {
 }
 
 export const metadata: Metadata = {
-  title: 'Poojawala | Book Experienced Pandits & Purohits Online',
-  description: 'Book verified and experienced Pandits for all Hindu pujas, homams, and rituals at your home. Quality pooja samagri and seamless online booking with Poojawala.',
+  title: '1Pooja | Book Experienced Pandits & Purohits Online',
+  description: 'Book verified and experienced Pandits for all Hindu pujas, homams, and rituals at your home. Quality pooja samagri and seamless online booking with 1Pooja.',
 };

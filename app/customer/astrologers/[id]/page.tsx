@@ -6,6 +6,6 @@ export default function AstrologerDetailsPage() {
 }
 
 export const metadata: Metadata = {
-  title: "Astrologer Details | Poojawala",
-  description: "View verified astrologer profile and book consultation on Poojawala.",
+  title: "Astrologer Details | 1Pooja",
+  description: "View verified astrologer profile and book consultation on 1Pooja.",
 };

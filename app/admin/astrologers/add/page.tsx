@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Onboard Astrologer | Admin Portal',
-  description: 'Add a new astrologer to the Poojawala platform.',
+  description: 'Add a new astrologer to the 1Pooja platform.',
 };
 
 export default function AddAstrologerPage() {

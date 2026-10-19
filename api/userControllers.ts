@@ -150,6 +150,24 @@ export const getPublicPurohitsListAPI = async (
   }
 };
 
+export const getPublicAstrologersListAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  search: string = ""
+) => {
+
+  const params = new URLSearchParams({
+    role: 'ASTROLOGER',
+    page: String(page),
+    limit: String(limit),
+  });
+  if (search) params.append('search', search);
+  const res2 = await userPublicApi.get(`/users/get?${params.toString()}`);
+  if (res2?.data?.success || res2?.data?.data) {
+    return res2.data;
+  }
+};
+
 export const getCustomersListAPI = async (
   page: number = 1,
   limit: number = 10,
@@ -374,11 +392,14 @@ export const getCustomerDashboardStatsAPI = async () => {
   }
 };
 
-export const getAllReviewsAPI = async (status?: string) => {
+export const getAllReviewsAPI = async (status?: string, bookingType?: string) => {
   try {
     const params = new URLSearchParams();
     if (status && status !== 'All') {
       params.append('status', status.toUpperCase());
+    }
+    if (bookingType) {
+      params.append('bookingType', bookingType.toUpperCase());
     }
     const response = await userSecuredApi.get(`/review?${params.toString()}`);
     return response.data;

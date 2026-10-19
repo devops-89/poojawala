@@ -94,7 +94,7 @@ export default function CustomerSidebar({
         <Box
           component="img"
           src="/images/logo.webp"
-          alt="Poojawala"
+          alt="1Pooja"
           sx={{ height: { xs: "40px", md: "60px" }, objectFit: "contain" }}
         />
       </Box>

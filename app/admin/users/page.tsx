@@ -4,7 +4,7 @@ import { Box, CircularProgress } from '@mui/material';
 import AdminUsersContent from '@/components/layouts/adminLayout/users/AdminUsersContent';
 
 export const metadata: Metadata = {
-  title: 'Customer Management | Poojawala Admin',
+  title: 'Customer Management | 1Pooja Admin',
   description: 'Manage users, ban/block accounts, and handle complaints.',
 };
 

@@ -14,6 +14,7 @@ import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPrevi
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput } from "@/utils/helpers";
 
 interface Step5ServiceAreaProps {
   formik: any;
@@ -161,7 +162,8 @@ export default function Step5ServiceArea({ formik }: Step5ServiceAreaProps) {
             rows={2}
             label="Full Service Address *"
             value={addressData.fullAddress}
-            onChange={(e) => handleAddressInputChange(e.target.value)}
+            onKeyDown={allowOnlyAddressCharsOnKeyDown}
+            onChange={(e) => handleAddressInputChange(sanitizeAddressInput(e.target.value))}
             onBlur={handleAddressInputBlur}
             variant="outlined"
             error={

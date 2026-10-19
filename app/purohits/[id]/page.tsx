@@ -2,7 +2,7 @@ import PurohitProfileLayout from "@/components/layouts/purohitsLayout/PurohitPro
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Purohit Profile | Poojawala",
+  title: "Purohit Profile | 1Pooja",
   description: "View detailed profile, expertise, and availability of our verified Purohits.",
 };
 

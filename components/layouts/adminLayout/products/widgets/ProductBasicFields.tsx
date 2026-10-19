@@ -7,7 +7,7 @@ import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextFi
 import { useFormikContext } from "formik";
 import React, { useEffect, useState } from "react";
 
-const PRICING_UNITS = Object.values(PRODUCT_PRICING_UNIT);
+const PRICING_UNITS = Object.values(PRODUCT_PRICING_UNIT) as string[];
 
 interface FormValues {
   name: string;
@@ -162,7 +162,7 @@ export default function ProductBasicFields() {
             labelId="pricing-unit-label"
             label="Pricing Unit *"
             name="pricingUnit"
-            value={values.pricingUnit}
+            value={values.pricingUnit || ""}
             onChange={(e) => {
               handleChange(e);
               setFieldTouched("pricingUnit", true, false);
@@ -173,6 +173,9 @@ export default function ProductBasicFields() {
               fontFamily: FONTS.OUTFIT,
             }}
           >
+            <MenuItem value="" disabled sx={{ fontFamily: FONTS.OUTFIT }}>
+              Select Pricing Unit
+            </MenuItem>
             {PRICING_UNITS.map((unit) => (
               <MenuItem
                 key={unit}

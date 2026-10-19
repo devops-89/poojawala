@@ -1,6 +1,16 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import {
+  ADDRESS_STRICT_REGEX,
+  ADDRESS_STRICT_MESSAGE,
+  allowOnlyAddressCharsOnKeyDown,
+  sanitizeAddressInput,
+  TITLE_STRICT_REGEX,
+  TITLE_STRICT_MESSAGE,
+  allowOnlyTitleCharsOnKeyDown,
+  sanitizeTitleInput,
+} from "@/utils/helpers";
 
 import { createTempleAPI, getTempleByIdAPI, updateTempleAPI } from "@/api/templeControllers";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
@@ -8,6 +18,7 @@ import { TiptapEditor } from "@/components/widgets/TiptapEditor";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import {
   Autocomplete,
@@ -25,7 +36,7 @@ import { City, State } from "country-state-city";
 import { FormikProvider, useFormik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
@@ -35,8 +46,8 @@ const validationSchema = Yup.object().shape({
     .min(3, "Temple name must be at least 3 characters")
     .max(100, "Temple name cannot exceed 100 characters")
     .matches(
-      /^[a-zA-Z\s&',.-]+$/,
-      "Temple name should only contain letters and spaces (no numbers or special characters)"
+      TITLE_STRICT_REGEX,
+      TITLE_STRICT_MESSAGE
     ),
   description: Yup.string()
     .required("Description is required")
@@ -46,11 +57,13 @@ const validationSchema = Yup.object().shape({
       const letters = (stripped.match(/[a-zA-Z]/g) || []).length;
       return stripped.length >= 10 && letters >= 5;
     }),
+  state: Yup.string().trim().required("State is required"),
   city: Yup.string().trim().required("City is required"),
   address: Yup.string()
     .trim()
     .required("Address is required")
     .min(5, "Address must be at least 5 characters")
+    .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
     .test("meaningful-address", "Address must contain letters, not just numbers or symbols", (val) => {
       if (!val) return false;
       return /[a-zA-Z]/.test(val);
@@ -67,7 +80,17 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [imageRemoved, setImageRemoved] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const initialDataRef = useRef<{
+    name: string;
+    description: string;
+    state: string;
+    city: string;
+    address: string;
+    hasImage: boolean;
+  } | null>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -79,10 +102,26 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
     },
     validationSchema,
     onSubmit: async (values) => {
-      if (!isEdit && !imageFile) {
+      if (!isEdit && !imageFile && !imagePreview) {
         setImageError("Temple image is required");
         showSnackbar("Please upload a temple image", "error");
         return;
+      }
+
+      // Check if updating without making any modifications
+      if (isEdit && initialDataRef.current) {
+        const init = initialDataRef.current;
+        const isNameSame = values.name.trim() === init.name.trim();
+        const isDescSame = values.description.trim() === init.description.trim();
+        const isStateSame = (values.state || "").trim() === (init.state || "").trim();
+        const isCitySame = values.city.trim() === init.city.trim();
+        const isAddressSame = values.address.trim() === init.address.trim();
+        const isImageSame = !imageFile && !imageRemoved;
+
+        if (isNameSame && isDescSame && isStateSame && isCitySame && isAddressSame && isImageSame) {
+          showSnackbar("No changes have been made", "info");
+          return;
+        }
       }
 
       try {
@@ -97,6 +136,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         formData.append("address", values.address.trim());
         if (imageFile) {
           formData.append("imageUrl", imageFile);
+        } else if (imageRemoved) {
+          formData.append("imageUrl", "");
         }
 
         let res;
@@ -122,7 +163,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         console.error("Temple submit error:", error);
         showSnackbar(
           error.response?.data?.message ||
-            `Error ${isEdit ? "updating" : "creating"} temple. Please try again.`,
+          `Error ${isEdit ? "updating" : "creating"} temple. Please try again.`,
           "error"
         );
       } finally {
@@ -176,6 +217,15 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
             if (existingImg) {
               setImagePreview(existingImg);
             }
+
+            initialDataRef.current = {
+              name: temple.name || "",
+              description: temple.description || "",
+              state: temple.state || "",
+              city: temple.city || "",
+              address: temple.address || "",
+              hasImage: Boolean(existingImg),
+            };
           } else {
             showSnackbar("Temple not found", "error");
             router.push("/admin/temples");
@@ -203,7 +253,18 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
       }
+      setImageRemoved(false);
       setImageError(null);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setImageRemoved(true);
+    if (!isEdit) {
+      setImageError("Temple image is required");
     }
   };
 
@@ -289,41 +350,24 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               >
                 Temple Image {!isEdit && "*"}
               </Typography>
-              <Box
-                component="label"
-                sx={{
-                  width: "100%",
-                  minHeight: "68px",
-                  border: "1px dashed #cbd5e1",
-                  borderRadius: "12px",
-                  bgcolor: "#f8fafc",
-                  display: "flex",
-                  alignItems: "center",
-                  px: 2.5,
-                  py: 1.5,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    borderColor: COLORS.PRIMARY,
-                    bgcolor: "#FFF0E6",
-                  },
-                }}
-              >
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-                {imagePreview ? (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      width: "100%",
-                    }}
-                  >
+              {imagePreview ? (
+                <Box
+                  sx={{
+                    width: "100%",
+                    minHeight: "72px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "12px",
+                    bgcolor: "#f8fafc",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    px: 2.5,
+                    py: 1.5,
+                    gap: 2,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <Box
                       component="img"
                       src={imagePreview}
@@ -336,7 +380,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                         border: "1px solid #e2e8f0",
                       }}
                     />
-                    <Box sx={{ flex: 1 }}>
+                    <Box>
                       <Typography
                         sx={{
                           fontFamily: FONTS.OUTFIT,
@@ -345,14 +389,83 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                           fontSize: "0.95rem",
                         }}
                       >
-                        Image Selected
+                        {imageFile ? "New Image Selected" : "Temple Image"}
                       </Typography>
                       <Typography sx={{ color: "#64748b", fontSize: "0.8rem" }}>
-                        Click to change image
+                        Click Change to replace or Remove to clear
                       </Typography>
                     </Box>
                   </Box>
-                ) : (
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        borderRadius: "8px",
+                        borderColor: "#cbd5e1",
+                        color: "#334155",
+                        textTransform: "none",
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                        "&:hover": { borderColor: COLORS.PRIMARY, color: COLORS.PRIMARY },
+                      }}
+                    >
+                      Change Image
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                      startIcon={<DeleteOutlineIcon fontSize="small" />}
+                      onClick={handleRemoveImage}
+                      sx={{
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                      }}
+                    >
+                      Remove Image
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  component="label"
+                  sx={{
+                    width: "100%",
+                    minHeight: "68px",
+                    border: "1px dashed #cbd5e1",
+                    borderRadius: "12px",
+                    bgcolor: "#f8fafc",
+                    display: "flex",
+                    alignItems: "center",
+                    px: 2.5,
+                    py: 1.5,
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      borderColor: COLORS.PRIMARY,
+                      bgcolor: "#FFF0E6",
+                    },
+                  }}
+                >
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
                   <Box
                     sx={{
                       display: "flex",
@@ -378,8 +491,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                       </Typography>
                     </Box>
                   </Box>
-                )}
-              </Box>
+                </Box>
+              )}
               {imageError && (
                 <Typography sx={{ fontSize: "0.75rem", color: "#d32f2f", mt: 0.5, ml: 1 }}>
                   {imageError}
@@ -395,8 +508,9 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               placeholder="e.g., Shri Hanuman Mandir"
               variant="outlined"
               value={formik.values.name}
+              onKeyDown={allowOnlyTitleCharsOnKeyDown}
               onChange={(e) => {
-                formik.handleChange(e);
+                formik.setFieldValue("name", sanitizeTitleInput(e.target.value));
                 formik.setFieldTouched("name", true, false);
               }}
               onBlur={formik.handleBlur}
@@ -460,20 +574,33 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                     onChange={(_, newValue) => {
                       const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
                       formik.setFieldValue("state", val);
+                      formik.setFieldTouched("state", true, true);
                       formik.setFieldValue("city", "");
+                      formik.setFieldTouched("city", false, false);
                     }}
                     onInputChange={(_, newInputValue) => {
                       const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
                       formik.setFieldValue("state", val);
+                      formik.setFieldTouched("state", true, true);
                     }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         fullWidth
                         name="state"
-                        label="State"
+                        label="State *"
                         placeholder="Select or type State"
                         variant="outlined"
+                        error={
+                          (formik.touched.state || Boolean(formik.values.state)) &&
+                          Boolean(formik.errors.state)
+                        }
+                        helperText={
+                          (formik.touched.state || Boolean(formik.values.state)) &&
+                            formik.errors.state
+                            ? (formik.errors.state as string)
+                            : undefined
+                        }
                         sx={{
                           "& .MuiOutlinedInput-root": { borderRadius: "12px" },
                         }}
@@ -492,10 +619,12 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                     onChange={(_, newValue) => {
                       const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
                       formik.setFieldValue("city", val);
+                      formik.setFieldTouched("city", true, true);
                     }}
                     onInputChange={(_, newInputValue) => {
                       const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
                       formik.setFieldValue("city", val);
+                      formik.setFieldTouched("city", true, true);
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -509,12 +638,14 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                             : "Select or type City"
                         }
                         variant="outlined"
-                        error={(formik.touched.city || Boolean(formik.values.city)) && Boolean(formik.errors.city)}
+                        error={
+                          (formik.touched.city || Boolean(formik.values.city)) &&
+                          Boolean(formik.errors.city)
+                        }
                         helperText={
-                          (formik.touched.city || Boolean(formik.values.city)) && formik.errors.city
+                          (formik.touched.city || Boolean(formik.values.city)) &&
+                            formik.errors.city
                             ? (formik.errors.city as string)
-                            : !formik.values.state
-                            ? "Select state to enable city selection"
                             : undefined
                         }
                         sx={{
@@ -534,9 +665,10 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                 placeholder="e.g., Sector 62, Near Central Market"
                 variant="outlined"
                 value={formik.values.address}
+                onKeyDown={allowOnlyAddressCharsOnKeyDown}
                 onChange={(e) => {
                   formik.handleChange(e);
-                  formik.setFieldTouched("address", true, false);
+                  formik.setFieldTouched("address", true, true);
                 }}
                 onBlur={formik.handleBlur}
                 error={

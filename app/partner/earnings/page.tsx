@@ -6,6 +6,6 @@ export default function EarningsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Earnings & Payouts | Poojawala Partner Portal',
-  description: 'Track your total earnings, view detailed payout history, and manage your financial transactions as a Poojawala Partner.',
+  title: 'Earnings & Payouts | 1Pooja Partner Portal',
+  description: 'Track your total earnings, view detailed payout history, and manage your financial transactions as a 1Pooja Partner.',
 };

@@ -64,9 +64,14 @@ const formatDate = (dateStr?: string) => {
 interface BlogCardGridProps {
   blogs?: any[];
   loading?: boolean;
+  hasFeatured?: boolean;
 }
 
-export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading }: BlogCardGridProps) {
+export default function BlogCardGrid({
+  blogs: propsBlogs,
+  loading: propsLoading,
+  hasFeatured = false,
+}: BlogCardGridProps) {
   const [fetchedBlogs, setFetchedBlogs] = useState<any[]>([]);
   const [internalLoading, setInternalLoading] = useState(true);
 
@@ -97,6 +102,11 @@ export default function BlogCardGrid({ blogs: propsBlogs, loading: propsLoading 
 
   const displayBlogs = propsBlogs !== undefined ? propsBlogs : fetchedBlogs;
   const isLoading = propsLoading !== undefined ? propsLoading : internalLoading;
+
+  // If there is already a featured blog on top and no other articles, hide the empty state box
+  if (!isLoading && hasFeatured && displayBlogs.length === 0) {
+    return null;
+  }
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

@@ -1,11 +1,16 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 import CustomerDashboardContent from '@/components/layouts/customerLayout/dashboard/CustomerDashboardContent';
 
 export default function CustomerDashboard() {
-  return <CustomerDashboardContent />;
+  return (
+    <Suspense fallback={null}>
+      <CustomerDashboardContent />
+    </Suspense>
+  );
 }
 
 export const metadata: Metadata = {
-  title: 'My Bookings | Poojawala',
-  description: 'Manage your upcoming pujas and view past bookings on the Poojawala customer portal.',
+  title: 'My Bookings | 1Pooja',
+  description: 'Manage your upcoming pujas and view past bookings on the 1Pooja customer portal.',
 };

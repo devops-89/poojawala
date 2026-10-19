@@ -1,11 +1,16 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import VerifyOtpContent from '@/components/layouts/userPages/VerifyOtpContent';
 
 export const metadata: Metadata = {
-  title: 'Verify OTP | Poojawala',
-  description: 'Verify your phone number to complete registration with Poojawala.',
+  title: 'Verify OTP | 1Pooja',
+  description: 'Verify your phone number to complete registration with 1Pooja.',
 };
 
 export default function VerifyOtpPage() {
-  return <VerifyOtpContent />;
+  return (
+    <Suspense fallback={null}>
+      <VerifyOtpContent />
+    </Suspense>
+  );
 }

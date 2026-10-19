@@ -62,9 +62,108 @@ export const getActiveRole = (): string | null => {
   return null;
 };
 
+export const syncCsrfToCookie = (token: string | null, roleHint?: string | null) => {
+  if (typeof document === "undefined" || !token) return;
+  const role = (roleHint || getActiveRole() || "").toUpperCase();
+
+  try {
+    const encoded = encodeURIComponent(token);
+    document.cookie = `csrftoken=${encoded}; path=/; SameSite=Lax`;
+    document.cookie = `csrf-token=${encoded}; path=/; SameSite=Lax`;
+
+    if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+      document.cookie = `poojawala-admin-csrf-token=${encoded}; path=/; SameSite=Lax`;
+      document.cookie = `admincsrftoken=${encoded}; path=/; SameSite=Lax`;
+    } else if (role === "CUSTOMER") {
+      document.cookie = `poojawala-customer-csrf-token=${encoded}; path=/; SameSite=Lax`;
+      document.cookie = `customercsrftoken=${encoded}; path=/; SameSite=Lax`;
+    } else if (role === "PUROHIT") {
+      document.cookie = `poojawala-purohit-csrf-token=${encoded}; path=/; SameSite=Lax`;
+      document.cookie = `purohitcsrftoken=${encoded}; path=/; SameSite=Lax`;
+    } else if (role === "ASTROLOGER") {
+      document.cookie = `poojawala-astrologer-csrf-token=${encoded}; path=/; SameSite=Lax`;
+      document.cookie = `astrologercsrftoken=${encoded}; path=/; SameSite=Lax`;
+    }
+  } catch (e) {}
+};
+
+export const clearCsrfTokensOnly = () => {
+  if (typeof window === "undefined") return;
+  try {
+    const cookieNames = [
+      "csrftoken",
+      "csrf-token",
+      "admincsrftoken",
+      "adminCsrfToken",
+      "poojawala-admin-csrf-token",
+      "poojawalaAdminCsrfToken",
+      "customercsrftoken",
+      "customerCsrfToken",
+      "poojawala-customer-csrf-token",
+      "poojawalaCustomerCsrfToken",
+      "purohitcsrftoken",
+      "purohitCsrfToken",
+      "poojawala-purohit-csrf-token",
+      "poojawalaPurohitCsrfToken",
+      "astrologercsrftoken",
+      "astrologerCsrfToken",
+      "poojawala-astrologer-csrf-token",
+      "poojawalaAstrologerCsrfToken",
+      "csrfToken",
+      "_csrf",
+      "XSRF-TOKEN",
+    ];
+    cookieNames.forEach((name) => {
+      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+    });
+
+    const storageKeys = [
+      "csrfToken",
+      "customercsrftoken",
+      "customerCsrfToken",
+      "poojawala-customer-csrf-token",
+      "poojawalaCustomerCsrfToken",
+      "admincsrftoken",
+      "adminCsrfToken",
+      "poojawala-admin-csrf-token",
+      "poojawalaAdminCsrfToken",
+      "purohitcsrftoken",
+      "purohitCsrfToken",
+      "poojawala-purohit-csrf-token",
+      "poojawalaPurohitCsrfToken",
+      "astrologercsrftoken",
+      "astrologerCsrfToken",
+      "poojawala-astrologer-csrf-token",
+      "poojawalaAstrologerCsrfToken",
+    ];
+
+    storageKeys.forEach((key) => {
+      try {
+        sessionStorage.removeItem(key);
+      } catch (e) {}
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {}
+    });
+  } catch (e) {}
+};
+
+export const replaceCsrfToken = (token: string | null, roleHint?: string | null) => {
+  if (typeof window === "undefined" || !token) return;
+  const role = (roleHint || getActiveRole() || "").toUpperCase();
+  clearCsrfTokensOnly();
+  saveRoleCsrfToken(token, role);
+};
+
 export const saveRoleCsrfToken = (token: string | null, roleHint?: string | null) => {
   if (typeof window === "undefined" || !token) return;
   const role = (roleHint || getActiveRole() || "").toUpperCase();
+
+  // Clear previous CSRF tokens so stale/different role tokens do not linger
+  clearCsrfTokensOnly();
+
+  syncCsrfToCookie(token, role);
 
   try {
     sessionStorage.setItem("csrfToken", token);
@@ -121,42 +220,14 @@ export const saveRoleCsrfToken = (token: string | null, roleHint?: string | null
 export const clearRoleCsrfToken = () => {
   if (typeof window === "undefined") return;
   try {
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("csrfToken");
-    sessionStorage.removeItem("customercsrftoken");
-    sessionStorage.removeItem("customerCsrfToken");
-    sessionStorage.removeItem("poojawala-customer-csrf-token");
-    sessionStorage.removeItem("poojawalaCustomerCsrfToken");
-    sessionStorage.removeItem("admincsrftoken");
-    sessionStorage.removeItem("adminCsrfToken");
-    sessionStorage.removeItem("poojawala-admin-csrf-token");
-    sessionStorage.removeItem("poojawalaAdminCsrfToken");
-    sessionStorage.removeItem("purohitcsrftoken");
-    sessionStorage.removeItem("purohitCsrfToken");
-    sessionStorage.removeItem("poojawala-purohit-csrf-token");
-    sessionStorage.removeItem("poojawalaPurohitCsrfToken");
-    sessionStorage.removeItem("astrologercsrftoken");
-    sessionStorage.removeItem("astrologerCsrfToken");
-    sessionStorage.removeItem("poojawala-astrologer-csrf-token");
-    sessionStorage.removeItem("poojawalaAstrologerCsrfToken");
+    clearCsrfTokensOnly();
 
-    localStorage.removeItem("csrfToken");
-    localStorage.removeItem("customercsrftoken");
-    localStorage.removeItem("customerCsrfToken");
-    localStorage.removeItem("poojawala-customer-csrf-token");
-    localStorage.removeItem("poojawalaCustomerCsrfToken");
-    localStorage.removeItem("admincsrftoken");
-    localStorage.removeItem("adminCsrfToken");
-    localStorage.removeItem("poojawala-admin-csrf-token");
-    localStorage.removeItem("poojawalaAdminCsrfToken");
-    localStorage.removeItem("purohitcsrftoken");
-    localStorage.removeItem("purohitCsrfToken");
-    localStorage.removeItem("poojawala-purohit-csrf-token");
-    localStorage.removeItem("poojawalaPurohitCsrfToken");
-    localStorage.removeItem("astrologercsrftoken");
-    localStorage.removeItem("astrologerCsrfToken");
-    localStorage.removeItem("poojawala-astrologer-csrf-token");
-    localStorage.removeItem("poojawalaAstrologerCsrfToken");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("activeRole");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    localStorage.removeItem("activeRole");
   } catch (e) {}
 };
 
@@ -369,8 +440,155 @@ export const getCsrfToken = (roleHint?: string | null): string | null => {
   );
 };
 
+// Immediately sync CSRF to cookies on client load if user is logged in
+if (typeof window !== "undefined") {
+  try {
+    const initialRole = getActiveRole();
+    const initialToken = getCsrfToken(initialRole);
+    if (initialToken) {
+      syncCsrfToCookie(initialToken, initialRole);
+    }
+  } catch (e) {}
+}
+
 export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string | null => {
   const role = (roleHint || getActiveRole() || "").toUpperCase();
+
+  // 1. First extract from response object/body/headers if provided
+  if (res) {
+    const target = res.data || res;
+    const headers = res.headers || {};
+    const innerData = target.data || {};
+    const innerTokens = target.tokens || {};
+
+    // Check response headers first
+    const headerToken =
+      headers["x-csrf-token"] ||
+      headers["X-CSRF-Token"] ||
+      headers["csrf-token"] ||
+      headers["CSRF-Token"] ||
+      headers["csrftoken"] ||
+      headers["x-admin-csrf-token"] ||
+      headers["x-customer-csrf-token"] ||
+      headers["x-purohit-csrf-token"] ||
+      headers["x-astrologer-csrf-token"] ||
+      headers.admincsrftoken ||
+      headers.customercsrftoken ||
+      headers.purohitcsrftoken ||
+      headers.astrologercsrftoken;
+    if (headerToken) return headerToken;
+
+    // Role-specific field checks in target, target.data, target.tokens, res
+    if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+      const val =
+        target.poojawalaAdminCsrfToken ||
+        target["poojawala-admin-csrf-token"] ||
+        target.admincsrftoken ||
+        target.adminCsrfToken ||
+        innerData.poojawalaAdminCsrfToken ||
+        innerData["poojawala-admin-csrf-token"] ||
+        innerData.admincsrftoken ||
+        innerData.adminCsrfToken ||
+        innerTokens.poojawalaAdminCsrfToken ||
+        res.poojawalaAdminCsrfToken ||
+        res["poojawala-admin-csrf-token"] ||
+        res.admincsrftoken ||
+        res.adminCsrfToken;
+      if (val) return val;
+    } else if (role === "PUROHIT") {
+      const val =
+        target.poojawalaPurohitCsrfToken ||
+        target["poojawala-purohit-csrf-token"] ||
+        target.purohitcsrftoken ||
+        target.purohitCsrfToken ||
+        innerData.poojawalaPurohitCsrfToken ||
+        innerData["poojawala-purohit-csrf-token"] ||
+        innerData.purohitcsrftoken ||
+        innerData.purohitCsrfToken ||
+        innerTokens.poojawalaPurohitCsrfToken ||
+        res.poojawalaPurohitCsrfToken ||
+        res["poojawala-purohit-csrf-token"] ||
+        res.purohitcsrftoken ||
+        res.purohitCsrfToken;
+      if (val) return val;
+    } else if (role === "ASTROLOGER") {
+      const val =
+        target.poojawalaAstrologerCsrfToken ||
+        target["poojawala-astrologer-csrf-token"] ||
+        target.astrologercsrftoken ||
+        target.astrologerCsrfToken ||
+        innerData.poojawalaAstrologerCsrfToken ||
+        innerData["poojawala-astrologer-csrf-token"] ||
+        innerData.astrologercsrftoken ||
+        innerData.astrologerCsrfToken ||
+        innerTokens.poojawalaAstrologerCsrfToken ||
+        res.poojawalaAstrologerCsrfToken ||
+        res["poojawala-astrologer-csrf-token"] ||
+        res.astrologercsrftoken ||
+        res.astrologerCsrfToken;
+      if (val) return val;
+    } else if (role === "CUSTOMER") {
+      const val =
+        target.poojawalaCustomerCsrfToken ||
+        target["poojawala-customer-csrf-token"] ||
+        target.customercsrftoken ||
+        target.customerCsrfToken ||
+        innerData.poojawalaCustomerCsrfToken ||
+        innerData["poojawala-customer-csrf-token"] ||
+        innerData.customercsrftoken ||
+        innerData.customerCsrfToken ||
+        innerTokens.poojawalaCustomerCsrfToken ||
+        res.poojawalaCustomerCsrfToken ||
+        res["poojawala-customer-csrf-token"] ||
+        res.customercsrftoken ||
+        res.customerCsrfToken;
+      if (val) return val;
+    }
+
+    // Generic field checks
+    const genericVal =
+      target.csrfToken ||
+      target.csrf ||
+      target.csrftoken ||
+      target["csrf-token"] ||
+      innerTokens.csrf ||
+      innerTokens.csrfToken ||
+      innerData.csrfToken ||
+      innerData.csrf ||
+      res.csrfToken ||
+      res.csrf;
+    if (genericVal) return genericVal;
+
+    // Cross-role checks
+    const anyRoleVal =
+      target.customercsrftoken ||
+      target.customerCsrfToken ||
+      target.poojawalaCustomerCsrfToken ||
+      target.admincsrftoken ||
+      target.adminCsrfToken ||
+      target.poojawalaAdminCsrfToken ||
+      target.purohitcsrftoken ||
+      target.purohitCsrfToken ||
+      target.poojawalaPurohitCsrfToken ||
+      target.astrologercsrftoken ||
+      target.astrologerCsrfToken ||
+      target.poojawalaAstrologerCsrfToken ||
+      res.customercsrftoken ||
+      res.customerCsrfToken ||
+      res.poojawalaCustomerCsrfToken ||
+      res.admincsrftoken ||
+      res.adminCsrfToken ||
+      res.poojawalaAdminCsrfToken ||
+      res.purohitcsrftoken ||
+      res.purohitCsrfToken ||
+      res.poojawalaPurohitCsrfToken ||
+      res.astrologercsrftoken ||
+      res.astrologerCsrfToken ||
+      res.poojawalaAstrologerCsrfToken;
+    if (anyRoleVal) return anyRoleVal;
+  }
+
+  // 2. Fallback: only if NOT in response, check cookies
   const { map, lowerMap } = parseAllCookies();
 
   if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
@@ -399,120 +617,12 @@ export const extractRoleCsrfToken = (res: any, roleHint?: string | null): string
     if (map["poojawalaCustomerCsrfToken"]) return map["poojawalaCustomerCsrfToken"];
   }
 
-  if (!res) return null;
-  const target = res.data || res;
-  const headers = res.headers || {};
-  const innerData = target.data || {};
-  const innerTokens = target.tokens || {};
-
-  if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
-    const val =
-      headers.admincsrftoken ||
-      headers.adminCsrfToken ||
-      headers["poojawala-admin-csrf-token"] ||
-      headers["x-admin-csrf-token"] ||
-      target.admincsrftoken ||
-      target.adminCsrfToken ||
-      target.poojawalaAdminCsrfToken ||
-      target["poojawala-admin-csrf-token"] ||
-      innerData.admincsrftoken ||
-      innerData.adminCsrfToken ||
-      res.admincsrftoken ||
-      res.adminCsrfToken ||
-      res.poojawalaAdminCsrfToken ||
-      res["poojawala-admin-csrf-token"];
-    if (val) return val;
-  } else if (role === "PUROHIT") {
-    const val =
-      headers.purohitcsrftoken ||
-      headers.purohitCsrfToken ||
-      headers["poojawala-purohit-csrf-token"] ||
-      headers["x-purohit-csrf-token"] ||
-      target.purohitcsrftoken ||
-      target.purohitCsrfToken ||
-      target.poojawalaPurohitCsrfToken ||
-      target["poojawala-purohit-csrf-token"] ||
-      innerData.purohitcsrftoken ||
-      innerData.purohitCsrfToken ||
-      res.purohitcsrftoken ||
-      res.purohitCsrfToken ||
-      res.poojawalaPurohitCsrfToken ||
-      res["poojawala-purohit-csrf-token"];
-    if (val) return val;
-  } else if (role === "ASTROLOGER") {
-    const val =
-      headers.astrologercsrftoken ||
-      headers.astrologerCsrfToken ||
-      headers["poojawala-astrologer-csrf-token"] ||
-      headers["x-astrologer-csrf-token"] ||
-      target.astrologercsrftoken ||
-      target.astrologerCsrfToken ||
-      target.poojawalaAstrologerCsrfToken ||
-      target["poojawala-astrologer-csrf-token"] ||
-      innerData.astrologercsrftoken ||
-      innerData.astrologerCsrfToken ||
-      res.astrologercsrftoken ||
-      res.astrologerCsrfToken ||
-      res.poojawalaAstrologerCsrfToken ||
-      res["poojawala-astrologer-csrf-token"];
-    if (val) return val;
-  } else if (role === "CUSTOMER") {
-    const val =
-      headers.customercsrftoken ||
-      headers.customerCsrfToken ||
-      headers["poojawala-customer-csrf-token"] ||
-      headers["x-customer-csrf-token"] ||
-      target.customercsrftoken ||
-      target.customerCsrfToken ||
-      target.poojawalaCustomerCsrfToken ||
-      target["poojawala-customer-csrf-token"] ||
-      innerData.customercsrftoken ||
-      innerData.customerCsrfToken ||
-      res.customercsrftoken ||
-      res.customerCsrfToken ||
-      res.poojawalaCustomerCsrfToken ||
-      res["poojawala-customer-csrf-token"];
-    if (val) return val;
-  }
-
   return (
-    headers["x-csrf-token"] ||
-    headers["X-CSRF-Token"] ||
-    headers.csrftoken ||
-    headers["csrf-token"] ||
-    headers.customercsrftoken ||
-    headers.admincsrftoken ||
-    headers.purohitcsrftoken ||
-    headers.astrologercsrftoken ||
-    target.customercsrftoken ||
-    target.customerCsrfToken ||
-    target.poojawalaCustomerCsrfToken ||
-    target.admincsrftoken ||
-    target.adminCsrfToken ||
-    target.poojawalaAdminCsrfToken ||
-    target.purohitcsrftoken ||
-    target.purohitCsrfToken ||
-    target.poojawalaPurohitCsrfToken ||
-    target.astrologercsrftoken ||
-    target.astrologerCsrfToken ||
-    target.poojawalaAstrologerCsrfToken ||
-    target.csrfToken ||
-    target.csrf ||
-    innerTokens.csrf ||
-    innerData.csrfToken ||
-    res.customercsrftoken ||
-    res.customerCsrfToken ||
-    res.poojawalaCustomerCsrfToken ||
-    res.admincsrftoken ||
-    res.adminCsrfToken ||
-    res.poojawalaAdminCsrfToken ||
-    res.purohitcsrftoken ||
-    res.purohitCsrfToken ||
-    res.poojawalaPurohitCsrfToken ||
-    res.astrologercsrftoken ||
-    res.astrologerCsrfToken ||
-    res.poojawalaAstrologerCsrfToken ||
-    res.csrfToken ||
+    map["csrftoken"] ||
+    map["csrf-token"] ||
+    lowerMap["csrftoken"] ||
+    map["_csrf"] ||
+    map["XSRF-TOKEN"] ||
     null
   );
 };
@@ -522,71 +632,74 @@ export const attachCsrfHeaders = (headers: any, token?: string | null, roleHint?
   const activeToken = token || getCsrfToken(role);
   if (!headers || !activeToken) return;
 
-  const setHeader = (key: string, val: string) => {
-    if (typeof headers.set === "function") {
-      headers.set(key, val);
+  // Always ensure csrftoken & role cookie are synced to document.cookie so browser sends them with cookies
+  syncCsrfToCookie(activeToken, role);
+
+  const keysToDelete = [
+    "X-CSRF-Token",
+    "x-csrf-token",
+    "csrftoken",
+    "csrf-token",
+    "Csrf-Token",
+    "Csrftoken",
+    "admincsrftoken",
+    "adminCsrfToken",
+    "AdminCsrfToken",
+    "poojawala-admin-csrf-token",
+    "poojawalaAdminCsrfToken",
+    "Poojawala-Admin-Csrf-Token",
+    "Poojawalaadmincsrftoken",
+    "x-admin-csrf-token",
+    "X-Admin-Csrf-Token",
+    "customercsrftoken",
+    "customerCsrfToken",
+    "CustomerCsrfToken",
+    "poojawala-customer-csrf-token",
+    "poojawalaCustomerCsrfToken",
+    "x-customer-csrf-token",
+    "purohitcsrftoken",
+    "purohitCsrfToken",
+    "PurohitCsrfToken",
+    "poojawala-purohit-csrf-token",
+    "poojawalaPurohitCsrfToken",
+    "x-purohit-csrf-token",
+    "astrologercsrftoken",
+    "astrologerCsrfToken",
+    "AstrologerCsrfToken",
+    "poojawala-astrologer-csrf-token",
+    "poojawalaAstrologerCsrfToken",
+    "x-astrologer-csrf-token",
+  ];
+
+  for (const k of keysToDelete) {
+    if (typeof headers.delete === "function") {
+      headers.delete(k);
     }
-    headers[key] = val;
-  };
-
-  setHeader("X-CSRF-Token", activeToken);
-  setHeader("x-csrf-token", activeToken);
-  setHeader("csrftoken", activeToken);
-  setHeader("csrf-token", activeToken);
-
-  if (role === "CUSTOMER") {
-    setHeader("customercsrftoken", activeToken);
-    setHeader("customerCsrfToken", activeToken);
-    setHeader("CustomerCsrfToken", activeToken);
-    setHeader("poojawala-customer-csrf-token", activeToken);
-    setHeader("poojawalaCustomerCsrfToken", activeToken);
-    setHeader("x-customer-csrf-token", activeToken);
-  } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
-    setHeader("admincsrftoken", activeToken);
-    setHeader("adminCsrfToken", activeToken);
-    setHeader("AdminCsrfToken", activeToken);
-    setHeader("poojawala-admin-csrf-token", activeToken);
-    setHeader("poojawalaAdminCsrfToken", activeToken);
-    setHeader("x-admin-csrf-token", activeToken);
-  } else if (role === "PUROHIT") {
-    setHeader("purohitcsrftoken", activeToken);
-    setHeader("purohitCsrfToken", activeToken);
-    setHeader("PurohitCsrfToken", activeToken);
-    setHeader("poojawala-purohit-csrf-token", activeToken);
-    setHeader("poojawalaPurohitCsrfToken", activeToken);
-    setHeader("x-purohit-csrf-token", activeToken);
-  } else if (role === "ASTROLOGER") {
-    setHeader("astrologercsrftoken", activeToken);
-    setHeader("astrologerCsrfToken", activeToken);
-    setHeader("AstrologerCsrfToken", activeToken);
-    setHeader("poojawala-astrologer-csrf-token", activeToken);
-    setHeader("poojawalaAstrologerCsrfToken", activeToken);
-    setHeader("x-astrologer-csrf-token", activeToken);
-  } else {
-    setHeader("customercsrftoken", activeToken);
-    setHeader("poojawala-customer-csrf-token", activeToken);
-    setHeader("admincsrftoken", activeToken);
-    setHeader("poojawala-admin-csrf-token", activeToken);
-    setHeader("purohitcsrftoken", activeToken);
-    setHeader("poojawala-purohit-csrf-token", activeToken);
-    setHeader("astrologercsrftoken", activeToken);
-    setHeader("poojawala-astrologer-csrf-token", activeToken);
+    delete headers[k];
   }
+
+  // Send CSRF token exactly once in request headers
+  if (typeof headers.set === "function") {
+    headers.set("x-csrf-token", activeToken);
+  }
+  headers["x-csrf-token"] = activeToken;
 };
 
 const attachRoleAndCsrfHeader = (config: InternalAxiosRequestConfig) => {
   const role = getActiveRole();
   if (role) {
-    const setHeader = (key: string, val: string) => {
-      if (typeof config.headers.set === "function") {
-        config.headers.set(key, val);
+    const roleKeysToDelete = ["X-Role", "x-role", "role", "Role", "Poojawala-Role", "poojawala-role"];
+    for (const k of roleKeysToDelete) {
+      if (typeof config.headers.delete === "function") {
+        config.headers.delete(k);
       }
-      (config.headers as any)[key] = val;
-    };
-    setHeader("X-Role", role);
-    setHeader("role", role);
-    setHeader("x-role", role);
-    setHeader("Poojawala-Role", role);
+      delete (config.headers as any)[k];
+    }
+    // Send role exactly once in request headers
+    if (typeof config.headers.set === "function") {
+      config.headers.set("x-role", role);
+    }
+    (config.headers as any)["x-role"] = role;
   }
 
   const csrfToken = getCsrfToken(role);
@@ -739,25 +852,43 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
 
         try {
           const currentRole = getActiveRole();
-          const csrfToken = getCsrfToken(currentRole);
+          const oldCsrfToken = getCsrfToken(currentRole);
           const refreshHeaders: any = {};
           if (currentRole) {
-            refreshHeaders["X-Role"] = currentRole;
-            refreshHeaders["role"] = currentRole;
             refreshHeaders["x-role"] = currentRole;
-            refreshHeaders["Poojawala-Role"] = currentRole;
           }
-          if (csrfToken) {
-            attachCsrfHeaders(refreshHeaders, csrfToken, currentRole);
+          if (oldCsrfToken) {
+            attachCsrfHeaders(refreshHeaders, oldCsrfToken, currentRole);
           }
           const response = await authPublicApi.post("auth/refresh-token", {}, { headers: refreshHeaders });
           const resBody = response.data;
           const userData = resBody?.user || resBody?.data?.user;
           const activeRole = userData?.role || currentRole;
-          const newCsrfToken = extractRoleCsrfToken(resBody, activeRole);
+
+          // Naye waale CSRF token ko extract karo response object ya body se
+          let newCsrfToken =
+            extractRoleCsrfToken(response, activeRole) ||
+            extractRoleCsrfToken(resBody, activeRole);
+
+          // Fallback: Agar cookie update hui ho jo puraane token se alag ho
+          if (!newCsrfToken) {
+            const { map, lowerMap } = parseAllCookies();
+            const candidate =
+              map["csrftoken"] ||
+              map["csrf-token"] ||
+              lowerMap["csrftoken"] ||
+              map["poojawala-customer-csrf-token"] ||
+              map["poojawala-admin-csrf-token"] ||
+              map["poojawala-purohit-csrf-token"] ||
+              map["poojawala-astrologer-csrf-token"];
+            if (candidate && candidate !== oldCsrfToken) {
+              newCsrfToken = candidate;
+            }
+          }
 
           if (newCsrfToken) {
-            saveRoleCsrfToken(newCsrfToken, activeRole);
+            // Naye waale csrf token ko store kr puraane waale ko hataakr
+            replaceCsrfToken(newCsrfToken, activeRole);
           }
 
           if (userData) {

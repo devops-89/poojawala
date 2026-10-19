@@ -11,6 +11,6 @@ export default function CustomerAstrologersPage() {
 }
 
 export const metadata: Metadata = {
-  title: "Astrologers | Poojawala",
+  title: "Astrologers | 1Pooja",
   description: "Consult expert and certified Vedic astrologers for Kundali matching, horoscope, vastu, and career guidance.",
 };

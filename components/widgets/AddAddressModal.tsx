@@ -20,6 +20,7 @@ import { AddAddressModalProps, AddressFormData } from "@/utils/types";
 import { useAddressGeocoding } from "./addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE } from "@/utils/helpers";
 export type { AddressFormData };
 
 export default function AddAddressModal({
@@ -59,6 +60,11 @@ export default function AddAddressModal({
         `Please fill in required fields: ${missingFields.join(", ")}`,
         "error"
       );
+      return;
+    }
+
+    if (!ADDRESS_STRICT_REGEX.test((addressData.fullAddress || "").trim())) {
+      showSnackbar(ADDRESS_STRICT_MESSAGE, "error");
       return;
     }
 

@@ -1,6 +1,12 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import {
+  allowOnlyEmailCharsOnKeyDown,
+  sanitizeEmailInput,
+  allowOnlyAddressCharsOnKeyDown,
+  sanitizeAddressInput,
+} from "@/utils/helpers";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -268,7 +274,11 @@ export default function AddBookingCustomerSection({
                 name="newCustomerEmail"
                 variant="outlined"
                 value={values.newCustomerEmail}
-                onChange={handleChange}
+                onKeyDown={allowOnlyEmailCharsOnKeyDown}
+                onChange={(e) => {
+                  const val = sanitizeEmailInput(e.target.value);
+                  setFieldValue("newCustomerEmail", val);
+                }}
                 onBlur={handleBlur}
                 error={
                   touched.newCustomerEmail && Boolean(errors.newCustomerEmail)
@@ -332,7 +342,11 @@ export default function AddBookingCustomerSection({
                 name="newCustomerAddress"
                 variant="outlined"
                 value={values.newCustomerAddress}
-                onChange={handleChange}
+                onKeyDown={allowOnlyAddressCharsOnKeyDown}
+                onChange={(e) => {
+                  const val = sanitizeAddressInput(e.target.value);
+                  setFieldValue("newCustomerAddress", val);
+                }}
                 onBlur={handleBlur}
                 error={
                   touched.newCustomerAddress &&

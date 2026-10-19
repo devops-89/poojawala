@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Our Services | Poojawala",
+  title: "Our Services | 1Pooja",
   description: "Discover and book verified Pandits and Purohits for a wide range of religious ceremonies.",
 };
 
