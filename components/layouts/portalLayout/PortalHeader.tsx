@@ -115,7 +115,7 @@ export default function PortalHeader({
     >
       <Toolbar sx={{ justifyContent: 'space-between', minHeight: '80px !important' }}>
         {/* Left Side */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} suppressHydrationWarning>
           {!isAstrologer ? (
             <IconButton
               color="inherit"
@@ -133,16 +133,16 @@ export default function PortalHeader({
             >
               <Box
                 component="img"
-                src="/images/logo.webp"
+                src="/images/1Poojalogo.webp"
                 alt="1Pooja"
-                sx={{ height: { xs: '38px', md: '50px' }, objectFit: 'contain' }}
+                sx={{ height: { xs: '30px', md: '38px' }, objectFit: 'contain' }}
               />
             </Box>
           )}
         </Box>
 
         {/* Right Side: Notifications & Profile Avatar */}
-        <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', gap: 1 }} suppressHydrationWarning>
           <IconButton
             onClick={handleOpenNotif}
             sx={{

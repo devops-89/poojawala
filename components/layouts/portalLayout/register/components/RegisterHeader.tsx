@@ -28,9 +28,9 @@ export default function RegisterHeader() {
       >
         <Box
           component="img"
-          src="/images/logo.webp"
+          src="/images/1Poojalogo.webp"
           alt="1Pooja"
-          sx={{ height: { xs: '40px', md: '50px' }, objectFit: 'contain' }}
+          sx={{ height: { xs: '30px', md: '38px' }, objectFit: 'contain' }}
         />
       </MuiLink>
 

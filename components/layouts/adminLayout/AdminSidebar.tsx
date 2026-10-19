@@ -466,10 +466,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         >
           <Box
             component="img"
-            src="/images/logo.webp"
+            src="/images/1Poojalogo.webp"
             alt="1Pooja"
             sx={{
-              height: { xs: "36px", sm: "44px" },
+              height: { xs: "28px", sm: "36px" },
               maxWidth: "180px",
               objectFit: "contain",
               objectPosition: "left center",
@@ -510,10 +510,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         >
           <Box
             component="img"
-            src="/images/logo.webp"
+            src="/images/1Poojalogo.webp"
             alt="1Pooja"
             sx={{
-              height: { xs: "36px", sm: "44px" },
+              height: { xs: "28px", sm: "36px" },
               maxWidth: "160px",
               objectFit: "contain",
               objectPosition: "left center",

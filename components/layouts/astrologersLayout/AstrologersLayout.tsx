@@ -24,19 +24,19 @@ export default function AstrologersLayout() {
       <Box
         sx={{
           width: '100%',
-          minHeight: { xs: '340px', sm: '420px', md: '560px' },
+          minHeight: { xs: '380px', sm: '480px', md: '777px' },
           backgroundImage: {
-            xs: 'linear-gradient(90deg, rgba(255, 253, 249, 0.92) 0%, rgba(255, 253, 249, 0.7) 40%, rgba(255, 253, 249, 0.15) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)',
-            md: 'linear-gradient(90deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.55) 30%, rgba(255, 253, 249, 0.05) 60%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)',
+            xs: 'linear-gradient(90deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.6) 35%, rgba(255, 253, 249, 0.05) 70%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)',
+            md: 'linear-gradient(90deg, rgba(255, 253, 249, 0.82) 0%, rgba(255, 253, 249, 0.45) 25%, rgba(255, 253, 249, 0.02) 50%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)',
           },
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           display: 'flex',
           flexDirection: 'column',
-          pt: { xs: 3, md: 5 },
-          pb: { xs: 4, md: 8 },
-          mb: { xs: 4, md: 6 },
+          pt: { xs: 2.5, md: 4 },
+          pb: { xs: 3.5, md: 8 },
+          mb: { xs: 4, md: 8 },
         }}
       >
         <Container

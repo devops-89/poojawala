@@ -143,9 +143,9 @@ export default function WelcomeLocationModal() {
         <Box sx={{ textCenter: "center", textAlign: "center", mb: 2 }}>
           <Box
             component="img"
-            src="/images/logo.webp"
+            src="/images/1Poojalogo.webp"
             alt="1Pooja"
-            sx={{ height: 46, objectFit: "contain", mx: "auto", mb: 1.5 }}
+            sx={{ height: 38, objectFit: "contain", mx: "auto", mb: 1.5 }}
           />
           <Typography
             variant="h5"

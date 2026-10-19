@@ -11,6 +11,7 @@ import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
 import ScrollToTop from "@/components/widgets/ScrollToTop";
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://1pooja.com/images/logo.webp",
+        url: "https://1pooja.com/images/1Poojalogo.webp",
         width: 800,
         height: 600,
         alt: "1Pooja",
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     title: "Book Experienced Pandits & Purohits online or offline | 1Pooja",
     description:
       "Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience",
-    images: ["https://1pooja.com/images/logo.webp"],
+    images: ["https://1pooja.com/images/1Poojalogo.webp"],
   },
   icons: {
     icon: [
@@ -75,7 +76,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Google Tag Manager - As high as possible */}
-        <script
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -98,7 +101,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           content="Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://1pooja.com/images/logo.webp" />
+        <meta property="og:image" content="https://1pooja.com/images/1Poojalogo.webp" />
 
         {/* X (Twitter) Tags */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -108,11 +111,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           name="twitter:description"
           content="Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience"
         />
-        <meta name="twitter:image" content="https://1pooja.com/images/logo.webp" />
+        <meta name="twitter:image" content="https://1pooja.com/images/1Poojalogo.webp" />
 
         {/* Org. Schema Markup */}
-        <script
+        <Script
+          id="schema-org"
           type="application/ld+json"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -120,7 +125,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               name: "1Pooja",
               alternateName: "1Pooja",
               url: "https://1pooja.com/",
-              logo: "https://1pooja.com/images/logo.webp",
+              logo: "https://1pooja.com/images/1Poojalogo.webp",
               sameAs: [
                 "https://www.facebook.com/1pooja",
                 "https://x.com/1pooja",

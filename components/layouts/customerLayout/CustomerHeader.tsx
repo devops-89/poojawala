@@ -155,11 +155,15 @@ export default function CustomerHeader() {
       }}
     >
       <Toolbar
+        disableGutters
         sx={{
+          width: "100%",
+          maxWidth: 1200,
+          mx: "auto",
           justifyContent: "space-between",
           alignItems: "center",
           minHeight: { xs: "60px !important", md: "80px !important" },
-          px: { xs: 2, sm: 3, md: 6 },
+          px: { xs: 2, sm: 3, md: 4 },
         }}
       >
         {/* Left: Mobile Hamburger & Logo */}
@@ -188,10 +192,10 @@ export default function CustomerHeader() {
           >
             <Box
               component="img"
-              src="/images/logo.webp"
+              src="/images/1Poojalogo.webp"
               alt="1Pooja"
               sx={{
-                height: { xs: "34px", sm: "42px", md: "52px" },
+                height: { xs: "30px", sm: "34px", md: "38px" },
                 objectFit: "contain",
                 cursor: "pointer",
               }}
@@ -552,9 +556,9 @@ export default function CustomerHeader() {
         >
           <Box
             component="img"
-            src="/images/logo.webp"
+            src="/images/1Poojalogo.webp"
             alt="1Pooja"
-            sx={{ height: "36px", objectFit: "contain" }}
+            sx={{ height: "32px", objectFit: "contain" }}
           />
           <IconButton onClick={() => setMobileOpen(false)}>
             <CloseIcon />

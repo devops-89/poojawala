@@ -23,8 +23,9 @@ const quickLinks = [
   { name: "Pooja Packages", href: "/services" },
   { name: "Temples & Dhams", href: "/temples" },
   { name: "Purohits", href: "/purohits" },
-  { name: "Blogs & Articles", href: "/blogs" },
-  { name: "Help Center", href: "/contact" },
+  { name: "Astrologers", href: "/astrologers" },
+  { name: "Blogs", href: "/blogs" },
+  { name: "Contact Us", href: "/contact" },
 ];
 
 // Top Cities (static, no routes)
@@ -97,9 +98,9 @@ export default function Footer() {
               >
                 <Box
                   component="img"
-                  src="/images/logo.webp"
+                  src="/images/1Poojalogo.webp"
                   alt="1Pooja"
-                  sx={{ height: { xs: "45px", md: "60px" }, objectFit: "contain" }}
+                  sx={{ height: { xs: "36px", md: "42px" }, objectFit: "contain" }}
                 />
               </Link>
               <Typography

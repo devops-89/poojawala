@@ -1,5 +1,5 @@
 'use client';
-import { Box, Drawer } from '@mui/material';
+import { Box, Drawer, CircularProgress } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import PortalSidebar from '@/components/layouts/portalLayout/PortalSidebar';
@@ -14,29 +14,61 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [storedRole, setStoredRole] = useState<string | null>(null);
   const { profile, fetchProfile } = useUserStore();
 
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+  const normalizedPath = (pathname || '').replace(/\/$/, '') || '/';
+  const isPublicRegister = normalizedPath === '/partner' || normalizedPath === '/partner/register';
+  const isAstrologyRoute = normalizedPath.startsWith('/partner/astrologybookings');
 
-  // Determine active role from store or session storage
-  const activeRole =
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const u = JSON.parse(sessionStorage.getItem('user') || '{}');
+      const r = u?.role || sessionStorage.getItem('role') || sessionStorage.getItem('activeRole');
+      if (r) setStoredRole(r);
+    } catch (e) {}
+  }, []);
+
+  useEffect(() => {
+    if (!isPublicRegister) {
+      fetchProfile();
+    }
+  }, [fetchProfile, isPublicRegister]);
+
+  // Determine active role safely without SSR hydration mismatch
+  const effectiveRole =
     profile?.role ||
     profile?.user?.role ||
-    (() => {
-      if (typeof window !== 'undefined') {
-        try {
-          const u = JSON.parse(sessionStorage.getItem('user') || '{}');
-          return u?.role;
-        } catch (e) {
-          return null;
-        }
-      }
-      return null;
-    })();
+    storedRole ||
+    (typeof window !== 'undefined'
+      ? (() => {
+          try {
+            const u = JSON.parse(sessionStorage.getItem('user') || '{}');
+            return u?.role || sessionStorage.getItem('role') || sessionStorage.getItem('activeRole');
+          } catch (e) {
+            return null;
+          }
+        })()
+      : null);
 
-  const isAstrologer = activeRole === USER_ROLE.ASTROLOGER || activeRole === 'ASTROLOGER';
+  const isAstrologer =
+    isAstrologyRoute ||
+    effectiveRole === USER_ROLE.ASTROLOGER ||
+    effectiveRole === 'ASTROLOGER';
+
+  const allowedAstrologerPaths = [
+    '/partner/astrologybookings',
+    '/partner/profile',
+    '/partner/profile/edit',
+  ];
+
+  const isAstrologerRestricted =
+    isAstrologer &&
+    !allowedAstrologerPaths.some(
+      (p) => normalizedPath === p || normalizedPath.startsWith(p + '/')
+    );
 
   useEffect(() => {
     const userStr = sessionStorage.getItem('user');
@@ -55,9 +87,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       } catch (e) {}
     }
 
-    if (pathname === '/partner' || pathname === '/partner/register') {
+    if (isPublicRegister) {
       if (isAuthorized) {
-        if (userObj.role === 'ASTROLOGER' || isAstrologer) {
+        if (userObj?.role === 'ASTROLOGER' || isAstrologer) {
           router.replace('/partner/astrologybookings');
         } else {
           router.replace('/partner/dashboard');
@@ -68,24 +100,28 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         router.replace('/sign-in');
       } else if (userObj?.role === 'ASTROLOGER' || isAstrologer) {
         // If astrologer tries to go to any page other than astrologybookings or profile:
-        const allowedAstrologerPaths = [
-          '/partner/astrologybookings',
-          '/partner/profile',
-          '/partner/profile/edit',
-        ];
         const isAllowed = allowedAstrologerPaths.some(
-          (p) => pathname === p || pathname.startsWith(p + '/')
+          (p) => normalizedPath === p || normalizedPath.startsWith(p + '/')
         );
         if (!isAllowed) {
           router.replace('/partner/astrologybookings');
         }
       }
     }
-  }, [pathname, router, isAstrologer]);
+  }, [normalizedPath, router, isAstrologer, isPublicRegister]);
 
   // Do not show sidebar on the login or registration page
-  if (pathname === '/partner' || pathname === '/partner/register') {
+  if (isPublicRegister) {
     return <Box sx={{ bgcolor: '#FFFDF9', minHeight: '100vh' }}>{children}</Box>;
+  }
+
+  // If an astrologer is on a restricted Purohit page, show loader while redirecting
+  if (isAstrologerRestricted) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: '#F9FAFB' }}>
+        <CircularProgress sx={{ color: '#FF6200' }} />
+      </Box>
+    );
   }
 
   return (
@@ -97,8 +133,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           isAstrologer={isAstrologer}
         />
 
-        {/* Sidebar ONLY for Purohit */}
-        {!isAstrologer && (
+        {/* Sidebar ONLY for Purohit - Never rendered for Astrologer */}
+        {mounted && !isAstrologer && (
           <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
             <Drawer
               variant="temporary"

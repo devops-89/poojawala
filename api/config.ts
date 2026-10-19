@@ -906,10 +906,13 @@ const setupResponseInterceptor = (instance: AxiosInstance) => {
           const typedError = refreshError as AxiosError | Error;
           processQueue(typedError, null);
           if (typeof window !== "undefined") {
-            const path = window.location.pathname;
+            const rawPath = window.location.pathname;
+            const path = rawPath.replace(/\/$/, "") || "/";
+            const isPublicPartner = path === "/partner" || path === "/partner/register";
+            const isPublicAdmin = path === "/admin";
             const isProtected =
-              path.startsWith("/admin") ||
-              path.startsWith("/partner") ||
+              (path.startsWith("/admin") && !isPublicAdmin) ||
+              (path.startsWith("/partner") && !isPublicPartner) ||
               path.startsWith("/customer");
             if (isProtected) {
               clearRoleCsrfToken();

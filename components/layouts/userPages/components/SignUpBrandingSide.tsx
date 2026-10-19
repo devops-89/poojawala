@@ -74,10 +74,10 @@ export default function SignUpBrandingSide() {
 
         <Box
           component="img"
-          src="/images/logo.webp"
+          src="/images/1Poojalogo.webp"
           alt="1Pooja Logo"
           sx={{
-            height: { xs: "36px", md: "46px" },
+            height: { xs: "32px", md: "38px" },
             objectFit: "contain",
             mb: 3,
             filter: "brightness(0) invert(1)",
