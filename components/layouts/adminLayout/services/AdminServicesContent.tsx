@@ -4,7 +4,7 @@ import { COLORS } from "@/utils/enums";
 
 import {
   deleteServiceAPI,
-  getServicesAPI,
+  getAllServicesAPI,
   updateServiceStatusAPI,
 } from "@/api/serviceControllers";
 import AdminDataTable, {
@@ -19,10 +19,10 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Tab, Tabs, Typography } from "@mui/material";
 import Image from "next/image";
 import NextLink from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const PLACEHOLDER =
@@ -32,7 +32,6 @@ const STATUS_TABS = [
   { id: "All Status", label: "All" },
   { id: "Active", label: "Active" },
   { id: "Inactive", label: "Inactive" },
-  { id: "Temple", label: "Temple" },
 ];
 
 import {
@@ -46,8 +45,23 @@ export default function AdminServicesContent() {
     defaultLimit: 10,
   });
 
+  const getInitialServiceType = (): "POOJA" | "TEMPLE" => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlType = params.get("type")?.toUpperCase();
+      if (urlType === "TEMPLE") return "TEMPLE";
+      if (urlType === "POOJA") return "POOJA";
+      const saved = sessionStorage.getItem("admin_services_type")?.toUpperCase();
+      if (saved === "TEMPLE" || saved === "POOJA") return saved as "POOJA" | "TEMPLE";
+    }
+    return "POOJA";
+  };
+
+  const [serviceType, setServiceType] = useState<"POOJA" | "TEMPLE">(getInitialServiceType);
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
+  const [statusFilter, setStatusFilter] = useState(
+    initialPagination.status === "Temple" ? "All Status" : initialPagination.status
+  );
 
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -58,10 +72,17 @@ export default function AdminServicesContent() {
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
   const { showSnackbar } = useSnackbarStore();
 
+  const handleServiceTypeChange = (newType: "POOJA" | "TEMPLE") => {
+    setServiceType(newType);
+    setPage(0);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("admin_services_type", newType);
+    }
+  };
+
   const fetchServices = useCallback(async () => {
     try {
       setLoading(true);
-      const isTempleTab = statusFilter === "Temple";
       const isActiveParam =
         statusFilter === "Active"
           ? true
@@ -69,28 +90,36 @@ export default function AdminServicesContent() {
             ? false
             : undefined;
 
-      const res = await getServicesAPI(
+      const res = await getAllServicesAPI(
         page + 1,
         rowsPerPage,
         searchValue,
-        undefined,
-        undefined,
-        undefined,
         isActiveParam,
         undefined,
         undefined,
         undefined,
         undefined,
-        isTempleTab ? true : undefined
+        serviceType === "TEMPLE"
       );
-      if (res.success && res.data?.data) {
-        let list = res.data.data;
-        let count = res.data.pagination?.total || list.length;
 
-        if (isTempleTab) {
-          list = list.filter((s: any) => Boolean(s.templeId || s.temple));
-          count = list.length;
+      if (res) {
+        let list: any[] = [];
+        if (Array.isArray(res)) {
+          list = res;
+        } else if (res.data?.data && Array.isArray(res.data.data)) {
+          list = res.data.data;
+        } else if (res.data && Array.isArray(res.data)) {
+          list = res.data;
+        } else if (res.services && Array.isArray(res.services)) {
+          list = res.services;
         }
+
+        const count =
+          res.data?.pagination?.total ??
+          res.pagination?.total ??
+          res.data?.total ??
+          res.total ??
+          list.length;
 
         setServices(list);
         setTotalCount(count);
@@ -100,7 +129,7 @@ export default function AdminServicesContent() {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, searchValue, statusFilter]);
+  }, [page, rowsPerPage, searchValue, statusFilter, serviceType]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -113,9 +142,13 @@ export default function AdminServicesContent() {
     syncTablePagination(
       "admin_services_state",
       { page, rowsPerPage, status: statusFilter },
-      { defaultStatus: "All Status", defaultLimit: 10 }
+      {
+        defaultStatus: "All Status",
+        defaultLimit: 10,
+        extraUrlParams: { type: serviceType.toLowerCase() },
+      }
     );
-  }, [page, rowsPerPage, statusFilter]);
+  }, [page, rowsPerPage, statusFilter, serviceType]);
 
   const confirmStatusChange = async () => {
     if (!statusChangeTarget) return;
@@ -163,204 +196,211 @@ export default function AdminServicesContent() {
     setDeleteTarget(null);
   };
 
-  const columns: Column<any>[] = [
-    {
-      id: "details",
-      label: "SERVICE DETAILS",
-      render: (service) => {
-        const title = service.name || "Untitled Service";
-        const catName =
-          service.category?.name ||
-          (typeof service.category === "string" ? service.category : "Puja");
-        const imageSrc =
-          service.iconDownloadurl ||
-          service.iconDownloadUrl ||
-          service.iconUrl ||
-          service.image ||
-          service.imageUrl ||
-          PLACEHOLDER;
+  const columns: Column<any>[] = useMemo(() => {
+    const cols: Column<any>[] = [
+      {
+        id: "details",
+        label: "SERVICE DETAILS",
+        render: (service) => {
+          const title = service.name || "Untitled Service";
+          const imageSrc =
+            service.iconDownloadurl ||
+            service.iconDownloadUrl ||
+            service.iconUrl ||
+            service.image ||
+            service.imageUrl ||
+            PLACEHOLDER;
 
-        return (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box
-              sx={{
-                width: 48,
-                height: 48,
-                borderRadius: "8px",
-                overflow: "hidden",
-                bgcolor: "#f1f5f9",
-                flexShrink: 0,
-                position: "relative",
-              }}
-            >
-              <Image
-                src={imageSrc}
-                alt={title}
-                fill
-                sizes="48px"
-                style={{ objectFit: "cover" }}
-                unoptimized
-              />
-            </Box>
-            <Box>
-              <Typography
+          return (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box
                 sx={{
-                  fontFamily: FONTS.OUTFIT,
-                  fontWeight: 700,
-                  fontSize: "0.95rem",
-                  color: "#1e293b",
+                  width: 48,
+                  height: 48,
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  bgcolor: "#f1f5f9",
+                  flexShrink: 0,
+                  position: "relative",
                 }}
               >
-                {title}
-              </Typography>
+                <Image
+                  src={imageSrc}
+                  alt={title}
+                  fill
+                  sizes="48px"
+                  style={{ objectFit: "cover" }}
+                  unoptimized
+                />
+              </Box>
+              <Box>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    color: "#1e293b",
+                  }}
+                >
+                  {title}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        );
+          );
+        },
       },
-    },
-    {
-      id: "price",
-      label: "PRICE",
-      render: (service) => {
-        const minP =
-          service.plans?.basic?.price ??
-          service.priceWithoutSamagri ??
-          service.minPrice;
-        const maxP =
-          service.plans?.standard?.price ??
-          service.priceWithSamagri ??
-          service.maxPrice;
+      {
+        id: "price",
+        label: "PRICE",
+        render: (service) => {
+          const minP =
+            service.plans?.basic?.price ??
+            service.priceWithoutSamagri ??
+            service.minPrice;
+          const maxP =
+            service.plans?.standard?.price ??
+            service.priceWithSamagri ??
+            service.maxPrice;
 
-        let priceDisplay = "₹0";
-        if (minP != null && maxP != null && minP !== maxP) {
-          priceDisplay = `₹${minP} - ₹${maxP}`;
-        } else if (minP != null) {
-          priceDisplay = `₹${minP}`;
-        } else if (maxP != null) {
-          priceDisplay = `₹${maxP}`;
-        }
+          let priceDisplay = "₹0";
+          if (minP != null && maxP != null && minP !== maxP) {
+            priceDisplay = `₹${minP} - ₹${maxP}`;
+          } else if (minP != null) {
+            priceDisplay = `₹${minP}`;
+          } else if (maxP != null) {
+            priceDisplay = `₹${maxP}`;
+          }
 
-        return (
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              color: "#1e293b",
-            }}
-          >
-            {priceDisplay}
-          </Typography>
-        );
-      },
-    },
-    {
-      id: "bookings",
-      label: "BOOKINGS",
-      render: (service) => (
-        <Typography
-          sx={{
-            fontFamily: FONTS.OUTFIT,
-            fontWeight: 600,
-            fontSize: "0.9rem",
-            color: "#64748b",
-          }}
-        >
-          {service.totalBookings || service._count?.bookings || 0} Bookings
-        </Typography>
-      ),
-    },
-    {
-      id: "temple",
-      label: "TEMPLE",
-      render: (service) => {
-        const templeObj = service.temple;
-        const templeName =
-          templeObj?.name ||
-          (typeof templeObj === "string" ? templeObj : null) ||
-          service.templeName;
-
-        if (templeName) {
           return (
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontWeight: 600,
-                fontSize: "0.92rem",
+                fontWeight: 700,
+                fontSize: "0.95rem",
                 color: "#1e293b",
               }}
             >
-              {templeName}
+              {priceDisplay}
             </Typography>
           );
-        }
-
-        return (
+        },
+      },
+      {
+        id: "bookings",
+        label: "BOOKINGS",
+        render: (service) => (
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              fontWeight: 500,
-              fontSize: "0.85rem",
-              color: "#94a3b8",
+              fontWeight: 600,
+              fontSize: "0.9rem",
+              color: "#64748b",
             }}
           >
-            No temple associated
+            {service.totalBookings || service._count?.bookings || 0} Bookings
           </Typography>
-        );
+        ),
       },
-    },
-    {
-      id: "status",
-      label: "STATUS",
-      render: (service) => {
-        const isAct = service.isActive ?? true;
-        return (
-          <AdminStatusSelect
-            value={isAct ? "Active" : "Inactive"}
-            options={[
-              { value: "Active", label: "Active" },
-              { value: "Inactive", label: "Inactive" },
-            ]}
-            onChange={(val) =>
-              setStatusChangeTarget({
-                service,
-                isActive: val === "Active",
-              })
-            }
-          />
-        );
+    ];
+
+    if (serviceType === "TEMPLE") {
+      cols.push({
+        id: "temple",
+        label: "TEMPLE",
+        render: (service) => {
+          const templeObj = service.temple;
+          const templeName =
+            templeObj?.name ||
+            (typeof templeObj === "string" ? templeObj : null) ||
+            service.templeName;
+
+          if (templeName) {
+            return (
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 600,
+                  fontSize: "0.92rem",
+                  color: "#1e293b",
+                }}
+              >
+                {templeName}
+              </Typography>
+            );
+          }
+
+          return (
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 500,
+                fontSize: "0.85rem",
+                color: "#94a3b8",
+              }}
+            >
+              No temple associated
+            </Typography>
+          );
+        },
+      });
+    }
+
+    cols.push(
+      {
+        id: "status",
+        label: "STATUS",
+        render: (service) => {
+          const isAct = service.isActive ?? true;
+          return (
+            <AdminStatusSelect
+              value={isAct ? "Active" : "Inactive"}
+              options={[
+                { value: "Active", label: "Active" },
+                { value: "Inactive", label: "Inactive" },
+              ]}
+              onChange={(val) =>
+                setStatusChangeTarget({
+                  service,
+                  isActive: val === "Active",
+                })
+              }
+            />
+          );
+        },
       },
-    },
-    {
-      id: "actions",
-      label: "ACTIONS",
-      align: "right",
-      render: (service) => (
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <AdminTableActionMenu
-            actions={[
-              {
-                label: "View Details",
-                icon: <VisibilityIcon fontSize="small" />,
-                href: `/admin/services/${service.id}`,
-              },
-              {
-                label: "Edit",
-                icon: <EditIcon fontSize="small" />,
-                href: `/admin/services/edit/${service.id}`,
-              },
-              {
-                label: "Delete",
-                icon: <DeleteIcon fontSize="small" />,
-                onClick: () => setDeleteTarget(service.id),
-                color: "#ef4444",
-              },
-            ]}
-          />
-        </Box>
-      ),
-    },
-  ];
+      {
+        id: "actions",
+        label: "ACTIONS",
+        align: "right",
+        render: (service) => (
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <AdminTableActionMenu
+              actions={[
+                {
+                  label: "View Details",
+                  icon: <VisibilityIcon fontSize="small" />,
+                  href: `/admin/services/${service.id}`,
+                },
+                {
+                  label: "Edit",
+                  icon: <EditIcon fontSize="small" />,
+                  href: `/admin/services/edit/${service.id}`,
+                },
+                {
+                  label: "Delete",
+                  icon: <DeleteIcon fontSize="small" />,
+                  onClick: () => setDeleteTarget(service.id),
+                  color: "#ef4444",
+                },
+              ]}
+            />
+          </Box>
+        ),
+      }
+    );
+
+    return cols;
+  }, [serviceType]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -377,6 +417,36 @@ export default function AdminServicesContent() {
         actionButtonHref="/admin/services/add"
         actionButtonIcon={<AddIcon />}
       />
+
+      {/* Primary Service Type Tabs */}
+      <Box sx={{ borderBottom: "1px solid #E2E8F0" }}>
+        <Tabs
+          value={serviceType}
+          onChange={(_, val) => handleServiceTypeChange(val)}
+          sx={{
+            "& .MuiTab-root": {
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: "15px",
+              textTransform: "none",
+              color: "#64748B",
+              minHeight: "48px",
+              px: 3,
+              "&.Mui-selected": {
+                color: COLORS.PRIMARY,
+              },
+            },
+            "& .MuiTabs-indicator": {
+              bgcolor: COLORS.PRIMARY,
+              height: "3px",
+              borderRadius: "3px 3px 0 0",
+            },
+          }}
+        >
+          <Tab value="POOJA" label="Pooja Services" />
+          <Tab value="TEMPLE" label="Temple Services" />
+        </Tabs>
+      </Box>
 
       <AdminDataTable
         columns={columns}
@@ -398,9 +468,9 @@ export default function AdminServicesContent() {
         }}
         keyExtractor={(service) => service.id}
         emptyMessage={
-          statusFilter === "Temple"
-            ? "No temple-associated services found."
-            : "No services found matching your criteria."
+          serviceType === "TEMPLE"
+            ? "No temple services found matching your criteria."
+            : "No pooja services found matching your criteria."
         }
       />
 
