@@ -78,34 +78,28 @@ export default function TemplesLayout() {
           {/* Content */}
           <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
             <Typography
-              variant="h2"
               component="h1"
               sx={{
                 fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
-                mb: 0.5,
-                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
-                lineHeight: { xs: 1.15, md: 1.2 },
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Explore Sacred
-            </Typography>
-            <Typography
-              variant="h2"
-              component="h1"
-              sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 800,
-                color: "#D32F2F",
                 mb: { xs: 1.5, md: 3 },
                 fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
                 lineHeight: { xs: 1.15, md: 1.2 },
                 letterSpacing: "-0.04em",
               }}
             >
-              Temples & Dhams
+              Explore Sacred{" "}
+              <Box
+                component="span"
+                sx={{
+                  display: { xs: "inline", sm: "block" },
+                  fontWeight: 800,
+                  color: "#D32F2F",
+                }}
+              >
+                Temples & Dhams
+              </Box>
             </Typography>
             <Typography
               variant="body1"

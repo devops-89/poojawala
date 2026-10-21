@@ -35,12 +35,14 @@ export default function RegisterHeader() {
       </MuiLink>
 
       <Typography
+        component="h1"
         sx={{
           color: COLORS.MUTED_TEXT,
           fontFamily: FONTS.OUTFIT,
-          fontWeight: 600,
-          fontSize: { xs: '13px', md: '15px' },
-          display: { xs: 'none', sm: 'block' },
+          fontWeight: 700,
+          fontSize: { xs: '13px', md: '16px' },
+          display: 'block',
+          m: 0,
         }}
       >
         Partner Onboarding

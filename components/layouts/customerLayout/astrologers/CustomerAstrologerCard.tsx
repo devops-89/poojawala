@@ -84,12 +84,16 @@ export default function CustomerAstrologerCard({
   const expYears = profile?.experienceYears ?? profile?.experience;
   const experience = expYears ? `${expYears}+ Yrs Exp` : "Experienced";
 
-  // 5. Rate per minute
-  const rawRate = profile?.ratePerMinute ?? astrologer?.ratePerMinute;
-  const rate =
-    rawRate != null && rawRate !== ""
-      ? `₹${Number(rawRate).toFixed(2)}/min`
-      : "₹25.00/min";
+  // 5. Astrology Price
+  const rawPrice =
+    profile?.astrologyPrice ??
+    astrologer?.astrologyPrice ??
+    profile?.ratePerMinute ??
+    astrologer?.ratePerMinute;
+  const priceDisplay =
+    rawPrice != null && rawPrice !== ""
+      ? `₹${Number(rawPrice).toFixed(2)}`
+      : "₹0.00";
 
   // 6. Location
   const city = profile?.city || astrologer?.city || "";
@@ -391,7 +395,7 @@ export default function CustomerAstrologerCard({
                     textTransform: "uppercase",
                   }}
                 >
-                  CONSULTATION RATE
+                  ASTROLOGY PRICE
                 </Typography>
                 <Typography
                   sx={{
@@ -401,7 +405,7 @@ export default function CustomerAstrologerCard({
                     fontSize: "17px",
                   }}
                 >
-                  {rate}
+                  {priceDisplay}
                 </Typography>
               </Box>
             </Box>

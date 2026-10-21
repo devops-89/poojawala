@@ -79,6 +79,10 @@ const validationSchema = Yup.object().shape({
         return !isNaN(selectedDate.getTime()) && selectedDate <= twentyYearsAgo;
       }
     ),
+  astrologyPrice: Yup.number()
+    .typeError("Astrology price must be a valid number")
+    .min(0, "Astrology price cannot be negative")
+    .required("Astrology price is required"),
   password: Yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters")
@@ -103,6 +107,7 @@ export default function AddAstrologerForm() {
       mobileNumber: "",
       countryCode: "+91",
       dob: "",
+      astrologyPrice: "",
       password: "",
       confirmPassword: "",
     },
@@ -122,6 +127,9 @@ export default function AddAstrologerForm() {
           payload.countryCode = values.countryCode;
         }
         if (values.dob) payload.dob = values.dob;
+        if (values.astrologyPrice !== "" && values.astrologyPrice !== undefined) {
+          payload.astrologyPrice = Number(values.astrologyPrice);
+        }
 
         const response = await addAstrologerByAdminAPI(payload);
 
@@ -363,8 +371,8 @@ export default function AddAstrologerForm() {
               </LocalizationProvider>
             </Grid>
 
-            {/* Row 3: Email Address (Full Width) */}
-            <Grid size={{ xs: 12 }}>
+            {/* Row 3: Email Address & Astrology Price */}
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 name="email"
@@ -384,6 +392,37 @@ export default function AddAstrologerForm() {
                 }
                 helperText={
                   (touched.email || Boolean(values.email)) ? errors.email : undefined
+                }
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                name="astrologyPrice"
+                label="Astrology Price (₹) *"
+                placeholder="e.g. 1000.00"
+                variant="outlined"
+                value={values.astrologyPrice}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9.]/g, "");
+                  const parts = val.split(".");
+                  const sanitized =
+                    parts.length > 2
+                      ? `${parts[0]}.${parts.slice(1).join("")}`
+                      : val;
+                  formik.setFieldValue("astrologyPrice", sanitized);
+                  formik.setFieldTouched("astrologyPrice", true, false);
+                }}
+                onBlur={handleBlur}
+                error={
+                  Boolean(errors.astrologyPrice) &&
+                  (touched.astrologyPrice || Boolean(values.astrologyPrice))
+                }
+                helperText={
+                  touched.astrologyPrice || Boolean(values.astrologyPrice)
+                    ? (errors.astrologyPrice as string)
+                    : undefined
                 }
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />

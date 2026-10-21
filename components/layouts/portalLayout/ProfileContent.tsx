@@ -140,7 +140,7 @@ export default function ProfileContent() {
     p.verificationStatus !== "APPROVED";
 
   const visibleTabs = TABS.filter((tab) => {
-    if (isAstrologer && (tab.id === "location" || tab.id === "bank")) {
+    if (isAstrologer && tab.id === "location") {
       return false;
     }
     if (tab.id === "documents") {
@@ -155,7 +155,7 @@ export default function ProfileContent() {
   });
 
   React.useEffect(() => {
-    if (isAstrologer && (p.activeTab === "location" || p.activeTab === "bank")) {
+    if (isAstrologer && p.activeTab === "location") {
       p.setActiveTab("personal");
     } else if (!canAccessDocuments && p.activeTab === "documents") {
       p.setActiveTab("personal");
@@ -325,6 +325,8 @@ export default function ProfileContent() {
               isAstrologer={isAstrologer}
               ratePerMinute={p.ratePerMinute}
               setRatePerMinute={p.setRatePerMinute}
+              astrologyPrice={p.astrologyPrice}
+              setAstrologyPrice={p.setAstrologyPrice}
             />
           )}
 

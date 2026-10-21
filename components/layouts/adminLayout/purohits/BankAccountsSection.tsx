@@ -128,9 +128,10 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
     setSavingBank(true);
     try {
       const isBank = bankForm.paymentMethod === "BANK";
-      const payload = isBank
+      const payload: any = isBank
         ? {
             purohitId: Number(purohitId),
+            userId: Number(purohitId),
             paymentMethod: "BANK",
             accountHolderName: bankForm.accountHolderName,
             accountNumber: bankForm.accountNumber,
@@ -141,6 +142,7 @@ export const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
           }
         : {
             purohitId: Number(purohitId),
+            userId: Number(purohitId),
             paymentMethod: "UPI",
             upiId: bankForm.upiId,
             isPrimary: bankForm.isPrimary,

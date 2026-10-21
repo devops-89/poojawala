@@ -5,7 +5,20 @@ export default function PublicServiceDetailsPage() {
   return <WebsiteServiceDetailsContent />;
 }
 
-export const metadata: Metadata = {
-  title: 'Service Details | 1Pooja',
-  description: 'View Vedic service details and book verified purohits on 1Pooja.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  return {
+    title: 'Service Details | 1Pooja',
+    description: 'View Vedic service details and book verified purohits on 1Pooja.',
+    alternates: {
+      canonical: `/services/${id}`,
+    },
+    openGraph: {
+      url: `/services/${id}`,
+    },
+  };
+}

@@ -119,15 +119,15 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
       </Box>
 
       <Grid container spacing={2.5}>
-        {/* Rate Per Minute */}
+        {/* Astrology Price */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            name="ratePerMinute"
-            label="Consultation Rate Per Minute (₹) *"
-            placeholder="e.g. 50.00"
+            name="astrologyPrice"
+            label="Astrology Price (₹) *"
+            placeholder="e.g. 1000.00"
             variant="outlined"
-            value={values.ratePerMinute}
+            value={values.astrologyPrice}
             onChange={(e) => {
               const val = e.target.value.replace(/[^0-9.]/g, "");
               const parts = val.split(".");
@@ -135,7 +135,7 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
                 parts.length > 2
                   ? `${parts[0]}.${parts.slice(1).join("")}`
                   : val;
-              setFieldValue("ratePerMinute", sanitized);
+              setFieldValue("astrologyPrice", sanitized);
             }}
             onBlur={handleBlur}
             slotProps={{
@@ -148,13 +148,13 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
               },
             }}
             error={
-              Boolean(errors.ratePerMinute) &&
-              (touched.ratePerMinute || Boolean(values.ratePerMinute))
+              Boolean(errors.astrologyPrice) &&
+              (touched.astrologyPrice || Boolean(values.astrologyPrice))
             }
             helperText={
-              touched.ratePerMinute || Boolean(values.ratePerMinute)
-                ? (errors.ratePerMinute as string)
-                : "Price charged per minute for astrology consultation"
+              touched.astrologyPrice || Boolean(values.astrologyPrice)
+                ? (errors.astrologyPrice as string)
+                : "Consultation price charged for astrology services"
             }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />

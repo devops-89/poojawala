@@ -48,6 +48,7 @@ export function useProfile() {
   const [isOnlineAvailable, setIsOnlineAvailable] = useState(true);
   const [isOfflineAvailable, setIsOfflineAvailable] = useState(false);
   const [ratePerMinute, setRatePerMinute] = useState("");
+  const [astrologyPrice, setAstrologyPrice] = useState("");
 
   // --- Documents & Registration Info State ---
   const [aadhaarNumber, setAadhaarNumber] = useState("");
@@ -141,8 +142,14 @@ export function useProfile() {
       setExperienceYears((p.experienceYears || profile.experienceYears) ? (p.experienceYears || profile.experienceYears).toString() : "");
       setIsOnlineAvailable(p.isOnlineAvailable ?? profile.isOnlineAvailable ?? true);
       setIsOfflineAvailable(p.isOfflineAvailable ?? profile.isOfflineAvailable ?? false);
-      const rawRate = p.ratePerMinute ?? profile.ratePerMinute;
-      setRatePerMinute(rawRate !== undefined && rawRate !== null ? String(rawRate) : "");
+      const rawRate =
+        p.astrologyPrice ??
+        profile.astrologyPrice ??
+        p.ratePerMinute ??
+        profile.ratePerMinute;
+      const priceStr = rawRate !== undefined && rawRate !== null ? String(rawRate) : "";
+      setRatePerMinute(priceStr);
+      setAstrologyPrice(priceStr);
 
       setAadhaarNumber(p.aadhaarNumber || profile.aadhaarNumber || "");
       setAadhaarDocUrl(p.aadhaarDocUrl || profile.aadhaarDocUrl || null);
@@ -246,8 +253,10 @@ export function useProfile() {
       formData.append("aadhaarNumber", aadhaarNumber);
 
       if (isAstrologer) {
-        if (ratePerMinute) {
-          formData.append("ratePerMinute", ratePerMinute);
+        const finalPrice = astrologyPrice || ratePerMinute;
+        if (finalPrice) {
+          formData.append("astrologyPrice", finalPrice);
+          formData.append("ratePerMinute", finalPrice);
         }
       } else {
         formData.append("isOnlineAvailable", isOnlineAvailable ? "true" : "false");
@@ -614,6 +623,8 @@ export function useProfile() {
     templeAffiliationProofUrl,
     verificationStatus,
     rejectionReason,
+    astrologyPrice,
+    setAstrologyPrice,
 
     // Service Areas
     serviceAreas,

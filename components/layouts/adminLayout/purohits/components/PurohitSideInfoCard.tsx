@@ -159,9 +159,8 @@ export default function PurohitSideInfoCard({
         </Paper>
       </Grid>
 
-      {/* Bank & Payment Accounts (Only for Purohit) */}
-      {!isAstrologer && (
-        <Grid size={{ xs: 12 }}>
+      {/* Bank & Payment Accounts */}
+      <Grid size={{ xs: 12 }}>
           <Paper
             elevation={0}
             sx={{
@@ -287,7 +286,6 @@ export default function PurohitSideInfoCard({
             )}
           </Paper>
         </Grid>
-      )}
     </Grid>
   );
 }

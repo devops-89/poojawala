@@ -63,7 +63,7 @@ export const getAstrologerTableColumns = ({
   },
   {
     id: "ratePerMinute",
-    label: "RATE / COMM.",
+    label: "PRICE / COMM.",
     width: "15%",
     minWidth: 120,
     render: (astrologer) => (

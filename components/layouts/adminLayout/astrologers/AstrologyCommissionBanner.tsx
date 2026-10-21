@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import PercentIcon from "@mui/icons-material/Percent";
 import EditIcon from "@mui/icons-material/Edit";
 import { FONTS } from "@/utils/fonts";
 import {
@@ -23,7 +23,7 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 
 export const parsePlatformSetting = (
   res: any,
-  targetKey: string = "ASTROLOGY_COMMISSION_PRICE"
+  targetKey: string = "ASTROLOGY_COMMISSION_PERCENTAGE"
 ) => {
   if (!res) return { key: targetKey, value: "", description: "" };
 
@@ -102,15 +102,13 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
     try {
       setLoadingCommission(true);
       const res = await getPlatformSettingsAPI();
-      const parsed = parsePlatformSetting(res, "ASTROLOGY_COMMISSION_PRICE");
+      const parsed = parsePlatformSetting(res, "ASTROLOGY_COMMISSION_PERCENTAGE");
       if (parsed.value !== "") {
         setPlatformCommission(parsed.value);
       }
-      if (parsed.description) {
-        setPlatformDescription(parsed.description);
-      }
+      setPlatformDescription(parsed.description || "");
       if (onCommissionLoaded) {
-        onCommissionLoaded(parsed.value, parsed.description);
+        onCommissionLoaded(parsed.value, parsed.description || "");
       }
     } catch (error) {
       console.error("Failed to fetch platform setting:", error);
@@ -125,30 +123,28 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
 
   const handleOpenCommissionModal = () => {
     setInputCommissionValue(platformCommission || "");
-    setInputCommissionDesc(
-      platformDescription || "Default platform commission price for astrology consultations"
-    );
+    setInputCommissionDesc(platformDescription || "");
     setIsCommissionModalOpen(true);
   };
 
   const handleSaveCommission = async () => {
-    if (!inputCommissionValue.trim()) {
-      showSnackbar("Please enter a valid commission price", "error");
+    const trimmedVal = inputCommissionValue.trim();
+    const numVal = Number(trimmedVal);
+    if (!trimmedVal || isNaN(numVal) || numVal < 0 || numVal > 100) {
+      showSnackbar("Please enter a valid commission percentage between 0 and 100", "error");
       return;
     }
 
     setIsSavingCommission(true);
     try {
       const payload = {
-        key: "ASTROLOGY_COMMISSION_PRICE",
-        value: inputCommissionValue.trim(),
-        description:
-          inputCommissionDesc.trim() ||
-          "Default platform commission price for astrology consultations",
+        key: "ASTROLOGY_COMMISSION_PERCENTAGE",
+        value: trimmedVal,
+        description: inputCommissionDesc.trim() || platformDescription || "",
       };
 
       await upsertPlatformSettingAPI(payload);
-      showSnackbar("Platform commission price updated successfully!", "success");
+      showSnackbar("Platform commission percentage updated successfully!", "success");
       setPlatformCommission(payload.value);
       setPlatformDescription(payload.description);
       setIsCommissionModalOpen(false);
@@ -156,10 +152,12 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
       if (onCommissionUpdated) {
         onCommissionUpdated(payload.value, payload.description);
       }
+
+      await fetchPlatformCommission();
     } catch (error: any) {
       console.error("Failed to update platform setting:", error);
       showSnackbar(
-        error?.response?.data?.message || "Failed to update platform commission price",
+        error?.response?.data?.message || "Failed to update platform commission percentage",
         "error"
       );
     } finally {
@@ -201,7 +199,7 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
               mt: 0.2,
             }}
           >
-            <CurrencyRupeeIcon sx={{ fontSize: 28 }} />
+            <PercentIcon sx={{ fontSize: 26 }} />
           </Box>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
             <Typography
@@ -225,13 +223,13 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
               {loadingCommission ? (
                 <CircularProgress size={14} sx={{ color: "#ea580c" }} />
               ) : (
-                platformDescription || "Default platform commission price for astrology consultations"
+                platformDescription || "Astrology platform commission percentage"
               )}
             </Typography>
           </Box>
         </Box>
 
-        {/* Right side: Clean Commission Price Label & Value + Update Button */}
+        {/* Right side: Clean Commission Percentage Label & Value + Update Button */}
         <Box
           sx={{
             display: "flex",
@@ -253,7 +251,7 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
                 letterSpacing: "0.6px",
               }}
             >
-              Commission Price
+              Commission Percentage
             </Typography>
             <Typography
               sx={{
@@ -267,7 +265,7 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
               {loadingCommission ? (
                 <CircularProgress size={20} sx={{ color: "#ea580c" }} />
               ) : (
-                `₹${platformCommission || "0"}`
+                `${platformCommission || "0"}%`
               )}
             </Typography>
           </Box>
@@ -314,26 +312,42 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
         </DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
           <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "0.88rem", color: "#64748b" }}>
-            This updates the global platform commission price for all astrology consultations.
+            {platformDescription || "Astrology platform commission percentage"}
           </Typography>
 
           <TextField
             fullWidth
-            label="Commission Price (₹) *"
-            type="number"
+            label="Commission Percentage (%) *"
             value={inputCommissionValue}
-            onChange={(e) => setInputCommissionValue(e.target.value)}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw === "") {
+                setInputCommissionValue("");
+                return;
+              }
+              const sanitized = raw.replace(/[^0-9.]/g, "");
+              const parts = sanitized.split(".");
+              if (parts.length > 2) return;
+              const num = Number(sanitized);
+              if (isNaN(num) || num > 100 || num < 0) return;
+              setInputCommissionValue(sanitized);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+                e.preventDefault();
+              }
+            }}
             slotProps={{
               input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CurrencyRupeeIcon sx={{ color: "#ea580c", fontSize: 20 }} />
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <PercentIcon sx={{ color: "#ea580c", fontSize: 20 }} />
                   </InputAdornment>
                 ),
               },
             }}
-            placeholder="e.g. 50.00"
-            helperText="Enter the commission amount to deduct per booking or consultation"
+            placeholder="e.g. 25"
+            helperText="Enter the commission percentage to deduct (0 - 100%)"
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "12px",
@@ -349,7 +363,7 @@ export const AstrologyCommissionBanner: React.FC<AstrologyCommissionBannerProps>
             rows={3}
             value={inputCommissionDesc}
             onChange={(e) => setInputCommissionDesc(e.target.value)}
-            placeholder="e.g. Default platform commission price for astrology consultations"
+            placeholder="e.g. Astrology platform commission percentage"
             helperText="Brief note explaining this commission setting"
             sx={{
               "& .MuiOutlinedInput-root": {

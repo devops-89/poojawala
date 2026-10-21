@@ -18,5 +18,11 @@ export default function PortalRegisterPage() {
 export const metadata: Metadata = {
   title: 'Register as a Partner | 1Pooja',
   description: 'Join 1Pooja as a verified partner (Purohit / Astrologer). Register today to connect with devotees and manage your bookings online.',
+  alternates: {
+    canonical: '/partner',
+  },
+  openGraph: {
+    url: '/partner',
+  },
 };
 

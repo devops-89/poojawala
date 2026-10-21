@@ -19,9 +19,6 @@ export const metadata: Metadata = {
   title: "Book Experienced Pandits & Purohits online or offline | 1Pooja",
   description:
     "Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience",
-  alternates: {
-    canonical: "https://1pooja.com/",
-  },
   verification: {
     google: "2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw",
   },

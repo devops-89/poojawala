@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, InputAdornment, TextField, Typography } from "@mui/material";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import PercentIcon from "@mui/icons-material/Percent";
 import { FONTS } from "@/utils/fonts";
 
 interface PlatformCommissionCardProps {
@@ -12,6 +13,10 @@ interface PlatformCommissionCardProps {
   onBlur?: (e: React.FocusEvent<any>) => void;
   title?: string;
   subtitle?: string;
+  label?: string;
+  unit?: "%" | "₹";
+  placeholder?: string;
+  name?: string;
 }
 
 export const PlatformCommissionCard: React.FC<PlatformCommissionCardProps> = ({
@@ -20,9 +25,15 @@ export const PlatformCommissionCard: React.FC<PlatformCommissionCardProps> = ({
   touched,
   onChange,
   onBlur,
-  title = "Platform Commission Price (₹)",
-  subtitle = "Set or modify the platform commission price charged for this partner.",
+  unit = "%",
+  title = "Platform Commission Percentage (%)",
+  subtitle = "Set or modify the platform commission percentage charged for this astrologer.",
+  label = "Commission Percentage (%) *",
+  placeholder = "e.g. 10.00",
+  name = "commissionPercentage",
 }) => {
+  const isPercent = unit === "%";
+
   return (
     <Box
       sx={{
@@ -52,7 +63,11 @@ export const PlatformCommissionCard: React.FC<PlatformCommissionCardProps> = ({
             boxShadow: "0 2px 8px rgba(217, 119, 6, 0.12)",
           }}
         >
-          <CurrencyRupeeIcon sx={{ fontSize: 28 }} />
+          {isPercent ? (
+            <PercentIcon sx={{ fontSize: 26 }} />
+          ) : (
+            <CurrencyRupeeIcon sx={{ fontSize: 28 }} />
+          )}
         </Box>
         <Box>
           <Typography
@@ -81,27 +96,53 @@ export const PlatformCommissionCard: React.FC<PlatformCommissionCardProps> = ({
       <Box sx={{ width: { xs: "100%", md: "280px" }, minWidth: "220px" }}>
         <TextField
           fullWidth
-          name="commissionPrice"
-          label="Commission Price (₹) *"
-          placeholder="e.g. 50.00"
+          name={name}
+          label={label}
+          placeholder={placeholder}
           variant="outlined"
           value={value}
           onChange={(e) => {
-            const val = e.target.value.replace(/[^0-9.]/g, "");
-            const parts = val.split(".");
-            const sanitized =
-              parts.length > 2
-                ? `${parts[0]}.${parts.slice(1).join("")}`
-                : val;
+            const raw = e.target.value;
+            if (raw === "") {
+              onChange("");
+              return;
+            }
+            const sanitized = raw.replace(/[^0-9.]/g, "");
+            const parts = sanitized.split(".");
+            if (parts.length > 2) return;
+            if (isPercent) {
+              const num = Number(sanitized);
+              if (isNaN(num) || num > 100 || num < 0) return;
+            }
             onChange(sanitized);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+              e.preventDefault();
+            }
           }}
           onBlur={onBlur}
           slotProps={{
             input: {
-              startAdornment: (
-                <CurrencyRupeeIcon
-                  sx={{ color: "#d97706", mr: 0.5, fontSize: 20 }}
-                />
+              [isPercent ? "endAdornment" : "startAdornment"]: isPercent ? (
+                <InputAdornment position="end">
+                  <Typography
+                    sx={{
+                      color: "#d97706",
+                      fontWeight: 800,
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: "16px",
+                    }}
+                  >
+                    %
+                  </Typography>
+                </InputAdornment>
+              ) : (
+                <InputAdornment position="start">
+                  <CurrencyRupeeIcon
+                    sx={{ color: "#d97706", mr: 0.5, fontSize: 20 }}
+                  />
+                </InputAdornment>
               ),
             },
           }}

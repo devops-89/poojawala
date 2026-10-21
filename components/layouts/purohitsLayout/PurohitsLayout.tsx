@@ -121,34 +121,28 @@ export default function PurohitsLayout() {
           {/* Content */}
           <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
             <Typography
-              variant="h2"
               component="h1"
               sx={{
                 fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
                 color: "#0f172a",
-                mb: 0.5,
-                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
-                lineHeight: { xs: 1.15, md: 1.2 },
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Explore Our
-            </Typography>
-            <Typography
-              variant="h2"
-              component="h1"
-              sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 800,
-                color: "#D32F2F",
                 mb: { xs: 1.5, md: 3 },
                 fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
                 lineHeight: { xs: 1.15, md: 1.2 },
                 letterSpacing: "-0.04em",
               }}
             >
-              Verified Purohits
+              Explore Our{" "}
+              <Box
+                component="span"
+                sx={{
+                  display: { xs: "inline", sm: "block" },
+                  fontWeight: 800,
+                  color: "#D32F2F",
+                }}
+              >
+                Verified Purohits
+              </Box>
             </Typography>
             <Typography
               variant="body1"

@@ -100,13 +100,21 @@ export default function AdminAstrologersContent() {
             email: u.email || "-",
             city: profile.city || "-",
             specializations,
-            ratePerMinute: profile.ratePerMinute ? `₹${profile.ratePerMinute}/min` : "-",
-            commissionPrice: profile.commissionPrice
+            ratePerMinute: profile.astrologyPrice
+              ? `₹${profile.astrologyPrice}`
+              : profile.ratePerMinute
+              ? `₹${profile.ratePerMinute}/min`
+              : "-",
+            commissionPrice: profile.commissionPercentage
+              ? `${profile.commissionPercentage}%`
+              : u.commissionPercentage
+              ? `${u.commissionPercentage}%`
+              : profile.commissionPrice
               ? `₹${profile.commissionPrice}`
               : u.commissionPrice
               ? `₹${u.commissionPrice}`
               : platformCommission
-              ? `₹${platformCommission}`
+              ? `${platformCommission}%`
               : "-",
             status: uiStatus,
             phone: formatPhoneNumber(u.phone, u.countryCode),

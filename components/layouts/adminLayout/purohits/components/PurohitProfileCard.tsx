@@ -187,6 +187,34 @@ export default function PurohitProfileCard({
                 }}
               />
             )}
+
+            {/* Rating badge beside Approved status: Star icon and number only */}
+            <Box
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 0.5,
+                px: 1,
+                height: "28px",
+                bgcolor: "#fffbeb",
+                borderRadius: "8px",
+                border: "1px solid #fde68a",
+                boxSizing: "border-box",
+              }}
+            >
+              <StarIcon sx={{ color: "#f59e0b", fontSize: 16 }} />
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: "#92400e",
+                  fontSize: "0.85rem",
+                  lineHeight: 1,
+                }}
+              >
+                {purohit.avgRating || profile.avgRating || "0.0"}
+              </Typography>
+            </Box>
           </Box>
           <Typography
             variant="h5"
@@ -217,6 +245,51 @@ export default function PurohitProfileCard({
               ? ` • ${profile.experienceYears} Years Experience`
               : ""}
           </Typography>
+
+          {/* Astrology Price directly below name & city */}
+          {isAstrologer && (
+            <Box
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 0.8,
+                px: 1.5,
+                py: 0.6,
+                mt: 1.5,
+                bgcolor: "#fff7ed",
+                borderRadius: "10px",
+                border: "1.5px solid #fed7aa",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  color: "#9a3412",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Astrology Price:
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  color: COLORS.PRIMARY,
+                  fontSize: "1.05rem",
+                  lineHeight: 1,
+                }}
+              >
+                ₹
+                {profile.astrologyPrice !== undefined &&
+                profile.astrologyPrice !== null
+                  ? profile.astrologyPrice
+                  : "0.00"}
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
 
@@ -245,7 +318,7 @@ export default function PurohitProfileCard({
           </Typography>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12, sm: isAstrologer ? 12 : 6 }}>
           <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
             Qualification
           </Typography>
@@ -254,35 +327,41 @@ export default function PurohitProfileCard({
           </Typography>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
-            Average Rating
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
-            <StarIcon sx={{ color: "#f59e0b", fontSize: 18 }} />
-            <Typography sx={{ color: "#1e293b", fontWeight: 700, fontSize: "0.95rem" }}>
-              {purohit.avgRating || profile.avgRating || "0.0"}
+        {!isAstrologer && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
+              Average Rating
             </Typography>
-          </Box>
-        </Grid>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
+              <StarIcon sx={{ color: "#f59e0b", fontSize: 18 }} />
+              <Typography sx={{ color: "#1e293b", fontWeight: 700, fontSize: "0.95rem" }}>
+                {purohit.avgRating || profile.avgRating || "0.0"}
+              </Typography>
+            </Box>
+          </Grid>
+        )}
 
         {isAstrologer ? (
           <>
             <Grid size={{ xs: 12, sm: 6 }}>
               <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
-                Rate / Minute
+                Commission Percentage
               </Typography>
-              <Typography sx={{ color: COLORS.PRIMARY, mt: 0.5, fontWeight: 700, fontSize: "1rem" }}>
-                ₹{profile.ratePerMinute !== undefined && profile.ratePerMinute !== null ? profile.ratePerMinute : "0.00"} / min
+              <Typography sx={{ color: "#ea580c", mt: 0.5, fontWeight: 700, fontSize: "1.05rem" }}>
+                {profile.commissionPercentage !== undefined && profile.commissionPercentage !== null
+                  ? `${profile.commissionPercentage}%`
+                  : "0%"}
               </Typography>
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>
               <Typography sx={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
-                Platform Commission
+                Astrologer Payout
               </Typography>
-              <Typography sx={{ color: "#1e293b", mt: 0.5, fontWeight: 700, fontSize: "1rem" }}>
-                ₹{profile.commissionPrice !== undefined && profile.commissionPrice !== null ? profile.commissionPrice : "0.00"}
+              <Typography sx={{ color: "#059669", mt: 0.5, fontWeight: 700, fontSize: "1.05rem" }}>
+                ₹{profile.astrologerPayout !== undefined && profile.astrologerPayout !== null
+                  ? profile.astrologerPayout
+                  : "0.00"}
               </Typography>
             </Grid>
           </>

@@ -85,34 +85,28 @@ export default function BlogsLayout() {
           {/* Content */}
           <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
             <Typography
-              variant="h2"
               component="h1"
               sx={{
                 fontFamily: FONTS.DM_SANS,
                 fontWeight: 700,
                 color: COLORS.SLATE_DARK,
-                mb: 0.5,
-                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
-                lineHeight: { xs: 1.15, md: 1.2 },
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Explore Our Articles &
-            </Typography>
-            <Typography
-              variant="h2"
-              component="h1"
-              sx={{
-                fontFamily: FONTS.DM_SANS,
-                fontWeight: 800,
-                color: COLORS.RED_DARK,
                 mb: { xs: 1.5, md: 3 },
                 fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
                 lineHeight: { xs: 1.15, md: 1.2 },
                 letterSpacing: "-0.04em",
               }}
             >
-              Vedic Wisdom
+              Explore Our Articles &{" "}
+              <Box
+                component="span"
+                sx={{
+                  display: { xs: "inline", sm: "block" },
+                  fontWeight: 800,
+                  color: COLORS.RED_DARK,
+                }}
+              >
+                Vedic Wisdom
+              </Box>
             </Typography>
             <Typography
               variant="body1"

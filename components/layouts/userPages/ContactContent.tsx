@@ -65,7 +65,7 @@ export default function ContactContent() {
           position: 'relative'
         }}
       >
-        <Typography variant="h2" sx={{ fontFamily: FONTS.DM_SANS, fontWeight: 800, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
+        <Typography variant="h2" component="h1" sx={{ fontFamily: FONTS.DM_SANS, fontWeight: 800, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
           Get in Touch
         </Typography>
         <Typography sx={{ fontFamily: FONTS.DM_SANS, fontSize: '18px', opacity: 0.9, maxWidth: '600px', mx: 'auto', px: 2 }}>

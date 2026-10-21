@@ -2,7 +2,7 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -16,6 +16,7 @@ import { getPurohitByIdAPI, updateUserByAdminAPI } from "@/api/userControllers";
 import { convertImageToWebP } from "@/utils/imageHelper";
 import { BasicDetailsSection } from "../purohits/BasicDetailsSection";
 import { VerificationDocsSection } from "../purohits/VerificationDocsSection";
+import { BankAccountsSection } from "../purohits/BankAccountsSection";
 import { PlatformCommissionCard } from "../common/PlatformCommissionCard";
 import { AstrologerProfileSection, ASTROLOGY_SPECIALIZATIONS, cleanItem, parseList } from "./AstrologerProfileSection";
 
@@ -59,14 +60,15 @@ const validationSchema = Yup.object().shape({
         return !isNaN(selectedDate.getTime()) && selectedDate <= twentyYearsAgo;
       }
     ),
-  commissionPrice: Yup.number()
-    .typeError("Commission price must be a valid number")
-    .min(0, "Commission price cannot be negative")
-    .required("Commission price is required"),
-  ratePerMinute: Yup.number()
-    .typeError("Rate per minute must be a valid number")
-    .min(0, "Rate cannot be negative")
-    .required("Rate per minute is required"),
+  commissionPercentage: Yup.number()
+    .typeError("Commission percentage must be a valid number")
+    .min(0, "Commission percentage cannot be negative")
+    .max(100, "Commission percentage cannot exceed 100%")
+    .required("Commission percentage is required"),
+  astrologyPrice: Yup.number()
+    .typeError("Astrology price must be a valid number")
+    .min(0, "Astrology price cannot be negative")
+    .required("Astrology price is required"),
   bio: Yup.string()
     .trim()
     .required("Bio is required")
@@ -91,6 +93,10 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Bank Accounts State
+  const initialBankAccountsRef = useRef<string>("");
+  const [bankAccounts, setBankAccounts] = useState<any[]>([]);
+
   const [selectedFiles, setSelectedFiles] = useState<{
     profilePhoto: File | null;
     identityDoc: File | null;
@@ -108,8 +114,8 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
       phone: "",
       countryCode: "+91",
       dob: "",
-      commissionPrice: "",
-      ratePerMinute: "",
+      commissionPercentage: "",
+      astrologyPrice: "",
       bio: "",
       qualification: "",
       experienceYears: "",
@@ -153,11 +159,13 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
           aadhaarNumber: values.aadhaarNumber,
           city: values.city,
           state: values.state,
-          commissionPrice: values.commissionPrice
-            ? Number(values.commissionPrice)
-            : 0,
-          ratePerMinute: values.ratePerMinute
-            ? Number(values.ratePerMinute)
+          commissionPercentage:
+            values.commissionPercentage !== "" &&
+            values.commissionPercentage !== undefined
+              ? Number(values.commissionPercentage)
+              : 0,
+          astrologyPrice: values.astrologyPrice
+            ? Number(values.astrologyPrice)
             : 0,
           aadhaarDocUrl:
             values.identityDocUrl && !values.identityDocUrl.startsWith("blob:")
@@ -169,19 +177,32 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
               : null,
         };
 
-        if (hasSelectedFiles) {
-          const fd = new FormData();
-          fd.append("firstName", firstName);
-          fd.append("lastName", lastName);
-          if (values.email) fd.append("email", values.email);
-          if (values.phone) fd.append("phone", values.phone);
-          if (values.countryCode)
-            fd.append("countryCode", values.countryCode || "+91");
-          if (values.dob) fd.append("dob", values.dob);
+          const formattedBankAccounts = bankAccounts.map((b) => ({
+            ...(b.id ? { id: b.id } : {}),
+            paymentMethod: b.paymentMethod || (b.upiId ? "UPI" : "BANK"),
+            accountHolderName: b.accountHolderName,
+            accountNumber: b.accountNumber,
+            ifscCode: b.ifscCode,
+            bankName: b.bankName,
+            accountType: b.accountType || "SAVINGS",
+            upiId: b.upiId,
+            isPrimary: Boolean(b.isPrimary),
+          }));
 
-          fd.append("profile", JSON.stringify(profileObj));
+          if (hasSelectedFiles) {
+            const fd = new FormData();
+            fd.append("firstName", firstName);
+            fd.append("lastName", lastName);
+            if (values.email) fd.append("email", values.email);
+            if (values.phone) fd.append("phone", values.phone);
+            if (values.countryCode)
+              fd.append("countryCode", values.countryCode || "+91");
+            if (values.dob) fd.append("dob", values.dob);
 
-          // Scalar fields for backend compatibility
+            fd.append("profile", JSON.stringify(profileObj));
+            fd.append("bankAccounts", JSON.stringify(formattedBankAccounts));
+
+            // Scalar fields for backend compatibility
           fd.append("bio", values.bio);
           if (cleanedQualification)
             fd.append("qualification", cleanedQualification);
@@ -196,11 +217,17 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
             fd.append("aadhaarNumber", values.aadhaarNumber);
           if (values.city) fd.append("city", values.city);
           if (values.state) fd.append("state", values.state);
-          if (values.commissionPrice !== "" && values.commissionPrice !== undefined) {
-            fd.append("commissionPrice", String(values.commissionPrice));
+          if (
+            values.commissionPercentage !== "" &&
+            values.commissionPercentage !== undefined
+          ) {
+            fd.append(
+              "commissionPercentage",
+              String(values.commissionPercentage)
+            );
           }
-          if (values.ratePerMinute)
-            fd.append("ratePerMinute", String(values.ratePerMinute));
+          if (values.astrologyPrice)
+            fd.append("astrologyPrice", String(values.astrologyPrice));
 
           if (selectedFiles.profilePhoto) {
             const webpFile = await convertImageToWebP(
@@ -230,15 +257,18 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
             phone: values.phone,
             countryCode: values.countryCode || "+91",
             dob: values.dob,
-            commissionPrice: values.commissionPrice
-              ? Number(values.commissionPrice)
-              : 0,
+            commissionPercentage:
+              values.commissionPercentage !== "" &&
+              values.commissionPercentage !== undefined
+                ? Number(values.commissionPercentage)
+                : 0,
             profileImage:
               values.profilePhotoUrl &&
                 !values.profilePhotoUrl.startsWith("blob:")
                 ? values.profilePhotoUrl
                 : null,
             profile: profileObj,
+            bankAccounts: formattedBankAccounts,
           };
           await updateUserByAdminAPI(id, updatePayload);
         }
@@ -315,6 +345,12 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
           return;
         }
         const profile = u.astrologerProfile || u.profile || {};
+        const bankAccountsList =
+          u.bankAccounts ||
+          raw.bankAccounts ||
+          [];
+        setBankAccounts(bankAccountsList);
+        initialBankAccountsRef.current = JSON.stringify(bankAccountsList);
 
         const parsedLangs = parseList(profile.languages);
         const parsedSpecs = parseList(profile.specializations);
@@ -334,17 +370,23 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
           return url;
         };
 
-        const rate =
-          profile.ratePerMinute !== undefined && profile.ratePerMinute !== null
+        const price =
+          profile.astrologyPrice !== undefined && profile.astrologyPrice !== null
+            ? String(profile.astrologyPrice)
+            : u.astrologyPrice !== undefined && u.astrologyPrice !== null
+            ? String(u.astrologyPrice)
+            : profile.ratePerMinute !== undefined && profile.ratePerMinute !== null
             ? String(profile.ratePerMinute)
             : "";
 
-        const commission =
-          profile.commissionPrice !== undefined && profile.commissionPrice !== null
-            ? String(profile.commissionPrice)
-            : u.commissionPrice !== undefined && u.commissionPrice !== null
-              ? String(u.commissionPrice)
-              : "";
+        const commissionPercentage =
+          profile.commissionPercentage !== undefined &&
+          profile.commissionPercentage !== null
+            ? String(profile.commissionPercentage)
+            : u.commissionPercentage !== undefined &&
+              u.commissionPercentage !== null
+            ? String(u.commissionPercentage)
+            : "";
 
         formik.resetForm({
           values: {
@@ -353,8 +395,8 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
             phone: u.phone || "",
             countryCode: u.countryCode || "+91",
             dob: u.dob ? u.dob.split("T")[0] : "",
-            commissionPrice: commission,
-            ratePerMinute: rate,
+            commissionPercentage: commissionPercentage,
+            astrologyPrice: price,
             bio: profile.bio || "",
             qualification: qual,
             experienceYears:
@@ -476,15 +518,19 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
           gap: 4,
         }}
       >
-        {/* TOP: Admin Platform Commission Price Card */}
+        {/* TOP: Admin Platform Commission Percentage Card */}
         <PlatformCommissionCard
-          value={values.commissionPrice}
-          error={errors.commissionPrice as string}
-          touched={touched.commissionPrice}
-          onChange={(val) => setFieldValue("commissionPrice", val)}
+          value={values.commissionPercentage}
+          error={errors.commissionPercentage as string}
+          touched={touched.commissionPercentage}
+          onChange={(val) => setFieldValue("commissionPercentage", val)}
           onBlur={handleBlur}
-          title="Platform Commission Price (₹)"
-          subtitle="Set or modify the platform commission price charged for this astrologer."
+          unit="%"
+          name="commissionPercentage"
+          title="Platform Commission Percentage (%)"
+          subtitle="Set or modify the platform commission percentage charged for this astrologer."
+          label="Commission Percentage (%) *"
+          placeholder="e.g. 10.00"
         />
 
         {/* SECTION 1: Basic Details */}
@@ -519,6 +565,15 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
           selectedFiles={selectedFiles}
           handleFileUpload={handleFileUpload}
           isAstrologer={true}
+        />
+
+        <Divider />
+
+        {/* SECTION 4: Bank Details & Payout Info */}
+        <BankAccountsSection
+          purohitId={id}
+          bankAccounts={bankAccounts}
+          setBankAccounts={setBankAccounts}
         />
 
         {/* Form Footer Actions */}

@@ -4,6 +4,12 @@ import TermsAndConditionsContent from '@/components/layouts/userPages/TermsAndCo
 export const metadata: Metadata = {
   title: 'Terms & Conditions | 1Pooja',
   description: 'Read the terms and conditions governing the use of 1Pooja services, bookings, and Purohit consultations.',
+  alternates: {
+    canonical: '/terms-and-conditions',
+  },
+  openGraph: {
+    url: '/terms-and-conditions',
+  },
 };
 
 export default function TermsAndConditionsPage() {

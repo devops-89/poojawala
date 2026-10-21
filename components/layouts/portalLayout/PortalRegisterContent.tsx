@@ -168,6 +168,7 @@ export default function PortalRegisterContent() {
       specializations: [],
       isOnlineAvailable: true,
       isOfflineAvailable: true,
+      astrologyPrice: "",
       ratePerMinute: "",
       paymentMethod: "BANK",
       upiId: "",
@@ -333,11 +334,15 @@ export default function PortalRegisterContent() {
             values.isOfflineAvailable ? "true" : "false",
           );
 
-          if (values.role === USER_ROLE.ASTROLOGER && values.ratePerMinute) {
-            fd.append("ratePerMinute", values.ratePerMinute.toString());
+          if (values.role === USER_ROLE.ASTROLOGER) {
+            const priceVal = values.astrologyPrice || values.ratePerMinute;
+            if (priceVal) {
+              fd.append("astrologyPrice", priceVal.toString());
+              fd.append("ratePerMinute", priceVal.toString());
+            }
           }
 
-          if (values.role !== USER_ROLE.ASTROLOGER) {
+          if (values.paymentMethod) {
             fd.append("paymentMethod", values.paymentMethod);
             if (values.paymentMethod === "UPI") {
               fd.append("upiId", values.upiId);
@@ -544,6 +549,7 @@ export default function PortalRegisterContent() {
       const draft = {
         values: {
           role: formik.values.role,
+          astrologyPrice: formik.values.astrologyPrice,
           ratePerMinute: formik.values.ratePerMinute,
           fullName: formik.values.fullName,
           countryCode: formik.values.countryCode,

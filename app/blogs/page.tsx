@@ -6,6 +6,12 @@ import { Box, CircularProgress } from "@mui/material";
 export const metadata: Metadata = {
   title: "Blogs & Sacred Insights | 1Pooja",
   description: "Discover step-by-step Puja Vidhis, festival guides, mantra meanings, and sacred insights written by verified Pandits.",
+  alternates: {
+    canonical: "/blogs",
+  },
+  openGraph: {
+    url: "/blogs",
+  },
 };
 
 export default function PublicBlogsPage() {

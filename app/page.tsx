@@ -33,4 +33,10 @@ export default function Home() {
 export const metadata: Metadata = {
   title: '1Pooja | Book Experienced Pandits & Purohits Online',
   description: 'Book verified and experienced Pandits for all Hindu pujas, homams, and rituals at your home. Quality pooja samagri and seamless online booking with 1Pooja.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    url: '/',
+  },
 };

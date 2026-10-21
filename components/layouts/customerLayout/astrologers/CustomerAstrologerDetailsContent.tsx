@@ -6,14 +6,9 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   FormControl,
   Grid,
-  IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -34,9 +29,6 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PaymentIcon from "@mui/icons-material/Payment";
-import CloseIcon from "@mui/icons-material/Close";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import NextLink from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { getAstrologerByIdAPI } from "@/api/userControllers";
@@ -136,19 +128,21 @@ export default function CustomerAstrologerDetailsContent() {
   const expYears = profile?.experienceYears ?? profile?.experience;
   const experience = expYears ? `${expYears}+ Years Experience` : "Experienced";
 
-  const rawRate = profile?.ratePerMinute ?? astrologer?.ratePerMinute;
-  const rate =
-    rawRate != null && rawRate !== ""
-      ? `₹${Number(rawRate).toFixed(2)}/min`
-      : "₹25.00/min";
+  const rawPrice =
+    profile?.astrologyPrice ??
+    astrologer?.astrologyPrice ??
+    profile?.ratePerMinute ??
+    astrologer?.ratePerMinute;
+  const astrologyPriceDisplay =
+    rawPrice != null && rawPrice !== ""
+      ? `₹${Number(rawPrice).toFixed(2)}`
+      : "₹0.00";
 
   const rawCommission = profile?.commissionPrice;
   const commissionPrice =
     rawCommission != null && rawCommission !== ""
       ? `₹${Number(rawCommission).toFixed(2)}`
       : "₹50.00";
-
-  const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
 
   const city = profile?.city || astrologer?.city || "";
   const state = profile?.state || astrologer?.state || "";
@@ -207,26 +201,8 @@ export default function CustomerAstrologerDetailsContent() {
     }
   }, [availableSlots, scheduledTime]);
 
-  const formattedSchedule = useMemo(() => {
-    if (!scheduledDate || !scheduledTime) return "";
-    try {
-      const [year, month, day] = scheduledDate.split("-").map(Number);
-      const [hour, minute] = scheduledTime.split(":").map(Number);
-      const d = new Date(year, month - 1, day, hour, minute, 0);
-      const datePart = d.toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-      const selectedSlot = availableSlots.find((s) => s.value === scheduledTime);
-      const timePart = selectedSlot ? selectedSlot.label : scheduledTime;
-      return `${datePart} at ${timePart}`;
-    } catch {
-      return `${scheduledDate} at ${scheduledTime}`;
-    }
-  }, [scheduledDate, scheduledTime, availableSlots]);
 
-  const handleInitiateBooking = (e: React.FormEvent) => {
+  const handleInitiateBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!astrologer?.id) {
       showSnackbar("Astrologer information missing", "error");
@@ -247,17 +223,8 @@ export default function CustomerAstrologerDetailsContent() {
       return;
     }
 
-    // Open confirmation pop up
-    setConfirmModalOpen(true);
-  };
-
-  const handleConfirmAndPay = async () => {
     setSubmitting(true);
     try {
-      const [year, month, day] = scheduledDate.split("-").map(Number);
-      const [hour, minute] = scheduledTime.split(":").map(Number);
-      const scheduledDateTime = new Date(year, month - 1, day, hour, minute, 0);
-
       const payload = {
         astrologerId: Number(astrologer.id),
         scheduledAt: scheduledDateTime.toISOString(),
@@ -318,7 +285,6 @@ export default function CustomerAstrologerDetailsContent() {
       );
     } finally {
       setSubmitting(false);
-      setConfirmModalOpen(false);
     }
   };
 
@@ -738,10 +704,10 @@ export default function CustomerAstrologerDetailsContent() {
           >
             <Box>
               <Typography sx={{ fontSize: "11px", fontWeight: 700, color: "#9a3412", letterSpacing: "0.5px" }}>
-                SESSION CHARGES
+                ASTROLOGY PRICE
               </Typography>
               <Typography sx={{ fontSize: "19px", fontWeight: 800, color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT }}>
-                {rate}
+                {astrologyPriceDisplay}
               </Typography>
             </Box>
 
@@ -778,192 +744,6 @@ export default function CustomerAstrologerDetailsContent() {
           </Box>
         </Box>
       </Paper>
-
-      {/* Booking Charges & Confirmation Popup */}
-      <Dialog
-        open={confirmModalOpen}
-        onClose={() => !submitting && setConfirmModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: "24px",
-              p: 1.5,
-              border: "1px solid #fed7aa",
-            },
-          },
-        }}
-      >
-        <DialogTitle sx={{ pb: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: "12px",
-                bgcolor: "#FFF0E6",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: COLORS.PRIMARY,
-              }}
-            >
-              <AccountBalanceWalletIcon sx={{ fontSize: 24 }} />
-            </Box>
-            <Box>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: "1.2rem", color: "#1e293b" }}>
-                Consultation Charges Breakdown
-              </Typography>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "0.82rem", color: "#64748b" }}>
-                Review payment details before proceeding
-              </Typography>
-            </Box>
-          </Box>
-          <IconButton
-            onClick={() => setConfirmModalOpen(false)}
-            disabled={submitting}
-            size="small"
-            sx={{ color: "#94a3b8" }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </DialogTitle>
-
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2.2, pt: 1.5 }}>
-          {/* Astrologer & Schedule Summary */}
-          <Box
-            sx={{
-              p: 2,
-              bgcolor: "#f8fafc",
-              borderRadius: "16px",
-              border: "1px solid #e2e8f0",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 1.5,
-            }}
-          >
-            <Box>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "1rem", color: "#1e293b" }}>
-                {fullName}
-              </Typography>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "0.82rem", color: "#64748b" }}>
-                {specification || "Vedic Astrologer"}
-              </Typography>
-            </Box>
-
-            <Box sx={{ textAlign: { xs: "left", sm: "right" } }}>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, fontSize: "0.85rem", color: "#334155" }}>
-                {formattedSchedule}
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Charges Card 1: Advance Booking Fee (Pay Now) */}
-          <Box
-            sx={{
-              p: 2.5,
-              bgcolor: "#FFF8F2",
-              borderRadius: "18px",
-              border: "1.5px solid #fed7aa",
-            }}
-          >
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "1rem", color: "#9a3412" }}>
-                Advance Booking Fee (Pay Now)
-              </Typography>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: "1.35rem", color: COLORS.PRIMARY }}>
-                {commissionPrice}
-              </Typography>
-            </Box>
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "0.85rem", color: "#64748b", lineHeight: 1.5 }}>
-              An advance booking token fee of <strong>{commissionPrice}</strong> is required now to confirm and reserve your consultation slot.
-            </Typography>
-          </Box>
-
-          {/* Charges Card 2: Post-Call Rate */}
-          <Box
-            sx={{
-              p: 2.5,
-              bgcolor: "#f0fdf4",
-              borderRadius: "18px",
-              border: "1.5px solid #bbf7d0",
-            }}
-          >
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "1rem", color: "#166534" }}>
-                Astrologer Rate (Pay After Consultation)
-              </Typography>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: "1.2rem", color: "#15803d" }}>
-                {rate}
-              </Typography>
-            </Box>
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "0.85rem", color: "#4b5563", lineHeight: 1.5 }}>
-              After your session concludes, duration-based consultation charges at <strong>{rate}</strong> will be payable directly to the astrologer for the actual call duration.
-            </Typography>
-          </Box>
-
-          {/* Note Box */}
-          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, px: 0.5 }}>
-            <InfoOutlinedIcon sx={{ color: "#f59e0b", fontSize: 20, mt: 0.2 }} />
-            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "0.82rem", color: "#64748b", lineHeight: 1.5 }}>
-              Clicking &ldquo;Proceed to Pay&rdquo; will securely redirect you to the payment gateway to complete the advance booking.
-            </Typography>
-          </Box>
-        </DialogContent>
-
-        <DialogActions sx={{ p: 2, pt: 1, gap: 1.5 }}>
-          <Button
-            onClick={() => setConfirmModalOpen(false)}
-            disabled={submitting}
-            variant="outlined"
-            sx={{
-              borderRadius: "12px",
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 600,
-              color: "#64748b",
-              borderColor: "#cbd5e1",
-              textTransform: "none",
-              px: 3,
-            }}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            onClick={handleConfirmAndPay}
-            disabled={submitting}
-            variant="contained"
-            startIcon={
-              submitting ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                <PaymentIcon />
-              )
-            }
-            sx={{
-              flex: 1,
-              borderRadius: "12px",
-              background: COLORS.PRIMARY,
-              color: "white",
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 700,
-              fontSize: "14px",
-              textTransform: "none",
-              py: 1.2,
-              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
-              "&:hover": {
-                background: COLORS.PRIMARY_DARK,
-                boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
-              },
-            }}
-          >
-            {submitting ? "Processing Payment..." : `Proceed to Pay ${commissionPrice}`}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }

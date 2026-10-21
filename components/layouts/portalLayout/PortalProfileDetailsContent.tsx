@@ -88,6 +88,7 @@ export default function PortalProfileDetailsContent() {
   }
 
   const { profile, bankAccounts, purohitServices, serviceAreas } = profileData;
+  const astroProfile = profileData.astrologerProfile || profileData.profile || profile || {};
   const rawLangs = profile?.languages;
   const languages = parseList(rawLangs);
 
@@ -205,8 +206,8 @@ export default function PortalProfileDetailsContent() {
             )}
           </Paper>
 
-          {/* Bank Details Card (Only for Purohit) */}
-          {!isAstrologer && bankAccounts && bankAccounts.length > 0 && (
+          {/* Bank Details Card */}
+          {bankAccounts && bankAccounts.length > 0 && (
             <Paper sx={{ p: 4, borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                 <AccountBalanceIcon sx={{ color: COLORS.PRIMARY }} />
@@ -368,7 +369,7 @@ export default function PortalProfileDetailsContent() {
             <Divider sx={{ my: 3 }} />
 
             <Grid container spacing={3} sx={{ mb: 4 }}>
-              <Grid size={{ xs: 12, sm: isAstrologer ? 4 : 6 }}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Qualifications</Typography>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>
                   {Array.isArray(profile?.qualification)
@@ -376,29 +377,48 @@ export default function PortalProfileDetailsContent() {
                     : (profile?.qualification || 'N/A')}
                 </Typography>
               </Grid>
-              <Grid size={{ xs: 12, sm: isAstrologer ? 4 : 6 }}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Experience</Typography>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontWeight: 600 }}>
                   {profile?.experienceYears ? `${profile.experienceYears} Years` : 'N/A'}
                 </Typography>
               </Grid>
+
               {isAstrologer && (
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>Consultation Rate</Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                <>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>
+                      Astrology Price
+                    </Typography>
                     <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.PRIMARY, fontWeight: 800, fontSize: '20px' }}>
-                      ₹{profile?.ratePerMinute || '0.00'}
+                      ₹{astroProfile?.astrologyPrice || astroProfile?.ratePerMinute || profile?.astrologyPrice || profile?.ratePerMinute || '0.00'}
                     </Typography>
-                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '13px', fontWeight: 500 }}>
-                      / min
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>
+                      Commission Percentage
                     </Typography>
-                  </Box>
-                  {profile?.commissionPrice && (
-                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#888', fontSize: '12px', mt: 0.5 }}>
-                      Commission: ₹{profile.commissionPrice}
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#ea580c', fontWeight: 800, fontSize: '20px' }}>
+                      {astroProfile?.commissionPercentage || profile?.commissionPercentage
+                        ? `${astroProfile.commissionPercentage || profile.commissionPercentage}%`
+                        : '0%'}
                     </Typography>
-                  )}
-                </Grid>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '14px', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>
+                      Astrologer Payout
+                    </Typography>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#059669', fontWeight: 800, fontSize: '20px' }}>
+                      ₹{astroProfile?.astrologerPayout !== undefined && astroProfile?.astrologerPayout !== null
+                        ? astroProfile.astrologerPayout
+                        : profile?.astrologerPayout !== undefined && profile?.astrologerPayout !== null
+                        ? profile.astrologerPayout
+                        : '0.00'}
+                    </Typography>
+                  </Grid>
+                </>
               )}
             </Grid>
             

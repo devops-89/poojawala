@@ -4,6 +4,12 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Our Astrologers | 1Pooja",
   description: "Discover and consult verified Vedic Astrologers for Kundali matching, horoscope, vastu, and personal guidance on 1Pooja.",
+  alternates: {
+    canonical: "/astrologers",
+  },
+  openGraph: {
+    url: "/astrologers",
+  },
 };
 
 export default function AstrologersPage() {

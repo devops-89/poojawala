@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Typography,
@@ -13,6 +13,7 @@ import {
   AutocompleteRenderValueGetItemProps,
   createFilterOptions,
 } from '@mui/material';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import Grid from '@mui/material/Grid';
 import { FormikProps } from 'formik';
 import { State, City } from 'country-state-city';
@@ -29,6 +30,8 @@ import {
   allowOnlyDescriptionCharsOnKeyDown,
   sanitizeDescriptionInput,
 } from '@/utils/helpers';
+import { getPlatformSettingsAPI } from '@/api/userControllers';
+import { parsePlatformSetting } from '@/components/layouts/adminLayout/astrologers/AstrologyCommissionBanner';
 
 const filter = createFilterOptions<string>();
 
@@ -67,6 +70,26 @@ interface Step2Props {
 }
 
 export default function Step2PurohitProfile({ formik }: Step2Props) {
+  const [platformCommission, setPlatformCommission] = useState<string>('');
+
+  useEffect(() => {
+    let active = true;
+    getPlatformSettingsAPI()
+      .then((res) => {
+        if (!active) return;
+        const parsed = parsePlatformSetting(res, 'ASTROLOGY_COMMISSION_PERCENTAGE');
+        if (parsed.value) {
+          setPlatformCommission(parsed.value);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load platform commission percentage:', err);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   // All Indian States from country-state-city
   const stateOptions = useMemo(() => {
     const states = State.getStatesOfCountry('IN') || [];
@@ -484,33 +507,59 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
           />
         </Grid>
 
-        {/* Rate Per Minute (Only for Astrologer) */}
+        {/* Astrology Price (Only for Astrologer) */}
         {formik.values.role === USER_ROLE.ASTROLOGER && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               size="small"
-              name="ratePerMinute"
-              label="Rate Per Minute (₹) *"
-              placeholder="e.g. 25.00"
+              name="astrologyPrice"
+              label="Astrology Price (₹) *"
+              placeholder="e.g. 1000.00"
               variant="outlined"
-              value={formik.values.ratePerMinute || ''}
+              value={formik.values.astrologyPrice || formik.values.ratePerMinute || ''}
               onChange={(e) => {
                 const val = e.target.value.replace(/[^0-9.]/g, '');
                 const parts = val.split('.');
                 const sanitized = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : val;
+                formik.setFieldValue('astrologyPrice', sanitized);
                 formik.setFieldValue('ratePerMinute', sanitized);
+                formik.setFieldTouched('astrologyPrice', true, false);
+              }}
+              onBlur={formik.handleBlur}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <CurrencyRupeeIcon sx={{ color: COLORS.PRIMARY, mr: 0.5, fontSize: 18 }} />
+                  ),
+                },
               }}
               error={
-                formik.touched.ratePerMinute &&
-                Boolean(formik.errors.ratePerMinute)
+                formik.touched.astrologyPrice &&
+                Boolean(formik.errors.astrologyPrice)
               }
               helperText={
-                formik.touched.ratePerMinute &&
-                (formik.errors.ratePerMinute as string)
+                formik.touched.astrologyPrice && formik.errors.astrologyPrice
+                  ? (formik.errors.astrologyPrice as string)
+                  : undefined
               }
               sx={fieldSx}
             />
+            {platformCommission && (
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: '0.8rem',
+                  color: '#c2410c',
+                  mt: 0.75,
+                  ml: 1,
+                  fontWeight: 500,
+                  lineHeight: 1.4,
+                }}
+              >
+                Platform Commission: <strong>{platformCommission}%</strong> (will be deducted per consultation)
+              </Typography>
+            )}
           </Grid>
         )}
 

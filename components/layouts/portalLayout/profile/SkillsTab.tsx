@@ -47,6 +47,8 @@ interface SkillsTabProps {
   isAstrologer?: boolean;
   ratePerMinute?: string;
   setRatePerMinute?: (val: string) => void;
+  astrologyPrice?: string;
+  setAstrologyPrice?: (val: string) => void;
 }
 
 export const SkillsTab: React.FC<SkillsTabProps> = ({
@@ -75,6 +77,8 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
   isAstrologer = false,
   ratePerMinute = "",
   setRatePerMinute,
+  astrologyPrice,
+  setAstrologyPrice,
 }) => {
   // All Indian States from country-state-city
   const stateOptions = useMemo(() => {
@@ -185,25 +189,26 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
           />
         </Grid>
 
-        {isAstrologer && setRatePerMinute && (
+        {isAstrologer && (setAstrologyPrice || setRatePerMinute) && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="Consultation Rate Per Minute (₹) *"
-              placeholder="e.g. 70.00"
-              value={ratePerMinute}
+              label="Astrology Price (₹) *"
+              placeholder="e.g. 1000.00"
+              value={astrologyPrice !== undefined ? astrologyPrice : ratePerMinute}
               onChange={(e) => {
                 const val = e.target.value.replace(/[^0-9.]/g, "");
                 const parts = val.split(".");
                 const sanitized = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join("")}` : val;
-                setRatePerMinute(sanitized);
+                if (setAstrologyPrice) setAstrologyPrice(sanitized);
+                if (setRatePerMinute) setRatePerMinute(sanitized);
               }}
-              helperText="Price charged per minute for astrology consultation"
+              helperText="Consultation price charged for astrology consultation"
             />
           </Grid>
         )}
 
-        <Grid size={{ xs: 12, sm: isAstrologer && !setRatePerMinute ? 12 : 6 }}>
+        <Grid size={{ xs: 12, sm: isAstrologer && !(setAstrologyPrice || setRatePerMinute) ? 12 : 6 }}>
           <Autocomplete<string, true, false, true>
             multiple
             freeSolo

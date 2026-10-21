@@ -35,6 +35,7 @@ export const ASTROLOGER_STEPS: StepItem[] = [
   { id: 'basic', label: 'Basic Details' },
   { id: 'otp', label: 'Verification (OTP)' },
   { id: 'profile', label: 'Professional Profile' },
+  { id: 'bank', label: 'Bank Details' },
   { id: 'documents', label: 'Document Upload' },
 ];
 
@@ -185,16 +186,20 @@ export const stepValidationSchemas: Record<StepId, any> = {
         return Boolean(isOnlineAvailable || isOfflineAvailable);
       }
     ),
-    ratePerMinute: yup.mixed().test(
-      'ratePerMinute-required',
-      'Please enter a valid rate per minute (greater than 0)',
+    astrologyPrice: yup.mixed().test(
+      'astrologyPrice-required',
+      'Please enter a valid astrology consultation price (greater than 0)',
       function (value) {
         const role = this.parent?.role;
         if (role === USER_ROLE.ASTROLOGER) {
-          if (value === undefined || value === null || String(value).trim() === '') {
+          const checkVal =
+            value !== undefined && value !== null && String(value).trim() !== ''
+              ? value
+              : this.parent?.ratePerMinute;
+          if (checkVal === undefined || checkVal === null || String(checkVal).trim() === '') {
             return false;
           }
-          const num = Number(value);
+          const num = Number(checkVal);
           return !isNaN(num) && num > 0;
         }
         return true;

@@ -11,7 +11,7 @@ export default function TermsAndConditionsContent() {
       <Container maxWidth="lg">
         {/* Header Title */}
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h3" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1A1A1A', fontSize: { xs: '32px', md: '42px' }, mb: 1 }}>
+          <Typography variant="h3" component="h1" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1A1A1A', fontSize: { xs: '32px', md: '42px' }, mb: 1 }}>
             Terms & Conditions
           </Typography>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '14px', mb: 2 }}>
