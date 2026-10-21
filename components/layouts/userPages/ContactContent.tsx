@@ -1,8 +1,8 @@
 'use client';
-import { Box, Button, Container, Grid, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, IconButton, Paper, TextField, Typography } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { socialLinks } from '@/components/widgets/Footer';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import React, { useState } from 'react';
@@ -92,31 +92,68 @@ export default function ContactContent() {
             
             <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'flex-start' }}>
               <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
-                <PhoneIcon />
-              </Box>
-              <Box>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Phone</Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>+91 98765 43210</Typography>
-              </Box>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'flex-start' }}>
-              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
                 <EmailIcon />
               </Box>
               <Box>
                 <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Email</Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>support@1pooja.com</Typography>
+                <Typography
+                  component="a"
+                  href="mailto:info@1pooja.com"
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 600,
+                    color: COLORS.CHARCOAL_DARK,
+                    fontSize: '16px',
+                    textDecoration: 'none',
+                    display: 'block',
+                    '&:hover': { color: COLORS.PRIMARY }
+                  }}
+                >
+                  info@1pooja.com
+                </Typography>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', mb: 4 }}>
               <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
                 <LocationOnIcon />
               </Box>
               <Box>
                 <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Office Address</Typography>
                 <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>123, Devotion Tower,<br/>Sector 4, New Delhi - 110001</Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ pt: 3, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 2, fontWeight: 600 }}>
+                Follow Us
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                {socialLinks.map(({ icon: Icon, href, label }) => (
+                  <IconButton
+                    key={label}
+                    component="a"
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    sx={{
+                      bgcolor: 'white',
+                      p: 1.2,
+                      borderRadius: '50%',
+                      color: COLORS.CHARCOAL_DARK,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        bgcolor: COLORS.PRIMARY,
+                        color: 'white',
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    <Icon sx={{ fontSize: '20px' }} />
+                  </IconButton>
+                ))}
               </Box>
             </Box>
           </Box>

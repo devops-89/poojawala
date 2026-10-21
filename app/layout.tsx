@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@1pooja",
+    site: "@1poojaofc",
     title: "Book Experienced Pandits & Purohits online or offline | 1Pooja",
     description:
       "Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience",
@@ -105,7 +105,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         {/* X (Twitter) Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@1pooja" />
+        <meta name="twitter:site" content="@1poojaofc" />
         <meta name="twitter:title" content="Book Experienced Pandits & Purohits online or offline | 1Pooja" />
         <meta
           name="twitter:description"
@@ -127,9 +127,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               url: "https://1pooja.com/",
               logo: "https://1pooja.com/images/1Poojalogo.webp",
               sameAs: [
-                "https://www.facebook.com/1pooja",
-                "https://x.com/1pooja",
-                "https://www.instagram.com/1pooja",
+                "https://www.facebook.com/1poojaofc/",
+                "https://x.com/1poojaofc",
+                "https://www.instagram.com/1poojaofc",
+                "https://www.youtube.com/@1poojaofc",
                 "https://www.linkedin.com/company/1pooja",
               ],
             }),

@@ -113,7 +113,7 @@ export default function TermsAndConditionsContent() {
             </Typography>
             <Box sx={{ mt: 2, p: 3, bgcolor: '#FFF0E6', borderRadius: '12px' }}>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>1Pooja Legal & Support Team</Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Email: <MuiLink href="mailto:support@1pooja.com" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>support@1pooja.com</MuiLink></Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Email: <MuiLink href="mailto:info@1pooja.com" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>info@1pooja.com</MuiLink></Typography>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#555', fontSize: '15px', mt: 0.5 }}>Support Portal: <MuiLink component={NextLink} href="/contact" underline="hover" color={COLORS.PRIMARY} sx={{ fontWeight: 600 }}>1Pooja Help Center</MuiLink></Typography>
             </Box>
           </Box>

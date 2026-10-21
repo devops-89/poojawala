@@ -3,7 +3,8 @@
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import TwitterIcon from "@mui/icons-material/Twitter";
+import XIcon from "@mui/icons-material/X";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import {
   Box,
   Container,
@@ -17,7 +18,6 @@ import { usePathname } from "next/navigation";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
-// Quick Links with their routes
 const quickLinks = [
   { name: "Home", href: "/" },
   { name: "Pooja Packages", href: "/services" },
@@ -33,25 +33,30 @@ const citiesColumn1 = ["Mumbai", "Bangalore", "New Delhi", "Pune", "Hyderabad", 
 const citiesColumn2 = ["Kolkata", "Ahmedabad", "Jaipur", "Lucknow", "Indore"];
 
 // Social media links
-const socialLinks = [
+export const socialLinks = [
   {
     icon: FacebookIcon,
-    href: "https://facebook.com/1pooja",
+    href: "https://www.facebook.com/1poojaofc/",
     label: "Facebook",
   },
   {
-    icon: TwitterIcon,
-    href: "https://twitter.com/1pooja",
-    label: "Twitter",
+    icon: XIcon,
+    href: "https://x.com/1poojaofc",
+    label: "X",
   },
   {
     icon: InstagramIcon,
-    href: "https://instagram.com/1pooja",
+    href: "https://www.instagram.com/1poojaofc",
     label: "Instagram",
   },
   {
+    icon: YouTubeIcon,
+    href: "https://www.youtube.com/@1poojaofc",
+    label: "YouTube",
+  },
+  {
     icon: LinkedInIcon,
-    href: "https://linkedin.com/company/1pooja",
+    href: "https://www.linkedin.com/company/1pooja",
     label: "LinkedIn",
   },
 ];
@@ -246,7 +251,7 @@ export default function Footer() {
                 Contact Us
               </Typography>
               <Link
-                href="mailto:support@1pooja.com"
+                href="mailto:info@1pooja.com"
                 underline="none"
                 sx={{
                   ...linkSx,
@@ -254,7 +259,7 @@ export default function Footer() {
                   mb: 4,
                 }}
               >
-                support@1pooja.com
+                info@1pooja.com
               </Link>
 
               <Typography
