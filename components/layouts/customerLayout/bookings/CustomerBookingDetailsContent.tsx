@@ -73,6 +73,34 @@ export default function CustomerBookingDetailsContent({
     fetchDetails();
   }, [bookingId, refreshTrigger]);
 
+  // Check for return from payment redirect (sessionStorage flag or payment params)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pendingBooking = sessionStorage.getItem("booking_payment_pending");
+      const hasPaymentParams =
+        urlParams.get("razorpay_payment_id") ||
+        urlParams.get("razorpay_payment_link_status") ||
+        urlParams.get("payment_id");
+
+      if (pendingBooking || hasPaymentParams) {
+        sessionStorage.removeItem("booking_payment_pending");
+        showSnackbar("Booking request created successfully!", "success");
+
+        if (hasPaymentParams) {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("razorpay_payment_id");
+          url.searchParams.delete("razorpay_payment_link_id");
+          url.searchParams.delete("razorpay_payment_link_reference_id");
+          url.searchParams.delete("razorpay_payment_link_status");
+          url.searchParams.delete("razorpay_signature");
+          url.searchParams.delete("payment_id");
+          window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+        }
+      }
+    }
+  }, [showSnackbar]);
+
   const [isRedirectingPayment, setIsRedirectingPayment] = useState(false);
 
   const handleCompletePayment = async () => {

@@ -366,6 +366,77 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     fetchProfile();
   }, [fetchProfile]);
 
+  // Check for return from payment redirect (sessionStorage flag or payment params)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pendingBooking = sessionStorage.getItem("booking_payment_pending");
+      const hasPaymentParams =
+        urlParams.get("razorpay_payment_id") ||
+        urlParams.get("razorpay_payment_link_status") ||
+        urlParams.get("payment_id");
+
+      if (pendingBooking || hasPaymentParams) {
+        sessionStorage.removeItem("booking_payment_pending");
+        showSnackbar("Booking request created successfully!", "success");
+
+        if (hasPaymentParams) {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("razorpay_payment_id");
+          url.searchParams.delete("razorpay_payment_link_id");
+          url.searchParams.delete("razorpay_payment_link_reference_id");
+          url.searchParams.delete("razorpay_payment_link_status");
+          url.searchParams.delete("razorpay_signature");
+          url.searchParams.delete("payment_id");
+          window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+        }
+      }
+    }
+  }, [showSnackbar]);
+
+  // Generate time options between 8:00 AM and 8:00 PM (08:00 to 20:00)
+  const timeOptions = useMemo(() => {
+    const options: { value: string; label: string; disabled: boolean }[] = [];
+    const isToday = bookingForm.scheduledDate === todayStr;
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    // From 08:00 (8:00 AM) to 20:00 (8:00 PM) in 30-min intervals
+    for (let h = 8; h <= 20; h++) {
+      for (const m of [0, 30]) {
+        if (h === 20 && m === 30) continue; // 20:00 (8:00 PM) is the last option
+
+        const timeVal = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+        const displayHour = h > 12 ? h - 12 : h === 0 ? 12 : h;
+        const period = h >= 12 ? "PM" : "AM";
+        const label = `${String(displayHour).padStart(2, "0")}:${String(m).padStart(2, "0")} ${period}`;
+
+        // Disable past slots if scheduled date is today
+        const isPast =
+          isToday && (h < currentHour || (h === currentHour && m <= currentMinute));
+
+        options.push({ value: timeVal, label, disabled: isPast });
+      }
+    }
+    return options;
+  }, [bookingForm.scheduledDate, todayStr]);
+
+  const isAllSlotsPassedToday = useMemo(() => {
+    if (bookingForm.scheduledDate !== todayStr) return false;
+    return timeOptions.length > 0 && timeOptions.every((opt) => opt.disabled);
+  }, [bookingForm.scheduledDate, todayStr, timeOptions]);
+
+  // Reset selected time if it becomes disabled on date change
+  useEffect(() => {
+    if (bookingForm.scheduledTime) {
+      const selectedOpt = timeOptions.find((o) => o.value === bookingForm.scheduledTime);
+      if (selectedOpt && selectedOpt.disabled) {
+        setBookingForm((prev) => ({ ...prev, scheduledTime: "" }));
+      }
+    }
+  }, [timeOptions, bookingForm.scheduledTime]);
+
   useEffect(() => {
     const loadAddresses = async () => {
       let addrList: any[] = [];
@@ -410,6 +481,14 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
     if (!bookingForm.scheduledDate || !bookingForm.scheduledTime) {
       showSnackbar("Please select both scheduled date and time", "error");
+      return;
+    }
+
+    const [hStr, mStr] = bookingForm.scheduledTime.split(":");
+    const h = parseInt(hStr, 10);
+    const m = parseInt(mStr, 10);
+    if (isNaN(h) || h < 8 || h > 20 || (h === 20 && m > 0)) {
+      showSnackbar("Please select a time between 08:00 AM and 08:00 PM", "error");
       return;
     }
 
@@ -482,7 +561,6 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
 
       const res = await customerCreateBookingAPI(payload);
       if (res.success || res.statusCode === 201 || res.statusCode === 200) {
-        showSnackbar("Pooja booking request created successfully!", "success");
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
@@ -508,8 +586,13 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           typeof paymentUrl === "string" &&
           (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://"))
         ) {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("booking_payment_pending", "true");
+          }
+          showSnackbar("Redirecting to payment...", "info");
           window.location.href = paymentUrl;
         } else {
+          showSnackbar("Booking request created successfully!", "success");
           router.push("/customer/bookings");
         }
       } else {
@@ -950,13 +1033,8 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
+                <FormControl
                   fullWidth
-                  label="Preferred Time"
-                  type="time"
-                  value={bookingForm.scheduledTime}
-                  onChange={(e) => handleInputChange("scheduledTime", e.target.value)}
-                  slotProps={{ inputLabel: { shrink: true } }}
                   required
                   sx={{
                     bgcolor: "#FFFBF7",
@@ -970,7 +1048,63 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       color: "#64534A",
                     },
                   }}
-                />
+                >
+                  <InputLabel id="preferred-time-label" shrink>
+                    Preferred Time
+                  </InputLabel>
+                  <Select
+                    labelId="preferred-time-label"
+                    value={bookingForm.scheduledTime}
+                    label="Preferred Time"
+                    displayEmpty
+                    onChange={(e) => handleInputChange("scheduledTime", e.target.value)}
+                    required
+                    MenuProps={{
+                      disableScrollLock: true,
+                      slotProps: {
+                        paper: {
+                          sx: {
+                            maxHeight: 280,
+                            borderRadius: "10px",
+                          },
+                        },
+                      },
+                    }}
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return <span style={{ color: "#9E9E9E", fontFamily: FONTS.PRIMARY }}>Select Time (08:00 AM - 08:00 PM)</span>;
+                      }
+                      const match = timeOptions.find((t) => t.value === selected);
+                      return match ? match.label : selected;
+                    }}
+                    sx={{
+                      borderRadius: "10px",
+                      fontFamily: FONTS.PRIMARY,
+                    }}
+                  >
+                    <MenuItem value="" disabled sx={{ fontFamily: FONTS.PRIMARY, color: "#8C7A6B" }}>
+                      Select Time (08:00 AM - 08:00 PM)
+                    </MenuItem>
+                    {timeOptions.map((opt) => (
+                      <MenuItem
+                        key={opt.value}
+                        value={opt.value}
+                        disabled={opt.disabled}
+                        sx={{
+                          fontFamily: FONTS.PRIMARY,
+                          color: opt.disabled ? "#BDBDBD" : "inherit",
+                        }}
+                      >
+                        {opt.label} {opt.disabled ? "(Passed)" : ""}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {isAllSlotsPassedToday && (
+                    <FormHelperText sx={{ color: "#d97706", fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+                      Slots for today are closed (8:00 AM - 8:00 PM). Please choose another date.
+                    </FormHelperText>
+                  )}
+                </FormControl>
               </Grid>
             </Grid>
 

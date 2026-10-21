@@ -260,7 +260,6 @@ export const ServicesPage = () => {
 
       const res = await customerCreateBookingAPI(payload);
       if (res.success || res.statusCode === 201 || res.statusCode === 200) {
-        showSnackbar("Booking request created successfully!", "success");
         handleCloseBooking();
 
         const resData = res.data?.data || res.data || res;
@@ -279,8 +278,13 @@ export const ServicesPage = () => {
           typeof paymentUrl === "string" &&
           (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://"))
         ) {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("booking_payment_pending", "true");
+          }
+          showSnackbar("Redirecting to payment...", "info");
           window.location.href = paymentUrl;
         } else {
+          showSnackbar("Booking request created successfully!", "success");
           router.push("/customer/bookings");
         }
       }
