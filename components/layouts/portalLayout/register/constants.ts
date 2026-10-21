@@ -109,9 +109,26 @@ export const stepValidationSchemas: Record<StepId, any> = {
       )
       .required('Email is required'),
     dob: yup
-      .date()
-      .max(twentyYearsAgo, 'Date of birth must be at least 20 years ago')
-      .required('Date of Birth is required'),
+      .string()
+      .required('Date of Birth is required')
+      .test(
+        'is-valid-date',
+        'Please enter a valid Date of Birth',
+        (val) => {
+          if (!val) return false;
+          const d = new Date(val);
+          return !isNaN(d.getTime());
+        }
+      )
+      .test(
+        'is-20-years-old',
+        'Date of birth must be at least 20 years ago',
+        (val) => {
+          if (!val) return false;
+          const d = new Date(val);
+          return !isNaN(d.getTime()) && d <= twentyYearsAgo;
+        }
+      ),
     password: yup
       .string()
       .min(6, 'Password must be at least 6 characters')

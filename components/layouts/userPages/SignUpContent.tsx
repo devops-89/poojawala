@@ -39,9 +39,26 @@ const step1ValidationSchema = Yup.object().shape({
   phone: Yup.string()
     .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
     .required("Phone number is required"),
-  dob: Yup.date()
-    .max(fifteenYearsAgo, "Date of birth must be at least 15 years ago")
-    .required("Date of birth is required"),
+  dob: Yup.string()
+    .required("Date of birth is required")
+    .test(
+      "is-valid-date",
+      "Please enter a valid Date of Birth",
+      (val) => {
+        if (!val) return false;
+        const d = new Date(val);
+        return !isNaN(d.getTime());
+      }
+    )
+    .test(
+      "is-15-years-old",
+      "Date of birth must be at least 15 years ago",
+      (val) => {
+        if (!val) return false;
+        const d = new Date(val);
+        return !isNaN(d.getTime()) && d <= fifteenYearsAgo;
+      }
+    ),
   birthPlace: Yup.string().required("Birth place is required"),
   rashi: Yup.string().optional(),
   gotra: Yup.string().optional(),
