@@ -74,6 +74,9 @@ export default function CustomerDashboardContent() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const isSwitchingTypeRef = React.useRef(false);
+  const lastNavigatedStatusRef = React.useRef<number | null>(null);
+
   const { showLoader, hideLoader } = useLoaderStore();
   const { showSnackbar } = useSnackbarStore();
   const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
@@ -84,6 +87,12 @@ export default function CustomerDashboardContent() {
   useEffect(() => {
     const typeParam = searchParams.get('type')?.toUpperCase();
     if (typeParam === 'ASTROLOGY' || typeParam === 'POOJA') {
+      if (isSwitchingTypeRef.current) {
+        if (typeParam === bookingType) {
+          isSwitchingTypeRef.current = false;
+        }
+        return;
+      }
       if (typeParam !== bookingType) {
         setBookingType(typeParam as 'POOJA' | 'ASTROLOGY');
       }
@@ -105,14 +114,33 @@ export default function CustomerDashboardContent() {
 
   // Sync status tab with URL parameter if present
   useEffect(() => {
+    if (isSwitchingTypeRef.current) {
+      return;
+    }
     const statusParam = searchParams.get('status');
     const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
     if (statusParam) {
       const foundIdx = activeTabs.findIndex(
         (t) => t.toLowerCase() === statusParam.toLowerCase()
       );
+      if (lastNavigatedStatusRef.current !== null) {
+        if (foundIdx === lastNavigatedStatusRef.current) {
+          lastNavigatedStatusRef.current = null;
+        }
+        return;
+      }
       if (foundIdx !== -1 && foundIdx !== tabValue) {
         setTabValue(foundIdx);
+      }
+    } else {
+      if (lastNavigatedStatusRef.current !== null) {
+        if (lastNavigatedStatusRef.current === 0) {
+          lastNavigatedStatusRef.current = null;
+        }
+        return;
+      }
+      if (tabValue !== 0) {
+        setTabValue(0);
       }
     }
   }, [bookingType, searchParams, tabValue]);
@@ -146,12 +174,15 @@ export default function CustomerDashboardContent() {
   }, [showSnackbar]);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const fetchBookings = async () => {
       showLoader('Loading bookings...');
       try {
         const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
         const currentStatus = tabValue === 0 ? undefined : activeTabs[tabValue];
         const res = await getCustomerBookingsAPI(currentStatus, page + 1, rowsPerPage, bookingType);
+        if (isCancelled) return;
         if (res.success && res.data?.bookings) {
           const rawBookings = res.data.bookings;
           const paginated = rawBookings.length > rowsPerPage
@@ -164,19 +195,28 @@ export default function CustomerDashboardContent() {
           setTotalBookings(0);
         }
       } catch (error) {
+        if (isCancelled) return;
         console.error(error);
         showSnackbar('Failed to fetch bookings', 'error');
         setBookings([]);
         setTotalBookings(0);
       } finally {
-        hideLoader();
+        if (!isCancelled) {
+          hideLoader();
+        }
       }
     };
     fetchBookings();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [page, rowsPerPage, tabValue, bookingType, refreshTrigger]);
 
   const handleBookingTypeChange = (event: React.SyntheticEvent, newValue: 'POOJA' | 'ASTROLOGY') => {
-    if (newValue) {
+    if (newValue && newValue !== bookingType) {
+      isSwitchingTypeRef.current = true;
+      lastNavigatedStatusRef.current = 0;
       setBookingType(newValue);
       setTabValue(0);
       setPage(0);
@@ -191,19 +231,22 @@ export default function CustomerDashboardContent() {
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-    setPage(0);
-    if (typeof window !== 'undefined') {
-      const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
-      const tabName = activeTabs[newValue];
-      const params = new URLSearchParams(window.location.search);
-      params.set('type', bookingType);
-      if (newValue === 0) {
-        params.delete('status');
-      } else {
-        params.set('status', tabName);
+    if (newValue !== tabValue) {
+      setTabValue(newValue);
+      setPage(0);
+      lastNavigatedStatusRef.current = newValue;
+      if (typeof window !== 'undefined') {
+        const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
+        const tabName = activeTabs[newValue];
+        const params = new URLSearchParams(window.location.search);
+        params.set('type', bookingType);
+        if (newValue === 0) {
+          params.delete('status');
+        } else {
+          params.set('status', tabName);
+        }
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       }
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
 
