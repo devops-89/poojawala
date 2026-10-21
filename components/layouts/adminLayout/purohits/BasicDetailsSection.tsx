@@ -7,6 +7,10 @@ import React from "react";
 import { Avatar, Box, Grid, TextField, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import moment from "moment";
 
 const today = new Date();
 const twentyYearsAgo = new Date(
@@ -150,22 +154,31 @@ export const BasicDetailsSection: React.FC<BasicDetailsSectionProps> = ({
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            name="dob"
-            label="Date of Birth *"
-            type="date"
-            slotProps={{
-              inputLabel: { shrink: true },
-              htmlInput: { max: maxDobDate },
-            }}
-            value={values.dob}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.dob && Boolean(errors.dob)}
-            helperText={touched.dob && (errors.dob as string)}
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-          />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DatePicker
+              label="Date of Birth *"
+              format="DD/MM/YYYY"
+              value={values.dob ? moment(values.dob, "YYYY-MM-DD") : null}
+              maxDate={maxDobDate ? moment(maxDobDate) : undefined}
+              onChange={(newValue) => {
+                if (newValue && newValue.isValid()) {
+                  setFieldValue("dob", newValue.format("YYYY-MM-DD"));
+                } else {
+                  setFieldValue("dob", "");
+                }
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  name: "dob",
+                  onBlur: handleBlur,
+                  error: touched.dob && Boolean(errors.dob),
+                  helperText: touched.dob && (errors.dob as string),
+                  sx: { "& .MuiOutlinedInput-root": { borderRadius: "12px" } },
+                },
+              }}
+            />
+          </LocalizationProvider>
         </Grid>
       </Grid>
     </Box>

@@ -35,6 +35,10 @@ import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as Yup from "yup";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import moment from "moment";
 
 const today = new Date();
 const twentyYearsAgo = new Date(
@@ -325,33 +329,38 @@ export default function AddPurohitForm() {
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <TextField
-              fullWidth
-              name="dob"
-              label="Date of Birth *"
-              type="date"
-              variant="outlined"
-              value={values.dob}
-              onChange={(e) => {
-                handleChange(e);
-                formik.setFieldTouched("dob", true, false);
-              }}
-              onBlur={handleBlur}
-              error={
-                Boolean(errors.dob) &&
-                (touched.dob || Boolean(values.dob))
-              }
-              helperText={
-                (touched.dob || Boolean(values.dob))
-                  ? (errors.dob as string)
-                  : undefined
-              }
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              slotProps={{
-                inputLabel: { shrink: true },
-                htmlInput: { max: maxDobDate },
-              }}
-            />
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label="Date of Birth *"
+                format="DD/MM/YYYY"
+                value={values.dob ? moment(values.dob, "YYYY-MM-DD") : null}
+                maxDate={moment(maxDobDate)}
+                onChange={(newValue) => {
+                  if (newValue && newValue.isValid()) {
+                    formik.setFieldValue("dob", newValue.format("YYYY-MM-DD"));
+                  } else {
+                    formik.setFieldValue("dob", "");
+                  }
+                  formik.setFieldTouched("dob", true, false);
+                }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    name: "dob",
+                    variant: "outlined",
+                    onBlur: handleBlur,
+                    error:
+                      Boolean(errors.dob) &&
+                      (touched.dob || Boolean(values.dob)),
+                    helperText:
+                      (touched.dob || Boolean(values.dob))
+                        ? (errors.dob as string)
+                        : undefined,
+                    sx: { "& .MuiOutlinedInput-root": { borderRadius: "12px" } },
+                  },
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
 
           {/* Row 3: Email Address (Full Width) */}

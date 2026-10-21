@@ -22,6 +22,10 @@ import {
   allowOnlyEmailCharsOnKeyDown,
   sanitizeEmailInput,
 } from "@/utils/helpers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import moment from "moment";
 
 interface Step0Props {
   formik: FormikProps<any>;
@@ -173,22 +177,32 @@ export default function Step0BasicDetails({
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            name="dob"
-            label="Date of Birth *"
-            type="date"
-            slotProps={{
-              inputLabel: { shrink: true },
-              htmlInput: { max: maxDobDate },
-            }}
-            variant="outlined"
-            value={formik.values.dob}
-            onChange={formik.handleChange}
-            error={formik.touched.dob && Boolean(formik.errors.dob)}
-            helperText={formik.touched.dob && (formik.errors.dob as string)}
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-          />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DatePicker
+              label="Date of Birth *"
+              format="DD/MM/YYYY"
+              value={formik.values.dob ? moment(formik.values.dob, "YYYY-MM-DD") : null}
+              maxDate={maxDobDate ? moment(maxDobDate) : undefined}
+              onChange={(newValue) => {
+                if (newValue && newValue.isValid()) {
+                  formik.setFieldValue("dob", newValue.format("YYYY-MM-DD"));
+                } else {
+                  formik.setFieldValue("dob", "");
+                }
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  name: "dob",
+                  variant: "outlined",
+                  onBlur: () => formik.setFieldTouched("dob", true),
+                  error: formik.touched.dob && Boolean(formik.errors.dob),
+                  helperText: formik.touched.dob && (formik.errors.dob as string),
+                  sx: { "& .MuiOutlinedInput-root": { borderRadius: "12px" } },
+                },
+              }}
+            />
+          </LocalizationProvider>
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6 }}>

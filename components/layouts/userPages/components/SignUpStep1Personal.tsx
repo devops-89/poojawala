@@ -20,6 +20,10 @@ import {
   allowOnlyEmailCharsOnKeyDown,
   sanitizeEmailInput,
 } from "@/utils/helpers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import moment from "moment";
 
 const today = new Date();
 const fifteenYearsAgo = new Date(
@@ -192,22 +196,33 @@ export default function SignUpStep1Personal({
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="dob">
-          {({ field, meta }: any) => (
-            <TextField
-              {...field}
-              fullWidth
-              size="small"
-              type="date"
-              label="Date of Birth *"
-              variant="outlined"
-              slotProps={{
-                inputLabel: { shrink: true },
-                htmlInput: { max: maxDobDate },
-              }}
-              error={meta.touched && !!meta.error}
-              helperText={meta.touched && meta.error}
-              sx={inputStyles}
-            />
+          {({ field, form, meta }: any) => (
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label="Date of Birth *"
+                format="DD/MM/YYYY"
+                value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
+                maxDate={moment(maxDobDate)}
+                onChange={(newValue) => {
+                  if (newValue && newValue.isValid()) {
+                    form.setFieldValue("dob", newValue.format("YYYY-MM-DD"));
+                  } else {
+                    form.setFieldValue("dob", "");
+                  }
+                }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    size: "small",
+                    variant: "outlined",
+                    onBlur: () => form.setFieldTouched("dob", true),
+                    error: meta.touched && !!meta.error,
+                    helperText: meta.touched && meta.error,
+                    sx: inputStyles,
+                  },
+                }}
+              />
+            </LocalizationProvider>
           )}
         </Field>
       </Grid>

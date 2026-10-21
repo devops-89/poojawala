@@ -17,6 +17,10 @@ import {
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import { convertImageToWebP } from "@/utils/imageHelper";
 import React from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import moment from "moment";
 
 interface PersonalInfoTabProps {
   firstName: string;
@@ -204,17 +208,26 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            type="date"
-            label="Date of Birth"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            slotProps={{
-              inputLabel: { shrink: true },
-              htmlInput: { max: maxDobDate },
-            }}
-          />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DatePicker
+              label="Date of Birth"
+              format="DD/MM/YYYY"
+              value={dob ? moment(dob, "YYYY-MM-DD") : null}
+              maxDate={maxDobDate ? moment(maxDobDate) : undefined}
+              onChange={(newValue) => {
+                if (newValue && newValue.isValid()) {
+                  setDob(newValue.format("YYYY-MM-DD"));
+                } else {
+                  setDob("");
+                }
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                },
+              }}
+            />
+          </LocalizationProvider>
         </Grid>
 
         <Grid size={{ xs: 12 }}>
