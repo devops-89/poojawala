@@ -32,6 +32,10 @@ import { getCustomerBookingsAPI } from '@/api/bookingControllers';
 import { useLoaderStore } from '@/stores/loaderStore';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useSocketStore } from '@/stores/socketStore';
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from '@/utils/paginationHelper';
 
 const getStatusColor = (status: string) => {
   switch (status?.toUpperCase()) {
@@ -68,14 +72,26 @@ export default function CustomerDashboardContent() {
     return 'POOJA';
   });
 
+  const initialPagination = getTablePaginationState('customer_dashboard_pagination', {
+    defaultLimit: 10,
+  });
+
   const [bookings, setBookings] = useState<any[]>([]);
   const [totalBookings, setTotalBookings] = useState(0);
   const [tabValue, setTabValue] = useState(0);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
 
   const isSwitchingTypeRef = React.useRef(false);
   const lastNavigatedStatusRef = React.useRef<number | null>(null);
+
+  useEffect(() => {
+    syncTablePagination(
+      'customer_dashboard_pagination',
+      { page, rowsPerPage },
+      { defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage]);
 
   const { showLoader, hideLoader } = useLoaderStore();
   const { showSnackbar } = useSnackbarStore();

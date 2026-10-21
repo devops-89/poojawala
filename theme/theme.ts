@@ -84,6 +84,31 @@ const theme = createTheme({
         disableScrollLock: true,
       },
     },
+    MuiSelect: {
+      defaultProps: {
+        MenuProps: {
+          disableScrollLock: true,
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left',
+          },
+          transformOrigin: {
+            vertical: 'top',
+            horizontal: 'left',
+          },
+          slotProps: {
+            paper: {
+              sx: {
+                mt: 1,
+                borderRadius: '12px',
+                maxHeight: 280,
+                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08)',
+              },
+            },
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

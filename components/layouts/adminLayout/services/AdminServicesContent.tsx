@@ -35,15 +35,25 @@ const STATUS_TABS = [
   { id: "Temple", label: "Temple" },
 ];
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminServicesContent() {
+  const initialPagination = getTablePaginationState("admin_services_state", {
+    defaultStatus: "All Status",
+    defaultLimit: 10,
+  });
+
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
 
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
   const { showSnackbar } = useSnackbarStore();
@@ -98,6 +108,14 @@ export default function AdminServicesContent() {
     }, 500);
     return () => clearTimeout(timer);
   }, [fetchServices]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_services_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All Status", defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage, statusFilter]);
 
   const confirmStatusChange = async () => {
     if (!statusChangeTarget) return;

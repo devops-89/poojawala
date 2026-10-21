@@ -52,13 +52,22 @@ const STATUS_TABS = [
   { id: COMPLAINT_STATUS.CLOSED, label: "Closed" },
 ];
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminComplaintsContent() {
-  const [statusFilter, setStatusFilter] = useState("All");
+  const initialPagination = getTablePaginationState("admin_complaints_state", {
+    defaultStatus: "All",
+    defaultLimit: 10,
+  });
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
   const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
 
   const [complaints, setComplaints] = useState<any[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
 
   const [deleteTarget, setDeleteTarget] = useState<number | string | null>(null);
@@ -89,6 +98,14 @@ export default function AdminComplaintsContent() {
   useEffect(() => {
     fetchComplaints();
   }, [fetchComplaints]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_complaints_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All", defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage, statusFilter]);
 
   const confirmStatusChange = async () => {
     if (!statusUpdateTarget) return;

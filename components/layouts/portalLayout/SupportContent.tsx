@@ -38,6 +38,10 @@ import BookIcon from '@mui/icons-material/Book';
 import { getComplaintsAPI, getComplaintByIdAPI } from '@/api/bookingControllers';
 import { useTicketModalStore } from '@/stores/ticketModalStore';
 import { useUserStore } from '@/stores/userStore';
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from '@/utils/paginationHelper';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
 
@@ -66,14 +70,27 @@ const getStatusColor = (status: string) => {
 };
 
 function ComplaintsTable() {
+  const initialPagination = getTablePaginationState('portal_support_pagination', {
+    defaultStatus: 'ALL',
+    defaultLimit: 10,
+  });
+
   const [complaints, setComplaints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusTab, setStatusTab] = useState('ALL');
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [statusTab, setStatusTab] = useState(initialPagination.status);
+  const [page, setPage] = useState(initialPagination.page + 1);
+  const [limit, setLimit] = useState(initialPagination.rowsPerPage);
   const [totalItems, setTotalItems] = useState(0);
   const [mounted, setMounted] = useState(false);
   const { profile } = useUserStore();
+
+  useEffect(() => {
+    syncTablePagination(
+      'portal_support_pagination',
+      { page: page - 1, rowsPerPage: limit, status: statusTab },
+      { defaultStatus: 'ALL', defaultLimit: 10 }
+    );
+  }, [page, limit, statusTab]);
 
   useEffect(() => {
     setMounted(true);

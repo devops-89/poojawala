@@ -37,6 +37,10 @@ import {
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
 
 const STATUS_TABS = [
   { id: "All", label: "All Reviews" },
@@ -50,12 +54,17 @@ export default function AdminReviewsContent() {
   const searchParams = useSearchParams();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
 
+  const initialPagination = getTablePaginationState("admin_reviews_pagination", {
+    defaultStatus: "All",
+    defaultLimit: 10,
+  });
+
   const [bookingType, setBookingType] = useState<"POOJA" | "ASTROLOGY">("POOJA");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
   const [selectedReview, setSelectedReview] = useState<any>(null);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -108,6 +117,14 @@ export default function AdminReviewsContent() {
   useEffect(() => {
     fetchReviews(statusFilter, bookingType);
   }, [statusFilter, bookingType]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_reviews_pagination",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All", defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage, statusFilter]);
 
   const fetchReviews = async (status: string, type: "POOJA" | "ASTROLOGY") => {
     try {

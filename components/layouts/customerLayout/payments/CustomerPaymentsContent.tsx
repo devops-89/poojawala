@@ -20,15 +20,32 @@ const getStatusColor = (status: string) => {
   }
 };
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function CustomerPaymentsContent() {
+  const initialPagination = getTablePaginationState("customer_payments_pagination", {
+    defaultLimit: 10,
+  });
+
   const [payments, setPayments] = useState<any[]>([]);
   const [totalPayments, setTotalPayments] = useState(0);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   const { showLoader, hideLoader } = useLoaderStore();
   const { showSnackbar } = useSnackbarStore();
+
+  useEffect(() => {
+    syncTablePagination(
+      "customer_payments_pagination",
+      { page, rowsPerPage },
+      { defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage]);
 
   useEffect(() => {
     const fetchPayments = async () => {

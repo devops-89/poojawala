@@ -11,9 +11,18 @@ const STATUS_CHIP: Record<string, { label: string; backgroundColor: string; colo
   Refunded: { label: 'Refunded', backgroundColor: '#FFEBEE', color: '#C62828' }
 };
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminFinancialsContent() {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const initialPagination = getTablePaginationState("admin_financials_state", {
+    defaultLimit: 10,
+  });
+
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   
   const [payouts, setPayouts] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -21,6 +30,14 @@ export default function AdminFinancialsContent() {
   
   const [stats, setStats] = useState<any>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_financials_state",
+      { page, rowsPerPage },
+      { defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage]);
 
   useEffect(() => {
     const fetchPayouts = async () => {

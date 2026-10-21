@@ -31,15 +31,25 @@ const STATUS_TABS = [
   { id: "Inactive", label: "Inactive" },
 ];
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminServiceCategoriesContent() {
+  const initialPagination = getTablePaginationState("admin_service_categories_state", {
+    defaultStatus: "All Status",
+    defaultLimit: 10,
+  });
+
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
 
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
 
@@ -113,6 +123,14 @@ export default function AdminServiceCategoriesContent() {
     }, 400);
     return () => clearTimeout(timer);
   }, [fetchCategories]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_service_categories_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All Status", defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage, statusFilter]);
 
   const handleOpenAddModal = () => {
     setModalState({ open: true, mode: "add", category: null });

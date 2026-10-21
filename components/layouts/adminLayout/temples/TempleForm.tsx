@@ -573,15 +573,21 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                     value={formik.values.state || ""}
                     onChange={(_, newValue) => {
                       const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                      formik.setFieldValue("state", val);
-                      formik.setFieldTouched("state", true, true);
+                      formik.setFieldValue("state", val, true);
+                      formik.setFieldTouched("state", true, false);
                       formik.setFieldValue("city", "");
                       formik.setFieldTouched("city", false, false);
                     }}
-                    onInputChange={(_, newInputValue) => {
-                      const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                      formik.setFieldValue("state", val);
-                      formik.setFieldTouched("state", true, true);
+                    onInputChange={(_, newInputValue, reason) => {
+                      if (reason === "input") {
+                        const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
+                        formik.setFieldValue("state", val, true);
+                        formik.setFieldTouched("state", true, false);
+                      } else if (reason === "clear") {
+                        formik.setFieldValue("state", "");
+                        formik.setFieldTouched("state", true, false);
+                        formik.setFieldValue("city", "");
+                      }
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -591,13 +597,15 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                         label="State *"
                         placeholder="Select or type State"
                         variant="outlined"
-                        error={
-                          (formik.touched.state || Boolean(formik.values.state)) &&
-                          Boolean(formik.errors.state)
-                        }
+                        error={Boolean(
+                          formik.touched.state &&
+                          formik.errors.state &&
+                          !formik.values.state?.trim()
+                        )}
                         helperText={
-                          (formik.touched.state || Boolean(formik.values.state)) &&
-                            formik.errors.state
+                          formik.touched.state &&
+                          formik.errors.state &&
+                          !formik.values.state?.trim()
                             ? (formik.errors.state as string)
                             : undefined
                         }
@@ -618,13 +626,18 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                     value={formik.values.city || ""}
                     onChange={(_, newValue) => {
                       const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                      formik.setFieldValue("city", val);
-                      formik.setFieldTouched("city", true, true);
+                      formik.setFieldValue("city", val, true);
+                      formik.setFieldTouched("city", true, false);
                     }}
-                    onInputChange={(_, newInputValue) => {
-                      const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                      formik.setFieldValue("city", val);
-                      formik.setFieldTouched("city", true, true);
+                    onInputChange={(_, newInputValue, reason) => {
+                      if (reason === "input") {
+                        const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
+                        formik.setFieldValue("city", val, true);
+                        formik.setFieldTouched("city", true, false);
+                      } else if (reason === "clear") {
+                        formik.setFieldValue("city", "");
+                        formik.setFieldTouched("city", true, false);
+                      }
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -638,13 +651,15 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                             : "Select or type City"
                         }
                         variant="outlined"
-                        error={
-                          (formik.touched.city || Boolean(formik.values.city)) &&
-                          Boolean(formik.errors.city)
-                        }
+                        error={Boolean(
+                          formik.touched.city &&
+                          formik.errors.city &&
+                          !formik.values.city?.trim()
+                        )}
                         helperText={
-                          (formik.touched.city || Boolean(formik.values.city)) &&
-                            formik.errors.city
+                          formik.touched.city &&
+                          formik.errors.city &&
+                          !formik.values.city?.trim()
                             ? (formik.errors.city as string)
                             : undefined
                         }

@@ -23,38 +23,21 @@ const STATUS_TABS = [
   { id: "Rejected", label: "Rejected" },
 ];
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminAstrologersContent() {
-  const searchParams = useSearchParams();
+  const initialPagination = getTablePaginationState("admin_astrologers_state", {
+    defaultStatus: "All",
+    defaultLimit: 10,
+  });
 
-  const getInitialState = () => {
-    const paramStatus = searchParams.get("status");
-    const paramPage = searchParams.get("page");
-    if (paramStatus || paramPage) {
-      return {
-        status: paramStatus || "All",
-        page: paramPage ? Math.max(0, parseInt(paramPage, 10) - 1) : 0,
-      };
-    }
-    if (typeof window !== "undefined") {
-      try {
-        const saved = sessionStorage.getItem("admin_astrologers_state");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          return {
-            status: parsed.status || "All",
-            page: typeof parsed.page === "number" ? parsed.page : 0,
-          };
-        }
-      } catch (e) {}
-    }
-    return { status: "All", page: 0 };
-  };
-
-  const initialState = getInitialState();
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState(initialState.status);
-  const [page, setPage] = useState(initialState.page);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -66,48 +49,12 @@ export default function AdminAstrologersContent() {
   const { showSnackbar } = useSnackbarStore();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem(
-          "admin_astrologers_state",
-          JSON.stringify({ status: statusFilter, page })
-        );
-      } catch (e) {}
-
-      const params = new URLSearchParams(window.location.search);
-      let changed = false;
-
-      if (statusFilter !== "All") {
-        if (params.get("status") !== statusFilter) {
-          params.set("status", statusFilter);
-          changed = true;
-        }
-      } else {
-        if (params.has("status")) {
-          params.delete("status");
-          changed = true;
-        }
-      }
-
-      if (page > 0) {
-        if (params.get("page") !== String(page + 1)) {
-          params.set("page", String(page + 1));
-          changed = true;
-        }
-      } else {
-        if (params.has("page")) {
-          params.delete("page");
-          changed = true;
-        }
-      }
-
-      if (changed) {
-        const queryString = params.toString();
-        const newUrl = queryString ? `/admin/astrologers?${queryString}` : `/admin/astrologers`;
-        window.history.replaceState(null, "", newUrl);
-      }
-    }
-  }, [statusFilter, page]);
+    syncTablePagination(
+      "admin_astrologers_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All", defaultLimit: 10 }
+    );
+  }, [statusFilter, page, rowsPerPage]);
 
   const fetchAstrologers = useCallback(async () => {
     try {

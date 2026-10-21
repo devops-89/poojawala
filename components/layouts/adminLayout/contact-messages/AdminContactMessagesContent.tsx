@@ -40,13 +40,23 @@ const STATUS_TABS = [
   { id: "READ", label: "Read" },
 ];
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminContactMessagesContent() {
+  const initialPagination = getTablePaginationState("admin_contact_messages_state", {
+    defaultStatus: "ALL",
+    defaultLimit: 10,
+  });
+
   const [messages, setMessages] = useState<any[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
   const [loading, setLoading] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
@@ -66,6 +76,14 @@ export default function AdminContactMessagesContent() {
   useEffect(() => {
     fetchMessages();
   }, [page, rowsPerPage, search, statusFilter]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_contact_messages_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "ALL", defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage, statusFilter]);
 
   const fetchMessages = async () => {
     setLoading(true);

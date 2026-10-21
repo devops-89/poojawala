@@ -18,8 +18,17 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from '@/utils/paginationHelper';
+
 export default function PurohitMyServicesContent() {
   const router = useRouter();
+  const initialPagination = getTablePaginationState('portal_my_services_pagination', {
+    defaultLimit: 10,
+  });
+
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,11 +43,19 @@ export default function PurohitMyServicesContent() {
 
   const [serviceToDelete, setServiceToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(initialPagination.page + 1);
+  const [limit, setLimit] = useState(initialPagination.rowsPerPage);
   const [totalItems, setTotalItems] = useState(0);
 
   const { showSnackbar } = useSnackbarStore();
+
+  useEffect(() => {
+    syncTablePagination(
+      'portal_my_services_pagination',
+      { page: page - 1, rowsPerPage: limit },
+      { defaultLimit: 10 }
+    );
+  }, [page, limit]);
 
   const fetchMyServices = async () => {
     try {

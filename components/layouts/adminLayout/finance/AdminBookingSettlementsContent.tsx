@@ -24,9 +24,18 @@ import NextLink from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminBookingSettlementsContent() {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const initialPagination = getTablePaginationState("admin_booking_settlements_state", {
+    defaultLimit: 10,
+  });
+
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
 
   const [settlements, setSettlements] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -59,6 +68,14 @@ export default function AdminBookingSettlementsContent() {
   useEffect(() => {
     fetchSettlements();
   }, [fetchSettlements]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_booking_settlements_state",
+      { page, rowsPerPage },
+      { defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage]);
 
   const getStatusStyle = (
     status: string,

@@ -49,86 +49,33 @@ const STATUS_TABS = [
 
 import { useSocketStore } from "@/stores/socketStore";
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminBookingsContent() {
-  const searchParams = useSearchParams();
+  const initialPagination = getTablePaginationState("admin_bookings_state", {
+    defaultStatus: "All Bookings",
+    defaultLimit: 10,
+  });
 
-  const getInitialState = () => {
-    const paramStatus = searchParams.get("status");
-    const paramPage = searchParams.get("page");
-    if (paramStatus || paramPage) {
-      return {
-        status: paramStatus || "All Bookings",
-        page: paramPage ? Math.max(0, parseInt(paramPage, 10) - 1) : 0,
-      };
-    }
-    if (typeof window !== "undefined") {
-      try {
-        const saved = sessionStorage.getItem("admin_bookings_state");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          return {
-            status: parsed.status || "All Bookings",
-            page: typeof parsed.page === "number" ? parsed.page : 0,
-          };
-        }
-      } catch (e) {}
-    }
-    return { status: "All Bookings", page: 0 };
-  };
-
-  const initialState = getInitialState();
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState(initialState.status);
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
 
   const [assignTarget, setAssignTarget] = useState<string | number | null>(null);
   const [selectedPurohit, setSelectedPurohit] = useState<string | number>("");
 
-  const [page, setPage] = useState(initialState.page);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem(
-          "admin_bookings_state",
-          JSON.stringify({ status: statusFilter, page })
-        );
-      } catch (e) {}
-
-      const params = new URLSearchParams(window.location.search);
-      let changed = false;
-
-      if (statusFilter !== "All Bookings") {
-        if (params.get("status") !== statusFilter) {
-          params.set("status", statusFilter);
-          changed = true;
-        }
-      } else {
-        if (params.has("status")) {
-          params.delete("status");
-          changed = true;
-        }
-      }
-
-      if (page > 0) {
-        if (params.get("page") !== String(page + 1)) {
-          params.set("page", String(page + 1));
-          changed = true;
-        }
-      } else {
-        if (params.has("page")) {
-          params.delete("page");
-          changed = true;
-        }
-      }
-
-      if (changed) {
-        const queryString = params.toString();
-        const newUrl = queryString ? `/admin/bookings?${queryString}` : `/admin/bookings`;
-        window.history.replaceState(null, "", newUrl);
-      }
-    }
-  }, [statusFilter, page]);
+    syncTablePagination(
+      "admin_bookings_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All Bookings", defaultLimit: 10 }
+    );
+  }, [statusFilter, page, rowsPerPage]);
 
   const [bookings, setBookings] = useState<any[]>([]);
   const [totalBookings, setTotalBookings] = useState(0);

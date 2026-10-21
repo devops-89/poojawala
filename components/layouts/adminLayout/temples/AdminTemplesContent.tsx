@@ -31,15 +31,25 @@ const STATUS_TABS = [
   { id: "Inactive", label: "Inactive" },
 ];
 
+import {
+  getTablePaginationState,
+  syncTablePagination,
+} from "@/utils/paginationHelper";
+
 export default function AdminTemplesContent() {
+  const initialPagination = getTablePaginationState("admin_temples_state", {
+    defaultStatus: "All Status",
+    defaultLimit: 10,
+  });
+
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
 
   const [temples, setTemples] = useState<ITemple[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<number | string | null>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(initialPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
   const { showSnackbar } = useSnackbarStore();
@@ -81,6 +91,14 @@ export default function AdminTemplesContent() {
     }, 400);
     return () => clearTimeout(timer);
   }, [fetchTemples]);
+
+  useEffect(() => {
+    syncTablePagination(
+      "admin_temples_state",
+      { page, rowsPerPage, status: statusFilter },
+      { defaultStatus: "All Status", defaultLimit: 10 }
+    );
+  }, [page, rowsPerPage, statusFilter]);
 
   const confirmStatusChange = async () => {
     if (!statusChangeTarget) return;

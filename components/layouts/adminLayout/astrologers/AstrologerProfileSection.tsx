@@ -197,12 +197,17 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
             value={values.state || ""}
             onChange={(_, newValue) => {
               const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-              setFieldValue("state", val);
+              setFieldValue("state", val, true);
               setFieldValue("city", "");
             }}
-            onInputChange={(_, newInputValue) => {
-              const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-              setFieldValue("state", val);
+            onInputChange={(_, newInputValue, reason) => {
+              if (reason === "input") {
+                const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
+                setFieldValue("state", val, true);
+              } else if (reason === "clear") {
+                setFieldValue("state", "");
+                setFieldValue("city", "");
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -211,8 +216,8 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
                 name="state"
                 label="State *"
                 variant="outlined"
-                error={touched.state && Boolean(errors.state)}
-                helperText={touched.state && (errors.state as string)}
+                error={Boolean(touched.state && errors.state && !values.state?.trim())}
+                helperText={touched.state && errors.state && !values.state?.trim() ? (errors.state as string) : undefined}
                 sx={{
                   "& .MuiOutlinedInput-root": { borderRadius: "12px" },
                 }}
@@ -231,11 +236,15 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
             value={values.city || ""}
             onChange={(_, newValue) => {
               const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-              setFieldValue("city", val);
+              setFieldValue("city", val, true);
             }}
-            onInputChange={(_, newInputValue) => {
-              const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-              setFieldValue("city", val);
+            onInputChange={(_, newInputValue, reason) => {
+              if (reason === "input") {
+                const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
+                setFieldValue("city", val, true);
+              } else if (reason === "clear") {
+                setFieldValue("city", "");
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -249,9 +258,9 @@ export const AstrologerProfileSection: React.FC<AstrologerProfileSectionProps> =
                     : "Select or type City"
                 }
                 variant="outlined"
-                error={touched.city && Boolean(errors.city)}
+                error={Boolean(touched.city && errors.city && !values.city?.trim())}
                 helperText={
-                  touched.city
+                  touched.city && errors.city && !values.city?.trim()
                     ? (errors.city as string)
                     : !values.state
                     ? "Select state to enable city selection"
