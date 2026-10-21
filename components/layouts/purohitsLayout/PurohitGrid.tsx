@@ -1,6 +1,17 @@
 'use client';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Grid, InputBase, Pagination, Paper, Typography, CircularProgress } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Pagination,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import PurohitCard from './PurohitCard';
 
@@ -33,7 +44,7 @@ export default function PurohitGrid() {
       try {
         setLoading(true);
         const response = await getPublicPurohitsListAPI(page, itemsPerPage, debouncedQuery);
-        
+
         let fetchedPurohits = [];
         if (response?.data?.data && Array.isArray(response.data.data)) {
           fetchedPurohits = response.data.data;
@@ -120,38 +131,124 @@ export default function PurohitGrid() {
   return (
     <Box ref={gridTopRef} id="top-purohits">
       {/* Header Row */}
-      {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A', mr: 2 }}>
-          Top Purohits for You
-        </Typography>
-        <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#666', mr: 3 }}>
-          {totalPurohits} Purohits available
-        </Typography>
-        
-        {/* Search Bar (Hero Style) */}
-        <Paper
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between',
+          alignItems: { xs: 'flex-start', md: 'center' },
+          gap: 2,
+          mb: 3.5,
+        }}
+      >
+        <Box>
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: FONTS.PRIMARY,
+              fontWeight: 700,
+              color: '#1A1A1A',
+              fontSize: { xs: '20px', sm: '24px' },
+              mb: 0.5,
+            }}
+          >
+            Top Purohits for You
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: FONTS.PRIMARY,
+              color: '#64748b',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            {totalPurohits} Purohits available
+          </Typography>
+        </Box>
+
+        {/* Search Bar (Matching Temples & Astrologers) */}
+        <Box
           component="form"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {
+            e.preventDefault();
+            setDebouncedQuery(searchQuery);
+            setPage(1);
+          }}
           sx={{
-            p: '2px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            width: '750px',
-            borderRadius: '30px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-            border: '1px solid #eaeaea',
+            display: "flex",
+            alignItems: "center",
+            bgcolor: "#FFFFFF",
+            borderRadius: "14px",
+            p: "4px 6px 4px 14px",
+            border: "1.5px solid #E2E8F0",
+            width: { xs: "100%", sm: "360px", md: "400px" },
+            transition: "all 0.25s ease",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+            "&:focus-within": {
+              borderColor: COLORS.PRIMARY,
+              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.15)",
+            },
           }}
         >
-          <SearchIcon sx={{ color: '#999', fontSize: '20px' }} />
-          <InputBase
-            sx={{ ml: 1, flex: 1, py: 0.5, fontFamily: FONTS.PRIMARY, fontSize: '14px' }}
-            placeholder="Search by name or language..."
-            inputProps={{ 'aria-label': 'search for purohits' }}
+          <SearchIcon sx={{ color: "#94a3b8", fontSize: 20, mr: 1 }} />
+          <TextField
+            variant="standard"
+            placeholder="Search by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            slotProps={{
+              input: {
+                disableUnderline: true,
+                sx: {
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "14px",
+                  color: "#1e293b",
+                  "&::placeholder": { color: "#94a3b8" },
+                },
+                endAdornment: searchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setDebouncedQuery("");
+                        setPage(1);
+                      }}
+                      aria-label="clear search"
+                      sx={{ p: 0.5, mr: 0.5 }}
+                    >
+                      <ClearIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null,
+              },
+            }}
+            sx={{ flexGrow: 1 }}
           />
-        </Paper>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              bgcolor: COLORS.PRIMARY,
+              color: "#FFFFFF",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 600,
+              fontSize: "13px",
+              textTransform: "none",
+              borderRadius: "10px",
+              px: 2,
+              py: 0.8,
+              minWidth: "auto",
+              boxShadow: "none",
+              "&:hover": {
+                bgcolor: "#E05600",
+                boxShadow: "none",
+              },
+            }}
+          >
+            Search
+          </Button>
+        </Box>
       </Box>
 
       {/* List Content */}
@@ -188,11 +285,11 @@ export default function PurohitGrid() {
       {/* Pagination */}
       {totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <Pagination 
-            count={totalPages} 
+          <Pagination
+            count={totalPages}
             page={page}
             onChange={handlePageChange}
-            shape="rounded" 
+            shape="rounded"
             sx={{
               '& .MuiPaginationItem-root': {
                 fontFamily: FONTS.PRIMARY,

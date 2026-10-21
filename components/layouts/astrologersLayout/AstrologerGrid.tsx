@@ -1,13 +1,16 @@
 'use client';
 import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import {
   Box,
+  Button,
   CircularProgress,
   Grid,
-  InputBase,
+  IconButton,
+  InputAdornment,
   Pagination,
-  Paper,
+  TextField,
   Typography,
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -215,39 +218,89 @@ export default function AstrologerGrid() {
           </Typography>
         </Box>
 
-        {/* Search Input */}
-        <Paper
-          elevation={0}
+        {/* Search Box (Matching Temples & Purohits) */}
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setDebouncedQuery(searchQuery);
+            setPage(1);
+          }}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: 2,
-            py: 0.8,
-            borderRadius: '30px',
-            border: '1px solid #e2e8f0',
-            bgcolor: '#fff',
-            width: { xs: '100%', md: '360px' },
-            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-            '&:hover, &:focus-within': {
+            display: "flex",
+            alignItems: "center",
+            bgcolor: "#FFFFFF",
+            borderRadius: "14px",
+            p: "4px 6px 4px 14px",
+            border: "1.5px solid #E2E8F0",
+            width: { xs: "100%", sm: "360px", md: "400px" },
+            transition: "all 0.25s ease",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+            "&:focus-within": {
               borderColor: COLORS.PRIMARY,
-              boxShadow: '0 2px 12px rgba(255, 98, 0, 0.1)',
+              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.15)",
             },
           }}
         >
-          <SearchIcon sx={{ color: '#94a3b8', fontSize: 20, mr: 1 }} />
-          <InputBase
-            placeholder="Search by name..."
+          <SearchIcon sx={{ color: "#94a3b8", fontSize: 20, mr: 1 }} />
+          <TextField
+            variant="standard"
+            placeholder="Search astrologers by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontSize: '14px',
-              color: '#1e293b',
-              width: '100%',
-              '& input::placeholder': { color: '#94a3b8', opacity: 1 },
+            slotProps={{
+              input: {
+                disableUnderline: true,
+                sx: {
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "14px",
+                  color: "#1e293b",
+                  "&::placeholder": { color: "#94a3b8" },
+                },
+                endAdornment: searchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setDebouncedQuery("");
+                        setPage(1);
+                      }}
+                      aria-label="clear search"
+                      sx={{ p: 0.5, mr: 0.5 }}
+                    >
+                      <ClearIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null,
+              },
             }}
+            sx={{ flexGrow: 1 }}
           />
-        </Paper>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              bgcolor: COLORS.PRIMARY,
+              color: "#FFFFFF",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 600,
+              fontSize: "13px",
+              textTransform: "none",
+              borderRadius: "10px",
+              px: 2,
+              py: 0.8,
+              minWidth: "auto",
+              boxShadow: "none",
+              "&:hover": {
+                bgcolor: "#E05600",
+                boxShadow: "none",
+              },
+            }}
+          >
+            Search
+          </Button>
+        </Box>
       </Box>
 
       {/* Grid Content */}
