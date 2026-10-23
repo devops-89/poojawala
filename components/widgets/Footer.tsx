@@ -20,12 +20,11 @@ import { COLORS } from "@/utils/enums";
 
 const quickLinks = [
   { name: "Home", href: "/" },
-  { name: "Pooja Packages", href: "/services" },
+  { name: "Offline Services", href: "/services?isOffline=true" },
+  { name: "Online Services", href: "/services?isOnline=true" },
   { name: "Temples & Dhams", href: "/temples" },
-  { name: "Purohits", href: "/purohits" },
   { name: "Astrologers", href: "/astrologers" },
   { name: "Blogs", href: "/blogs" },
-  { name: "Contact Us", href: "/contact" },
 ];
 
 // Top Cities (static, no routes)
@@ -237,8 +236,12 @@ export default function Footer() {
 
             {/* Contact Us Column */}
             <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-              <Typography
+              <Link
+                component={NextLink}
+                href="/contact"
+                underline="none"
                 sx={{
+                  display: "inline-block",
                   fontFamily: FONTS.PRIMARY,
                   fontWeight: 600,
                   color: "#141414",
@@ -246,10 +249,13 @@ export default function Footer() {
                   fontSize: "16px",
                   lineHeight: "15.3px",
                   letterSpacing: "0.72px",
+                  cursor: "pointer",
+                  transition: "color 0.2s ease",
+                  "&:hover": { color: COLORS.PRIMARY },
                 }}
               >
                 Contact Us
-              </Typography>
+              </Link>
               <Link
                 href="mailto:info@1pooja.com"
                 underline="none"
@@ -284,7 +290,7 @@ export default function Footer() {
                   display: "block",
                 }}
               >
-                Register as Purohit / Astrologer
+                Register as Astrologer
               </Link>
             </Grid>
           </Grid>

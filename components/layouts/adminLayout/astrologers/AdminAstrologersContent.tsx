@@ -103,7 +103,7 @@ export default function AdminAstrologersContent() {
             ratePerMinute: profile.astrologyPrice
               ? `₹${profile.astrologyPrice}`
               : profile.ratePerMinute
-              ? `₹${profile.ratePerMinute}/min`
+              ? `₹${profile.ratePerMinute}`
               : "-",
             commissionPrice: profile.commissionPercentage
               ? `${profile.commissionPercentage}%`

@@ -60,7 +60,9 @@ export const getServicesAPI = async (
   city?: string,
   templeId?: string | number,
   categoryId?: string | number,
-  includeTemple?: boolean
+  includeTemple?: boolean,
+  isOnline?: boolean,
+  isOffline?: boolean
 ) => {
   try {
     const params = new URLSearchParams();
@@ -96,6 +98,12 @@ export const getServicesAPI = async (
     if (includeTemple !== undefined) {
       params.append('includeTemple', String(includeTemple));
     }
+    if (isOnline !== undefined) {
+      params.append('isOnline', String(isOnline));
+    }
+    if (isOffline !== undefined) {
+      params.append('isOffline', String(isOffline));
+    }
     const response = await userPublicApi.get(`/service`, { params });
     return response.data;
   } catch (error) {
@@ -103,9 +111,64 @@ export const getServicesAPI = async (
   }
 };
 
+export const resolveServiceId = (id: string | number): string | number => {
+  if (!id) return id;
+  const isNumeric = /^\d+$/.test(String(id).trim());
+  if (isNumeric) return id;
+
+  if (typeof window !== "undefined") {
+    try {
+      const lower = String(id).trim().toLowerCase();
+      const cached =
+        localStorage.getItem(`slug_to_id_${lower}`) ||
+        sessionStorage.getItem(`slug_to_id_${lower}`) ||
+        localStorage.getItem(`service_slug_${lower}`) ||
+        sessionStorage.getItem(`service_slug_${lower}`) ||
+        localStorage.getItem(`slug_to_id_${id}`) ||
+        sessionStorage.getItem(`slug_to_id_${id}`) ||
+        localStorage.getItem(`service_slug_${id}`) ||
+        sessionStorage.getItem(`service_slug_${id}`) ||
+        localStorage.getItem("last_service_id") ||
+        sessionStorage.getItem("last_service_id");
+
+      if (cached && /^\d+$/.test(cached)) {
+        return cached;
+      }
+    } catch (e) {}
+  }
+
+  return id;
+};
+
 export const getServiceByIdAPI = async (id: string | number) => {
   try {
-    const response = await userPublicApi.get(`/service/${id}`);
+    const numericId = resolveServiceId(id);
+
+    // STRICT SAFETY: NEVER call /service/:id with non-numeric string to avoid 400 Validation Error
+    if (!/^\d+$/.test(String(numericId).trim())) {
+      console.warn(`[getServiceByIdAPI] Could not resolve numeric ID for slug: ${id}`);
+      return {
+        success: false,
+        message: "Service not found",
+        data: null,
+      };
+    }
+
+    const response = await userPublicApi.get(`/service/${numericId}`);
+    if (typeof window !== "undefined" && response?.data) {
+      const data = response.data?.data?.data || response.data?.data || response.data;
+      if (data?.id) {
+        localStorage.setItem("last_service_id", String(data.id));
+        sessionStorage.setItem("last_service_id", String(data.id));
+        if (data.slug) {
+          const s = String(data.slug).toLowerCase();
+          localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+          sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+          localStorage.setItem(`service_slug_${s}`, String(data.id));
+          sessionStorage.setItem(`service_slug_${s}`, String(data.id));
+        }
+      }
+    }
     return response.data;
   } catch (error) {
     throw error;
@@ -114,7 +177,8 @@ export const getServiceByIdAPI = async (id: string | number) => {
 
 export const editServiceAPI = async (id: string | number, formData: FormData) => {
   try {
-    const response = await userSecuredApi.patch(`/service/${id}`, formData);
+    const numericId = resolveServiceId(id);
+    const response = await userSecuredApi.patch(`/service/${numericId}`, formData);
     return response.data;
   } catch (error) {
     throw error;
@@ -123,7 +187,8 @@ export const editServiceAPI = async (id: string | number, formData: FormData) =>
 
 export const updateServiceStatusAPI = async (id: string | number, isActive: boolean) => {
   try {
-    const response = await userSecuredApi.patch(`/service/${id}/status`, { isActive });
+    const numericId = resolveServiceId(id);
+    const response = await userSecuredApi.patch(`/service/${numericId}/status`, { isActive });
     return response.data;
   } catch (error) {
     throw error;
@@ -132,7 +197,8 @@ export const updateServiceStatusAPI = async (id: string | number, isActive: bool
 
 export const deleteServiceAPI = async (id: string | number) => {
   try {
-    const response = await userSecuredApi.delete(`/service/${id}`);
+    const numericId = resolveServiceId(id);
+    const response = await userSecuredApi.delete(`/service/${numericId}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -156,7 +222,9 @@ export const getAllServicesAPI = async (
   state?: string,
   categoryId?: string | number,
   templeId?: string | number,
-  includeTemple?: boolean
+  includeTemple?: boolean,
+  isOnline?: boolean,
+  isOffline?: boolean
 ) => {
   try {
     const params: Record<string, any> = {};
@@ -169,6 +237,8 @@ export const getAllServicesAPI = async (
     if (categoryId && categoryId !== 'All') params.categoryId = categoryId;
     if (templeId && templeId !== 'All') params.templeId = templeId;
     if (includeTemple !== undefined) params.includeTemple = includeTemple;
+    if (isOnline !== undefined) params.isOnline = isOnline;
+    if (isOffline !== undefined) params.isOffline = isOffline;
 
     const response = await userPublicApi.get('/service', { params });
     return response.data;

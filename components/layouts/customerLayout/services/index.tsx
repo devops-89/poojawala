@@ -8,7 +8,7 @@ import { useUserStore } from "@/stores/userStore";
 import { Box, CircularProgress, Grid, Pagination } from "@mui/material";
 import { City, State } from "country-state-city";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CustomerServiceCard from "./CustomerServiceCard";
 import CustomerServicesBookingModal from "./CustomerServicesBookingModal";
 import CustomerServicesEmptyState from "./CustomerServicesEmptyState";
@@ -18,6 +18,8 @@ import CustomerServicesHeader from "./CustomerServicesHeader";
 export const ServicesPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const isOffline = searchParams.get("isOffline") === "true";
+  const isOnline = searchParams.get("isOnline") === "true";
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -56,6 +58,22 @@ export const ServicesPage = () => {
 
   useEffect(() => {
     let isMounted = true;
+
+    // Online services do not need address or location lookup
+    if (isOnline) {
+      setSelectedCity("All");
+      setSelectedState("All");
+      const urlSearch = searchParams.get("search");
+      const urlCategoryId = searchParams.get("categoryId");
+      const urlCategory = searchParams.get("category");
+      const urlPage = searchParams.get("page");
+      if (urlSearch) setSearchTerm(urlSearch);
+      if (urlCategoryId) setSelectedCategoryId(urlCategoryId);
+      if (urlCategory) setSelectedCategoryName(urlCategory);
+      if (urlPage && !isNaN(Number(urlPage))) setPage(Number(urlPage));
+      setIsInitialized(true);
+      return;
+    }
 
     const urlState = searchParams.get("state");
     const urlCity = searchParams.get("city");
@@ -119,15 +137,20 @@ export const ServicesPage = () => {
       }
 
       const defaultAddr = findDefaultAddress(addresses);
-      if (defaultAddr?.city) {
-        const city = String(defaultAddr.city).trim();
-        setUserDefaultCity(city);
-        setSelectedCity(city);
-      }
-      if (defaultAddr?.state) {
-        const state = String(defaultAddr.state).trim();
-        setUserDefaultState(state);
-        setSelectedState(state);
+      if (!isOnline) {
+        if (defaultAddr?.city) {
+          const city = String(defaultAddr.city).trim();
+          setUserDefaultCity(city);
+          setSelectedCity(city);
+        }
+        if (defaultAddr?.state) {
+          const state = String(defaultAddr.state).trim();
+          setUserDefaultState(state);
+          setSelectedState(state);
+        }
+      } else {
+        setSelectedCity("All");
+        setSelectedState("All");
       }
       setIsInitialized(true);
     };
@@ -136,38 +159,19 @@ export const ServicesPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [fetchProfile, searchParams]);
+  }, [isOnline]);
+
+  useEffect(() => {
+    if (isOnline) {
+      setSelectedCity("All");
+      setSelectedState("All");
+    }
+  }, [isOnline]);
 
   const handleOpenBooking = (serviceId: number) => {
     setSelectedServiceId(serviceId);
     const targetService = filteredServices.find((s) => s.id === serviceId);
-    const isGlobal =
-      targetService?.isGlobal === true ||
-      !targetService?.cities ||
-      (Array.isArray(targetService.cities) && targetService.cities.length === 0);
-
-    const isOnlineAllowed = isGlobal || targetService?.isOnline !== false;
-    let isOfflineAllowed = isGlobal || targetService?.isOffline === true;
-
-    if (!isGlobal && targetService?.cities && Array.isArray(targetService.cities) && targetService.cities.length > 0) {
-      const cityToCheck = userDefaultCity || selectedCity;
-      if (cityToCheck && cityToCheck !== "All" && cityToCheck !== "All Cities") {
-        const cCheck = cityToCheck.toLowerCase().trim();
-        isOfflineAllowed = isOfflineAllowed && targetService.cities.some((c: any) => {
-          const cName = (typeof c === "string" ? c : c?.name || "").toLowerCase().trim();
-          return cName.includes(cCheck) || cCheck.includes(cName);
-        });
-      } else {
-        isOfflineAllowed = false;
-      }
-    }
-
-    const defaultMode =
-      isOnlineAllowed && !isOfflineAllowed
-        ? "ONLINE"
-        : !isOnlineAllowed && isOfflineAllowed
-          ? "OFFLINE"
-          : "ONLINE";
+    const defaultMode = targetService?.isOnline ? "ONLINE" : "OFFLINE";
     setBookingForm((prev) => ({
       ...prev,
       bookingMode: defaultMode,
@@ -207,34 +211,7 @@ export const ServicesPage = () => {
       }
 
       const targetService = filteredServices.find((s) => s.id === selectedServiceId);
-      const isGlobal =
-        targetService?.isGlobal === true ||
-        !targetService?.cities ||
-        (Array.isArray(targetService.cities) && targetService.cities.length === 0);
-
-      const isOnlineAllowed = isGlobal || targetService?.isOnline !== false;
-      let isOfflineAllowed = isGlobal || targetService?.isOffline === true;
-
-      if (!isGlobal && targetService?.cities && Array.isArray(targetService.cities) && targetService.cities.length > 0) {
-        if (!defaultAddr?.city) {
-          isOfflineAllowed = false;
-        } else {
-          const aCity = (defaultAddr.city || "").toLowerCase().trim();
-          isOfflineAllowed = isOfflineAllowed && targetService.cities.some((c: any) => {
-            const cName = (typeof c === "string" ? c : c?.name || "").toLowerCase().trim();
-            return cName.includes(aCity) || aCity.includes(cName);
-          });
-        }
-      }
-
-      const finalBookingMode =
-        isOnlineAllowed && !isOfflineAllowed
-          ? "ONLINE"
-          : !isOnlineAllowed && isOfflineAllowed
-            ? "OFFLINE"
-            : bookingForm.bookingMode === "ONLINE"
-              ? "ONLINE"
-              : "OFFLINE";
+      const finalBookingMode = targetService?.isOnline ? "ONLINE" : "OFFLINE";
 
       if (!customerAddressId && finalBookingMode === "OFFLINE") {
         showSnackbar(
@@ -309,31 +286,23 @@ export const ServicesPage = () => {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // Sync current filter state and page number to URL search parameters
-  useEffect(() => {
-    if (!isInitialized) return;
-    const params = new URLSearchParams();
-    if (page > 1) params.set("page", String(page));
-    if (selectedState && selectedState !== "All" && selectedState !== "All States") {
-      params.set("state", selectedState);
-    }
-    if (selectedCity && selectedCity !== "All" && selectedCity !== "All Cities") {
-      params.set("city", selectedCity);
-    }
-    if (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories") {
-      params.set("categoryId", selectedCategoryId);
-    }
-    if (selectedCategoryName && selectedCategoryName !== "All Categories") {
-      params.set("category", selectedCategoryName);
-    }
-    if (searchTerm) {
-      params.set("search", searchTerm);
-    }
+  const handleStateChange = useCallback((val: string) => {
+    setSelectedState(val);
+    setSelectedCity("All");
+    setPage(1);
+  }, []);
 
-    const queryStr = params.toString();
-    const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
-    window.history.replaceState(null, "", newUrl);
-  }, [page, selectedState, selectedCity, selectedCategoryId, selectedCategoryName, searchTerm, isInitialized]);
+  const handleCityChange = useCallback((val: string) => {
+    setSelectedCity(val);
+    setPage(1);
+  }, []);
+
+  const handleCategoryChange = useCallback((catId: string, catName: string) => {
+    setSelectedCategoryId(catId);
+    setSelectedCategoryName(catName);
+    setPage(1);
+  }, []);
+
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -342,9 +311,9 @@ export const ServicesPage = () => {
       setLoading(true);
       try {
         const cityParam =
-          selectedCity && selectedCity !== "All" && selectedCity !== "All Cities" ? selectedCity : undefined;
+          !isOnline && selectedCity && selectedCity !== "All" && selectedCity !== "All Cities" ? selectedCity : undefined;
         const stateParam =
-          selectedState && selectedState !== "All" && selectedState !== "All States" ? selectedState : undefined;
+          !isOnline && selectedState && selectedState !== "All" && selectedState !== "All States" ? selectedState : undefined;
         const catIdParam =
           selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories"
             ? selectedCategoryId
@@ -359,7 +328,9 @@ export const ServicesPage = () => {
           stateParam,
           catIdParam,
           undefined,
-          false
+          false,
+          isOnline ? true : undefined,
+          isOffline ? true : undefined
         );
         let rawList: any[] = [];
         if (res.success) {
@@ -398,7 +369,7 @@ export const ServicesPage = () => {
       }
     };
     fetchServices();
-  }, [page, debouncedSearch, selectedCity, selectedState, selectedCategoryId, isInitialized]);
+  }, [page, debouncedSearch, selectedCity, selectedState, selectedCategoryId, isInitialized, isOffline, isOnline]);
 
   // All Indian States from country-state-city
   const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
@@ -429,30 +400,20 @@ export const ServicesPage = () => {
 
   return (
     <Box>
-      <CustomerServicesHeader />
+      <CustomerServicesHeader isOffline={isOffline} isOnline={isOnline} />
 
       <CustomerServicesFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        stateOptions={stateOptions}
-        selectedState={selectedState}
-        onStateChange={(val) => {
-          setSelectedState(val);
-          setSelectedCity("All");
-          setPage(1);
-        }}
+        hideLocationFilters={isOnline}
+        stateOptions={isOnline ? undefined : stateOptions}
+        selectedState={isOnline ? undefined : selectedState}
+        onStateChange={isOnline ? undefined : handleStateChange}
         selectedCategory={selectedCategoryName || selectedCategoryId}
-        onCategoryChange={(catId, catName) => {
-          setSelectedCategoryId(catId);
-          setSelectedCategoryName(catName);
-          setPage(1);
-        }}
-        cityOptions={cityOptions}
-        selectedCity={selectedCity}
-        onCityChange={(val) => {
-          setSelectedCity(val);
-          setPage(1);
-        }}
+        onCategoryChange={handleCategoryChange}
+        cityOptions={isOnline ? undefined : cityOptions}
+        selectedCity={isOnline ? undefined : selectedCity}
+        onCityChange={isOnline ? undefined : handleCityChange}
       />
 
       {loading ? (
@@ -461,11 +422,16 @@ export const ServicesPage = () => {
         </Box>
       ) : filteredServices.length === 0 ? (
         <CustomerServicesEmptyState
-          selectedCity={selectedCity}
-          selectedState={selectedState}
+          selectedCity={isOnline ? "All" : selectedCity}
+          selectedState={isOnline ? "All" : selectedState}
           onReset={() => {
-            setSelectedState("All");
-            setSelectedCity("All");
+            if (!isOnline) {
+              setSelectedState("All");
+              setSelectedCity("All");
+            }
+            setSelectedCategoryId("");
+            setSelectedCategoryName("All Categories");
+            setSearchTerm("");
             setPage(1);
           }}
         />

@@ -10,6 +10,7 @@ import { stripHtml } from '@/utils/helpers';
 
 export default function ServiceCard({
   id,
+  slug,
   title,
   image,
   description,
@@ -47,16 +48,17 @@ export default function ServiceCard({
 
   const formattedPrice = (() => {
     if (!price || price === '0') return 'Price on Request';
-    if (price.includes('-')) {
-      const parts = price.split('-');
+    const cleanPrice = String(price).replace(/₹/g, '').trim();
+    if (cleanPrice.includes('-')) {
+      const parts = cleanPrice.split('-');
       const p1 = Number(parts[0].trim());
       const p2 = Number(parts[1].trim());
-      const p1Str = !isNaN(p1) ? `₹${p1.toLocaleString('en-IN')}` : parts[0].trim();
-      const p2Str = !isNaN(p2) ? `₹${p2.toLocaleString('en-IN')}` : parts[1].trim();
+      const p1Str = !isNaN(p1) ? `₹${p1.toLocaleString('en-IN')}` : `₹${parts[0].trim()}`;
+      const p2Str = !isNaN(p2) ? `₹${p2.toLocaleString('en-IN')}` : `₹${parts[1].trim()}`;
       return `${p1Str} - ${p2Str}`;
     }
-    const p = Number(price);
-    return !isNaN(p) ? `₹${p.toLocaleString('en-IN')}` : `₹${price}`;
+    const p = Number(cleanPrice);
+    return !isNaN(p) ? `₹${p.toLocaleString('en-IN')}` : `₹${cleanPrice}`;
   })();
 
   return (
@@ -125,27 +127,6 @@ export default function ServiceCard({
             }}
           >
             {duration}
-          </Box>
-        )}
-        {(isOnline || isOffline) && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 12,
-              left: 12,
-              bgcolor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #BAE6FD',
-              px: 1.2,
-              py: 0.3,
-              borderRadius: '20px',
-              fontSize: '11px',
-              fontWeight: 700,
-              color: '#0369A1',
-              fontFamily: FONTS.PRIMARY,
-              backdropFilter: 'blur(4px)',
-            }}
-          >
-            {isOnline && isOffline ? 'Online & Offline' : isOnline ? 'Online' : 'Offline'}
           </Box>
         )}
       </Box>

@@ -57,13 +57,20 @@ export default function AdminBookingDetailsContent() {
   const handleInitiatePayout = async () => {
     try {
       setIsPaying(true);
-      const res = await initiateManualPayoutAPI({ bookingId: booking.id });
+      const res = await initiateManualPayoutAPI({
+        bookingId: booking.id,
+      });
       if (res.success) {
         showSnackbar(
           res.message || "Payout initiated successfully",
           "success"
         );
-        setBooking({ ...booking, purohitPayoutStatus: "PAID" });
+        setBooking({
+          ...booking,
+          partnerPayoutStatus: "PAID",
+          purohitPayoutStatus: "PAID",
+          astrologerPayoutStatus: "PAID",
+        });
       } else {
         showSnackbar(res.message || "Failed to initiate payout", "error");
       }
@@ -98,7 +105,13 @@ export default function AdminBookingDetailsContent() {
   const customerName = booking.customer
     ? `${booking.customer.firstName} ${booking.customer.lastName || ""}`.trim()
     : "N/A";
-  const technicianName = booking.purohit
+  const technicianName = booking.astrologer
+    ? (booking.astrologer.user
+        ? `${booking.astrologer.user.firstName || ""} ${booking.astrologer.user.lastName || ""}`.trim()
+        : `${booking.astrologer.firstName || ""} ${booking.astrologer.lastName || ""}`.trim() ||
+          booking.astrologer.username ||
+          "Astrologer")
+    : booking.purohit
     ? booking.purohit.user
       ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`.trim()
       : `${booking.purohit.firstName} ${booking.purohit.lastName || ""}`.trim()

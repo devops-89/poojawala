@@ -218,3 +218,70 @@ export const stripHtml = (html?: string | null): string => {
     .trim();
 };
 
+export const formatServicePriceRange = (service: any, prefix = "₹"): string => {
+  if (!service) return `${prefix}0`;
+
+  const isOnline = Boolean(
+    service.isOnline === true ||
+    String(service.isOnline).toLowerCase() === "true" ||
+    service.isOnline === 1 ||
+    String(service.isOnline) === "1"
+  );
+
+  let basicPrice: number | null = null;
+  let standardPrice: number | null = null;
+
+  if (service.plans && typeof service.plans === "object") {
+    const b = service.plans.basic?.price;
+    if (b != null && !isNaN(Number(b)) && Number(b) > 0) {
+      basicPrice = Number(b);
+    }
+    const s = service.plans.standard?.price;
+    if (s != null && !isNaN(Number(s)) && Number(s) > 0) {
+      standardPrice = Number(s);
+    }
+  }
+
+  if (basicPrice == null) {
+    const rawMin =
+      service.priceWithoutSamagri ??
+      service.minPrice ??
+      service.price ??
+      service.basePrice;
+    if (rawMin != null && !isNaN(Number(rawMin)) && Number(rawMin) > 0) {
+      basicPrice = Number(rawMin);
+    }
+  }
+
+  if (standardPrice == null && !isOnline) {
+    const rawMax =
+      service.priceWithSamagri ??
+      service.maxPrice;
+    if (rawMax != null && !isNaN(Number(rawMax)) && Number(rawMax) > 0) {
+      standardPrice = Number(rawMax);
+    }
+  }
+
+  // Online services always have a single price
+  if (isOnline) {
+    const single = basicPrice || standardPrice;
+    return single ? `${prefix}${single.toLocaleString("en-IN")}` : `${prefix}0`;
+  }
+
+  // Offline services display range only if standard plan is higher than basic
+  if (basicPrice != null && standardPrice != null && standardPrice > basicPrice) {
+    return `${prefix}${basicPrice.toLocaleString("en-IN")} - ${prefix}${standardPrice.toLocaleString("en-IN")}`;
+  }
+
+  if (basicPrice != null) {
+    return `${prefix}${basicPrice.toLocaleString("en-IN")}`;
+  }
+
+  if (standardPrice != null) {
+    return `${prefix}${standardPrice.toLocaleString("en-IN")}`;
+  }
+
+  return `${prefix}0`;
+};
+
+

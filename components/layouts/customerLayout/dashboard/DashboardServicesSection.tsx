@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { formatServicePriceRange } from "@/utils/helpers";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CelebrationIcon from "@mui/icons-material/Celebration";
@@ -186,32 +187,7 @@ export default function DashboardServicesSection({
         <Grid container spacing={3}>
           {displayServices.map((item) => {
             const isSingle = count === 1;
-            let minP: number | null = item.minPrice != null ? Number(item.minPrice) : null;
-            let maxP: number | null = item.maxPrice != null ? Number(item.maxPrice) : null;
-
-            if ((minP == null || isNaN(minP)) && item.plans && typeof item.plans === "object") {
-              const prices: number[] = [];
-              const planList = Array.isArray(item.plans) ? item.plans : Object.values(item.plans);
-              planList.forEach((p: any) => {
-                if (p && p.price != null && !isNaN(Number(p.price))) {
-                  prices.push(Number(p.price));
-                }
-              });
-              if (prices.length > 0) {
-                minP = Math.min(...prices);
-                maxP = Math.max(...prices);
-              }
-            }
-
-            if (minP == null || isNaN(minP)) {
-              minP = item.priceWithoutSamagri != null ? Number(item.priceWithoutSamagri) : (item.price ?? item.basePrice ?? 0);
-              maxP = item.priceWithSamagri != null ? Number(item.priceWithSamagri) : null;
-            }
-
-            const priceDisplay =
-              maxP && Number(maxP) > Number(minP)
-                ? `₹${Number(minP).toLocaleString("en-IN")} - ₹${Number(maxP).toLocaleString("en-IN")}`
-                : `₹${Number(minP).toLocaleString("en-IN")}`;
+            const priceDisplay = formatServicePriceRange(item);
 
             const imageSrc =
               item.iconDownloadurl ||
@@ -238,6 +214,9 @@ export default function DashboardServicesSection({
             return (
               <Grid size={gridSpan} key={item.id}>
                 <Card
+                  onClick={() =>
+                    router.push(`/customer/services/${item.id}`)
+                  }
                   variant="outlined"
                   sx={{
                     borderRadius: "16px",
@@ -251,6 +230,7 @@ export default function DashboardServicesSection({
                       : "column",
                     height: "100%",
                     position: "relative",
+                    cursor: "pointer",
                     transition: "transform 0.2s, box-shadow 0.2s",
                     "&:hover": {
                       transform: "translateY(-4px)",
@@ -425,9 +405,10 @@ export default function DashboardServicesSection({
                       </Box>
 
                       <Button
-                        onClick={() =>
-                          router.push(`/customer/services/${item.id}`)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/customer/services/${item.id}`);
+                        }}
                         variant="contained"
                         size={isSingle ? "medium" : "small"}
                         sx={{

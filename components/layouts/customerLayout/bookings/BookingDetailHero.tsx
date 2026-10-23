@@ -225,7 +225,7 @@ export default function BookingDetailHero({
               booking.paymentStatus === 'PAID' ? (
                 <Chip
                   icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#16a34a' }} />}
-                  label={`Token Paid: ₹${formatInr(tokenAmt)}`}
+                  label="Fully Paid"
                   size="small"
                   sx={{
                     fontWeight: 700,
@@ -239,7 +239,7 @@ export default function BookingDetailHero({
               ) : statusStr !== 'CANCELLED' ? (
                 <Chip
                   icon={<AccessTimeIcon sx={{ fontSize: '15px !important', color: '#dc2626' }} />}
-                  label="Token Payment Pending"
+                  label="Payment Pending"
                   size="small"
                   sx={{
                     fontWeight: 700,
@@ -308,10 +308,10 @@ export default function BookingDetailHero({
             {isAstrology ? (
               <>
                 <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>
-                  Token Advance Amount
+                  Consultation Fee
                 </Typography>
                 <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
-                  ₹{formatInr(tokenAmt)}
+                  ₹{formatInr(payDetails.finalAmount)}
                 </Typography>
               </>
             ) : (
@@ -482,31 +482,51 @@ export default function BookingDetailHero({
         </Grid>
       </Grid>
 
-      {/* Astrology Token & Per Minute Charge Notice in English */}
+      {/* Astrology Consultation Fee Notice in English */}
       {isAstrology && (
         <Box
           sx={{
             mt: 3,
             p: 2.5,
-            bgcolor: '#fff7ed',
+            bgcolor: booking.paymentStatus === 'PAID' ? '#f0fdf4' : '#fff7ed',
             borderRadius: '14px',
-            border: '1px solid #fed7aa',
+            border: `1px solid ${booking.paymentStatus === 'PAID' ? '#bbf7d0' : '#fed7aa'}`,
             display: 'flex',
             alignItems: 'flex-start',
             gap: 1.5,
           }}
         >
-          <InfoOutlinedIcon sx={{ color: '#ea580c', fontSize: 22, mt: 0.2, flexShrink: 0 }} />
+          <InfoOutlinedIcon
+            sx={{
+              color: booking.paymentStatus === 'PAID' ? '#16a34a' : '#ea580c',
+              fontSize: 22,
+              mt: 0.2,
+              flexShrink: 0,
+            }}
+          />
           <Box>
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '14px', fontWeight: 700, color: '#9a3412' }}>
-              Token Advance Amount: ₹{formatInr(tokenAmt)} (Paid)
+            <Typography
+              sx={{
+                fontFamily: FONTS.PRIMARY,
+                fontSize: '14px',
+                fontWeight: 700,
+                color: booking.paymentStatus === 'PAID' ? '#166534' : '#9a3412',
+              }}
+            >
+              Consultation Fee: ₹{formatInr(payDetails.finalAmount)}
             </Typography>
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#c2410c', mt: 0.5, lineHeight: 1.6 }}>
-              This amount is only a token advance to confirm your booking. The astrologer's consultation rate is{' '}
-              <strong style={{ color: '#9a3412' }}>
-                {ratePerMinute ? `₹${ratePerMinute} / minute` : 'applicable consultation rate'}
-              </strong>
-              , which will be payable directly after the consultation session based on the actual session duration.
+            <Typography
+              sx={{
+                fontFamily: FONTS.PRIMARY,
+                fontSize: '13px',
+                color: booking.paymentStatus === 'PAID' ? '#15803d' : '#c2410c',
+                mt: 0.5,
+                lineHeight: 1.6,
+              }}
+            >
+              {booking.paymentStatus === 'PAID'
+                ? 'Your full consultation charge has been successfully paid. Your session is confirmed and you can connect with the astrologer at the scheduled time.'
+                : 'This is the complete consultation fee for your astrology session. Please complete the payment to confirm your booking.'}
             </Typography>
           </Box>
         </Box>

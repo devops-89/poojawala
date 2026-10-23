@@ -11,10 +11,10 @@ export async function generateMetadata({
     title: "Purohit Profile | 1Pooja",
     description: "View detailed profile, expertise, and availability of our verified Purohits.",
     alternates: {
-      canonical: `/purohits/${id}`,
+      canonical: `https://1pooja.com/purohits/${id}`,
     },
     openGraph: {
-      url: `/purohits/${id}`,
+      url: `https://1pooja.com/purohits/${id}`,
     },
   };
 }

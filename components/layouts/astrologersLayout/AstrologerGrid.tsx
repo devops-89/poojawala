@@ -124,8 +124,12 @@ export default function AstrologerGrid() {
           const numRating = Number(rawRating || 0);
           const rating = numRating > 0 ? numRating.toFixed(1) : 'New';
 
-          // 7. Rate per minute
-          const ratePerMinute = profile.ratePerMinute ?? item.ratePerMinute;
+          // 7. Astrology Price
+          const astrologyPrice =
+            profile.astrologyPrice ??
+            item.astrologyPrice ??
+            profile.ratePerMinute ??
+            item.ratePerMinute;
 
           // 8. City
           const city = profile.city || item.city || '';
@@ -153,7 +157,8 @@ export default function AstrologerGrid() {
             language: langStr,
             experience,
             rating,
-            ratePerMinute,
+            astrologyPrice,
+            ratePerMinute: astrologyPrice,
             bio,
             city,
           };

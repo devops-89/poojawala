@@ -20,6 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -295,6 +296,111 @@ export default function AdminContactMessagesContent() {
               Message Details
             </DialogTitle>
             <DialogContent sx={{ pt: 3 }}>
+              {selectedMessage.service && (
+                <Box
+                  sx={{
+                    mb: 2.5,
+                    p: 2,
+                    bgcolor: "rgba(255, 98, 0, 0.05)",
+                    border: "1px solid rgba(255, 98, 0, 0.2)",
+                    borderRadius: "12px",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 700,
+                      color: COLORS.PRIMARY,
+                      fontSize: "0.75rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      mb: 1,
+                    }}
+                  >
+                    Associated Service
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      flexWrap: "wrap",
+                      gap: 1.5,
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      {selectedMessage.service.iconUrl && (
+                        <Box
+                          component="img"
+                          src={selectedMessage.service.iconUrl}
+                          alt={selectedMessage.service.name}
+                          sx={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: "8px",
+                            objectFit: "cover",
+                            border: "1px solid #fed7aa",
+                          }}
+                        />
+                      )}
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 700,
+                          color: "#1e293b",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        {selectedMessage.service.name}
+                      </Typography>
+                    </Box>
+
+                    {/* Mode Tabs / Badges */}
+                    <Box sx={{ display: "flex", gap: 0.8, alignItems: "center" }}>
+                      {selectedMessage.service.isOnline && (
+                        <Chip
+                          label="Online"
+                          size="small"
+                          sx={{
+                            bgcolor: "#e0f2fe",
+                            color: "#0369a1",
+                            fontWeight: 700,
+                            fontSize: "0.75rem",
+                            borderRadius: "6px",
+                          }}
+                        />
+                      )}
+                      {selectedMessage.service.isOffline && (
+                        <Chip
+                          label="Offline"
+                          size="small"
+                          sx={{
+                            bgcolor: "#fef3c7",
+                            color: "#92400e",
+                            fontWeight: 700,
+                            fontSize: "0.75rem",
+                            borderRadius: "6px",
+                          }}
+                        />
+                      )}
+                      {!selectedMessage.service.isOnline && !selectedMessage.service.isOffline && (
+                        <Chip
+                          label="Service"
+                          size="small"
+                          sx={{
+                            bgcolor: "#f1f5f9",
+                            color: "#475569",
+                            fontWeight: 700,
+                            fontSize: "0.75rem",
+                            borderRadius: "6px",
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+
               <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#64748b", fontSize: "0.85rem", mb: 0.5 }}>From</Typography>
               <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: "#1e293b", mb: 2 }}>
                 {selectedMessage.name} ({selectedMessage.email})
@@ -335,6 +441,27 @@ export default function AdminContactMessagesContent() {
               <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#1e293b", fontSize: "0.9rem" }}>
                 {statusToChange.messageObj.name} ({statusToChange.messageObj.email})
               </Typography>
+              {statusToChange.messageObj.service && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.8, flexWrap: "wrap" }}>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "0.85rem" }}>
+                    <b>Service:</b> {statusToChange.messageObj.service.name}
+                  </Typography>
+                  {statusToChange.messageObj.service.isOnline && (
+                    <Chip
+                      label="Online"
+                      size="small"
+                      sx={{ height: 20, fontSize: "0.65rem", bgcolor: "#e0f2fe", color: "#0369a1", fontWeight: 700 }}
+                    />
+                  )}
+                  {statusToChange.messageObj.service.isOffline && (
+                    <Chip
+                      label="Offline"
+                      size="small"
+                      sx={{ height: 20, fontSize: "0.65rem", bgcolor: "#fef3c7", color: "#92400e", fontWeight: 700 }}
+                    />
+                  )}
+                </Box>
+              )}
               <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "0.85rem", mt: 0.5 }}>
                 <b>Subject:</b> {statusToChange.messageObj.subject}
               </Typography>

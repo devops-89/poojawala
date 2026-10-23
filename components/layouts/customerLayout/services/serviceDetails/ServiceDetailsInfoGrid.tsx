@@ -101,7 +101,7 @@ export default function ServiceDetailsInfoGrid({
                     color: "#2C1810",
                   }}
                 >
-                  {service.durationMinutes ? `${service.durationMinutes} minutes` : durationText}
+                  {durationText || (service.durationMinutes ? `${service.durationMinutes} mins` : "1-2 hours")}
                 </Typography>
               </Box>
 

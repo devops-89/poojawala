@@ -10,6 +10,8 @@ import { COLORS } from "@/utils/enums";
 
 export default function ServicesLayout() {
   const searchParams = useSearchParams();
+  const isOffline = searchParams.get("isOffline") === "true";
+  const isOnline = searchParams.get("isOnline") === "true";
   const stateParam = searchParams.get("state");
   const cityParam = searchParams.get("city");
   const categoryParam = searchParams.get("category");
@@ -59,7 +61,14 @@ export default function ServicesLayout() {
 
   useEffect(() => {
     const params = new URLSearchParams();
+    if (isOnline) {
+      params.set("isOnline", "true");
+    }
+    if (isOffline) {
+      params.set("isOffline", "true");
+    }
     if (
+      !isOnline &&
       selectedState &&
       selectedState !== "All" &&
       selectedState !== "All States"
@@ -67,6 +76,7 @@ export default function ServicesLayout() {
       params.set("state", selectedState);
     }
     if (
+      !isOnline &&
       selectedCity &&
       selectedCity !== "All" &&
       selectedCity !== "All Cities"
@@ -103,6 +113,8 @@ export default function ServicesLayout() {
       : window.location.pathname;
     window.history.replaceState(null, "", newUrl);
   }, [
+    isOnline,
+    isOffline,
     selectedState,
     selectedCity,
     selectedCategoryId,
@@ -208,7 +220,11 @@ export default function ServicesLayout() {
                   color: "#D32F2F",
                 }}
               >
-                Sacred Pooja Services
+                {isOnline
+                  ? "Online Pooja Services"
+                  : isOffline
+                  ? "Offline Pooja Services"
+                  : "Sacred Pooja Services"}
               </Box>
             </Typography>
             <Typography
@@ -223,9 +239,9 @@ export default function ServicesLayout() {
                 letterSpacing: "0em",
               }}
             >
-              Discover and book verified Pandits and Purohits for a wide range
-              of religious ceremonies, tailored to your language and local
-              traditions.
+              {isOnline
+                ? "Experience authentic sacred rituals performed live via interactive digital video by experienced Purohits from anywhere."
+                : "Discover and book verified Pandits and Purohits for a wide range of religious ceremonies, tailored to your language and local traditions."}
             </Typography>
           </Box>
         </Container>
@@ -242,17 +258,18 @@ export default function ServicesLayout() {
           <CustomerServicesFilters
             searchTerm={searchQuery}
             onSearchChange={setSearchQuery}
-            stateOptions={stateOptions}
-            selectedState={selectedState}
+            stateOptions={isOnline ? [] : stateOptions}
+            selectedState={isOnline ? "All" : selectedState}
             onStateChange={(newVal) => {
               setSelectedState(newVal);
               setSelectedCity("All");
             }}
             selectedCategory={selectedCategoryName}
             onCategoryChange={handleCategoryChange}
-            cityOptions={cityOptions}
-            selectedCity={selectedCity}
+            cityOptions={isOnline ? [] : cityOptions}
+            selectedCity={isOnline ? "All" : selectedCity}
             onCityChange={handleCityChange}
+            hideLocationFilters={isOnline}
           />
         </Container>
 
@@ -269,6 +286,8 @@ export default function ServicesLayout() {
                 searchQuery={searchQuery}
                 selectedState={selectedState}
                 selectedCity={selectedCity}
+                isOnline={isOnline}
+                isOffline={isOffline}
               />
             </Grid>
           </Grid>

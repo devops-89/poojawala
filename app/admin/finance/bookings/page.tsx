@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import AdminBookingSettlementsContent from '@/components/layouts/adminLayout/finance/AdminBookingSettlementsContent';
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function BookingSettlementsPage() {
-  return <AdminBookingSettlementsContent />;
+  return (
+    <Suspense fallback={null}>
+      <AdminBookingSettlementsContent />
+    </Suspense>
+  );
 }

@@ -2,17 +2,20 @@
 import { FONTS } from "@/utils/fonts";
 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Box, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { Box, IconButton, Typography } from "@mui/material";
 import React from "react";
 
 interface ServiceIconUploadFieldProps {
   iconPreview: string | null;
   onIconChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveIcon?: () => void;
 }
 
 export default function ServiceIconUploadField({
   iconPreview,
   onIconChange,
+  onRemoveIcon,
 }: ServiceIconUploadFieldProps) {
   return (
     <Box>
@@ -74,6 +77,23 @@ export default function ServiceIconUploadField({
             >
               Image Selected (Click to change)
             </Typography>
+            {onRemoveIcon && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onRemoveIcon();
+                }}
+                sx={{
+                  color: "#ef4444",
+                  p: 0.5,
+                  "&:hover": { bgcolor: "rgba(239, 68, 68, 0.1)" },
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
           </Box>
         ) : (
           <Box

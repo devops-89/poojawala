@@ -159,28 +159,7 @@ export default function CustomerServicesBookingModal({
     return serviceCities.some((sc) => checkCityMatch(defaultAddr, sc));
   }, [isGlobal, service?.isOffline, serviceCities, defaultAddr]);
 
-  const isOnlineAllowed = isGlobal || service?.isOnline !== false;
-  const isOfflineAllowed =
-    isGlobal || (service?.isOffline === true && isAddressCityCoveredForOffline);
-  const isBothAllowed = isOnlineAllowed && isOfflineAllowed;
-  const isSingleMode = !isBothAllowed;
-
-  const currentBookingMode =
-    isSingleMode
-      ? isOnlineAllowed
-        ? "ONLINE"
-        : isOfflineAllowed
-          ? "OFFLINE"
-          : ""
-      : bookingForm.bookingMode || (isOfflineAllowed ? "OFFLINE" : "ONLINE");
-
-  useEffect(() => {
-    if (!isOfflineAllowed && isOnlineAllowed && bookingForm.bookingMode !== "ONLINE") {
-      setBookingForm((prev: any) => ({ ...prev, bookingMode: "ONLINE" }));
-    } else if (isOfflineAllowed && !isOnlineAllowed && bookingForm.bookingMode !== "OFFLINE") {
-      setBookingForm((prev: any) => ({ ...prev, bookingMode: "OFFLINE" }));
-    }
-  }, [isOfflineAllowed, isOnlineAllowed, bookingForm.bookingMode, setBookingForm]);
+  const currentBookingMode = service?.isOnline ? "ONLINE" : "OFFLINE";
 
   const now = new Date();
   const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
@@ -251,41 +230,7 @@ export default function CustomerServicesBookingModal({
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <FormControl fullWidth disabled={isSingleMode}>
-              <InputLabel>Booking Mode</InputLabel>
-              <Select
-                value={currentBookingMode}
-                label="Booking Mode"
-                disabled={isSingleMode}
-                onChange={(e) =>
-                  setBookingForm({
-                    ...bookingForm,
-                    bookingMode: e.target.value,
-                  })
-                }
-              >
-                {isOnlineAllowed && (
-                  <MenuItem value="ONLINE">Online</MenuItem>
-                )}
-                {isOfflineAllowed && (
-                  <MenuItem value="OFFLINE">Offline</MenuItem>
-                )}
-              </Select>
-              {isSingleMode && (
-                <FormHelperText>
-                  {service?.isOffline && !isAddressCityCoveredForOffline ? (
-                    <>
-                      Offline mode is only available in {serviceCityNamesText}. Your address is in {defaultAddr?.city || "another city"}, so only Online mode is available.
-                    </>
-                  ) : (
-                    `Available in ${isOnlineAllowed ? "Online" : "Offline"} mode only`
-                  )}
-                </FormHelperText>
-              )}
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Language"

@@ -48,7 +48,7 @@ const formatDate = (dateStr?: string) => {
 };
 
 interface RelatedBlogsSectionProps {
-  currentBlogId: string | number;
+  currentBlogId?: string | number;
   isAdmin?: boolean;
 }
 

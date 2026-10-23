@@ -258,19 +258,24 @@ export default function AstrologyBookingsContent() {
       const mappedBookings = list.map((booking: any) => {
         const schedule = formatScheduleDateTime(booking);
         const bookedAt = formatCreatedDateTime(booking);
-        const ratePerMinute = Number(
-          booking.ratePerMinute ||
-          booking.astrologyTransparency?.ratePerMinute ||
-          booking.astrologerProfile?.ratePerMinute ||
-          40
-        );
-        const platformAccessFee = Number(
-          booking.platformAccessFee ||
-          booking.astrologyTransparency?.platformAccessFee ||
-          booking.finalAmount ||
-          booking.servicePrice ||
-          50
-        );
+
+        const rawPayout =
+          (booking.partnerPayoutAmount !== null && booking.partnerPayoutAmount !== undefined && booking.partnerPayoutAmount !== "" && booking.partnerPayoutAmount !== "0.00")
+            ? booking.partnerPayoutAmount
+            : (booking.priceBreakDown?.astrologerPayout !== null && booking.priceBreakDown?.astrologerPayout !== undefined)
+              ? booking.priceBreakDown.astrologerPayout
+              : (booking.astrologerProfile?.astrologerPayout !== null && booking.astrologerProfile?.astrologerPayout !== undefined)
+                ? booking.astrologerProfile.astrologerPayout
+                : (booking.astrologer?.astrologerProfile?.astrologerPayout !== null && booking.astrologer?.astrologerProfile?.astrologerPayout !== undefined)
+                  ? booking.astrologer.astrologerProfile.astrologerPayout
+                  : booking.purohitPayoutAmount || 0;
+
+        const astrologerPayout = Number(rawPayout) || 0;
+        const payoutStatus =
+          booking.partnerPayoutStatus ||
+          booking.purohitPayoutStatus ||
+          booking.astrologerPayoutStatus ||
+          'PENDING';
 
         return {
           id: booking.bookingNumber || booking.id,
@@ -278,16 +283,16 @@ export default function AstrologyBookingsContent() {
           customer: booking.customer
             ? `${booking.customer.firstName || ''} ${booking.customer.lastName || ''}`.trim()
             : 'Devotee',
-          ritual: booking.service?.name || 'Astrology Consultation',
+          ritual: 'Astrology Consultation',
           date: schedule.date,
           time: schedule.time,
           scheduleFull: schedule.full,
           bookedAt,
           location: booking.customerAddress?.fullAddress || (booking.bookingMode ? `${booking.bookingMode} Consultation` : 'Online Consultation'),
-          ratePerMinute,
-          platformAccessFee,
+          astrologerPayout,
+          payoutStatus,
           paymentStatus: booking.paymentStatus || 'PAID',
-          price: `₹${ratePerMinute}/min`,
+          price: `₹${astrologerPayout}`,
           status: booking.status,
           plan: booking.plan,
           bookingMode: booking.bookingMode || 'ONLINE',
@@ -319,10 +324,12 @@ export default function AstrologyBookingsContent() {
     setUpdatingJobId(null);
   };
 
-  const handleStatusChange = async (newStatus: string) => {
-    if (!updatingJobId) return;
+  const handleStatusChange = async (newStatus: string, specificJobId?: number | string) => {
+    const targetId = specificJobId || updatingJobId;
+    if (!targetId) return;
 
     if (newStatus.toUpperCase() === 'CANCELLED') {
+      setUpdatingJobId(Number(targetId));
       setCancelModalOpen(true);
       setStatusMenuAnchorEl(null);
       return;
@@ -330,7 +337,7 @@ export default function AstrologyBookingsContent() {
 
     try {
       showLoader('Updating status...');
-      const response = await updateBookingStatusAPI(updatingJobId, newStatus);
+      const response = await updateBookingStatusAPI(targetId, newStatus);
       if (response.success) {
         showSnackbar(`Booking marked as ${newStatus}!`, 'success');
         fetchActiveBookings();
@@ -929,7 +936,7 @@ export default function AstrologyBookingsContent() {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleStatusChange('COMPLETED')}
+                          onClick={() => handleStatusChange('COMPLETED', jobId)}
                           startIcon={<CheckCircleIcon />}
                           sx={{
                             background: '#16A34A',
@@ -1065,20 +1072,20 @@ export default function AstrologyBookingsContent() {
                     </Box>
                   </Box>
 
-                  {/* 2. Consultation Rate */}
+                  {/* 2. Astrologer Payout */}
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                     <Box sx={{ p: 1, bgcolor: '#ECFDF5', borderRadius: '8px', color: '#059669', display: 'flex' }}>
                       <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />
                     </Box>
                     <Box>
                       <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
-                        Consultation Rate
+                        Astrologer Payout
                       </Typography>
                       <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '15px', fontWeight: 800, color: '#059669' }}>
-                        ₹{job.ratePerMinute} / min
+                        ₹{job.astrologerPayout ?? (job.originalData?.priceBreakDown?.astrologerPayout ?? 0)}
                       </Typography>
                       <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
-                        Direct Client Billing
+                        {job.payoutStatus ? `Payout: ${job.payoutStatus}` : 'Consultation Payout'}
                       </Typography>
                     </Box>
                   </Box>

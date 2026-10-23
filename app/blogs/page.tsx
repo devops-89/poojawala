@@ -4,13 +4,29 @@ import { Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Blogs & Sacred Insights | 1Pooja",
-  description: "Discover step-by-step Puja Vidhis, festival guides, mantra meanings, and sacred insights written by verified Pandits.",
+  title: 'Pooja Vidhi, Pandit Booking & Muhurat Guide | 1Pooja Blogs',
+  description:
+    'Read expert guides on Hindu pooja vidhi, festival traditions, pandit booking, and auspicious muhurat timings for your rituals.',
+  keywords: [
+    'Pooja Guide',
+    'Muhurat Guide',
+    'Pandit Booking Guide',
+    'Hindu festival pooja guide',
+  ],
   alternates: {
-    canonical: "/blogs",
+    canonical: '/blogs',
   },
   openGraph: {
-    url: "/blogs",
+    title: 'Pooja Vidhi, Pandit Booking & Muhurat Guide | 1Pooja Blogs',
+    description:
+      'Read expert guides on Hindu pooja vidhi, festival traditions, pandit booking, and auspicious muhurat timings for your rituals.',
+    url: '/blogs',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pooja Vidhi, Pandit Booking & Muhurat Guide | 1Pooja Blogs',
+    description:
+      'Read expert guides on Hindu pooja vidhi, festival traditions, pandit booking, and auspicious muhurat timings for your rituals.',
   },
 };
 

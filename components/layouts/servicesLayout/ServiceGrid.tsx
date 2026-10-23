@@ -8,6 +8,7 @@ import { ServiceGridProps } from '@/utils/types';
 import ServiceCard from './ServiceCard';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
+import { formatServicePriceRange } from '@/utils/helpers';
 
 export default function ServiceGrid({
   activeCategory,
@@ -18,6 +19,8 @@ export default function ServiceGrid({
   searchQuery,
   selectedState,
   selectedCity,
+  isOnline,
+  isOffline,
 }: ServiceGridProps) {
   const searchParams = useSearchParams();
   const [services, setServices] = useState<any[]>([]);
@@ -50,18 +53,18 @@ export default function ServiceGrid({
       return;
     }
     setPage(1);
-  }, [searchQuery, selectedState, selectedCity, selectedCategoryId, activeCategory, selectedTempleId]);
+  }, [searchQuery, selectedState, selectedCity, selectedCategoryId, activeCategory, selectedTempleId, isOnline, isOffline]);
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
         const cityParam =
-          selectedCity && selectedCity !== 'All' && selectedCity !== 'All Cities'
+          !isOnline && selectedCity && selectedCity !== 'All' && selectedCity !== 'All Cities'
             ? selectedCity
             : undefined;
         const stateParam =
-          selectedState && selectedState !== 'All' && selectedState !== 'All States'
+          !isOnline && selectedState && selectedState !== 'All' && selectedState !== 'All States'
             ? selectedState
             : undefined;
         const templeParam =
@@ -78,7 +81,9 @@ export default function ServiceGrid({
           stateParam,
           selectedCategoryId || undefined,
           templeParam,
-          false
+          false,
+          isOnline ? true : undefined,
+          isOffline ? true : undefined
         );
 
         let fetchedServices = [];
@@ -136,37 +141,7 @@ export default function ServiceGrid({
         setTotalPages(calcTotalPages);
 
         const formattedServices = activeOnly.map((s: any) => {
-          let minP: number | null = s.minPrice != null ? Number(s.minPrice) : null;
-          let maxP: number | null = s.maxPrice != null ? Number(s.maxPrice) : null;
-
-          if ((minP == null || isNaN(minP)) && s.plans && typeof s.plans === "object") {
-            const prices: number[] = [];
-            const planList = Array.isArray(s.plans) ? s.plans : Object.values(s.plans);
-            planList.forEach((p: any) => {
-              if (p && p.price != null && !isNaN(Number(p.price))) {
-                prices.push(Number(p.price));
-              }
-            });
-            if (prices.length > 0) {
-              minP = Math.min(...prices);
-              maxP = Math.max(...prices);
-            }
-          }
-
-          let computedPriceStr = '0';
-          if (minP != null && !isNaN(minP)) {
-            if (maxP != null && !isNaN(maxP) && maxP > minP) {
-              computedPriceStr = `${minP} - ${maxP}`;
-            } else {
-              computedPriceStr = `${minP}`;
-            }
-          } else if (s.priceWithoutSamagri != null && s.priceWithSamagri != null) {
-            computedPriceStr = `${s.priceWithoutSamagri} - ${s.priceWithSamagri}`;
-          } else if (s.priceWithoutSamagri != null) {
-            computedPriceStr = `${s.priceWithoutSamagri}`;
-          } else if (s.basePrice != null || s.price != null) {
-            computedPriceStr = `${s.basePrice ?? s.price}`;
-          }
+          const computedPriceStr = formatServicePriceRange(s, "");
 
           return {
             id: s.id || s._id,
@@ -183,7 +158,8 @@ export default function ServiceGrid({
             availability: s.availability || s.serviceMode || 'All',
             rituals: s.rituals || 'all',
             isOnline: Boolean(s.isOnline),
-            isOffline: Boolean(s.isOffline)
+            isOffline: Boolean(s.isOffline),
+            slug: s.slug || null,
           };
         });
 
@@ -196,7 +172,7 @@ export default function ServiceGrid({
     };
 
     fetchServices();
-  }, [page, searchQuery, selectedState, selectedCity, selectedCategoryId, selectedTempleId]);
+  }, [page, searchQuery, selectedState, selectedCity, selectedCategoryId, selectedTempleId, isOnline, isOffline]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -241,6 +217,7 @@ export default function ServiceGrid({
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={service.id} sx={{ display: 'flex' }}>
               <ServiceCard
                 id={service.id}
+                slug={service.slug}
                 title={service.title}
                 image={service.image}
                 description={service.description}

@@ -18,6 +18,7 @@ export default function EditProductForm() {
   const [initialValues, setInitialValues] = useState<ProductFormValues | null>(
     null,
   );
+  const [numericProductId, setNumericProductId] = useState<number | string | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,6 +31,23 @@ export default function EditProductForm() {
         const rawData = res?.data?.data || res?.data?.product || res?.data || res;
         const data = Array.isArray(rawData) ? rawData[0] : rawData;
         if (data) {
+          if (data.id) {
+            setNumericProductId(data.id);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("last_product_id", String(data.id));
+              sessionStorage.setItem("last_product_id", String(data.id));
+              if (data.slug) {
+                const s = String(data.slug).toLowerCase();
+                localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+                sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+                localStorage.setItem(`product_slug_${s}`, String(data.id));
+                sessionStorage.setItem(`product_slug_${s}`, String(data.id));
+              }
+            }
+          }
+          if (data.slug && /^\d+$/.test(String(params.id))) {
+            window.history.replaceState(null, "", `/admin/products/edit/${data.slug}`);
+          }
           setInitialValues({
             name: data.name || "",
             description: data.description || "",
@@ -60,7 +78,7 @@ export default function EditProductForm() {
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      const res = await updateProductAPI(params.id as string, formData);
+      const res = await updateProductAPI(numericProductId || (params.id as string), formData);
       if (res?.success !== false) {
         showSnackbar("Product updated successfully", "success");
         router.push("/admin/products");
@@ -94,7 +112,7 @@ export default function EditProductForm() {
   return (
     <ProductForm
       isEdit={true}
-      title={`Edit Product (P-${params.id})`}
+      title={`Edit Product (${initialValues.name || `P-${numericProductId || params.id}`})`}
       submitButtonText="Update Product"
       onSubmit={handleSubmit}
       initialValues={initialValues}

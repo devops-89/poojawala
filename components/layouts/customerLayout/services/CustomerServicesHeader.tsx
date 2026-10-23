@@ -2,7 +2,24 @@
 import { FONTS } from "@/utils/fonts";
 import { Box, Typography } from "@mui/material";
 
-export default function CustomerServicesHeader() {
+interface Props {
+  isOffline?: boolean;
+  isOnline?: boolean;
+}
+
+export default function CustomerServicesHeader({ isOffline, isOnline }: Props) {
+  const title = isOffline
+    ? "Offline Pooja Services"
+    : isOnline
+    ? "Online Pooja Services"
+    : "Explore Services";
+
+  const subtitle = isOffline
+    ? "Browse and book verified purohits for in-person pujas at your home or venue."
+    : isOnline
+    ? "Browse and book verified purohits for virtual pujas via live video consultation."
+    : "Browse and book verified purohits for your pujas.";
+
   return (
     <Box sx={{ mb: 4 }}>
       <Typography
@@ -14,12 +31,12 @@ export default function CustomerServicesHeader() {
           mb: 1,
         }}
       >
-        Explore Services
+        {title}
       </Typography>
       <Typography
         sx={{ fontFamily: FONTS.PRIMARY, color: "#666" }}
       >
-        Browse and book verified purohits for your pujas.
+        {subtitle}
       </Typography>
     </Box>
   );

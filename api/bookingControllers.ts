@@ -280,7 +280,7 @@ export const getPaymentsAPI = async (page: number = 1, limit: number = 10, statu
   try {
     let url = `/payments/my?page=${page}&limit=${limit}`;
     if (status && status !== 'ALL') {
-      url += `&purohitPayoutStatus=${status.toUpperCase()}`;
+      url += `&partnerPayoutStatus=${status.toUpperCase()}&purohitPayoutStatus=${status.toUpperCase()}`;
     }
     const response = await paymentSecuredApi.get(url);
     return response.data;
@@ -346,7 +346,9 @@ export const addComplaintAPI = async (formData: FormData) => {
 
 export const initiateManualPayoutAPI = async (payload: { bookingId: number | string }) => {
   try {
-    const response = await paymentSecuredApi.post('/payments/admin/payout/manual', payload);
+    const response = await paymentSecuredApi.post('/payments/admin/payout/manual', {
+      bookingId: payload.bookingId,
+    });
     return response.data;
   } catch (error) {
     throw error;

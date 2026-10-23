@@ -52,11 +52,18 @@ export default function ProductTableRow({
       {/* Name */}
       <TableCell>
         <Typography
+          component={NextLink}
+          href={`/admin/products/${product.id}`}
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1e293b",
             fontSize: "0.95rem",
+            textDecoration: "none",
+            "&:hover": {
+              color: COLORS.PRIMARY,
+              textDecoration: "underline",
+            },
           }}
         >
           {product.name || "Untitled Product"}

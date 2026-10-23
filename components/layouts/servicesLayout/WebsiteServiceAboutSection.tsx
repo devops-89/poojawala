@@ -29,37 +29,14 @@ export default function WebsiteServiceAboutSection({
 
   const rawBenefits = parseJsonList(service?.benefits);
 
-  // Fallback benefits if array is empty
-  const benefitsList =
-    rawBenefits.length > 0
-      ? rawBenefits
-      : [
-          {
-            title: "Traditional Durga Puja Vidhi",
-            description: "Complete Durga Puja performed according to traditional Vedic rituals.",
-          },
-          {
-            title: "Kalash Sthapana",
-            description: "Sacred Kalash Sthapana performed with appropriate Vedic mantras and rituals.",
-          },
-          {
-            title: "Durga Saptashati Path",
-            description: "Selected Durga Saptashati prayers and recitations based on the selected plan.",
-          },
-          {
-            title: "Havan",
-            description: "Traditional Havan performed with sacred samagri and Vedic mantras.",
-          },
-          {
-            title: "Aarti & Prasad",
-            description: "Concluding Aarti followed by Prasad distribution.",
-          },
-        ];
+  const benefitsList = rawBenefits;
 
   const fullDesc =
     service?.description ||
     service?.desc ||
-    "Special Navratri Durga Puja performed by experienced Purohits with traditional Vedic rituals, Durga Saptashati prayers, Kalash Sthapana, Havan and Aarti. Available for homes, societies and private venues across Noida, Greater Noida and Ghaziabad.";
+    (service?.name
+      ? `Experience divine blessings with authentic ${service.name} performed by experienced Vedic Acharyas and Purohits.`
+      : "");
 
   // Split description into paragraphs if long enough
   const sentences = fullDesc.split(". ");
@@ -130,82 +107,84 @@ export default function WebsiteServiceAboutSection({
       )}
 
       {/* Key Highlights & Ritual Benefits (Points List, No Cards) */}
-      <Box sx={{ mt: 5 }}>
-        <Typography
-          variant="h4"
-          sx={{
-            fontFamily: FONTS.PRIMARY,
-            fontWeight: 800,
-            fontSize: { xs: "20px", sm: "24px" },
-            color: "#1A0B05",
-            mb: 3,
-          }}
-        >
-          Key Highlights & Ritual Benefits
-        </Typography>
+      {benefitsList.length > 0 && (
+        <Box sx={{ mt: 5 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontFamily: FONTS.PRIMARY,
+              fontWeight: 800,
+              fontSize: { xs: "20px", sm: "24px" },
+              color: "#1A0B05",
+              mb: 3,
+            }}
+          >
+            Key Highlights & Ritual Benefits
+          </Typography>
 
-        {/* Vertical Points List */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {benefitsList.map((benefit: any, index: number) => {
-            const bTitle = typeof benefit === "string" ? benefit : benefit.title || benefit.name;
-            const bDesc = typeof benefit === "object" ? benefit.description || benefit.desc : "";
+          {/* Vertical Points List */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {benefitsList.map((benefit: any, index: number) => {
+              const bTitle = typeof benefit === "string" ? benefit : benefit.title || benefit.name;
+              const bDesc = typeof benefit === "object" ? benefit.description || benefit.desc : "";
 
-            return (
-              <Box
-                key={index}
-                sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                }}
-              >
+              return (
                 <Box
+                  key={index}
                   sx={{
-                    bgcolor: "#FFF0E6",
-                    borderRadius: "50%",
-                    p: 0.6,
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: COLORS.PRIMARY,
-                    flexShrink: 0,
-                    mt: 0.3,
+                    alignItems: "flex-start",
+                    gap: 2,
                   }}
                 >
-                  <CheckCircleIcon sx={{ fontSize: 18 }} />
-                </Box>
-
-                <Box>
-                  <Typography
+                  <Box
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      color: "#1A0B05",
-                      mb: 0.4,
+                      bgcolor: "#FFF0E6",
+                      borderRadius: "50%",
+                      p: 0.6,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: COLORS.PRIMARY,
+                      flexShrink: 0,
+                      mt: 0.3,
                     }}
                   >
-                    {bTitle}
-                  </Typography>
+                    <CheckCircleIcon sx={{ fontSize: 18 }} />
+                  </Box>
 
-                  {bDesc && (
+                  <Box>
                     <Typography
                       sx={{
                         fontFamily: FONTS.PRIMARY,
-                        fontSize: "14px",
-                        color: "#5C4A40",
-                        lineHeight: 1.6,
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        color: "#1A0B05",
+                        mb: 0.4,
                       }}
                     >
-                      {bDesc}
+                      {bTitle}
                     </Typography>
-                  )}
+
+                    {bDesc && (
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.PRIMARY,
+                          fontSize: "14px",
+                          color: "#5C4A40",
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {bDesc}
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
-              </Box>
-            );
-          })}
+              );
+            })}
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 }

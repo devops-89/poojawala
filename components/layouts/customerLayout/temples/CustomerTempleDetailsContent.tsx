@@ -41,12 +41,37 @@ export default function CustomerTempleDetailsContent({
   useEffect(() => {
     const fetchTemple = async () => {
       if (!templeId) return;
+      if (
+        temple &&
+        (temple.slug === templeId || String(temple.id) === String(templeId))
+      ) {
+        return;
+      }
       try {
         setLoading(true);
         const res = await getTempleByIdAPI(templeId);
         if (res?.success) {
           const rawData = res.data?.data || res.data;
           setTemple(rawData);
+          if (rawData?.id && typeof window !== "undefined") {
+            localStorage.setItem("last_temple_id", String(rawData.id));
+            sessionStorage.setItem("last_temple_id", String(rawData.id));
+            if (rawData.slug) {
+              const s = String(rawData.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              localStorage.setItem(`temple_slug_${s}`, String(rawData.id));
+              sessionStorage.setItem(`temple_slug_${s}`, String(rawData.id));
+              const currentPath = window.location.pathname;
+              const basePath = currentPath.startsWith("/customer/temple/")
+                ? "/customer/temple"
+                : "/customer/temples";
+              const targetPath = `${basePath}/${rawData.slug}`;
+              if (currentPath !== targetPath) {
+                window.history.replaceState(null, "", targetPath);
+              }
+            }
+          }
         } else {
           showSnackbar(res?.message || "Failed to load temple details", "error");
         }

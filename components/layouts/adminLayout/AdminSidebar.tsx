@@ -107,7 +107,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       path: "/admin/finance",
       children: [
         { text: "Booking Settlements", path: "/admin/finance/bookings" },
-        { text: "Purohit Payouts", path: "/admin/finance/payouts" },
+        { text: "Partner Payouts", path: "/admin/finance/payouts" },
       ],
     },
     { text: "Reviews", icon: <StarBorderIcon fontSize="small" />, path: "/admin/reviews" },

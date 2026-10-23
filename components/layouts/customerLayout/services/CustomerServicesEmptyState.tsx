@@ -5,8 +5,8 @@ import LocationOffIcon from "@mui/icons-material/LocationOff";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
 interface CustomerServicesEmptyStateProps {
-  selectedCity: string;
-  selectedState: string;
+  selectedCity?: string;
+  selectedState?: string;
   onReset: () => void;
 }
 
@@ -15,8 +15,8 @@ export default function CustomerServicesEmptyState({
   selectedState,
   onReset,
 }: CustomerServicesEmptyStateProps) {
-  const isCityActive = selectedCity && selectedCity !== "All";
-  const isStateActive = selectedState && selectedState !== "All";
+  const isCityActive = selectedCity && selectedCity !== "All" && selectedCity !== "All Cities";
+  const isStateActive = selectedState && selectedState !== "All" && selectedState !== "All States";
 
   const locationText = isCityActive
     ? selectedCity
@@ -69,7 +69,9 @@ export default function CustomerServicesEmptyState({
           mb: 1,
         }}
       >
-        We aren't in {locationText} yet!
+        {isCityActive || isStateActive
+          ? `We aren't in ${locationText} yet!`
+          : "No pooja services found"}
       </Typography>
       <Typography
         sx={{
@@ -80,9 +82,15 @@ export default function CustomerServicesEmptyState({
           mb: 3,
         }}
       >
-        We currently do not offer services in <strong>{regionText}</strong>, but we
-        are expanding rapidly! We will start serving here very soon. In the
-        meantime, please check services in another city or state.
+        {isCityActive || isStateActive ? (
+          <>
+            We currently do not offer services in <strong>{regionText}</strong>, but we
+            are expanding rapidly! We will start serving here very soon. In the
+            meantime, please check services in another city or state.
+          </>
+        ) : (
+          "No pooja services found matching your selected search or category filters. Please try resetting your filters or searching for something else."
+        )}
       </Typography>
       <Button
         variant="outlined"
@@ -100,7 +108,7 @@ export default function CustomerServicesEmptyState({
           },
         }}
       >
-        View All Available Locations
+        {isCityActive || isStateActive ? "View All Available Locations" : "Clear Filters"}
       </Button>
     </Paper>
   );

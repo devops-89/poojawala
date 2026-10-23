@@ -20,13 +20,36 @@ export default function AdminProductDetailsContent() {
 
   useEffect(() => {
     const fetchDetails = async () => {
-      if (!params.id) return;
+      const identifier = params.id as string;
+      if (!identifier) return;
+
+      if (
+        product &&
+        (product.slug === identifier || String(product.id) === String(identifier))
+      ) {
+        return;
+      }
+
       try {
         setLoading(true);
-        const res = await getProductByIdAPI(params.id as string);
+        const res = await getProductByIdAPI(identifier);
         const data = res?.data?.data || res?.data || res;
         if (data) {
           setProduct(data);
+          if (data.id && typeof window !== "undefined") {
+            localStorage.setItem("last_product_id", String(data.id));
+            sessionStorage.setItem("last_product_id", String(data.id));
+            if (data.slug) {
+              const s = String(data.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+              localStorage.setItem(`product_slug_${s}`, String(data.id));
+              sessionStorage.setItem(`product_slug_${s}`, String(data.id));
+              if (/^\d+$/.test(String(identifier))) {
+                window.history.replaceState(null, "", `/admin/products/${data.slug}`);
+              }
+            }
+          }
         } else {
           showSnackbar("Failed to load product details", "error");
         }
@@ -39,7 +62,7 @@ export default function AdminProductDetailsContent() {
     };
 
     fetchDetails();
-  }, [params.id, showSnackbar]);
+  }, [params.id, showSnackbar, product]);
 
   if (loading) {
     return (
@@ -79,12 +102,12 @@ export default function AdminProductDetailsContent() {
         title="Product Details"
         breadcrumbs={[
           { label: "Products", href: "/admin/products" },
-          { label: "Product Details" },
+          { label: product.name || "Product Details" },
         ]}
         actionButton={
           <Button
             component={NextLink}
-            href={`/admin/products/edit/${product.id}`}
+            href={`/admin/products/edit/${product.slug || product.id}`}
             variant="contained"
             startIcon={<EditIcon />}
             sx={{

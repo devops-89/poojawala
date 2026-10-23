@@ -5,11 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, TablePagination, CircularProgress, Skeleton } from '@mui/material';
 import { getAdminPayoutsAPI, getAdminFinanceStatsAPI } from '@/api/paymentControllers';
 
-const STATUS_CHIP: Record<string, { label: string; backgroundColor: string; color: string }> = {
-  Completed: { label: 'Completed', backgroundColor: '#E8F5E9', color: '#2E7D32' },
-  'Pending Payout': { label: 'Pending', backgroundColor: '#FFF3E0', color: '#E65100' },
-  Refunded: { label: 'Refunded', backgroundColor: '#FFEBEE', color: '#C62828' }
-};
+
 
 import {
   getTablePaginationState,
@@ -23,11 +19,11 @@ export default function AdminFinancialsContent() {
 
   const [page, setPage] = useState(initialPagination.page);
   const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
-  
+
   const [payouts, setPayouts] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  
+
   const [stats, setStats] = useState<any>(null);
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -62,8 +58,9 @@ export default function AdminFinancialsContent() {
       setStatsLoading(true);
       try {
         const res = await getAdminFinanceStatsAPI();
-        if (res.success && res.data?.data) {
-          setStats(res.data.data);
+        const rawStats = res?.data?.data || res?.data;
+        if (rawStats) {
+          setStats(rawStats);
         }
       } catch (error) {
         console.error('Error fetching admin finance stats:', error);
@@ -78,20 +75,32 @@ export default function AdminFinancialsContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <Box>
         <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1e293b' }}>
-          Purohit Payouts & Financials
+          Partner Payouts & Financials
         </Typography>
         <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#64748b', mt: 0.5 }}>
-          Manage and view all transaction ledger and automated payouts
+          Manage and view all transaction ledger and automated partner payouts
         </Typography>
       </Box>
 
       {/* Finance Overview Cards */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2 }}>
         {[
-          { title: 'Total Revenue', value: statsLoading ? null : (stats?.totalRevenue ? `₹${stats.totalRevenue}` : '₹0') },
-          { title: 'Purohit Payouts', value: statsLoading ? null : (stats?.purohitPayoutsAmount ? `₹${stats.purohitPayoutsAmount}` : '₹0') },
-          { title: 'Pending Transactions', value: statsLoading ? null : (stats?.pendingPayoutsNumber || '0') },
-          { title: 'Successful Payouts', value: statsLoading ? null : (stats?.successfulPayoutsNumber || '0') }
+          {
+            title: 'Purohit Payout',
+            value: statsLoading ? null : (stats?.purohitPayoutAmount != null ? `₹${Number(stats.purohitPayoutAmount).toLocaleString('en-IN')}` : '₹0'),
+          },
+          {
+            title: 'Astrologer Payout',
+            value: statsLoading ? null : (stats?.astrologerPayoutAmount != null ? `₹${Number(stats.astrologerPayoutAmount).toLocaleString('en-IN')}` : '₹0'),
+          },
+          {
+            title: 'Pending Payouts',
+            value: statsLoading ? null : (stats?.pendingPayoutsCount != null ? String(stats.pendingPayoutsCount) : '0'),
+          },
+          {
+            title: 'Successful Payouts',
+            value: statsLoading ? null : (stats?.successfulPayoutsCount != null ? String(stats.successfulPayoutsCount) : '0'),
+          },
         ].map((card, idx) => (
           <Paper
             key={idx}
@@ -122,17 +131,20 @@ export default function AdminFinancialsContent() {
       {/* Payout Table */}
       <Paper elevation={0} sx={{ border: "1px solid #e2e8f0", borderRadius: 3, overflow: "hidden" }}>
         <TableContainer>
-          <Table size="small" sx={{ minWidth: 800 }}>
+          <Table size="small" sx={{ minWidth: 850 }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#f8fafc" }}>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", py: 2 }}>
-                  TXN ID
+                  Booking ID
                 </TableCell>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Purohit
+                  Type
                 </TableCell>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Date
+                  Partner
+                </TableCell>
+                <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  Payout Date
                 </TableCell>
                 <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: 12, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Gross Amount
@@ -150,7 +162,8 @@ export default function AdminFinancialsContent() {
               {loading ? (
                 Array.from(new Array(5)).map((_, idx) => (
                   <TableRow key={idx}>
-                    <TableCell><Skeleton variant="text" width={80} /></TableCell>
+                    <TableCell><Skeleton variant="text" width={120} /></TableCell>
+                    <TableCell><Skeleton variant="rounded" width={80} height={24} /></TableCell>
                     <TableCell><Skeleton variant="text" width={120} /></TableCell>
                     <TableCell><Skeleton variant="text" width={100} /></TableCell>
                     <TableCell><Skeleton variant="text" width={70} /></TableCell>
@@ -160,14 +173,6 @@ export default function AdminFinancialsContent() {
                 ))
               ) : payouts.length > 0 ? (
                 payouts.map((txn) => {
-                  const statusMap: Record<string, string> = {
-                    'PAID': 'Completed',
-                    'PENDING': 'Pending Payout',
-                    'REFUNDED': 'Refunded'
-                  };
-                  const mappedStatus = statusMap[txn.purohitPayoutStatus] || txn.purohitPayoutStatus;
-                  const statusConfig = STATUS_CHIP[mappedStatus] || { label: mappedStatus, backgroundColor: '#f1f5f9', color: '#475569' };
-
                   return (
                     <TableRow
                       key={txn.paymentId}
@@ -175,13 +180,32 @@ export default function AdminFinancialsContent() {
                       sx={{ "&:last-child td": { borderBottom: 0 }, cursor: "default" }}
                     >
                       <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 700, color: COLORS.PRIMARY, py: 2 }}>
-                        TXN-{txn.paymentId}
+                        {txn.bookingId ? `B-${txn.bookingId}` : (txn.paymentId ? `B-${txn.paymentId}` : '-')}
+                      </TableCell>
+                      <TableCell sx={{ py: 2 }}>
+                        <Chip
+                          label={txn.bookingType || '-'}
+                          size="small"
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: 11,
+                            fontFamily: FONTS.OUTFIT,
+                            backgroundColor: txn.bookingType === 'ASTROLOGY' ? '#F3E8FF' : '#E0F2FE',
+                            color: txn.bookingType === 'ASTROLOGY' ? '#7E22CE' : '#0369A1',
+                          }}
+                        />
                       </TableCell>
                       <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
-                        {txn.purohitName}
+                        {txn.partnerName || "-"}
                       </TableCell>
                       <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, color: "#475569" }}>
-                        {txn.purohitPayoutDate ? new Date(txn.purohitPayoutDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-'}
+                        {txn.partnerPayoutDate
+                          ? new Date(txn.partnerPayoutDate).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })
+                          : '-'}
                       </TableCell>
                       <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
                         ₹{txn.finalAmount}
@@ -191,14 +215,24 @@ export default function AdminFinancialsContent() {
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={statusConfig.label}
+                          label={txn.partnerPayoutStatus || "-"}
                           size="small"
                           sx={{
-                            fontWeight: 600,
+                            fontWeight: 700,
                             fontSize: 11,
                             fontFamily: FONTS.OUTFIT,
-                            backgroundColor: statusConfig.backgroundColor,
-                            color: statusConfig.color,
+                            backgroundColor:
+                              txn.partnerPayoutStatus === 'PAID'
+                                ? '#E8F5E9'
+                                : txn.partnerPayoutStatus === 'PENDING'
+                                  ? '#FFF3E0'
+                                  : '#F1F5F9',
+                            color:
+                              txn.partnerPayoutStatus === 'PAID'
+                                ? '#2E7D32'
+                                : txn.partnerPayoutStatus === 'PENDING'
+                                  ? '#E65100'
+                                  : '#475569',
                           }}
                         />
                       </TableCell>
@@ -207,7 +241,7 @@ export default function AdminFinancialsContent() {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 6, color: '#64748b', fontFamily: FONTS.OUTFIT }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6, color: '#64748b', fontFamily: FONTS.OUTFIT }}>
                     No payouts found matching your criteria.
                   </TableCell>
                 </TableRow>

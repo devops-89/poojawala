@@ -12,6 +12,8 @@ export const getPurohitPayoutRange = (serviceObj: any): string => {
     basicPlan.price ?? service?.priceWithoutSamagri ?? service?.minPrice ?? 0
   );
   let basicPayout =
+    basicPlan.basicPartnerPayoutAmount ??
+    basicPlan.partnerPayoutAmount ??
     basicPlan.basicPurohitPayoutAmount ??
     basicPlan.purohitPayoutAmount;
 
@@ -25,6 +27,8 @@ export const getPurohitPayoutRange = (serviceObj: any): string => {
     standardPlan.price ?? service?.priceWithSamagri ?? service?.maxPrice ?? 0
   );
   let standardPayout =
+    standardPlan.standardPartnerPayoutAmount ??
+    standardPlan.partnerPayoutAmount ??
     standardPlan.standardPurohitPayoutAmount ??
     standardPlan.purohitPayoutAmount;
 
@@ -35,9 +39,10 @@ export const getPurohitPayoutRange = (serviceObj: any): string => {
   const numBasic = Number(basicPayout || 0);
   const numStandard = Number(standardPayout || 0);
 
-  // Direct override on purohitService if present and > 0
-  if (serviceObj.purohitPayoutAmount && Number(serviceObj.purohitPayoutAmount) > 0) {
-    return `₹${Number(serviceObj.purohitPayoutAmount).toLocaleString("en-IN")}`;
+  // Direct override on purohitService/partnerService if present and > 0
+  const directPayout = serviceObj.partnerPayoutAmount ?? serviceObj.purohitPayoutAmount;
+  if (directPayout && Number(directPayout) > 0) {
+    return `₹${Number(directPayout).toLocaleString("en-IN")}`;
   }
 
   if (numBasic > 0 && numStandard > 0 && numBasic !== numStandard) {
@@ -57,8 +62,9 @@ export const getBookingPurohitPayoutDisplay = (booking: any): string => {
   if (!booking) return "₹0";
 
   // 1. Direct payout override from backend on booking
-  if (booking.purohitPayoutAmount && Number(booking.purohitPayoutAmount) > 0) {
-    return `₹${Number(booking.purohitPayoutAmount).toLocaleString("en-IN")}`;
+  const directBookingPayout = booking.partnerPayoutAmount ?? booking.purohitPayoutAmount;
+  if (directBookingPayout && Number(directBookingPayout) > 0) {
+    return `₹${Number(directBookingPayout).toLocaleString("en-IN")}`;
   }
 
   const service = booking.service || {};
@@ -96,6 +102,8 @@ export const getBookingPurohitPayoutDisplay = (booking: any): string => {
           0
       );
       let standardPayout =
+        standardPlan.standardPartnerPayoutAmount ??
+        standardPlan.partnerPayoutAmount ??
         standardPlan.standardPurohitPayoutAmount ??
         standardPlan.purohitPayoutAmount;
       if (standardPayout == null || standardPayout === undefined) {
@@ -119,6 +127,8 @@ export const getBookingPurohitPayoutDisplay = (booking: any): string => {
           0
       );
       let basicPayout =
+        basicPlan.basicPartnerPayoutAmount ??
+        basicPlan.partnerPayoutAmount ??
         basicPlan.basicPurohitPayoutAmount ??
         basicPlan.purohitPayoutAmount;
       if (basicPayout == null || basicPayout === undefined) {

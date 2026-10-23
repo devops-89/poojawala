@@ -29,9 +29,10 @@ interface CustomerServicesFiltersProps {
   selectedTemple?: string;
   onTempleChange?: (templeId: string, templeName: string) => void;
   // City filter props
-  cityOptions: string[];
-  selectedCity: string;
-  onCityChange: (value: string) => void;
+  cityOptions?: string[];
+  selectedCity?: string;
+  onCityChange?: (value: string) => void;
+  hideLocationFilters?: boolean;
 }
 
 export default function CustomerServicesFilters({
@@ -49,12 +50,18 @@ export default function CustomerServicesFilters({
   cityOptions,
   selectedCity,
   onCityChange,
+  hideLocationFilters = false,
 }: CustomerServicesFiltersProps) {
   const [internalCategories, setInternalCategories] = useState<CategoryOption[]>([]);
   const [internalTemples, setInternalTemples] = useState<TempleOption[]>([]);
 
+  const catsFetched = React.useRef(false);
+  const templesFetched = React.useRef(false);
+
   useEffect(() => {
+    if (catsFetched.current) return;
     if (onCategoryChange && (!categoryOptions || categoryOptions.length === 0)) {
+      catsFetched.current = true;
       const fetchCats = async () => {
         try {
           const res = await getServiceCategoriesAPI(1, 100, "", true, "SERVICE");
@@ -81,10 +88,12 @@ export default function CustomerServicesFilters({
       };
       fetchCats();
     }
-  }, [categoryOptions, onCategoryChange]);
+  }, []);
 
   useEffect(() => {
+    if (templesFetched.current) return;
     if (onTempleChange && (!templeOptions || templeOptions.length === 0)) {
+      templesFetched.current = true;
       const fetchTemples = async () => {
         try {
           const res = await getTemplesAPI(1, 100, "", true);
@@ -111,7 +120,7 @@ export default function CustomerServicesFilters({
       };
       fetchTemples();
     }
-  }, [templeOptions, onTempleChange]);
+  }, []);
 
   const catsToUse = categoryOptions && categoryOptions.length > 0 ? categoryOptions : internalCategories;
   const categoryNames = ["All Categories", ...catsToUse.map((c) => c.name)];
@@ -145,11 +154,17 @@ export default function CustomerServicesFilters({
     return selectedTemple;
   }, [selectedTemple, templesToUse]);
 
+  const showState = !hideLocationFilters && Boolean(stateOptions && onStateChange);
+  const showCity = !hideLocationFilters && Boolean(cityOptions && onCityChange);
+  const showCategory = Boolean(onCategoryChange);
+  const showTemple = Boolean(onTempleChange);
+
   const filterCount =
-    (stateOptions && onStateChange ? 1 : 0) +
-    (onCategoryChange ? 1 : 0) +
-    (onTempleChange ? 1 : 0) +
-    1; // City is always present
+    (showState ? 1 : 0) +
+    (showCategory ? 1 : 0) +
+    (showTemple ? 1 : 0) +
+    (showCity ? 1 : 0);
+
   const filterGridSize =
     filterCount === 4
       ? { xs: 12, sm: 6, md: 3 }
@@ -157,7 +172,7 @@ export default function CustomerServicesFilters({
       ? { xs: 12, sm: 4 }
       : filterCount === 2
       ? { xs: 12, sm: 6 }
-      : { xs: 12 };
+      : { xs: 12, sm: 6, md: 4 };
 
   const [localSearch, setLocalSearch] = useState(searchTerm || "");
 
@@ -176,8 +191,8 @@ export default function CustomerServicesFilters({
 
   return (
     <Grid container spacing={2} sx={{ mb: 4 }}>
-      {/* Search Input - Full Width */}
-      <Grid size={{ xs: 12 }}>
+      {/* Search Input - Grid of 2 when hideLocationFilters is true, else Full Width */}
+      <Grid size={hideLocationFilters ? { xs: 12, sm: 6 } : { xs: 12 }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -201,8 +216,8 @@ export default function CustomerServicesFilters({
         />
       </Grid>
 
-      {/* State Filter (Rendered if stateOptions & onStateChange are passed) */}
-      {stateOptions && onStateChange && (
+      {/* State Filter (Rendered if stateOptions & onStateChange are passed and not hidden) */}
+      {showState && stateOptions && onStateChange && (
         <Grid size={filterGridSize}>
           <Autocomplete
             openOnFocus
@@ -239,7 +254,7 @@ export default function CustomerServicesFilters({
 
       {/* Category Filter (Rendered if onCategoryChange is passed) */}
       {onCategoryChange && (
-        <Grid size={filterGridSize}>
+        <Grid size={hideLocationFilters ? { xs: 12, sm: 6 } : filterGridSize}>
           <Autocomplete
             openOnFocus
             options={categoryNames}
@@ -316,48 +331,50 @@ export default function CustomerServicesFilters({
       )}
 
       {/* City Filter */}
-      <Grid size={filterGridSize}>
-        <Autocomplete
-          openOnFocus
-          disabled={!selectedState || selectedState === "All"}
-          options={["All Cities", ...cityOptions]}
-          value={
-            selectedCity && selectedCity !== "All"
-              ? selectedCity
-              : "All Cities"
-          }
-          onChange={(_, newValue) => {
-            const val =
-              !newValue || newValue === "All Cities" ? "All" : newValue;
-            onCityChange(val);
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Filter by City"
-              placeholder={
-                !selectedState || selectedState === "All"
-                  ? "Select State first"
-                  : "Select or type City"
-              }
-              variant="outlined"
-              autoComplete="off"
-              helperText={
-                !selectedState || selectedState === "All"
-                  ? "Select state to enable city filter"
-                  : undefined
-              }
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
-                  bgcolor: "white",
-                  "& fieldset": { borderColor: "#E0E0E0" },
-                },
-              }}
-            />
-          )}
-        />
-      </Grid>
+      {showCity && cityOptions && onCityChange && (
+        <Grid size={filterGridSize}>
+          <Autocomplete
+            openOnFocus
+            disabled={!selectedState || selectedState === "All"}
+            options={["All Cities", ...cityOptions]}
+            value={
+              selectedCity && selectedCity !== "All"
+                ? selectedCity
+                : "All Cities"
+            }
+            onChange={(_, newValue) => {
+              const val =
+                !newValue || newValue === "All Cities" ? "All" : newValue;
+              onCityChange(val);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Filter by City"
+                placeholder={
+                  !selectedState || selectedState === "All"
+                    ? "Select State first"
+                    : "Select or type City"
+                }
+                variant="outlined"
+                autoComplete="off"
+                helperText={
+                  !selectedState || selectedState === "All"
+                    ? "Select state to enable city filter"
+                    : undefined
+                }
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "12px",
+                    bgcolor: "white",
+                    "& fieldset": { borderColor: "#E0E0E0" },
+                  },
+                }}
+              />
+            )}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 }

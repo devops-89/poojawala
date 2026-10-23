@@ -1,6 +1,6 @@
 "use client";
 
-import { getServicesAPI } from "@/api/serviceControllers";
+import { getAllServicesAPI } from "@/api/serviceControllers";
 import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml } from "@/utils/helpers";
+import { formatServicePriceRange, stripHtml } from "@/utils/helpers";
 
 const formatDuration = (mins: number) => {
   if (!mins) return "2-3 hrs";
@@ -37,79 +37,53 @@ export default function PopularPackages() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await getServicesAPI(
+        const response = await getAllServicesAPI(
           1,
           4,
           "",
-          undefined,
-          undefined,
-          undefined,
           true,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          false,
+          undefined,
+          true
         );
-        if (
-          response?.success &&
-          response?.data?.data &&
-          Array.isArray(response.data.data)
-        ) {
-          const activeOnly = response.data.data.filter(
-            (item: any) => item.isActive !== false,
-          );
-          const apiPackages = activeOnly.map((item: any) => {
-            let minP: number | null = item.minPrice != null ? Number(item.minPrice) : null;
-            let maxP: number | null = item.maxPrice != null ? Number(item.maxPrice) : null;
+        const items =
+          response?.data?.data && Array.isArray(response.data.data)
+            ? response.data.data
+            : response?.data && Array.isArray(response.data)
+            ? response.data
+            : Array.isArray(response)
+            ? response
+            : [];
+        const activeOnly = items.filter(
+          (item: any) => item.isActive !== false,
+        );
+        const apiPackages = activeOnly.map((item: any) => {
+          const priceStr = formatServicePriceRange(item);
 
-            if ((minP == null || isNaN(minP)) && item.plans && typeof item.plans === "object") {
-              const prices: number[] = [];
-              const planList = Array.isArray(item.plans) ? item.plans : Object.values(item.plans);
-              planList.forEach((p: any) => {
-                if (p && p.price != null && !isNaN(Number(p.price))) {
-                  prices.push(Number(p.price));
-                }
-              });
-              if (prices.length > 0) {
-                minP = Math.min(...prices);
-                maxP = Math.max(...prices);
-              }
-            }
-
-            let priceStr = "Price on Request";
-            if (minP != null && !isNaN(minP)) {
-              if (maxP != null && !isNaN(maxP) && maxP > minP) {
-                priceStr = `₹${minP.toLocaleString("en-IN")} - ₹${maxP.toLocaleString("en-IN")}`;
-              } else {
-                priceStr = `₹${minP.toLocaleString("en-IN")}`;
-              }
-            } else if (item.priceWithoutSamagri != null) {
-              const p1 = Number(item.priceWithoutSamagri);
-              if (item.priceWithSamagri != null && Number(item.priceWithSamagri) > p1) {
-                priceStr = `₹${p1.toLocaleString("en-IN")} - ₹${Number(item.priceWithSamagri).toLocaleString("en-IN")}`;
-              } else {
-                priceStr = `₹${p1.toLocaleString("en-IN")}`;
-              }
-            }
-
-            return {
-              id: item.id,
-              title: item.name,
-              description:
-                item.description ||
-                item.shortDescription ||
-                "Traditional Vedic pooja performed by an experienced Purohit.",
-              duration: formatDuration(item.durationMinutes),
-              price: priceStr,
-              unit: "/ ceremony",
-              image:
-                item.iconDownloadurl ||
-                item.iconUrl ||
-                "/images/home/poojaPackages/satyanarayan.webp",
-              isOnline: item.isOnline,
-              isOffline: item.isOffline,
-            };
-          });
-          setPackages(apiPackages.slice(0, 4));
-        } else {
-          setPackages([]);
-        }
+          return {
+            id: item.id,
+            slug: item.slug,
+            title: item.name,
+            description:
+              item.description ||
+              item.shortDescription ||
+              "Traditional Vedic pooja performed by an experienced Purohit.",
+            duration: formatDuration(item.durationMinutes),
+            price: priceStr,
+            unit: "/ ceremony",
+            image:
+              item.iconDownloadurl ||
+              item.iconUrl ||
+              "/images/home/poojaPackages/satyanarayan.webp",
+            isOnline: item.isOnline,
+            isOffline: item.isOffline,
+          };
+        });
+        setPackages(apiPackages.slice(0, 4));
       } catch (error) {
         console.error("Failed to fetch popular packages:", error);
         setPackages([]);
@@ -240,7 +214,7 @@ export default function PopularPackages() {
               >
                 <Card
                   elevation={0}
-                  onClick={() => router.push("/services")}
+                  onClick={() => router.push(`/services/${pkg.id}`)}
                   sx={{
                     width: "100%",
                     height: "100%",
@@ -293,31 +267,6 @@ export default function PopularPackages() {
                           display: "block",
                         }}
                       />
-                      {(pkg.isOnline || pkg.isOffline) && (
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            top: 8,
-                            left: 8,
-                            bgcolor: "rgba(255, 255, 255, 0.95)",
-                            backdropFilter: "blur(4px)",
-                            color: "#0369a1",
-                            px: 1.25,
-                            py: 0.35,
-                            borderRadius: "6px",
-                            fontSize: "11px",
-                            fontWeight: 700,
-                            border: "1px solid #bae6fd",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.06)",
-                          }}
-                        >
-                          {pkg.isOnline && pkg.isOffline
-                            ? "Online & Offline"
-                            : pkg.isOnline
-                              ? "Online"
-                              : "Offline"}
-                        </Box>
-                      )}
                     </Box>
                     <Typography
                       component="h3"

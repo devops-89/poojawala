@@ -11,6 +11,7 @@ import {
   CircularProgress,
   IconButton,
   Paper,
+  Tab,
   Table,
   TableBody,
   TableCell,
@@ -18,9 +19,11 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tabs,
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
@@ -30,6 +33,24 @@ import {
 } from "@/utils/paginationHelper";
 
 export default function AdminBookingSettlementsContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [bookingType, setBookingType] = useState<"POOJA" | "ASTROLOGY">(() => {
+    const typeParam = searchParams.get("type")?.toUpperCase();
+    if (typeParam === "ASTROLOGY" || typeParam === "POOJA") {
+      return typeParam as "POOJA" | "ASTROLOGY";
+    }
+    if (typeof window !== "undefined") {
+      const savedType = sessionStorage.getItem("admin_booking_settlements_type");
+      if (savedType === "ASTROLOGY" || savedType === "POOJA") {
+        return savedType as "POOJA" | "ASTROLOGY";
+      }
+    }
+    return "POOJA";
+  });
+
   const initialPagination = getTablePaginationState("admin_booking_settlements_state", {
     defaultLimit: 10,
   });
@@ -42,10 +63,45 @@ export default function AdminBookingSettlementsContent() {
   const [loading, setLoading] = useState(true);
   const { showSnackbar } = useSnackbarStore();
 
+  // Sync bookingType with URL searchParams & sessionStorage
+  useEffect(() => {
+    const typeParam = searchParams.get("type")?.toUpperCase();
+    if (typeParam === "ASTROLOGY" || typeParam === "POOJA") {
+      if (typeParam !== bookingType) {
+        setBookingType(typeParam as "POOJA" | "ASTROLOGY");
+      }
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("admin_booking_settlements_type", typeParam);
+      }
+    } else if (typeof window !== "undefined") {
+      const savedType = sessionStorage.getItem("admin_booking_settlements_type");
+      if (savedType === "ASTROLOGY" || savedType === "POOJA") {
+        if (savedType !== bookingType) {
+          setBookingType(savedType as "POOJA" | "ASTROLOGY");
+        }
+        const params = new URLSearchParams(window.location.search);
+        params.set("type", savedType);
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      }
+    }
+  }, [searchParams, pathname, router, bookingType]);
+
+  const handleBookingTypeChange = (newType: "POOJA" | "ASTROLOGY") => {
+    if (newType === bookingType) return;
+    setBookingType(newType);
+    setPage(0);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("admin_booking_settlements_type", newType);
+      const params = new URLSearchParams(window.location.search);
+      params.set("type", newType);
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+  };
+
   const fetchSettlements = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCompletedBookingsAPI(page + 1, rowsPerPage, "POOJA");
+      const res = await getCompletedBookingsAPI(page + 1, rowsPerPage, bookingType);
       if (res.success && res.data?.bookings) {
         setSettlements(res.data.bookings);
         setTotalCount(
@@ -53,6 +109,9 @@ export default function AdminBookingSettlementsContent() {
             res.data.pagination?.total ||
             res.data.bookings.length,
         );
+      } else {
+        setSettlements([]);
+        setTotalCount(0);
       }
     } catch (err: any) {
       console.error("Failed to fetch settlements:", err);
@@ -60,10 +119,12 @@ export default function AdminBookingSettlementsContent() {
         err.response?.data?.message || "Failed to fetch bookings for payout",
         "error",
       );
+      setSettlements([]);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, bookingType, showSnackbar]);
 
   useEffect(() => {
     fetchSettlements();
@@ -91,7 +152,7 @@ export default function AdminBookingSettlementsContent() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       {/* Page Header */}
       <Box>
         <Typography
@@ -111,8 +172,38 @@ export default function AdminBookingSettlementsContent() {
             mt: 0.5,
           }}
         >
-          View completed bookings and process purohit payouts
+          View completed bookings and process {bookingType === "ASTROLOGY" ? "astrologer" : "purohit"} payouts
         </Typography>
+      </Box>
+
+      {/* Booking Type Tabs */}
+      <Box sx={{ borderBottom: "1px solid #e2e8f0" }}>
+        <Tabs
+          value={bookingType}
+          onChange={(_, val) => handleBookingTypeChange(val)}
+          sx={{
+            "& .MuiTab-root": {
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: "15px",
+              textTransform: "none",
+              color: "#64748b",
+              minHeight: "48px",
+              px: 3,
+              "&.Mui-selected": {
+                color: COLORS.PRIMARY,
+              },
+            },
+            "& .MuiTabs-indicator": {
+              bgcolor: COLORS.PRIMARY,
+              height: "3px",
+              borderRadius: "3px 3px 0 0",
+            },
+          }}
+        >
+          <Tab value="POOJA" label="Pooja Bookings" />
+          <Tab value="ASTROLOGY" label="Astrology Bookings" />
+        </Tabs>
       </Box>
 
       {/* Table */}
@@ -146,8 +237,19 @@ export default function AdminBookingSettlementsContent() {
                     fontSize: "0.75rem",
                   }}
                 >
-                  PUROHIT NAME
+                  {bookingType === "ASTROLOGY" ? "ASTROLOGER NAME" : "PARTNER NAME"}
                 </TableCell>
+                {bookingType === "POOJA" && (
+                  <TableCell
+                    sx={{
+                      color: "#64748b",
+                      fontWeight: 700,
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    SERVICE NAME
+                  </TableCell>
+                )}
                 <TableCell
                   sx={{
                     color: "#64748b",
@@ -155,16 +257,7 @@ export default function AdminBookingSettlementsContent() {
                     fontSize: "0.75rem",
                   }}
                 >
-                  SERVICE NAME
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#64748b",
-                    fontWeight: 700,
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  AMOUNT
+                  PAYOUT AMOUNT
                 </TableCell>
                 <TableCell
                   sx={{
@@ -191,7 +284,7 @@ export default function AdminBookingSettlementsContent() {
                     fontSize: "0.75rem",
                   }}
                 >
-                  PAYOUT STATUS
+                  {bookingType === "ASTROLOGY" ? "PAYOUT STATUS" : "PARTNER PAYOUT STATUS"}
                 </TableCell>
                 <TableCell
                   align="right"
@@ -208,18 +301,22 @@ export default function AdminBookingSettlementsContent() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ py: 5 }}>
+                  <TableCell
+                    colSpan={bookingType === "POOJA" ? 7 : 6}
+                    align="center"
+                    sx={{ py: 5 }}
+                  >
                     <CircularProgress sx={{ color: COLORS.PRIMARY }} />
                   </TableCell>
                 </TableRow>
               ) : settlements.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={8}
+                    colSpan={bookingType === "POOJA" ? 7 : 6}
                     align="center"
                     sx={{ py: 5, color: "#64748b" }}
                   >
-                    No completed bookings found.
+                    No completed {bookingType === "ASTROLOGY" ? "astrology" : "pooja"} bookings found.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -230,17 +327,44 @@ export default function AdminBookingSettlementsContent() {
                     "payment",
                   );
                   const payoutStatusValue =
-                    item.payoutStatus || item.purohitPayoutStatus || "PENDING";
+                    item.partnerPayoutStatus ||
+                    item.purohitPayoutStatus ||
+                    item.astrologerPayoutStatus ||
+                    item.payoutStatus ||
+                    "PENDING";
                   const payoutStyle = getStatusStyle(
                     payoutStatusValue,
                     "payout",
                   );
 
-                  const technicianName = item.purohit?.user
-                    ? `${item.purohit.user.firstName} ${item.purohit.user.lastName || ""}`.trim()
-                    : item.purohit?.firstName
-                      ? `${item.purohit.firstName} ${item.purohit.lastName || ""}`.trim()
-                      : "Unknown";
+                  const technicianName =
+                    (item.astrologer
+                      ? item.astrologer.user
+                        ? `${item.astrologer.user.firstName || ""} ${item.astrologer.user.lastName || ""}`.trim()
+                        : `${item.astrologer.firstName || item.astrologer.name || ""} ${item.astrologer.lastName || ""}`.trim()
+                      : null) ||
+                    (item.purohit?.user
+                      ? `${item.purohit.user.firstName || ""} ${item.purohit.user.lastName || ""}`.trim()
+                      : item.purohit?.firstName
+                        ? `${item.purohit.firstName || ""} ${item.purohit.lastName || ""}`.trim()
+                        : item.partner?.user
+                          ? `${item.partner.user.firstName || ""} ${item.partner.user.lastName || ""}`.trim()
+                          : null) ||
+                    "Unknown";
+
+                  const rawPayout =
+                    (item.partnerPayoutAmount !== null && item.partnerPayoutAmount !== undefined && item.partnerPayoutAmount !== "" && item.partnerPayoutAmount !== "0.00")
+                      ? item.partnerPayoutAmount
+                      : (item.priceBreakDown?.astrologerPayout !== null && item.priceBreakDown?.astrologerPayout !== undefined)
+                        ? item.priceBreakDown.astrologerPayout
+                        : (item.astrologerProfile?.astrologerPayout !== null && item.astrologerProfile?.astrologerPayout !== undefined)
+                          ? item.astrologerProfile.astrologerPayout
+                          : (item.astrologer?.astrologerProfile?.astrologerPayout !== null && item.astrologer?.astrologerProfile?.astrologerPayout !== undefined)
+                            ? item.astrologer.astrologerProfile.astrologerPayout
+                            : item.purohitPayoutAmount || item.finalAmount || "0.00";
+
+                  const payoutAmount =
+                    typeof rawPayout === "number" ? rawPayout.toFixed(2) : rawPayout;
 
                   return (
                     <TableRow
@@ -273,17 +397,19 @@ export default function AdminBookingSettlementsContent() {
                           {technicianName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography
-                          sx={{
-                            color: "#64748b",
-                            fontFamily: FONTS.OUTFIT,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {item.service?.name || "Unknown"}
-                        </Typography>
-                      </TableCell>
+                      {bookingType === "POOJA" && (
+                        <TableCell>
+                          <Typography
+                            sx={{
+                              color: "#64748b",
+                              fontFamily: FONTS.OUTFIT,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {item.service?.name || "Unknown"}
+                          </Typography>
+                        </TableCell>
+                      )}
                       <TableCell>
                         <Typography
                           sx={{
@@ -292,10 +418,7 @@ export default function AdminBookingSettlementsContent() {
                             fontFamily: FONTS.OUTFIT,
                           }}
                         >
-                          ₹
-                          {item.purohitPayoutAmount ||
-                            item.finalAmount ||
-                            "0.00"}
+                          ₹{payoutAmount}
                         </Typography>
                       </TableCell>
                       <TableCell>

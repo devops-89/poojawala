@@ -94,7 +94,7 @@ export default function AddBookingAstrologerSection({
             const specializations = Array.isArray(profile?.specializations)
               ? profile.specializations.slice(0, 2).join(', ')
               : '';
-            const rate = profile?.ratePerMinute;
+            const rate = profile?.astrologyPrice || profile?.ratePerMinute;
 
             return (
               <Box
@@ -149,7 +149,7 @@ export default function AddBookingAstrologerSection({
                 {rate && (
                   <Chip
                     size="small"
-                    label={`₹${rate}/min`}
+                    label={`₹${rate}`}
                     sx={{
                       bgcolor: '#ecfdf5',
                       color: '#059669',
@@ -288,7 +288,7 @@ export default function AddBookingAstrologerSection({
                         fontFamily: FONTS.OUTFIT,
                       }}
                     >
-                      ₹{selectedAstrologer.astrologerProfile.ratePerMinute}/min
+                      ₹{selectedAstrologer.astrologerProfile.astrologyPrice || selectedAstrologer.astrologerProfile.ratePerMinute}
                     </Typography>
                   </Box>
                 )}

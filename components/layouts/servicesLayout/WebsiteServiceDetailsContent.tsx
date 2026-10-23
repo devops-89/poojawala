@@ -1,5 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
+import { formatServicePriceRange } from "@/utils/helpers";
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import WebsiteServiceAboutSection from "./WebsiteServiceAboutSection";
@@ -26,10 +27,19 @@ export default function WebsiteServiceDetailsContent() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
     const fetchService = async () => {
+      const identifier = (params.slug || params.id) as string;
+      if (!identifier) return;
+
+      if (
+        service &&
+        (service.slug === identifier || String(service.id) === String(identifier))
+      ) {
+        return;
+      }
+
       setLoading(true);
       try {
-        if (!params.id) return;
-        const res = await getServiceByIdAPI(params.id as string);
+        const res = await getServiceByIdAPI(identifier);
         if (res.success) {
           let rawData = res.data;
           if (rawData && rawData.data) {
@@ -39,6 +49,22 @@ export default function WebsiteServiceDetailsContent() {
             rawData = rawData.data;
           }
           setService(rawData);
+          if (rawData?.id && typeof window !== "undefined") {
+            localStorage.setItem("last_service_id", String(rawData.id));
+            sessionStorage.setItem("last_service_id", String(rawData.id));
+            if (rawData?.slug) {
+              const s = String(rawData.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              localStorage.setItem(`service_slug_${s}`, String(rawData.id));
+              sessionStorage.setItem(`service_slug_${s}`, String(rawData.id));
+              const currentPath = window.location.pathname;
+              const targetPath = `/services/${rawData.slug}`;
+              if (currentPath !== targetPath) {
+                window.history.replaceState(null, "", targetPath);
+              }
+            }
+          }
           // Keep viewport at top after content loads
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         } else {
@@ -52,7 +78,7 @@ export default function WebsiteServiceDetailsContent() {
       }
     };
     fetchService();
-  }, [params.id, showSnackbar]);
+  }, [params.id, params.slug, showSnackbar, service]);
 
   useEffect(() => {
     if (!loading && service) {
@@ -135,42 +161,7 @@ export default function WebsiteServiceDetailsContent() {
     );
   }
 
-  let minP: number | null =
-    service?.minPrice != null ? Number(service.minPrice) : null;
-  let maxP: number | null =
-    service?.maxPrice != null ? Number(service.maxPrice) : null;
-
-  if (service?.plans && typeof service.plans === "object") {
-    const prices: number[] = [];
-    const planList = Array.isArray(service.plans)
-      ? service.plans
-      : Object.values(service.plans);
-    planList.forEach((p: any) => {
-      if (p && p.price != null && !isNaN(Number(p.price))) {
-        prices.push(Number(p.price));
-      }
-    });
-    if (prices.length > 0) {
-      const calcMin = Math.min(...prices);
-      const calcMax = Math.max(...prices);
-      if (minP == null) minP = calcMin;
-      if (maxP == null) maxP = calcMax;
-    }
-  }
-
-  if (minP == null) {
-    minP = service?.priceWithoutSamagri ?? service?.price ?? service?.basePrice ?? null;
-  }
-  if (maxP == null) {
-    maxP = service?.priceWithSamagri ?? null;
-  }
-
-  const priceDisplay =
-    minP != null && maxP != null && maxP > minP
-      ? `₹${Number(minP).toLocaleString("en-IN")} – ₹${Number(maxP).toLocaleString("en-IN")}`
-      : minP != null
-        ? `₹${Number(minP).toLocaleString("en-IN")}`
-        : "Price on request";
+  const priceDisplay = formatServicePriceRange(service);
 
   const parseJsonList = (val: any) => {
     if (!val) return [];
@@ -205,13 +196,24 @@ export default function WebsiteServiceDetailsContent() {
           .join(" · ")
       : "";
 
-  const durationText = service.durationMinutes
-    ? service.durationMinutes >= 60
-      ? `${Math.floor(service.durationMinutes / 60)} HOURS`
-      : `${service.durationMinutes} MINS`
-    : service.duration
-      ? String(service.duration).toUpperCase()
-      : "2 HOURS";
+  const durationText = (() => {
+    const mins = Number(service?.durationMinutes);
+    if (!isNaN(mins) && mins > 0) {
+      const hours = Math.floor(mins / 60);
+      const remainingMins = mins % 60;
+      if (hours > 0 && remainingMins > 0) {
+        return `${hours} hr ${remainingMins} mins`;
+      }
+      if (hours > 0) {
+        return `${hours} hour${hours > 1 ? "s" : ""}`;
+      }
+      return `${remainingMins} mins`;
+    }
+    if (service?.duration) {
+      return String(service.duration);
+    }
+    return "";
+  })();
 
   const heroImage =
     service.bannerDownloadurl ||

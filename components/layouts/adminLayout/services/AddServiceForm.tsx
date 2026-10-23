@@ -81,22 +81,24 @@ const validationSchema = Yup.object().shape({
   basicPrice: Yup.number()
     .required("Basic plan price is required")
     .min(0, "Cannot be negative"),
-  standardPrice: Yup.number()
-    .required("Please fill in all required Standard Plan details.")
-    .typeError("Please fill in all required Standard Plan details.")
-    .min(0, "Cannot be negative")
-    .test(
-      "is-greater-than-basic",
-      "Standard plan price should be greater than or equal to Basic plan price",
-      function (value) {
-        const { basicPrice } = this.parent;
-        return (
-          basicPrice === undefined ||
-          value === undefined ||
-          value >= basicPrice
-        );
-      },
-    ),
+  standardPrice: Yup.number().when("isOffline", {
+    is: true,
+    then: (schema) =>
+      schema
+        .required("Please fill in all required Standard Plan details.")
+        .typeError("Please fill in all required Standard Plan details.")
+        .min(0, "Cannot be negative")
+        .test(
+          "is-greater-than-basic",
+          "Standard plan price should be greater than or equal to Basic plan price",
+          function (value) {
+            const { basicPrice } = this.parent;
+            if (value === undefined || value === null || (value as any) === "") return true;
+            return basicPrice === undefined || value >= basicPrice;
+          },
+        ),
+    otherwise: (schema) => schema.nullable().notRequired(),
+  }),
   commissionPercentage: Yup.number()
     .required("Commission percentage is required")
     .min(0, "Cannot be negative")
@@ -105,20 +107,15 @@ const validationSchema = Yup.object().shape({
     .required("Duration is required")
     .min(1, "Duration must be at least 1 minute"),
   requiresVenue: Yup.boolean(),
-  isOnline: Yup.boolean().test(
-    "at-least-one-mode",
-    "Please select at least one service mode: Online or Offline",
-    function (value) {
-      const { isOffline } = this.parent;
-      return Boolean(value || isOffline);
-    }
-  ),
+  isOnline: Yup.boolean(),
   isOffline: Yup.boolean().test(
-    "at-least-one-mode",
-    "Please select at least one service mode: Online or Offline",
+    "single-mode-selected",
+    "Please select exactly one service mode: Online or Offline",
     function (value) {
       const { isOnline } = this.parent;
-      return Boolean(isOnline || value);
+      const on = Boolean(isOnline);
+      const off = Boolean(value);
+      return (on || off) && !(on && off);
     }
   ),
   isUpcomingFestival: Yup.boolean(),
@@ -180,7 +177,7 @@ export default function AddServiceForm() {
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
-      isOnline: true,
+      isOnline: false,
       isOffline: true,
       isUpcomingFestival: false,
       festivalStartDate: "",
@@ -198,7 +195,14 @@ export default function AddServiceForm() {
 
       if (!values.isOnline && !values.isOffline) {
         showSnackbar(
-          "Please select at least one service mode: Online or Offline",
+          "Please select a service mode: Online or Offline",
+          "error",
+        );
+        return;
+      }
+      if (values.isOnline && values.isOffline) {
+        showSnackbar(
+          "Please select only one service mode: Online or Offline",
           "error",
         );
         return;
@@ -220,7 +224,7 @@ export default function AddServiceForm() {
         formData.append("durationMinutes", String(values.durationMinutes));
 
         // Build plans JSON payload
-        const plansPayload = {
+        const plansPayload: any = {
           basic: {
             price: Number(values.basicPrice) || 0,
             features: (values.basicFeatures || [])
@@ -237,7 +241,10 @@ export default function AddServiceForm() {
                 isActive: true,
               })),
           },
-          standard: {
+        };
+
+        if (values.isOffline) {
+          plansPayload.standard = {
             price: Number(values.standardPrice) || 0,
             features: (values.standardFeatures || [])
               .filter((f: any) => f && (f.title?.trim() || f.key?.trim()))
@@ -252,8 +259,8 @@ export default function AddServiceForm() {
                     : "true",
                 isActive: true,
               })),
-          },
-        };
+          };
+        }
         formData.append("plans", JSON.stringify(plansPayload));
 
         if (
@@ -264,24 +271,27 @@ export default function AddServiceForm() {
           formData.append("sortOrder", String(values.sortOrder));
         }
 
-        // 3. Purohit Carry Items
-        const validBasicCarry = (values.basicPurohitCarryItems || [])
-          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
-          .filter(Boolean);
-        const validStandardCarry = (values.standardPurohitCarryItems || [])
-          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
-          .filter(Boolean);
+        // 3. Purohit Carry Items (Offline Only)
+        if (values.isOffline) {
+          const validBasicCarry = (values.basicPurohitCarryItems || [])
+            .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+            .filter(Boolean);
 
-        validBasicCarry.forEach((item, index) => {
-          formData.append(`purohitCarryItems[basic][${index}]`, item);
-        });
-        validStandardCarry.forEach((item, index) => {
-          formData.append(`purohitCarryItems[standard][${index}]`, item);
-        });
+          validBasicCarry.forEach((item, index) => {
+            formData.append(`purohitCarryItems[basic][${index}]`, item);
+          });
+
+          const validStandardCarry = (values.standardPurohitCarryItems || [])
+            .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+            .filter(Boolean);
+          validStandardCarry.forEach((item, index) => {
+            formData.append(`purohitCarryItems[standard][${index}]`, item);
+          });
+        }
 
         formData.append(
           "requiresVenue",
-          values.requiresVenue ? "true" : "false",
+          values.isOffline && values.requiresVenue ? "true" : "false",
         );
         formData.append(
           "isOnline",
@@ -313,11 +323,13 @@ export default function AddServiceForm() {
           formData.append("benefits", JSON.stringify(validBenefits));
         }
 
-        const validCities = values.cities.filter(
-          (c) => c.name && c.name.trim(),
-        );
-        if (validCities.length > 0) {
-          formData.append("cities", JSON.stringify(validCities));
+        if (values.isOffline) {
+          const validCities = values.cities.filter(
+            (c) => c.name && c.name.trim(),
+          );
+          if (validCities.length > 0) {
+            formData.append("cities", JSON.stringify(validCities));
+          }
         }
 
         const validLanguages = values.languages.filter(
@@ -412,7 +424,16 @@ export default function AddServiceForm() {
         formik.setFieldTouched("isOnline", true, true);
         formik.setFieldTouched("isOffline", true, true);
         showSnackbar(
-          "Please select at least one service mode: Online or Offline",
+          "Please select a service mode: Online or Offline",
+          "error",
+        );
+        return;
+      }
+      if (values.isOnline && values.isOffline) {
+        formik.setFieldTouched("isOnline", true, true);
+        formik.setFieldTouched("isOffline", true, true);
+        showSnackbar(
+          "Please select only one service mode: Online or Offline",
           "error",
         );
         return;
@@ -500,6 +521,15 @@ export default function AddServiceForm() {
           <Box sx={{ minHeight: 300 }}>
             {activeStep === 0 && (
               <Grid container spacing={3}>
+                <ServiceAvailabilityFields
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                />
+
                 <Grid size={{ xs: 12 }}>
                   <ServiceIconUploadField
                     iconPreview={iconPreview}
@@ -524,24 +554,18 @@ export default function AddServiceForm() {
                   setFieldValue={setFieldValue}
                 />
 
-                <ServiceCitiesFields
-                  cities={values.cities}
-                  setFieldValue={setFieldValue}
-                />
+                {values.isOffline && (
+                  <ServiceCitiesFields
+                    cities={values.cities}
+                    setFieldValue={setFieldValue}
+                  />
+                )}
 
                 <ServiceLanguagesFields
                   languages={values.languages}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   setFieldValue={setFieldValue}
-                />
-
-                <ServiceAvailabilityFields
-                  values={values}
-                  errors={errors}
-                  touched={touched}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
                 />
               </Grid>
             )}

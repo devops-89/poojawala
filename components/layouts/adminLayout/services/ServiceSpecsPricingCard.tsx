@@ -40,6 +40,7 @@ const formatFeatureName = (key: string) => {
 export default function ServiceSpecsPricingCard({
   service,
 }: ServiceSpecsPricingCardProps) {
+  const isOnlineService = Boolean(service?.isOnline && !service?.isOffline);
   // Extract Basic Plan details
   const basicPrice =
     service.plans?.basic?.price ?? service.priceWithoutSamagri ?? service.minPrice ?? 0;
@@ -183,39 +184,43 @@ export default function ServiceSpecsPricingCard({
                 display: "inline-block",
               }}
             />
-            Service Plans & Purohit Carry Items
+            {isOnlineService
+              ? "Online Pooja Package"
+              : "Service Plans & Purohit Carry Items"}
           </Typography>
 
           <Grid container spacing={3}>
             {/* Basic Plan Box */}
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: isOnlineService ? 8 : 6 }}>
               <ServicePlanCard
                 planType="basic"
-                planBadgeLabel="BASIC PLAN"
-                planTitle="Basic Ritual Package"
+                planBadgeLabel={isOnlineService ? "ONLINE POOJA PACKAGE" : "BASIC PLAN"}
+                planTitle={isOnlineService ? "Online Virtual Ritual Package" : "Basic Ritual Package"}
                 price={basicPrice}
                 tokenAmount={basicTokenAmount}
                 purohitPayoutAmount={basicPayoutAmount}
                 featureList={basicFeatureList}
-                carryItems={basicCarryItems}
+                carryItems={isOnlineService ? [] : basicCarryItems}
                 formatFeatureName={formatFeatureName}
               />
             </Grid>
 
             {/* Standard Plan Box */}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <ServicePlanCard
-                planType="standard"
-                planBadgeLabel="STANDARD PLAN"
-                planTitle="Standard Complete Package"
-                price={standardPrice}
-                tokenAmount={standardTokenAmount}
-                purohitPayoutAmount={standardPayoutAmount}
-                featureList={standardFeatureList}
-                carryItems={standardCarryItems}
-                formatFeatureName={formatFeatureName}
-              />
-            </Grid>
+            {!isOnlineService && (
+              <Grid size={{ xs: 12, md: 6 }}>
+                <ServicePlanCard
+                  planType="standard"
+                  planBadgeLabel="STANDARD PLAN"
+                  planTitle="Standard Complete Package"
+                  price={standardPrice}
+                  tokenAmount={standardTokenAmount}
+                  purohitPayoutAmount={standardPayoutAmount}
+                  featureList={standardFeatureList}
+                  carryItems={standardCarryItems}
+                  formatFeatureName={formatFeatureName}
+                />
+              </Grid>
+            )}
           </Grid>
         </Paper>
       </Grid>

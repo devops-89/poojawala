@@ -7,7 +7,6 @@ import ServiceCategoriesSection from "@/components/layouts/home-layout/ServiceCa
 import TemplesSection from "@/components/layouts/home-layout/TemplesSection";
 import Testimonials from "@/components/layouts/home-layout/Testimonials";
 import UpcomingFestivals from "@/components/layouts/home-layout/UpcomingFestivals";
-import VerifiedPurohits from "@/components/layouts/home-layout/VerifiedPurohits";
 import WhyPoojawala from "@/components/layouts/home-layout/WhyPoojawala";
 import WelcomeLocationModal from "@/components/widgets/WelcomeLocationModal";
 import { Box } from '@mui/material';
@@ -21,7 +20,6 @@ export default function Home() {
       <PoojaProcessSection />
       <ServiceCategoriesSection />
       <TemplesSection />
-      <VerifiedPurohits />
       <UpcomingFestivals />
       <Testimonials />
       <WhyPoojawala />
@@ -31,12 +29,41 @@ export default function Home() {
 }
 
 export const metadata: Metadata = {
-  title: '1Pooja | Book Experienced Pandits & Purohits Online',
-  description: 'Book verified and experienced Pandits for all Hindu pujas, homams, and rituals at your home. Quality pooja samagri and seamless online booking with 1Pooja.',
+  title: 'Book Experienced Pandits & Purohits online or offline | 1Pooja',
+  description:
+    'Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience.',
+  keywords: [
+    'satyanarayan pooja booking',
+    'satyanarayan katha pandit',
+    'satyanarayan pooja for new home',
+    'satyanarayan katha online booking',
+    'new office opening pooja',
+    'new vehicle pooja booking',
+    'pandit booking online',
+    'pitru dosh pooja booking',
+    'book rudrabhishek pooja',
+    'rudrabhishek pooja at home',
+    'ganesh pooja booking',
+    'vishwakarma pooja booking',
+    'shani shanti pooja booking',
+    'vastu dosh nivaran pooja',
+    'vastu dosh pooja booking',
+    'vastu shanti pooja booking',
+    'havan pooja booking',
+  ],
   alternates: {
     canonical: '/',
   },
   openGraph: {
+    title: 'Book Experienced Pandits & Purohits online or offline | 1Pooja',
+    description:
+      'Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience.',
     url: '/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Book Experienced Pandits & Purohits online or offline | 1Pooja',
+    description:
+      'Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience.',
   },
 };

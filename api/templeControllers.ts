@@ -24,9 +24,64 @@ export const getTemplesAPI = async (
   }
 };
 
+export const resolveTempleId = (id: string | number): string | number => {
+  if (!id) return id;
+  const isNumeric = /^\d+$/.test(String(id).trim());
+  if (isNumeric) return id;
+
+  if (typeof window !== "undefined") {
+    try {
+      const lower = String(id).trim().toLowerCase();
+      const cached =
+        localStorage.getItem(`slug_to_id_${lower}`) ||
+        sessionStorage.getItem(`slug_to_id_${lower}`) ||
+        localStorage.getItem(`temple_slug_${lower}`) ||
+        sessionStorage.getItem(`temple_slug_${lower}`) ||
+        localStorage.getItem(`slug_to_id_${id}`) ||
+        sessionStorage.getItem(`slug_to_id_${id}`) ||
+        localStorage.getItem(`temple_slug_${id}`) ||
+        sessionStorage.getItem(`temple_slug_${id}`) ||
+        localStorage.getItem("last_temple_id") ||
+        sessionStorage.getItem("last_temple_id");
+
+      if (cached && /^\d+$/.test(cached)) {
+        return cached;
+      }
+    } catch (e) {}
+  }
+
+  return id;
+};
+
 export const getTempleByIdAPI = async (id: string | number) => {
   try {
-    const response = await userPublicApi.get(`/temples/${id}`);
+    const numericId = resolveTempleId(id);
+
+    // STRICT SAFETY: NEVER call /temples/:id with non-numeric string to avoid 400 Validation Error
+    if (!/^\d+$/.test(String(numericId).trim())) {
+      console.warn(`[getTempleByIdAPI] Could not resolve numeric ID for slug: ${id}`);
+      return {
+        success: false,
+        message: "Temple not found",
+        data: null,
+      };
+    }
+
+    const response = await userPublicApi.get(`/temples/${numericId}`);
+    if (typeof window !== "undefined" && response?.data) {
+      const data = response.data?.data || response.data;
+      if (data?.id) {
+        localStorage.setItem("last_temple_id", String(data.id));
+        sessionStorage.setItem("last_temple_id", String(data.id));
+        if (data.slug) {
+          const s = String(data.slug).toLowerCase();
+          localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+          sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+          localStorage.setItem(`temple_slug_${s}`, String(data.id));
+          sessionStorage.setItem(`temple_slug_${s}`, String(data.id));
+        }
+      }
+    }
     return response.data;
   } catch (error) {
     throw error;
@@ -44,7 +99,8 @@ export const createTempleAPI = async (formData: FormData) => {
 
 export const updateTempleAPI = async (id: string | number, formData: FormData | any) => {
   try {
-    const response = await userSecuredApi.patch(`/temples/${id}`, formData);
+    const numericId = resolveTempleId(id);
+    const response = await userSecuredApi.patch(`/temples/${numericId}`, formData);
     return response.data;
   } catch (error) {
     throw error;
@@ -53,7 +109,8 @@ export const updateTempleAPI = async (id: string | number, formData: FormData | 
 
 export const updateTempleStatusAPI = async (id: string | number, isActive: boolean) => {
   try {
-    const response = await userSecuredApi.patch(`/temples/${id}`, { isActive });
+    const numericId = resolveTempleId(id);
+    const response = await userSecuredApi.patch(`/temples/${numericId}`, { isActive });
     return response.data;
   } catch (error) {
     throw error;
@@ -62,7 +119,8 @@ export const updateTempleStatusAPI = async (id: string | number, isActive: boole
 
 export const deleteTempleAPI = async (id: string | number) => {
   try {
-    const response = await userSecuredApi.delete(`/temples/${id}`);
+    const numericId = resolveTempleId(id);
+    const response = await userSecuredApi.delete(`/temples/${numericId}`);
     return response.data;
   } catch (error) {
     throw error;

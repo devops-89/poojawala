@@ -81,6 +81,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [imageRemoved, setImageRemoved] = useState(false);
+  const [numericTempleId, setNumericTempleId] = useState<number | string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialDataRef = useRef<{
@@ -142,7 +143,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
 
         let res;
         if (isEdit && id) {
-          res = await updateTempleAPI(id, formData);
+          res = await updateTempleAPI(numericTempleId || id, formData);
         } else {
           res = await createTempleAPI(formData);
         }
@@ -205,6 +206,23 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           const res = await getTempleByIdAPI(id);
           if (res.success && res.data) {
             const temple = res.data.data || res.data;
+            if (temple.id) {
+              setNumericTempleId(temple.id);
+              if (typeof window !== "undefined") {
+                localStorage.setItem("last_temple_id", String(temple.id));
+                sessionStorage.setItem("last_temple_id", String(temple.id));
+                if (temple.slug) {
+                  const s = String(temple.slug).toLowerCase();
+                  localStorage.setItem(`slug_to_id_${s}`, String(temple.id));
+                  sessionStorage.setItem(`slug_to_id_${s}`, String(temple.id));
+                  localStorage.setItem(`temple_slug_${s}`, String(temple.id));
+                  sessionStorage.setItem(`temple_slug_${s}`, String(temple.id));
+                }
+              }
+            }
+            if (temple.slug && /^\d+$/.test(String(id))) {
+              window.history.replaceState(null, "", `/admin/temples/edit/${temple.slug}`);
+            }
             formik.setValues({
               name: temple.name || "",
               description: temple.description || "",

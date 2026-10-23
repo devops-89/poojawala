@@ -169,11 +169,17 @@ export default function AdminTemplesContent() {
       label: "NAME",
       render: (temple: ITemple) => (
         <Typography
+          component={NextLink}
+          href={`/admin/temples/${temple.id}`}
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             fontSize: "0.95rem",
             color: "#1e293b",
+            textDecoration: "none",
+            "&:hover": {
+              color: COLORS.PRIMARY,
+            },
           }}
         >
           {temple.name || "Untitled Temple"}

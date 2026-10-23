@@ -82,22 +82,24 @@ const validationSchema = Yup.object().shape({
   basicPrice: Yup.number()
     .required("Basic plan price is required")
     .min(0, "Cannot be negative"),
-  standardPrice: Yup.number()
-    .required("Please fill in all required Standard Plan details.")
-    .typeError("Please fill in all required Standard Plan details.")
-    .min(0, "Cannot be negative")
-    .test(
-      "is-greater-than-basic",
-      "Standard plan price should be greater than or equal to Basic plan price",
-      function (value) {
-        const { basicPrice } = this.parent;
-        return (
-          basicPrice === undefined ||
-          value === undefined ||
-          value >= basicPrice
-        );
-      },
-    ),
+  standardPrice: Yup.number().when("isOffline", {
+    is: true,
+    then: (schema) =>
+      schema
+        .required("Please fill in all required Standard Plan details.")
+        .typeError("Please fill in all required Standard Plan details.")
+        .min(0, "Cannot be negative")
+        .test(
+          "is-greater-than-basic",
+          "Standard plan price should be greater than or equal to Basic plan price",
+          function (value) {
+            const { basicPrice } = this.parent;
+            if (value === undefined || value === null || (value as any) === "") return true;
+            return basicPrice === undefined || value >= basicPrice;
+          },
+        ),
+    otherwise: (schema) => schema.nullable().notRequired(),
+  }),
   commissionPercentage: Yup.number()
     .required("Commission percentage is required")
     .min(0, "Cannot be negative")
@@ -106,20 +108,15 @@ const validationSchema = Yup.object().shape({
     .required("Duration is required")
     .min(1, "Duration must be at least 1 minute"),
   requiresVenue: Yup.boolean(),
-  isOnline: Yup.boolean().test(
-    "at-least-one-mode",
-    "Please select at least one service mode: Online or Offline",
-    function (value) {
-      const { isOffline } = this.parent;
-      return Boolean(value || isOffline);
-    }
-  ),
+  isOnline: Yup.boolean(),
   isOffline: Yup.boolean().test(
-    "at-least-one-mode",
-    "Please select at least one service mode: Online or Offline",
+    "single-mode-selected",
+    "Please select exactly one service mode: Online or Offline",
     function (value) {
       const { isOnline } = this.parent;
-      return Boolean(isOnline || value);
+      const on = Boolean(isOnline);
+      const off = Boolean(value);
+      return (on || off) && !(on && off);
     }
   ),
   isActive: Yup.boolean(),
@@ -150,6 +147,9 @@ export default function EditServiceForm() {
   const steps = ["Basic Information", "Pricing & Details"];
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
+  const [existingIconUrl, setExistingIconUrl] = useState<string | null>(null);
+  const [numericServiceId, setNumericServiceId] = useState<string | number | null>(null);
+  const [isIconRemoved, setIsIconRemoved] = useState(false);
   const { showSnackbar } = useSnackbarStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -161,7 +161,15 @@ export default function EditServiceForm() {
       const webpFile = await convertImageToWebP(file);
       setIconFile(webpFile);
       setIconPreview(URL.createObjectURL(webpFile));
+      setIsIconRemoved(false);
     }
+  };
+
+  const handleRemoveIcon = () => {
+    setIconFile(null);
+    setIconPreview(null);
+    setExistingIconUrl(null);
+    setIsIconRemoved(true);
   };
 
   const formik = useFormik({
@@ -185,7 +193,7 @@ export default function EditServiceForm() {
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
-      isOnline: true,
+      isOnline: false,
       isOffline: true,
       isActive: true,
       isUpcomingFestival: false,
@@ -200,7 +208,8 @@ export default function EditServiceForm() {
       if (
         originalValues &&
         JSON.stringify(values) === JSON.stringify(originalValues) &&
-        !iconFile
+        !iconFile &&
+        !isIconRemoved
       ) {
         showSnackbar("No changes detected", "info");
         return;
@@ -208,7 +217,14 @@ export default function EditServiceForm() {
 
       if (!values.isOnline && !values.isOffline) {
         showSnackbar(
-          "Please select at least one service mode: Online or Offline",
+          "Please select a service mode: Online or Offline",
+          "error",
+        );
+        return;
+      }
+      if (values.isOnline && values.isOffline) {
+        showSnackbar(
+          "Please select only one service mode: Online or Offline",
           "error",
         );
         return;
@@ -230,7 +246,7 @@ export default function EditServiceForm() {
         formData.append("durationMinutes", String(values.durationMinutes));
 
         // Build plans JSON payload
-        const plansPayload = {
+        const plansPayload: any = {
           basic: {
             price: Number(values.basicPrice) || 0,
             features: (values.basicFeatures || [])
@@ -247,7 +263,10 @@ export default function EditServiceForm() {
                 isActive: true,
               })),
           },
-          standard: {
+        };
+
+        if (values.isOffline) {
+          plansPayload.standard = {
             price: Number(values.standardPrice) || 0,
             features: (values.standardFeatures || [])
               .filter((f: any) => f && (f.title?.trim() || f.key?.trim()))
@@ -262,8 +281,8 @@ export default function EditServiceForm() {
                     : "true",
                 isActive: true,
               })),
-          },
-        };
+          };
+        }
         formData.append("plans", JSON.stringify(plansPayload));
 
         if (
@@ -274,24 +293,27 @@ export default function EditServiceForm() {
           formData.append("sortOrder", String(values.sortOrder));
         }
 
-        // 3. Purohit Carry Items
-        const validBasicCarry = (values.basicPurohitCarryItems || [])
-          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
-          .filter(Boolean);
-        const validStandardCarry = (values.standardPurohitCarryItems || [])
-          .map((i: any) => (typeof i === "string" ? i.trim() : ""))
-          .filter(Boolean);
+        // 3. Purohit Carry Items (Offline Only)
+        if (values.isOffline) {
+          const validBasicCarry = (values.basicPurohitCarryItems || [])
+            .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+            .filter(Boolean);
 
-        validBasicCarry.forEach((item, index) => {
-          formData.append(`purohitCarryItems[basic][${index}]`, item);
-        });
-        validStandardCarry.forEach((item, index) => {
-          formData.append(`purohitCarryItems[standard][${index}]`, item);
-        });
+          validBasicCarry.forEach((item, index) => {
+            formData.append(`purohitCarryItems[basic][${index}]`, item);
+          });
+
+          const validStandardCarry = (values.standardPurohitCarryItems || [])
+            .map((i: any) => (typeof i === "string" ? i.trim() : ""))
+            .filter(Boolean);
+          validStandardCarry.forEach((item, index) => {
+            formData.append(`purohitCarryItems[standard][${index}]`, item);
+          });
+        }
 
         formData.append(
           "requiresVenue",
-          values.requiresVenue ? "true" : "false",
+          values.isOffline && values.requiresVenue ? "true" : "false",
         );
         formData.append(
           "isOnline",
@@ -323,11 +345,17 @@ export default function EditServiceForm() {
           formData.append("benefits", JSON.stringify(validBenefits));
         }
 
-        const validCities = values.cities.filter(
-          (c) => c.name && c.name.trim(),
-        );
-        if (validCities.length > 0) {
-          formData.append("cities", JSON.stringify(validCities));
+        if (values.isOffline) {
+          const validCities = values.cities.filter(
+            (c) => c.name && c.name.trim(),
+          );
+          if (validCities.length > 0) {
+            formData.append("cities", JSON.stringify(validCities));
+          } else {
+            formData.append("cities", JSON.stringify([]));
+          }
+        } else {
+          formData.append("cities", JSON.stringify([]));
         }
 
         const validLanguages = values.languages.filter(
@@ -351,11 +379,34 @@ export default function EditServiceForm() {
           formData.append("templeId", String(values.templeId));
         }
 
-        if (iconFile) {
-          formData.append("icon", iconFile);
+        if (isIconRemoved) {
+          formData.append("iconUrl", "");
+        } else {
+          let fileToSend = iconFile;
+          if (!fileToSend && existingIconUrl) {
+            try {
+              const imgRes = await fetch(existingIconUrl);
+              if (imgRes.ok) {
+                const blob = await imgRes.blob();
+                const ext = blob.type?.split("/")[1] || "webp";
+                fileToSend = new File([blob], `service_icon.${ext}`, {
+                  type: blob.type || "image/webp",
+                });
+              }
+            } catch (err) {
+              console.error("Could not fetch existing icon file:", err);
+            }
+          }
+
+          if (fileToSend) {
+            formData.append("icon", fileToSend);
+          } else if (existingIconUrl) {
+            formData.append("iconUrl", existingIconUrl);
+          }
         }
 
-        const response = await editServiceAPI(params.id as string, formData);
+        const targetId = numericServiceId || (params.id as string);
+        const response = await editServiceAPI(targetId, formData);
 
         if (response.success) {
           showSnackbar("Service updated successfully", "success");
@@ -392,6 +443,23 @@ export default function EditServiceForm() {
         const res = await getServiceByIdAPI(params.id as string);
         if (res.success && res.data) {
           const service = res.data.data || res.data;
+          if (service.id) {
+            setNumericServiceId(service.id);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("last_service_id", String(service.id));
+              sessionStorage.setItem("last_service_id", String(service.id));
+              if (service.slug) {
+                const s = String(service.slug).toLowerCase();
+                localStorage.setItem(`slug_to_id_${s}`, String(service.id));
+                sessionStorage.setItem(`slug_to_id_${s}`, String(service.id));
+                localStorage.setItem(`service_slug_${s}`, String(service.id));
+                sessionStorage.setItem(`service_slug_${s}`, String(service.id));
+              }
+            }
+          }
+          if (service.slug && /^\d+$/.test(String(params.id))) {
+            window.history.replaceState(null, "", `/admin/services/edit/${service.slug}`);
+          }
 
           let basicPrice =
             service.plans?.basic?.price ??
@@ -474,6 +542,34 @@ export default function EditServiceForm() {
               standardPurohitCarryItems = service.purohitCarryItems.standard;
             }
           }
+          let resolvedIsOnline = false;
+          let resolvedIsOffline = true;
+          if (service.isOnline && !service.isOffline) {
+            resolvedIsOnline = true;
+            resolvedIsOffline = false;
+          } else if (service.isOffline && !service.isOnline) {
+            resolvedIsOnline = false;
+            resolvedIsOffline = true;
+          } else if (service.isOnline && service.isOffline) {
+            if (service.mode === "ONLINE") {
+              resolvedIsOnline = true;
+              resolvedIsOffline = false;
+            } else if (Array.isArray(service.cities) && service.cities.length > 0) {
+              resolvedIsOnline = false;
+              resolvedIsOffline = true;
+            } else {
+              resolvedIsOnline = true;
+              resolvedIsOffline = false;
+            }
+          } else {
+            if (service.mode === "ONLINE") {
+              resolvedIsOnline = true;
+              resolvedIsOffline = false;
+            } else {
+              resolvedIsOnline = false;
+              resolvedIsOffline = true;
+            }
+          }
 
           const newValues = {
             name: service.name || "",
@@ -499,15 +595,9 @@ export default function EditServiceForm() {
             standardPurohitCarryItems: standardPurohitCarryItems,
             commissionPercentage: service.commissionPercentage || "",
             durationMinutes: service.durationMinutes || "",
-            requiresVenue: service.requiresVenue ?? false,
-            isOnline:
-              service.isOnline !== undefined
-                ? Boolean(service.isOnline)
-                : service.mode === "ONLINE" || service.mode === "BOTH" || true,
-            isOffline:
-              service.isOffline !== undefined
-                ? Boolean(service.isOffline)
-                : service.mode === "OFFLINE" || service.mode === "BOTH" || true,
+            requiresVenue: resolvedIsOffline ? (service.requiresVenue ?? false) : false,
+            isOnline: resolvedIsOnline,
+            isOffline: resolvedIsOffline,
             isActive: service.isActive ?? true,
             isUpcomingFestival: service.isUpcomingFestival ?? false,
             festivalStartDate: service.festivalStartDate
@@ -528,8 +618,14 @@ export default function EditServiceForm() {
           formik.resetForm({ values: newValues });
           setOriginalValues(newValues);
 
-          if (service.iconDownloadurl || service.iconUrl) {
-            setIconPreview(service.iconDownloadurl || service.iconUrl);
+          if (service.id) {
+            setNumericServiceId(service.id);
+          }
+
+          const existingIcon = service.iconDownloadurl || service.iconUrl;
+          if (existingIcon) {
+            setExistingIconUrl(existingIcon);
+            setIconPreview(existingIcon);
           }
         } else {
           showSnackbar(
@@ -588,7 +684,16 @@ export default function EditServiceForm() {
         formik.setFieldTouched("isOnline", true, true);
         formik.setFieldTouched("isOffline", true, true);
         showSnackbar(
-          "Please select at least one service mode: Online or Offline",
+          "Please select a service mode: Online or Offline",
+          "error",
+        );
+        return;
+      }
+      if (values.isOnline && values.isOffline) {
+        formik.setFieldTouched("isOnline", true, true);
+        formik.setFieldTouched("isOffline", true, true);
+        showSnackbar(
+          "Please select only one service mode: Online or Offline",
           "error",
         );
         return;
@@ -691,10 +796,21 @@ export default function EditServiceForm() {
           <Box sx={{ minHeight: 300 }}>
             {activeStep === 0 && (
               <Grid container spacing={3}>
+                <ServiceAvailabilityFields
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                  showStatusSwitch={true}
+                />
+
                 <Grid size={{ xs: 12 }}>
                   <ServiceIconUploadField
                     iconPreview={iconPreview}
                     onIconChange={handleIconChange}
+                    onRemoveIcon={handleRemoveIcon}
                   />
                 </Grid>
 
@@ -715,25 +831,18 @@ export default function EditServiceForm() {
                   setFieldValue={setFieldValue}
                 />
 
-                <ServiceCitiesFields
-                  cities={values.cities}
-                  setFieldValue={setFieldValue}
-                />
+                {values.isOffline && (
+                  <ServiceCitiesFields
+                    cities={values.cities}
+                    setFieldValue={setFieldValue}
+                  />
+                )}
 
                 <ServiceLanguagesFields
                   languages={values.languages}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   setFieldValue={setFieldValue}
-                />
-
-                <ServiceAvailabilityFields
-                  values={values}
-                  errors={errors}
-                  touched={touched}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  showStatusSwitch={true}
                 />
               </Grid>
             )}

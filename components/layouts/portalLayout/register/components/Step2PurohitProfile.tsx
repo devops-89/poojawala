@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
+  Button,
   Typography,
   TextField,
   Autocomplete,
@@ -14,6 +15,7 @@ import {
   createFilterOptions,
 } from '@mui/material';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Grid from '@mui/material/Grid';
 import { FormikProps } from 'formik';
 import { State, City } from 'country-state-city';
@@ -109,6 +111,99 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
     }
     return [];
   }, [formik.values.state]);
+
+  const [isBioManuallyEdited, setIsBioManuallyEdited] = useState(false);
+  const lastGeneratedBioRef = React.useRef<string>('');
+
+  const buildAutoBio = () => {
+    const isAstrologer = formik.values.role === USER_ROLE.ASTROLOGER;
+    const rawName = (formik.values.fullName || '').trim();
+    const name = rawName || (isAstrologer ? 'Astrologer' : 'Pandit Ji');
+    const exp = formik.values.experienceYears ? `${formik.values.experienceYears}+ years` : '';
+    const qual = (formik.values.qualification || '').trim();
+    const langs = (formik.values.languages || []).filter(Boolean);
+    const specs = (formik.values.specializations || []).filter(Boolean);
+
+    const langText = langs.length > 0 ? langs.join(', ') : '';
+    const specText = specs.length > 0 ? specs.join(', ') : '';
+
+    if (isAstrologer) {
+      let bio = `Namaste! I am ${name}, a certified Vedic Astrologer`;
+      if (exp) {
+        bio += ` with over ${exp} of dedicated experience in Vedic astrology, horoscope reading, and spiritual consultation`;
+      } else {
+        bio += ` dedicated to providing authentic Vedic astrological guidance and spiritual consultation`;
+      }
+      bio += `.`;
+
+      if (qual) {
+        bio += ` I hold formal qualification in ${qual}.`;
+      }
+      if (specText) {
+        bio += ` My core specializations include ${specText}.`;
+      }
+      if (langText) {
+        bio += ` Fluent in ${langText}, I provide personalized consultations with accurate predictions and practical Vedic remedies.`;
+      }
+      return bio;
+    } else {
+      let bio = `Namaste! I am ${name}, a devoted Vedic Purohit`;
+      if (exp) {
+        bio += ` with over ${exp} of dedicated experience in performing sacred rituals and traditional poojas`;
+      } else {
+        bio += ` dedicated to conducting authentic Vedic rituals with complete devotion and Shastric vidhi`;
+      }
+      bio += `.`;
+
+      if (qual) {
+        bio += ` I have completed formal education in ${qual}.`;
+      }
+      if (specText) {
+        bio += ` I specialize in performing ${specText} following complete Vedic traditions and authentic mantras.`;
+      }
+      if (langText) {
+        bio += ` Fluent in ${langText}, I ensure devotees understand the spiritual significance of each ceremony.`;
+      }
+
+      if (formik.values.isOnlineAvailable && formik.values.isOfflineAvailable) {
+        bio += ` Available for both offline home ceremonies and online Vedic e-poojas.`;
+      } else if (formik.values.isOnlineAvailable) {
+        bio += ` Available for online Vedic e-poojas.`;
+      } else if (formik.values.isOfflineAvailable) {
+        bio += ` Available for offline home poojas.`;
+      }
+      return bio;
+    }
+  };
+
+  useEffect(() => {
+    const currentBio = formik.values.bio || '';
+    const isAutoOrEmpty = !currentBio || currentBio === lastGeneratedBioRef.current || !isBioManuallyEdited;
+
+    if (isAutoOrEmpty) {
+      const newBio = buildAutoBio();
+      if (newBio && newBio !== currentBio) {
+        lastGeneratedBioRef.current = newBio;
+        formik.setFieldValue('bio', newBio);
+      }
+    }
+  }, [
+    formik.values.role,
+    formik.values.fullName,
+    formik.values.experienceYears,
+    formik.values.qualification,
+    formik.values.languages,
+    formik.values.specializations,
+    formik.values.isOnlineAvailable,
+    formik.values.isOfflineAvailable,
+  ]);
+
+  const handleRegenerateBio = () => {
+    const newBio = buildAutoBio();
+    lastGeneratedBioRef.current = newBio;
+    setIsBioManuallyEdited(false);
+    formik.setFieldValue('bio', newBio);
+  };
 
   return (
     <Box>
@@ -565,18 +660,59 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
 
         {/* Bio */}
         <Grid size={{ xs: 12 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.8, flexWrap: 'wrap', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#333', fontFamily: FONTS.PRIMARY }}>
+                Bio (About Yourself) *
+              </Typography>
+              {Boolean(formik.values.bio && !isBioManuallyEdited) && (
+                <Chip
+                  label="Auto-filled"
+                  size="small"
+                  sx={{
+                    height: 20,
+                    fontSize: '11px',
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 600,
+                    bgcolor: 'rgba(255, 98, 0, 0.1)',
+                    color: COLORS.PRIMARY,
+                    border: '1px solid rgba(255, 98, 0, 0.25)',
+                  }}
+                />
+              )}
+            </Box>
+            <Button
+              type="button"
+              size="small"
+              variant="text"
+              onClick={handleRegenerateBio}
+              startIcon={<AutoAwesomeIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />}
+              sx={{
+                textTransform: 'none',
+                fontFamily: FONTS.PRIMARY,
+                fontWeight: 700,
+                fontSize: '12px',
+                color: COLORS.PRIMARY,
+                p: '2px 8px',
+                borderRadius: '6px',
+                '&:hover': { bgcolor: 'rgba(255, 98, 0, 0.08)' },
+              }}
+            >
+              Auto-generate Bio
+            </Button>
+          </Box>
           <TextField
             fullWidth
             size="small"
             multiline
-            rows={3}
+            rows={4}
             name="bio"
-            label="Bio (About Yourself) *"
             placeholder="Tell us about your background, Vedic education, and ritual experience..."
             variant="outlined"
             value={formik.values.bio || ''}
             onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
             onChange={(e) => {
+              setIsBioManuallyEdited(true);
               formik.setFieldValue('bio', sanitizeDescriptionInput(e.target.value));
             }}
             error={formik.touched.bio && Boolean(formik.errors.bio)}

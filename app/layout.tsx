@@ -4,6 +4,7 @@ if (typeof window !== "undefined" && typeof (Array.prototype as any).toSorted !=
   };
 }
 
+import { Suspense } from "react";
 import Navbar from "@/components/widgets/Navbar";
 import Footer from "@/components/widgets/Footer";
 import ThemeRegistry from "@/theme/ThemeRegistry";
@@ -11,40 +12,42 @@ import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
 import ScrollToTop from "@/components/widgets/ScrollToTop";
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://1pooja.com"),
-  title: "Book Experienced Pandits & Purohits online or offline | 1Pooja",
+  title: "Book Experienced Pandits & Purohits online or offline | 1pooja",
   description:
-    "Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience",
+    "Book experienced Pandits & Purohits online or offline with 1pooja for authentic religious services and a seamless spiritual experience",
   verification: {
     google: "2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw",
   },
+  alternates: {
+    canonical: "https://1pooja.com/",
+  },
   openGraph: {
-    title: "Book Experienced Pandits & Purohits online or offline | 1Pooja",
-    siteName: "1Pooja",
+    title: "Book Experienced Pandits & Purohits online or offline | 1pooja",
+    siteName: "1pooja",
     url: "https://1pooja.com/",
     description:
-      "Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience",
+      "Book experienced Pandits & Purohits online or offline with 1pooja for authentic religious services and a seamless spiritual experience",
     type: "website",
     images: [
       {
-        url: "https://1pooja.com/images/1Poojalogo.webp",
+        url: "https://1pooja.com/images/logo.webp",
         width: 800,
         height: 600,
-        alt: "1Pooja",
+        alt: "1pooja",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    site: "@1poojaofc",
-    title: "Book Experienced Pandits & Purohits online or offline | 1Pooja",
+    site: "@1pooja",
+    title: "Book Experienced Pandits & Purohits online or offline | 1pooja",
     description:
-      "Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience",
-    images: ["https://1pooja.com/images/1Poojalogo.webp"],
+      "Book experienced Pandits & Purohits online or offline with 1pooja for authentic religious services and a seamless spiritual experience",
+    images: ["https://1pooja.com/images/logo.webp"],
   },
   icons: {
     icon: [
@@ -60,8 +63,7 @@ export const metadata: Metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  themeColor: "#FF6200",
 };
 
 export default function RootLayout({
@@ -72,62 +74,52 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google Tag Manager - As high as possible */}
-        <Script
-          id="gtm-script"
-          strategy="afterInteractive"
+        {/* Google Tag Manager - As high as possible in <head> */}
+        <script
           dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WNHPFBJ2');`,
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l: ';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-WNHPFBJ2');`,
           }}
         />
         {/* End Google Tag Manager */}
 
         <meta name="google-site-verification" content="2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw" />
-        <link rel="canonical" href="https://1pooja.com/" />
 
         {/* OG Tags */}
-        <meta property="og:title" content="Book Experienced Pandits & Purohits online or offline | 1Pooja" />
-        <meta property="og:site_name" content="1Pooja" />
+        <meta property="og:title" content="Book Experienced Pandits & Purohits online or offline | 1pooja" />
+        <meta property="og:site_name" content="1pooja" />
         <meta property="og:url" content="https://1pooja.com/" />
         <meta
           property="og:description"
-          content="Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience"
+          content="Book experienced Pandits & Purohits online or offline with 1pooja for authentic religious services and a seamless spiritual experience"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://1pooja.com/images/1Poojalogo.webp" />
+        <meta property="og:image" content="https://1pooja.com/images/logo.webp" />
 
         {/* X (Twitter) Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@1poojaofc" />
-        <meta name="twitter:title" content="Book Experienced Pandits & Purohits online or offline | 1Pooja" />
+        <meta name="twitter:site" content="@1pooja" />
+        <meta name="twitter:title" content="Book Experienced Pandits & Purohits online or offline | 1pooja" />
         <meta
           name="twitter:description"
-          content="Book experienced Pandits & Purohits online or offline with 1Pooja for authentic religious services and a seamless spiritual experience"
+          content="Book experienced Pandits & Purohits online or offline with 1pooja for authentic religious services and a seamless spiritual experience"
         />
-        <meta name="twitter:image" content="https://1pooja.com/images/1Poojalogo.webp" />
+        <meta name="twitter:image" content="https://1pooja.com/images/logo.webp" />
 
         {/* Org. Schema Markup */}
-        <Script
-          id="schema-org"
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "1Pooja",
-              alternateName: "1Pooja",
+              name: "1pooja",
+              alternateName: "1pooja",
               url: "https://1pooja.com/",
-              logo: "https://1pooja.com/images/1Poojalogo.webp",
+              logo: "https://1pooja.com/images/logo.webp",
               sameAs: [
-                "https://www.facebook.com/1poojaofc/",
-                "https://x.com/1poojaofc",
-                "https://www.instagram.com/1poojaofc",
-                "https://www.youtube.com/@1poojaofc",
+                "https://www.facebook.com/1pooja/",
+                "https://x.com/1pooja",
+                "https://www.instagram.com/1pooja",
                 "https://www.linkedin.com/company/1pooja",
               ],
             }),
@@ -165,7 +157,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <ThemeRegistry>
           <ScrollToTop />
-          <Navbar />
+          <Suspense fallback={null}>
+            <Navbar />
+          </Suspense>
           <main className="flex-grow flex flex-col w-full relative">
             {children}
           </main>

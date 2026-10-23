@@ -207,27 +207,27 @@ export default function WelcomeLocationModal() {
                     },
                   }}
                   renderInput={(params: any) => {
-                    const updatedParams = {
-                      ...params,
-                      InputProps: {
-                        ...params.InputProps,
-                        startAdornment: (
-                          <>
-                            <InputAdornment position="start">
-                              <LocationOnIcon
-                                sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
-                              />
-                            </InputAdornment>
-                            {params.InputProps?.startAdornment}
-                          </>
-                        ),
-                      },
-                    };
+                    const { InputProps, ...restParams } = params;
                     return (
                       <TextField
-                        {...updatedParams}
+                        {...restParams}
                         placeholder="Select State"
                         autoComplete="off"
+                        slotProps={{
+                          input: {
+                            ...InputProps,
+                            startAdornment: (
+                              <>
+                                <InputAdornment position="start">
+                                  <LocationOnIcon
+                                    sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
+                                  />
+                                </InputAdornment>
+                                {InputProps?.startAdornment}
+                              </>
+                            ),
+                          },
+                        }}
                         sx={{
                           bgcolor: COLORS.WHITE,
                           "& .MuiOutlinedInput-root": {
@@ -276,25 +276,10 @@ export default function WelcomeLocationModal() {
                     },
                   }}
                   renderInput={(params: any) => {
-                    const updatedParams = {
-                      ...params,
-                      InputProps: {
-                        ...params.InputProps,
-                        startAdornment: (
-                          <>
-                            <InputAdornment position="start">
-                              <LocationOnIcon
-                                sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
-                              />
-                            </InputAdornment>
-                            {params.InputProps?.startAdornment}
-                          </>
-                        ),
-                      },
-                    };
+                    const { InputProps, ...restParams } = params;
                     return (
                       <TextField
-                        {...updatedParams}
+                        {...restParams}
                         placeholder={
                           !selectedState ? "Select State first" : "Select City"
                         }
@@ -304,6 +289,21 @@ export default function WelcomeLocationModal() {
                             ? "Select state to enable city selection"
                             : undefined
                         }
+                        slotProps={{
+                          input: {
+                            ...InputProps,
+                            startAdornment: (
+                              <>
+                                <InputAdornment position="start">
+                                  <LocationOnIcon
+                                    sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
+                                  />
+                                </InputAdornment>
+                                {InputProps?.startAdornment}
+                              </>
+                            ),
+                          },
+                        }}
                         sx={{
                           bgcolor: COLORS.WHITE,
                           "& .MuiOutlinedInput-root": {

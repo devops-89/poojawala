@@ -215,6 +215,7 @@ export interface IPujaPackage {
 
 export interface ServiceCardProps {
   id?: number | string;
+  slug?: string;
   title: string;
   image: string;
   description?: string;
@@ -238,6 +239,8 @@ export interface ServiceGridProps {
   searchQuery?: string;
   selectedState?: string;
   selectedCity?: string;
+  isOnline?: boolean;
+  isOffline?: boolean;
 }
 
 export interface ServiceFiltersProps {

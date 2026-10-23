@@ -23,6 +23,7 @@ export interface AstrologerCardProps {
   experience?: string;
   rating?: string | number;
   ratePerMinute?: string | number;
+  astrologyPrice?: string | number;
   bio?: string;
   city?: string;
 }
@@ -39,6 +40,7 @@ export default function AstrologerCard({
   experience = '5+ Years',
   rating = 'New',
   ratePerMinute,
+  astrologyPrice,
   bio,
   city,
 }: AstrologerCardProps) {
@@ -74,9 +76,14 @@ export default function AstrologerCard({
     handleCardClick();
   };
 
+  const rawPrice =
+    astrologyPrice !== undefined && astrologyPrice !== null && astrologyPrice !== ''
+      ? astrologyPrice
+      : ratePerMinute;
+  const numPrice = Number(rawPrice);
   const displayRate =
-    ratePerMinute && Number(ratePerMinute) > 0
-      ? `₹${Number(ratePerMinute).toFixed(2)}/min`
+    rawPrice != null && rawPrice !== '' && !isNaN(numPrice) && numPrice > 0
+      ? `₹${numPrice.toFixed(2)}`
       : 'Consultation Available';
 
   const initials = title

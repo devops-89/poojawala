@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { formatServicePriceRange } from "@/utils/helpers";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Box, Button, Chip, Grid, Paper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -16,28 +17,13 @@ export default function CustomerServiceCard({
   const router = useRouter();
 
   const handleCardClick = () => {
-    if (service?.id) {
-      router.push(`/customer/services/${service.id}`);
+    const targetId = service?.id || service?._id;
+    if (targetId) {
+      router.push(`/customer/services/${targetId}`);
     }
   };
 
-  const minP =
-    service?.plans?.basic?.price ??
-    service?.priceWithoutSamagri ??
-    service?.minPrice ??
-    service?.price ??
-    service?.basePrice;
-  const maxP =
-    service?.plans?.standard?.price ??
-    service?.priceWithSamagri ??
-    service?.maxPrice;
-
-  const priceDisplay =
-    minP != null && maxP != null && minP !== maxP
-      ? `₹${Number(minP).toLocaleString("en-IN")} - ₹${Number(maxP).toLocaleString("en-IN")}`
-      : minP != null
-        ? `₹${Number(minP).toLocaleString("en-IN")}`
-        : "Price on request";
+  const priceDisplay = formatServicePriceRange(service);
 
   const serviceTitle =
     service?.title ||
@@ -51,10 +37,17 @@ export default function CustomerServiceCard({
     service?.shortDescription ||
     "Special pooja performed with traditional Vedic rituals.";
 
-  const durationText = service?.durationMinutes
-    ? service.durationMinutes >= 60
-      ? `${Math.floor(service.durationMinutes / 60)} hour${service.durationMinutes >= 120 ? "s" : ""}`
-      : `${service.durationMinutes} mins`
+  const dMins =
+    service?.durationMinutes != null && !isNaN(Number(service.durationMinutes))
+      ? Number(service.durationMinutes)
+      : null;
+
+  const durationText = dMins != null
+    ? dMins >= 60
+      ? dMins % 60 === 0
+        ? `${dMins / 60} hour${dMins >= 120 ? "s" : ""}`
+        : `${Math.floor(dMins / 60)} hr ${dMins % 60} mins`
+      : `${dMins} mins`
     : service?.duration || "120 mins";
 
   const imageSrc =

@@ -5,6 +5,7 @@ import { COLORS } from "@/utils/enums";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import {
   Box,
   Button,
@@ -34,6 +35,8 @@ export interface PlanFeatureItem {
 
 interface ServicePlansTabConfigProps {
   values: {
+    isOnline?: boolean;
+    isOffline?: boolean;
     basicPrice: string | number;
     basicFeatures: Array<PlanFeatureItem | any>;
     basicPurohitCarryItems?: string[];
@@ -55,11 +58,17 @@ export default function ServicePlansTabConfig({
   handleChange,
   handleBlur,
 }: ServicePlansTabConfigProps) {
+  const isOnlineOnly = Boolean(values.isOnline && !values.isOffline);
   const [selectedPlanTab, setSelectedPlanTab] = useState<"basic" | "standard">(
     "basic",
   );
   const formik = useFormikContext<any>();
 
+  React.useEffect(() => {
+    if (isOnlineOnly && selectedPlanTab !== "basic") {
+      setSelectedPlanTab("basic");
+    }
+  }, [isOnlineOnly, selectedPlanTab]);
 
   return (
     <Grid size={{ xs: 12 }}>
@@ -73,17 +82,21 @@ export default function ServicePlansTabConfig({
           mb: 0.5,
         }}
       >
-        Service Plans & Purohit Carry Items
+        {isOnlineOnly
+          ? "Online Pooja Package"
+          : "Service Plans & Purohit Carry Items"}
       </Typography>
       <Typography sx={{ color: "#64748b", fontSize: "0.85rem", mb: 2 }}>
-        Click on Basic or Standard plan below to set price, feature key-values,
-        and Purohit carry items.
+        {isOnlineOnly
+          ? "Configure package price and features/inclusions for this online virtual ritual."
+          : "Click on Basic or Standard plan below to set price, feature key-values, and Purohit carry items."}
       </Typography>
 
       <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
         <Button
           variant={selectedPlanTab === "basic" ? "contained" : "outlined"}
           onClick={() => setSelectedPlanTab("basic")}
+          startIcon={isOnlineOnly ? <VideocamIcon /> : undefined}
           sx={{
             borderRadius: "20px",
             px: 3,
@@ -102,31 +115,33 @@ export default function ServicePlansTabConfig({
                 }),
           }}
         >
-          Basic Plan
+          {isOnlineOnly ? "Online Pooja Package" : "Basic Plan"}
         </Button>
-        <Button
-          variant={selectedPlanTab === "standard" ? "contained" : "outlined"}
-          onClick={() => setSelectedPlanTab("standard")}
-          sx={{
-            borderRadius: "20px",
-            px: 3,
-            py: 1,
-            fontWeight: 700,
-            textTransform: "none",
-            fontFamily: FONTS.OUTFIT,
-            ...(selectedPlanTab === "standard"
-              ? {
-                  bgcolor: "#FF6200 !important",
-                  color: "white !important",
-                }
-              : {
-                  borderColor: errors.standardPrice ? "#ef4444" : "#cbd5e1",
-                  color: errors.standardPrice ? "#ef4444" : "#475569",
-                }),
-          }}
-        >
-          Standard Plan
-        </Button>
+        {!isOnlineOnly && (
+          <Button
+            variant={selectedPlanTab === "standard" ? "contained" : "outlined"}
+            onClick={() => setSelectedPlanTab("standard")}
+            sx={{
+              borderRadius: "20px",
+              px: 3,
+              py: 1,
+              fontWeight: 700,
+              textTransform: "none",
+              fontFamily: FONTS.OUTFIT,
+              ...(selectedPlanTab === "standard"
+                ? {
+                    bgcolor: "#FF6200 !important",
+                    color: "white !important",
+                  }
+                : {
+                    borderColor: errors.standardPrice ? "#ef4444" : "#cbd5e1",
+                    color: errors.standardPrice ? "#ef4444" : "#475569",
+                  }),
+            }}
+          >
+            Standard Plan
+          </Button>
+        )}
       </Box>
 
       {/* Basic Plan Tab Content */}
@@ -148,7 +163,9 @@ export default function ServicePlansTabConfig({
               fontFamily: FONTS.OUTFIT,
             }}
           >
-            Basic Plan Configuration
+            {isOnlineOnly
+              ? "Online Pooja Package Configuration"
+              : "Basic Plan Configuration"}
           </Typography>
 
           <Grid container spacing={3}>
@@ -157,8 +174,12 @@ export default function ServicePlansTabConfig({
               <TextField
                 fullWidth
                 name="basicPrice"
-                label="Basic Plan Price (₹) *"
-                placeholder="e.g. 5100"
+                label={
+                  isOnlineOnly
+                    ? "Online Pooja Price (₹) *"
+                    : "Basic Plan Price (₹) *"
+                }
+                placeholder={isOnlineOnly ? "e.g. 2100" : "e.g. 5100"}
                 variant="outlined"
                 type="number"
                 value={values.basicPrice}
@@ -205,7 +226,9 @@ export default function ServicePlansTabConfig({
                           color: "#1e293b",
                         }}
                       >
-                        Basic Plan Features
+                        {isOnlineOnly
+                          ? "Online Pooja Features & Inclusions"
+                          : "Basic Plan Features"}
                       </Typography>
                       <Button
                         size="small"
@@ -257,7 +280,11 @@ export default function ServicePlansTabConfig({
                             <TextField
                               size="small"
                               name={`basicFeatures.${index}.title`}
-                              placeholder="Feature Title (e.g. 1 Vedic Purohit)"
+                              placeholder={
+                                isOnlineOnly
+                                  ? "Feature Title (e.g. Live Sankalp via Video Call, 1 Vedic Purohit)"
+                                  : "Feature Title (e.g. 1 Vedic Purohit)"
+                              }
                               value={featTitle}
                               onKeyDown={allowOnlyTitleCharsOnKeyDown}
                               onChange={(e) => {
@@ -349,115 +376,117 @@ export default function ServicePlansTabConfig({
               </FieldArray>
             </Grid>
 
-            {/* Basic Plan Purohit Carry Items */}
-            <Grid size={{ xs: 12 }}>
-              <Divider sx={{ my: 1 }} />
-              <FieldArray name="basicPurohitCarryItems">
-                {({ push, remove }) => (
-                  <Box sx={{ mt: 1 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "100%",
-                        mb: 2,
-                      }}
-                    >
+            {/* Basic Plan Purohit Carry Items (Offline Only) */}
+            {!isOnlineOnly && (
+              <Grid size={{ xs: 12 }}>
+                <Divider sx={{ my: 1 }} />
+                <FieldArray name="basicPurohitCarryItems">
+                  {({ push, remove }) => (
+                    <Box sx={{ mt: 1 }}>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <InventoryIcon
-                          sx={{ color: COLORS.PRIMARY, fontSize: "1.2rem" }}
-                        />
-                        <Typography
-                          sx={{
-                            fontFamily: FONTS.OUTFIT,
-                            fontWeight: 700,
-                            color: "#1e293b",
-                          }}
-                        >
-                          Purohit Carry Items
-                        </Typography>
-                      </Box>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        startIcon={<AddIcon />}
-                        onClick={() => push("")}
                         sx={{
-                          ml: "auto",
-                          borderColor: COLORS.PRIMARY,
-                          color: COLORS.PRIMARY,
-                          textTransform: "none",
-                          borderRadius: "8px",
-                          fontWeight: 600,
-                          "&:hover": {
-                            borderColor: COLORS.PRIMARY_DARK,
-                            bgcolor: "#fff7ed",
-                          },
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          width: "100%",
+                          mb: 2,
                         }}
                       >
-                        Add Carry Item
-                      </Button>
-                    </Box>
-
-                    {(values.basicPurohitCarryItems || []).map(
-                      (item: string, index: number) => (
                         <Box
-                          key={`basic-carry-${index}`}
-                          sx={{
-                            display: "flex",
-                            gap: 2,
-                            alignItems: "center",
-                            mb: 1.5,
-                          }}
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
                         >
-                          <TextField
-                            fullWidth
-                            size="small"
-                            name={`basicPurohitCarryItems.${index}`}
-                            placeholder="e.g. Ganapati Idol, Puja Thali, Kalash"
-                            value={item}
-                            onKeyDown={allowOnlyTitleCharsOnKeyDown}
-                            onChange={(e) => {
-                              const sanitized = sanitizeTitleInput(e.target.value);
-                              if (formik?.setFieldValue) {
-                                formik.setFieldValue(`basicPurohitCarryItems.${index}`, sanitized);
-                              } else {
-                                handleChange(e as any);
-                              }
-                            }}
-                            onBlur={handleBlur}
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: "8px",
-                                bgcolor: "white",
-                              },
-                            }}
+                          <InventoryIcon
+                            sx={{ color: COLORS.PRIMARY, fontSize: "1.2rem" }}
                           />
-                          <IconButton
-                            onClick={() => remove(index)}
+                          <Typography
                             sx={{
-                              color: "#ef4444",
-                              "&:hover": { bgcolor: "#fee2e2" },
+                              fontFamily: FONTS.OUTFIT,
+                              fontWeight: 700,
+                              color: "#1e293b",
                             }}
                           >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
+                            Purohit Carry Items
+                          </Typography>
                         </Box>
-                      ),
-                    )}
-                  </Box>
-                )}
-              </FieldArray>
-            </Grid>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<AddIcon />}
+                          onClick={() => push("")}
+                          sx={{
+                            ml: "auto",
+                            borderColor: COLORS.PRIMARY,
+                            color: COLORS.PRIMARY,
+                            textTransform: "none",
+                            borderRadius: "8px",
+                            fontWeight: 600,
+                            "&:hover": {
+                              borderColor: COLORS.PRIMARY_DARK,
+                              bgcolor: "#fff7ed",
+                            },
+                          }}
+                        >
+                          Add Carry Item
+                        </Button>
+                      </Box>
+
+                      {(values.basicPurohitCarryItems || []).map(
+                        (item: string, index: number) => (
+                          <Box
+                            key={`basic-carry-${index}`}
+                            sx={{
+                              display: "flex",
+                              gap: 2,
+                              alignItems: "center",
+                              mb: 1.5,
+                            }}
+                          >
+                            <TextField
+                              fullWidth
+                              size="small"
+                              name={`basicPurohitCarryItems.${index}`}
+                              placeholder="e.g. Ganapati Idol, Puja Thali, Kalash"
+                              value={item}
+                              onKeyDown={allowOnlyTitleCharsOnKeyDown}
+                              onChange={(e) => {
+                                const sanitized = sanitizeTitleInput(e.target.value);
+                                if (formik?.setFieldValue) {
+                                  formik.setFieldValue(`basicPurohitCarryItems.${index}`, sanitized);
+                                } else {
+                                  handleChange(e as any);
+                                }
+                              }}
+                              onBlur={handleBlur}
+                              sx={{
+                                "& .MuiOutlinedInput-root": {
+                                  borderRadius: "8px",
+                                  bgcolor: "white",
+                                },
+                              }}
+                            />
+                            <IconButton
+                              onClick={() => remove(index)}
+                              sx={{
+                                color: "#ef4444",
+                                "&:hover": { bgcolor: "#fee2e2" },
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ),
+                      )}
+                    </Box>
+                  )}
+                </FieldArray>
+              </Grid>
+            )}
           </Grid>
         </Box>
       )}
 
       {/* Standard Plan Tab Content */}
-      {selectedPlanTab === "standard" && (
+      {!isOnlineOnly && selectedPlanTab === "standard" && (
         <Box
           sx={{
             p: 3,

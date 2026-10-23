@@ -36,10 +36,36 @@ export default function AdminServiceDetailsContent() {
 
   useEffect(() => {
     const fetchServiceDetails = async () => {
+      const identifier = params.id as string;
+      if (!identifier) return;
+
+      if (
+        service &&
+        (service.slug === identifier || String(service.id) === String(identifier))
+      ) {
+        return;
+      }
+
       try {
-        const response = await getServiceByIdAPI(params.id as string);
+        setLoading(true);
+        const response = await getServiceByIdAPI(identifier);
         if (response.success) {
-          setService(response.data?.data || response.data);
+          const data = response.data?.data || response.data;
+          setService(data);
+          if (data?.id && typeof window !== "undefined") {
+            localStorage.setItem("last_service_id", String(data.id));
+            sessionStorage.setItem("last_service_id", String(data.id));
+            if (data?.slug) {
+              const s = String(data.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+              localStorage.setItem(`service_slug_${s}`, String(data.id));
+              sessionStorage.setItem(`service_slug_${s}`, String(data.id));
+              if (/^\d+$/.test(String(identifier))) {
+                window.history.replaceState(null, "", `/admin/services/${data.slug}`);
+              }
+            }
+          }
         } else {
           showSnackbar(
             response.message || "Failed to fetch service details",
@@ -53,10 +79,8 @@ export default function AdminServiceDetailsContent() {
         setLoading(false);
       }
     };
-    if (params.id) {
-      fetchServiceDetails();
-    }
-  }, [params.id, showSnackbar]);
+    fetchServiceDetails();
+  }, [params.id, showSnackbar, service]);
 
   if (loading) {
     return (
@@ -106,12 +130,12 @@ export default function AdminServiceDetailsContent() {
         title="Service Details"
         breadcrumbs={[
           { label: "Services", href: "/admin/services" },
-          { label: "Service Details" },
+          { label: service.name || "Service Details" },
         ]}
         actionButton={
           <Button
             component={NextLink}
-            href={`/admin/services/edit/${params.id}`}
+            href={`/admin/services/edit/${service?.slug || service?.id || params.id}`}
             variant="contained"
             sx={{
               background: COLORS.PRIMARY,

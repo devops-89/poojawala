@@ -50,13 +50,90 @@ export const getAllProductsAPI = async (
   }
 };
 
+export const resolveProductId = (id: number | string): number | string => {
+  if (!id) return id;
+  const isNumeric = /^\d+$/.test(String(id).trim());
+  if (isNumeric) return id;
+
+  if (typeof window !== "undefined") {
+    try {
+      const lower = String(id).trim().toLowerCase();
+      const cached =
+        localStorage.getItem(`slug_to_id_${lower}`) ||
+        sessionStorage.getItem(`slug_to_id_${lower}`) ||
+        localStorage.getItem(`product_slug_${lower}`) ||
+        sessionStorage.getItem(`product_slug_${lower}`) ||
+        localStorage.getItem(`slug_to_id_${id}`) ||
+        sessionStorage.getItem(`slug_to_id_${id}`) ||
+        localStorage.getItem(`product_slug_${id}`) ||
+        sessionStorage.getItem(`product_slug_${id}`) ||
+        localStorage.getItem("last_product_id") ||
+        sessionStorage.getItem("last_product_id");
+
+      if (cached && /^\d+$/.test(cached)) {
+        return cached;
+      }
+    } catch (e) {}
+  }
+
+  return id;
+};
+
 export const getProductByIdAPI = async (id: number | string) => {
   try {
-    const response = await userSecuredApi.get(`/products/${id}`);
+    const numericId = resolveProductId(id);
+
+    // STRICT SAFETY: NEVER call /products/:id with non-numeric string to avoid 400 Validation Error
+    if (!/^\d+$/.test(String(numericId).trim())) {
+      console.warn(`[getProductByIdAPI] Could not resolve numeric ID for slug: ${id}`);
+      return {
+        success: false,
+        message: "Product not found",
+        data: null,
+      };
+    }
+
+    const response = await userSecuredApi.get(`/products/${numericId}`);
+    if (typeof window !== "undefined" && response?.data) {
+      const data = response.data?.data || response.data?.product || response.data;
+      if (data?.id) {
+        localStorage.setItem("last_product_id", String(data.id));
+        sessionStorage.setItem("last_product_id", String(data.id));
+        if (data.slug) {
+          const s = String(data.slug).toLowerCase();
+          localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+          sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+          localStorage.setItem(`product_slug_${s}`, String(data.id));
+          sessionStorage.setItem(`product_slug_${s}`, String(data.id));
+        }
+      }
+    }
     return response.data;
   } catch (error) {
     try {
-      const response = await userPublicApi.get(`/products/${id}`);
+      const numericId = resolveProductId(id);
+      if (!/^\d+$/.test(String(numericId).trim())) {
+        return {
+          success: false,
+          message: "Product not found",
+          data: null,
+        };
+      }
+      const response = await userPublicApi.get(`/products/${numericId}`);
+      if (typeof window !== "undefined" && response?.data) {
+        const data = response.data?.data || response.data?.product || response.data;
+        if (data?.id) {
+          localStorage.setItem("last_product_id", String(data.id));
+          sessionStorage.setItem("last_product_id", String(data.id));
+          if (data.slug) {
+            const s = String(data.slug).toLowerCase();
+            localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+            sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+            localStorage.setItem(`product_slug_${s}`, String(data.id));
+            sessionStorage.setItem(`product_slug_${s}`, String(data.id));
+          }
+        }
+      }
       return response.data;
     } catch (err) {
       throw error;
@@ -78,7 +155,8 @@ export const addProductAPI = async (data: any) => {
 
 export const updateProductStatusAPI = async (id: number | string, isActive: boolean) => {
   try {
-    const response = await userSecuredApi.patch(`/products/${id}/status`, { isActive });
+    const numericId = resolveProductId(id);
+    const response = await userSecuredApi.patch(`/products/${numericId}/status`, { isActive });
     return response.data;
   } catch (error) {
     throw error;
@@ -87,8 +165,9 @@ export const updateProductStatusAPI = async (id: number | string, isActive: bool
 
 export const updateProductAPI = async (id: number | string, data: any) => {
   try {
+    const numericId = resolveProductId(id);
     const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
-    const response = await userSecuredApi.patch(`/products/${id}`, data, {
+    const response = await userSecuredApi.patch(`/products/${numericId}`, data, {
       headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
     });
     return response.data;
@@ -99,9 +178,11 @@ export const updateProductAPI = async (id: number | string, data: any) => {
 
 export const deleteProductAPI = async (id: number | string) => {
   try {
-    const response = await userSecuredApi.delete(`/products/${id}`);
+    const numericId = resolveProductId(id);
+    const response = await userSecuredApi.delete(`/products/${numericId}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
+

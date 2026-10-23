@@ -23,7 +23,8 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import LanguageIcon from "@mui/icons-material/Language";
 import React, { useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -58,9 +59,14 @@ export default function CustomerSidebar({
     }
   };
 
+  const searchParams = useSearchParams();
+  const isOffline = searchParams.get("isOffline") === "true";
+  const isOnline = searchParams.get("isOnline") === "true";
+
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, path: "/customer/dashboard" },
-    { text: "Services", icon: <EventNoteIcon />, path: "/customer/services" },
+    { text: "Offline Services", icon: <EventNoteIcon />, path: "/customer/services?isOffline=true" },
+    { text: "Online Services", icon: <LanguageIcon />, path: "/customer/services?isOnline=true" },
     { text: "Astrologers", icon: <AutoAwesomeIcon />, path: "/customer/astrologers" },
     { text: "Temples", icon: <TempleHinduIcon />, path: "/customer/temples" },
     {
@@ -108,7 +114,12 @@ export default function CustomerSidebar({
         }}
       >
         {menuItems.map((item: any) => {
-          const isActive = pathname === item.path;
+          const isActive =
+            item.path.includes("isOffline=true")
+              ? pathname === "/customer/services" && isOffline
+              : item.path.includes("isOnline=true")
+              ? pathname === "/customer/services" && isOnline
+              : pathname === item.path;
           return (
             <ListItem key={item.text} disablePadding>
               <ListItemButton

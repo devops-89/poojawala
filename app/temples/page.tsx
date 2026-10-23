@@ -4,14 +4,30 @@ import { Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Sacred Temples & Dhams | 1Pooja",
+  title: 'Explore Famous Temples in India & Pooja Booking | 1Pooja',
   description:
-    "Explore sacred temples and divine pilgrimage sites across India. Discover consecrated rituals and book authenticated temple pooja services directly.",
+    'Explore famous temples in India, discover temple details, and book pooja online or offline with 1Pooja for a convenient spiritual experience.',
+  keywords: [
+    'book pooja on temple',
+    'temple pooja package',
+    'temple pooja booking price',
+    'book pandit for temple pooja',
+    'online temple pooja booking',
+  ],
   alternates: {
-    canonical: "/temples",
+    canonical: '/temples',
   },
   openGraph: {
-    url: "/temples",
+    title: 'Explore Famous Temples in India & Pooja Booking | 1Pooja',
+    description:
+      'Explore famous temples in India, discover temple details, and book pooja online or offline with 1Pooja for a convenient spiritual experience.',
+    url: '/temples',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Explore Famous Temples in India & Pooja Booking | 1Pooja',
+    description:
+      'Explore famous temples in India, discover temple details, and book pooja online or offline with 1Pooja for a convenient spiritual experience.',
   },
 };
 

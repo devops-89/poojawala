@@ -254,17 +254,17 @@ export default function CustomerAstrologerDetailsContent() {
 
         const socket = socketStore.socket;
         if (socket && socket.connected) {
-          socket.emit("new_astrology_booking", {
+          const payload = {
             bookingId: resData?.id,
             astrologerId: Number(astrologer.id),
             scheduledAt: scheduledDateTime.toISOString(),
-            message: "New Astrology Booking Request",
-          });
-          socket.emit("astrology_booking_created", {
-            bookingId: resData?.id,
-            astrologerId: Number(astrologer.id),
-            scheduledAt: scheduledDateTime.toISOString(),
-          });
+            message: "New Astrology Consultation Scheduled",
+          };
+          socket.emit("New Astrology Consultation Scheduled", payload);
+          socket.emit("new_astrology_consultation_scheduled", payload);
+          socket.emit("astrology_consultation_scheduled", payload);
+          socket.emit("new_astrology_booking", payload);
+          socket.emit("astrology_booking_created", payload);
         }
       } catch (e) {
         console.warn("Socket notification notice:", e);

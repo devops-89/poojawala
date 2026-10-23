@@ -111,7 +111,7 @@ export default function DashboardContent() {
     { title: isAstrologer ? 'Completed Consultations' : 'Completed Pujas', value: statsData.totalCompletedBookings, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#FF9800' }} />, color: '#FFF3E0', link: isAstrologer ? '/partner/astrologybookings' : '/partner/bookings' },
     ...(!isAstrologer
       ? [{ title: 'Active Services', value: statsData.totalActiveServices, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/my-services' }]
-      : [{ title: 'Consultation Rate', value: profile?.ratePerMinute ? `₹ ${profile.ratePerMinute}/min` : 'N/A', icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/profile' }])
+      : [{ title: 'Consultation Rate', value: (profile?.astrologyPrice || profile?.ratePerMinute) ? `₹ ${profile.astrologyPrice || profile.ratePerMinute}` : 'N/A', icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/profile' }])
   ];
 
   return (

@@ -1,11 +1,12 @@
 "use client";
 import { COLORS } from "@/utils/enums";
+import { formatServicePriceRange } from "@/utils/helpers";
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ServiceDetailsBookingForm from "./serviceDetails/ServiceDetailsBookingForm";
 import ServiceDetailsBreadcrumbs from "./serviceDetails/ServiceDetailsBreadcrumbs";
 import ServiceDetailsFaqSection from "./serviceDetails/ServiceDetailsFaqSection";
@@ -20,6 +21,7 @@ export default function CustomerServiceDetailsContent() {
   const router = useRouter();
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const loadedIdRef = useRef<string | number | null>(null);
 
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const { fetchProfile } = useUserStore();
@@ -30,10 +32,19 @@ export default function CustomerServiceDetailsContent() {
 
   useEffect(() => {
     const fetchService = async () => {
+      const identifier = params.id as string;
+      if (!identifier) return;
+
+      if (
+        service &&
+        (service.slug === identifier || String(service.id) === String(identifier))
+      ) {
+        return;
+      }
+
       setLoading(true);
       try {
-        if (!params.id) return;
-        const res = await getServiceByIdAPI(params.id as string);
+        const res = await getServiceByIdAPI(identifier);
         if (res.success) {
           let rawData = res.data;
           if (rawData && rawData.data) {
@@ -43,6 +54,23 @@ export default function CustomerServiceDetailsContent() {
             rawData = rawData.data;
           }
           setService(rawData);
+          loadedIdRef.current = rawData.id;
+          if (rawData?.id && typeof window !== "undefined") {
+            localStorage.setItem("last_service_id", String(rawData.id));
+            sessionStorage.setItem("last_service_id", String(rawData.id));
+            if (rawData?.slug) {
+              const s = String(rawData.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              localStorage.setItem(`service_slug_${s}`, String(rawData.id));
+              sessionStorage.setItem(`service_slug_${s}`, String(rawData.id));
+              const currentPath = window.location.pathname;
+              const targetPath = `/customer/services/${rawData.slug}`;
+              if (currentPath !== targetPath) {
+                window.history.replaceState(null, "", targetPath);
+              }
+            }
+          }
         } else {
           showSnackbar(res.message || "Failed to load service details", "error");
         }
@@ -54,7 +82,7 @@ export default function CustomerServiceDetailsContent() {
       }
     };
     fetchService();
-  }, [params.id, showSnackbar]);
+  }, [params.id, showSnackbar, service]);
 
   const handleScrollToBookingForm = () => {
     const el = document.getElementById("booking-form-section");
@@ -106,23 +134,7 @@ export default function CustomerServiceDetailsContent() {
     );
   }
 
-  const minP =
-    service?.plans?.basic?.price ??
-    service?.priceWithoutSamagri ??
-    service?.minPrice ??
-    service?.price ??
-    service?.basePrice;
-  const maxP =
-    service?.plans?.standard?.price ??
-    service?.priceWithSamagri ??
-    service?.maxPrice;
-
-  const priceDisplay =
-    minP != null && maxP != null && minP !== maxP
-      ? `₹${Number(minP).toLocaleString("en-IN")} - ₹${Number(maxP).toLocaleString("en-IN")}`
-      : minP != null
-        ? `₹${Number(minP).toLocaleString("en-IN")}`
-        : "Price on request";
+  const priceDisplay = formatServicePriceRange(service);
 
   const parseJsonList = (val: any) => {
     if (!val) return [];
@@ -160,7 +172,9 @@ export default function CustomerServiceDetailsContent() {
 
   const durationText = service.durationMinutes
     ? service.durationMinutes >= 60
-      ? `${Math.floor(service.durationMinutes / 60)} hour${service.durationMinutes >= 120 ? "s" : ""}`
+      ? service.durationMinutes % 60 === 0
+        ? `${service.durationMinutes / 60} hour${service.durationMinutes >= 120 ? "s" : ""}`
+        : `${Math.floor(service.durationMinutes / 60)} hr ${service.durationMinutes % 60} mins`
       : `${service.durationMinutes} mins`
     : service.duration || "2 hours";
 
@@ -175,7 +189,10 @@ export default function CustomerServiceDetailsContent() {
   return (
     <Box sx={{ pb: 6 }}>
       {/* Top Breadcrumbs */}
-      <ServiceDetailsBreadcrumbs serviceName={service.name || service.title} />
+      <ServiceDetailsBreadcrumbs
+        serviceName={service.name || service.title}
+        service={service}
+      />
 
       {/* Hero Section */}
       <ServiceDetailsHeroSection

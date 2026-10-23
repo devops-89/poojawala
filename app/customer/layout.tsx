@@ -44,7 +44,9 @@ export default function CustomerDashboardLayout({
           bgcolor: "#ffffff",
         }}
       >
-        <CustomerHeader />
+        <React.Suspense fallback={null}>
+          <CustomerHeader />
+        </React.Suspense>
 
         {/* Main Content */}
         <Box

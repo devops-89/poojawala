@@ -7,6 +7,7 @@ import { getCustomerAddressesAPI } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import AddIcon from "@mui/icons-material/Add";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
@@ -15,6 +16,7 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
+  Divider,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -30,6 +32,9 @@ import {
   Typography,
 } from "@mui/material";
 import AddAddressModal from "@/components/widgets/AddAddressModal";
+import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
+import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import ServiceInquiryModal from "./ServiceInquiryModal";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -188,6 +193,86 @@ const checkCityMatch = (addr: any, serviceCity: { name: string; state?: string }
   return false;
 };
 
+const parsePlanFeatures = (
+  planKey: string,
+  plan: any,
+  service: any,
+  showAddons: boolean,
+  selectedFeatureIds: number[]
+) => {
+  const isOnlineService = Boolean(service?.isOnline && !service?.isOffline);
+  const planTitle = isOnlineService
+    ? "Online Pooja Package"
+    : planKey === "basic"
+      ? "Basic Plan"
+      : "Standard Plan";
+
+  const rawFeatures =
+    plan?.features ||
+    (service?.serviceFeatures
+      ? service.serviceFeatures.filter(
+          (sf: any) => sf.plan === planKey.toUpperCase(),
+        )
+      : null);
+
+  const normalFeatures: string[] = [];
+  const priceFeatures: Array<{ id: number; title: string; price: number; plan: string }> = [];
+
+  if (Array.isArray(rawFeatures)) {
+    rawFeatures.forEach((f: any, idx: number) => {
+      if (f && f.isActive !== false) {
+        const title = formatKeyName(f.title || f.name || f.key || "");
+        if (f.type === "PRICE") {
+          const matchedSf = service?.serviceFeatures?.find(
+            (sf: any) =>
+              sf.id === f.id ||
+              (sf.plan === planKey.toUpperCase() &&
+                (sf.title || "").trim().toLowerCase() ===
+                  (f.title || f.name || "").trim().toLowerCase())
+          );
+          const resolvedId =
+            f.id != null
+              ? Number(f.id)
+              : matchedSf?.id != null
+                ? Number(matchedSf.id)
+                : idx + 1;
+          priceFeatures.push({
+            id: resolvedId,
+            title: title || f.title || "Add-on",
+            price: Number(f.value || f.price || 0),
+            plan: planKey,
+          });
+        } else if (title) {
+          normalFeatures.push(title);
+        }
+      }
+    });
+  } else if (plan?.features && typeof plan.features === "object") {
+    const targetObj = plan.features;
+    Object.entries(targetObj).forEach(([k, v]) => {
+      const formatted = formatFeatureKey(k, v);
+      if (formatted) normalFeatures.push(formatted);
+    });
+  }
+
+  const planAddonTotal = showAddons
+    ? priceFeatures
+        .filter((pf) => selectedFeatureIds.includes(pf.id))
+        .reduce((sum, pf) => sum + Number(pf.price || 0), 0)
+    : 0;
+
+  const totalCardPrice = Number(plan?.price || 0) + planAddonTotal;
+
+  return {
+    isOnlineService,
+    planTitle,
+    normalFeatures,
+    priceFeatures,
+    planAddonTotal,
+    totalCardPrice,
+  };
+};
+
 export default function ServiceDetailsBookingForm({ serviceId, service }: Props) {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
@@ -196,11 +281,26 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
   const todayStr = new Date().toISOString().split("T")[0];
 
   const plans = service?.plans;
+  const availablePlanKeys = useMemo(
+    () => ["basic", "standard"].filter((k) => Boolean(plans?.[k])),
+    [plans]
+  );
+  const isSinglePlan = availablePlanKeys.length === 1;
+
   const [selectedPlan, setSelectedPlan] = useState<string>("basic");
+
+  useEffect(() => {
+    if (plans) {
+      if (plans[selectedPlan]) return;
+      if (plans.basic) setSelectedPlan("basic");
+      else if (plans.standard) setSelectedPlan("standard");
+    }
+  }, [plans, selectedPlan]);
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<number[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<number | string>("");
   const [addressModalOpen, setAddressModalOpen] = useState(false);
+  const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
 
   const toggleFeatureId = (id: number, planKey: string) => {
     if (selectedPlan !== planKey) {
@@ -221,6 +321,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
   };
 
   const handleAddressAdded = async (newAddrResponse?: any) => {
+    if (activeBookingMode === "ONLINE" || isOnlineService) return;
     let addrList: any[] = [];
     try {
       const res = await getCustomerAddressesAPI();
@@ -314,31 +415,28 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     return serviceCities.some((sc) => checkCityMatch(selectedAddress, sc));
   }, [isGlobal, service?.isOffline, serviceCities, selectedAddress]);
 
-  const isOnlineAllowed = isGlobal || service?.isOnline !== false;
-  const isOfflineAllowed =
-    isGlobal || (service?.isOffline === true && isAddressCityCoveredForOffline);
-  const isBothAllowed = isOnlineAllowed && isOfflineAllowed;
-  const isSingleMode = !isBothAllowed;
+  // Service is either strictly online or offline based on service data
+  const isOnlineService = Boolean(
+    service?.isOnline === true ||
+    String(service?.isOnline).toLowerCase() === "true" ||
+    service?.isOnline === 1 ||
+    String(service?.isOnline) === "1" ||
+    (service as any)?.bookingMode === "ONLINE"
+  );
+
+  const activeBookingMode = useMemo(() => {
+    return isOnlineService ? "ONLINE" : "OFFLINE";
+  }, [isOnlineService]);
 
   const [bookingForm, setBookingForm] = useState({
     scheduledDate: "",
     scheduledTime: "",
-    bookingMode: "OFFLINE",
     paymentOption: "TOKEN",
     language: "Hindi",
     specialInstructions: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
-
-  const activeBookingMode = useMemo(() => {
-    if (isSingleMode) {
-      if (isOfflineAllowed && !isOnlineAllowed) return "OFFLINE";
-      if (isOnlineAllowed && !isOfflineAllowed) return "ONLINE";
-      return isOfflineAllowed ? "OFFLINE" : "ONLINE";
-    }
-    return bookingForm.bookingMode === "ONLINE" ? "ONLINE" : "OFFLINE";
-  }, [isSingleMode, isOfflineAllowed, isOnlineAllowed, bookingForm.bookingMode]);
 
   const showAddons = activeBookingMode === "OFFLINE";
 
@@ -348,19 +446,6 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
       setSelectedFeatureIds([]);
     }
   }, [showAddons, selectedFeatureIds.length]);
-
-  // Sync booking mode whenever allowed modes or address selection changes
-  useEffect(() => {
-    if (!isOfflineAllowed && isOnlineAllowed) {
-      setBookingForm((prev) =>
-        prev.bookingMode !== "ONLINE" ? { ...prev, bookingMode: "ONLINE" } : prev
-      );
-    } else if (isOfflineAllowed && !isOnlineAllowed) {
-      setBookingForm((prev) =>
-        prev.bookingMode !== "OFFLINE" ? { ...prev, bookingMode: "OFFLINE" } : prev
-      );
-    }
-  }, [isOfflineAllowed, isOnlineAllowed]);
 
   useEffect(() => {
     fetchProfile();
@@ -438,6 +523,11 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
   }, [timeOptions, bookingForm.scheduledTime]);
 
   useEffect(() => {
+    if (activeBookingMode === "ONLINE" || isOnlineService) {
+      setAddresses([]);
+      return;
+    }
+
     const loadAddresses = async () => {
       let addrList: any[] = [];
       try {
@@ -470,7 +560,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
       }
     };
     loadAddresses();
-  }, [profile]);
+  }, [profile, activeBookingMode, isOnlineService]);
 
   const handleInputChange = (field: string, value: any) => {
     setBookingForm((prev) => ({ ...prev, [field]: value }));
@@ -502,13 +592,6 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         );
         return;
       }
-      if (!isGlobal && !isAddressCityCoveredForOffline) {
-        showSnackbar(
-          `Offline service is only available in: ${serviceCityNamesText}. Please select a supported address or book Online.`,
-          "error"
-        );
-        return;
-      }
     }
 
     setSubmitting(true);
@@ -527,7 +610,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         serviceId: Number(serviceId),
         bookingMode: activeBookingMode,
         scheduledAt: scheduledAtIso,
-        plan: selectedPlan ? selectedPlan.toUpperCase() : "BASIC",
+        plan: isOnlineService ? "BASIC" : (selectedPlan ? selectedPlan.toUpperCase() : "BASIC"),
         paymentOption: bookingForm.paymentOption || "TOKEN",
         featureIds: finalFeatureIds,
         specialInstructions: bookingForm.specialInstructions || "",
@@ -564,7 +647,6 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
-          bookingMode: !isOfflineAllowed && isOnlineAllowed ? "ONLINE" : "OFFLINE",
           paymentOption: "TOKEN",
           language: "Hindi",
           specialInstructions: "",
@@ -624,334 +706,480 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
       }}
     >
       {/* Plan Selection Cards (If Plans Exist) */}
-      {plans && (plans.basic || plans.standard) && (
-        <Box sx={{ mb: 5 }}>
-          <Typography
-            sx={{
-              fontSize: "12px",
-              fontWeight: 700,
-              letterSpacing: "1.2px",
-              color: COLORS.PRIMARY,
-              textTransform: "uppercase",
-              mb: 1,
-            }}
-          >
-            SELECT YOUR PLAN
-          </Typography>
-          <Typography
-            variant="h4"
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 800,
-              color: "#2C1810",
-              fontSize: { xs: "22px", sm: "28px" },
-              mb: 3,
-            }}
-          >
-            Choose the package that suits your ritual requirements
-          </Typography>
+      {isOnlineService ? (() => {
+        const onlinePlan = plans?.basic || plans?.standard || Object.values(plans || {})[0];
+        const onlinePrice = Number(onlinePlan?.price || service?.minPrice || 0);
 
-          <Grid container spacing={3}>
-            {["basic", "standard"].map((planKey) => {
-              const plan = plans[planKey];
-              if (!plan) return null;
-              const isSelected = selectedPlan === planKey;
-              const planTitle =
-                planKey === "basic" ? "Basic Plan" : "Standard Plan";
+        const onlineRawFeatures =
+          onlinePlan?.features ||
+          (service?.serviceFeatures
+            ? service.serviceFeatures.filter(
+                (sf: any) => sf.plan === "BASIC",
+              )
+            : null);
 
-              const rawFeatures =
-                plan.features ||
-                (service?.serviceFeatures
-                  ? service.serviceFeatures.filter(
-                      (sf: any) => sf.plan === planKey.toUpperCase(),
-                    )
-                  : null);
-
-              const normalFeatures: string[] = [];
-              const priceFeatures: Array<{ id: number; title: string; price: number; plan: string }> = [];
-
-              if (Array.isArray(rawFeatures)) {
-                rawFeatures.forEach((f: any, idx: number) => {
-                  if (f && f.isActive !== false) {
-                    const title = formatKeyName(f.title || f.name || f.key || "");
-                    if (f.type === "PRICE") {
-                      const matchedSf = service?.serviceFeatures?.find(
-                        (sf: any) =>
-                          sf.id === f.id ||
-                          (sf.plan === planKey.toUpperCase() &&
-                            (sf.title || "").trim().toLowerCase() ===
-                              (f.title || f.name || "").trim().toLowerCase())
-                      );
-                      const resolvedId =
-                        f.id != null
-                          ? Number(f.id)
-                          : matchedSf?.id != null
-                            ? Number(matchedSf.id)
-                            : idx + 1;
-                      priceFeatures.push({
-                        id: resolvedId,
-                        title: title || f.title || "Add-on",
-                        price: Number(f.value || f.price || 0),
-                        plan: planKey,
-                      });
-                    } else if (title) {
-                      normalFeatures.push(title);
-                    }
-                  }
-                });
-              } else if (plan.features && typeof plan.features === "object") {
-                const targetObj = plan.features;
-                Object.entries(targetObj).forEach(([k, v]) => {
-                  const formatted = formatFeatureKey(k, v);
-                  if (formatted) normalFeatures.push(formatted);
-                });
+        const onlineFeatures: string[] = [];
+        if (Array.isArray(onlineRawFeatures)) {
+          onlineRawFeatures.forEach((f: any) => {
+            if (f && f.isActive !== false) {
+              const title = formatKeyName(f.title || f.name || f.key || "");
+              if (title && f.type !== "PRICE") {
+                onlineFeatures.push(title);
               }
+            }
+          });
+        } else if (onlinePlan?.features && typeof onlinePlan.features === "object") {
+          Object.entries(onlinePlan.features).forEach(([k, v]) => {
+            const formatted = formatFeatureKey(k, v);
+            if (formatted) onlineFeatures.push(formatted);
+          });
+        }
 
-              const planAddonTotal = showAddons
-                ? priceFeatures
-                    .filter((pf) => selectedFeatureIds.includes(pf.id))
-                    .reduce((sum, pf) => sum + Number(pf.price || 0), 0)
-                : 0;
+        return (
+          <Paper
+            elevation={0}
+            sx={{
+              p: { xs: 2.5, sm: 3.5 },
+              borderRadius: "16px",
+              border: "1px solid #EADCCF",
+              bgcolor: "#FFFFFF",
+              boxShadow: "0 2px 12px rgba(44, 24, 16, 0.04)",
+              mb: 5,
+            }}
+          >
+            {/* Header with Price */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "flex-start", sm: "center" },
+                gap: 2,
+                pb: 2,
+                borderBottom: "1px solid #F1E5D8",
+              }}
+            >
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    letterSpacing: "1px",
+                    color: COLORS.PRIMARY,
+                    textTransform: "uppercase",
+                    mb: 0.5,
+                  }}
+                >
+                  Online Pooja Package
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    color: "#2C1810",
+                    fontSize: { xs: "20px", sm: "24px" },
+                  }}
+                >
+                  Package Inclusions & Features
+                </Typography>
+              </Box>
 
-              const totalCardPrice = Number(plan.price || 0) + planAddonTotal;
+              <Box sx={{ textAlign: { xs: "left", sm: "right" } }}>
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: "#8C7A6B",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Pooja Offering
+                </Typography>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    color: COLORS.PRIMARY,
+                    fontSize: { xs: "28px", sm: "32px" },
+                    lineHeight: 1.15,
+                    my: 0.3,
+                  }}
+                >
+                  ₹{onlinePrice.toLocaleString("en-IN")}
+                </Typography>
+              </Box>
+            </Box>
 
-              return (
-                <Grid size={{ xs: 12, sm: 6 }} key={planKey} sx={{ display: "flex" }}>
-                  <Paper
-                    elevation={0}
-                    onClick={() => handleSelectPlan(planKey)}
-                    sx={{
-                      width: "100%",
-                      p: 3,
-                      borderRadius: "18px",
-                      border: isSelected
-                        ? "2px solid #C84B16"
-                        : "1px solid #EADCCF",
-                      bgcolor: isSelected ? "#FFFBF7" : "#FFFFFF",
-                      cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      boxShadow: isSelected
-                        ? "0 8px 24px rgba(200, 75, 22, 0.12)"
-                        : "0 2px 8px rgba(0,0,0,0.02)",
-                      transition: "all 0.25s ease",
-                      position: "relative",
-                      "&:hover": {
-                        transform: "translateY(-3px)",
-                        boxShadow: "0 8px 24px rgba(200, 75, 22, 0.15)",
-                        borderColor: COLORS.PRIMARY,
-                      },
-                    }}
-                  >
-                    <Box>
-                      <Box
+            {/* Feature Points */}
+            {onlineFeatures.length > 0 && (
+              <Box sx={{ pt: 2.5 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                    gap: 1.8,
+                  }}
+                >
+                  {onlineFeatures.map((feat, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1.2,
+                      }}
+                    >
+                      <CheckCircleIcon
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 1.5,
+                          color: COLORS.PRIMARY,
+                          fontSize: 18,
+                          flexShrink: 0,
+                          mt: 0.2,
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.PRIMARY,
+                          fontSize: "14px",
+                          color: "#3D2B22",
+                          fontWeight: 500,
+                          lineHeight: 1.5,
                         }}
                       >
-                        <Typography
-                          variant="h6"
+                        {feat}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            )}
+          </Paper>
+        );
+      })() : (
+        plans && (plans.basic || plans.standard) && (
+          <Box sx={{ mb: 5 }}>
+            <Typography
+              sx={{
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "1.2px",
+                color: COLORS.PRIMARY,
+                textTransform: "uppercase",
+                mb: 1,
+              }}
+            >
+              SELECT YOUR PLAN
+            </Typography>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: "#2C1810",
+                fontSize: { xs: "22px", sm: "28px" },
+                mb: 3,
+              }}
+            >
+              Choose the package that suits your ritual requirements
+            </Typography>
+
+            <Grid container spacing={3}>
+              {["basic", "standard"].map((planKey) => {
+                const plan = plans[planKey];
+                if (!plan) return null;
+                const isSelected = selectedPlan === planKey;
+                const planTitle = planKey === "basic" ? "Basic Plan" : "Standard Plan";
+
+                const rawFeatures =
+                  plan.features ||
+                  (service?.serviceFeatures
+                    ? service.serviceFeatures.filter(
+                        (sf: any) => sf.plan === planKey.toUpperCase(),
+                      )
+                    : null);
+
+                const normalFeatures: string[] = [];
+                const priceFeatures: Array<{ id: number; title: string; price: number; plan: string }> = [];
+
+                if (Array.isArray(rawFeatures)) {
+                  rawFeatures.forEach((f: any, idx: number) => {
+                    if (f && f.isActive !== false) {
+                      const title = formatKeyName(f.title || f.name || f.key || "");
+                      if (f.type === "PRICE") {
+                        const matchedSf = service?.serviceFeatures?.find(
+                          (sf: any) =>
+                            sf.id === f.id ||
+                            (sf.plan === planKey.toUpperCase() &&
+                              (sf.title || "").trim().toLowerCase() ===
+                                (f.title || f.name || "").trim().toLowerCase())
+                        );
+                        const resolvedId =
+                          f.id != null
+                            ? Number(f.id)
+                            : matchedSf?.id != null
+                              ? Number(matchedSf.id)
+                              : idx + 1;
+                        priceFeatures.push({
+                          id: resolvedId,
+                          title: title || f.title || "Add-on",
+                          price: Number(f.value || f.price || 0),
+                          plan: planKey,
+                        });
+                      } else if (title) {
+                        normalFeatures.push(title);
+                      }
+                    }
+                  });
+                } else if (plan.features && typeof plan.features === "object") {
+                  const targetObj = plan.features;
+                  Object.entries(targetObj).forEach(([k, v]) => {
+                    const formatted = formatFeatureKey(k, v);
+                    if (formatted) normalFeatures.push(formatted);
+                  });
+                }
+
+                const planAddonTotal = showAddons
+                  ? priceFeatures
+                      .filter((pf) => selectedFeatureIds.includes(pf.id))
+                      .reduce((sum, pf) => sum + Number(pf.price || 0), 0)
+                  : 0;
+
+                const totalCardPrice = Number(plan.price || 0) + planAddonTotal;
+
+                return (
+                  <Grid size={{ xs: 12, sm: 6 }} key={planKey} sx={{ display: "flex" }}>
+                    <Paper
+                      elevation={0}
+                      onClick={() => handleSelectPlan(planKey)}
+                      sx={{
+                        width: "100%",
+                        p: 3,
+                        borderRadius: "18px",
+                        border: isSelected
+                          ? "2px solid #C84B16"
+                          : "1px solid #EADCCF",
+                        bgcolor: isSelected ? "#FFFBF7" : "#FFFFFF",
+                        cursor: "pointer",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        boxShadow: isSelected
+                          ? "0 8px 24px rgba(200, 75, 22, 0.12)"
+                          : "0 2px 8px rgba(0,0,0,0.02)",
+                        transition: "all 0.25s ease",
+                        position: "relative",
+                        "&:hover": {
+                          transform: "translateY(-3px)",
+                          boxShadow: "0 8px 24px rgba(200, 75, 22, 0.15)",
+                          borderColor: COLORS.PRIMARY,
+                        },
+                      }}
+                    >
+                      <Box>
+                        <Box
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
-                            fontWeight: 800,
-                            color: "#2C1810",
-                            fontSize: "20px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 1.5,
                           }}
                         >
-                          {planTitle}
-                        </Typography>
-                        {isSelected && (
-                          <Chip
-                            label="SELECTED"
-                            size="small"
+                          <Typography
+                            variant="h6"
                             sx={{
-                              bgcolor: COLORS.PRIMARY,
-                              color: "#FFF",
-                              fontWeight: 700,
-                              fontSize: "11px",
-                              height: "22px",
-                            }}
-                          />
-                        )}
-                      </Box>
-
-                      <Typography
-                        variant="h4"
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontWeight: 800,
-                          color: COLORS.PRIMARY,
-                          mb: 2.5,
-                        }}
-                      >
-                        ₹{totalCardPrice.toLocaleString("en-IN")}
-                      </Typography>
-
-                      {/* Normal Features (Title only) */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 1.2,
-                        }}
-                      >
-                        {normalFeatures.map((feat, idx) => (
-                          <Box
-                            key={idx}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1.2,
+                              fontFamily: FONTS.PRIMARY,
+                              fontWeight: 800,
+                              color: "#2C1810",
+                              fontSize: "20px",
                             }}
                           >
-                            <CheckCircleIcon
+                            {planTitle}
+                          </Typography>
+                          {isSelected && (
+                            <Chip
+                              label="SELECTED"
+                              size="small"
                               sx={{
-                                color: COLORS.PRIMARY,
-                                fontSize: 18,
-                                flexShrink: 0,
+                                bgcolor: COLORS.PRIMARY,
+                                color: "#FFF",
+                                fontWeight: 700,
+                                fontSize: "11px",
+                                height: "22px",
                               }}
                             />
+                          )}
+                        </Box>
+
+                        <Typography
+                          variant="h4"
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontWeight: 800,
+                            color: COLORS.PRIMARY,
+                            mb: 2.5,
+                          }}
+                        >
+                          ₹{totalCardPrice.toLocaleString("en-IN")}
+                        </Typography>
+
+                        {/* Normal Features */}
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                          {normalFeatures.map((feat, idx) => (
+                            <Box
+                              key={idx}
+                              sx={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                gap: 1.2,
+                              }}
+                            >
+                              <CheckCircleIcon
+                                sx={{
+                                  color: COLORS.PRIMARY,
+                                  fontSize: 18,
+                                  flexShrink: 0,
+                                  mt: 0.2,
+                                }}
+                              />
+                              <Typography
+                                sx={{
+                                  fontFamily: FONTS.PRIMARY,
+                                  fontSize: "14px",
+                                  color: "#5C4A40",
+                                  fontWeight: 500,
+                                  lineHeight: 1.5,
+                                }}
+                              >
+                                {feat}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Box>
+
+                        {/* Optional Add-ons */}
+                        {showAddons && priceFeatures.length > 0 && (
+                          <Box sx={{ mt: 2.5, pt: 2, borderTop: "1px dashed #EADCCF" }}>
                             <Typography
                               sx={{
                                 fontFamily: FONTS.PRIMARY,
-                                fontSize: "14px",
-                                color: "#5C4A40",
-                                fontWeight: 500,
+                                fontSize: "12px",
+                                fontWeight: 700,
+                                color: "#8C7A6B",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.5px",
+                                mb: 1.2,
                               }}
                             >
-                              {feat}
+                              Optional Add-ons
                             </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-
-                      {/* Price Features with Right-Tick Checkboxes (Only in OFFLINE mode) */}
-                      {showAddons && priceFeatures.length > 0 && (
-                        <Box sx={{ mt: 2.5, pt: 2, borderTop: "1px dashed #EADCCF" }}>
-                          <Typography
-                            sx={{
-                              fontFamily: FONTS.PRIMARY,
-                              fontSize: "12px",
-                              fontWeight: 700,
-                              color: "#8C7A6B",
-                              textTransform: "uppercase",
-                              letterSpacing: "0.5px",
-                              mb: 1.2,
-                            }}
-                          >
-                            Optional Add-ons
-                          </Typography>
-                          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                            {priceFeatures.map((pf) => {
-                              const isChecked = selectedFeatureIds.includes(pf.id);
-
-                              return (
-                                <Box
-                                  key={pf.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleFeatureId(pf.id, planKey);
-                                  }}
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    p: "8px 12px",
-                                    borderRadius: "10px",
-                                    bgcolor: isChecked ? "#FFF7ED" : "#F8FAFC",
-                                    border: `1.5px solid ${
-                                      isChecked ? COLORS.PRIMARY : "#E2E8F0"
-                                    }`,
-                                    cursor: "pointer",
-                                    transition: "all 0.2s ease",
-                                    "&:hover": {
-                                      borderColor: COLORS.PRIMARY,
-                                      bgcolor: "#FFF7ED",
-                                    },
-                                  }}
-                                >
-                                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-                                    <Checkbox
-                                      checked={isChecked}
-                                      onChange={() => toggleFeatureId(pf.id, planKey)}
-                                      onClick={(e) => e.stopPropagation()}
-                                      size="small"
-                                      sx={{
-                                        p: 0,
-                                        color: "#94A3B8",
-                                        "&.Mui-checked": {
-                                          color: COLORS.PRIMARY,
-                                        },
-                                      }}
-                                    />
-                                    <Typography
-                                      sx={{
-                                        fontFamily: FONTS.PRIMARY,
-                                        fontSize: "13.5px",
-                                        color: isChecked ? "#2C1810" : "#475569",
-                                        fontWeight: isChecked ? 700 : 500,
-                                      }}
-                                    >
-                                      {pf.title}
-                                    </Typography>
-                                  </Box>
-                                  <Typography
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                              {priceFeatures.map((pf) => {
+                                const isChecked = selectedFeatureIds.includes(pf.id);
+                                return (
+                                  <Box
+                                    key={pf.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleFeatureId(pf.id, planKey);
+                                    }}
                                     sx={{
-                                      fontFamily: FONTS.OUTFIT,
-                                      fontSize: "13.5px",
-                                      fontWeight: 700,
-                                      color: COLORS.PRIMARY,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                      p: 1.2,
+                                      borderRadius: "8px",
+                                      border: isChecked ? "1.5px solid #C84B16" : "1px solid #E2E8F0",
+                                      bgcolor: isChecked ? "#FFF7ED" : "#FFFFFF",
+                                      cursor: "pointer",
+                                      transition: "all 0.2s ease",
+                                      "&:hover": {
+                                        borderColor: COLORS.PRIMARY,
+                                        bgcolor: "#FFF7ED",
+                                      },
                                     }}
                                   >
-                                    +₹{Number(pf.price || 0).toLocaleString("en-IN")}
-                                  </Typography>
-                                </Box>
-                              );
-                            })}
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                                      <Checkbox
+                                        checked={isChecked}
+                                        onChange={() => toggleFeatureId(pf.id, planKey)}
+                                        onClick={(e) => e.stopPropagation()}
+                                        size="small"
+                                        sx={{
+                                          p: 0,
+                                          color: "#94A3B8",
+                                          "&.Mui-checked": {
+                                            color: COLORS.PRIMARY,
+                                          },
+                                        }}
+                                      />
+                                      <Typography
+                                        sx={{
+                                          fontFamily: FONTS.PRIMARY,
+                                          fontSize: "13.5px",
+                                          color: isChecked ? "#2C1810" : "#475569",
+                                          fontWeight: isChecked ? 700 : 500,
+                                        }}
+                                      >
+                                        {pf.title}
+                                      </Typography>
+                                    </Box>
+                                    <Typography
+                                      sx={{
+                                        fontFamily: FONTS.OUTFIT,
+                                        fontSize: "13.5px",
+                                        fontWeight: 700,
+                                        color: COLORS.PRIMARY,
+                                      }}
+                                    >
+                                      +₹{Number(pf.price || 0).toLocaleString("en-IN")}
+                                    </Typography>
+                                  </Box>
+                                );
+                              })}
+                            </Box>
                           </Box>
-                        </Box>
-                      )}
-                    </Box>
+                        )}
+                      </Box>
 
-                    <Button
-                      variant={isSelected ? "contained" : "outlined"}
-                      fullWidth
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSelectPlan(planKey);
-                      }}
-                      sx={{
-                        mt: 3,
-                        borderRadius: "10px",
-                        textTransform: "none",
-                        fontWeight: 700,
-                        py: 1,
-                        ...(isSelected
-                          ? {
-                              bgcolor: "#C84B16 !important",
-                              color: "white !important",
-                            }
-                          : {
-                              borderColor: COLORS.PRIMARY,
-                              color: COLORS.PRIMARY,
-                              "&:hover": { bgcolor: "#FFFBF7" },
-                            }),
-                      }}
-                    >
-                      {isSelected ? "Selected Plan" : "Select Plan"}
-                    </Button>
-                  </Paper>
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Box>
+                      <Button
+                        variant={isSelected ? "contained" : "outlined"}
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectPlan(planKey);
+                        }}
+                        sx={{
+                          mt: 3,
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          fontWeight: 700,
+                          py: 1,
+                          ...(isSelected
+                            ? {
+                                bgcolor: "#C84B16 !important",
+                                color: "white !important",
+                              }
+                            : {
+                                borderColor: COLORS.PRIMARY,
+                                color: COLORS.PRIMARY,
+                                "&:hover": { bgcolor: "#FFFBF7" },
+                              }),
+                        }}
+                      >
+                        {isSelected ? "Selected Plan" : "Select Plan"}
+                      </Button>
+                    </Paper>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
+        )
       )}
-
+      
       <Grid container spacing={5} sx={{ alignItems: "flex-start" }}>
         {/* Left Column: Heading & Description */}
         <Grid size={{ xs: 12, md: 5 }}>
@@ -994,6 +1222,91 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
             Share your preferred date, time, and requirements. We'll confirm your
             booking within 24 hours — no advance payment needed.
           </Typography>
+
+          {/* Get Inquiry Card Option */}
+          <Box
+            sx={{
+              mt: 4,
+              p: 2.5,
+              borderRadius: "16px",
+              background: "linear-gradient(135deg, #FFF9F5 0%, #FFF2E8 100%)",
+              border: "1px dashed #FFBE98",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              maxWidth: 440,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "10px",
+                  bgcolor: "rgba(255, 98, 0, 0.12)",
+                  color: COLORS.PRIMARY,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  mt: 0.2,
+                }}
+              >
+                <HelpOutlinedIcon fontSize="medium" />
+              </Box>
+              <Box>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 700,
+                    fontSize: "15px",
+                    color: "#2C1810",
+                  }}
+                >
+                  Have questions or custom requirements?
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontSize: "13px",
+                    color: "#786558",
+                    mt: 0.5,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Need a custom date, specific vidhi details, or tailored Samagri? Send us an inquiry.
+                </Typography>
+              </Box>
+            </Box>
+
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={() => setInquiryModalOpen(true)}
+              startIcon={<ChatBubbleOutlineOutlinedIcon />}
+              sx={{
+                color: COLORS.PRIMARY,
+                borderColor: COLORS.PRIMARY,
+                bgcolor: "#FFFFFF",
+                fontFamily: FONTS.PRIMARY,
+                fontWeight: 700,
+                fontSize: "14px",
+                borderRadius: "10px",
+                px: 2.5,
+                py: 0.9,
+                textTransform: "none",
+                alignSelf: "flex-start",
+                boxShadow: "0 2px 6px rgba(255, 98, 0, 0.08)",
+                "&:hover": {
+                  borderColor: COLORS.PRIMARY_DARK,
+                  bgcolor: "#FFF4ED",
+                  color: COLORS.PRIMARY_DARK,
+                },
+              }}
+            >
+              Get Inquiry
+            </Button>
+          </Box>
         </Grid>
 
         {/* Right Column: Form */}
@@ -1108,63 +1421,9 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               </Grid>
             </Grid>
 
-            {/* Row 2: Booking Mode & Preferred Language */}
+            {/* Row 2: Preferred Language */}
             <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl
-                  fullWidth
-                  disabled={isSingleMode}
-                  sx={{
-                    bgcolor: isSingleMode ? "#F5EFE9" : "#FFFBF7",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <InputLabel
-                    id="booking-mode-label"
-                    sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      color: "#64534A",
-                      "&.Mui-disabled": {
-                        color: "#8C7A6B",
-                      },
-                    }}
-                  >
-                    Booking Mode
-                  </InputLabel>
-                  <Select
-                    labelId="booking-mode-label"
-                    label="Booking Mode"
-                    disabled={isSingleMode}
-                    value={activeBookingMode}
-                    onChange={(e) => handleInputChange("bookingMode", e.target.value)}
-                    sx={{
-                      borderRadius: "10px",
-                      fontFamily: FONTS.PRIMARY,
-                      "&.Mui-disabled": {
-                        color: "#2C2013",
-                        WebkitTextFillColor: "#2C2013",
-                        bgcolor: "rgba(0, 0, 0, 0.02)",
-                      },
-                    }}
-                  >
-                    {isOnlineAllowed && (
-                      <MenuItem value="ONLINE">Online</MenuItem>
-                    )}
-                    {isOfflineAllowed && (
-                      <MenuItem value="OFFLINE">Offline</MenuItem>
-                    )}
-                  </Select>
-                  {isSingleMode && (
-                    <FormHelperText sx={{ fontFamily: FONTS.PRIMARY, color: "#8C7A6B" }}>
-                      {service?.isOffline && !isAddressCityCoveredForOffline
-                        ? "Only online mode is available in your city"
-                        : `This service is available in ${isOnlineAllowed ? "Online" : "Offline"} mode only`}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label="Preferred Language"
@@ -1187,195 +1446,197 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               </Grid>
             </Grid>
 
-            {/* Row 3: Customer Address (Select Address & Add Address) */}
-            <Box sx={{ width: "100%" }}>
-              {addresses.length > 0 ? (
-                <Box sx={{ width: "100%" }}>
-                  {/* Top Right Responsive Add Address Button */}
+            {/* Row 3: Customer Address (Select Address & Add Address) - OFFLINE only */}
+            {activeBookingMode === "OFFLINE" && (
+              <Box sx={{ width: "100%" }}>
+                {addresses.length > 0 ? (
+                  <Box sx={{ width: "100%" }}>
+                    {/* Top Right Responsive Add Address Button */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        mb: 1,
+                        width: "100%",
+                      }}
+                    >
+                      <Button
+                        type="button"
+                        variant="contained"
+                        onClick={() => setAddressModalOpen(true)}
+                        startIcon={<AddIcon sx={{ fontSize: { xs: "16px", sm: "18px" } }} />}
+                        sx={{
+                          bgcolor: COLORS.PRIMARY,
+                          color: "#ffffff",
+                          fontFamily: FONTS.PRIMARY,
+                          fontWeight: 700,
+                          fontSize: { xs: "12px", sm: "13px" },
+                          textTransform: "none",
+                          px: { xs: 1.8, sm: 2.2 },
+                          py: { xs: 0.6, sm: 0.8 },
+                          borderRadius: "8px",
+                          boxShadow: "none",
+                          whiteSpace: "nowrap",
+                          "&:hover": {
+                            bgcolor: "#ea580c",
+                            boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
+                          },
+                        }}
+                      >
+                        Add Address
+                      </Button>
+                    </Box>
+
+                    {/* Full Width Select Dropdown */}
+                    <FormControl fullWidth sx={{ bgcolor: "#FFFBF7", borderRadius: "10px" }}>
+                      <InputLabel
+                        id="customer-address-label"
+                        sx={{
+                          fontFamily: FONTS.PRIMARY,
+                          color: "#64534A",
+                        }}
+                      >
+                        Select Delivery / Pooja Address
+                      </InputLabel>
+                      <Select
+                        labelId="customer-address-label"
+                        label="Select Delivery / Pooja Address"
+                        value={selectedAddressId}
+                        onChange={(e) => {
+                          if (e.target.value === "ADD_NEW") {
+                            setAddressModalOpen(true);
+                          } else {
+                            setSelectedAddressId(e.target.value);
+                          }
+                        }}
+                        MenuProps={{
+                          slotProps: {
+                            paper: {
+                              sx: {
+                                maxHeight: 320,
+                                maxWidth: { xs: "90vw", sm: "600px" },
+                                borderRadius: "14px",
+                                boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+                              },
+                            },
+                          },
+                        }}
+                        sx={{
+                          borderRadius: "10px",
+                          fontFamily: FONTS.PRIMARY,
+                          "& .MuiSelect-select": {
+                            whiteSpace: "normal",
+                            wordBreak: "break-word",
+                            py: 1.5,
+                            lineHeight: 1.4,
+                          },
+                        }}
+                      >
+                        {addresses.map((addr: any) => {
+                          const labelPrefix = addr.addressLabel ? `${addr.addressLabel}: ` : "";
+                          const displayAddress =
+                            addr.fullAddress ||
+                            [addr.addressLine1 || addr.street, addr.city, addr.state, addr.pincode || addr.postalCode]
+                              .filter(Boolean)
+                              .join(", ");
+                          const isDef =
+                            addr.isDefault === true ||
+                            String(addr.isDefault).toLowerCase() === "true" ||
+                            addr.isdefault === true ||
+                            addr.is_default === true;
+
+                          return (
+                            <MenuItem
+                              key={addr.id}
+                              value={addr.id}
+                              sx={{
+                                whiteSpace: "normal",
+                                wordBreak: "break-word",
+                                py: 1.5,
+                                px: 2,
+                                fontFamily: FONTS.PRIMARY,
+                                fontSize: "14px",
+                                lineHeight: 1.5,
+                                borderBottom: "1px solid #F5ECE3",
+                                "&:last-child": { borderBottom: "none" },
+                              }}
+                            >
+                              {labelPrefix}{displayAddress}{isDef ? " (Default)" : ""}
+                            </MenuItem>
+                          );
+                        })}
+                        <MenuItem
+                          value="ADD_NEW"
+                          sx={{
+                            py: 1.5,
+                            px: 2,
+                            fontFamily: FONTS.PRIMARY,
+                            fontSize: "14px",
+                            fontWeight: 700,
+                            color: COLORS.PRIMARY,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            borderTop: "1px dashed #FF6200",
+                            bgcolor: "#FFF8F2",
+                            "&:hover": { bgcolor: "#FFEFE2" },
+                          }}
+                        >
+                          <AddIcon sx={{ fontSize: "18px", color: COLORS.PRIMARY }} />
+                          + Add New Address
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                ) : (
                   <Box
                     sx={{
+                      p: 2,
+                      borderRadius: "10px",
+                      border: "1px dashed #FF6200",
+                      bgcolor: "#FFFBF7",
                       display: "flex",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                      mb: 1,
-                      width: "100%",
+                      flexDirection: { xs: "column", sm: "row" },
+                      alignItems: { xs: "flex-start", sm: "center" },
+                      justifyContent: "space-between",
+                      gap: 1.5,
                     }}
                   >
+                    <Box>
+                      <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "14px", color: "#2C1810" }}>
+                        No Saved Address Found
+                      </Typography>
+                      <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#64534A" }}>
+                        Please add a delivery / pooja address to complete your booking.
+                      </Typography>
+                    </Box>
                     <Button
                       type="button"
                       variant="contained"
                       onClick={() => setAddressModalOpen(true)}
-                      startIcon={<AddIcon sx={{ fontSize: { xs: "16px", sm: "18px" } }} />}
+                      startIcon={<AddIcon />}
                       sx={{
-                        bgcolor: COLORS.PRIMARY,
-                        color: "#ffffff",
+                        bgcolor: "#FF6200 !important",
+                        color: "white !important",
                         fontFamily: FONTS.PRIMARY,
                         fontWeight: 700,
-                        fontSize: { xs: "12px", sm: "13px" },
+                        fontSize: "13px",
                         textTransform: "none",
-                        px: { xs: 1.8, sm: 2.2 },
-                        py: { xs: 0.6, sm: 0.8 },
                         borderRadius: "8px",
                         boxShadow: "none",
+                        px: 2,
+                        py: 0.8,
                         whiteSpace: "nowrap",
-                        "&:hover": {
-                          bgcolor: "#ea580c",
-                          boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
-                        },
+                        "&:hover": { bgcolor: "#ea580c !important" },
                       }}
                     >
-                      Add Address
+                      + Add Address
                     </Button>
                   </Box>
-
-                  {/* Full Width Select Dropdown */}
-                  <FormControl fullWidth sx={{ bgcolor: "#FFFBF7", borderRadius: "10px" }}>
-                    <InputLabel
-                      id="customer-address-label"
-                      sx={{
-                        fontFamily: FONTS.PRIMARY,
-                        color: "#64534A",
-                      }}
-                    >
-                      Select Delivery / Pooja Address
-                    </InputLabel>
-                    <Select
-                      labelId="customer-address-label"
-                      label="Select Delivery / Pooja Address"
-                      value={selectedAddressId}
-                      onChange={(e) => {
-                        if (e.target.value === "ADD_NEW") {
-                          setAddressModalOpen(true);
-                        } else {
-                          setSelectedAddressId(e.target.value);
-                        }
-                      }}
-                      MenuProps={{
-                        slotProps: {
-                          paper: {
-                            sx: {
-                              maxHeight: 320,
-                              maxWidth: { xs: "90vw", sm: "600px" },
-                              borderRadius: "14px",
-                              boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-                            },
-                          },
-                        },
-                      }}
-                      sx={{
-                        borderRadius: "10px",
-                        fontFamily: FONTS.PRIMARY,
-                        "& .MuiSelect-select": {
-                          whiteSpace: "normal",
-                          wordBreak: "break-word",
-                          py: 1.5,
-                          lineHeight: 1.4,
-                        },
-                      }}
-                    >
-                      {addresses.map((addr: any) => {
-                        const labelPrefix = addr.addressLabel ? `${addr.addressLabel}: ` : "";
-                        const displayAddress =
-                          addr.fullAddress ||
-                          [addr.addressLine1 || addr.street, addr.city, addr.state, addr.pincode || addr.postalCode]
-                            .filter(Boolean)
-                            .join(", ");
-                        const isDef =
-                          addr.isDefault === true ||
-                          String(addr.isDefault).toLowerCase() === "true" ||
-                          addr.isdefault === true ||
-                          addr.is_default === true;
-
-                        return (
-                          <MenuItem
-                            key={addr.id}
-                            value={addr.id}
-                            sx={{
-                              whiteSpace: "normal",
-                              wordBreak: "break-word",
-                              py: 1.5,
-                              px: 2,
-                              fontFamily: FONTS.PRIMARY,
-                              fontSize: "14px",
-                              lineHeight: 1.5,
-                              borderBottom: "1px solid #F5ECE3",
-                              "&:last-child": { borderBottom: "none" },
-                            }}
-                          >
-                            {labelPrefix}{displayAddress}{isDef ? " (Default)" : ""}
-                          </MenuItem>
-                        );
-                      })}
-                      <MenuItem
-                        value="ADD_NEW"
-                        sx={{
-                          py: 1.5,
-                          px: 2,
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "14px",
-                          fontWeight: 700,
-                          color: COLORS.PRIMARY,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          borderTop: "1px dashed #FF6200",
-                          bgcolor: "#FFF8F2",
-                          "&:hover": { bgcolor: "#FFEFE2" },
-                        }}
-                      >
-                        <AddIcon sx={{ fontSize: "18px", color: COLORS.PRIMARY }} />
-                        + Add New Address
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    p: 2,
-                    borderRadius: "10px",
-                    border: "1px dashed #FF6200",
-                    bgcolor: "#FFFBF7",
-                    display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
-                    alignItems: { xs: "flex-start", sm: "center" },
-                    justifyContent: "space-between",
-                    gap: 1.5,
-                  }}
-                >
-                  <Box>
-                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "14px", color: "#2C1810" }}>
-                      No Saved Address Found
-                    </Typography>
-                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#64534A" }}>
-                      Please add a delivery / pooja address to complete your booking.
-                    </Typography>
-                  </Box>
-                  <Button
-                    type="button"
-                    variant="contained"
-                    onClick={() => setAddressModalOpen(true)}
-                    startIcon={<AddIcon />}
-                    sx={{
-                      bgcolor: "#FF6200 !important",
-                      color: "white !important",
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 700,
-                      fontSize: "13px",
-                      textTransform: "none",
-                      borderRadius: "8px",
-                      boxShadow: "none",
-                      px: 2,
-                      py: 0.8,
-                      whiteSpace: "nowrap",
-                      "&:hover": { bgcolor: "#ea580c !important" },
-                    }}
-                  >
-                    + Add Address
-                  </Button>
-                </Box>
-              )}
-            </Box>
+                )}
+              </Box>
+            )}
 
             {(() => {
               const currentPlanObj = plans?.[selectedPlan];
@@ -1573,6 +1834,14 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         open={addressModalOpen}
         onClose={() => setAddressModalOpen(false)}
         onSuccess={handleAddressAdded}
+      />
+
+      {/* SERVICE INQUIRY MODAL */}
+      <ServiceInquiryModal
+        open={inquiryModalOpen}
+        onClose={() => setInquiryModalOpen(false)}
+        serviceId={service?.id || serviceId}
+        serviceName={service?.name || service?.title}
       />
     </Paper>
   );

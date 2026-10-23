@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { getBlogByIdAPI } from "@/api/blogControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { FONTS } from "@/utils/fonts";
@@ -24,21 +25,31 @@ import RelatedBlogsSection from "./RelatedBlogsSection";
 import BlogCtaBanner from "./BlogCtaBanner";
 
 interface WebsiteBlogDetailsContentProps {
-  blogId: string | number;
+  blogId?: string | number;
 }
 
-export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetailsContentProps) {
+export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetailsContentProps = {}) {
+  const params = useParams();
+  const effectiveId = blogId || (params?.id as string) || (params?.slug as string);
   const { showSnackbar } = useSnackbarStore();
   const [loading, setLoading] = useState(true);
   const [blog, setBlog] = useState<any>(null);
 
   useEffect(() => {
     const fetchBlogDetails = async () => {
+      if (!effectiveId) return;
       try {
         setLoading(true);
-        const res = await getBlogByIdAPI(blogId);
+        const res = await getBlogByIdAPI(effectiveId);
         const data = res?.data?.data || res?.data || res?.blog || res;
         setBlog(data);
+        if (data?.slug && typeof window !== "undefined") {
+          const currentPath = window.location.pathname;
+          const targetPath = `/blogs/${data.slug}`;
+          if (currentPath !== targetPath) {
+            window.history.replaceState(null, "", targetPath);
+          }
+        }
       } catch (err: any) {
         console.error("Failed to fetch public blog details", err);
         showSnackbar("Failed to load article details", "error");
@@ -47,10 +58,8 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
       }
     };
 
-    if (blogId) {
-      fetchBlogDetails();
-    }
-  }, [blogId, showSnackbar]);
+    fetchBlogDetails();
+  }, [effectiveId, showSnackbar]);
 
   useEffect(() => {
     if (!loading && blog) {
@@ -440,7 +449,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
         )}
 
         {/* Related Blogs Section: More Sacred Wisdom */}
-        <RelatedBlogsSection currentBlogId={blogId} />
+        <RelatedBlogsSection currentBlogId={effectiveId || blog?.id || ""} />
       </Container>
 
       {/* Full-width CTA Banner right above footer */}

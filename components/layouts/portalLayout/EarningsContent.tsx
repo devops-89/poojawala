@@ -187,11 +187,11 @@ function TransactionsTable() {
                             {dateStr}
                           </TableCell>
                           <TableCell sx={{ fontSize: 13, fontWeight: 600, color: '#1e293b' }}>
-                            ₹{payment.purohitPayoutAmount}
+                            ₹{payment.partnerPayoutAmount ?? payment.purohitPayoutAmount}
                           </TableCell>
                           <TableCell>
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(payment.purohitPayoutStatus)}`}>
-                              {payment.purohitPayoutStatus || 'PENDING'}
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(payment.partnerPayoutStatus || payment.purohitPayoutStatus)}`}>
+                              {payment.partnerPayoutStatus || payment.purohitPayoutStatus || 'PENDING'}
                             </span>
                           </TableCell>
                         </TableRow>
@@ -207,6 +207,8 @@ function TransactionsTable() {
               {payments.map((payment) => {
                 const dateStr = new Date(payment.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 const customerName = payment.customerDetails ? `${payment.customerDetails.firstName} ${payment.customerDetails.lastName}` : 'N/A';
+                const pStatus = payment.partnerPayoutStatus || payment.purohitPayoutStatus || 'PENDING';
+                const pAmt = payment.partnerPayoutAmount ?? payment.purohitPayoutAmount;
                 
                 return (
                   <Card key={payment.id} variant="outlined" sx={{ borderRadius: '24px', p: 3, bgcolor: 'white', borderColor: '#e2e8f0' }}>
@@ -214,12 +216,12 @@ function TransactionsTable() {
                       <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
                         PAY-{payment.id}
                       </Typography>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(payment.purohitPayoutStatus)}`}>
-                        {payment.purohitPayoutStatus || 'PENDING'}
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(pStatus)}`}>
+                        {pStatus}
                       </span>
                     </Box>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, fontSize: '1.1rem' }}>
-                      ₹{payment.purohitPayoutAmount}
+                      ₹{pAmt}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                       Booking: B-{payment.bookingId}

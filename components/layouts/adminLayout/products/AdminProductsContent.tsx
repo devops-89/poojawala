@@ -189,11 +189,18 @@ export default function AdminProductsContent() {
       label: "PRODUCT",
       render: (product) => (
         <Typography
+          component={NextLink}
+          href={`/admin/products/${product.id}`}
           sx={{
             fontWeight: 700,
             color: "#1e293b",
             fontFamily: FONTS.OUTFIT,
             fontSize: "0.95rem",
+            textDecoration: "none",
+            "&:hover": {
+              color: COLORS.PRIMARY,
+              textDecoration: "underline",
+            },
           }}
         >
           {product.name || "Untitled Product"}

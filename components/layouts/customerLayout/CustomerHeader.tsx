@@ -16,6 +16,7 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import LanguageIcon from "@mui/icons-material/Language";
 import {
   Alert,
   AppBar,
@@ -37,7 +38,7 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -130,9 +131,15 @@ export default function CustomerHeader() {
     }
   };
 
+  const searchParams = useSearchParams();
+
+  const isOffline = searchParams.get("isOffline") === "true";
+  const isOnline = searchParams.get("isOnline") === "true";
+
   const mainNavItems = [
     { label: "Dashboard", path: "/customer/dashboard", icon: <HomeIcon /> },
-    { label: "Services", path: "/customer/services", icon: <StorefrontIcon /> },
+    { label: "Offline Services", path: "/customer/services?isOffline=true", icon: <StorefrontIcon /> },
+    { label: "Online Services", path: "/customer/services?isOnline=true", icon: <LanguageIcon /> },
     { label: "Astrologers", path: "/customer/astrologers", icon: <AutoAwesomeIcon /> },
     { label: "Temples", path: "/customer/temples", icon: <TempleHinduIcon /> },
     { label: "Pooja Products", path: "/customer/products", icon: <ShoppingBagIcon /> },
@@ -213,7 +220,12 @@ export default function CustomerHeader() {
           }}
         >
           {mainNavItems.map((item) => {
-            const isActive = pathname === item.path;
+            const isActive =
+              item.path.includes("isOffline=true")
+                ? pathname === "/customer/services" && isOffline
+                : item.path.includes("isOnline=true")
+                ? pathname === "/customer/services" && isOnline
+                : pathname === item.path;
             return (
               <Typography
                 key={item.path}
@@ -568,7 +580,12 @@ export default function CustomerHeader() {
 
         <List sx={{ px: 1.5, py: 2 }}>
           {mainNavItems.map((item) => {
-            const isActive = pathname === item.path;
+            const isActive =
+              item.path.includes("isOffline=true")
+                ? pathname === "/customer/services" && isOffline
+                : item.path.includes("isOnline=true")
+                ? pathname === "/customer/services" && isOnline
+                : pathname === item.path;
             return (
               <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton

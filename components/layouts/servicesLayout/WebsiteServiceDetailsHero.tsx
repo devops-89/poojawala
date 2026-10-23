@@ -32,7 +32,7 @@ export default function WebsiteServiceDetailsHero({
 }: WebsiteServiceDetailsHeroProps) {
   // Title formatting
   const rawTitle =
-    service?.name || service?.title || "Navratri Special Durga Puja";
+    service?.name || service?.title || "Pooja Service";
   const titleWords = rawTitle.trim().split(/\s+/);
 
   let firstPart = rawTitle;
@@ -212,90 +212,94 @@ export default function WebsiteServiceDetailsHero({
             )}
 
             {/* Duration Badge */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.85,
-                px: 2,
-                py: 0.8,
-                bgcolor: "rgba(255, 251, 247, 0.9)",
-                border: "1px solid #FFE0D0",
-                borderRadius: "10px",
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.5px",
-                color: COLORS.PRIMARY,
-                boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  bgcolor: "#FFF0E6",
-                  borderColor: COLORS.PRIMARY,
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              <AccessTimeIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
-              <span>{durationText}</span>
-            </Box>
+            {durationText && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.85,
+                  px: 2,
+                  py: 0.8,
+                  bgcolor: "rgba(255, 251, 247, 0.9)",
+                  border: "1px solid #FFE0D0",
+                  borderRadius: "10px",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.5px",
+                  color: COLORS.PRIMARY,
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "#FFF0E6",
+                    borderColor: COLORS.PRIMARY,
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                <AccessTimeIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
+                <span>{durationText}</span>
+              </Box>
+            )}
 
             {/* Language Badge */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.85,
-                px: 2,
-                py: 0.8,
-                bgcolor: "rgba(255, 251, 247, 0.9)",
-                border: "1px solid #FFE0D0",
-                borderRadius: "10px",
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.5px",
-                color: COLORS.PRIMARY,
-                boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  bgcolor: "#FFF0E6",
-                  borderColor: COLORS.PRIMARY,
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              <LanguageIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
-              <span>{formattedLanguages ? formattedLanguages : "HINDI"}</span>
-            </Box>
+            {formattedLanguages && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.85,
+                  px: 2,
+                  py: 0.8,
+                  bgcolor: "rgba(255, 251, 247, 0.9)",
+                  border: "1px solid #FFE0D0",
+                  borderRadius: "10px",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.5px",
+                  color: COLORS.PRIMARY,
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "#FFF0E6",
+                    borderColor: COLORS.PRIMARY,
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                <LanguageIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
+                <span>{formattedLanguages}</span>
+              </Box>
+            )}
 
-            {/* Location / Cities Badge */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.85,
-                px: 2,
-                py: 0.8,
-                bgcolor: "rgba(255, 251, 247, 0.9)",
-                border: "1px solid #FFE0D0",
-                borderRadius: "10px",
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.5px",
-                color: COLORS.PRIMARY,
-                boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  bgcolor: "#FFF0E6",
-                  borderColor: COLORS.PRIMARY,
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              <LocationOnIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
-              <span>
-                {formattedCities ? formattedCities : "NOIDA & GHAZIABAD"}
-              </span>
-            </Box>
+            {/* Location / Cities Badge - ONLY for offline services with actual cities */}
+            {!service?.isOnline && formattedCities && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.85,
+                  px: 2,
+                  py: 0.8,
+                  bgcolor: "rgba(255, 251, 247, 0.9)",
+                  border: "1px solid #FFE0D0",
+                  borderRadius: "10px",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.5px",
+                  color: COLORS.PRIMARY,
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "#FFF0E6",
+                    borderColor: COLORS.PRIMARY,
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                <LocationOnIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
+                <span>{formattedCities}</span>
+              </Box>
+            )}
           </Box>
 
           {/* Action Button & Trust Guarantee */}

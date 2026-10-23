@@ -60,16 +60,19 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       if (userRole === 'ADMIN' || userRole === 'SUPERADMIN' || userRole === 'SUPER_ADMIN') {
         return 'New Astrology Booking Request';
       }
-      if (userRole === 'ASTROLOGER') {
-        return 'New Astrology Consultation Scheduled';
-      }
-      // Customer
       return 'New Astrology Consultation Scheduled';
     };
 
     const handleAstrologyNotification = (data?: any) => {
       const defaultMsg = getAstrologyDefaultMsg();
-      const msg = data?.message || defaultMsg;
+      let msg = defaultMsg;
+      if (typeof data === 'string' && data.trim()) {
+        msg = data.trim();
+      } else if (data?.message && typeof data.message === 'string' && data.message.trim()) {
+        msg = data.message.trim();
+      } else if (data?.title && typeof data.title === 'string' && data.title.trim()) {
+        msg = data.title.trim();
+      }
       addNotification(msg);
       incrementUnread();
       triggerRefresh();
@@ -80,7 +83,7 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       const refType = (data?.referenceType || '').toUpperCase();
       const type = (data?.type || '').toUpperCase();
       const bookingType = (data?.bookingType || data?.booking?.bookingType || '').toUpperCase();
-      const rawMsg = data?.message || '';
+      const rawMsg = data?.message || data?.title || '';
       const lowerMsg = rawMsg.toLowerCase();
 
       const isAstrology =
@@ -111,6 +114,14 @@ export default function SocketProvider({ children }: { children: React.ReactNode
     });
 
     // 2. Dedicated Astrology Consultation Events
+    socket.on('New Astrology Consultation Scheduled', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    socket.on('new_astrology_consultation_scheduled', (data) => {
+      handleAstrologyNotification(data);
+    });
+
     socket.on('new_astrology_booking', (data) => {
       handleAstrologyNotification(data);
     });
@@ -127,7 +138,15 @@ export default function SocketProvider({ children }: { children: React.ReactNode
       handleAstrologyNotification(data);
     });
 
+    socket.on('astrology:consultation_scheduled', (data) => {
+      handleAstrologyNotification(data);
+    });
+
     socket.on('astrology:new_booking', (data) => {
+      handleAstrologyNotification(data);
+    });
+
+    socket.on('astrology_booking', (data) => {
       handleAstrologyNotification(data);
     });
 

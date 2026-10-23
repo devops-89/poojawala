@@ -33,11 +33,36 @@ export default function AdminTempleDetailsContent() {
 
   useEffect(() => {
     const fetchTempleDetails = async () => {
+      const identifier = params.id as string;
+      if (!identifier) return;
+
+      if (
+        temple &&
+        (temple.slug === identifier || String(temple.id) === String(identifier))
+      ) {
+        return;
+      }
+
       try {
         setLoading(true);
-        const response = await getTempleByIdAPI(params.id as string);
+        const response = await getTempleByIdAPI(identifier);
         if (response.success && response.data) {
-          setTemple(response.data.data || response.data);
+          const data = response.data.data || response.data;
+          setTemple(data);
+          if (data?.id && typeof window !== "undefined") {
+            localStorage.setItem("last_temple_id", String(data.id));
+            sessionStorage.setItem("last_temple_id", String(data.id));
+            if (data?.slug) {
+              const s = String(data.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+              localStorage.setItem(`temple_slug_${s}`, String(data.id));
+              sessionStorage.setItem(`temple_slug_${s}`, String(data.id));
+              if (/^\d+$/.test(String(identifier))) {
+                window.history.replaceState(null, "", `/admin/temples/${data.slug}`);
+              }
+            }
+          }
         } else {
           showSnackbar(
             response.message || "Failed to fetch temple details",
@@ -51,10 +76,8 @@ export default function AdminTempleDetailsContent() {
         setLoading(false);
       }
     };
-    if (params.id) {
-      fetchTempleDetails();
-    }
-  }, [params.id, showSnackbar]);
+    fetchTempleDetails();
+  }, [params.id, showSnackbar, temple]);
 
   if (loading) {
     return (
@@ -102,7 +125,7 @@ export default function AdminTempleDetailsContent() {
         actionButton={
           <Button
             component={NextLink}
-            href={`/admin/temples/edit/${temple.id}`}
+            href={`/admin/temples/edit/${temple.slug || temple.id}`}
             variant="contained"
             sx={{
               background: COLORS.PRIMARY,

@@ -10,6 +10,7 @@ import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { formatServicePriceRange } from "@/utils/helpers";
 
 interface WebsiteTempleServicesSectionProps {
   temple: any;
@@ -68,37 +69,7 @@ export default function WebsiteTempleServicesSection({
     return rawList
       .filter((s: any) => s && s.isActive !== false)
       .map((s: any) => {
-        let minP: number | null = s.minPrice != null ? Number(s.minPrice) : null;
-        let maxP: number | null = s.maxPrice != null ? Number(s.maxPrice) : null;
-
-        if ((minP == null || isNaN(minP)) && s.plans && typeof s.plans === "object") {
-          const prices: number[] = [];
-          const planList = Array.isArray(s.plans) ? s.plans : Object.values(s.plans);
-          planList.forEach((p: any) => {
-            if (p && p.price != null && !isNaN(Number(p.price))) {
-              prices.push(Number(p.price));
-            }
-          });
-          if (prices.length > 0) {
-            minP = Math.min(...prices);
-            maxP = Math.max(...prices);
-          }
-        }
-
-        let computedPriceStr = "Price on request";
-        if (minP != null && !isNaN(minP)) {
-          if (maxP != null && !isNaN(maxP) && maxP > minP) {
-            computedPriceStr = `₹${minP} - ₹${maxP}`;
-          } else {
-            computedPriceStr = `₹${minP}`;
-          }
-        } else if (s.priceWithoutSamagri != null && s.priceWithSamagri != null) {
-          computedPriceStr = `₹${s.priceWithoutSamagri} - ₹${s.priceWithSamagri}`;
-        } else if (s.priceWithoutSamagri != null) {
-          computedPriceStr = `₹${s.priceWithoutSamagri}`;
-        } else if (s.basePrice != null || s.price != null) {
-          computedPriceStr = `₹${s.basePrice ?? s.price}`;
-        }
+        const computedPriceStr = formatServicePriceRange(s, "");
 
         const serviceImg =
           s.iconDownloadurl ||
@@ -121,6 +92,7 @@ export default function WebsiteTempleServicesSection({
           category: s.category?.name || "Temple Pooja",
           isOnline: Boolean(s.isOnline),
           isOffline: Boolean(s.isOffline),
+          slug: s.slug || null,
         };
       });
   };
@@ -205,6 +177,7 @@ export default function WebsiteTempleServicesSection({
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={srv.id} sx={{ display: "flex" }}>
               <ServiceCard
                 id={srv.id}
+                slug={srv.slug}
                 title={srv.title}
                 image={srv.image}
                 description={srv.description}

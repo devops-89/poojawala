@@ -14,13 +14,16 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
-export default function Navbar() {
+function NavbarContent() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isOffline = searchParams.get("isOffline") === "true";
+  const isOnline = searchParams.get("isOnline") === "true";
   const [mobileOpen, setMobileOpen] = useState(false);
 
   if (
@@ -36,11 +39,21 @@ export default function Navbar() {
   )
     return null;
 
+  const isLinkActive = (href: string) => {
+    if (href === "/services?isOffline=true") {
+      return pathname === "/services" && isOffline;
+    }
+    if (href === "/services?isOnline=true") {
+      return pathname === "/services" && isOnline;
+    }
+    return pathname === href;
+  };
+
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Services", href: "/services" },
+    { name: "Offline Services", href: "/services?isOffline=true" },
+    { name: "Online Services", href: "/services?isOnline=true" },
     { name: "Temples", href: "/temples" },
-    { name: "Purohits", href: "/purohits" },
     { name: "Astrologers", href: "/astrologers" },
   ];
 
@@ -88,7 +101,7 @@ export default function Navbar() {
             }}
           >
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = isLinkActive(link.href);
               return (
                 <Link
                   key={link.name}
@@ -114,6 +127,31 @@ export default function Navbar() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Button
               component={NextLink}
+              href="/contact"
+              variant="outlined"
+              sx={{
+                display: { xs: "none", md: "inline-flex" },
+                borderColor: "#e2e8f0",
+                color: "#475569",
+                borderRadius: "30px",
+                textTransform: "none",
+                fontWeight: 600,
+                px: 2.2,
+                py: 0.8,
+                fontSize: "14px",
+                fontFamily: FONTS.PRIMARY,
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  borderColor: COLORS.PRIMARY,
+                  bgcolor: "#FFF0E6",
+                  color: COLORS.PRIMARY,
+                },
+              }}
+            >
+              Contact Us
+            </Button>
+            <Button
+              component={NextLink}
               href="/partner"
               variant="outlined"
               sx={{
@@ -134,7 +172,7 @@ export default function Navbar() {
                 },
               }}
             >
-              Register as Purohit / Astrologer
+              Register as Astrologer
             </Button>
             <Button
               component={NextLink}
@@ -229,7 +267,7 @@ export default function Navbar() {
         {/* Drawer Nav Links */}
         <List sx={{ px: 1, py: 2 }}>
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = isLinkActive(link.href);
             return (
               <ListItem key={link.name} disablePadding>
                 <ListItemButton
@@ -265,6 +303,30 @@ export default function Navbar() {
 
         {/* Action Buttons — right below links */}
         <Box sx={{ px: 2, pt: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
+          <Button
+            component={NextLink}
+            href="/contact"
+            variant="outlined"
+            fullWidth
+            onClick={handleDrawerToggle}
+            sx={{
+              borderColor: "#e2e8f0",
+              color: "#475569",
+              borderRadius: "30px",
+              textTransform: "none",
+              py: 1.2,
+              fontWeight: 600,
+              fontSize: "14px",
+              fontFamily: FONTS.PRIMARY,
+              "&:hover": {
+                borderColor: COLORS.PRIMARY,
+                bgcolor: "#FFF0E6",
+                color: COLORS.PRIMARY,
+              },
+            }}
+          >
+            Contact Us
+          </Button>
           <Button
             component={NextLink}
             href="/sign-in"
@@ -307,10 +369,19 @@ export default function Navbar() {
               },
             }}
           >
-            Register as Purohit / Astrologer
+            Register as Astrologer
           </Button>
         </Box>
       </Drawer>
     </>
   );
 }
+
+export default function Navbar() {
+  return (
+    <Suspense fallback={null}>
+      <NavbarContent />
+    </Suspense>
+  );
+}
+

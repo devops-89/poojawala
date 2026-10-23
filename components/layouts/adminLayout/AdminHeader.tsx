@@ -109,6 +109,14 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
     });
 
     // Dedicated Astrology booking events for Admin
+    socket.on("New Astrology Consultation Scheduled", (data: any) => {
+      handleAstrologyNotification(data?.message || "New Astrology Consultation Scheduled");
+    });
+
+    socket.on("new_astrology_consultation_scheduled", (data: any) => {
+      handleAstrologyNotification(data?.message || "New Astrology Consultation Scheduled");
+    });
+
     socket.on("new_astrology_booking", (data: any) => {
       handleAstrologyNotification(data?.message);
     });
@@ -118,6 +126,10 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
     });
 
     socket.on("astrology_consultation_scheduled", (data: any) => {
+      handleAstrologyNotification(data?.message);
+    });
+
+    socket.on("astrology:consultation_scheduled", (data: any) => {
       handleAstrologyNotification(data?.message);
     });
 

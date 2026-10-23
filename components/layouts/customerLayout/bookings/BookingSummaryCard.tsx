@@ -2,7 +2,7 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import React from 'react';
 import { Box, Typography, Paper, Chip } from '@mui/material';
-import { formatInr } from './bookingPaymentHelper';
+import { formatInr, getBookingPaymentDetails } from './bookingPaymentHelper';
 
 interface Props {
   booking: any;
@@ -37,13 +37,8 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
     booking?.astrologerProfile?.ratePerMinute ||
     null;
 
-  const tokenAmt = Number(
-    booking?.tokenAmount ??
-    booking?.priceBreakDown?.tokenAmount ??
-    booking?.paidAmount ??
-    booking?.finalAmount ??
-    50
-  );
+  const payDetails = getBookingPaymentDetails(booking);
+  const consultationAmount = payDetails.finalAmount || Number(booking?.finalAmount ?? booking?.servicePrice ?? 0);
 
   return (
     <Paper
@@ -116,16 +111,25 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
         {isAstrology && (
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Token Advance</Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#16a34a', fontSize: '14px' }}>
-                ₹{formatInr(tokenAmt)} (Paid)
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Consultation Fee</Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', fontSize: '14px' }}>
+                ₹{formatInr(consultationAmount)}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Consultation Fee</Typography>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#ea580c', fontSize: '14px' }}>
-                {ratePerMinute ? `₹${ratePerMinute}/min` : 'As per session'} (Payable after session)
-              </Typography>
+              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Payment Status</Typography>
+              <Chip
+                label={booking?.paymentStatus === 'PAID' ? 'Paid' : 'Payment Pending'}
+                size="small"
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: FONTS.PRIMARY,
+                  bgcolor: booking?.paymentStatus === 'PAID' ? '#ecfdf5' : '#fef2f2',
+                  color: booking?.paymentStatus === 'PAID' ? '#166534' : '#b91c1c',
+                  border: `1px solid ${booking?.paymentStatus === 'PAID' ? '#bbf7d0' : '#fecaca'}`,
+                  fontSize: '12px',
+                }}
+              />
             </Box>
           </>
         )}

@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { formatServicePriceRange } from "@/utils/helpers";
 
 import {
   deleteServiceAPI,
@@ -39,40 +40,60 @@ import {
   syncTablePagination,
 } from "@/utils/paginationHelper";
 
+type ServiceTypeTab = "ONLINE_POOJA" | "OFFLINE_POOJA" | "TEMPLE";
+
 export default function AdminServicesContent() {
-  const initialPagination = getTablePaginationState("admin_services_state", {
-    defaultStatus: "All Status",
-    defaultLimit: 10,
-  });
-
-  const getInitialServiceType = (): "POOJA" | "TEMPLE" => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const urlType = params.get("type")?.toUpperCase();
-      if (urlType === "TEMPLE") return "TEMPLE";
-      if (urlType === "POOJA") return "POOJA";
-      const saved = sessionStorage.getItem("admin_services_type")?.toUpperCase();
-      if (saved === "TEMPLE" || saved === "POOJA") return saved as "POOJA" | "TEMPLE";
-    }
-    return "POOJA";
-  };
-
-  const [serviceType, setServiceType] = useState<"POOJA" | "TEMPLE">(getInitialServiceType);
+  const [isMounted, setIsMounted] = useState(false);
+  const [serviceType, setServiceType] = useState<ServiceTypeTab>("ONLINE_POOJA");
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState(
-    initialPagination.status === "Temple" ? "All Status" : initialPagination.status
-  );
+  const [statusFilter, setStatusFilter] = useState("All Status");
 
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
-  const [page, setPage] = useState(initialPagination.page);
-  const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
   const { showSnackbar } = useSnackbarStore();
 
-  const handleServiceTypeChange = (newType: "POOJA" | "TEMPLE") => {
+  const getInitialServiceType = (): ServiceTypeTab => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlType = params.get("type")?.toUpperCase();
+      if (urlType === "TEMPLE") return "TEMPLE";
+      if (urlType === "OFFLINE" || urlType === "OFFLINE_POOJA") return "OFFLINE_POOJA";
+      if (urlType === "ONLINE" || urlType === "ONLINE_POOJA") return "ONLINE_POOJA";
+      if (urlType === "POOJA") return "ONLINE_POOJA";
+      const saved = sessionStorage.getItem("admin_services_type")?.toUpperCase();
+      if (
+        saved === "TEMPLE" ||
+        saved === "ONLINE_POOJA" ||
+        saved === "OFFLINE_POOJA"
+      ) {
+        return saved as ServiceTypeTab;
+      }
+    }
+    return "ONLINE_POOJA";
+  };
+
+  // Restore pagination & tab state after initial client mount to avoid SSR hydration mismatch
+  useEffect(() => {
+    const savedPagination = getTablePaginationState("admin_services_state", {
+      defaultStatus: "All Status",
+      defaultLimit: 10,
+    });
+    setPage(savedPagination.page);
+    setRowsPerPage(savedPagination.rowsPerPage);
+    if (savedPagination.status && savedPagination.status !== "Temple") {
+      setStatusFilter(savedPagination.status);
+    }
+    const initialType = getInitialServiceType();
+    setServiceType(initialType);
+    setIsMounted(true);
+  }, []);
+
+  const handleServiceTypeChange = (newType: ServiceTypeTab) => {
     setServiceType(newType);
     setPage(0);
     if (typeof window !== "undefined") {
@@ -90,6 +111,10 @@ export default function AdminServicesContent() {
             ? false
             : undefined;
 
+      const isOnlineParam = serviceType === "ONLINE_POOJA" ? true : undefined;
+      const isOfflineParam = serviceType === "OFFLINE_POOJA" ? true : undefined;
+      const isTemple = serviceType === "TEMPLE";
+
       const res = await getAllServicesAPI(
         page + 1,
         rowsPerPage,
@@ -99,7 +124,9 @@ export default function AdminServicesContent() {
         undefined,
         undefined,
         undefined,
-        serviceType === "TEMPLE"
+        isTemple,
+        isOnlineParam,
+        isOfflineParam
       );
 
       if (res) {
@@ -132,23 +159,29 @@ export default function AdminServicesContent() {
   }, [page, rowsPerPage, searchValue, statusFilter, serviceType]);
 
   useEffect(() => {
+    if (!isMounted) return;
     const timer = setTimeout(() => {
       fetchServices();
     }, 500);
     return () => clearTimeout(timer);
-  }, [fetchServices]);
+  }, [fetchServices, isMounted]);
 
   useEffect(() => {
+    if (!isMounted) return;
+    let typeParam = "online_pooja";
+    if (serviceType === "OFFLINE_POOJA") typeParam = "offline_pooja";
+    else if (serviceType === "TEMPLE") typeParam = "temple";
+
     syncTablePagination(
       "admin_services_state",
       { page, rowsPerPage, status: statusFilter },
       {
         defaultStatus: "All Status",
         defaultLimit: 10,
-        extraUrlParams: { type: serviceType.toLowerCase() },
+        extraUrlParams: { type: typeParam },
       }
     );
-  }, [page, rowsPerPage, statusFilter, serviceType]);
+  }, [page, rowsPerPage, statusFilter, serviceType, isMounted]);
 
   const confirmStatusChange = async () => {
     if (!statusChangeTarget) return;
@@ -235,11 +268,17 @@ export default function AdminServicesContent() {
               </Box>
               <Box>
                 <Typography
+                  component={NextLink}
+                  href={`/admin/services/${service.id}`}
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     fontSize: "0.95rem",
                     color: "#1e293b",
+                    textDecoration: "none",
+                    "&:hover": {
+                      color: COLORS.PRIMARY,
+                    },
                   }}
                 >
                   {title}
@@ -253,23 +292,7 @@ export default function AdminServicesContent() {
         id: "price",
         label: "PRICE",
         render: (service) => {
-          const minP =
-            service.plans?.basic?.price ??
-            service.priceWithoutSamagri ??
-            service.minPrice;
-          const maxP =
-            service.plans?.standard?.price ??
-            service.priceWithSamagri ??
-            service.maxPrice;
-
-          let priceDisplay = "₹0";
-          if (minP != null && maxP != null && minP !== maxP) {
-            priceDisplay = `₹${minP} - ₹${maxP}`;
-          } else if (minP != null) {
-            priceDisplay = `₹${minP}`;
-          } else if (maxP != null) {
-            priceDisplay = `₹${maxP}`;
-          }
+          const priceDisplay = formatServicePriceRange(service);
 
           return (
             <Typography
@@ -443,7 +466,8 @@ export default function AdminServicesContent() {
             },
           }}
         >
-          <Tab value="POOJA" label="Pooja Services" />
+          <Tab value="ONLINE_POOJA" label="Online Pooja Services" />
+          <Tab value="OFFLINE_POOJA" label="Offline Pooja Services" />
           <Tab value="TEMPLE" label="Temple Services" />
         </Tabs>
       </Box>
@@ -470,7 +494,9 @@ export default function AdminServicesContent() {
         emptyMessage={
           serviceType === "TEMPLE"
             ? "No temple services found matching your criteria."
-            : "No pooja services found matching your criteria."
+            : serviceType === "ONLINE_POOJA"
+              ? "No online pooja services found matching your criteria."
+              : "No offline pooja services found matching your criteria."
         }
       />
 

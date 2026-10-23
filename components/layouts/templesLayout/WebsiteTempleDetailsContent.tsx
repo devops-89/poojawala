@@ -26,13 +26,38 @@ export default function WebsiteTempleDetailsContent() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
     const fetchTemple = async () => {
+      const identifier = (params.slug || params.id) as string;
+      if (!identifier) return;
+
+      if (
+        temple &&
+        (temple.slug === identifier || String(temple.id) === String(identifier))
+      ) {
+        return;
+      }
+
       setLoading(true);
       try {
-        if (!params.id) return;
-        const res = await getTempleByIdAPI(params.id as string);
+        const res = await getTempleByIdAPI(identifier);
         if (res?.success) {
           const rawData = res.data?.data || res.data;
           setTemple(rawData);
+          if (rawData?.id && typeof window !== "undefined") {
+            localStorage.setItem("last_temple_id", String(rawData.id));
+            sessionStorage.setItem("last_temple_id", String(rawData.id));
+            if (rawData.slug) {
+              const s = String(rawData.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+              localStorage.setItem(`temple_slug_${s}`, String(rawData.id));
+              sessionStorage.setItem(`temple_slug_${s}`, String(rawData.id));
+              const currentPath = window.location.pathname;
+              const targetPath = `/temples/${rawData.slug}`;
+              if (currentPath !== targetPath) {
+                window.history.replaceState(null, "", targetPath);
+              }
+            }
+          }
           // Keep viewport at top after content loads
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         } else {
@@ -47,7 +72,7 @@ export default function WebsiteTempleDetailsContent() {
     };
 
     fetchTemple();
-  }, [params.id, showSnackbar]);
+  }, [params.id, params.slug, showSnackbar, temple]);
 
   useEffect(() => {
     if (!loading && temple) {

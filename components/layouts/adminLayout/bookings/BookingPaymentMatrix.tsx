@@ -30,17 +30,77 @@ export default function BookingPaymentMatrix({
 }: BookingPaymentMatrixProps) {
   const isAstrology = booking?.bookingType === "ASTROLOGY";
 
-  const primaryAccount =
-    booking.purohit?.bankAccounts?.find((acc: any) => acc.isPrimary) ||
-    booking.purohit?.bankAccounts?.[0];
+  // Partner bank accounts (can be in astrologer.bankAccounts, purohit.user.bankAccounts, etc.)
+  const partnerUser =
+    booking.astrologer?.user ||
+    booking.astrologer ||
+    booking.purohit?.user ||
+    booking.partner?.user ||
+    booking.purohit ||
+    booking.partner;
 
-  // Plan & Purohit Payout calculation based on booking plan
+  const partnerBankAccounts: any[] =
+    partnerUser?.bankAccounts ||
+    booking.astrologer?.bankAccounts ||
+    booking.astrologer?.user?.bankAccounts ||
+    booking.purohit?.bankAccounts ||
+    booking.partner?.bankAccounts ||
+    [];
+
+  // Strictly select only the bank account where isPrimary is true
+  const primaryAccount = partnerBankAccounts.find(
+    (acc: any) =>
+      acc.isPrimary === true ||
+      acc.isPrimary === "true" ||
+      acc.isPrimary === 1 ||
+      acc.isPrimary === "1"
+  );
+
+  // Plan & Partner Payout calculation based on booking plan or priceBreakDown
   const planKey = booking.plan?.toLowerCase();
   const planDetails = booking.service?.plans?.[planKey];
-  const purohitPayoutAmount =
-    booking.purohitPayoutAmount ??
-    planDetails?.purohitPayoutAmount ??
-    "0.00";
+  const partnerPayoutAmount =
+    (booking.partnerPayoutAmount !== null && booking.partnerPayoutAmount !== undefined && booking.partnerPayoutAmount !== "" && booking.partnerPayoutAmount !== "0.00")
+      ? booking.partnerPayoutAmount
+      : (booking.priceBreakDown?.astrologerPayout !== null && booking.priceBreakDown?.astrologerPayout !== undefined)
+        ? booking.priceBreakDown.astrologerPayout
+        : (booking.astrologerProfile?.astrologerPayout !== null && booking.astrologerProfile?.astrologerPayout !== undefined)
+          ? booking.astrologerProfile.astrologerPayout
+          : (booking.astrologer?.astrologerProfile?.astrologerPayout !== null && booking.astrologer?.astrologerProfile?.astrologerPayout !== undefined)
+            ? booking.astrologer.astrologerProfile.astrologerPayout
+            : booking.purohitPayoutAmount ??
+              planDetails?.partnerPayoutAmount ??
+              planDetails?.purohitPayoutAmount ??
+              booking.partnerPayout?.amount ??
+              booking.purohitPayout?.amount ??
+              "0.00";
+
+  const partnerPayoutStatus =
+    booking.partnerPayoutStatus ??
+    booking.purohitPayoutStatus ??
+    booking.astrologerPayoutStatus ??
+    booking.partnerPayout?.status ??
+    booking.purohitPayout?.status ??
+    "PENDING";
+
+  const platformCommissionAmount =
+    booking.priceBreakDown?.commissionPrice ??
+    (isAstrology && booking.priceBreakDown?.astrologerPayout
+      ? Number(booking.finalAmount || 0) - Number(booking.priceBreakDown.astrologerPayout)
+      : booking.platformCommission ?? "0.00");
+
+  const commissionPercent =
+    booking.priceBreakDown?.platformCommissionPercentage ??
+    booking.commissionPercentage ??
+    booking.astrologerProfile?.commissionPercentage ??
+    booking.astrologer?.astrologerProfile?.commissionPercentage ??
+    "0";
+
+  const partnerPayoutId =
+    booking.partnerPayoutId ??
+    booking.purohitPayoutId ??
+    booking.partnerPayout?.id ??
+    booking.purohitPayout?.id;
 
   // Customer booking payments list
   const customerPayments = Array.isArray(booking.payments)
@@ -121,13 +181,13 @@ export default function BookingPaymentMatrix({
             fontFamily: FONTS.OUTFIT,
           }}
         >
-          {isAstrology ? "Payment Summary" : "Payment & Payout Matrix"}
+          Payment & Payout Matrix
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
         {/* Customer Payment */}
-        <Grid size={{ xs: 12, md: isAstrology ? 6 : 4 }}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper
             sx={{
               p: 3,
@@ -443,7 +503,7 @@ export default function BookingPaymentMatrix({
         </Grid>
 
         {/* Platform Revenue */}
-        <Grid size={{ xs: 12, md: isAstrology ? 6 : 4 }}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper
             sx={{
               p: 3,
@@ -468,7 +528,7 @@ export default function BookingPaymentMatrix({
             </Typography>
             <Box sx={{ my: 1.5 }}>
               <Chip
-                label={`Comm: ${booking.commissionPercentage || "0"}%`}
+                label={`Comm: ${commissionPercent}%`}
                 size="medium"
                 sx={{
                   fontWeight: 700,
@@ -494,7 +554,7 @@ export default function BookingPaymentMatrix({
               variant="h4"
               sx={{ fontWeight: 800, color: COLORS.PRIMARY }}
             >
-              ₹{formatAmount(booking.platformCommission)}
+              ₹{formatAmount(platformCommissionAmount)}
             </Typography>
 
             <Box sx={{ mt: "auto", pt: 3 }}>
@@ -521,29 +581,28 @@ export default function BookingPaymentMatrix({
                   variant="h6"
                   sx={{ fontWeight: 800, color: "#ea580c" }}
                 >
-                  ₹{formatAmount(booking.platformCommission)}
+                  ₹{formatAmount(platformCommissionAmount)}
                 </Typography>
               </Box>
             </Box>
           </Paper>
         </Grid>
 
-        {/* Purohit Payout - Hidden for Astrology bookings */}
-        {!isAstrology && (
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Paper
-              sx={{
-                p: 3,
-                borderRadius: 3,
-                border: "2px solid",
-                borderColor:
-                  booking.purohitPayoutStatus === "PAID" ? "#10b981" : "#e2e8f0",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
-              }}
-            >
+        {/* Partner / Astrologer Payout */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              border: "2px solid",
+              borderColor:
+                partnerPayoutStatus === "PAID" ? "#10b981" : "#e2e8f0",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -560,9 +619,9 @@ export default function BookingPaymentMatrix({
                   fontSize: "0.75rem",
                 }}
               >
-                Purohit Payout
+                {isAstrology ? "Astrologer Payout" : "Partner Payout"}
               </Typography>
-              {booking.plan && (
+              {booking.plan ? (
                 <Chip
                   label={`${booking.plan} Plan`}
                   size="small"
@@ -574,22 +633,34 @@ export default function BookingPaymentMatrix({
                     textTransform: "uppercase",
                   }}
                 />
-              )}
+              ) : isAstrology ? (
+                <Chip
+                  label={booking.astrologerProfile?.specification || "Consultation"}
+                  size="small"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: "0.7rem",
+                    backgroundColor: "#fdf4ff",
+                    color: "#9333ea",
+                    textTransform: "uppercase",
+                  }}
+                />
+              ) : null}
             </Box>
 
             <Box sx={{ my: 1.5 }}>
               <Chip
-                label={booking.purohitPayoutStatus || "PENDING"}
+                label={partnerPayoutStatus || "PENDING"}
                 size="medium"
                 sx={{
                   fontWeight: 700,
                   px: 1,
                   backgroundColor:
-                    booking.purohitPayoutStatus === "PAID"
+                    partnerPayoutStatus === "PAID"
                       ? "#d1fae5"
                       : "#fef3c7",
                   color:
-                    booking.purohitPayoutStatus === "PAID"
+                    partnerPayoutStatus === "PAID"
                       ? "#065f46"
                       : "#d97706",
                   fontFamily: FONTS.OUTFIT,
@@ -606,13 +677,13 @@ export default function BookingPaymentMatrix({
                 mb: 0.5,
               }}
             >
-              Payable Amount (Plan Payout)
+              {isAstrology ? "Payable Amount (Astrologer Payout)" : "Payable Amount (Plan Payout)"}
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 800, color: "#0f172a" }}>
-              ₹{formatAmount(purohitPayoutAmount)}
+              ₹{formatAmount(partnerPayoutAmount)}
             </Typography>
 
-            {primaryAccount && (
+            {primaryAccount ? (
               <Box
                 sx={{
                   mt: 2,
@@ -622,17 +693,37 @@ export default function BookingPaymentMatrix({
                   border: "1px solid #e2e8f0",
                 }}
               >
-                <Typography
+                <Box
                   sx={{
-                    fontWeight: 700,
-                    color: "#475569",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     mb: 1,
-                    fontSize: "0.875rem",
                   }}
                 >
-                  Payout Account
-                </Typography>
-                {primaryAccount.paymentMethod === "UPI" ? (
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      color: "#475569",
+                      fontSize: "0.875rem",
+                    }}
+                  >
+                    Payout Account
+                  </Typography>
+                  <Chip
+                    label="Primary Account"
+                    size="small"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.65rem",
+                      height: "20px",
+                      bgcolor: "#dcfce7",
+                      color: "#15803d",
+                      fontFamily: FONTS.OUTFIT,
+                    }}
+                  />
+                </Box>
+                {primaryAccount.paymentMethod === "UPI" || primaryAccount.upiId ? (
                   <Box>
                     <Typography
                       sx={{
@@ -671,29 +762,53 @@ export default function BookingPaymentMatrix({
                         fontSize: "0.875rem",
                       }}
                     >
-                      {primaryAccount.bankName} - {primaryAccount.accountNumber}
+                      {primaryAccount.bankName || "Bank"} - {primaryAccount.accountNumber || "N/A"}
                     </Typography>
-                    <Typography
-                      sx={{
-                        color: "#64748b",
-                        fontSize: "0.75rem",
-                        display: "block",
-                        mt: 0.5,
-                      }}
-                    >
-                      IFSC: {primaryAccount.ifscCode}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#64748b",
-                        fontSize: "0.75rem",
-                        display: "block",
-                      }}
-                    >
-                      Holder: {primaryAccount.accountHolderName}
-                    </Typography>
+                    {primaryAccount.ifscCode && (
+                      <Typography
+                        sx={{
+                          color: "#64748b",
+                          fontSize: "0.75rem",
+                          display: "block",
+                          mt: 0.5,
+                        }}
+                      >
+                        IFSC: {primaryAccount.ifscCode}
+                      </Typography>
+                    )}
+                    {primaryAccount.accountHolderName && (
+                      <Typography
+                        sx={{
+                          color: "#64748b",
+                          fontSize: "0.75rem",
+                          display: "block",
+                        }}
+                      >
+                        Holder: {primaryAccount.accountHolderName}
+                      </Typography>
+                    )}
                   </Box>
                 )}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  backgroundColor: "#fff7ed",
+                  borderRadius: 2,
+                  border: "1px dashed #fed7aa",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    color: "#c2410c",
+                    fontSize: "0.8125rem",
+                  }}
+                >
+                  No primary bank account found for payout.
+                </Typography>
               </Box>
             )}
 
@@ -716,21 +831,22 @@ export default function BookingPaymentMatrix({
                   py: 1.2,
                   borderRadius: 2,
                   boxShadow:
-                    booking.purohitPayoutStatus !== "PAID"
+                    partnerPayoutStatus !== "PAID"
                       ? "0 8px 20px -6px rgba(16,185,129,0.4)"
                       : "none",
                   fontFamily: FONTS.OUTFIT,
                 }}
                 disabled={
                   isPaying ||
-                  booking.purohitPayoutStatus === "PAID" ||
-                  booking.paymentStatus !== "PAID"
+                  partnerPayoutStatus === "PAID" ||
+                  booking.paymentStatus !== "PAID" ||
+                  !primaryAccount
                 }
                 onClick={onInitiatePayout}
               >
                 {isPaying ? (
                   <CircularProgress size={24} color="inherit" />
-                ) : booking.purohitPayoutStatus === "PAID" ? (
+                ) : partnerPayoutStatus === "PAID" ? (
                   "Payout Completed"
                 ) : (
                   "Initiate Payout"
@@ -739,7 +855,6 @@ export default function BookingPaymentMatrix({
             </Box>
           </Paper>
         </Grid>
-        )}
       </Grid>
     </Card>
   );

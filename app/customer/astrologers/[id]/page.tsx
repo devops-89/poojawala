@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CustomerAstrologerDetailsContent } from "@/components/layouts/customerLayout/astrologers";
+import CustomerAstrologerDetailsContent from "@/components/layouts/customerLayout/astrologers/CustomerAstrologerDetailsContent";
 
 export default function AstrologerDetailsPage() {
   return <CustomerAstrologerDetailsContent />;
