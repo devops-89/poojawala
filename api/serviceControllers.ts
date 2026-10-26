@@ -127,9 +127,7 @@ export const resolveServiceId = (id: string | number): string | number => {
         localStorage.getItem(`slug_to_id_${id}`) ||
         sessionStorage.getItem(`slug_to_id_${id}`) ||
         localStorage.getItem(`service_slug_${id}`) ||
-        sessionStorage.getItem(`service_slug_${id}`) ||
-        localStorage.getItem("last_service_id") ||
-        sessionStorage.getItem("last_service_id");
+        sessionStorage.getItem(`service_slug_${id}`);
 
       if (cached && /^\d+$/.test(cached)) {
         return cached;
@@ -142,7 +140,60 @@ export const resolveServiceId = (id: string | number): string | number => {
 
 export const getServiceByIdAPI = async (id: string | number) => {
   try {
-    const numericId = resolveServiceId(id);
+    let numericId = resolveServiceId(id);
+
+    // If non-numeric (slug), dynamically find the service by slug from public services API
+    if (!/^\d+$/.test(String(numericId).trim())) {
+      try {
+        const searchKeyword = String(id).replace(/-/g, ' ');
+        const searchRes = await userPublicApi.get('/service', { params: { search: searchKeyword } });
+        const rawItems =
+          searchRes?.data?.data?.data && Array.isArray(searchRes.data.data.data)
+            ? searchRes.data.data.data
+            : searchRes?.data?.data && Array.isArray(searchRes.data.data)
+            ? searchRes.data.data
+            : searchRes?.data && Array.isArray(searchRes.data)
+            ? searchRes.data
+            : [];
+        let match = rawItems.find((item: any) => 
+          String(item.slug || '').toLowerCase() === String(id).toLowerCase() ||
+          item.slug === id ||
+          String(item.id) === String(id)
+        );
+
+        if (!match) {
+          const allRes = await userPublicApi.get('/service', { params: { limit: 100 } });
+          const allRaw =
+            allRes?.data?.data?.data && Array.isArray(allRes.data.data.data)
+              ? allRes.data.data.data
+              : allRes?.data?.data && Array.isArray(allRes.data.data)
+              ? allRes.data.data
+              : allRes?.data && Array.isArray(allRes.data)
+              ? allRes.data
+              : [];
+          match = allRaw.find((item: any) => 
+            String(item.slug || '').toLowerCase() === String(id).toLowerCase() ||
+            item.slug === id
+          );
+        }
+
+        if (match?.id) {
+          numericId = match.id;
+          if (typeof window !== "undefined") {
+            const s = String(id).toLowerCase();
+            localStorage.setItem(`slug_to_id_${s}`, String(match.id));
+            sessionStorage.setItem(`slug_to_id_${s}`, String(match.id));
+            if (match.slug) {
+              const ms = String(match.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${ms}`, String(match.id));
+              sessionStorage.setItem(`slug_to_id_${ms}`, String(match.id));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`[getServiceByIdAPI] Failed searching service by slug ${id}:`, err);
+      }
+    }
 
     // STRICT SAFETY: NEVER call /service/:id with non-numeric string to avoid 400 Validation Error
     if (!/^\d+$/.test(String(numericId).trim())) {
@@ -157,16 +208,10 @@ export const getServiceByIdAPI = async (id: string | number) => {
     const response = await userPublicApi.get(`/service/${numericId}`);
     if (typeof window !== "undefined" && response?.data) {
       const data = response.data?.data?.data || response.data?.data || response.data;
-      if (data?.id) {
-        localStorage.setItem("last_service_id", String(data.id));
-        sessionStorage.setItem("last_service_id", String(data.id));
-        if (data.slug) {
-          const s = String(data.slug).toLowerCase();
-          localStorage.setItem(`slug_to_id_${s}`, String(data.id));
-          sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
-          localStorage.setItem(`service_slug_${s}`, String(data.id));
-          sessionStorage.setItem(`service_slug_${s}`, String(data.id));
-        }
+      if (data?.id && data?.slug) {
+        const s = String(data.slug).toLowerCase();
+        localStorage.setItem(`slug_to_id_${s}`, String(data.id));
+        sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
       }
     }
     return response.data;

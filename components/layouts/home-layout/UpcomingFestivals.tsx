@@ -33,12 +33,17 @@ export default function UpcomingFestivals() {
           true,
           true,
         );
-        if (
-          response?.success &&
-          response?.data?.data &&
-          Array.isArray(response.data.data)
-        ) {
-          const apiFestivals = response.data.data
+        const rawItems =
+          response?.data?.data && Array.isArray(response.data.data)
+            ? response.data.data
+            : response?.data && Array.isArray(response.data)
+            ? response.data
+            : response?.data?.data?.data && Array.isArray(response.data.data.data)
+            ? response.data.data.data
+            : [];
+
+        if (rawItems.length > 0) {
+          const apiFestivals = rawItems
             .slice(0, 2)
             .map((item: any) => {
               const startDate = item.festivalStartDate
@@ -58,8 +63,17 @@ export default function UpcomingFestivals() {
                   ? `${startDate} - ${endDate}`
                   : startDate || "Upcoming";
 
+              if (typeof window !== "undefined" && item.id) {
+                if (item.slug) {
+                  const s = String(item.slug).toLowerCase();
+                  localStorage.setItem(`slug_to_id_${s}`, String(item.id));
+                  sessionStorage.setItem(`slug_to_id_${s}`, String(item.id));
+                }
+              }
+
               return {
                 id: item.id,
+                slug: item.slug,
                 title: item.name,
                 date: dateString,
                 description: item.description || "",
@@ -181,7 +195,9 @@ export default function UpcomingFestivals() {
             {festivalsData.map((fest) => (
               <Box
                 key={fest.id}
+                onClick={() => router.push(`/services/${fest.slug || fest.id}`)}
                 sx={{
+                  cursor: "pointer",
                   width: { xs: "100%", md: "calc(50% - 21px)" },
                   maxWidth: "558px",
                   height: { xs: "auto", sm: "322px" },
@@ -198,6 +214,11 @@ export default function UpcomingFestivals() {
                   boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
                   position: "relative",
                   overflow: "hidden",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 16px 36px rgba(0,0,0,0.12)",
+                  },
                   "&::before": {
                     content: '""',
                     position: "absolute",
@@ -273,7 +294,10 @@ export default function UpcomingFestivals() {
                   </Typography>
                   <Button
                     variant="contained"
-                    onClick={() => router.push("/sign-up?from=book-now")}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/services/${fest.slug || fest.id}`);
+                    }}
                     sx={{
                       background: COLORS.PRIMARY,
                       color: "#FFFFFF",

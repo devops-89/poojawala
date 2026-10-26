@@ -10,7 +10,7 @@ import WebsiteWhyPoojawalaSection from "./WebsiteWhyPoojawalaSection";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { Box, Button, CircularProgress, Container, Paper, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const DEFAULT_BANNER = "/images/home/poojaPackages/satyanarayan.webp";
 
@@ -19,28 +19,27 @@ export default function WebsiteServiceDetailsContent() {
   const router = useRouter();
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const fetchedIdentifierRef = useRef<string | null>(null);
 
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+
+  const identifier = (params.slug || params.id) as string;
 
   useEffect(() => {
     // Scroll window immediately to top when navigating to service details
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
+    if (!identifier) return;
+
+    // Prevent duplicate API calls for the same service identifier
+    if (fetchedIdentifierRef.current === identifier) return;
+    fetchedIdentifierRef.current = identifier;
+
     const fetchService = async () => {
-      const identifier = (params.slug || params.id) as string;
-      if (!identifier) return;
-
-      if (
-        service &&
-        (service.slug === identifier || String(service.id) === String(identifier))
-      ) {
-        return;
-      }
-
       setLoading(true);
       try {
         const res = await getServiceByIdAPI(identifier);
-        if (res.success) {
+        if (res?.success || res?.data) {
           let rawData = res.data;
           if (rawData && rawData.data) {
             rawData = rawData.data;
@@ -50,25 +49,15 @@ export default function WebsiteServiceDetailsContent() {
           }
           setService(rawData);
           if (rawData?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_service_id", String(rawData.id));
-            sessionStorage.setItem("last_service_id", String(rawData.id));
             if (rawData?.slug) {
               const s = String(rawData.slug).toLowerCase();
               localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
               sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              localStorage.setItem(`service_slug_${s}`, String(rawData.id));
-              sessionStorage.setItem(`service_slug_${s}`, String(rawData.id));
-              const currentPath = window.location.pathname;
-              const targetPath = `/services/${rawData.slug}`;
-              if (currentPath !== targetPath) {
-                window.history.replaceState(null, "", targetPath);
-              }
             }
           }
-          // Keep viewport at top after content loads
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         } else {
-          showSnackbar(res.message || "Failed to load service details", "error");
+          showSnackbar(res?.message || "Failed to load service details", "error");
         }
       } catch (error) {
         console.error("Failed to fetch service details:", error);
@@ -77,8 +66,9 @@ export default function WebsiteServiceDetailsContent() {
         setLoading(false);
       }
     };
+
     fetchService();
-  }, [params.id, params.slug, showSnackbar, service]);
+  }, [identifier]);
 
   useEffect(() => {
     if (!loading && service) {

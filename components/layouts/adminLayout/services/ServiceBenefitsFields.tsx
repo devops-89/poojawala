@@ -221,7 +221,7 @@ export default function ServiceBenefitsFields({
                 }}
               >
                 {editingIndex !== null
-                  ? `Edit Benefit #${editingIndex + 1}`
+                  ? `Edit Benefit ${editingIndex + 1}`
                   : "New Benefit Details"}
               </Typography>
               <IconButton size="small" onClick={handleCancel}>

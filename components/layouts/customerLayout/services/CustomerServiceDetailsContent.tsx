@@ -30,22 +30,18 @@ export default function CustomerServiceDetailsContent() {
     fetchProfile();
   }, [fetchProfile]);
 
+  const identifier = params.id as string;
+
   useEffect(() => {
+    if (!identifier) return;
+    if (loadedIdRef.current === identifier) return;
+    loadedIdRef.current = identifier;
+
     const fetchService = async () => {
-      const identifier = params.id as string;
-      if (!identifier) return;
-
-      if (
-        service &&
-        (service.slug === identifier || String(service.id) === String(identifier))
-      ) {
-        return;
-      }
-
       setLoading(true);
       try {
         const res = await getServiceByIdAPI(identifier);
-        if (res.success) {
+        if (res?.success || res?.data) {
           let rawData = res.data;
           if (rawData && rawData.data) {
             rawData = rawData.data;
@@ -54,25 +50,15 @@ export default function CustomerServiceDetailsContent() {
             rawData = rawData.data;
           }
           setService(rawData);
-          loadedIdRef.current = rawData.id;
           if (rawData?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_service_id", String(rawData.id));
-            sessionStorage.setItem("last_service_id", String(rawData.id));
             if (rawData?.slug) {
               const s = String(rawData.slug).toLowerCase();
               localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
               sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              localStorage.setItem(`service_slug_${s}`, String(rawData.id));
-              sessionStorage.setItem(`service_slug_${s}`, String(rawData.id));
-              const currentPath = window.location.pathname;
-              const targetPath = `/customer/services/${rawData.slug}`;
-              if (currentPath !== targetPath) {
-                window.history.replaceState(null, "", targetPath);
-              }
             }
           }
         } else {
-          showSnackbar(res.message || "Failed to load service details", "error");
+          showSnackbar(res?.message || "Failed to load service details", "error");
         }
       } catch (error) {
         console.error("Failed to fetch service details:", error);
@@ -82,7 +68,7 @@ export default function CustomerServiceDetailsContent() {
       }
     };
     fetchService();
-  }, [params.id, showSnackbar, service]);
+  }, [identifier]);
 
   const handleScrollToBookingForm = () => {
     const el = document.getElementById("booking-form-section");
