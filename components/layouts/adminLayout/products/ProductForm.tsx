@@ -68,7 +68,9 @@ const validationSchema = Yup.object().shape({
     .typeError("Quantity must be a valid number")
     .required("Quantity is required")
     .min(0, "Cannot be negative"),
-  categoryId: Yup.mixed().required("Please select a product category"),
+  categoryId: Yup.mixed()
+    .test("not-empty", "Please select a product category", (val) => Boolean(val && String(val).trim() !== ""))
+    .required("Please select a product category"),
 });
 
 export interface ProductFormValues {
