@@ -57,6 +57,8 @@ export default function CategoryModal({
 }: CategoryModalProps) {
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
+  const [metaTitleInput, setMetaTitleInput] = useState("");
+  const [metaDescriptionInput, setMetaDescriptionInput] = useState("");
   const [categoryType, setCategoryType] = useState<"SERVICE" | "PRODUCT">(
     "SERVICE",
   );
@@ -106,6 +108,8 @@ export default function CategoryModal({
       if (mode === "edit" || mode === "view") {
         setNameInput(category?.name || category?.title || "");
         setDescriptionInput(category?.description || category?.details || "");
+        setMetaTitleInput(category?.metaTitle || "");
+        setMetaDescriptionInput(category?.metaDescription || "");
         setCategoryType(category?.categoryType || "SERVICE");
         setIconFile(null);
         setIconPreview(
@@ -119,6 +123,8 @@ export default function CategoryModal({
         // Add mode reset
         setNameInput("");
         setDescriptionInput("");
+        setMetaTitleInput("");
+        setMetaDescriptionInput("");
         setCategoryType("SERVICE");
         setIconFile(null);
         setIconPreview("");
@@ -161,6 +167,8 @@ export default function CategoryModal({
     if (mode === "edit" && category) {
       const origName = (category?.name || category?.title || "").trim();
       const origDesc = (category?.description || category?.details || "").trim();
+      const origMetaTitle = (category?.metaTitle || "").trim();
+      const origMetaDesc = (category?.metaDescription || "").trim();
       const origType = category?.categoryType || "SERVICE";
       const origIcon =
         category?.iconDownloadurl ||
@@ -171,10 +179,14 @@ export default function CategoryModal({
 
       const currentName = nameInput.trim();
       const currentDesc = descriptionInput.trim();
+      const currentMetaTitle = metaTitleInput.trim();
+      const currentMetaDesc = metaDescriptionInput.trim();
       const currentType = categoryType;
 
       const isNameChanged = currentName !== origName;
       const isDescChanged = currentDesc !== origDesc;
+      const isMetaTitleChanged = currentMetaTitle !== origMetaTitle;
+      const isMetaDescChanged = currentMetaDesc !== origMetaDesc;
       const isTypeChanged = currentType !== origType;
       const isImageRemoved = Boolean(origIcon) && !iconPreview && !iconFile;
       const isImageAddedOrChanged = Boolean(iconFile);
@@ -182,6 +194,8 @@ export default function CategoryModal({
       const hasChanges =
         isNameChanged ||
         isDescChanged ||
+        isMetaTitleChanged ||
+        isMetaDescChanged ||
         isTypeChanged ||
         isImageRemoved ||
         isImageAddedOrChanged;
@@ -200,6 +214,12 @@ export default function CategoryModal({
         formData.append("categoryType", categoryType);
         if (descriptionInput.trim()) {
           formData.append("description", descriptionInput.trim());
+        }
+        if (metaTitleInput.trim()) {
+          formData.append("metaTitle", metaTitleInput.trim());
+        }
+        if (metaDescriptionInput.trim()) {
+          formData.append("metaDescription", metaDescriptionInput.trim());
         }
         if (iconFile) {
           formData.append("icon", iconFile);
@@ -233,6 +253,12 @@ export default function CategoryModal({
           if (descriptionInput.trim()) {
             formData.append("description", descriptionInput.trim());
           }
+          if (metaTitleInput.trim()) {
+            formData.append("metaTitle", metaTitleInput.trim());
+          }
+          if (metaDescriptionInput.trim()) {
+            formData.append("metaDescription", metaDescriptionInput.trim());
+          }
           formData.append("icon", iconFile);
           data = formData;
         } else {
@@ -241,6 +267,8 @@ export default function CategoryModal({
             description: descriptionInput.trim(),
             categoryType: categoryType,
             iconUrl: isImageRemoved ? "" : existingIcon,
+            metaTitle: metaTitleInput.trim() || undefined,
+            metaDescription: metaDescriptionInput.trim() || undefined,
           };
         }
 
@@ -391,6 +419,59 @@ export default function CategoryModal({
                   {category.description || "No description provided."}
                 </Typography>
               </Box>
+
+              {category.metaTitle && (
+                <Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      color: "#94a3b8",
+                      mb: 0.5,
+                    }}
+                  >
+                    META TITLE (SEO)
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 400,
+                      fontSize: "0.95rem",
+                      color: "#334155",
+                    }}
+                  >
+                    {category.metaTitle}
+                  </Typography>
+                </Box>
+              )}
+
+              {category.metaDescription && (
+                <Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      color: "#94a3b8",
+                      mb: 0.5,
+                    }}
+                  >
+                    META DESCRIPTION (SEO)
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 400,
+                      fontSize: "0.95rem",
+                      color: "#334155",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {category.metaDescription}
+                  </Typography>
+                </Box>
+              )}
 
               <Grid container spacing={2}>
                 {(category.id || category._id) && (
@@ -547,6 +628,26 @@ export default function CategoryModal({
                   },
                 },
               }}
+            />
+
+            <TextField
+              label="Meta Title (SEO)"
+              placeholder="e.g. Book Online Festival Poojas | 1Pooja"
+              fullWidth
+              value={metaTitleInput}
+              onChange={(e) => setMetaTitleInput(e.target.value)}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+
+            <TextField
+              label="Meta Description (SEO)"
+              placeholder="Enter meta description for search engines..."
+              fullWidth
+              multiline
+              rows={2}
+              value={metaDescriptionInput}
+              onChange={(e) => setMetaDescriptionInput(e.target.value)}
+              slotProps={{ inputLabel: { shrink: true } }}
             />
 
             <CategoryImageUpload

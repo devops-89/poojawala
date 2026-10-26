@@ -75,6 +75,8 @@ const validationSchema = Yup.object().shape({
         return val.trim().length >= 10 && letters >= 5;
       }
     ),
+  metaTitle: Yup.string().trim().optional(),
+  metaDescription: Yup.string().trim().optional(),
   tokenPercentage: Yup.number()
     .required("Token percentage is required")
     .min(0, "Cannot be negative")
@@ -179,6 +181,8 @@ export default function EditServiceForm() {
       templeId: "",
       sortOrder: "",
       description: "",
+      metaTitle: "",
+      metaDescription: "",
       tokenPercentage: "40.00",
       basicPrice: "",
       basicFeatures: [
@@ -238,6 +242,12 @@ export default function EditServiceForm() {
           formData.append("categoryId", String(values.categoryId));
         }
         formData.append("description", values.description);
+        if (values.metaTitle !== undefined) {
+          formData.append("metaTitle", values.metaTitle.trim());
+        }
+        if (values.metaDescription !== undefined) {
+          formData.append("metaDescription", values.metaDescription.trim());
+        }
         formData.append("tokenPercentage", String(values.tokenPercentage));
         formData.append(
           "commissionPercentage",
@@ -586,6 +596,8 @@ export default function EditServiceForm() {
                 ? service.sortOrder
                 : "",
             description: service.description || "",
+            metaTitle: service.metaTitle || "",
+            metaDescription: service.metaDescription || "",
             tokenPercentage: service.tokenPercentage ?? "40.00",
             basicPrice: basicPrice,
             basicFeatures: basicFeatList,

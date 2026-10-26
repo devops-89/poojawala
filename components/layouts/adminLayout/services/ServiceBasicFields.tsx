@@ -302,6 +302,44 @@ export default function ServiceBasicFields({
           }}
         />
       </Grid>
+
+      <Grid size={{ xs: 12 }}>
+        <TextField
+          fullWidth
+          name="metaTitle"
+          label="Meta Title (SEO)"
+          placeholder="e.g., Book Online Annaprashan Puja | Expert Vedic Acharya"
+          variant="outlined"
+          value={values.metaTitle || ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(touched.metaTitle && errors.metaTitle)}
+          helperText={touched.metaTitle ? errors.metaTitle : undefined}
+          sx={{
+            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+          }}
+        />
+      </Grid>
+
+      <Grid size={{ xs: 12 }}>
+        <TextField
+          fullWidth
+          multiline
+          rows={3}
+          name="metaDescription"
+          label="Meta Description (SEO)"
+          placeholder="Enter meta description for search engines..."
+          variant="outlined"
+          value={values.metaDescription || ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(touched.metaDescription && errors.metaDescription)}
+          helperText={touched.metaDescription ? errors.metaDescription : undefined}
+          sx={{
+            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+          }}
+        />
+      </Grid>
     </>
   );
 }
