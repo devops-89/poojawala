@@ -30,6 +30,7 @@ import ProductDescriptionField from "./widgets/ProductDescriptionField";
 import ProductImageUpload from "./widgets/ProductImageUpload";
 
 import { convertImageToWebP } from "@/utils/imageHelper";
+import { useSnackbarStore } from "@/stores/snackbarStore";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -104,6 +105,7 @@ export default function ProductForm({
   isEdit = false,
 }: ProductFormProps) {
   const router = useRouter();
+  const { showSnackbar } = useSnackbarStore();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     existingImageUrl,
@@ -115,6 +117,21 @@ export default function ProductForm({
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
+      if (isEdit) {
+        const isNameSame = (values.name || "").trim() === (initialValues.name || "").trim();
+        const isDescSame = (values.description || "").trim() === (initialValues.description || "").trim();
+        const isPriceSame = Number(values.price) === Number(initialValues.price);
+        const isUnitSame = String(values.pricingUnit || "").trim() === String(initialValues.pricingUnit || "").trim();
+        const isQtySame = Number(values.quantity ?? 0) === Number(initialValues.quantity ?? 0);
+        const isCategorySame = String(values.categoryId ?? "") === String(initialValues.categoryId ?? "");
+        const isImageSame = !imageFile;
+
+        if (isNameSame && isDescSame && isPriceSame && isUnitSame && isQtySame && isCategorySame && isImageSame) {
+          showSnackbar("No changes have been made to the product", "info");
+          return;
+        }
+      }
+
       setIsSubmitting(true);
       try {
         const formData = new FormData();

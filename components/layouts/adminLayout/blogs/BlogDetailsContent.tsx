@@ -114,12 +114,13 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
 
   const titleText = blog.title || blog.heading || blog.name || "Untitled Blog Post";
   const contentText = blog.content || blog.body || blog.description || "";
-  const coverImg =
+  const rawCover =
     blog.coverImage ||
     blog.imageUrl ||
     blog.image ||
-    blog.downloadUrl ||
-    "/images/home/hero/heroSectionHome.webp";
+    blog.downloadUrl;
+  const hasCoverImg = Boolean(rawCover && !rawCover.includes("heroSectionHome.webp"));
+  const coverImg = hasCoverImg ? rawCover : null;
 
   const categoryName = (
     typeof blog.category === "string"
@@ -242,7 +243,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
       {/* HERO SECTION: 2-Column Side-by-Side Layout (Top Aligned) */}
       <Grid container spacing={{ xs: 4, md: 6 }} sx={{ alignItems: "flex-start" }}>
         {/* Left Column: Text & Author Info */}
-        <Grid size={{ xs: 12, md: 6.5 }}>
+        <Grid size={{ xs: 12, md: hasCoverImg ? 6.5 : 12 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* Category Pill Tag & Status */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
@@ -351,33 +352,35 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
           </Box>
         </Grid>
 
-        {/* Right Column: Hero Cover Image */}
-        <Grid size={{ xs: 12, md: 5.5 }}>
-          <Box
-            sx={{
-              width: "100%",
-              borderRadius: "24px",
-              overflow: "hidden",
-              position: "relative",
-              boxShadow: "0 12px 32px rgba(0,0,0,0.08)",
-              border: "1px solid #EFEAE0",
-              bgcolor: "#f8fafc",
-              height: { xs: 280, sm: 360, md: 400 },
-            }}
-          >
+        {/* Right Column: Hero Cover Image (only when uploaded) */}
+        {hasCoverImg && coverImg && (
+          <Grid size={{ xs: 12, md: 5.5 }}>
             <Box
-              component="img"
-              src={coverImg}
-              alt={titleText}
               sx={{
                 width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
+                borderRadius: "24px",
+                overflow: "hidden",
+                position: "relative",
+                boxShadow: "0 12px 32px rgba(0,0,0,0.08)",
+                border: "1px solid #EFEAE0",
+                bgcolor: "#f8fafc",
+                height: { xs: 280, sm: 360, md: 400 },
               }}
-            />
-          </Box>
-        </Grid>
+            >
+              <Box
+                component="img"
+                src={coverImg}
+                alt={titleText}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            </Box>
+          </Grid>
+        )}
       </Grid>
 
       <Divider sx={{ my: 4 }} />

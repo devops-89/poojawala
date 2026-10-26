@@ -55,21 +55,45 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
           const coverImg =
             data.coverImage || data.imageUrl || data.image || data.downloadUrl || "";
 
+          const rawMainContent = data.content || data.body || "";
+          const cleanText = (str: string) => (str || "").replace(/<[^>]*>/g, "").trim();
+          const mainClean = cleanText(rawMainContent);
+
+          let initialSections = Array.isArray(data.sections)
+            ? data.sections.map((sec: any) => ({
+                title: sec.title || sec.heading || "",
+                description: sec.description || sec.content || sec.body || "",
+              }))
+            : [];
+
+          // If only 1 section exists and its content matches the blog's main content,
+          // it was automatically duplicated from main content by the backend when no custom sections were added.
+          if (initialSections.length === 1) {
+            const onlySec = initialSections[0];
+            const secTitle = (onlySec.title || "").trim().toLowerCase();
+            const secClean = cleanText(onlySec.description || "");
+            const blogTitle = (data.title || "").trim().toLowerCase();
+
+            if (
+              (secClean && secClean === mainClean) ||
+              (onlySec.description && onlySec.description === rawMainContent)
+            ) {
+              if (!secTitle || secTitle === blogTitle || secTitle === "main content" || secTitle === "content") {
+                initialSections = [];
+              }
+            }
+          }
+
           setInitialValues({
             title: data.title || "",
-            content: data.content || data.body || "",
+            content: rawMainContent,
             category: categoryName,
             authorName: authorName,
             readTime: data.readTime ?? "",
             isFeatured: Boolean(data.isFeatured),
             coverImage: coverImg,
             status: data.status || "PUBLISHED",
-            sections: Array.isArray(data.sections)
-              ? data.sections.map((sec: any) => ({
-                  title: sec.title || sec.heading || "",
-                  description: sec.description || sec.content || sec.body || "",
-                }))
-              : [],
+            sections: initialSections,
           });
         }
       } catch (err: any) {
@@ -88,14 +112,22 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
   const handleSubmit = async (values: BlogFormValues, imageFile?: File | null) => {
     try {
       let payload: any;
+      const parsedRead = Number(values.readTime);
+      const safeReadTime =
+        !isNaN(parsedRead) && parsedRead > 0 && parsedRead <= 300
+          ? Math.round(parsedRead)
+          : 4;
+
       const jsonPayload = {
         title: values.title,
         content: values.content,
-        sections: (values.sections || []).map((sec: any) => ({
-          title: sec.title || sec.heading || "",
-          description: sec.description || sec.content || "",
-        })),
-        readTime: values.readTime ? Number(values.readTime) : 4,
+        sections: (values.sections || [])
+          .filter((sec: any) => Boolean(sec?.title || sec?.heading || sec?.description || sec?.content))
+          .map((sec: any) => ({
+            title: sec.title || sec.heading || "",
+            description: sec.description || sec.content || "",
+          })),
+        readTime: safeReadTime,
         category: values.category,
         status: values.status || "PUBLISHED",
         isFeatured: Boolean(values.isFeatured),
@@ -131,7 +163,12 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
       }
     } catch (err: any) {
       console.error("Error updating blog", err);
-      showSnackbar(err?.response?.data?.message || "Failed to update blog", "error");
+      const rawMsg = err?.response?.data?.message || err?.message || "";
+      const displayMsg =
+        typeof rawMsg === "string" && rawMsg.toLowerCase().includes("validation failed")
+          ? "Please complete all required fields before publishing the blog."
+          : rawMsg || "Failed to update blog";
+      showSnackbar(displayMsg, "error");
     }
   };
 

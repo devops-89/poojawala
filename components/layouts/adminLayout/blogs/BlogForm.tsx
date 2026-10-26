@@ -89,14 +89,14 @@ const validationSchema = Yup.object().shape({
     ),
   authorName: Yup.string()
     .trim()
-    .test("valid-author", "Author name should only contain letters and spaces", (val) => {
-      if (!val) return true;
-      return /^[a-zA-Z\s.]+$/.test(val);
-    })
-    .optional(),
+    .required("Author name is required")
+    .min(2, "Author name must be at least 2 characters")
+    .max(100, "Author name cannot exceed 100 characters")
+    .matches(/^[a-zA-Z\s.]+$/, "Author name should only contain letters and spaces"),
   readTime: Yup.number()
-    .typeError("Read time must be a number")
-    .min(1, "Must be at least 1 min")
+    .typeError("Please enter a valid read time within the allowed limit")
+    .min(1, "Read time must be at least 1 minute")
+    .max(300, "Please enter a valid read time within the allowed limit (max 300 minutes)")
     .optional(),
   isFeatured: Yup.boolean().optional(),
   coverImage: Yup.string().optional(),
@@ -158,6 +158,33 @@ export default function BlogForm({
     },
   });
 
+  const isFormModified = React.useCallback(() => {
+    if (imageFile !== null) return true;
+    if (formik.values.title !== initialValues.title) return true;
+    if (formik.values.content !== initialValues.content) return true;
+    if (formik.values.category !== initialValues.category) return true;
+    if (formik.values.authorName !== initialValues.authorName) return true;
+    if (String(formik.values.readTime ?? "") !== String(initialValues.readTime ?? "")) return true;
+    if (Boolean(formik.values.isFeatured) !== Boolean(initialValues.isFeatured)) return true;
+    if ((formik.values.coverImage || "") !== (initialValues.coverImage || "")) return true;
+    if (formik.values.status && initialValues.status && formik.values.status !== initialValues.status) return true;
+
+    const curSecs = formik.values.sections || [];
+    const initSecs = initialValues.sections || [];
+    if (curSecs.length !== initSecs.length) return true;
+    for (let i = 0; i < curSecs.length; i++) {
+      const c = curSecs[i];
+      const ini = initSecs[i];
+      const cTitle = c.title || c.heading || "";
+      const iniTitle = ini.title || ini.heading || "";
+      const cContent = c.content || c.description || "";
+      const iniContent = ini.content || ini.description || "";
+      if (cTitle !== iniTitle || cContent !== iniContent) return true;
+    }
+
+    return false;
+  }, [formik.values, initialValues, imageFile]);
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -218,7 +245,7 @@ export default function BlogForm({
           p: { xs: 2, md: 3.5 },
         }}
       >
-        <FormikValidationSnackbar />
+        <FormikValidationSnackbar message="Please complete all required fields before publishing the blog." />
 
         {/* Header & Breadcrumbs */}
         <Box
@@ -315,7 +342,7 @@ export default function BlogForm({
             <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 fullWidth
-                label="Author Name"
+                label="Author Name *"
                 name="authorName"
                 placeholder="e.g., Pt. Ramesh Sharma"
                 value={formik.values.authorName}
@@ -380,9 +407,18 @@ export default function BlogForm({
                 label="Read Time (Minutes)"
                 name="readTime"
                 placeholder="e.g., 4"
+                slotProps={{
+                  htmlInput: {
+                    min: 1,
+                    max: 300,
+                  },
+                }}
                 value={formik.values.readTime}
                 onChange={(e) => {
-                  formik.handleChange(e);
+                  const val = e.target.value;
+                  if (val === "" || (!isNaN(Number(val)) && Number(val) <= 10000)) {
+                    formik.handleChange(e);
+                  }
                   formik.setFieldTouched("readTime", true, false);
                 }}
                 onBlur={formik.handleBlur}
@@ -745,7 +781,7 @@ export default function BlogForm({
           <Divider sx={{ my: 4 }} />
 
           {/* Action Buttons */}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 2 }}>
             <Button
               component={NextLink}
               href="/admin/blogs"
@@ -758,10 +794,44 @@ export default function BlogForm({
             >
               Cancel
             </Button>
+
+            {!isEdit && (
+              <Button
+                type="button"
+                variant="outlined"
+                disabled={isSubmitting}
+                onClick={async () => {
+                  await formik.setFieldValue("status", "DRAFT");
+                  formik.handleSubmit();
+                }}
+                sx={{
+                  borderColor: "#cbd5e1",
+                  color: "#475569",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  fontWeight: 600,
+                  fontFamily: FONTS.OUTFIT,
+                  px: 3,
+                  py: 1.2,
+                  "&:hover": {
+                    borderColor: "#94a3b8",
+                    bgcolor: "#f8fafc",
+                  },
+                }}
+              >
+                Save as Draft
+              </Button>
+            )}
+
             <Button
               type="submit"
               variant="contained"
-              disabled={isSubmitting}
+              onClick={() => {
+                if (!isEdit) {
+                  formik.setFieldValue("status", "PUBLISHED");
+                }
+              }}
+              disabled={isSubmitting || (isEdit && !isFormModified())}
               startIcon={
                 isSubmitting ? (
                   <CircularProgress size={20} color="inherit" />
@@ -781,6 +851,10 @@ export default function BlogForm({
                 px: 4,
                 py: 1.2,
                 "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+                "&.Mui-disabled": {
+                  bgcolor: "#cbd5e1",
+                  color: "#94a3b8",
+                },
               }}
             >
               {isSubmitting

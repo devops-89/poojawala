@@ -130,13 +130,24 @@ export default function AdminProductsContent() {
       );
       if (res?.success !== false) {
         showSnackbar("Product status updated successfully", "success");
-        setProducts((prev) =>
-          prev.map((p) =>
-            p.id === statusChangeTarget.product.id
-              ? { ...p, isActive: statusChangeTarget.isActive }
-              : p,
-          ),
-        );
+        if (
+          (statusFilter === "Available" && !statusChangeTarget.isActive) ||
+          (statusFilter === "Unavailable" && statusChangeTarget.isActive)
+        ) {
+          setProducts((prev) =>
+            prev.filter((p) => p.id !== statusChangeTarget.product.id)
+          );
+          setTotalCount((prev) => Math.max(0, prev - 1));
+          fetchProducts();
+        } else {
+          setProducts((prev) =>
+            prev.map((p) =>
+              p.id === statusChangeTarget.product.id
+                ? { ...p, isActive: statusChangeTarget.isActive }
+                : p,
+            ),
+          );
+        }
       } else {
         showSnackbar(
           res?.message || "Failed to update product status",
@@ -157,6 +168,8 @@ export default function AdminProductsContent() {
       if (res?.success !== false) {
         showSnackbar("Product deleted successfully", "success");
         setProducts((prev) => prev.filter((p) => p.id !== deleteTarget));
+        setTotalCount((prev) => Math.max(0, prev - 1));
+        fetchProducts();
       } else {
         showSnackbar(res?.message || "Failed to delete product", "error");
       }

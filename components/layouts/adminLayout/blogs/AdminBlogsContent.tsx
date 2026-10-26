@@ -18,6 +18,7 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import StarIcon from "@mui/icons-material/Star";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Avatar, Box, Chip, IconButton, Typography } from "@mui/material";
 import NextLink from "next/link";
@@ -26,6 +27,7 @@ import { useCallback, useEffect, useState } from "react";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const getAuthorName = (blog: any) => {
+  if (!blog) return "Editorial Team";
   const authorData = blog.author || blog.authorName || blog.createdBy || blog.user;
   if (!authorData) return "Editorial Team";
   if (typeof authorData === "string") return authorData;
@@ -40,6 +42,7 @@ const getAuthorName = (blog: any) => {
 };
 
 const getCategoryName = (blog: any) => {
+  if (!blog) return "Spiritual";
   const catData = blog.category || blog.categoryName;
   if (!catData) return "Spiritual";
   if (typeof catData === "string") return catData;
@@ -50,6 +53,7 @@ const getCategoryName = (blog: any) => {
 };
 
 const getBlogTitle = (blog: any) => {
+  if (!blog) return "";
   const titleVal = blog.title || blog.heading || blog.name;
   if (!titleVal) return "Untitled Blog Article";
   if (typeof titleVal === "string") return titleVal;
@@ -58,6 +62,7 @@ const getBlogTitle = (blog: any) => {
 };
 
 const getBlogDescription = (blog: any) => {
+  if (!blog) return "Sacred insights & Vedic rituals guide";
   const descVal = blog.excerpt || blog.description || blog.shortDescription || blog.content || blog.body || blog.metaDescription || blog.slug;
   if (!descVal) return "Sacred insights & Vedic rituals guide";
   const raw = typeof descVal === "string" ? descVal : descVal.text || descVal.description || "";
@@ -99,7 +104,7 @@ export default function AdminBlogsContent() {
   }, [statusFilter, page, rowsPerPage]);
 
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
-  const [deleteTarget, setDeleteTarget] = useState<number | string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const { showSnackbar } = useSnackbarStore();
 
   const fetchBlogs = useCallback(async () => {
@@ -165,19 +170,31 @@ export default function AdminBlogsContent() {
     if (!statusChangeTarget) return;
     try {
       const newStatus = statusChangeTarget.newStatus;
+      const targetId = statusChangeTarget.blog.id ?? statusChangeTarget.blog._id;
       const res = await updateBlogStatusAPI(
-        statusChangeTarget.blog.id,
+        targetId,
         newStatus
       );
       if (res?.success !== false) {
         showSnackbar("Blog status updated successfully", "success");
-        setBlogs((prev) =>
-          prev.map((b) =>
-            b.id === statusChangeTarget.blog.id
-              ? { ...b, status: newStatus, isActive: newStatus === "PUBLISHED" }
-              : b
-          )
-        );
+        if (
+          (statusFilter === "PUBLISHED" && newStatus !== "PUBLISHED") ||
+          (statusFilter === "DRAFT" && newStatus !== "DRAFT")
+        ) {
+          setBlogs((prev) =>
+            prev.filter((b) => (b.id ?? b._id) !== targetId)
+          );
+          setTotalCount((prev) => Math.max(0, prev - 1));
+          fetchBlogs();
+        } else {
+          setBlogs((prev) =>
+            prev.map((b) =>
+              (b.id ?? b._id) === targetId
+                ? { ...b, status: newStatus, isActive: newStatus === "PUBLISHED" }
+                : b
+            )
+          );
+        }
       } else {
         showSnackbar(
           res?.message || "Failed to update blog status",
@@ -194,10 +211,13 @@ export default function AdminBlogsContent() {
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     try {
-      const res = await deleteBlogAPI(deleteTarget);
+      const targetId = deleteTarget.id ?? deleteTarget._id ?? deleteTarget;
+      const res = await deleteBlogAPI(targetId);
       if (res?.success !== false) {
         showSnackbar("Blog deleted successfully", "success");
-        setBlogs((prev) => prev.filter((b) => b.id !== deleteTarget));
+        setBlogs((prev) => prev.filter((b) => (b.id ?? b._id) !== targetId));
+        setTotalCount((prev) => Math.max(0, prev - 1));
+        fetchBlogs();
       } else {
         showSnackbar(res?.message || "Failed to delete blog", "error");
       }
@@ -221,7 +241,7 @@ export default function AdminBlogsContent() {
             fontSize: "0.85rem",
           }}
         >
-          B-{blog.id}
+          B-{blog.id ?? blog._id}
         </Typography>
       ),
     },
@@ -230,17 +250,44 @@ export default function AdminBlogsContent() {
       label: "NAME",
       render: (blog) => {
         const titleText = getBlogTitle(blog);
+        const isFeatured = Boolean(blog.isFeatured || blog.featured);
         return (
-          <Typography
-            sx={{
-              fontWeight: 700,
-              color: "#1e293b",
-              fontFamily: FONTS.OUTFIT,
-              fontSize: "0.95rem",
-            }}
-          >
-            {titleText}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+            <Typography
+              component={NextLink}
+              href={`/admin/blogs/${blog.id ?? blog._id}`}
+              sx={{
+                fontWeight: 700,
+                color: "#1e293b",
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "0.95rem",
+                textDecoration: "none",
+                "&:hover": {
+                  color: COLORS.PRIMARY,
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              {titleText}
+            </Typography>
+            {isFeatured && (
+              <Chip
+                icon={<StarIcon sx={{ fontSize: "14px !important", color: "#b45309 !important" }} />}
+                label="Featured"
+                size="small"
+                sx={{
+                  bgcolor: "#fef3c7",
+                  color: "#92400e",
+                  fontWeight: 700,
+                  fontSize: "0.72rem",
+                  height: "22px",
+                  borderRadius: "6px",
+                  fontFamily: FONTS.OUTFIT,
+                  border: "1px solid #fde68a",
+                }}
+              />
+            )}
+          </Box>
         );
       },
     },
@@ -299,17 +346,17 @@ export default function AdminBlogsContent() {
               {
                 label: "View Details",
                 icon: <VisibilityIcon fontSize="small" />,
-                href: `/admin/blogs/${blog.id}`,
+                href: `/admin/blogs/${blog.id ?? blog._id}`,
               },
               {
                 label: "Edit",
                 icon: <EditIcon fontSize="small" />,
-                href: `/admin/blogs/edit/${blog.id}`,
+                href: `/admin/blogs/edit/${blog.id ?? blog._id}`,
               },
               {
                 label: "Delete",
                 icon: <DeleteIcon fontSize="small" />,
-                onClick: () => setDeleteTarget(blog.id),
+                onClick: () => setDeleteTarget(blog),
                 color: "#ef4444",
               },
             ]}
@@ -353,14 +400,14 @@ export default function AdminBlogsContent() {
           setStatusFilter(tab);
           setPage(0);
         }}
-        keyExtractor={(blog) => blog.id}
+        keyExtractor={(blog) => blog?.id ?? blog?._id ?? blog?.slug ?? (blog ? getBlogTitle(blog) : "")}
         emptyMessage="No blogs found matching your criteria."
       />
 
       <ConfirmDeleteDialog
         open={Boolean(deleteTarget)}
         title="Confirm Blog Deletion"
-        itemName={blogs.find((b) => b.id === deleteTarget)?.title || "Blog Article"}
+        itemName={deleteTarget ? getBlogTitle(deleteTarget) : ""}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
       />
@@ -368,7 +415,7 @@ export default function AdminBlogsContent() {
       <ConfirmStatusDialog
         open={Boolean(statusChangeTarget)}
         title="Change Blog Status"
-        itemName={statusChangeTarget?.blog?.title || "Blog Article"}
+        itemName={statusChangeTarget?.blog ? getBlogTitle(statusChangeTarget.blog) : ""}
         newStatus={statusChangeTarget?.newStatus === "PUBLISHED" ? "Published" : "Draft"}
         onClose={() => setStatusChangeTarget(null)}
         onConfirm={handleStatusChangeConfirm}

@@ -16,8 +16,8 @@ import { useSocketStore } from "@/stores/socketStore";
 import { ORDER_PAYMENT_STATUS, ORDER_STATUS } from "@/utils/enums";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, Chip, IconButton, Typography } from "@mui/material";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 
 const STATUS_TABS = [
@@ -29,7 +29,74 @@ const STATUS_TABS = [
   { id: ORDER_STATUS.OUT_FOR_DELIVERY, label: "Out For Delivery" },
   { id: ORDER_STATUS.DELIVERED, label: "Delivered" },
   { id: ORDER_STATUS.CANCELLED, label: "Cancelled" },
+  { id: ORDER_STATUS.EXPIRED, label: "Expired" },
 ];
+
+const matchesStatus = (order: any, filter: string) => {
+  if (!filter || filter === "All Orders" || filter === "ALL") return true;
+  const orderStatus = (order.orderStatus || order.status || "").toUpperCase();
+  const target = filter.toUpperCase();
+  if (target === "PENDING" || target === "PENDING_PAYMENT") {
+    return orderStatus === "PENDING" || orderStatus === "PENDING_PAYMENT";
+  }
+  return orderStatus === target;
+};
+
+const matchesSearch = (order: any, query: string) => {
+  if (!query || !query.trim()) return true;
+  const q = query.toLowerCase().trim();
+  const rawId = String(order.id ?? order.orderId ?? "").toLowerCase();
+  const formattedId = `ord-${rawId}`.toLowerCase();
+  if (rawId.includes(q) || formattedId.includes(q)) return true;
+
+  const user = order.customer || order.user || {};
+  const customerName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.username || "";
+  if (customerName.toLowerCase().includes(q)) return true;
+
+  const phone = String(
+    user.phone ||
+      order.shippingAddressSnapshot?.phone ||
+      order.shippingAddress?.phone ||
+      ""
+  );
+  if (phone.includes(q)) return true;
+
+  const email = String(
+    user.email || order.shippingAddressSnapshot?.email || ""
+  );
+  if (email.toLowerCase().includes(q)) return true;
+
+  const orderStatus = String(
+    order.orderStatus || order.status || ""
+  ).toLowerCase();
+  if (orderStatus.includes(q) || orderStatus.replace(/_/g, " ").includes(q)) {
+    return true;
+  }
+
+  const paymentStatus = String(
+    order.paymentStatus || order.payment?.status || ""
+  ).toLowerCase();
+  if (
+    paymentStatus.includes(q) ||
+    paymentStatus.replace(/_/g, " ").includes(q)
+  ) {
+    return true;
+  }
+
+  const items = order.items || [];
+  if (
+    items.some((item: any) => {
+      const pName = String(
+        item.productName || item.product?.name || item.name || ""
+      ).toLowerCase();
+      return pName.includes(q);
+    })
+  ) {
+    return true;
+  }
+
+  return false;
+};
 
 import {
   getTablePaginationState,
@@ -66,8 +133,10 @@ export default function AdminOrdersContent() {
 
   const { showSnackbar } = useSnackbarStore();
   const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
+  const currentRequestId = useRef(0);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
+    const requestId = ++currentRequestId.current;
     try {
       setIsLoading(true);
       const res = await getAllOrdersAPI(
@@ -76,6 +145,8 @@ export default function AdminOrdersContent() {
         statusFilter,
         searchValue,
       );
+
+      if (requestId !== currentRequestId.current) return;
 
       let orderList: any[] = [];
       let totalCount = 0;
@@ -92,9 +163,23 @@ export default function AdminOrdersContent() {
           totalCount = orderList.length;
         }
       }
-      setOrders(orderList);
-      setTotalOrders(totalCount);
+
+      let filtered = orderList;
+      if (statusFilter && statusFilter !== "All Orders") {
+        filtered = filtered.filter((o) => matchesStatus(o, statusFilter));
+      }
+      if (searchValue && searchValue.trim()) {
+        filtered = filtered.filter((o) => matchesSearch(o, searchValue));
+      }
+
+      setOrders(filtered);
+      if (searchValue && searchValue.trim()) {
+        setTotalOrders(filtered.length);
+      } else {
+        setTotalOrders(totalCount || filtered.length);
+      }
     } catch (error: any) {
+      if (requestId !== currentRequestId.current) return;
       showSnackbar(
         error.response?.data?.message || "Error fetching product orders",
         "error",
@@ -102,13 +187,21 @@ export default function AdminOrdersContent() {
       setOrders([]);
       setTotalOrders(0);
     } finally {
-      setIsLoading(false);
+      if (requestId === currentRequestId.current) {
+        setIsLoading(false);
+      }
     }
-  };
+  }, [page, rowsPerPage, statusFilter, searchValue, showSnackbar]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [page, rowsPerPage, statusFilter, searchValue, refreshTrigger]);
+    const timer = setTimeout(() => {
+      fetchOrders();
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [fetchOrders, refreshTrigger]);
 
   const confirmUpdateStatus = async () => {
     if (!confirmStatusChange) return;
@@ -120,17 +213,28 @@ export default function AdminOrdersContent() {
       );
 
       showSnackbar("Order status updated successfully", "success");
-      setOrders((prev) =>
-        prev.map((o) =>
-          (o.id || o.orderId) === confirmStatusChange.id
-            ? {
-                ...o,
-                orderStatus: confirmStatusChange.status,
-                status: confirmStatusChange.status,
-              }
-            : o,
-        ),
-      );
+      if (
+        statusFilter !== "All Orders" &&
+        confirmStatusChange.status !== statusFilter
+      ) {
+        setOrders((prev) =>
+          prev.filter((o) => (o.id || o.orderId) !== confirmStatusChange.id)
+        );
+        setTotalOrders((prev) => Math.max(0, prev - 1));
+        fetchOrders();
+      } else {
+        setOrders((prev) =>
+          prev.map((o) =>
+            (o.id || o.orderId) === confirmStatusChange.id
+              ? {
+                  ...o,
+                  orderStatus: confirmStatusChange.status,
+                  status: confirmStatusChange.status,
+                }
+              : o,
+          ),
+        );
+      }
       setConfirmStatusChange(null);
     } catch (error: any) {
       const errMsg =
@@ -178,6 +282,9 @@ export default function AdminOrdersContent() {
           { value: ORDER_STATUS.DELIVERED, label: "Delivered" },
           { value: ORDER_STATUS.CANCELLED, label: "Cancelled" },
         ];
+      case ORDER_STATUS.EXPIRED:
+      case "EXPIRED":
+        return [{ value: ORDER_STATUS.EXPIRED, label: "Expired" }];
       default:
         return [{ value: current, label: current.replace("_", " ") }];
     }

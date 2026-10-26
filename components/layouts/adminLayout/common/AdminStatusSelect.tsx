@@ -39,7 +39,7 @@ export const getStatusTheme = (statusStr?: string) => {
   }
 
   if (
-    ["CANCELLED", "BLOCKED", "REJECTED", "FAILED", "UNAVAILABLE", "OUT OF STOCK", "INACTIVE", "DISABLED"].includes(status)
+    ["CANCELLED", "BLOCKED", "REJECTED", "FAILED", "UNAVAILABLE", "OUT OF STOCK", "INACTIVE", "DISABLED", "EXPIRED"].includes(status)
   ) {
     return { bg: "#fee2e2", text: "#ef4444" };
   }

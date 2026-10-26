@@ -12,16 +12,26 @@ export default function AddBlogContent() {
   const handleSubmit = async (values: BlogFormValues, imageFile?: File | null) => {
     try {
       let payload: any;
+      const parsedRead = Number(values.readTime);
+      const safeReadTime =
+        !isNaN(parsedRead) && parsedRead > 0 && parsedRead <= 300
+          ? Math.round(parsedRead)
+          : 4;
+
+      const blogStatus = values.status || "PUBLISHED";
+
       const jsonPayload = {
         title: values.title,
         content: values.content,
-        sections: (values.sections || []).map((sec: any) => ({
-          title: sec.title || sec.heading || "",
-          description: sec.description || sec.content || "",
-        })),
-        readTime: values.readTime ? Number(values.readTime) : 4,
+        sections: (values.sections || [])
+          .filter((sec: any) => Boolean(sec?.title || sec?.heading || sec?.description || sec?.content))
+          .map((sec: any) => ({
+            title: sec.title || sec.heading || "",
+            description: sec.description || sec.content || "",
+          })),
+        readTime: safeReadTime,
         category: values.category,
-        status: values.status || "PUBLISHED",
+        status: blogStatus,
         isFeatured: Boolean(values.isFeatured),
         authorName: values.authorName || "",
         coverImage: values.coverImage || "",
@@ -48,14 +58,24 @@ export default function AddBlogContent() {
 
       const res = await createBlogAPI(payload);
       if (res?.success !== false) {
-        showSnackbar("Blog created successfully!", "success");
+        showSnackbar(
+          blogStatus === "DRAFT"
+            ? "Blog saved as draft successfully!"
+            : "Blog created successfully!",
+          "success"
+        );
         router.push("/admin/blogs");
       } else {
         showSnackbar(res?.message || "Failed to create blog", "error");
       }
     } catch (err: any) {
       console.error("Error creating blog", err);
-      showSnackbar(err?.response?.data?.message || "Failed to create blog", "error");
+      const rawMsg = err?.response?.data?.message || err?.message || "";
+      const displayMsg =
+        typeof rawMsg === "string" && rawMsg.toLowerCase().includes("validation failed")
+          ? "Please complete all required fields before publishing the blog."
+          : rawMsg || "Failed to create blog";
+      showSnackbar(displayMsg, "error");
     }
   };
 

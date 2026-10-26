@@ -51,8 +51,15 @@ export const getAllOrdersAPI = async (
       if (validStatus === "PENDING") validStatus = "PENDING_PAYMENT";
       params.orderStatus = validStatus;
     }
-    if (search) {
-      params.search = search;
+    if (search && search.trim()) {
+      const trimmed = search.trim();
+      params.search = trimmed;
+      const cleanNumericId = trimmed.replace(/^ORD-?/i, "").trim();
+      if (/^\d+$/.test(cleanNumericId)) {
+        params.search = cleanNumericId;
+        params.orderId = cleanNumericId;
+        params.id = cleanNumericId;
+      }
     }
 
     const response = await userSecuredApi.get("/orders/all", {
