@@ -166,7 +166,6 @@ export default function ProductForm({
             formData.append("image", fileToSend);
           }
           formData.append("imageUrl", existingImageUrl);
-          formData.append("imageDownloadUrl", existingImageUrl);
         } else if (!imagePreview && existingImageUrl) {
           formData.append("imageUrl", "");
         }

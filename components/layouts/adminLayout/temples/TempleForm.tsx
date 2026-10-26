@@ -158,7 +158,6 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           } else {
             formData.append("imageUrl", imagePreview);
           }
-          formData.append("existingImageUrl", imagePreview);
         }
 
         let res;

@@ -169,9 +169,6 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
           }
         });
         formData.append("coverImage", fileToSend);
-        if (existingCover) {
-          formData.append("coverImageUrl", existingCover);
-        }
         payload = formData;
       } else {
         const { coverImage, ...restJson } = jsonPayload;
