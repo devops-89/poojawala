@@ -13,6 +13,7 @@ html {
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: scroll;
+  scrollbar-gutter: stable;
   font-family: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 

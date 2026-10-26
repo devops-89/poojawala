@@ -42,6 +42,7 @@ export default function ConfirmStatusDialog({
     <Dialog
       open={open}
       onClose={onClose}
+      disableScrollLock
       maxWidth="xs"
       fullWidth
       sx={{
