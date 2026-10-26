@@ -221,31 +221,50 @@ export default function CategoryModal({
           "";
         const isImageRemoved = Boolean(origIcon) && !iconPreview && !iconFile;
 
-        let data: any;
-
-        if (iconFile) {
-          const formData = new FormData();
-          formData.append("name", nameInput.trim());
-          formData.append("categoryType", categoryType);
-          if (descriptionInput.trim()) {
-            formData.append("description", descriptionInput.trim());
-          }
-          formData.append("icon", iconFile);
-          data = formData;
-        } else {
-          data = {
-            name: nameInput.trim(),
-            description: descriptionInput.trim(),
-            categoryType: categoryType,
-            ...(isImageRemoved
-              ? {
-                iconUrl: "",
-              }
-              : {}),
-          };
+        const formData = new FormData();
+        formData.append("name", nameInput.trim());
+        formData.append("categoryType", categoryType);
+        if (descriptionInput.trim()) {
+          formData.append("description", descriptionInput.trim());
         }
 
-        const res = await updateServiceCategoryAPI(targetId, data);
+        const existingIcon =
+          category?.iconDownloadurl ||
+          category?.iconUrl ||
+          category?.image ||
+          category?.imageUrl ||
+          "";
+
+        if (isImageRemoved) {
+          formData.append("iconUrl", "");
+          formData.append("icon", "");
+        } else {
+          let fileToSend = iconFile;
+          if (!fileToSend && existingIcon && iconPreview) {
+            try {
+              const imgRes = await fetch(existingIcon);
+              if (imgRes.ok) {
+                const blob = await imgRes.blob();
+                const ext = blob.type?.split("/")[1] || "webp";
+                fileToSend = new File([blob], `category_icon.${ext}`, {
+                  type: blob.type || "image/webp",
+                });
+              }
+            } catch (err) {
+              console.error("Could not fetch existing category icon file:", err);
+            }
+          }
+
+          if (fileToSend) {
+            formData.append("icon", fileToSend);
+          }
+          if (existingIcon) {
+            formData.append("iconUrl", existingIcon);
+            formData.append("iconDownloadurl", existingIcon);
+          }
+        }
+
+        const res = await updateServiceCategoryAPI(targetId, formData);
         if (res?.success || res?.status === "success" || res?.data || res) {
           showSnackbar("Category updated successfully", "success");
           onSuccess?.();

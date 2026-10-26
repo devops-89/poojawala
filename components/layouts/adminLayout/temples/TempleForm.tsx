@@ -139,6 +139,26 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           formData.append("imageUrl", imageFile);
         } else if (imageRemoved) {
           formData.append("imageUrl", "");
+        } else if (imagePreview && !imagePreview.startsWith("blob:")) {
+          let fileToSend: File | null = null;
+          try {
+            const imgRes = await fetch(imagePreview);
+            if (imgRes.ok) {
+              const blob = await imgRes.blob();
+              const ext = blob.type?.split("/")[1] || "webp";
+              fileToSend = new File([blob], `temple_image.${ext}`, {
+                type: blob.type || "image/webp",
+              });
+            }
+          } catch (err) {
+            console.error("Could not fetch existing temple image:", err);
+          }
+          if (fileToSend) {
+            formData.append("imageUrl", fileToSend);
+          } else {
+            formData.append("imageUrl", imagePreview);
+          }
+          formData.append("existingImageUrl", imagePreview);
         }
 
         let res;

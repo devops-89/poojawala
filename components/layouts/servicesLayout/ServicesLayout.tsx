@@ -60,6 +60,35 @@ export default function ServicesLayout() {
   }, [stateParam, categoryParam, categoryIdParam, templeParam, templeIdParam, cityParam]);
 
   useEffect(() => {
+    let pageTitle = "Book Pandit & Purohit Online or Offline for All Pooja | 1Pooja";
+    let pageDesc =
+      "Book experienced pandit & Purohit online or offline for Ganesh Pooja, Griha Pravesh, Havan and other Hindu rituals with 1Pooja.";
+
+    if (isOffline) {
+      pageTitle = "Offline Pooja Services | Book Verified Pandit at Home | 1Pooja";
+      pageDesc =
+        "Discover and book verified Pandits and Purohits for offline pooja at home or temple. Authentic Vedic rituals tailored to your language and local traditions.";
+    } else if (isOnline) {
+      pageTitle = "Online Pooja Services | Book Live Digital E-Pooja | 1Pooja";
+      pageDesc =
+        "Experience authentic sacred rituals performed live via interactive digital video by experienced Purohits from anywhere with 1Pooja.";
+    }
+
+    if (typeof document !== "undefined") {
+      document.title = pageTitle;
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute("content", pageDesc);
+      } else {
+        metaDesc = document.createElement("meta");
+        metaDesc.setAttribute("name", "description");
+        metaDesc.setAttribute("content", pageDesc);
+        document.head.appendChild(metaDesc);
+      }
+    }
+  }, [isOffline, isOnline]);
+
+  useEffect(() => {
     const params = new URLSearchParams();
     if (isOnline) {
       params.set("isOnline", "true");

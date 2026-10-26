@@ -234,18 +234,38 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
               selectedFiles.profilePhoto
             );
             fd.append("profileImage", webpFile);
+          } else if (
+            values.profilePhotoUrl &&
+            !values.profilePhotoUrl.startsWith("blob:")
+          ) {
+            fd.append("profileImage", values.profilePhotoUrl);
+            fd.append("profileImageUrl", values.profilePhotoUrl);
           }
+
           if (selectedFiles.identityDoc) {
             const webpFile = await convertImageToWebP(
               selectedFiles.identityDoc
             );
             fd.append("aadhaarDoc", webpFile);
+          } else if (
+            values.identityDocUrl &&
+            !values.identityDocUrl.startsWith("blob:")
+          ) {
+            fd.append("aadhaarDoc", values.identityDocUrl);
+            fd.append("aadhaarDocUrl", values.identityDocUrl);
           }
+
           if (selectedFiles.certificate) {
             const webpFile = await convertImageToWebP(
               selectedFiles.certificate
             );
             fd.append("certificate", webpFile);
+          } else if (
+            values.certificateUrl &&
+            !values.certificateUrl.startsWith("blob:")
+          ) {
+            fd.append("certificate", values.certificateUrl);
+            fd.append("certificateUrl", values.certificateUrl);
           }
 
           await updateUserByAdminAPI(id, fd);

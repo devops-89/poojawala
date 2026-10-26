@@ -135,7 +135,28 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
         coverImage: values.coverImage || "",
       };
 
-      if (imageFile) {
+      let fileToSend = imageFile;
+      const existingCover =
+        values.coverImage && !values.coverImage.startsWith("blob:")
+          ? values.coverImage
+          : "";
+
+      if (!fileToSend && existingCover) {
+        try {
+          const imgRes = await fetch(existingCover);
+          if (imgRes.ok) {
+            const blob = await imgRes.blob();
+            const ext = blob.type?.split("/")[1] || "webp";
+            fileToSend = new File([blob], `blog_cover.${ext}`, {
+              type: blob.type || "image/webp",
+            });
+          }
+        } catch (err) {
+          console.error("Could not fetch existing blog cover image:", err);
+        }
+      }
+
+      if (fileToSend) {
         const formData = new FormData();
         const { coverImage, ...restPayload } = jsonPayload;
         Object.entries(restPayload).forEach(([key, val]) => {
@@ -147,11 +168,15 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
             }
           }
         });
-        formData.append("coverImage", imageFile);
+        formData.append("coverImage", fileToSend);
+        if (existingCover) {
+          formData.append("coverImageUrl", existingCover);
+        }
         payload = formData;
       } else {
         const { coverImage, ...restJson } = jsonPayload;
-        payload = coverImage && coverImage.startsWith("blob:") ? restJson : jsonPayload;
+        payload =
+          coverImage && coverImage.startsWith("blob:") ? restJson : jsonPayload;
       }
 
       const res = await editBlogAPI(blogId, payload);

@@ -148,6 +148,27 @@ export default function ProductForm({
         formData.append("isActive", "true");
         if (imageFile) {
           formData.append("image", imageFile);
+        } else if (existingImageUrl && imagePreview) {
+          let fileToSend: File | null = null;
+          try {
+            const imgRes = await fetch(existingImageUrl);
+            if (imgRes.ok) {
+              const blob = await imgRes.blob();
+              const ext = blob.type?.split("/")[1] || "webp";
+              fileToSend = new File([blob], `product_image.${ext}`, {
+                type: blob.type || "image/webp",
+              });
+            }
+          } catch (err) {
+            console.error("Could not fetch existing product image:", err);
+          }
+          if (fileToSend) {
+            formData.append("image", fileToSend);
+          }
+          formData.append("imageUrl", existingImageUrl);
+          formData.append("imageDownloadUrl", existingImageUrl);
+        } else if (!imagePreview && existingImageUrl) {
+          formData.append("imageUrl", "");
         }
         await onSubmit(formData);
       } finally {
