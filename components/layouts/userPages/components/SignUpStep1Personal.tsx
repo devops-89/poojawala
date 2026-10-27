@@ -63,7 +63,7 @@ const RASHI_OPTIONS = [
 export interface SignUpStep1PersonalProps {
   onNext: () => void;
 }
-
+//sdfg
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
     fontFamily: FONTS.OUTFIT,
