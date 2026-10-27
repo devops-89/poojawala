@@ -48,19 +48,17 @@ export default function PopularPackages() {
           undefined,
           false,
           undefined,
-          true
+          true,
         );
         const items =
           response?.data?.data && Array.isArray(response.data.data)
             ? response.data.data
             : response?.data && Array.isArray(response.data)
-            ? response.data
-            : Array.isArray(response)
-            ? response
-            : [];
-        const activeOnly = items.filter(
-          (item: any) => item.isActive !== false,
-        );
+              ? response.data
+              : Array.isArray(response)
+                ? response
+                : [];
+        const activeOnly = items.filter((item: any) => item.isActive !== false);
         const apiPackages = activeOnly.map((item: any) => {
           const priceStr = formatServicePriceRange(item);
 
@@ -312,7 +310,9 @@ export default function PopularPackages() {
                           mb: 0.5,
                         }}
                       >
-                        {pkg.price.includes("-") ? "PRICE RANGE" : "STARTING FROM"}
+                        {pkg.price.includes("-")
+                          ? "PRICE RANGE"
+                          : "STARTING FROM"}
                       </Typography>
 
                       {/* Price Display */}
@@ -334,14 +334,17 @@ export default function PopularPackages() {
                               pkg.price.length > 13
                                 ? { xs: "15px", sm: "16.5px" }
                                 : pkg.price.length > 9
-                                ? { xs: "17px", sm: "18.5px" }
-                                : { xs: "20px", sm: "22px" },
+                                  ? { xs: "17px", sm: "18.5px" }
+                                  : { xs: "20px", sm: "22px" },
                             color: "#2C1810",
                             lineHeight: 1.2,
                             whiteSpace: "nowrap",
                           }}
                         >
-                          {pkg.price.startsWith("₹") || pkg.price.startsWith("Price") ? pkg.price : `₹${pkg.price}`}
+                          {pkg.price.startsWith("₹") ||
+                          pkg.price.startsWith("Price")
+                            ? pkg.price
+                            : `₹${pkg.price}`}
                         </Typography>
                         <Typography
                           component="span"

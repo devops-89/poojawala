@@ -4,16 +4,20 @@ import { getTemplesAPI } from "@/api/templeControllers";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
-import { Box, Button, Container, Grid, Skeleton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
 import { TempleItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import { stripHtml } from "@/utils/helpers";
-
-// Swiper Imports
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -58,7 +62,7 @@ export default function TemplesSection() {
 
   const handleTempleClick = (temple: TempleItem) => {
     router.push(
-      `/services?templeId=${temple.id}&temple=${encodeURIComponent(temple.name)}`
+      `/services?templeId=${temple.id}&temple=${encodeURIComponent(temple.name)}`,
     );
   };
 
@@ -506,8 +510,9 @@ export default function TemplesSection() {
               mt: 0.5,
             }}
           >
-            Experience the divine energy of renowned temples across India.
-            Book traditional pujas and sankalp rituals performed in sanctified shrines.
+            Experience the divine energy of renowned temples across India. Book
+            traditional pujas and sankalp rituals performed in sanctified
+            shrines.
           </Typography>
 
           {temples.length > 0 && (

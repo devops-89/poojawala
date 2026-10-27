@@ -14,7 +14,15 @@ import {
   ADDRESS_STRICT_REGEX,
   ADDRESS_STRICT_MESSAGE,
 } from "@/utils/helpers";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -221,217 +229,324 @@ export default function SignUpContent() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#FFFDF9",
+        backgroundImage: "url('/images/signup-bg1.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         position: "relative",
-        overflow: "hidden",
-        py: { xs: 3, md: 5 },
+        overflowX: "hidden",
+        overflowY: "auto",
+        py: { xs: 2.5, md: 3 },
+        px: { xs: 2, sm: 3 },
+        "@media (max-height: 740px)": {
+          py: 1.5,
+        },
+        "@media (max-height: 660px)": {
+          py: 1,
+        },
       }}
     >
-      {/* Background Decor */}
+      {/* Top Header: Desktop Back Navigation */}
       <Box
-        component="img"
-        src="/images/home/chakra.webp"
-        alt="Chakra Decor Left"
         sx={{
-          position: "absolute",
-          top: -150,
-          left: -150,
-          width: "500px",
-          opacity: 0.4,
-          pointerEvents: "none",
-          zIndex: 0,
+          position: { xs: "relative", md: "absolute" },
+          top: { xs: 0, md: 20 },
+          left: 0,
+          right: 0,
+          px: { xs: 2, sm: 4, md: 6 },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: { xs: "center", md: "flex-end" },
+          width: "100%",
+          mb: { xs: 2, md: 0 },
+          zIndex: 10,
         }}
-      />
-      <Box
-        component="img"
-        src="/images/home/chakraright.webp"
-        alt="Chakra Decor Right"
-        sx={{
-          position: "absolute",
-          bottom: -150,
-          right: -150,
-          width: "500px",
-          opacity: 0.4,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
+      >
+        <Button
+          component={Link}
+          href="/"
+          startIcon={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                bgcolor: "rgba(255, 98, 0, 0.12)",
+                color: "#FF6200",
+              }}
+            >
+              <ArrowBackIcon sx={{ fontSize: 14 }} />
+            </Box>
+          }
+          sx={{
+            display: { xs: "none", md: "inline-flex" },
+            color: "#1F1A17",
+            bgcolor: "#FFFFFF",
+            border: "1.5px solid rgba(255, 98, 0, 0.28)",
+            borderRadius: "32px",
+            pl: 1.2,
+            pr: 2.2,
+            py: 0.6,
+            fontFamily: FONTS.OUTFIT_ONLY,
+            fontWeight: 600,
+            fontSize: "13px",
+            textTransform: "none",
+            boxShadow:
+              "0 4px 14px -2px rgba(255, 98, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)",
+            transition: "all 0.25s ease",
+            "&:hover": {
+              bgcolor: "#FFFFFF",
+              borderColor: "#FF6200",
+              transform: "translateY(-1px)",
+              boxShadow: "0 6px 18px -2px rgba(255, 98, 0, 0.28)",
+            },
+          }}
+        >
+          Back to Website
+        </Button>
+      </Box>
 
       <Container
         maxWidth="lg"
         sx={{
           position: "relative",
           zIndex: 1,
-          px: { xs: 2, md: 3 },
+          px: { xs: 0, sm: 1 },
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        <Grid
-          container
-          spacing={0}
-          sx={{ justifyContent: "center", alignItems: "center" }}
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: { xs: "100%", sm: "580px", md: "890px", lg: "900px" },
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            borderRadius: { xs: "20px", md: "24px" },
+            overflow: "hidden",
+            bgcolor: "rgba(255, 255, 255, 0.72)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            border: "1.5px solid rgba(255, 255, 255, 0.92)",
+            boxShadow:
+              "0 25px 70px -15px rgba(210, 100, 30, 0.18), 0 10px 28px rgba(0, 0, 0, 0.05), inset 0 1.5px 2px rgba(255, 255, 255, 0.95)",
+          }}
         >
-          <Grid size={{ xs: 12, md: 11, lg: 10 }}>
-            <Paper
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                borderRadius: "24px",
-                overflow: "hidden",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
-                border: "1px solid #FFE0D0",
+          {/* Left Side Branding */}
+          <SignUpBrandingSide />
+
+          {/* Right Side Form */}
+          <Box
+            sx={{
+              flex: { md: 1.15, lg: 1.2 },
+              p: { xs: 2, sm: 2.25, md: "20px 24px" },
+              "@media (max-height: 740px)": {
+                p: { xs: 2, md: "14px 20px" },
+              },
+              "@media (max-height: 660px)": {
+                p: { xs: 1.5, md: "10px 16px" },
+              },
+              bgcolor: "rgba(255, 255, 255, 0.88)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Formik
+              initialValues={initialValues}
+              validationSchema={fullValidationSchema}
+              validateOnChange={false}
+              validateOnBlur={true}
+              onSubmit={async (values, { setSubmitting }) => {
+                try {
+                  const res = await sendOtpAPI({
+                    phone: values.phone,
+                    email: values.email,
+                    role: "CUSTOMER",
+                  });
+                  if (res.success || res.statusCode === 200) {
+                    sessionStorage.setItem(
+                      "signupData",
+                      JSON.stringify(values)
+                    );
+                    showSnackbar("OTP sent successfully!", "success");
+                    const targetOtpUrl = redirectParam
+                      ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
+                      : "/verify-otp";
+                    router.replace(targetOtpUrl);
+                  } else {
+                    showSnackbar(
+                      res.message || "Failed to send OTP",
+                      "error"
+                    );
+                  }
+                } catch (error: any) {
+                  showSnackbar(
+                    extractBackendErrorMessage(error, "Failed to send OTP"),
+                    "error"
+                  );
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
-              {/* Left Side Branding */}
-              <SignUpBrandingSide />
+              {({
+                isSubmitting,
+                values,
+                setFieldValue,
+                setTouched,
+              }) => (
+                <Box component={Form}>
+                  <FormikValidationSnackbar />
 
-              {/* Right Side Form */}
-              <Box
-                sx={{
-                  flex: 1.5,
-                  p: { xs: 3, md: 4 },
-                  bgcolor: "#fff",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={fullValidationSchema}
-                  validateOnChange={false}
-                  validateOnBlur={true}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    try {
-                      const res = await sendOtpAPI({
-                        phone: values.phone,
-                        email: values.email,
-                        role: "CUSTOMER",
-                      });
-                      if (res.success || res.statusCode === 200) {
-                        sessionStorage.setItem(
-                          "signupData",
-                          JSON.stringify(values)
-                        );
-                        showSnackbar("OTP sent successfully!", "success");
-                        const targetOtpUrl = redirectParam
-                          ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
-                          : "/verify-otp";
-                        router.replace(targetOtpUrl);
-                      } else {
+                  {/* Header with Step Progress */}
+                  <SignUpStepperHeader
+                    currentStep={currentStep}
+                    onStep1Click={() => setCurrentStep(1)}
+                    onStep2Click={async () => {
+                      try {
+                        await step1ValidationSchema.validate(values, {
+                          abortEarly: false,
+                        });
+                        setCurrentStep(2);
+                      } catch (err: any) {
                         showSnackbar(
-                          res.message || "Failed to send OTP",
+                          "Please complete personal details first",
                           "error"
                         );
                       }
-                    } catch (error: any) {
-                      showSnackbar(
-                        extractBackendErrorMessage(error, "Failed to send OTP"),
-                        "error"
-                      );
-                    } finally {
-                      setSubmitting(false);
-                    }
-                  }}
-                >
-                  {({
-                    isSubmitting,
-                    values,
-                    setFieldValue,
-                    setTouched,
-                  }) => (
-                    <Box component={Form}>
-                      <FormikValidationSnackbar />
-
-                      {/* Header with Step Progress */}
-                      <SignUpStepperHeader
-                        currentStep={currentStep}
-                        onStep1Click={() => setCurrentStep(1)}
-                        onStep2Click={async () => {
-                          try {
-                            await step1ValidationSchema.validate(values, {
-                              abortEarly: false,
-                            });
-                            setCurrentStep(2);
-                          } catch (err: any) {
-                            showSnackbar(
-                              "Please complete personal details first",
-                              "error"
-                            );
-                          }
-                        }}
-                      />
-
-                      {/* STEP 1 */}
-                      {currentStep === 1 && (
-                        <SignUpStep1Personal
-                          onNext={async () => {
-                            try {
-                              await step1ValidationSchema.validate(values, {
-                                abortEarly: false,
-                              });
-                              setCurrentStep(2);
-                            } catch (err: any) {
-                              if (err.inner) {
-                                const touchedObj: any = {};
-                                err.inner.forEach((e: any) => {
-                                  if (e.path) touchedObj[e.path] = true;
-                                });
-                                setTouched(touchedObj);
-                              }
-                              showSnackbar(
-                                "Please fill all required personal details correctly",
-                                "error"
-                              );
-                            }
-                          }}
-                        />
-                      )}
-
-                      {/* STEP 2 */}
-                      {currentStep === 2 && (
-                        <SignUpStep2Address
-                          isFetchingLocation={isFetchingLocation}
-                          isSubmitting={isSubmitting}
-                          onFetchLocation={() =>
-                            handleFetchCurrentLocation(setFieldValue)
-                          }
-                          onBack={() => setCurrentStep(1)}
-                        />
-                      )}
-                    </Box>
-                  )}
-                </Formik>
-
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT_ONLY,
-                    color: "#666",
-                    textAlign: "center",
-                    mt: 2.5,
-                    fontSize: "13.5px",
-                  }}
-                >
-                  Already have an account?{" "}
-                  <Link
-                    href={signInHref}
-                    style={{
-                      color: COLORS.PRIMARY,
-                      fontWeight: 700,
-                      textDecoration: "none",
                     }}
-                  >
-                    Sign In
-                  </Link>
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
+                  />
+
+                  {/* STEP 1 */}
+                  {currentStep === 1 && (
+                    <SignUpStep1Personal
+                      onNext={async () => {
+                        try {
+                          await step1ValidationSchema.validate(values, {
+                            abortEarly: false,
+                          });
+                          setCurrentStep(2);
+                        } catch (err: any) {
+                          if (err.inner) {
+                            const touchedObj: any = {};
+                            err.inner.forEach((e: any) => {
+                              if (e.path) touchedObj[e.path] = true;
+                            });
+                            setTouched(touchedObj);
+                          }
+                          showSnackbar(
+                            "Please fill all required personal details correctly",
+                            "error"
+                          );
+                        }
+                      }}
+                    />
+                  )}
+
+                  {/* STEP 2 */}
+                  {currentStep === 2 && (
+                    <SignUpStep2Address
+                      isFetchingLocation={isFetchingLocation}
+                      isSubmitting={isSubmitting}
+                      onFetchLocation={() =>
+                        handleFetchCurrentLocation(setFieldValue)
+                      }
+                      onBack={() => setCurrentStep(1)}
+                    />
+                  )}
+                </Box>
+              )}
+            </Formik>
+
+            {/* Divider */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                my: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "1px",
+                  bgcolor: "rgba(220, 200, 185, 0.55)",
+                }}
+              />
+              <Typography
+                sx={{
+                  px: 1.5,
+                  fontSize: "11px",
+                  color: "#9CA3AF",
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 500,
+                }}
+              >
+                or
+              </Typography>
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "1px",
+                  bgcolor: "rgba(220, 200, 185, 0.55)",
+                }}
+              />
+            </Box>
+
+            {/* Already have an account */}
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: "#6B7280",
+                textAlign: "center",
+                fontSize: "13px",
+                fontWeight: 500,
+              }}
+            >
+              Already have an account?{" "}
+              <Link
+                href={signInHref}
+                style={{
+                  color: "#FF6200",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                Sign In
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
       </Container>
+
+      {/* Mobile Back to Website */}
+      <Box sx={{ display: { xs: "block", md: "none" }, mt: 3, textAlign: "center" }}>
+        <Button
+          component={Link}
+          href="/"
+          startIcon={<ArrowBackIcon fontSize="small" />}
+          sx={{
+            color: "#4B5563",
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 600,
+            fontSize: "13px",
+            textTransform: "none",
+          }}
+        >
+          Back to Website
+        </Button>
+      </Box>
     </Box>
   );
 }
+

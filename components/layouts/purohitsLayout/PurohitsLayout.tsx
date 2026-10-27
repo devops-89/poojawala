@@ -61,7 +61,9 @@ const categories = [
   {
     id: "Havan/Yagya",
     label: "Havan / Yagya",
-    icon: <LocalFireDepartmentIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
+    icon: (
+      <LocalFireDepartmentIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />
+    ),
   },
   {
     id: "Festival Special Pujas",
@@ -166,7 +168,6 @@ export default function PurohitsLayout() {
 
       {/* Main Content Area Below Hero */}
       <Box sx={{ position: "relative" }}>
-
         {/* Main Content */}
         <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
           <Grid container spacing={4}>

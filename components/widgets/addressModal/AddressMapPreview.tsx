@@ -9,6 +9,7 @@ interface AddressMapPreviewProps {
   statusMessage: StatusMessage;
   isSearchingGeo: boolean;
   onFindLocation: () => void;
+  height?: any;
 }
 
 export default function AddressMapPreview({
@@ -16,6 +17,7 @@ export default function AddressMapPreview({
   statusMessage,
   isSearchingGeo,
   onFindLocation,
+  height,
 }: AddressMapPreviewProps) {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -23,25 +25,24 @@ export default function AddressMapPreview({
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          alignItems: { xs: "stretch", sm: "center" },
+          alignItems: "center",
           justifyContent: "space-between",
-          gap: 1.5,
-          mt: 0.5,
+          gap: 1.25,
+          mt: 0.25,
         }}
       >
         <Typography
           sx={{
-            fontSize: { xs: "0.82rem", sm: "0.88rem" },
+            fontSize: "11px",
             color:
               statusMessage.type === "error"
                 ? "#c0261b"
                 : statusMessage.type === "success"
                 ? "#1f8a3b"
                 : "#6b7280",
-            fontWeight: 500,
+            fontWeight: 600,
             flex: 1,
-            minHeight: "1.2em",
+            lineHeight: 1.3,
           }}
         >
           {statusMessage.text}
@@ -52,28 +53,29 @@ export default function AddressMapPreview({
           disabled={isSearchingGeo}
           startIcon={
             isSearchingGeo ? (
-              <CircularProgress size={14} sx={{ color: COLORS.PRIMARY }} />
+              <CircularProgress size={12} sx={{ color: COLORS.PRIMARY }} />
             ) : (
-              <SearchIcon />
+              <SearchIcon sx={{ fontSize: 14 }} />
             )
           }
           sx={{
-            width: { xs: "100%", sm: "auto" },
             borderColor: COLORS.PRIMARY,
             color: COLORS.PRIMARY,
-            fontWeight: 600,
-            fontSize: { xs: "0.8rem", sm: "0.85rem" },
-            py: { xs: 1, sm: 0.8 },
-            borderRadius: "8px",
+            fontWeight: 700,
+            fontSize: "11px",
+            py: 0.35,
+            px: 1.25,
+            borderRadius: "7px",
             textTransform: "none",
             whiteSpace: "nowrap",
+            flexShrink: 0,
             "&:hover": {
               borderColor: "#d45b00",
               bgcolor: "#fff3e8",
             },
           }}
         >
-          Find location from these details
+          {isSearchingGeo ? "Searching..." : "Find on Map"}
         </Button>
       </Box>
 
@@ -81,9 +83,9 @@ export default function AddressMapPreview({
       <Box
         ref={mapContainerRef}
         sx={{
-          height: { xs: "200px", sm: "250px", md: "280px" },
+          height: height || { xs: "200px", sm: "250px", md: "280px" },
           width: "100%",
-          borderRadius: "12px",
+          borderRadius: "10px",
           border: "1px solid #d1d5db",
           zIndex: 0,
           bgcolor: "#f8fafc",
@@ -93,9 +95,9 @@ export default function AddressMapPreview({
         variant="caption"
         sx={{
           color: "#6b7280",
-          mt: 0.5,
+          mt: 0.25,
           display: "block",
-          fontSize: { xs: "0.75rem", sm: "0.8rem" },
+          fontSize: "10.5px",
         }}
       >
         Click the map or drag the marker to set the exact spot. The address fields update to match.
