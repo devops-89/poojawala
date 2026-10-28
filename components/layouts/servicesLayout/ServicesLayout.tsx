@@ -192,19 +192,22 @@ export default function ServicesLayout() {
       <Box
         sx={{
           width: "100%",
-          minHeight: { xs: "380px", sm: "480px", md: "777px" },
+          height: { xs: "auto", md: "calc(100vh - 80px)" },
+          minHeight: { xs: "380px", sm: "460px", md: "calc(100vh - 80px)" },
+          maxHeight: { md: "calc(100vh - 80px)" },
           backgroundImage: {
-            xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.6) 35%, rgba(255, 253, 249, 0.05) 70%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-            md: "linear-gradient(90deg, rgba(255, 253, 249, 0.82) 0%, rgba(255, 253, 249, 0.45) 25%, rgba(255, 253, 249, 0.02) 50%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            xs: "linear-gradient(180deg, rgba(12, 6, 2, 0.78) 0%, rgba(12, 6, 2, 0.52) 60%, rgba(12, 6, 2, 0.18) 100%), url(/images/home/hero/heroSectionHome.webp)",
+            sm: "linear-gradient(90deg, rgba(12, 6, 2, 0.82) 0%, rgba(12, 6, 2, 0.55) 55%, rgba(12, 6, 2, 0.12) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+            md: "linear-gradient(90deg, rgba(12, 6, 2, 0.84) 0%, rgba(12, 6, 2, 0.55) 42%, rgba(12, 6, 2, 0.15) 68%, transparent 85%), url(/images/home/hero/heroSectionHome.webp)",
           },
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: { xs: "top right", md: "center" },
           backgroundRepeat: "no-repeat",
           display: "flex",
           flexDirection: "column",
-          pt: { xs: 2.5, md: 4 },
-          pb: { xs: 3.5, md: 8 },
-          mb: { xs: 4, md: 8 },
+          pt: { xs: 3.5, sm: 4, md: 4 },
+          pb: { xs: 4, sm: 5, md: 6 },
+          mb: { xs: 4, md: 6 },
         }}
       >
         <Container
@@ -213,22 +216,24 @@ export default function ServicesLayout() {
             flexGrow: 1,
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             position: "relative",
             zIndex: 1,
           }}
         >
           {/* Content */}
-          <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
+          <Box sx={{ maxWidth: { xs: "100%", md: "620px" }, mt: "auto", mb: "auto", position: "relative", zIndex: 2 }}>
             <Typography
               component="h1"
               sx={{
                 fontFamily: FONTS.PRIMARY,
-                fontWeight: 700,
-                color: "#0f172a",
+                fontWeight: 800,
+                color: "#FFFFFF",
                 mb: { xs: 1.5, md: 3 },
-                fontSize: { xs: "1.5rem", sm: "2.2rem", md: "48px" },
-                lineHeight: { xs: 1.15, md: 1.2 },
-                letterSpacing: "-0.04em",
+                fontSize: { xs: "1.85rem", sm: "2.4rem", md: "48px" },
+                lineHeight: { xs: 1.2, md: 1.22 },
+                letterSpacing: "-0.03em",
+                textShadow: "0 2px 10px rgba(0, 0, 0, 0.85), 0 4px 20px rgba(0, 0, 0, 0.7)",
               }}
             >
               Explore Our{" "}
@@ -237,7 +242,8 @@ export default function ServicesLayout() {
                 sx={{
                   display: { xs: "inline", sm: "block" },
                   fontWeight: 800,
-                  color: "#D32F2F",
+                  color: "#FFB300",
+                  textShadow: "0 2px 10px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 179, 0, 0.5)",
                 }}
               >
                 {isOnline
@@ -251,12 +257,13 @@ export default function ServicesLayout() {
               variant="body1"
               sx={{
                 fontFamily: FONTS.PRIMARY,
-                color: "#0f172a",
-                fontWeight: 600,
-                fontSize: { xs: "14px", sm: "15px", md: "16px" },
-                lineHeight: "1.45",
-                maxWidth: "500px",
+                color: "#F1F5F9",
+                fontWeight: 500,
+                fontSize: { xs: "14.5px", sm: "15px", md: "16px" },
+                lineHeight: 1.6,
+                maxWidth: "520px",
                 letterSpacing: "0em",
+                textShadow: "0 1px 4px rgba(0, 0, 0, 0.9)",
               }}
             >
               {isOnline

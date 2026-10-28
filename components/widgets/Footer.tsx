@@ -290,7 +290,7 @@ export default function Footer() {
                   display: "block",
                 }}
               >
-                Register as Astrologer
+                Register as Astrologer/Purohit
               </Link>
             </Grid>
           </Grid>
