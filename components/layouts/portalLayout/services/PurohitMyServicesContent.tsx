@@ -304,7 +304,7 @@ export default function PurohitMyServicesContent() {
                         <IconButton
                           size="small"
                           sx={{ color: COLORS.PRIMARY, mr: 0.5 }}
-                          onClick={() => router.push(`/partner/services/${ps.serviceId || ps.service?.id || ps.id}`)}
+                          onClick={() => router.push(`/partner/services/${ps.service?.slug || ps.serviceSlug || ps.serviceId || ps.service?.id || ps.id}`)}
                         >
                           <VisibilityIcon fontSize="small" />
                         </IconButton>
@@ -411,7 +411,7 @@ export default function PurohitMyServicesContent() {
                   size="small"
                   variant="outlined"
                   startIcon={<VisibilityIcon />}
-                  onClick={() => router.push(`/partner/services/${ps.serviceId || ps.service?.id || ps.id}`)}
+                  onClick={() => router.push(`/partner/services/${ps.service?.slug || ps.serviceSlug || ps.serviceId || ps.service?.id || ps.id}`)}
                   sx={{
                     borderRadius: '8px',
                     textTransform: 'none',

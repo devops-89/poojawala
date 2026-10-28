@@ -26,7 +26,7 @@ export default function TempleCard({ temple }: TempleCardProps) {
   const handleCardClick = () => {
     if (!temple?.id) return;
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    router.push(`/temples/${temple.id}`);
+    router.push(`/temples/${temple.slug || temple.id}`);
   };
 
   const fullLocation = [temple.address, temple.city, temple.state]

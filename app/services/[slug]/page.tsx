@@ -9,30 +9,38 @@ export default function PublicServiceDetailsPage() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  let slug = id;
+  const resolvedParams = await params;
+  const rawSlug = resolvedParams?.slug;
+  let slug = rawSlug;
   let serviceTitle = 'Service Details | 1Pooja';
   let serviceDesc = 'View Vedic service details and book verified purohits on 1Pooja.';
   let imageUrl = 'https://1pooja.com/images/logo.webp';
 
   try {
-    const res = await getServiceByIdAPI(id);
+    const res = await getServiceByIdAPI(rawSlug);
     let data = res?.data;
-    if (data && data.data) data = data.data;
-    if (data && data.data) data = data.data;
+    while (data?.data && !data?.id) {
+      data = data.data;
+    }
 
     if (data) {
       if (data.slug) slug = data.slug;
-      if (data.name) serviceTitle = `${data.name} | 1Pooja`;
-      if (data.description || data.shortDescription) {
+      if (data.metaTitle && data.metaTitle.trim()) {
+        serviceTitle = data.metaTitle.trim();
+      } else if (data.name) {
+        serviceTitle = `${data.name} | 1Pooja`;
+      }
+      if (data.metaDescription && data.metaDescription.trim()) {
+        serviceDesc = data.metaDescription.trim();
+      } else if (data.description || data.shortDescription) {
         serviceDesc = String(data.shortDescription || data.description)
           .replace(/<[^>]*>?/gm, '')
           .slice(0, 160);
       }
-      if (data.iconDownloadurl || data.iconUrl) {
-        imageUrl = data.iconDownloadurl || data.iconUrl;
+      if (data.iconDownloadurl || data.iconUrl || data.downloadUrl || data.imageUrl) {
+        imageUrl = data.iconDownloadurl || data.iconUrl || data.downloadUrl || data.imageUrl;
       }
     }
   } catch (err) {

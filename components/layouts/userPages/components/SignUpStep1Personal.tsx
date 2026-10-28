@@ -7,13 +7,14 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
   TextField,
 } from "@mui/material";
 import { Field } from "formik";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import { useState } from "react";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+import { COLORS, RASHI_OPTIONS } from "@/utils/enums";
 import {
   allowOnlyLettersOnKeyDown,
   sanitizeLettersOnly,
@@ -68,8 +69,15 @@ export default function SignUpStep1Personal({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onNext();
+    }
+  };
+
   return (
-    <Grid container spacing={2.25}>
+    <Grid container spacing={2.25} onKeyDown={handleKeyDown}>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="firstName">
           {({ field, form, meta }: any) => (
@@ -253,18 +261,65 @@ export default function SignUpStep1Personal({
           {({ field, form, meta }: any) => (
             <TextField
               {...field}
+              select
               fullWidth
               size="small"
               label="Rashi"
               variant="outlined"
-              onKeyDown={allowOnlyLettersOnKeyDown}
+              value={field.value || ""}
               onChange={(e) => {
-                form.setFieldValue("rashi", sanitizeLettersOnly(e.target.value));
+                form.setFieldValue("rashi", e.target.value);
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
+              slotProps={{
+                select: {
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left",
+                    },
+                    transformOrigin: {
+                      vertical: "top",
+                      horizontal: "left",
+                    },
+                    slotProps: {
+                      paper: {
+                        sx: {
+                          mt: 0.6,
+                          maxHeight: 260,
+                          borderRadius: "12px",
+                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)",
+                        },
+                      },
+                    },
+                  },
+                },
+              }}
               sx={inputStyles}
-            />
+            >
+              <MenuItem value="" sx={{ fontFamily: FONTS.OUTFIT, color: "#94a3b8" }}>
+                <em>None</em>
+              </MenuItem>
+              {RASHI_OPTIONS.map((option) => (
+                <MenuItem
+                  key={option}
+                  value={option}
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "0.875rem",
+                    py: 1,
+                    "&.Mui-selected": {
+                      bgcolor: "#FFF0E6 !important",
+                      fontWeight: 600,
+                      color: COLORS.BRAND_ORANGE,
+                    },
+                  }}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
           )}
         </Field>
       </Grid>

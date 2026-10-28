@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ServiceCardProps } from '@/utils/types';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
-import { stripHtml } from '@/utils/helpers';
+import { createSlug, stripHtml } from '@/utils/helpers';
 
 export default function ServiceCard({
   id,
@@ -23,27 +23,31 @@ export default function ServiceCard({
   const { profile } = useUserStore();
 
   const handleCardClick = (e?: React.MouseEvent) => {
-    if (!id) return;
+    const targetSlug = slug || (title ? createSlug(title) : id);
+    if (!targetSlug) return;
+    if (typeof window !== "undefined" && id) {
+      if (slug) {
+        const lower = String(slug).toLowerCase();
+        localStorage.setItem(`slug_to_id_${lower}`, String(id));
+        sessionStorage.setItem(`slug_to_id_${lower}`, String(id));
+        localStorage.setItem(`service_slug_${lower}`, String(id));
+        sessionStorage.setItem(`service_slug_${lower}`, String(id));
+      }
+      if (targetSlug) {
+        const lowerT = String(targetSlug).toLowerCase();
+        localStorage.setItem(`slug_to_id_${lowerT}`, String(id));
+        sessionStorage.setItem(`slug_to_id_${lowerT}`, String(id));
+      }
+      localStorage.setItem("last_service_id", String(id));
+      sessionStorage.setItem("last_service_id", String(id));
+    }
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    router.push(`/services/${id}`);
+    router.push(`/services/${targetSlug}`);
   };
 
   const handleBookNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const targetUrl = `/customer/services/${id}`;
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("post_login_redirect", targetUrl);
-      const token =
-        sessionStorage.getItem("token") ||
-        localStorage.getItem("token") ||
-        sessionStorage.getItem("customercsrftoken");
-      const user = sessionStorage.getItem("user");
-      if (token || user) {
-        router.push(targetUrl);
-        return;
-      }
-    }
-    router.push(`/sign-in?redirect=${encodeURIComponent(targetUrl)}`);
+    handleCardClick(e);
   };
 
   const formattedPrice = (() => {

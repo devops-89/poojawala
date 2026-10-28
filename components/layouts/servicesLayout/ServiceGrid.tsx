@@ -72,6 +72,14 @@ export default function ServiceGrid({
             ? selectedTempleId
             : undefined;
 
+        const effectiveCatId =
+          (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories"
+            ? selectedCategoryId
+            : "") ||
+          (typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("categoryId") || ""
+            : "");
+
         const response = await getAllServicesAPI(
           page,
           itemsPerPage,
@@ -79,7 +87,7 @@ export default function ServiceGrid({
           true,
           cityParam,
           stateParam,
-          selectedCategoryId || undefined,
+          effectiveCatId || undefined,
           templeParam,
           false,
           isOnline ? true : undefined,
@@ -105,15 +113,38 @@ export default function ServiceGrid({
 
         let activeOnly = fetchedServices.filter((s: any) => s.isActive !== false);
 
-        if (selectedCategoryId && selectedCategoryId !== 'All' && selectedCategoryId !== '') {
+        if (effectiveCatId) {
           activeOnly = activeOnly.filter((s: any) => {
             const sCatId = s.categoryId || s.category?.id || (typeof s.category === "object" ? s.category?.id : "");
-            return String(sCatId) === String(selectedCategoryId);
+            if (sCatId && String(sCatId) === String(effectiveCatId)) return true;
+
+            if (Array.isArray(s.categories)) {
+              if (s.categories.some((c: any) => String(c?.id || c?._id || c) === String(effectiveCatId))) return true;
+              if (activeCategory && activeCategory !== 'All Categories' && s.categories.some((c: any) => (c?.name || c)?.toLowerCase() === activeCategory.toLowerCase())) return true;
+            }
+
+            if (Array.isArray(s.categoryIds) && s.categoryIds.some((id: any) => String(id) === String(effectiveCatId))) return true;
+
+            if (activeCategory && activeCategory !== 'All' && activeCategory !== 'All Categories') {
+              const catName = s.category?.name || (typeof s.category === "string" ? s.category : "");
+              if (catName.toLowerCase() === activeCategory.toLowerCase()) return true;
+              if (typeof s.categories === 'string' && s.categories.toLowerCase().includes(activeCategory.toLowerCase())) return true;
+            }
+
+            // Fallback: If backend returned it for the requested categoryId, keep it
+            return true;
           });
         } else if (activeCategory && activeCategory !== 'All' && activeCategory !== 'All Categories') {
           activeOnly = activeOnly.filter((s: any) => {
             const catName = s.category?.name || (typeof s.category === "string" ? s.category : "");
-            return catName.toLowerCase() === activeCategory.toLowerCase();
+            if (catName.toLowerCase() === activeCategory.toLowerCase()) return true;
+            if (Array.isArray(s.categories)) {
+              return s.categories.some((c: any) => (c?.name || c)?.toLowerCase() === activeCategory.toLowerCase());
+            }
+            if (typeof s.categories === 'string') {
+              return s.categories.toLowerCase().includes(activeCategory.toLowerCase());
+            }
+            return false;
           });
         }
 
@@ -126,7 +157,7 @@ export default function ServiceGrid({
 
         const pagination = rawData?.data?.pagination || rawData?.pagination || rawData?.data || {};
         const hasCustomFilter =
-          Boolean(selectedCategoryId) ||
+          Boolean(effectiveCatId) ||
           Boolean(templeParam) ||
           Boolean(activeCategory && activeCategory !== 'All Categories');
 
@@ -142,12 +173,17 @@ export default function ServiceGrid({
 
         const formattedServices = activeOnly.map((s: any) => {
           const computedPriceStr = formatServicePriceRange(s, "");
+          const resolvedCatName =
+            (Array.isArray(s.categories) && s.categories[0]?.name) ||
+            s.category?.name ||
+            (typeof s.category === "string" ? s.category : "") ||
+            (activeCategory && activeCategory !== 'All Categories' ? activeCategory : 'All');
 
           return {
             id: s.id || s._id,
             title: s.name || s.title || 'Service',
-            categoryId: s.categoryId || s.category?.id || (typeof s.category === "object" ? s.category?.id : ""),
-            category: s.category?.name || (typeof s.category === "string" ? s.category : "") || 'All',
+            categoryId: s.categoryId || s.category?.id || (Array.isArray(s.categories) && s.categories[0]?.id) || (typeof s.category === "object" ? s.category?.id : ""),
+            category: resolvedCatName,
             description: s.description || '',
             duration: s.durationMinutes ? `${Math.round(s.durationMinutes / 60)} hr` : (s.duration || '1 hr'),
             price: computedPriceStr,
@@ -162,6 +198,19 @@ export default function ServiceGrid({
             slug: s.slug || null,
           };
         });
+
+        if (typeof window !== "undefined" && activeOnly.length > 0) {
+          activeOnly.forEach((s: any) => {
+            const sid = s.id || s._id;
+            if (sid && s.slug) {
+              const lowerSlug = String(s.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${lowerSlug}`, String(sid));
+              sessionStorage.setItem(`slug_to_id_${lowerSlug}`, String(sid));
+              localStorage.setItem(`service_slug_${lowerSlug}`, String(sid));
+              sessionStorage.setItem(`service_slug_${lowerSlug}`, String(sid));
+            }
+          });
+        }
 
         setServices(formattedServices.length > 0 ? formattedServices : []);
       } catch (error) {

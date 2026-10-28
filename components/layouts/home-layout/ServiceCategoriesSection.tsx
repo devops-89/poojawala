@@ -60,9 +60,10 @@ export default function ServiceCategoriesSection() {
   }, []);
 
   const handleCategoryClick = (cat: CategoryItem) => {
-    router.push(
-      `/services?categoryId=${cat.id}&category=${encodeURIComponent(cat.name)}`,
-    );
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("home_restore_section", "pooja-by-category");
+    }
+    router.push(`/services?categoryId=${cat.id}`);
   };
 
   if (!loading && categories.length === 0) {
@@ -209,10 +210,12 @@ export default function ServiceCategoriesSection() {
   return (
     <Box
       component="section"
+      id="pooja-by-category"
       sx={{
         py: { xs: 6, md: 9 },
         bgcolor: "#FFF",
         position: "relative",
+        scrollMarginTop: "90px",
       }}
     >
       <Container maxWidth="lg">
@@ -272,7 +275,12 @@ export default function ServiceCategoriesSection() {
             >
               <Button
                 endIcon={<ArrowForwardIcon fontSize="small" />}
-                onClick={() => router.push("/services")}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    sessionStorage.setItem("home_restore_section", "pooja-by-category");
+                  }
+                  router.push("/services");
+                }}
                 sx={{
                   color: "#D32F2F",
                   background: "transparent",

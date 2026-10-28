@@ -101,8 +101,11 @@ export default function ResetPasswordContent() {
     otpRefs.current[nextFocus]?.focus();
   };
 
-  const handleOtpKeyDown = (idx: number, e: React.KeyboardEvent<HTMLDivElement>, values: any) => {
-    if (e.key === 'Backspace' && !values.otp[idx] && idx > 0) {
+  const handleOtpKeyDown = (idx: number, e: React.KeyboardEvent<HTMLDivElement>, values: any, submitForm?: () => void) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (submitForm) submitForm();
+    } else if (e.key === 'Backspace' && !values.otp[idx] && idx > 0) {
       otpRefs.current[idx - 1]?.focus();
     }
   };
@@ -127,7 +130,7 @@ export default function ResetPasswordContent() {
     >
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: 10 }}>
         <Grid container spacing={0} sx={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Grid size={{ xs: 12, sm: 8, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, sm: 8, md: 6, lg: 5 }}>
             <Paper 
               sx={{ 
                 p: { xs: 4, md: 6 },
@@ -177,8 +180,18 @@ export default function ResetPasswordContent() {
                   }
                 }}
               >
-                {({ isSubmitting, touched, errors, values, setFieldValue }) => (
-                  <Box component={Form}>
+                {({ isSubmitting, touched, errors, values, setFieldValue, submitForm }) => (
+                  <Box
+                    component={Form}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter') {
+                        const target = e.target as HTMLElement;
+                        if (target.tagName?.toLowerCase() === 'textarea') return;
+                        e.preventDefault();
+                        submitForm();
+                      }
+                    }}
+                  >
                     <FormikValidationSnackbar />
                     <Box sx={{ mb: 2 }}>
                       <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', mb: 1, fontSize: '14px' }}>
@@ -191,7 +204,7 @@ export default function ResetPasswordContent() {
                             variant="outlined" 
                             value={val}
                             onChange={(e) => handleOtpChange(idx, e.target.value, setFieldValue, values)}
-                            onKeyDown={(e) => handleOtpKeyDown(idx, e, values)}
+                            onKeyDown={(e) => handleOtpKeyDown(idx, e, values, submitForm)}
                             onPaste={(e) => handleOtpPaste(e, setFieldValue, values)}
                             inputRef={(el) => { otpRefs.current[idx] = el; }}
                             slotProps={{ htmlInput: { maxLength: 6 } }}

@@ -7,6 +7,7 @@ import CustomerServicesFilters from "../customerLayout/services/CustomerServices
 import ServiceGrid from "./ServiceGrid";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 
 export default function ServicesLayout() {
   const searchParams = useSearchParams();
@@ -16,8 +17,6 @@ export default function ServicesLayout() {
   const cityParam = searchParams.get("city");
   const categoryParam = searchParams.get("category");
   const categoryIdParam = searchParams.get("categoryId");
-  const templeParam = searchParams.get("temple");
-  const templeIdParam = searchParams.get("templeId");
 
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,34 +29,46 @@ export default function ServicesLayout() {
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
     categoryParam || "All Categories",
   );
-  const [selectedTempleId, setSelectedTempleId] = useState<string>(
-    templeIdParam || "",
-  );
-  const [selectedTempleName, setSelectedTempleName] = useState<string>(
-    templeParam || "All Temples",
-  );
   const [selectedCity, setSelectedCity] = useState<string>(cityParam || "All");
 
   useEffect(() => {
     if (stateParam) {
       setSelectedState(stateParam);
     }
-    if (categoryIdParam) {
-      setSelectedCategoryId(categoryIdParam);
+    const targetCatId =
+      categoryIdParam ||
+      (typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("categoryId")
+        : "");
+    if (targetCatId) {
+      setSelectedCategoryId(targetCatId);
+      getServiceCategoriesAPI(1, 100, "", true, "SERVICE")
+        .then((res: any) => {
+          let list: any[] = [];
+          if (Array.isArray(res)) list = res;
+          else if (res?.data) {
+            if (Array.isArray(res.data.data)) list = res.data.data;
+            else if (Array.isArray(res.data)) list = res.data;
+            else if (Array.isArray(res.data.categories)) list = res.data.categories;
+          } else if (Array.isArray(res?.categories)) {
+            list = res.categories;
+          }
+          const found = list.find(
+            (c: any) => String(c.id || c._id) === String(targetCatId),
+          );
+          if (found?.name) {
+            setSelectedCategoryName(found.name);
+          }
+        })
+        .catch(() => {});
     }
     if (categoryParam) {
       setSelectedCategoryName(categoryParam);
     }
-    if (templeIdParam) {
-      setSelectedTempleId(templeIdParam);
-    }
-    if (templeParam) {
-      setSelectedTempleName(templeParam);
-    }
     if (cityParam) {
       setSelectedCity(cityParam);
     }
-  }, [stateParam, categoryParam, categoryIdParam, templeParam, templeIdParam, cityParam]);
+  }, [stateParam, categoryParam, categoryIdParam, cityParam]);
 
   useEffect(() => {
     let pageTitle = "Book Pandit & Purohit Online or Offline for All Pooja | 1Pooja";
@@ -119,19 +130,6 @@ export default function ServicesLayout() {
     ) {
       params.set("categoryId", selectedCategoryId);
     }
-    if (selectedCategoryName && selectedCategoryName !== "All Categories") {
-      params.set("category", selectedCategoryName);
-    }
-    if (
-      selectedTempleId &&
-      selectedTempleId !== "All" &&
-      selectedTempleId !== "All Temples"
-    ) {
-      params.set("templeId", selectedTempleId);
-    }
-    if (selectedTempleName && selectedTempleName !== "All Temples") {
-      params.set("temple", selectedTempleName);
-    }
     if (searchQuery) {
       params.set("search", searchQuery);
     }
@@ -148,8 +146,6 @@ export default function ServicesLayout() {
     selectedCity,
     selectedCategoryId,
     selectedCategoryName,
-    selectedTempleId,
-    selectedTempleName,
     searchQuery,
   ]);
 
@@ -177,11 +173,6 @@ export default function ServicesLayout() {
   const handleCategoryChange = (catId: string, catName: string) => {
     setSelectedCategoryId(catId);
     setSelectedCategoryName(catName);
-  };
-
-  const handleTempleChange = (templeId: string, templeName: string) => {
-    setSelectedTempleId(templeId);
-    setSelectedTempleName(templeName);
   };
 
   const handleCityChange = (newCity: string) => {
@@ -294,6 +285,7 @@ export default function ServicesLayout() {
               setSelectedCity("All");
             }}
             selectedCategory={selectedCategoryName}
+            selectedCategoryId={selectedCategoryId}
             onCategoryChange={handleCategoryChange}
             cityOptions={isOnline ? [] : cityOptions}
             selectedCity={isOnline ? "All" : selectedCity}
@@ -309,8 +301,6 @@ export default function ServicesLayout() {
               <ServiceGrid
                 activeCategory={selectedCategoryName}
                 selectedCategoryId={selectedCategoryId}
-                selectedTempleId={selectedTempleId}
-                selectedTempleName={selectedTempleName}
                 activeFilters={activeFilters}
                 searchQuery={searchQuery}
                 selectedState={selectedState}

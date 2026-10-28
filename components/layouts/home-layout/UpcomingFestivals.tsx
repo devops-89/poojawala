@@ -99,7 +99,8 @@ export default function UpcomingFestivals() {
 
   return (
     <Box
-      sx={{ position: "relative", py: 8, bgcolor: "#fff", overflow: "hidden" }}
+      id="upcoming-festivals"
+      sx={{ position: "relative", py: 8, bgcolor: "#fff", overflow: "hidden", scrollMarginTop: "90px" }}
     >
       {/* Left Chakra Decoration */}
       <Box
@@ -195,7 +196,12 @@ export default function UpcomingFestivals() {
             {festivalsData.map((fest) => (
               <Box
                 key={fest.id}
-                onClick={() => router.push(`/services/${fest.slug || fest.id}`)}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    sessionStorage.setItem("home_restore_section", "upcoming-festivals");
+                  }
+                  router.push(`/services/${fest.slug || fest.id}`);
+                }}
                 sx={{
                   cursor: "pointer",
                   width: { xs: "100%", md: "calc(50% - 21px)" },
@@ -296,6 +302,9 @@ export default function UpcomingFestivals() {
                     variant="contained"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (typeof window !== "undefined") {
+                        sessionStorage.setItem("home_restore_section", "upcoming-festivals");
+                      }
                       router.push(`/services/${fest.slug || fest.id}`);
                     }}
                     sx={{

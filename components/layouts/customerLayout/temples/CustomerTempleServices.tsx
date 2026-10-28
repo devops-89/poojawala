@@ -20,9 +20,7 @@ export default function CustomerTempleServices({
   services,
   servicesLoading,
 }: CustomerTempleServicesProps) {
-  const bookUrl = `/customer/services?templeId=${temple?.id}&temple=${encodeURIComponent(
-    temple?.name || ""
-  )}`;
+  const bookUrl = `/customer/services?templeId=${temple?.id}`;
 
   return (
     <Box

@@ -101,7 +101,7 @@ export default function PopularPackages() {
   }, []);
 
   return (
-    <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: "#FFF" }}>
+    <Box id="popular-packages" sx={{ py: { xs: 6, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}>
       <Container maxWidth="lg">
         {/* Header Section */}
         <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
@@ -142,7 +142,12 @@ export default function PopularPackages() {
             >
               <Button
                 endIcon={<ArrowForwardIcon fontSize="small" />}
-                onClick={() => router.push("/services")}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    sessionStorage.setItem("home_restore_section", "popular-packages");
+                  }
+                  router.push("/services");
+                }}
                 sx={{
                   color: "#D32F2F",
                   background: "transparent",
@@ -174,7 +179,12 @@ export default function PopularPackages() {
           >
             <Button
               endIcon={<ArrowForwardIcon fontSize="small" />}
-              onClick={() => router.push("/services")}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("home_restore_section", "popular-packages");
+                }
+                router.push("/services");
+              }}
               sx={{
                 color: "#D32F2F",
                 background: "transparent",
@@ -220,7 +230,12 @@ export default function PopularPackages() {
               >
                 <Card
                   elevation={0}
-                  onClick={() => router.push(`/services/${pkg.slug || pkg.id}`)}
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      sessionStorage.setItem("home_restore_section", "popular-packages");
+                    }
+                    router.push(`/services/${pkg.slug || pkg.id}`);
+                  }}
                   sx={{
                     width: "100%",
                     height: "100%",
@@ -389,6 +404,9 @@ export default function PopularPackages() {
                       variant="outlined"
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (typeof window !== "undefined") {
+                          sessionStorage.setItem("home_restore_section", "popular-packages");
+                        }
                         router.push(`/services/${pkg.slug || pkg.id}`);
                       }}
                       sx={{

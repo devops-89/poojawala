@@ -15,25 +15,9 @@ import {
 } from "@mui/material";
 import { useFormikContext } from "formik";
 import React, { useState } from "react";
+import { ALL_INDIAN_LANGUAGES } from "@/utils/serviceDetailsUtils";
 
-const COMMON_LANGUAGES = [
-  "Hindi",
-  "Sanskrit",
-  "English",
-  "Marathi",
-  "Gujarati",
-  "Bengali",
-  "Tamil",
-  "Telugu",
-  "Kannada",
-  "Malayalam",
-  "Odia",
-  "Punjabi",
-  "Bhojpuri",
-  "Maithili",
-  "Assamese",
-  "Marwari",
-];
+const COMMON_LANGUAGES = ALL_INDIAN_LANGUAGES;
 
 interface ServiceLanguagesFieldsProps {
   languages: Array<{ name: string; code?: string }>;

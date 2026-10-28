@@ -63,7 +63,10 @@ export default function Step1OtpVerification({
     idx: number,
     e: React.KeyboardEvent<HTMLDivElement>
   ) => {
-    if (e.key === 'Backspace' && !formik.values.otp[idx] && idx > 0) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      formik.handleSubmit();
+    } else if (e.key === 'Backspace' && !formik.values.otp[idx] && idx > 0) {
       otpRefs.current[idx - 1]?.focus();
     }
   };

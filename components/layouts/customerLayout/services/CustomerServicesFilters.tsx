@@ -23,10 +23,12 @@ interface CustomerServicesFiltersProps {
   // Optional Category filter props (used in public services page)
   categoryOptions?: CategoryOption[];
   selectedCategory?: string;
+  selectedCategoryId?: string;
   onCategoryChange?: (categoryId: string, categoryName: string) => void;
   // Optional Temple filter props (used in public services page)
   templeOptions?: TempleOption[];
   selectedTemple?: string;
+  selectedTempleId?: string;
   onTempleChange?: (templeId: string, templeName: string) => void;
   // City filter props
   cityOptions?: string[];
@@ -43,9 +45,11 @@ export default function CustomerServicesFilters({
   onStateChange,
   categoryOptions,
   selectedCategory = "All Categories",
+  selectedCategoryId = "",
   onCategoryChange,
   templeOptions,
   selectedTemple = "All Temples",
+  selectedTempleId = "",
   onTempleChange,
   cityOptions,
   selectedCity,
@@ -123,9 +127,12 @@ export default function CustomerServicesFilters({
   }, []);
 
   const catsToUse = categoryOptions && categoryOptions.length > 0 ? categoryOptions : internalCategories;
-  const categoryNames = ["All Categories", ...catsToUse.map((c) => c.name)];
 
   const displayCategoryName = React.useMemo(() => {
+    if (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories") {
+      const matchById = catsToUse.find((c) => String(c.id) === String(selectedCategoryId));
+      if (matchById) return matchById.name;
+    }
     if (!selectedCategory || selectedCategory === "All" || selectedCategory === "All Categories") {
       return "All Categories";
     }
@@ -136,12 +143,36 @@ export default function CustomerServicesFilters({
     if (matchByName) return matchByName.name;
 
     return selectedCategory;
-  }, [selectedCategory, catsToUse]);
+  }, [selectedCategoryId, selectedCategory, catsToUse]);
+
+  useEffect(() => {
+    if (selectedCategoryId && selectedCategoryId !== "All" && selectedCategoryId !== "All Categories" && onCategoryChange) {
+      const match = catsToUse.find((c) => String(c.id) === String(selectedCategoryId));
+      if (match && selectedCategory !== match.name) {
+        onCategoryChange(String(match.id), match.name);
+      }
+    }
+  }, [selectedCategoryId, catsToUse, selectedCategory, onCategoryChange]);
+
+  const categoryNames = React.useMemo(() => {
+    const names = ["All Categories", ...catsToUse.map((c) => c.name)];
+    if (
+      displayCategoryName &&
+      displayCategoryName !== "All Categories" &&
+      !names.includes(displayCategoryName)
+    ) {
+      names.push(displayCategoryName);
+    }
+    return names;
+  }, [catsToUse, displayCategoryName]);
 
   const templesToUse = templeOptions && templeOptions.length > 0 ? templeOptions : internalTemples;
-  const templeNames = ["All Temples", ...templesToUse.map((t) => t.name)];
 
   const displayTempleName = React.useMemo(() => {
+    if (selectedTempleId && selectedTempleId !== "All" && selectedTempleId !== "All Temples") {
+      const matchById = templesToUse.find((t) => String(t.id) === String(selectedTempleId));
+      if (matchById) return matchById.name;
+    }
     if (!selectedTemple || selectedTemple === "All" || selectedTemple === "All Temples") {
       return "All Temples";
     }
@@ -152,7 +183,28 @@ export default function CustomerServicesFilters({
     if (matchByName) return matchByName.name;
 
     return selectedTemple;
-  }, [selectedTemple, templesToUse]);
+  }, [selectedTempleId, selectedTemple, templesToUse]);
+
+  useEffect(() => {
+    if (selectedTempleId && selectedTempleId !== "All" && selectedTempleId !== "All Temples" && onTempleChange) {
+      const match = templesToUse.find((t) => String(t.id) === String(selectedTempleId));
+      if (match && selectedTemple !== match.name) {
+        onTempleChange(String(match.id), match.name);
+      }
+    }
+  }, [selectedTempleId, templesToUse, selectedTemple, onTempleChange]);
+
+  const templeNames = React.useMemo(() => {
+    const names = ["All Temples", ...templesToUse.map((t) => t.name)];
+    if (
+      displayTempleName &&
+      displayTempleName !== "All Temples" &&
+      !names.includes(displayTempleName)
+    ) {
+      names.push(displayTempleName);
+    }
+    return names;
+  }, [templesToUse, displayTempleName]);
 
   const showState = !hideLocationFilters && Boolean(stateOptions && onStateChange);
   const showCity = !hideLocationFilters && Boolean(cityOptions && onCityChange);

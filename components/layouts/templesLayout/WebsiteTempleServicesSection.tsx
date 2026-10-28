@@ -66,7 +66,7 @@ export default function WebsiteTempleServicesSection({
   }, [temple?.id, temple?.services]);
 
   const formatServiceList = (rawList: any[]) => {
-    return rawList
+    const filtered = rawList
       .filter((s: any) => s && s.isActive !== false)
       .map((s: any) => {
         const computedPriceStr = formatServicePriceRange(s, "");
@@ -95,11 +95,21 @@ export default function WebsiteTempleServicesSection({
           slug: s.slug || null,
         };
       });
+
+    if (typeof window !== "undefined" && filtered.length > 0) {
+      filtered.forEach((s: any) => {
+        if (s.id && s.slug) {
+          const lower = String(s.slug).toLowerCase();
+          localStorage.setItem(`slug_to_id_${lower}`, String(s.id));
+          sessionStorage.setItem(`slug_to_id_${lower}`, String(s.id));
+        }
+      });
+    }
+
+    return filtered;
   };
 
-  const bookUrl = `/services?templeId=${temple?.id}&temple=${encodeURIComponent(
-    temple?.name || ""
-  )}`;
+  const bookUrl = `/services?templeId=${temple?.id}`;
 
   return (
     <Box id="temple-services-section" sx={{ py: { xs: 5, md: 7 }, borderTop: "1px solid #F3E8DB" }}>

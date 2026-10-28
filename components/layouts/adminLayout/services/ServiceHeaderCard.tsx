@@ -32,6 +32,7 @@ export default function ServiceHeaderCard({
     service.templeName ||
     (typeof service.temple === "string" ? service.temple : null);
   const templeId = service.templeId || service.temple?.id;
+  const templeIdentifier = service.temple?.slug || service.templeSlug || templeId;
 
   return (
     <Paper
@@ -249,9 +250,9 @@ export default function ServiceHeaderCard({
               >
                 Temple:
               </Box>
-              {templeId ? (
+              {templeIdentifier ? (
                 <NextLink
-                  href={`/admin/temples/${templeId}`}
+                  href={`/admin/temples/${templeIdentifier}`}
                   style={{
                     color: COLORS.PRIMARY,
                     textDecoration: "none",

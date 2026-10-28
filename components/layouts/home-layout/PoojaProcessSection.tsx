@@ -66,8 +66,32 @@ const promises = [
 export default function PoojaProcessSection() {
   const router = useRouter();
 
+  const handleSchedulePooja = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("home_restore_section", "pooja-process");
+    }
+    if (typeof window !== "undefined") {
+      const role =
+        sessionStorage.getItem("activeRole") || sessionStorage.getItem("role");
+      const token =
+        sessionStorage.getItem("token") ||
+        localStorage.getItem("token") ||
+        sessionStorage.getItem("customercsrftoken");
+      if (token) {
+        try {
+          const userObj = JSON.parse(sessionStorage.getItem("user") || "{}");
+          if (role === "CUSTOMER" || userObj?.role === "CUSTOMER") {
+            router.push("/customer/services?isOffline=true");
+            return;
+          }
+        } catch (e) {}
+      }
+    }
+    router.push("/services?isOffline=true");
+  };
+
   return (
-    <Box sx={{ py: { xs: 7, md: 10 }, bgcolor: COLORS.WHITE }}>
+    <Box id="pooja-process" sx={{ py: { xs: 7, md: 10 }, bgcolor: COLORS.WHITE, scrollMarginTop: "90px" }}>
       <Container maxWidth="lg">
         <Grid
           container
@@ -264,7 +288,7 @@ export default function PoojaProcessSection() {
 
               <Button
                 variant="contained"
-                onClick={() => router.push("/sign-in")}
+                onClick={handleSchedulePooja}
                 sx={{
                   width: "100%",
                   bgcolor: COLORS.PRIMARY,

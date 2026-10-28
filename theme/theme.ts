@@ -81,12 +81,12 @@ const theme = createTheme({
     },
     MuiModal: {
       defaultProps: {
-        disableScrollLock: true,
+        disableScrollLock: false,
       },
     },
     MuiDialog: {
       defaultProps: {
-        disableScrollLock: true,
+        disableScrollLock: false,
       },
     },
     MuiMenu: {
@@ -102,7 +102,7 @@ const theme = createTheme({
     MuiDrawer: {
       defaultProps: {
         ModalProps: {
-          disableScrollLock: true,
+          disableScrollLock: false,
         },
       },
     },

@@ -1,7 +1,7 @@
 "use client";
 import { COLORS } from "@/utils/enums";
 
-import { getServiceByIdAPI } from "@/api/serviceControllers";
+import { getServiceByIdAPI, registerServiceSlugMapping } from "@/api/serviceControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
 import ServiceCitiesCard from "@/components/layouts/adminLayout/services/ServiceCitiesCard";
 import ServiceDescriptionCard from "@/components/layouts/adminLayout/services/ServiceDescriptionCard";
@@ -35,40 +35,29 @@ export default function AdminServiceDetailsContent() {
   const { showSnackbar } = useSnackbarStore();
 
   useEffect(() => {
+    const identifier = (params.slug || params.id) as string;
+    if (!identifier) return;
+
     const fetchServiceDetails = async () => {
-      const identifier = params.id as string;
-      if (!identifier) return;
-
-      if (
-        service &&
-        (service.slug === identifier || String(service.id) === String(identifier))
-      ) {
-        return;
-      }
-
       try {
         setLoading(true);
         const response = await getServiceByIdAPI(identifier);
-        if (response.success) {
-          const data = response.data?.data || response.data;
+        let data = response?.data;
+        while (data?.data && !data?.id) {
+          data = data.data;
+        }
+
+        if (data?.id) {
           setService(data);
-          if (data?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_service_id", String(data.id));
-            sessionStorage.setItem("last_service_id", String(data.id));
-            if (data?.slug) {
-              const s = String(data.slug).toLowerCase();
-              localStorage.setItem(`slug_to_id_${s}`, String(data.id));
-              sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
-              localStorage.setItem(`service_slug_${s}`, String(data.id));
-              sessionStorage.setItem(`service_slug_${s}`, String(data.id));
-              if (/^\d+$/.test(String(identifier))) {
-                window.history.replaceState(null, "", `/admin/services/${data.slug}`);
-              }
+          if (data?.slug) {
+            registerServiceSlugMapping(data.slug, data.id);
+            if (/^\d+$/.test(String(identifier))) {
+              window.history.replaceState(null, "", `/admin/services/${data.slug}`);
             }
           }
         } else {
           showSnackbar(
-            response.message || "Failed to fetch service details",
+            response?.message || "Failed to fetch service details",
             "error"
           );
         }
@@ -80,7 +69,7 @@ export default function AdminServiceDetailsContent() {
       }
     };
     fetchServiceDetails();
-  }, [params.id, showSnackbar, service]);
+  }, [params.id, params.slug, showSnackbar]);
 
   if (loading) {
     return (

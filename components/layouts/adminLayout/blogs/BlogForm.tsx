@@ -50,6 +50,8 @@ export interface BlogFormValues {
   isFeatured: boolean;
   coverImage: string;
   status?: string;
+  metaTitle?: string;
+  metaDescription?: string;
   sections: BlogSection[];
 }
 
@@ -101,6 +103,8 @@ const validationSchema = Yup.object().shape({
   isFeatured: Yup.boolean().optional(),
   coverImage: Yup.string().optional(),
   status: Yup.string().optional(),
+  metaTitle: Yup.string().trim().optional(),
+  metaDescription: Yup.string().trim().optional(),
   sections: Yup.array()
     .of(
       Yup.object().shape({
@@ -131,6 +135,8 @@ export default function BlogForm({
     isFeatured: false,
     coverImage: "",
     status: "PUBLISHED",
+    metaTitle: "",
+    metaDescription: "",
     sections: [],
   },
   onSubmit,
@@ -168,6 +174,8 @@ export default function BlogForm({
     if (Boolean(formik.values.isFeatured) !== Boolean(initialValues.isFeatured)) return true;
     if ((formik.values.coverImage || "") !== (initialValues.coverImage || "")) return true;
     if (formik.values.status && initialValues.status && formik.values.status !== initialValues.status) return true;
+    if ((formik.values.metaTitle || "").trim() !== (initialValues.metaTitle || "").trim()) return true;
+    if ((formik.values.metaDescription || "").trim() !== (initialValues.metaDescription || "").trim()) return true;
 
     const curSecs = formik.values.sections || [];
     const initSecs = initialValues.sections || [];
@@ -455,9 +463,9 @@ export default function BlogForm({
                         color: COLORS.PRIMARY,
                       },
                       "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                        {
-                          backgroundColor: COLORS.PRIMARY,
-                        },
+                      {
+                        backgroundColor: COLORS.PRIMARY,
+                      },
                     }}
                   />
                 }
@@ -776,6 +784,78 @@ export default function BlogForm({
                 ))}
               </Box>
             )}
+          </Box>
+
+          <Divider sx={{ my: 4 }} />
+
+          {/* SEO / Search Engine Optimization */}
+          <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2.5 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: "#1e293b",
+                }}
+              >
+                SEO / Search Engine Optimization
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "0.85rem",
+                  color: "#64748b",
+                  mt: 0.5,
+                }}
+              >
+                Add meta title and description to optimize this blog post for search engines and social sharing.
+              </Typography>
+            </Box>
+
+            <Grid container spacing={2.5}>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Meta Title (SEO)"
+                  name="metaTitle"
+                  placeholder="e.g., Diwali Lakshmi Puja Vidhi: Samagri, Procedure and Auspicious Muhurat"
+                  value={formik.values.metaTitle || ""}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={Boolean(formik.touched.metaTitle && formik.errors.metaTitle)}
+                  helperText={formik.touched.metaTitle ? formik.errors.metaTitle : undefined}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "12px",
+                      fontFamily: FONTS.OUTFIT,
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Meta Description (SEO)"
+                  name="metaDescription"
+                  placeholder="e.g., Complete guide to performing Diwali Lakshmi Puja at home. Step-by-step vidhi, samagri list, muhurat, and rituals."
+                  value={formik.values.metaDescription || ""}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={Boolean(formik.touched.metaDescription && formik.errors.metaDescription)}
+                  helperText={formik.touched.metaDescription ? formik.errors.metaDescription : undefined}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "12px",
+                      fontFamily: FONTS.OUTFIT,
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
           </Box>
 
           <Divider sx={{ my: 4 }} />

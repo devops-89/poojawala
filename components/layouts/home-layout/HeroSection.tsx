@@ -1,10 +1,36 @@
 "use client";
 import { Box, Button, Container, Typography } from "@mui/material";
 import Link from "next/link";
+import { useEffect } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
 export default function HeroSection() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Clean up any lingering hash from address bar so URL remains clean
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+
+    const targetSection = sessionStorage.getItem("home_restore_section");
+    if (!targetSection) return;
+    sessionStorage.removeItem("home_restore_section");
+
+    const doScroll = () => {
+      const el = document.getElementById(targetSection);
+      if (el) {
+        el.scrollIntoView({ behavior: "instant" as ScrollBehavior, block: "start" });
+        return true;
+      }
+      return false;
+    };
+
+    if (!doScroll()) {
+      requestAnimationFrame(doScroll);
+    }
+  }, []);
   return (
     <Box
       sx={{

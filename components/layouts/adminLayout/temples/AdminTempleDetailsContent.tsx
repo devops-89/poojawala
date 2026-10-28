@@ -2,9 +2,10 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
-import { getTempleByIdAPI } from "@/api/templeControllers";
+import { getTempleByIdAPI, registerTempleSlugMapping } from "@/api/templeControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useLoaderStore } from "@/stores/loaderStore";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -30,6 +31,7 @@ export default function AdminTempleDetailsContent() {
   const [temple, setTemple] = useState<ITemple | any>(null);
   const [loading, setLoading] = useState(true);
   const { showSnackbar } = useSnackbarStore();
+  const { showLoader, hideLoader } = useLoaderStore();
 
   useEffect(() => {
     const fetchTempleDetails = async () => {
@@ -45,23 +47,27 @@ export default function AdminTempleDetailsContent() {
 
       try {
         setLoading(true);
+        showLoader("Loading temple details...");
         const response = await getTempleByIdAPI(identifier);
-        if (response.success && response.data) {
-          const data = response.data.data || response.data;
-          setTemple(data);
-          if (data?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_temple_id", String(data.id));
-            sessionStorage.setItem("last_temple_id", String(data.id));
+        if (response?.success || response?.data) {
+          let data = response.data;
+          while (data?.data && !data?.id) {
+            data = data.data;
+          }
+          if (data?.id) {
+            setTemple(data);
             if (data?.slug) {
-              const s = String(data.slug).toLowerCase();
-              localStorage.setItem(`slug_to_id_${s}`, String(data.id));
-              sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
-              localStorage.setItem(`temple_slug_${s}`, String(data.id));
-              sessionStorage.setItem(`temple_slug_${s}`, String(data.id));
-              if (/^\d+$/.test(String(identifier))) {
-                window.history.replaceState(null, "", `/admin/temples/${data.slug}`);
+              registerTempleSlugMapping(data.slug, data.id);
+            }
+            if (typeof window !== "undefined" && data?.slug) {
+              const currentPath = window.location.pathname;
+              const targetPath = `/admin/temples/${data.slug}`;
+              if (currentPath !== targetPath) {
+                window.history.replaceState(null, "", targetPath);
               }
             }
+          } else {
+            showSnackbar(response?.message || "Temple not found", "error");
           }
         } else {
           showSnackbar(
@@ -74,10 +80,11 @@ export default function AdminTempleDetailsContent() {
         showSnackbar("Error fetching temple details", "error");
       } finally {
         setLoading(false);
+        hideLoader();
       }
     };
     fetchTempleDetails();
-  }, [params.id, showSnackbar, temple]);
+  }, [params.id, showSnackbar, showLoader, hideLoader]);
 
   if (loading) {
     return (
@@ -346,7 +353,7 @@ export default function AdminTempleDetailsContent() {
                           />
                           <Button
                             component={NextLink}
-                            href={`/admin/services/${svc.id}`}
+                            href={`/admin/services/${svc.slug || svc.id}`}
                             size="small"
                             endIcon={<OpenInNewIcon fontSize="small" />}
                             sx={{

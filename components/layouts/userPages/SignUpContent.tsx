@@ -5,7 +5,6 @@ import SignUpBrandingSide from "@/components/layouts/userPages/components/SignUp
 import SignUpStep1Personal from "@/components/layouts/userPages/components/SignUpStep1Personal";
 import SignUpStep2Address from "@/components/layouts/userPages/components/SignUpStep2Address";
 import SignUpStepperHeader from "@/components/layouts/userPages/components/SignUpStepperHeader";
-import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import {
   extractBackendErrorMessage,
@@ -302,7 +301,7 @@ export default function SignUpContent() {
                 <Formik
                   initialValues={initialValues}
                   validationSchema={fullValidationSchema}
-                  validateOnChange={false}
+                  validateOnChange={true}
                   validateOnBlur={true}
                   onSubmit={async (values, { setSubmitting }) => {
                     try {
@@ -316,14 +315,14 @@ export default function SignUpContent() {
                           "signupData",
                           JSON.stringify(values)
                         );
-                        showSnackbar("OTP sent successfully!", "success");
+                        showSnackbar(res?.message || "OTP sent successfully!", "success");
                         const targetOtpUrl = redirectParam
                           ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
                           : "/verify-otp";
                         router.replace(targetOtpUrl);
                       } else {
                         showSnackbar(
-                          res.message || "Failed to send OTP",
+                          res?.message || "Failed to send OTP",
                           "error"
                         );
                       }
@@ -342,68 +341,68 @@ export default function SignUpContent() {
                     values,
                     setFieldValue,
                     setTouched,
-                  }) => (
-                    <Box component={Form}>
-                      <FormikValidationSnackbar />
+                  }) => {
+                    const handleStep1Next = async () => {
+                      try {
+                        await step1ValidationSchema.validate(values, {
+                          abortEarly: false,
+                        });
+                        setCurrentStep(2);
+                      } catch (err: any) {
+                        if (err.inner) {
+                          const touchedObj: any = {};
+                          err.inner.forEach((e: any) => {
+                            if (e.path) touchedObj[e.path] = true;
+                          });
+                          setTouched(touchedObj);
+                        }
+                        showSnackbar(
+                          "Please fill all required personal details correctly",
+                          "error"
+                        );
+                      }
+                    };
 
-                      {/* Header with Step Progress */}
-                      <SignUpStepperHeader
-                        currentStep={currentStep}
-                        onStep1Click={() => setCurrentStep(1)}
-                        onStep2Click={async () => {
-                          try {
-                            await step1ValidationSchema.validate(values, {
-                              abortEarly: false,
-                            });
-                            setCurrentStep(2);
-                          } catch (err: any) {
-                            showSnackbar(
-                              "Please complete personal details first",
-                              "error"
-                            );
+                    return (
+                      <Box
+                        component={Form}
+                        onKeyDown={(e: React.KeyboardEvent) => {
+                          if (e.key === "Enter") {
+                            const target = e.target as HTMLElement;
+                            if (target.tagName?.toLowerCase() === "textarea") return;
+                            if (currentStep === 1) {
+                              e.preventDefault();
+                              handleStep1Next();
+                            }
                           }
                         }}
-                      />
+                      >
+                        {/* Header with Step Progress */}
+                        <SignUpStepperHeader
+                          currentStep={currentStep}
+                          onStep1Click={() => setCurrentStep(1)}
+                          onStep2Click={handleStep1Next}
+                        />
 
-                      {/* STEP 1 */}
-                      {currentStep === 1 && (
-                        <SignUpStep1Personal
-                          onNext={async () => {
-                            try {
-                              await step1ValidationSchema.validate(values, {
-                                abortEarly: false,
-                              });
-                              setCurrentStep(2);
-                            } catch (err: any) {
-                              if (err.inner) {
-                                const touchedObj: any = {};
-                                err.inner.forEach((e: any) => {
-                                  if (e.path) touchedObj[e.path] = true;
-                                });
-                                setTouched(touchedObj);
-                              }
-                              showSnackbar(
-                                "Please fill all required personal details correctly",
-                                "error"
-                              );
+                        {/* STEP 1 */}
+                        {currentStep === 1 && (
+                          <SignUpStep1Personal onNext={handleStep1Next} />
+                        )}
+
+                        {/* STEP 2 */}
+                        {currentStep === 2 && (
+                          <SignUpStep2Address
+                            isFetchingLocation={isFetchingLocation}
+                            isSubmitting={isSubmitting}
+                            onFetchLocation={() =>
+                              handleFetchCurrentLocation(setFieldValue)
                             }
-                          }}
-                        />
-                      )}
-
-                      {/* STEP 2 */}
-                      {currentStep === 2 && (
-                        <SignUpStep2Address
-                          isFetchingLocation={isFetchingLocation}
-                          isSubmitting={isSubmitting}
-                          onFetchLocation={() =>
-                            handleFetchCurrentLocation(setFieldValue)
-                          }
-                          onBack={() => setCurrentStep(1)}
-                        />
-                      )}
-                    </Box>
-                  )}
+                            onBack={() => setCurrentStep(1)}
+                          />
+                        )}
+                      </Box>
+                    );
+                  }}
                 </Formik>
 
                 <Typography

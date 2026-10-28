@@ -24,6 +24,7 @@ export default function ServiceSpecsAvailabilityCard({
     service.templeName ||
     (typeof service.temple === "string" ? service.temple : null);
   const templeId = service.templeId || service.temple?.id;
+  const templeIdentifier = service.temple?.slug || service.templeSlug || templeId;
 
   return (
     <Paper
@@ -66,8 +67,8 @@ export default function ServiceSpecsAvailabilityCard({
         {isTempleService && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Box
-              component={templeId ? NextLink : "div"}
-              href={templeId ? `/admin/temples/${templeId}` : undefined}
+              component={templeIdentifier ? NextLink : "div"}
+              href={templeIdentifier ? `/admin/temples/${templeIdentifier}` : undefined}
               sx={{
                 p: 3,
                 bgcolor: "#fffbeb",

@@ -1,5 +1,15 @@
 import React from 'react';
 
+export const createSlug = (str: string): string => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 export const extractBackendErrorMessage = (error: any, fallback = 'Something went wrong'): string => {
   if (!error) return fallback;
   const data = error.response?.data;
@@ -67,10 +77,10 @@ export const sanitizeEmailInput = (val: string): string => {
 
 /**
  * Strict Address validation regex and helpers:
- * Strictly allows letters, digits, whitespace, and special characters only ',' and '&'
+ * Strictly allows letters, digits, whitespace, and standard address punctuation (,, ., -, /, #, ', :, (, ), &)
  */
-export const ADDRESS_STRICT_REGEX = /^[a-zA-Z0-9\s,&]+$/;
-export const ADDRESS_STRICT_MESSAGE = "Address can only contain letters, numbers, spaces, and ',' or '&'";
+export const ADDRESS_STRICT_REGEX = /^[a-zA-Z0-9\s,&.\-/#':()]+$/;
+export const ADDRESS_STRICT_MESSAGE = "Address can only contain letters, numbers, spaces, and standard address characters (, . - / # ' : () &)";
 
 export const allowOnlyAddressCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
   if (
@@ -80,14 +90,14 @@ export const allowOnlyAddressCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElemen
   ) {
     return;
   }
-  // Disallow any character other than alphanumeric, whitespace, ',' or '&'
-  if (!/^[a-zA-Z0-9\s,&]$/.test(e.key)) {
+  // Allow alphanumeric, whitespace, and standard address characters
+  if (!/^[a-zA-Z0-9\s,&.\-/#':()]$/.test(e.key)) {
     e.preventDefault();
   }
 };
 
 export const sanitizeAddressInput = (val: string): string => {
-  return (val || '').replace(/[^a-zA-Z0-9\s,&]/g, '');
+  return (val || '').replace(/[^a-zA-Z0-9\s,&.\-/#':()]/g, '');
 };
 
 /**

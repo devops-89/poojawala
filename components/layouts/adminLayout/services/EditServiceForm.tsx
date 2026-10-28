@@ -22,7 +22,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 
-import { editServiceAPI, getServiceByIdAPI } from "@/api/serviceControllers";
+import { editServiceAPI, getServiceByIdAPI, registerServiceSlugMapping } from "@/api/serviceControllers";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 
@@ -450,25 +450,20 @@ export default function EditServiceForm() {
     const fetchService = async () => {
       setIsLoading(true);
       try {
-        const res = await getServiceByIdAPI(params.id as string);
-        if (res.success && res.data) {
-          const service = res.data.data || res.data;
-          if (service.id) {
-            setNumericServiceId(service.id);
-            if (typeof window !== "undefined") {
-              localStorage.setItem("last_service_id", String(service.id));
-              sessionStorage.setItem("last_service_id", String(service.id));
-              if (service.slug) {
-                const s = String(service.slug).toLowerCase();
-                localStorage.setItem(`slug_to_id_${s}`, String(service.id));
-                sessionStorage.setItem(`slug_to_id_${s}`, String(service.id));
-                localStorage.setItem(`service_slug_${s}`, String(service.id));
-                sessionStorage.setItem(`service_slug_${s}`, String(service.id));
-              }
+        const identifier = (params.slug || params.id) as string;
+        const res = await getServiceByIdAPI(identifier);
+        let service = res?.data;
+        while (service?.data && !service?.id) {
+          service = service.data;
+        }
+
+        if (service?.id) {
+          setNumericServiceId(service.id);
+          if (service.slug) {
+            registerServiceSlugMapping(service.slug, service.id);
+            if (/^\d+$/.test(String(identifier))) {
+              window.history.replaceState(null, "", `/admin/services/edit/${service.slug}`);
             }
-          }
-          if (service.slug && /^\d+$/.test(String(params.id))) {
-            window.history.replaceState(null, "", `/admin/services/edit/${service.slug}`);
           }
 
           let basicPrice =
@@ -652,10 +647,10 @@ export default function EditServiceForm() {
       }
     };
 
-    if (params.id) {
+    if (params.id || params.slug) {
       fetchService();
     }
-  }, [params.id]);
+  }, [params.id, params.slug]);
 
   const handleNext = async () => {
     if (activeStep === 0) {

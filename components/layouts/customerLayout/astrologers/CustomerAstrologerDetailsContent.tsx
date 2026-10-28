@@ -29,6 +29,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PaymentIcon from "@mui/icons-material/Payment";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import NextLink from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { getAstrologerByIdAPI } from "@/api/userControllers";
@@ -171,9 +172,11 @@ export default function CustomerAstrologerDetailsContent() {
       for (const m of [0, 30]) {
         if (h === 22 && m === 30) continue; // 22:00 is the last slot
 
-        // Disable past slots if scheduled date is today
+        // Disable past slots and enforce minimum 2 hours in advance if scheduled date is today
         if (isToday) {
-          if (h < currentHour || (h === currentHour && m <= currentMinute)) {
+          const slotTotalMinutes = h * 60 + m;
+          const currentTotalMinutes = currentHour * 60 + currentMinute;
+          if (slotTotalMinutes < currentTotalMinutes + 120) {
             continue;
           }
         }
@@ -668,7 +671,7 @@ export default function CustomerAstrologerDetailsContent() {
                 >
                   {availableSlots.length === 0 ? (
                     <MenuItem value="" disabled>
-                      No more slots available for today (09:00 AM - 10:00 PM)
+                      No slots available for today (minimum 2 hours advance notice required)
                     </MenuItem>
                   ) : (
                     availableSlots.map((slot) => (
@@ -682,9 +685,36 @@ export default function CustomerAstrologerDetailsContent() {
             </Grid>
           </Grid>
 
+          {/* Compact Advance Booking Note */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.8,
+              px: 1.5,
+              py: 0.7,
+              borderRadius: "8px",
+              bgcolor: "#fff7ed",
+              border: "1px solid #fed7aa",
+              width: "fit-content",
+            }}
+          >
+            <InfoOutlinedIcon sx={{ color: "#ea580c", fontSize: 16, flexShrink: 0 }} />
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "12px",
+                color: "#9a3412",
+                fontWeight: 500,
+              }}
+            >
+              <strong>Note:</strong> Please book at least <strong>2 hours</strong> in advance.
+            </Typography>
+          </Box>
+
           {availableSlots.length === 0 && (
             <Typography sx={{ color: "#d97706", fontSize: "0.88rem", fontFamily: FONTS.OUTFIT }}>
-              Consultation hours for today have closed (9 AM - 10 PM). Please select tomorrow or another future date.
+              No slots available for today (consultations require at least 2 hours advance booking). Please select tomorrow or another future date.
             </Typography>
           )}
 

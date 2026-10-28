@@ -143,7 +143,18 @@ export default function AdminLoginForm() {
           </Typography>
         </Box>
 
-        <form onSubmit={handleFormSubmit} noValidate>
+        <form
+          onSubmit={handleFormSubmit}
+          noValidate
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === "Enter") {
+              const target = e.target as HTMLElement;
+              if (target.tagName?.toLowerCase() === "textarea") return;
+              e.preventDefault();
+              handleFormSubmit(e as any);
+            }
+          }}
+        >
           <TextField
             fullWidth 
             id="email"

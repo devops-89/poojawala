@@ -1,4 +1,5 @@
 import ServicesLayout from "@/components/layouts/servicesLayout/ServicesLayout";
+import { getServiceCategoriesAPI, getServiceCategoryByIdAPI } from "@/api/serviceControllers";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
@@ -84,7 +85,55 @@ export async function generateMetadata({ searchParams }: ServicesPageProps): Pro
   let canonical = "/services";
   let keywords = DEFAULT_KEYWORDS;
 
-  if (isOffline) {
+  const rawCategoryId = resolvedParams?.categoryId;
+  const categoryId = Array.isArray(rawCategoryId) ? rawCategoryId[0] : rawCategoryId;
+  const rawCategoryName = resolvedParams?.category;
+  const categoryName = Array.isArray(rawCategoryName) ? rawCategoryName[0] : rawCategoryName;
+
+  if (categoryId && categoryId !== "All" && categoryId !== "All Categories") {
+    try {
+      const catRes = await getServiceCategoryByIdAPI(categoryId);
+      const catData = catRes?.data?.data || catRes?.data || catRes;
+      if (catData) {
+        if (catData.metaTitle && catData.metaTitle.trim()) {
+          title = catData.metaTitle.trim();
+        } else if (catData.name || catData.title) {
+          title = `${catData.name || catData.title} Services | Book Verified Pandit | 1Pooja`;
+        }
+        if (catData.metaDescription && catData.metaDescription.trim()) {
+          description = catData.metaDescription.trim();
+        } else if (catData.description) {
+          description = String(catData.description).replace(/<[^>]*>?/gm, "").slice(0, 160);
+        }
+        canonical = `/services?categoryId=${categoryId}`;
+      }
+    } catch (err) {}
+  } else if (categoryName && categoryName !== "All" && categoryName !== "All Categories") {
+    try {
+      const catListRes = await getServiceCategoriesAPI(1, 10, categoryName);
+      const list = catListRes?.data?.categories || catListRes?.categories || catListRes?.data || [];
+      const match = Array.isArray(list)
+        ? list.find(
+            (c: any) =>
+              (c.name || c.title || "").toLowerCase().trim() ===
+              categoryName.toLowerCase().trim()
+          )
+        : null;
+      if (match) {
+        if (match.metaTitle && match.metaTitle.trim()) {
+          title = match.metaTitle.trim();
+        } else if (match.name || match.title) {
+          title = `${match.name || match.title} Services | Book Verified Pandit | 1Pooja`;
+        }
+        if (match.metaDescription && match.metaDescription.trim()) {
+          description = match.metaDescription.trim();
+        } else if (match.description) {
+          description = String(match.description).replace(/<[^>]*>?/gm, "").slice(0, 160);
+        }
+        canonical = `/services?category=${encodeURIComponent(categoryName)}`;
+      }
+    } catch (err) {}
+  } else if (isOffline) {
     title = "Offline Pooja Services | Book Verified Pandit at Home | 1Pooja";
     description =
       "Discover and book verified Pandits and Purohits for offline pooja at home or temple. Authentic Vedic rituals tailored to your language and local traditions.";

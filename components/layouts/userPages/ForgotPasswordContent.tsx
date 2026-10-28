@@ -88,8 +88,18 @@ export default function ForgotPasswordContent() {
                   }
                 }}
               >
-                {({ isSubmitting, touched, errors }) => (
-                  <Box component={Form}>
+                {({ isSubmitting, touched, errors, submitForm }) => (
+                  <Box
+                    component={Form}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter') {
+                        const target = e.target as HTMLElement;
+                        if (target.tagName?.toLowerCase() === 'textarea') return;
+                        e.preventDefault();
+                        submitForm();
+                      }
+                    }}
+                  >
                     <FormikValidationSnackbar />
                     <Field name="email">
                       {({ field, form, meta }: any) => (

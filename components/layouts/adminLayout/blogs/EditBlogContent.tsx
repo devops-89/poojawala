@@ -24,6 +24,8 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
     readTime: "",
     isFeatured: false,
     coverImage: "",
+    metaTitle: "",
+    metaDescription: "",
     sections: [],
   });
 
@@ -92,6 +94,8 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
             readTime: data.readTime ?? "",
             isFeatured: Boolean(data.isFeatured),
             coverImage: coverImg,
+            metaTitle: data.metaTitle || "",
+            metaDescription: data.metaDescription || "",
             status: data.status || "PUBLISHED",
             sections: initialSections,
           });
@@ -133,6 +137,8 @@ export default function EditBlogContent({ blogId }: EditBlogContentProps) {
         isFeatured: Boolean(values.isFeatured),
         authorName: values.authorName || "",
         coverImage: values.coverImage || "",
+        metaTitle: values.metaTitle ? values.metaTitle.trim() : "",
+        metaDescription: values.metaDescription ? values.metaDescription.trim() : "",
       };
 
       let fileToSend = imageFile;

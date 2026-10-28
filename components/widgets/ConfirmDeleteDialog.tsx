@@ -36,7 +36,6 @@ export default function ConfirmDeleteDialog({
     <Dialog
       open={open}
       onClose={onClose}
-      disableScrollLock
       maxWidth="xs"
       fullWidth
       sx={{

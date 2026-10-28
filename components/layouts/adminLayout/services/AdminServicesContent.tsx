@@ -269,7 +269,7 @@ export default function AdminServicesContent() {
               <Box>
                 <Typography
                   component={NextLink}
-                  href={`/admin/services/${service.id}`}
+                  href={`/admin/services/${service.slug || service.id}`}
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
@@ -402,12 +402,12 @@ export default function AdminServicesContent() {
                 {
                   label: "View Details",
                   icon: <VisibilityIcon fontSize="small" />,
-                  href: `/admin/services/${service.id}`,
+                  href: `/admin/services/${service.slug || service.id}`,
                 },
                 {
                   label: "Edit",
                   icon: <EditIcon fontSize="small" />,
-                  href: `/admin/services/edit/${service.id}`,
+                  href: `/admin/services/edit/${service.slug || service.id}`,
                 },
                 {
                   label: "Delete",

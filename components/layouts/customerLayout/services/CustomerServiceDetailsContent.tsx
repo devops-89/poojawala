@@ -1,7 +1,7 @@
 "use client";
 import { COLORS } from "@/utils/enums";
 import { formatServicePriceRange } from "@/utils/helpers";
-import { getServiceByIdAPI } from "@/api/serviceControllers";
+import { getServiceByIdAPI, registerServiceSlugMapping } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
@@ -43,19 +43,46 @@ export default function CustomerServiceDetailsContent() {
         const res = await getServiceByIdAPI(identifier);
         if (res?.success || res?.data) {
           let rawData = res.data;
-          if (rawData && rawData.data) {
+          while (rawData?.data && !rawData?.id) {
             rawData = rawData.data;
           }
-          if (rawData && rawData.data) {
-            rawData = rawData.data;
-          }
-          setService(rawData);
-          if (rawData?.id && typeof window !== "undefined") {
-            if (rawData?.slug) {
-              const s = String(rawData.slug).toLowerCase();
-              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
+          if (rawData?.id) {
+            setService(rawData);
+            if (typeof document !== "undefined") {
+              const seoTitle =
+                (rawData.metaTitle && rawData.metaTitle.trim()) ||
+                (rawData.name ? `${rawData.name} | 1Pooja` : "Service Details | 1Pooja");
+              document.title = seoTitle;
+
+              const seoDesc =
+                (rawData.metaDescription && rawData.metaDescription.trim()) ||
+                (rawData.description || rawData.shortDescription
+                  ? String(rawData.shortDescription || rawData.description)
+                      .replace(/<[^>]*>?/gm, "")
+                      .slice(0, 160)
+                  : "");
+              if (seoDesc) {
+                let metaDescTag = document.querySelector('meta[name="description"]');
+                if (!metaDescTag) {
+                  metaDescTag = document.createElement("meta");
+                  metaDescTag.setAttribute("name", "description");
+                  document.head.appendChild(metaDescTag);
+                }
+                metaDescTag.setAttribute("content", seoDesc);
+              }
             }
+            if (rawData?.slug) {
+              registerServiceSlugMapping(rawData.slug, rawData.id);
+              if (typeof window !== "undefined") {
+                const currentPath = window.location.pathname;
+                const targetPath = `/customer/services/${rawData.slug}`;
+                if (currentPath !== targetPath) {
+                  window.history.replaceState(null, "", targetPath);
+                }
+              }
+            }
+          } else {
+            showSnackbar(res?.message || "Service not found", "error");
           }
         } else {
           showSnackbar(res?.message || "Failed to load service details", "error");
@@ -196,7 +223,7 @@ export default function CustomerServiceDetailsContent() {
 
       {/* Inline Booking Form Section */}
       <ServiceDetailsBookingForm
-        serviceId={Number(params.id)}
+        serviceId={Number(service.id)}
         service={service}
       />
 

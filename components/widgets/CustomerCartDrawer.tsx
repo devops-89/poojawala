@@ -137,7 +137,6 @@ export default function CustomerCartDrawer() {
 
   return (
     <Drawer
-      ModalProps={{ disableScrollLock: true }}
       anchor="right"
       open={isOpen}
       onClose={closeCart}

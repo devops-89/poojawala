@@ -25,14 +25,20 @@ export async function generateMetadata({
 
     if (data) {
       if (data.slug) slug = data.slug;
-      if (data.name) templeTitle = `${data.name} | 1Pooja`;
-      if (data.description || data.about || data.history) {
+      if (data.metaTitle && data.metaTitle.trim()) {
+        templeTitle = data.metaTitle.trim();
+      } else if (data.name) {
+        templeTitle = `${data.name} | 1Pooja`;
+      }
+      if (data.metaDescription && data.metaDescription.trim()) {
+        templeDesc = data.metaDescription.trim();
+      } else if (data.description || data.about || data.history) {
         templeDesc = String(data.description || data.about || data.history)
           .replace(/<[^>]*>?/gm, '')
           .slice(0, 160);
       }
-      if (data.coverImage || data.image || data.iconDownloadurl || data.iconUrl) {
-        imageUrl = data.coverImage || data.image || data.iconDownloadurl || data.iconUrl;
+      if (data.downloadUrl || data.imageUrl || data.coverImage || data.image || data.iconDownloadurl || data.iconUrl) {
+        imageUrl = data.downloadUrl || data.imageUrl || data.coverImage || data.image || data.iconDownloadurl || data.iconUrl;
       }
     }
   } catch (err) {

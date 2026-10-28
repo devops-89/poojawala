@@ -1,4 +1,22 @@
 import { userPublicApi, userSecuredApi } from "./config";
+import { createSlug } from "@/utils/helpers";
+
+const serviceSlugToIdMap = new Map<string, string | number>();
+
+export const registerServiceSlugMapping = (slug: string, id: string | number) => {
+  if (!slug || !id) return;
+  const lower = String(slug).trim().toLowerCase();
+  const sid = String(id).trim();
+  serviceSlugToIdMap.set(lower, sid);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(`slug_to_id_${lower}`, sid);
+      sessionStorage.setItem(`slug_to_id_${lower}`, sid);
+      localStorage.setItem(`service_slug_${lower}`, sid);
+      sessionStorage.setItem(`service_slug_${lower}`, sid);
+    } catch (e) {}
+  }
+};
 
 export const addServiceAPI = async (formData: FormData) => {
   try {
@@ -105,10 +123,41 @@ export const getServicesAPI = async (
       params.append('isOffline', String(isOffline));
     }
     const response = await userPublicApi.get(`/service`, { params });
+    if (response?.data) {
+      const rawList =
+        response.data?.data?.data && Array.isArray(response.data.data.data)
+          ? response.data.data.data
+          : response.data?.data && Array.isArray(response.data.data)
+          ? response.data.data
+          : Array.isArray(response.data)
+          ? response.data
+          : [];
+      rawList.forEach((item: any) => {
+        if (item?.id) {
+          if (item?.slug) {
+            registerServiceSlugMapping(item.slug, item.id);
+          }
+          if (item?.name) {
+            registerServiceSlugMapping(createSlug(item.name), item.id);
+          }
+        }
+      });
+    }
     return response.data;
   } catch (error) {
     throw error;
   }
+};
+
+const extractServicesArray = (resData: any): any[] => {
+  if (!resData) return [];
+  if (Array.isArray(resData)) return resData;
+  if (Array.isArray(resData?.data?.data?.data)) return resData.data.data.data;
+  if (Array.isArray(resData?.data?.data)) return resData.data.data;
+  if (Array.isArray(resData?.data)) return resData.data;
+  if (Array.isArray(resData?.services)) return resData.services;
+  if (Array.isArray(resData?.data?.services)) return resData.data.services;
+  return [];
 };
 
 export const resolveServiceId = (id: string | number): string | number => {
@@ -116,9 +165,13 @@ export const resolveServiceId = (id: string | number): string | number => {
   const isNumeric = /^\d+$/.test(String(id).trim());
   if (isNumeric) return id;
 
+  const lower = String(id).trim().toLowerCase();
+  if (serviceSlugToIdMap.has(lower)) {
+    return serviceSlugToIdMap.get(lower)!;
+  }
+
   if (typeof window !== "undefined") {
     try {
-      const lower = String(id).trim().toLowerCase();
       const cached =
         localStorage.getItem(`slug_to_id_${lower}`) ||
         sessionStorage.getItem(`slug_to_id_${lower}`) ||
@@ -130,6 +183,7 @@ export const resolveServiceId = (id: string | number): string | number => {
         sessionStorage.getItem(`service_slug_${id}`);
 
       if (cached && /^\d+$/.test(cached)) {
+        serviceSlugToIdMap.set(lower, cached);
         return cached;
       }
     } catch (e) {}
@@ -144,51 +198,70 @@ export const getServiceByIdAPI = async (id: string | number) => {
 
     // If non-numeric (slug), dynamically find the service by slug from public services API
     if (!/^\d+$/.test(String(numericId).trim())) {
+      const targetSlug = String(id).trim().toLowerCase();
       try {
-        const searchKeyword = String(id).replace(/-/g, ' ');
-        const searchRes = await userPublicApi.get('/service', { params: { search: searchKeyword } });
-        const rawItems =
-          searchRes?.data?.data?.data && Array.isArray(searchRes.data.data.data)
-            ? searchRes.data.data.data
-            : searchRes?.data?.data && Array.isArray(searchRes.data.data)
-            ? searchRes.data.data
-            : searchRes?.data && Array.isArray(searchRes.data)
-            ? searchRes.data
-            : [];
-        let match = rawItems.find((item: any) => 
-          String(item.slug || '').toLowerCase() === String(id).toLowerCase() ||
-          item.slug === id ||
-          String(item.id) === String(id)
+        let allItems: any[] = [];
+        let totalPages = 1;
+
+        // 1. Fetch initial listing (try limit 100 first, fallback to default)
+        try {
+          const res1 = await userPublicApi.get('/service', { params: { limit: 100, page: 1 } });
+          allItems = extractServicesArray(res1?.data);
+          const pagination = res1?.data?.data?.pagination || res1?.data?.pagination;
+          if (pagination?.totalPages && Number(pagination.totalPages) > 1) {
+            totalPages = Number(pagination.totalPages);
+          }
+        } catch (e1) {
+          const fallbackRes = await userPublicApi.get('/service');
+          allItems = extractServicesArray(fallbackRes?.data);
+          const pagination = fallbackRes?.data?.data?.pagination || fallbackRes?.data?.pagination;
+          if (pagination?.totalPages && Number(pagination.totalPages) > 1) {
+            totalPages = Number(pagination.totalPages);
+          }
+        }
+
+        // Cache all items from first page
+        allItems.forEach((item: any) => {
+          if (item?.id) {
+            if (item?.slug) registerServiceSlugMapping(item.slug, item.id);
+            if (item?.name) registerServiceSlugMapping(createSlug(item.name), item.id);
+          }
+        });
+
+        // Check if item is in first batch
+        let match = allItems.find((item: any) =>
+          String(item.slug || '').trim().toLowerCase() === targetSlug ||
+          createSlug(item.name || item.title || '').trim().toLowerCase() === targetSlug ||
+          String(item.id) === targetSlug
         );
 
-        if (!match) {
-          const allRes = await userPublicApi.get('/service', { params: { limit: 100 } });
-          const allRaw =
-            allRes?.data?.data?.data && Array.isArray(allRes.data.data.data)
-              ? allRes.data.data.data
-              : allRes?.data?.data && Array.isArray(allRes.data.data)
-              ? allRes.data.data
-              : allRes?.data && Array.isArray(allRes.data)
-              ? allRes.data
-              : [];
-          match = allRaw.find((item: any) => 
-            String(item.slug || '').toLowerCase() === String(id).toLowerCase() ||
-            item.slug === id
-          );
+        // If not found and there are more pages, fetch next pages
+        if (!match && totalPages > 1) {
+          for (let p = 2; p <= Math.min(totalPages, 15); p++) {
+            try {
+              const nextRes = await userPublicApi.get('/service', { params: { page: p, limit: 100 } });
+              const pageItems = extractServicesArray(nextRes?.data);
+              pageItems.forEach((item: any) => {
+                if (item?.id) {
+                  if (item?.slug) registerServiceSlugMapping(item.slug, item.id);
+                  if (item?.name) registerServiceSlugMapping(createSlug(item.name), item.id);
+                }
+              });
+              match = pageItems.find((item: any) =>
+                String(item.slug || '').trim().toLowerCase() === targetSlug ||
+                createSlug(item.name || item.title || '').trim().toLowerCase() === targetSlug ||
+                String(item.id) === targetSlug
+              );
+              if (match) break;
+            } catch (errPage) {
+              break;
+            }
+          }
         }
 
         if (match?.id) {
           numericId = match.id;
-          if (typeof window !== "undefined") {
-            const s = String(id).toLowerCase();
-            localStorage.setItem(`slug_to_id_${s}`, String(match.id));
-            sessionStorage.setItem(`slug_to_id_${s}`, String(match.id));
-            if (match.slug) {
-              const ms = String(match.slug).toLowerCase();
-              localStorage.setItem(`slug_to_id_${ms}`, String(match.id));
-              sessionStorage.setItem(`slug_to_id_${ms}`, String(match.id));
-            }
-          }
+          registerServiceSlugMapping(targetSlug, match.id);
         }
       } catch (err) {
         console.warn(`[getServiceByIdAPI] Failed searching service by slug ${id}:`, err);
@@ -206,12 +279,18 @@ export const getServiceByIdAPI = async (id: string | number) => {
     }
 
     const response = await userPublicApi.get(`/service/${numericId}`);
-    if (typeof window !== "undefined" && response?.data) {
-      const data = response.data?.data?.data || response.data?.data || response.data;
-      if (data?.id && data?.slug) {
-        const s = String(data.slug).toLowerCase();
-        localStorage.setItem(`slug_to_id_${s}`, String(data.id));
-        sessionStorage.setItem(`slug_to_id_${s}`, String(data.id));
+    if (response?.data) {
+      let data = response.data?.data;
+      while (data?.data && !data?.id) {
+        data = data.data;
+      }
+      if (data?.id) {
+        if (data.slug) {
+          registerServiceSlugMapping(data.slug, data.id);
+        }
+        if (data.name) {
+          registerServiceSlugMapping(createSlug(data.name), data.id);
+        }
       }
     }
     return response.data;
@@ -279,13 +358,26 @@ export const getAllServicesAPI = async (
     if (isActive !== undefined) params.isActive = isActive;
     if (city && city !== 'All' && city !== 'All Cities') params.city = city;
     if (state && state !== 'All' && state !== 'All States') params.state = state;
-    if (categoryId && categoryId !== 'All') params.categoryId = categoryId;
-    if (templeId && templeId !== 'All') params.templeId = templeId;
+    if (categoryId && categoryId !== 'All' && categoryId !== 'All Categories') params.categoryId = categoryId;
+    if (templeId && templeId !== 'All' && templeId !== 'All Temples') params.templeId = templeId;
     if (includeTemple !== undefined) params.includeTemple = includeTemple;
     if (isOnline !== undefined) params.isOnline = isOnline;
     if (isOffline !== undefined) params.isOffline = isOffline;
 
     const response = await userPublicApi.get('/service', { params });
+    if (response?.data) {
+      const rawList = extractServicesArray(response.data);
+      rawList.forEach((item: any) => {
+        if (item?.id) {
+          if (item?.slug) {
+            registerServiceSlugMapping(item.slug, item.id);
+          }
+          if (item?.name) {
+            registerServiceSlugMapping(createSlug(item.name), item.id);
+          }
+        }
+      });
+    }
     return response.data;
   } catch (error) {
     throw error;
