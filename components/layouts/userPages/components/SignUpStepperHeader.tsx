@@ -63,11 +63,15 @@ export default function SignUpStepperHeader({
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 0.85,
+          gap: { xs: 0.5, sm: 0.85 },
           p: "3px",
-          bgcolor: "rgba(255, 246, 237, 0.85)",
-          border: "1px solid rgba(240, 215, 195, 0.75)",
+          bgcolor: "rgba(255, 246, 237, 0.55)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.75)",
           borderRadius: "12px",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {/* Step 1 Button */}
@@ -78,10 +82,10 @@ export default function SignUpStepperHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 0.75,
+            gap: { xs: 0.5, sm: 0.75 },
             cursor: "pointer",
-            py: 0.55,
-            px: 1.2,
+            py: { xs: 0.65, sm: 0.55 },
+            px: { xs: 0.5, sm: 1.2 },
             borderRadius: "9px",
             background:
               currentStep === 1
@@ -99,15 +103,21 @@ export default function SignUpStepperHeader({
             },
           }}
         >
-          <PersonOutlineOutlinedIcon sx={{ fontSize: 16 }} />
+          <PersonOutlineOutlinedIcon sx={{ fontSize: { xs: 15, sm: 16 } }} />
           <Typography
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "12px", sm: "12.5px" },
+              fontSize: { xs: "11.5px", sm: "12.5px" },
+              whiteSpace: "nowrap",
               fontFamily: FONTS.OUTFIT,
             }}
           >
-            1. Personal Details
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              1. Personal Details
+            </Box>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+              1. Personal
+            </Box>
           </Typography>
         </Box>
 
@@ -119,10 +129,10 @@ export default function SignUpStepperHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 0.75,
+            gap: { xs: 0.5, sm: 0.75 },
             cursor: "pointer",
-            py: 0.55,
-            px: 1.2,
+            py: { xs: 0.65, sm: 0.55 },
+            px: { xs: 0.5, sm: 1.2 },
             borderRadius: "9px",
             background:
               currentStep === 2
@@ -140,15 +150,21 @@ export default function SignUpStepperHeader({
             },
           }}
         >
-          <LocationOnOutlinedIcon sx={{ fontSize: 17 }} />
+          <LocationOnOutlinedIcon sx={{ fontSize: { xs: 15, sm: 17 } }} />
           <Typography
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "12.5px", sm: "13px" },
+              fontSize: { xs: "11.5px", sm: "13px" },
+              whiteSpace: "nowrap",
               fontFamily: FONTS.OUTFIT,
             }}
           >
-            2. Address Details
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              2. Address Details
+            </Box>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+              2. Address
+            </Box>
           </Typography>
         </Box>
       </Box>

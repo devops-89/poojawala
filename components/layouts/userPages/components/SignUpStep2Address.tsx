@@ -43,17 +43,23 @@ const inputStyles = {
     fontFamily: FONTS.OUTFIT,
     borderRadius: "10px",
     fontSize: "0.835rem",
-    bgcolor: "#FFFFFF",
+    bgcolor: "rgba(255, 255, 255, 0.68)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
     color: "#1F1A17",
     height: "44px",
     boxSizing: "border-box",
+    transition: "background-color 0.2s ease, box-shadow 0.2s ease",
     "@media (max-height: 660px)": {
       height: "39px",
     },
     "& fieldset": {
-      borderColor: "rgba(220, 210, 200, 0.8)",
-      borderWidth: "1px",
+      borderColor: "rgba(220, 205, 190, 0.7)",
+      borderWidth: "1.2px",
       transition: "all 0.2s ease",
+    },
+    "&:hover": {
+      bgcolor: "rgba(255, 255, 255, 0.82)",
     },
     "&:hover fieldset": {
       borderColor: "#FF9100",
@@ -63,6 +69,7 @@ const inputStyles = {
       borderWidth: "1.5px",
     },
     "&.Mui-focused": {
+      bgcolor: "#FFFFFF",
       boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.12)",
     },
   },

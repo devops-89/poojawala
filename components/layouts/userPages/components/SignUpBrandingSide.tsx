@@ -12,17 +12,20 @@ export default function SignUpBrandingSide() {
     <Box
       sx={{
         flex: { md: 0.9, lg: 0.88 },
+        width: "100%",
+        boxSizing: "border-box",
         background:
-          "linear-gradient(165deg, rgba(255, 252, 247, 0.55) 0%, rgba(255, 245, 235, 0.35) 100%)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderRight: { md: "1.5px solid rgba(255, 235, 220, 0.6)" },
-        p: { xs: 2, sm: 2.25, md: "20px 24px" },
+          "linear-gradient(165deg, rgba(255, 252, 247, 0.45) 0%, rgba(255, 245, 235, 0.22) 100%)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderRight: { md: "1.5px solid rgba(255, 255, 255, 0.65)" },
+        borderBottom: { xs: "1.5px solid rgba(255, 235, 220, 0.5)", md: "none" },
+        p: { xs: "18px 16px", sm: 2.25, md: "20px 24px" },
         "@media (max-height: 740px)": {
-          p: { xs: 2, md: "14px 20px" },
+          p: { xs: "16px 14px", md: "14px 20px" },
         },
         "@media (max-height: 660px)": {
-          p: { xs: 1.5, md: "10px 16px" },
+          p: { xs: "14px 12px", md: "10px 16px" },
         },
         display: "flex",
         flexDirection: "column",
@@ -31,18 +34,20 @@ export default function SignUpBrandingSide() {
         zIndex: 1,
       }}
     >
-      {/* Brand Logo - Top Aligned with Create an Account */}
+      {/* Brand Logo - Centered and Larger on Mobile, Left-aligned on Desktop */}
       <Box
         component={Link}
         href="/"
         sx={{
-          display: "inline-block",
+          display: { xs: "flex", md: "inline-block" },
+          justifyContent: { xs: "center", md: "flex-start" },
+          width: { xs: "100%", md: "auto" },
           mb: { xs: 2, md: 2.5 },
           "@media (max-height: 740px)": {
-            mb: 1.75,
+            mb: { xs: 1.75, md: 1.75 },
           },
           "@media (max-height: 660px)": {
-            mb: 1.25,
+            mb: { xs: 1.25, md: 1.25 },
           },
           transition: "transform 0.2s ease",
           "&:hover": { transform: "scale(1.02)" },
@@ -53,12 +58,12 @@ export default function SignUpBrandingSide() {
           src="/images/1Poojalogo.webp"
           alt="1Pooja Logo"
           sx={{
-            height: { xs: "36px", sm: "40px", md: "46px" },
+            height: { xs: "52px", sm: "56px", md: "46px" },
             "@media (max-height: 740px)": {
-              height: { xs: "34px", md: "40px" },
+              height: { xs: "46px", md: "40px" },
             },
             "@media (max-height: 660px)": {
-              height: { xs: "30px", md: "34px" },
+              height: { xs: "40px", md: "34px" },
             },
             width: "auto",
             objectFit: "contain",
@@ -73,15 +78,15 @@ export default function SignUpBrandingSide() {
           fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#1F1A17",
-          fontSize: { xs: "24px", sm: "26px", md: "28px" },
+          fontSize: { xs: "20px", sm: "24px", md: "28px" },
           "@media (max-height: 740px)": {
-            fontSize: { xs: "22px", md: "25px" },
+            fontSize: { xs: "19px", md: "25px" },
           },
           "@media (max-height: 660px)": {
-            fontSize: { xs: "20px", md: "22px" },
+            fontSize: { xs: "18px", md: "22px" },
           },
           lineHeight: 1.22,
-          mb: 1.2,
+          mb: { xs: 0.75, md: 1.2 },
           letterSpacing: "-0.3px",
         }}
       >
@@ -93,17 +98,17 @@ export default function SignUpBrandingSide() {
         sx={{
           fontFamily: FONTS.OUTFIT,
           color: "#6B7280",
-          fontSize: { xs: "13px", md: "14px" },
-          lineHeight: 1.55,
-          mb: { xs: 2.25, md: 3 },
+          fontSize: { xs: "12.5px", md: "14px" },
+          lineHeight: 1.5,
+          mb: { xs: 1.75, md: 3 },
           "@media (max-height: 740px)": {
             mb: 2,
           },
           "@media (max-height: 660px)": {
-            fontSize: "12.5px",
+            fontSize: "12px",
             mb: 1.5,
           },
-          maxWidth: "380px",
+          maxWidth: { xs: "100%", md: "380px" },
         }}
       >
         Create an account to book authentic pooja services, track your bookings,
@@ -115,7 +120,7 @@ export default function SignUpBrandingSide() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: { xs: 1.6, md: 2 },
+          gap: { xs: 1.1, md: 2 },
           "@media (max-height: 740px)": {
             gap: 1.5,
           },
@@ -128,7 +133,7 @@ export default function SignUpBrandingSide() {
           {
             icon: (
               <SpaOutlinedIcon
-                sx={{ fontSize: { xs: 20, md: 22 }, color: "#FF6200" }}
+                sx={{ fontSize: { xs: 18, md: 22 }, color: "#FF6200" }}
               />
             ),
             title: "Verified Vedic Purohits & Scholars",
@@ -136,7 +141,7 @@ export default function SignUpBrandingSide() {
           {
             icon: (
               <CalendarMonthOutlinedIcon
-                sx={{ fontSize: { xs: 20, md: 22 }, color: "#FF6200" }}
+                sx={{ fontSize: { xs: 18, md: 22 }, color: "#FF6200" }}
               />
             ),
             title: "Live & Instant Pooja Status Updates",
@@ -144,7 +149,7 @@ export default function SignUpBrandingSide() {
           {
             icon: (
               <ShieldOutlinedIcon
-                sx={{ fontSize: { xs: 20, md: 22 }, color: "#FF6200" }}
+                sx={{ fontSize: { xs: 18, md: 22 }, color: "#FF6200" }}
               />
             ),
             title: "100% Sacred, Transparent & Secure",
@@ -155,18 +160,18 @@ export default function SignUpBrandingSide() {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: { xs: 1.5, md: 1.75 },
+              gap: { xs: 1.25, md: 1.75 },
             }}
           >
             <Box
               sx={{
-                width: { xs: 40, md: 44 },
-                height: { xs: 40, md: 44 },
+                width: { xs: 34, sm: 38, md: 44 },
+                height: { xs: 34, sm: 38, md: 44 },
                 "@media (max-height: 660px)": {
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                 },
-                borderRadius: "12px",
+                borderRadius: "10px",
                 bgcolor: "rgba(255, 120, 20, 0.1)",
                 border: "1px solid rgba(255, 120, 20, 0.2)",
                 display: "flex",
@@ -181,9 +186,9 @@ export default function SignUpBrandingSide() {
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: { xs: "13.5px", md: "14.5px" },
+                fontSize: { xs: "12.5px", sm: "13.5px", md: "14.5px" },
                 "@media (max-height: 660px)": {
-                  fontSize: "13px",
+                  fontSize: "12px",
                 },
                 fontWeight: 600,
                 color: "#1F1A17",

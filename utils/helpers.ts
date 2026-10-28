@@ -1,43 +1,57 @@
-import React from 'react';
+import React from "react";
 
 export const createSlug = (str: string): string => {
-  if (!str) return '';
+  if (!str) return "";
   return str
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 };
 
-export const extractBackendErrorMessage = (error: any, fallback = 'Something went wrong'): string => {
+export const extractBackendErrorMessage = (
+  error: any,
+  fallback = "Something went wrong",
+): string => {
   if (!error) return fallback;
   const data = error.response?.data;
   if (data) {
     if (Array.isArray(data.message) && data.message.length > 0) {
-      return data.message.join(', ');
+      return data.message.join(", ");
     }
-    if (typeof data.message === 'string' && data.message.trim()) {
+    if (typeof data.message === "string" && data.message.trim()) {
       return data.message;
     }
-    if (typeof data.error === 'string' && data.error.trim()) {
+    if (typeof data.error === "string" && data.error.trim()) {
       return data.error;
     }
-    if (typeof data === 'string' && data.trim()) {
+    if (typeof data === "string" && data.trim()) {
       return data;
     }
   }
-  if (error.message && typeof error.message === 'string') {
+  if (error.message && typeof error.message === "string") {
     return error.message;
   }
   return fallback;
 };
 
-export const allowOnlyLettersOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+export const allowOnlyLettersOnKeyDown = (
+  e: React.KeyboardEvent<HTMLElement>,
+) => {
   if (
     e.ctrlKey ||
     e.metaKey ||
-    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+    [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Enter",
+      "Home",
+      "End",
+    ].includes(e.key)
   ) {
     return;
   }
@@ -47,21 +61,34 @@ export const allowOnlyLettersOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) =
 };
 
 export const sanitizeLettersOnly = (val: string): string => {
-  return (val || '').replace(/[^a-zA-Z\s.-]/g, '');
+  return (val || "").replace(/[^a-zA-Z\s.-]/g, "");
 };
 
 /**
  * Strict Email validation regex and helpers:
  * Strictly allows letters, digits, and special characters only '.' and '@'
  */
-export const EMAIL_STRICT_REGEX = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
-export const EMAIL_STRICT_MESSAGE = "Invalid email format. Only letters, numbers, '.' and '@' are allowed";
+export const EMAIL_STRICT_REGEX =
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+export const EMAIL_STRICT_MESSAGE =
+  "Invalid email format. Only letters, numbers, '.' and '@' are allowed";
 
-export const allowOnlyEmailCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+export const allowOnlyEmailCharsOnKeyDown = (
+  e: React.KeyboardEvent<HTMLElement>,
+) => {
   if (
     e.ctrlKey ||
     e.metaKey ||
-    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+    [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Enter",
+      "Home",
+      "End",
+    ].includes(e.key)
   ) {
     return;
   }
@@ -72,7 +99,7 @@ export const allowOnlyEmailCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>
 };
 
 export const sanitizeEmailInput = (val: string): string => {
-  return (val || '').replace(/[^a-zA-Z0-9.@]/g, '');
+  return (val || "").replace(/[^a-zA-Z0-9.@]/g, "");
 };
 
 /**
@@ -80,13 +107,25 @@ export const sanitizeEmailInput = (val: string): string => {
  * Strictly allows letters, digits, whitespace, and standard address punctuation (,, ., -, /, #, ', :, (, ), &)
  */
 export const ADDRESS_STRICT_REGEX = /^[a-zA-Z0-9\s,&.\-/#':()]+$/;
-export const ADDRESS_STRICT_MESSAGE = "Address can only contain letters, numbers, spaces, and standard address characters (, . - / # ' : () &)";
+export const ADDRESS_STRICT_MESSAGE =
+  "Address can only contain letters, numbers, spaces, and standard address characters (, . - / # ' : () &)";
 
-export const allowOnlyAddressCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+export const allowOnlyAddressCharsOnKeyDown = (
+  e: React.KeyboardEvent<HTMLElement>,
+) => {
   if (
     e.ctrlKey ||
     e.metaKey ||
-    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+    [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Enter",
+      "Home",
+      "End",
+    ].includes(e.key)
   ) {
     return;
   }
@@ -97,7 +136,7 @@ export const allowOnlyAddressCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElemen
 };
 
 export const sanitizeAddressInput = (val: string): string => {
-  return (val || '').replace(/[^a-zA-Z0-9\s,&.\-/#':()]/g, '');
+  return (val || "").replace(/[^a-zA-Z0-9\s,&.\-/#':()]/g, "");
 };
 
 /**
@@ -106,13 +145,25 @@ export const sanitizeAddressInput = (val: string): string => {
  * Disallows symbols like @ # $ % ^ * < > { } [ ] _ = + | ~ `
  */
 export const TITLE_STRICT_REGEX = /^[a-zA-Z0-9\s,&.\-':()\/]+$/;
-export const TITLE_STRICT_MESSAGE = "Title can only contain letters, numbers, spaces, and standard punctuation (, . - & ' : () /)";
+export const TITLE_STRICT_MESSAGE =
+  "Title can only contain letters, numbers, spaces, and standard punctuation (, . - & ' : () /)";
 
-export const allowOnlyTitleCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+export const allowOnlyTitleCharsOnKeyDown = (
+  e: React.KeyboardEvent<HTMLElement>,
+) => {
   if (
     e.ctrlKey ||
     e.metaKey ||
-    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+    [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Enter",
+      "Home",
+      "End",
+    ].includes(e.key)
   ) {
     return;
   }
@@ -122,7 +173,7 @@ export const allowOnlyTitleCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>
 };
 
 export const sanitizeTitleInput = (val: string): string => {
-  return (val || '').replace(/[^a-zA-Z0-9\s,&.\-':()\/]/g, '');
+  return (val || "").replace(/[^a-zA-Z0-9\s,&.\-':()\/]/g, "");
 };
 
 /**
@@ -131,13 +182,25 @@ export const sanitizeTitleInput = (val: string): string => {
  * Disallows symbols like @ # $ ^ * < > { } [ ] _ = + | ~ `
  */
 export const DESCRIPTION_STRICT_REGEX = /^[a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]+$/;
-export const DESCRIPTION_STRICT_MESSAGE = "Description cannot contain special characters like @, #, $, ^, *, <, >, {, }, [, ], =, +, ~, |";
+export const DESCRIPTION_STRICT_MESSAGE =
+  "Description cannot contain special characters like @, #, $, ^, *, <, >, {, }, [, ], =, +, ~, |";
 
-export const allowOnlyDescriptionCharsOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+export const allowOnlyDescriptionCharsOnKeyDown = (
+  e: React.KeyboardEvent<HTMLElement>,
+) => {
   if (
     e.ctrlKey ||
     e.metaKey ||
-    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key)
+    [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Enter",
+      "Home",
+      "End",
+    ].includes(e.key)
   ) {
     return;
   }
@@ -147,9 +210,8 @@ export const allowOnlyDescriptionCharsOnKeyDown = (e: React.KeyboardEvent<HTMLEl
 };
 
 export const sanitizeDescriptionInput = (val: string): string => {
-  return (val || '').replace(/[^a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]/g, '');
+  return (val || "").replace(/[^a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]/g, "");
 };
-
 
 export interface BankFormValues {
   paymentMethod: string;
@@ -161,45 +223,48 @@ export interface BankFormValues {
 }
 
 export const validateBankForm = (bankForm: BankFormValues): string | null => {
-  if (bankForm.paymentMethod === 'UPI') {
+  if (bankForm.paymentMethod === "UPI") {
     if (!bankForm.upiId || !bankForm.upiId.trim()) {
-      return 'UPI ID is required';
+      return "UPI ID is required";
     }
     const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
     if (!upiRegex.test(bankForm.upiId.trim())) {
-      return 'Please enter a valid UPI ID (e.g. 9876543210@ybl or user@upi)';
+      return "Please enter a valid UPI ID (e.g. 9876543210@ybl or user@upi)";
     }
   } else {
     if (!bankForm.accountHolderName || !bankForm.accountHolderName.trim()) {
-      return 'Account Holder Name is required';
+      return "Account Holder Name is required";
     }
     if (!/^[a-zA-Z\s.-]+$/.test(bankForm.accountHolderName.trim())) {
-      return 'Account Holder Name cannot contain numbers or special characters';
+      return "Account Holder Name cannot contain numbers or special characters";
     }
     if (!bankForm.bankName || !bankForm.bankName.trim()) {
-      return 'Bank Name is required';
+      return "Bank Name is required";
     }
     if (!/^[a-zA-Z\s.-]+$/.test(bankForm.bankName.trim())) {
-      return 'Bank Name cannot contain numbers or special characters';
+      return "Bank Name cannot contain numbers or special characters";
     }
     if (!bankForm.accountNumber || !bankForm.accountNumber.trim()) {
-      return 'Account Number is required';
+      return "Account Number is required";
     }
     if (!/^[0-9]{9,18}$/.test(bankForm.accountNumber.trim())) {
-      return 'Account Number must be between 9 and 18 digits (numbers only)';
+      return "Account Number must be between 9 and 18 digits (numbers only)";
     }
     if (!bankForm.ifscCode || !bankForm.ifscCode.trim()) {
-      return 'IFSC Code is required';
+      return "IFSC Code is required";
     }
     const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
     if (!ifscRegex.test(bankForm.ifscCode.trim().toUpperCase())) {
-      return 'Please enter a valid 11-character IFSC Code (e.g. SBIN0001234)';
+      return "Please enter a valid 11-character IFSC Code (e.g. SBIN0001234)";
     }
   }
   return null;
 };
 
-export const formatPhoneNumber = (phone?: string, countryCode?: string): string => {
+export const formatPhoneNumber = (
+  phone?: string,
+  countryCode?: string,
+): string => {
   if (!phone) return "N/A";
   const p = phone.trim();
   if (!countryCode) {
@@ -235,7 +300,7 @@ export const formatServicePriceRange = (service: any, prefix = "₹"): string =>
     service.isOnline === true ||
     String(service.isOnline).toLowerCase() === "true" ||
     service.isOnline === 1 ||
-    String(service.isOnline) === "1"
+    String(service.isOnline) === "1",
   );
 
   let basicPrice: number | null = null;
@@ -264,9 +329,7 @@ export const formatServicePriceRange = (service: any, prefix = "₹"): string =>
   }
 
   if (standardPrice == null && !isOnline) {
-    const rawMax =
-      service.priceWithSamagri ??
-      service.maxPrice;
+    const rawMax = service.priceWithSamagri ?? service.maxPrice;
     if (rawMax != null && !isNaN(Number(rawMax)) && Number(rawMax) > 0) {
       standardPrice = Number(rawMax);
     }
@@ -279,7 +342,11 @@ export const formatServicePriceRange = (service: any, prefix = "₹"): string =>
   }
 
   // Offline services display range only if standard plan is higher than basic
-  if (basicPrice != null && standardPrice != null && standardPrice > basicPrice) {
+  if (
+    basicPrice != null &&
+    standardPrice != null &&
+    standardPrice > basicPrice
+  ) {
     return `${prefix}${basicPrice.toLocaleString("en-IN")} - ${prefix}${standardPrice.toLocaleString("en-IN")}`;
   }
 
@@ -293,5 +360,4 @@ export const formatServicePriceRange = (service: any, prefix = "₹"): string =>
 
   return `${prefix}0`;
 };
-
-
+  

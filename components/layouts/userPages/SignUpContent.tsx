@@ -14,14 +14,7 @@ import {
   ADDRESS_STRICT_MESSAGE,
 } from "@/utils/helpers";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -34,9 +27,9 @@ const today = new Date();
 const fifteenYearsAgo = new Date(
   today.getFullYear() - 15,
   today.getMonth(),
-  today.getDate()
+  today.getDate(),
 );
-
+//xsdfgh
 const step1ValidationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
@@ -44,19 +37,18 @@ const step1ValidationSchema = Yup.object().shape({
     .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
     .required("Email is required"),
   phone: Yup.string()
-    .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
+    .matches(
+      /^[6-9][0-9]{9}$/,
+      "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9",
+    )
     .required("Phone number is required"),
   dob: Yup.string()
     .required("Date of birth is required")
-    .test(
-      "is-valid-date",
-      "Please enter a valid Date of Birth",
-      (val) => {
-        if (!val) return false;
-        const d = new Date(val);
-        return !isNaN(d.getTime());
-      }
-    )
+    .test("is-valid-date", "Please enter a valid Date of Birth", (val) => {
+      if (!val) return false;
+      const d = new Date(val);
+      return !isNaN(d.getTime());
+    })
     .test(
       "is-15-years-old",
       "Date of birth must be at least 15 years ago",
@@ -64,7 +56,7 @@ const step1ValidationSchema = Yup.object().shape({
         if (!val) return false;
         const d = new Date(val);
         return !isNaN(d.getTime()) && d <= fifteenYearsAgo;
-      }
+      },
     ),
   birthPlace: Yup.string().required("Birth place is required"),
   rashi: Yup.string().optional(),
@@ -86,7 +78,7 @@ const fullValidationSchema = step1ValidationSchema.concat(
     city: Yup.string().required("City is required"),
     state: Yup.string().required("State is required"),
     pincode: Yup.string().required("Pincode is required"),
-  })
+  }),
 );
 
 export default function SignUpContent() {
@@ -138,7 +130,11 @@ export default function SignUpContent() {
           }
         } else if (role === "PUROHIT") {
           router.replace("/partner/dashboard");
-        } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+        } else if (
+          role === "ADMIN" ||
+          role === "SUPERADMIN" ||
+          role === "SUPER_ADMIN"
+        ) {
           router.replace("/admin/dashboard");
         }
       } catch (e) {}
@@ -161,7 +157,7 @@ export default function SignUpContent() {
 
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
           );
           if (res.ok) {
             const data = await res.json();
@@ -174,7 +170,7 @@ export default function SignUpContent() {
                 addressObj.town ||
                 addressObj.village ||
                 addressObj.state_district ||
-                ""
+                "",
             );
             setFieldValue("state", addressObj.state || "");
             setFieldValue("pincode", addressObj.postcode || "");
@@ -190,10 +186,10 @@ export default function SignUpContent() {
         console.error(error);
         showSnackbar(
           "Failed to fetch location. Please allow location access.",
-          "error"
+          "error",
         );
         setIsFetchingLocation(false);
-      }
+      },
     );
   };
 
@@ -234,40 +230,38 @@ export default function SignUpContent() {
         backgroundRepeat: "no-repeat",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: { xs: "flex-start", md: "center" },
         alignItems: "center",
         position: "relative",
         overflowX: "hidden",
         overflowY: "auto",
-        py: { xs: 2.5, md: 3 },
-        px: { xs: 2, sm: 3 },
+        py: { xs: 2, sm: 2.5, md: 3 },
+        px: { xs: 1.5, sm: 2.5, md: 3 },
         "@media (max-height: 740px)": {
-          py: 1.5,
+          py: { xs: 2, md: 1.5 },
         },
         "@media (max-height: 660px)": {
-          py: 1,
+          py: { xs: 1.5, md: 1 },
         },
       }}
     >
-      {/* Top Header: Desktop Back Navigation */}
+      {/* Top Header: Desktop Back Navigation (Hidden on Mobile) */}
       <Box
         sx={{
-          position: { xs: "relative", md: "absolute" },
-          top: { xs: 0, md: 20 },
-          left: 0,
+          position: "absolute",
+          top: 20,
           right: 0,
           px: { xs: 2, sm: 4, md: 6 },
-          display: "flex",
+          display: { xs: "none", md: "flex" },
           alignItems: "center",
-          justifyContent: { xs: "center", md: "flex-end" },
+          justifyContent: "flex-end",
           width: "100%",
-          mb: { xs: 2, md: 0 },
           zIndex: 10,
         }}
       >
         <Button
           component={Link}
-          href="/"
+          href={signInHref}
           startIcon={
             <Box
               sx={{
@@ -285,7 +279,6 @@ export default function SignUpContent() {
             </Box>
           }
           sx={{
-            display: { xs: "none", md: "inline-flex" },
             color: "#1F1A17",
             bgcolor: "#FFFFFF",
             border: "1.5px solid rgba(255, 98, 0, 0.28)",
@@ -308,156 +301,166 @@ export default function SignUpContent() {
             },
           }}
         >
-          Back to Website
+          Back to Sign In
         </Button>
       </Box>
 
       <Container
         maxWidth="lg"
+        disableGutters
         sx={{
           position: "relative",
           zIndex: 1,
           px: { xs: 0, sm: 1 },
           display: "flex",
           justifyContent: "center",
+          width: "100%",
         }}
       >
         <Box
           sx={{
             width: "100%",
-            maxWidth: { xs: "100%", sm: "580px", md: "890px", lg: "900px" },
+            maxWidth: { xs: "100%", sm: "600px", md: "890px", lg: "900px" },
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             borderRadius: { xs: "20px", md: "24px" },
             overflow: "hidden",
-            bgcolor: "rgba(255, 255, 255, 0.72)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            border: "1.5px solid rgba(255, 255, 255, 0.92)",
+            boxSizing: "border-box",
+            background:
+              "linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 250, 245, 0.22) 100%)",
+            backdropFilter: "blur(14px) saturate(140%)",
+            WebkitBackdropFilter: "blur(14px) saturate(140%)",
+            border: "1.5px solid rgba(255, 255, 255, 0.85)",
             boxShadow:
-              "0 25px 70px -15px rgba(210, 100, 30, 0.18), 0 10px 28px rgba(0, 0, 0, 0.05), inset 0 1.5px 2px rgba(255, 255, 255, 0.95)",
+              "0 35px 85px -15px rgba(210, 100, 30, 0.22), 0 15px 35px rgba(0, 0, 0, 0.06), inset 0 2px 2px rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(255, 255, 255, 0.4)",
           }}
         >
           {/* Left Side Branding */}
           <SignUpBrandingSide />
 
-              {/* Right Side Form */}
-              <Box
-                sx={{
-                  flex: 1.5,
-                  p: { xs: 3, md: 4 },
-                  bgcolor: "#fff",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={fullValidationSchema}
-                  validateOnChange={true}
-                  validateOnBlur={true}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    try {
-                      const res = await sendOtpAPI({
-                        phone: values.phone,
-                        email: values.email,
-                        role: "CUSTOMER",
-                      });
-                      if (res.success || res.statusCode === 200) {
-                        sessionStorage.setItem(
-                          "signupData",
-                          JSON.stringify(values)
-                        );
-                        showSnackbar(res?.message || "OTP sent successfully!", "success");
-                        const targetOtpUrl = redirectParam
-                          ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
-                          : "/verify-otp";
-                        router.replace(targetOtpUrl);
-                      } else {
-                        showSnackbar(
-                          res?.message || "Failed to send OTP",
-                          "error"
-                        );
-                      }
-                    } catch (error: any) {
-                      showSnackbar(
-                        extractBackendErrorMessage(error, "Failed to send OTP"),
-                        "error"
-                      );
-                    } finally {
-                      setSubmitting(false);
-                    }
-                  }}
-                >
-                  {({
-                    isSubmitting,
-                    values,
-                    setFieldValue,
-                    setTouched,
-                  }) => {
-                    const handleStep1Next = async () => {
-                      try {
-                        await step1ValidationSchema.validate(values, {
-                          abortEarly: false,
-                        });
-                        setCurrentStep(2);
-                      } catch (err: any) {
-                        if (err.inner) {
-                          const touchedObj: any = {};
-                          err.inner.forEach((e: any) => {
-                            if (e.path) touchedObj[e.path] = true;
-                          });
-                          setTouched(touchedObj);
-                        }
-                        showSnackbar(
-                          "Please fill all required personal details correctly",
-                          "error"
-                        );
-                      }
-                    };
-
-                    return (
-                      <Box
-                        component={Form}
-                        onKeyDown={(e: React.KeyboardEvent) => {
-                          if (e.key === "Enter") {
-                            const target = e.target as HTMLElement;
-                            if (target.tagName?.toLowerCase() === "textarea") return;
-                            if (currentStep === 1) {
-                              e.preventDefault();
-                              handleStep1Next();
-                            }
-                          }
-                        }}
-                      >
-                        {/* Header with Step Progress */}
-                        <SignUpStepperHeader
-                          currentStep={currentStep}
-                          onStep1Click={() => setCurrentStep(1)}
-                          onStep2Click={handleStep1Next}
-                        />
-
-                        {/* STEP 1 */}
-                        {currentStep === 1 && (
-                          <SignUpStep1Personal onNext={handleStep1Next} />
-                        )}
-
-                        {/* STEP 2 */}
-                        {currentStep === 2 && (
-                          <SignUpStep2Address
-                            isFetchingLocation={isFetchingLocation}
-                            isSubmitting={isSubmitting}
-                            onFetchLocation={() =>
-                              handleFetchCurrentLocation(setFieldValue)
-                            }
-                            onBack={() => setCurrentStep(1)}
-                          />
-                        )}
-                      </Box>
+          {/* Right Side Form */}
+          <Box
+            sx={{
+              flex: 1.5,
+              width: "100%",
+              boxSizing: "border-box",
+              p: { xs: "20px 16px", sm: 3, md: "22px 26px" },
+              background:
+                "linear-gradient(165deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 252, 248, 0.25) 100%)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Formik
+              initialValues={initialValues}
+              validationSchema={fullValidationSchema}
+              validateOnChange={true}
+              validateOnBlur={true}
+              onSubmit={async (values, { setSubmitting }) => {
+                try {
+                  const res = await sendOtpAPI({
+                    phone: values.phone,
+                    email: values.email,
+                    role: "CUSTOMER",
+                  });
+                  if (res.success || res.statusCode === 200) {
+                    sessionStorage.setItem(
+                      "signupData",
+                      JSON.stringify(values),
                     );
-                  }}
-                </Formik>
+                    showSnackbar(
+                      res?.message || "OTP sent successfully!",
+                      "success",
+                    );
+                    const targetOtpUrl = redirectParam
+                      ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
+                      : "/verify-otp";
+                    router.replace(targetOtpUrl);
+                  } else {
+                    showSnackbar(res?.message || "Failed to send OTP", "error");
+                  }
+                } catch (error: any) {
+                  showSnackbar(
+                    extractBackendErrorMessage(error, "Failed to send OTP"),
+                    "error",
+                  );
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              {({ isSubmitting, values, setFieldValue, setTouched }) => {
+                const handleStep1Next = async () => {
+                  try {
+                    await step1ValidationSchema.validate(values, {
+                      abortEarly: false,
+                    });
+                    setCurrentStep(2);
+                  } catch (err: any) {
+                    if (err.inner) {
+                      const touchedObj: any = {};
+                      err.inner.forEach((e: any) => {
+                        if (e.path) touchedObj[e.path] = true;
+                      });
+                      setTouched(touchedObj);
+                    }
+                    showSnackbar(
+                      "Please fill all required personal details correctly",
+                      "error",
+                    );
+                  }
+                };
+
+                return (
+                  <Box
+                    component={Form}
+                    sx={{
+                      width: "100%",
+                      overflow: "hidden",
+                      boxSizing: "border-box",
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        const target = e.target as HTMLElement;
+                        if (target.tagName?.toLowerCase() === "textarea")
+                          return;
+                        if (currentStep === 1) {
+                          e.preventDefault();
+                          handleStep1Next();
+                        }
+                      }
+                    }}
+                  >
+                    {/* Header with Step Progress */}
+                    <SignUpStepperHeader
+                      currentStep={currentStep}
+                      onStep1Click={() => setCurrentStep(1)}
+                      onStep2Click={handleStep1Next}
+                    />
+
+                    {/* STEP 1 */}
+                    {currentStep === 1 && (
+                      <SignUpStep1Personal onNext={handleStep1Next} />
+                    )}
+
+                    {/* STEP 2 */}
+                    {currentStep === 2 && (
+                      <SignUpStep2Address
+                        isFetchingLocation={isFetchingLocation}
+                        isSubmitting={isSubmitting}
+                        onFetchLocation={() =>
+                          handleFetchCurrentLocation(setFieldValue)
+                        }
+                        onBack={() => setCurrentStep(1)}
+                      />
+                    )}
+                  </Box>
+                );
+              }}
+            </Formik>
 
             {/* Divider */}
             <Box
@@ -520,24 +523,72 @@ export default function SignUpContent() {
         </Box>
       </Container>
 
-      {/* Mobile Back to Website */}
-      <Box sx={{ display: { xs: "block", md: "none" }, mt: 3, textAlign: "center" }}>
+      {/* Mobile Back to Sign In (Centered below card, exactly like Login) */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          justifyContent: "center",
+          width: "100%",
+          mt: 2.5,
+          mb: 1.5,
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
         <Button
           component={Link}
-          href="/"
-          startIcon={<ArrowBackIcon fontSize="small" />}
+          href={signInHref}
+          startIcon={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 26,
+                height: 26,
+                borderRadius: "50%",
+                bgcolor: "rgba(255, 98, 0, 0.12)",
+                color: "#FF6200",
+                transition: "all 0.25s ease",
+              }}
+            >
+              <ArrowBackIcon sx={{ fontSize: 15 }} />
+            </Box>
+          }
           sx={{
-            color: "#4B5563",
-            fontFamily: FONTS.OUTFIT,
+            color: "#1F1A17",
+            bgcolor: "#FFFFFF",
+            border: "1.5px solid rgba(255, 98, 0, 0.28)",
+            borderRadius: "32px",
+            pl: 1.2,
+            pr: 2.4,
+            py: 0.8,
+            fontFamily: FONTS.OUTFIT_ONLY,
             fontWeight: 600,
-            fontSize: "13px",
+            fontSize: "13.5px",
+            letterSpacing: "0.1px",
             textTransform: "none",
+            boxShadow:
+              "0 6px 20px -3px rgba(255, 98, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.05)",
+            transition: "all 0.25s ease",
+            "& .MuiButton-startIcon": {
+              mr: 1,
+            },
+            "&:hover": {
+              bgcolor: "#FFFFFF",
+              borderColor: "#FF6200",
+              color: "#FF6200",
+              transform: "translateY(-1.5px)",
+              boxShadow: "0 8px 24px -3px rgba(255, 98, 0, 0.28)",
+            },
+            "&:active": {
+              transform: "translateY(0)",
+            },
           }}
         >
-          Back to Website
+          Back to Sign In
         </Button>
       </Box>
     </Box>
   );
 }
-

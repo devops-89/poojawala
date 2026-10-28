@@ -11,13 +11,15 @@ export default function RegisterHeader() {
   return (
     <Box
       sx={{
-        p: 2.5,
-        px: { xs: 2, md: 4 },
-        borderBottom: '1px solid #FFE0D0',
-        bgcolor: COLORS.WHITE,
+        pt: { xs: 2, md: 3 },
+        pb: { xs: 1, md: 1.5 },
+        px: { xs: 2.5, sm: 4, md: 6 },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        position: 'relative',
+        zIndex: 10,
+        bgcolor: 'transparent',
       }}
     >
       <MuiLink
@@ -30,17 +32,18 @@ export default function RegisterHeader() {
           component="img"
           src="/images/1Poojalogo.webp"
           alt="1Pooja"
-          sx={{ height: { xs: '30px', md: '38px' }, objectFit: 'contain' }}
+          sx={{ height: { xs: '32px', md: '42px' }, objectFit: 'contain' }}
         />
       </MuiLink>
 
       <Typography
         component="h1"
         sx={{
-          color: COLORS.MUTED_TEXT,
+          color: '#334155',
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          fontSize: { xs: '13px', md: '16px' },
+          fontSize: { xs: '14px', md: '18px' },
+          letterSpacing: '-0.01em',
           display: 'block',
           m: 0,
         }}
@@ -51,22 +54,26 @@ export default function RegisterHeader() {
       <Button
         component={NextLink}
         href="/"
-        startIcon={<ArrowBackIcon />}
+        startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
         sx={{
-          color: '#475569',
-          borderColor: '#FFE0D0',
-          borderRadius: '25px',
-          px: 2.5,
-          py: 0.75,
+          bgcolor: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(8px)',
+          color: '#334155',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+          borderRadius: '50px',
+          px: { xs: 2, md: 2.5 },
+          py: 0.8,
           fontFamily: FONTS.OUTFIT,
           fontWeight: 600,
-          fontSize: '0.85rem',
+          fontSize: { xs: '0.8rem', md: '0.85rem' },
           textTransform: 'none',
-          border: '1px solid #FFE0D0',
+          transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            bgcolor: '#FFF0E6',
+            bgcolor: '#FFFFFF',
+            transform: 'translateY(-1px)',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.1)',
             color: COLORS.PRIMARY,
-            borderColor: COLORS.PRIMARY,
           },
         }}
       >

@@ -37,8 +37,8 @@ export default function HeroSection() {
         width: "100%",
         minHeight: { xs: "380px", sm: "480px", md: "777px" },
         backgroundImage: {
-          xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.6) 35%, rgba(255, 253, 249, 0.05) 70%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-          md: "linear-gradient(90deg, rgba(255, 253, 249, 0.82) 0%, rgba(255, 253, 249, 0.45) 25%, rgba(255, 253, 249, 0.02) 50%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+          xs: "linear-gradient(90deg, rgba(255, 253, 249, 0.95) 0%, rgba(255, 253, 249, 0.85) 45%, rgba(255, 253, 249, 0.35) 75%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
+          md: "linear-gradient(90deg, rgba(255, 253, 249, 0.94) 0%, rgba(255, 253, 249, 0.86) 24%, rgba(255, 253, 249, 0.68) 38%, rgba(255, 253, 249, 0.22) 48%, transparent 56%), url(/images/home/hero/heroSectionHome.webp)",
         },
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -54,7 +54,7 @@ export default function HeroSection() {
         sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
       >
         {/* Content */}
-        <Box sx={{ maxWidth: "600px", mt: "auto", mb: "auto" }}>
+        <Box sx={{ maxWidth: { xs: "100%", md: "560px" }, mt: "auto", mb: "auto", position: "relative", zIndex: 2 }}>
           <Typography
             component="h1"
             sx={{
@@ -65,6 +65,7 @@ export default function HeroSection() {
               fontSize: { xs: "1.75rem", sm: "2.4rem", md: "48px" },
               lineHeight: { xs: 1.15, md: 1.2 },
               letterSpacing: "-0.04em",
+              textShadow: "0 1px 3px rgba(255, 255, 255, 0.9), 0 2px 14px rgba(255, 253, 249, 0.75)",
             }}
           >
             Sacred Rituals,
@@ -94,6 +95,7 @@ export default function HeroSection() {
               lineHeight: "1.45",
               maxWidth: "440px",
               letterSpacing: "0em",
+              textShadow: "0 1px 2px rgba(255, 255, 255, 0.85), 0 1px 8px rgba(255, 253, 249, 0.7)",
             }}
           >
             Book verified Pandits for Puja, Astrology, and Vastu — at home, at a

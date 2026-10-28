@@ -399,7 +399,21 @@ export default function SignInContent() {
                       }}
                     >
                       <FormikValidationSnackbar />
-                      <Field name="email">
+
+                      {/* Email Field */}
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT_ONLY,
+                            fontSize: "13.5px",
+                            fontWeight: 600,
+                            color: "#374151",
+                            mb: 0.7,
+                          }}
+                        >
+                          Email address
+                        </Typography>
+                        <Field name="email">
                         {({ field, form, meta }: any) => (
                           <TextField
                             {...field}

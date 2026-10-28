@@ -70,9 +70,6 @@ export default function Step0BasicDetails({
             helperText={formik.touched.role && (formik.errors.role as string)}
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           >
-            <MenuItem value="" disabled>
-              Select Role
-            </MenuItem>
             <MenuItem value={USER_ROLE.PUROHIT}>Purohit</MenuItem>
             <MenuItem value={USER_ROLE.ASTROLOGER}>Astrologer</MenuItem>
           </TextField>
