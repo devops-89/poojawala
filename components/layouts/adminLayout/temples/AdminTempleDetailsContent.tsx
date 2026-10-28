@@ -4,19 +4,27 @@ import { COLORS } from "@/utils/enums";
 
 import { getTempleByIdAPI, registerTempleSlugMapping } from "@/api/templeControllers";
 import AdminDetailsHeader from "@/components/layouts/adminLayout/common/AdminDetailsHeader";
+import AdminStatusSelect from "@/components/layouts/adminLayout/common/AdminStatusSelect";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useLoaderStore } from "@/stores/loaderStore";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
+  IconButton,
   Paper,
   Typography,
 } from "@mui/material";
@@ -26,10 +34,35 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { ITemple } from "@/utils/types";
 
+const checkIsImage = (url: string) => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.startsWith("data:image/") || lowerUrl.startsWith("blob:")) {
+    return !lowerUrl.includes("pdf");
+  }
+  const cleanUrl = lowerUrl.split("?")[0].split("#")[0];
+  return /\.(jpeg|jpg|gif|png|webp|svg|bmp)$/i.test(cleanUrl);
+};
+
+const getPdfUrlWithParams = (url: string) => {
+  if (!url) return "";
+  if (url.includes("#")) return url;
+  return `${url}#toolbar=0&navpanes=0&view=FitH`;
+};
+
 export default function AdminTempleDetailsContent() {
   const params = useParams();
   const [temple, setTemple] = useState<ITemple | any>(null);
   const [loading, setLoading] = useState(true);
+  const [docModal, setDocModal] = useState<{
+    open: boolean;
+    title: string;
+    url: string;
+  }>({
+    open: false,
+    title: "",
+    url: "",
+  });
   const { showSnackbar } = useSnackbarStore();
   const { showLoader, hideLoader } = useLoaderStore();
 
@@ -219,7 +252,48 @@ export default function AdminTempleDetailsContent() {
                     size="small"
                     sx={{ fontWeight: 600, borderRadius: "6px" }}
                   />
+                  {temple.verificationStatus && (
+                    <AdminStatusSelect
+                      value={temple.verificationStatus.toUpperCase()}
+                      readOnly={true}
+                    />
+                  )}
                 </Box>
+
+                {temple.verificationStatus === "REJECTED" && temple.verificationRemarks && (
+                  <Box
+                    sx={{
+                      mb: 2,
+                      p: 1.5,
+                      borderRadius: "8px",
+                      bgcolor: "#fee2e2",
+                      border: "1px solid #fecaca",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 0.5,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#991b1b",
+                      }}
+                    >
+                      Verification Rejection Remarks:
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontSize: "0.875rem",
+                        color: "#b91c1c",
+                      }}
+                    >
+                      {temple.verificationRemarks}
+                    </Typography>
+                  </Box>
+                )}
 
                 <Box
                   sx={{
@@ -468,67 +542,497 @@ export default function AdminTempleDetailsContent() {
               </Box>
             </Paper>
 
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3,
-                borderRadius: "16px",
-                border: "1px solid #e2e8f0",
-                bgcolor: "white",
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-              }}
-            >
-              <Typography
-                variant="h6"
+            {/* Shrine & Trust Information */}
+            {(temple.primaryDeity ||
+              temple.trustName ||
+              temple.contactName ||
+              temple.phone ||
+              temple.email ||
+              temple.trustRegNo) && (
+              <Paper
+                elevation={0}
                 sx={{
-                  fontFamily: FONTS.OUTFIT,
-                  fontWeight: 700,
-                  color: "#1e293b",
+                  p: 3,
+                  borderRadius: "16px",
+                  border: "1px solid #e2e8f0",
+                  bgcolor: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
                 }}
               >
-                System Metadata
-              </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    color: "#1e293b",
+                  }}
+                >
+                  Shrine & Authority
+                </Typography>
 
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
-                    Temple ID
-                  </Typography>
-                  <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
-                    T-{temple.id}
-                  </Typography>
-                </Box>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  {temple.primaryDeity && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Primary Deity
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 700, color: COLORS.PRIMARY }}>
+                        {temple.primaryDeity}
+                      </Typography>
+                    </Box>
+                  )}
 
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
-                    Status
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "0.875rem",
-                      fontWeight: 600,
-                      color: temple.isActive ? "#16a34a" : "#64748b",
-                    }}
-                  >
-                    {temple.isActive ? "Active" : "Inactive"}
-                  </Typography>
-                </Box>
+                  {temple.trustName && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Managing Trust
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b", textAlign: "right" }}>
+                        {temple.trustName}
+                      </Typography>
+                    </Box>
+                  )}
 
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
-                    Offered Services
-                  </Typography>
-                  <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
-                    {services.length}
-                  </Typography>
+                  {temple.trustRegNo && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Trust Reg No
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
+                        {temple.trustRegNo}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {temple.contactName && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Contact Person
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
+                        {temple.contactName}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {temple.phone && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Phone
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
+                        {temple.phone.length === 10
+                          ? `+91 ${temple.phone.slice(0, 5)} ${temple.phone.slice(5)}`
+                          : temple.phone}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {temple.email && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Email
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
+                        {temple.email}
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
-              </Box>
-            </Paper>
+              </Paper>
+            )}
+
+            {/* Timings & Aarti Schedule */}
+            {(temple.openingTime || temple.closingTime || temple.aartis) && (
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3,
+                  borderRadius: "16px",
+                  border: "1px solid #e2e8f0",
+                  bgcolor: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    color: "#1e293b",
+                  }}
+                >
+                  Visiting Hours & Aartis
+                </Typography>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  {temple.openingTime && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Opening Time
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
+                        {(() => {
+                          const parts = temple.openingTime.split(":");
+                          if (parts.length >= 2) {
+                            let h = parseInt(parts[0], 10);
+                            const m = parts[1];
+                            const ampm = h >= 12 ? "PM" : "AM";
+                            h = h % 12 || 12;
+                            return `${h < 10 ? "0" + h : h}:${m} ${ampm}`;
+                          }
+                          return temple.openingTime;
+                        })()}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {temple.closingTime && (
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography sx={{ fontSize: "0.875rem", color: "#64748b" }}>
+                        Closing Time
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.875rem", fontWeight: 600, color: "#1e293b" }}>
+                        {(() => {
+                          const parts = temple.closingTime.split(":");
+                          if (parts.length >= 2) {
+                            let h = parseInt(parts[0], 10);
+                            const m = parts[1];
+                            const ampm = h >= 12 ? "PM" : "AM";
+                            h = h % 12 || 12;
+                            return `${h < 10 ? "0" + h : h}:${m} ${ampm}`;
+                          }
+                          return temple.closingTime;
+                        })()}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {(() => {
+                    let aartiList: any[] = [];
+                    if (Array.isArray(temple.aartis)) {
+                      aartiList = temple.aartis;
+                    } else if (typeof temple.aartis === "string") {
+                      try {
+                        const parsed = JSON.parse(temple.aartis);
+                        if (Array.isArray(parsed)) aartiList = parsed;
+                      } catch {}
+                    }
+                    if (aartiList.length === 0) return null;
+                    return (
+                      <Box sx={{ mt: 1, pt: 1.5, borderTop: "1px solid #F1F5F9" }}>
+                        <Typography sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#EA580C", mb: 1 }}>
+                          DAILY AARTI SCHEDULE
+                        </Typography>
+                        {aartiList.map((a, idx) => {
+                          const timeStr = (() => {
+                            if (!a.time) return "";
+                            const parts = a.time.split(":");
+                            if (parts.length >= 2) {
+                              let h = parseInt(parts[0], 10);
+                              const m = parts[1];
+                              const ampm = h >= 12 ? "PM" : "AM";
+                              h = h % 12 || 12;
+                              return `${h < 10 ? "0" + h : h}:${m} ${ampm}`;
+                            }
+                            return a.time;
+                          })();
+                          return (
+                            <Box key={idx} sx={{ display: "flex", justifyContent: "space-between", py: 0.5 }}>
+                              <Typography sx={{ fontSize: "0.85rem", color: "#1E293B", fontWeight: 600 }}>
+                                {a.name}
+                              </Typography>
+                              <Typography sx={{ fontSize: "0.85rem", color: "#64748B" }}>
+                                {timeStr}
+                              </Typography>
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    );
+                  })()}
+                </Box>
+              </Paper>
+            )}
+
+            {/* Documents & Media (Trust Deed & Deity Photo) */}
+            {(temple.trustDocDownloadUrl ||
+              temple.trustDocUrl ||
+              temple.deityPhotoDownloadUrl ||
+              temple.deityPhotoUrl) && (
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3,
+                  borderRadius: "16px",
+                  border: "1px solid #e2e8f0",
+                  bgcolor: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    color: "#1e293b",
+                  }}
+                >
+                  Documents & Media
+                </Typography>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {/* Deity Photo */}
+                  {(temple.deityPhotoDownloadUrl || temple.deityPhotoUrl) && (
+                    <Box>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                        <Typography
+                          sx={{
+                            fontSize: "0.75rem",
+                            fontWeight: 700,
+                            color: "#64748B",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Main Shrine / Deity Photo
+                        </Typography>
+                        <Button
+                          size="small"
+                          startIcon={<VisibilityIcon sx={{ fontSize: 15 }} />}
+                          onClick={() =>
+                            setDocModal({
+                              open: true,
+                              title: `${temple.primaryDeity || temple.name} - Main Shrine Photo`,
+                              url: temple.deityPhotoDownloadUrl || temple.deityPhotoUrl,
+                            })
+                          }
+                          sx={{
+                            textTransform: "none",
+                            color: COLORS.PRIMARY,
+                            fontWeight: 600,
+                            fontSize: "0.75rem",
+                            p: 0,
+                            minWidth: "auto",
+                          }}
+                        >
+                          Preview
+                        </Button>
+                      </Box>
+                      <Box
+                        onClick={() =>
+                          setDocModal({
+                            open: true,
+                            title: `${temple.primaryDeity || temple.name} - Main Shrine Photo`,
+                            url: temple.deityPhotoDownloadUrl || temple.deityPhotoUrl,
+                          })
+                        }
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                          height: 180,
+                          borderRadius: "10px",
+                          overflow: "hidden",
+                          border: "1px solid #E2E8F0",
+                          bgcolor: "#F8FAFC",
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                          "&:hover": {
+                            opacity: 0.9,
+                            borderColor: COLORS.PRIMARY,
+                          },
+                        }}
+                      >
+                        <Image
+                          src={temple.deityPhotoDownloadUrl || temple.deityPhotoUrl}
+                          alt="Main Deity"
+                          fill
+                          style={{ objectFit: "cover" }}
+                          unoptimized
+                        />
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Trust Deed Document */}
+                  {(temple.trustDocDownloadUrl || temple.trustDocUrl) && (
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          color: "#64748B",
+                          textTransform: "uppercase",
+                          mb: 1,
+                        }}
+                      >
+                        Trust Deed / Registration Document
+                      </Typography>
+                      <Box
+                        sx={{
+                          p: 1.5,
+                          borderRadius: "10px",
+                          border: "1px solid #E2E8F0",
+                          bgcolor: "#F8FAFC",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 1.5,
+                        }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
+                          <PictureAsPdfIcon sx={{ color: "#DC2626", fontSize: 26 }} />
+                          <Box>
+                            <Typography sx={{ fontSize: "0.85rem", fontWeight: 600, color: "#1E293B" }}>
+                              Trust Registration Deed
+                            </Typography>
+                            <Typography sx={{ fontSize: "0.75rem", color: "#64748B" }}>
+                              PDF Document
+                            </Typography>
+                          </Box>
+                        </Box>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          startIcon={<VisibilityIcon fontSize="small" />}
+                          onClick={() =>
+                            setDocModal({
+                              open: true,
+                              title: "Trust Deed / Registration Document",
+                              url: temple.trustDocDownloadUrl || temple.trustDocUrl,
+                            })
+                          }
+                          sx={{
+                            textTransform: "none",
+                            borderRadius: "8px",
+                            borderColor: "#CBD5E1",
+                            color: COLORS.PRIMARY,
+                            fontWeight: 600,
+                            fontSize: "0.8rem",
+                            px: 1.5,
+                            py: 0.4,
+                            "&:hover": {
+                              borderColor: COLORS.PRIMARY,
+                              bgcolor: "#FFF5EE",
+                            },
+                          }}
+                        >
+                          View
+                        </Button>
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
+              </Paper>
+            )}
           </Box>
         </Grid>
       </Grid>
+
+      {/* PDF & Document Preview Modal */}
+      <Dialog
+        open={docModal.open}
+        onClose={() => setDocModal({ open: false, title: "", url: "" })}
+        maxWidth="md"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: { borderRadius: "16px", overflow: "hidden" },
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 700,
+            fontSize: "1.05rem",
+            color: "#1e293b",
+            px: 2.5,
+            py: 1.75,
+          }}
+        >
+          {docModal.title}
+          <IconButton
+            onClick={() => setDocModal({ open: false, title: "", url: "" })}
+            size="small"
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          dividers
+          sx={{
+            p: 1.5,
+            height: "75vh",
+            bgcolor: "#f8fafc",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {docModal.url &&
+            (checkIsImage(docModal.url) ? (
+              <Box
+                component="img"
+                src={docModal.url}
+                alt={docModal.title}
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+              />
+            ) : (
+              <object
+                data={getPdfUrlWithParams(docModal.url)}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              >
+                <iframe
+                  src={
+                    docModal.url.startsWith("blob:") ||
+                    docModal.url.startsWith("data:")
+                      ? getPdfUrlWithParams(docModal.url)
+                      : `https://docs.google.com/gview?url=${encodeURIComponent(
+                          docModal.url
+                        )}&embedded=true`
+                  }
+                  width="100%"
+                  height="100%"
+                  style={{ border: "none", borderRadius: "8px" }}
+                  title={docModal.title}
+                >
+                  <Box sx={{ p: 3, textAlign: "center" }}>
+                    <Typography sx={{ mb: 2, fontFamily: FONTS.OUTFIT }}>
+                      Unable to display PDF preview directly in browser dialog.
+                    </Typography>
+                    <Button
+                      component="a"
+                      href={docModal.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="contained"
+                      sx={{ bgcolor: COLORS.PRIMARY }}
+                    >
+                      Open / Download Document
+                    </Button>
+                  </Box>
+                </iframe>
+              </object>
+            ))}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }

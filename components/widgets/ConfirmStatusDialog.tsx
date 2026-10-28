@@ -34,8 +34,31 @@ export default function ConfirmStatusDialog({
   onConfirm,
   loading = false,
 }: ConfirmStatusDialogProps) {
-  const formattedStatus = newStatus
-    ? newStatus.replace(/_/g, " ").toUpperCase()
+  // Preserve last valid props so that during closing exit animation,
+  // title, itemName, newStatus and customMessage do not flicker or flash default text!
+  const lastPropsRef = React.useRef({
+    title,
+    itemName,
+    newStatus,
+    customMessage,
+  });
+
+  if (open) {
+    lastPropsRef.current = {
+      title,
+      itemName,
+      newStatus,
+      customMessage,
+    };
+  }
+
+  const activeTitle = open ? title : lastPropsRef.current.title;
+  const activeItemName = open ? itemName : lastPropsRef.current.itemName;
+  const activeNewStatus = open ? newStatus : lastPropsRef.current.newStatus;
+  const activeCustomMessage = open ? customMessage : lastPropsRef.current.customMessage;
+
+  const formattedStatus = activeNewStatus
+    ? activeNewStatus.replace(/_/g, " ").toUpperCase()
     : undefined;
 
   return (
@@ -59,7 +82,7 @@ export default function ConfirmStatusDialog({
           color: COLORS.SLATE_DARK,
         }}
       >
-        {title}
+        {activeTitle}
       </DialogTitle>
       <DialogContent>
         <DialogContentText
@@ -69,12 +92,12 @@ export default function ConfirmStatusDialog({
             color: "#475569",
           }}
         >
-          {customMessage ? (
-            customMessage
+          {activeCustomMessage ? (
+            activeCustomMessage
           ) : (
             <>
               Are you sure you want to change status of{" "}
-              {itemName ? <strong>&quot;{itemName}&quot;</strong> : "this item"}{" "}
+              {activeItemName ? <strong>&quot;{activeItemName}&quot;</strong> : "this item"}{" "}
               to {formattedStatus ? <strong>{formattedStatus}</strong> : "the selected status"}?
             </>
           )}

@@ -67,17 +67,16 @@ export default function CustomerDashboardHero() {
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (selectedState && selectedState !== "All") {
-      params.append("state", selectedState);
+    params.set("isOffline", "true");
+    if (selectedState && selectedState !== "All" && selectedState !== "All States") {
+      params.set("state", selectedState.trim());
     }
-    if (selectedCity && selectedCity !== "All") {
-      params.append("city", selectedCity);
+    if (selectedCity && selectedCity !== "All" && selectedCity !== "All Cities") {
+      params.set("city", selectedCity.trim());
     }
 
     const queryString = params.toString();
-    const targetUrl = queryString
-      ? `/customer/services?${queryString}`
-      : "/customer/services";
+    const targetUrl = `/customer/services?${queryString}`;
 
     router.push(targetUrl);
   };
@@ -223,44 +222,42 @@ export default function CustomerDashboardHero() {
                         setSelectedState(newValue);
                         setSelectedCity(null);
                       }}
-                      renderInput={(params: any) => {
-                        const updatedParams = {
-                          ...params,
-                          InputProps: {
-                            ...params.InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <LocationOnIcon
-                                    sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
-                                  />
-                                </InputAdornment>
-                                {params.InputProps?.startAdornment}
-                              </>
-                            ),
-                          },
-                        };
-                        return (
-                          <TextField
-                            {...updatedParams}
-                            placeholder="Select State"
-                            autoComplete="off"
-                            sx={{
-                              bgcolor: "#FFFFFF",
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: "12px",
-                                fontFamily: FONTS.PRIMARY,
-                                fontSize: "14px",
-                                "& fieldset": { borderColor: "#E2E8F0" },
-                                "&:hover fieldset": { borderColor: COLORS.PRIMARY },
-                                "&.Mui-focused fieldset": {
-                                  borderColor: COLORS.PRIMARY,
-                                },
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          placeholder="Select State"
+                          autoComplete="off"
+                          slotProps={{
+                            ...params.slotProps,
+                            input: {
+                              ...params.slotProps?.input,
+                              startAdornment: (
+                                <>
+                                  <InputAdornment position="start">
+                                    <LocationOnIcon
+                                      sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                                    />
+                                  </InputAdornment>
+                                  {params.slotProps?.input?.startAdornment}
+                                </>
+                              ),
+                            },
+                          }}
+                          sx={{
+                            bgcolor: "#FFFFFF",
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "12px",
+                              fontFamily: FONTS.PRIMARY,
+                              fontSize: "14px",
+                              "& fieldset": { borderColor: "#E2E8F0" },
+                              "&:hover fieldset": { borderColor: COLORS.PRIMARY },
+                              "&.Mui-focused fieldset": {
+                                borderColor: COLORS.PRIMARY,
                               },
-                            }}
-                          />
-                        );
-                      }}
+                            },
+                          }}
+                        />
+                      )}
                     />
                   </FormControl>
                 </Grid>
@@ -286,44 +283,42 @@ export default function CustomerDashboardHero() {
                       options={cityOptions}
                       value={selectedCity}
                       onChange={(_, newValue) => setSelectedCity(newValue)}
-                      renderInput={(params: any) => {
-                        const updatedParams = {
-                          ...params,
-                          InputProps: {
-                            ...params.InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <LocationOnIcon
-                                    sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
-                                  />
-                                </InputAdornment>
-                                {params.InputProps?.startAdornment}
-                              </>
-                            ),
-                          },
-                        };
-                        return (
-                          <TextField
-                            {...updatedParams}
-                            placeholder="Select City"
-                            autoComplete="off"
-                            sx={{
-                              bgcolor: "#FFFFFF",
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: "12px",
-                                fontFamily: FONTS.PRIMARY,
-                                fontSize: "14px",
-                                "& fieldset": { borderColor: "#E2E8F0" },
-                                "&:hover fieldset": { borderColor: COLORS.PRIMARY },
-                                "&.Mui-focused fieldset": {
-                                  borderColor: COLORS.PRIMARY,
-                                },
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          placeholder="Select City"
+                          autoComplete="off"
+                          slotProps={{
+                            ...params.slotProps,
+                            input: {
+                              ...params.slotProps?.input,
+                              startAdornment: (
+                                <>
+                                  <InputAdornment position="start">
+                                    <LocationOnIcon
+                                      sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                                    />
+                                  </InputAdornment>
+                                  {params.slotProps?.input?.startAdornment}
+                                </>
+                              ),
+                            },
+                          }}
+                          sx={{
+                            bgcolor: "#FFFFFF",
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "12px",
+                              fontFamily: FONTS.PRIMARY,
+                              fontSize: "14px",
+                              "& fieldset": { borderColor: "#E2E8F0" },
+                              "&:hover fieldset": { borderColor: COLORS.PRIMARY },
+                              "&.Mui-focused fieldset": {
+                                borderColor: COLORS.PRIMARY,
                               },
-                            }}
-                          />
-                        );
-                      }}
+                            },
+                          }}
+                        />
+                      )}
                     />
                   </FormControl>
                 </Grid>
@@ -351,7 +346,7 @@ export default function CustomerDashboardHero() {
                   },
                 }}
               >
-                Search Pooja Services
+                Explore Services
               </Button>
             </Box>
           </Paper>

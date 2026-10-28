@@ -188,6 +188,36 @@ export const updateTempleStatusAPI = async (id: string | number, isActive: boole
   }
 };
 
+export const updateTempleVerificationAPI = async (
+  id: string | number,
+  verificationStatus: "APPROVED" | "REJECTED" | "PENDING",
+  verificationRemarks?: string
+) => {
+  try {
+    const numericId = resolveTempleId(id);
+    const payload: any = { verificationStatus };
+    if (verificationStatus === "REJECTED" && verificationRemarks) {
+      payload.verificationRemarks = verificationRemarks.trim();
+    } else if (verificationStatus === "APPROVED") {
+      payload.verificationRemarks = null;
+    }
+
+    try {
+      const response = await userSecuredApi.patch(`/temples/${numericId}`, payload);
+      return response.data;
+    } catch (err: any) {
+      // If backend has a separate /temples/:id/verification endpoint
+      if (err?.response?.status === 404 || err?.response?.data?.message?.includes("route")) {
+        const altResponse = await userSecuredApi.patch(`/temples/${numericId}/verification`, payload);
+        return altResponse.data;
+      }
+      throw err;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const deleteTempleAPI = async (id: string | number) => {
   try {
     const numericId = resolveTempleId(id);

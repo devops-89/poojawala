@@ -23,7 +23,7 @@ import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { City, State } from 'country-state-city';
-import CustomerServicesFilters from '@/components/layouts/customerLayout/services/CustomerServicesFilters';
+import PurohitServicesFilters from './PurohitServicesFilters';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
 
@@ -42,18 +42,32 @@ export default function PurohitServicesContent() {
   const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get('search') || "");
   const [selectedCity, setSelectedCity] = useState<string>(searchParams.get('city') || "All");
   const [selectedState, setSelectedState] = useState<string>(searchParams.get('state') || "All");
+  const initialMode = useMemo(() => {
+    const m = searchParams.get('mode');
+    if (m) {
+      if (m.toLowerCase() === 'online') return 'Online';
+      if (m.toLowerCase() === 'offline') return 'Offline';
+    }
+    if (searchParams.get('isOnline') === 'true') return 'Online';
+    if (searchParams.get('isOffline') === 'true') return 'Offline';
+    return 'All';
+  }, [searchParams]);
+  const [selectedMode, setSelectedMode] = useState<string>(initialMode);
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (page > 1) params.set('page', String(page));
     if (selectedState && selectedState !== 'All') params.set('state', selectedState);
     if (selectedCity && selectedCity !== 'All') params.set('city', selectedCity);
+    if (selectedMode && selectedMode !== 'All' && selectedMode !== 'All Modes') {
+      params.set('mode', selectedMode.toLowerCase());
+    }
     if (searchTerm) params.set('search', searchTerm);
 
     const queryStr = params.toString();
     const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
     window.history.replaceState(null, '', newUrl);
-  }, [page, selectedState, selectedCity, searchTerm]);
+  }, [page, selectedState, selectedCity, selectedMode, searchTerm]);
 
   const { showSnackbar } = useSnackbarStore();
   const { fetchProfile } = useUserStore();
@@ -81,8 +95,25 @@ export default function PurohitServicesContent() {
       const stateParam =
         selectedState && selectedState !== "All" ? selectedState : undefined;
 
+      const isOnlineParam =
+        selectedMode.toLowerCase() === "online" ? true : undefined;
+      const isOfflineParam =
+        selectedMode.toLowerCase() === "offline" ? true : undefined;
+
       const [res, myRes] = await Promise.all([
-        getAllServicesAPI(page, 6, debouncedSearch, true, cityParam, stateParam),
+        getAllServicesAPI(
+          page,
+          6,
+          debouncedSearch,
+          true,
+          cityParam,
+          stateParam,
+          undefined,
+          undefined,
+          undefined,
+          isOnlineParam,
+          isOfflineParam
+        ),
         getPurohitServicesAPI(1, 100)
       ]);
       
@@ -117,7 +148,7 @@ export default function PurohitServicesContent() {
 
   useEffect(() => {
     fetchServices();
-  }, [page, debouncedSearch, selectedCity, selectedState]);
+  }, [page, debouncedSearch, selectedCity, selectedState, selectedMode]);
 
   const handleCardClick = (service: any, _isAlreadyAdded?: boolean) => {
     const targetSlug =
@@ -169,8 +200,8 @@ export default function PurohitServicesContent() {
         </Box>
       </Box>
 
-      {/* Search & State/City Filters */}
-      <CustomerServicesFilters
+      {/* Search & State/City/Mode Filters */}
+      <PurohitServicesFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         stateOptions={stateOptions}
@@ -184,6 +215,11 @@ export default function PurohitServicesContent() {
         selectedCity={selectedCity}
         onCityChange={(val) => {
           setSelectedCity(val);
+          setPage(1);
+        }}
+        selectedMode={selectedMode}
+        onModeChange={(val) => {
+          setSelectedMode(val);
           setPage(1);
         }}
       />

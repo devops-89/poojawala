@@ -6,6 +6,7 @@ import {
   deleteTempleAPI,
   getTemplesAPI,
   updateTempleStatusAPI,
+  updateTempleVerificationAPI,
 } from "@/api/templeControllers";
 import AdminDataTable, {
   Column,
@@ -19,7 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import NextLink from "next/link";
 import { ITemple } from "@/utils/types";
@@ -52,6 +53,13 @@ export default function AdminTemplesContent() {
   const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);
+  const [verificationTarget, setVerificationTarget] = useState<{
+    temple: ITemple;
+    newStatus: "APPROVED" | "REJECTED" | "PENDING";
+  } | null>(null);
+  const [verificationRemarks, setVerificationRemarks] = useState("");
+  const [remarksError, setRemarksError] = useState("");
+  const [updatingVerification, setUpdatingVerification] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
   const fetchTemples = useCallback(async () => {
@@ -124,6 +132,55 @@ export default function AdminTemplesContent() {
       showSnackbar("Error updating temple status", "error");
     }
     setStatusChangeTarget(null);
+  };
+
+  const confirmVerificationChange = async () => {
+    if (!verificationTarget) return;
+
+    if (verificationTarget.newStatus === "REJECTED" && !verificationRemarks.trim()) {
+      setRemarksError("Please provide rejection remarks.");
+      return;
+    }
+
+    try {
+      setUpdatingVerification(true);
+      const res = await updateTempleVerificationAPI(
+        verificationTarget.temple.id,
+        verificationTarget.newStatus,
+        verificationRemarks
+      );
+
+      if (res?.success || res?.statusCode === 200) {
+        showSnackbar(res?.message || "Temple verification updated successfully", "success");
+        setTemples((prev) =>
+          prev.map((t) =>
+            t.id === verificationTarget.temple.id
+              ? {
+                  ...t,
+                  verificationStatus: verificationTarget.newStatus,
+                  verificationRemarks:
+                    verificationTarget.newStatus === "REJECTED"
+                      ? verificationRemarks.trim()
+                      : null,
+                }
+              : t
+          )
+        );
+        setVerificationTarget(null);
+        setVerificationRemarks("");
+        setRemarksError("");
+      } else {
+        showSnackbar(res?.message || "Failed to update verification status", "error");
+      }
+    } catch (error: any) {
+      console.error("Verification update error:", error);
+      showSnackbar(
+        error.response?.data?.message || error.message || "Error updating verification status",
+        "error"
+      );
+    } finally {
+      setUpdatingVerification(false);
+    }
   };
 
   const confirmDelete = async () => {
@@ -201,6 +258,52 @@ export default function AdminTemplesContent() {
           {temple.city || "N/A"}
         </Typography>
       ),
+    },
+    {
+      id: "verificationStatus" as keyof ITemple,
+      label: "VERIFICATION STATUS",
+      render: (temple: ITemple) => {
+        const rawStatus = temple.verificationStatus || "PENDING";
+        const vStatus = rawStatus.toUpperCase();
+        const isPending = vStatus === "PENDING";
+
+        const badgeOrSelect = (
+          <AdminStatusSelect
+            value={vStatus}
+            readOnly={!isPending}
+            options={[
+              { value: "PENDING", label: "PENDING" },
+              { value: "APPROVED", label: "APPROVED" },
+              { value: "REJECTED", label: "REJECTED" },
+            ]}
+            onChange={(val) => {
+              if (val === vStatus) return;
+              setVerificationTarget({
+                temple,
+                newStatus: val as "APPROVED" | "REJECTED" | "PENDING",
+              });
+              setVerificationRemarks("");
+              setRemarksError("");
+            }}
+          />
+        );
+
+        if (vStatus === "REJECTED" && temple.verificationRemarks) {
+          return (
+            <Tooltip
+              title={`Remarks: ${temple.verificationRemarks}`}
+              arrow
+              placement="top"
+            >
+              <Box sx={{ display: "inline-block", cursor: "help" }}>
+                {badgeOrSelect}
+              </Box>
+            </Tooltip>
+          );
+        }
+
+        return badgeOrSelect;
+      },
     },
     {
       id: "status",
@@ -310,6 +413,68 @@ export default function AdminTemplesContent() {
         newStatus={statusChangeTarget?.isActive ? "Active" : "Inactive"}
         onClose={() => setStatusChangeTarget(null)}
         onConfirm={confirmStatusChange}
+      />
+
+      {/* Verification Status Change Confirmation Dialog */}
+      <ConfirmStatusDialog
+        open={Boolean(verificationTarget)}
+        title={
+          verificationTarget?.newStatus === "REJECTED"
+            ? "Reject Temple Verification"
+            : verificationTarget?.newStatus === "APPROVED"
+              ? "Approve Temple Verification"
+              : "Update Verification Status"
+        }
+        itemName={verificationTarget?.temple?.name}
+        newStatus={verificationTarget?.newStatus}
+        loading={updatingVerification}
+        customMessage={
+          verificationTarget?.newStatus === "REJECTED" ? (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 0.5 }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "0.95rem",
+                  color: "#475569",
+                }}
+              >
+                Are you sure you want to reject the verification for{" "}
+                <strong>&quot;{verificationTarget?.temple?.name}&quot;</strong>?
+                Please provide rejection remarks below:
+              </Typography>
+              <TextField
+                multiline
+                rows={3}
+                placeholder="Enter remarks for rejecting this temple..."
+                value={verificationRemarks}
+                onChange={(e) => {
+                  setVerificationRemarks(e.target.value);
+                  if (remarksError) setRemarksError("");
+                }}
+                error={Boolean(remarksError)}
+                helperText={remarksError}
+                fullWidth
+                size="small"
+                autoFocus
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "0.9rem",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </Box>
+          ) : undefined
+        }
+        onClose={() => {
+          if (!updatingVerification) {
+            setVerificationTarget(null);
+            setVerificationRemarks("");
+            setRemarksError("");
+          }
+        }}
+        onConfirm={confirmVerificationChange}
       />
     </Box>
   );

@@ -76,6 +76,8 @@ export default function AdminComplaintsContent() {
     newStatus: string;
   } | null>(null);
   const [adminRemark, setAdminRemark] = useState("");
+  const [remarkTouched, setRemarkTouched] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { showSnackbar } = useSnackbarStore();
@@ -115,14 +117,20 @@ export default function AdminComplaintsContent() {
         statusUpdateTarget.newStatus === COMPLAINT_STATUS.RESOLVED) &&
       !adminRemark.trim()
     ) {
+      setRemarkTouched(true);
+      const notesLabel =
+        statusUpdateTarget.newStatus === COMPLAINT_STATUS.REJECTED
+          ? "Rejection notes"
+          : "Resolution notes";
       showSnackbar(
-        `Resolution notes are required when marking a complaint as ${statusUpdateTarget.newStatus.replace(/_/g, " ")}`,
+        `${notesLabel} are required when marking a complaint as ${statusUpdateTarget.newStatus.replace(/_/g, " ")}`,
         "error"
       );
       return;
     }
 
     try {
+      setIsUpdatingStatus(true);
       const res = await updateComplaintStatusAPI(
         statusUpdateTarget.id,
         statusUpdateTarget.newStatus,
@@ -131,13 +139,16 @@ export default function AdminComplaintsContent() {
       if (res.success) {
         showSnackbar("Complaint status updated", "success");
         fetchComplaints();
+        setStatusUpdateTarget(null);
+        setAdminRemark("");
+        setRemarkTouched(false);
       } else {
         showSnackbar(res.message || "Failed to update status", "error");
       }
     } catch (err: any) {
       showSnackbar(err.response?.data?.message || "Error updating status", "error");
     } finally {
-      setStatusUpdateTarget(null);
+      setIsUpdatingStatus(false);
     }
   };
 
@@ -223,17 +234,27 @@ export default function AdminComplaintsContent() {
           item.status === COMPLAINT_STATUS.CLOSED ||
           item.status === COMPLAINT_STATUS.RESOLVED;
 
+        const availableStatuses = Object.values(COMPLAINT_STATUS).filter((s) => {
+          // If complaint is currently UNDER_REVIEW, OPEN is not an allowed transition
+          if (item.status === COMPLAINT_STATUS.UNDER_REVIEW && s === COMPLAINT_STATUS.OPEN) {
+            return false;
+          }
+          return true;
+        });
+
         return (
           <AdminStatusSelect
             value={item.status}
             readOnly={isFinal}
-            options={Object.values(COMPLAINT_STATUS).map((s) => ({
+            options={availableStatuses.map((s) => ({
               value: s,
               label: s.replace(/_/g, " "),
             }))}
             onChange={(newStatus) => {
+              if (newStatus === item.status) return;
               setStatusUpdateTarget({ id: item.id, newStatus });
               setAdminRemark("");
+              setRemarkTouched(false);
             }}
           />
         );
@@ -304,32 +325,72 @@ export default function AdminComplaintsContent() {
 
       <ConfirmStatusDialog
         open={Boolean(statusUpdateTarget)}
-        title="Update Complaint Status"
+        title={
+          statusUpdateTarget?.newStatus === COMPLAINT_STATUS.REJECTED
+            ? "Reject Complaint"
+            : statusUpdateTarget?.newStatus === COMPLAINT_STATUS.RESOLVED
+            ? "Resolve Complaint"
+            : "Update Complaint Status"
+        }
         itemName={statusUpdateTarget ? `Complaint C-${statusUpdateTarget.id}` : undefined}
         newStatus={statusUpdateTarget?.newStatus.replace(/_/g, " ")}
+        loading={isUpdatingStatus}
         customMessage={
           statusUpdateTarget?.newStatus === COMPLAINT_STATUS.REJECTED ||
           statusUpdateTarget?.newStatus === COMPLAINT_STATUS.RESOLVED ? (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 1 }}>
               <Typography sx={{ color: "#475569", fontFamily: FONTS.OUTFIT }}>
-                Resolution notes are required when marking status as <strong>{statusUpdateTarget?.newStatus.replace(/_/g, " ")}</strong>:
+                {statusUpdateTarget.newStatus === COMPLAINT_STATUS.REJECTED ? (
+                  <>
+                    Rejection notes are required when marking status as <strong>REJECTED</strong>:
+                  </>
+                ) : (
+                  <>
+                    Resolution notes are required when marking status as <strong>RESOLVED</strong>:
+                  </>
+                )}
               </Typography>
               <TextField
                 fullWidth
                 multiline
                 rows={3}
-                label="Resolution Notes (Required) *"
+                label={
+                  statusUpdateTarget.newStatus === COMPLAINT_STATUS.REJECTED
+                    ? "Rejection Notes (Required) *"
+                    : "Resolution Notes (Required) *"
+                }
+                placeholder={
+                  statusUpdateTarget.newStatus === COMPLAINT_STATUS.REJECTED
+                    ? "Enter reason for rejection..."
+                    : "Enter resolution details..."
+                }
                 variant="outlined"
                 value={adminRemark}
-                onChange={(e) => setAdminRemark(e.target.value)}
-                error={adminRemark.trim() === ""}
-                helperText={adminRemark.trim() === "" ? "Notes are required to resolve/reject." : ""}
+                onChange={(e) => {
+                  setAdminRemark(e.target.value);
+                  if (remarkTouched && e.target.value.trim() !== "") {
+                    setRemarkTouched(false);
+                  }
+                }}
+                error={remarkTouched && adminRemark.trim() === ""}
+                helperText={
+                  remarkTouched && adminRemark.trim() === ""
+                    ? statusUpdateTarget.newStatus === COMPLAINT_STATUS.REJECTED
+                      ? "Notes are required to reject."
+                      : "Notes are required to resolve."
+                    : ""
+                }
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Box>
           ) : undefined
         }
-        onClose={() => setStatusUpdateTarget(null)}
+        onClose={() => {
+          if (isUpdatingStatus) return;
+          setStatusUpdateTarget(null);
+          setRemarkTouched(false);
+          setAdminRemark("");
+        }}
         onConfirm={confirmStatusChange}
       />
 
@@ -356,8 +417,19 @@ export default function AdminComplaintsContent() {
                 </Grid>
                 {selectedComplaint.adminRemark && (
                   <Grid size={{ xs: 12 }}>
-                    <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600, mt: 1 }}>Admin Resolution Notes</Typography>
-                    <Typography sx={{ color: "#059669", fontWeight: 600, fontFamily: FONTS.OUTFIT, mt: 0.5 }}>{selectedComplaint.adminRemark}</Typography>
+                    <Typography variant="body2" sx={{ color: "#64748b", fontWeight: 600, mt: 1 }}>
+                      {selectedComplaint.status === COMPLAINT_STATUS.REJECTED ? "Admin Rejection Notes" : "Admin Resolution Notes"}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: selectedComplaint.status === COMPLAINT_STATUS.REJECTED ? "#dc2626" : "#059669",
+                        fontWeight: 600,
+                        fontFamily: FONTS.OUTFIT,
+                        mt: 0.5,
+                      }}
+                    >
+                      {selectedComplaint.adminRemark}
+                    </Typography>
                   </Grid>
                 )}
               </Grid>

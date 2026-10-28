@@ -1,8 +1,3 @@
-/**
- * Helper to persist and synchronize table pagination (page, rowsPerPage/limit, and optional filters)
- * across browser refreshes using both sessionStorage and URL search parameters.
- */
-
 export interface TablePaginationState {
   page: number;
   rowsPerPage: number;

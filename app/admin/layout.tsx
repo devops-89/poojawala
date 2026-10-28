@@ -55,7 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
-        <Box component="main" sx={{ flex: 1, p: { xs: 2, sm: 3, lg: 4 }, overflowY: 'auto' }}>
+        <Box component="main" sx={{ flex: 1, p: { xs: 2, sm: 3, lg: 4 } }}>
           {children}
         </Box>
       </Box>

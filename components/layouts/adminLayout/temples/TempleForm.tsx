@@ -1,157 +1,202 @@
 "use client";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import {
   ADDRESS_STRICT_REGEX,
   ADDRESS_STRICT_MESSAGE,
-  allowOnlyAddressCharsOnKeyDown,
-  sanitizeAddressInput,
   TITLE_STRICT_REGEX,
   TITLE_STRICT_MESSAGE,
-  allowOnlyTitleCharsOnKeyDown,
-  sanitizeTitleInput,
 } from "@/utils/helpers";
 
-import { createTempleAPI, getTempleByIdAPI, updateTempleAPI } from "@/api/templeControllers";
+import {
+  createTempleAPI,
+  getTempleByIdAPI,
+  updateTempleAPI,
+} from "@/api/templeControllers";
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
-import { TiptapEditor } from "@/components/widgets/TiptapEditor";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
+import {
+  formatSecondsToTimeInput,
+  formatTimeToSeconds,
+} from "@/utils/templeFormUtils";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import {
-  Autocomplete,
   Box,
   Breadcrumbs,
   Button,
   CircularProgress,
-  Divider,
-  Grid,
-  Paper,
-  TextField,
   Typography,
 } from "@mui/material";
 import { City, State } from "country-state-city";
 import { FormikProvider, useFormik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as Yup from "yup";
+import { TempleFormProps } from "@/utils/types";
+
+import TempleProfileSection from "./components/TempleProfileSection";
+import TempleTimingsSection, {
+  AartiItem,
+} from "./components/TempleTimingsSection";
+import TempleMediaSection from "./components/TempleMediaSection";
+import TempleSeoSection from "./components/TempleSeoSection";
+
+export type { AartiItem };
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .trim()
     .required("Temple name is required")
     .min(3, "Temple name must be at least 3 characters")
-    .max(100, "Temple name cannot exceed 100 characters")
+    .max(120, "Temple name cannot exceed 120 characters")
+    .matches(TITLE_STRICT_REGEX, TITLE_STRICT_MESSAGE),
+  primaryDeity: Yup.string()
+    .trim()
+    .required("Primary Deity is required")
+    .min(2, "Primary Deity must be at least 2 characters")
+    .max(100, "Primary Deity cannot exceed 100 characters"),
+  trustName: Yup.string().trim().optional(),
+  contactName: Yup.string()
+    .trim()
+    .required("Contact person / Trustee name is required")
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name cannot exceed 100 characters"),
+  phone: Yup.string()
+    .trim()
+    .required("Phone number is required")
     .matches(
-      TITLE_STRICT_REGEX,
-      TITLE_STRICT_MESSAGE
+      /^[6-9]\d{9}$/,
+      "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9"
     ),
-  description: Yup.string()
-    .required("Description is required")
-    .test("meaningful-html", "Description must contain meaningful text with letters (at least 10 characters), not just symbols", (val) => {
-      if (!val) return false;
-      const stripped = val.replace(/<[^>]*>/g, "").trim();
-      const letters = (stripped.match(/[a-zA-Z]/g) || []).length;
-      return stripped.length >= 10 && letters >= 5;
-    }),
-  state: Yup.string().trim().required("State is required"),
-  city: Yup.string().trim().required("City is required"),
+  email: Yup.string()
+    .trim()
+    .email("Please enter a valid email address")
+    .optional(),
   address: Yup.string()
     .trim()
     .required("Address is required")
     .min(5, "Address must be at least 5 characters")
     .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
-    .test("meaningful-address", "Address must contain letters, not just numbers or symbols", (val) => {
-      if (!val) return false;
-      return /[a-zA-Z]/.test(val);
-    }),
+    .test(
+      "meaningful-address",
+      "Address must contain letters, not just numbers or symbols",
+      (val) => {
+        if (!val) return false;
+        return /[a-zA-Z]/.test(val);
+      }
+    ),
+  state: Yup.string().trim().required("State is required"),
+  city: Yup.string().trim().required("City is required"),
+  description: Yup.string()
+    .required("Description is required")
+    .test(
+      "meaningful-html",
+      "Description must contain meaningful text with letters (at least 10 characters), not just symbols",
+      (val) => {
+        if (!val) return false;
+        const stripped = val.replace(/<[^>]*>/g, "").trim();
+        const letters = (stripped.match(/[a-zA-Z]/g) || []).length;
+        return stripped.length >= 10 && letters >= 5;
+      }
+    ),
+  openingTime: Yup.string().optional(),
+  closingTime: Yup.string().optional(),
+  trustRegNo: Yup.string().trim().optional(),
   metaTitle: Yup.string().trim().optional(),
   metaDescription: Yup.string().trim().optional(),
 });
-
-import { TempleFormProps } from "@/utils/types";
 
 export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   const router = useRouter();
   const { showSnackbar } = useSnackbarStore();
 
   const [loading, setLoading] = useState(isEdit);
+  const [numericTempleId, setNumericTempleId] = useState<number | string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Main Image (imageUrl)
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [imageRemoved, setImageRemoved] = useState(false);
-  const [numericTempleId, setNumericTempleId] = useState<number | string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initialDataRef = useRef<{
-    name: string;
-    description: string;
-    state: string;
-    city: string;
-    address: string;
-    metaTitle: string;
-    metaDescription: string;
-    hasImage: boolean;
-  } | null>(null);
+  // Trust Deed (trustDocUrl)
+  const [trustDocFile, setTrustDocFile] = useState<File | null>(null);
+  const [trustDocPreview, setTrustDocPreview] = useState<string | null>(null);
+  const [trustDocName, setTrustDocName] = useState<string>("");
+  const [trustDocRemoved, setTrustDocRemoved] = useState(false);
+
+  // Deity Photo (deityPhotoUrl)
+  const [deityPhotoFile, setDeityPhotoFile] = useState<File | null>(null);
+  const [deityPhotoPreview, setDeityPhotoPreview] = useState<string | null>(null);
+  const [deityPhotoRemoved, setDeityPhotoRemoved] = useState(false);
+
+  // Aartis list
+  const [aartis, setAartis] = useState<AartiItem[]>([
+    { name: "", time: "", description: "" },
+  ]);
+
+  const initialDataRef = useRef<any>(null);
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
+      primaryDeity: "",
+      trustName: "",
+      contactName: "",
+      phone: "",
+      email: "",
+      address: "",
       state: "",
       city: "",
-      address: "",
+      description: "",
+      openingTime: "",
+      closingTime: "",
+      trustRegNo: "",
       metaTitle: "",
       metaDescription: "",
     },
     validationSchema,
     onSubmit: async (values) => {
       if (!isEdit && !imageFile && !imagePreview) {
-        setImageError("Temple image is required");
-        showSnackbar("Please upload a temple image", "error");
+        setImageError("Temple main cover image is required");
+        showSnackbar("Please upload a temple main cover image", "error");
         return;
-      }
-
-      // Check if updating without making any modifications
-      if (isEdit && initialDataRef.current) {
-        const init = initialDataRef.current;
-        const isNameSame = values.name.trim() === init.name.trim();
-        const isDescSame = values.description.trim() === init.description.trim();
-        const isStateSame = (values.state || "").trim() === (init.state || "").trim();
-        const isCitySame = values.city.trim() === init.city.trim();
-        const isAddressSame = values.address.trim() === init.address.trim();
-        const isMetaTitleSame = (values.metaTitle || "").trim() === (init.metaTitle || "").trim();
-        const isMetaDescSame = (values.metaDescription || "").trim() === (init.metaDescription || "").trim();
-        const isImageSame = !imageFile && !imageRemoved;
-
-        if (
-          isNameSame &&
-          isDescSame &&
-          isStateSame &&
-          isCitySame &&
-          isAddressSame &&
-          isMetaTitleSame &&
-          isMetaDescSame &&
-          isImageSame
-        ) {
-          showSnackbar("No changes have been made", "info");
-          return;
-        }
       }
 
       try {
         setIsSubmitting(true);
         const formData = new FormData();
+
         formData.append("name", values.name.trim());
-        formData.append("description", values.description.trim());
+        formData.append("primaryDeity", values.primaryDeity.trim());
+        if (values.trustName && values.trustName.trim()) {
+          formData.append("trustName", values.trustName.trim());
+        }
+        formData.append("contactName", values.contactName.trim());
+        formData.append("phone", values.phone.trim());
+        if (values.email && values.email.trim()) {
+          formData.append("email", values.email.trim());
+        }
+        formData.append("address", values.address.trim());
+        formData.append("city", values.city.trim());
         if (values.state && values.state.trim()) {
           formData.append("state", values.state.trim());
         }
-        formData.append("city", values.city.trim());
-        formData.append("address", values.address.trim());
+        formData.append("description", values.description.trim());
+
+        if (values.openingTime) {
+          formData.append("openingTime", formatTimeToSeconds(values.openingTime));
+        }
+        if (values.closingTime) {
+          formData.append("closingTime", formatTimeToSeconds(values.closingTime));
+        }
+        if (values.trustRegNo && values.trustRegNo.trim()) {
+          formData.append("trustRegNo", values.trustRegNo.trim());
+        }
+
         if (values.metaTitle && values.metaTitle.trim()) {
           formData.append("metaTitle", values.metaTitle.trim());
         } else if (isEdit) {
@@ -162,6 +207,18 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         } else if (isEdit) {
           formData.append("metaDescription", "");
         }
+
+        // Aartis Array stringified
+        const validAartis = aartis
+          .filter((a) => a.name && a.name.trim() !== "")
+          .map((a) => ({
+            name: a.name.trim(),
+            time: formatTimeToSeconds(a.time),
+            description: a.description?.trim() || "",
+          }));
+        formData.append("aartis", JSON.stringify(validAartis));
+
+        // 1. Main Cover Image (imageUrl)
         if (imageFile) {
           formData.append("imageUrl", imageFile);
         } else if (imageRemoved) {
@@ -187,6 +244,24 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           }
         }
 
+        // 2. Trust Deed Document (trustDocUrl)
+        if (trustDocFile) {
+          formData.append("trustDocUrl", trustDocFile);
+        } else if (trustDocRemoved) {
+          formData.append("trustDocUrl", "");
+        } else if (trustDocPreview && !trustDocPreview.startsWith("blob:")) {
+          formData.append("trustDocUrl", trustDocPreview);
+        }
+
+        // 3. Deity Photo (deityPhotoUrl)
+        if (deityPhotoFile) {
+          formData.append("deityPhotoUrl", deityPhotoFile);
+        } else if (deityPhotoRemoved) {
+          formData.append("deityPhotoUrl", "");
+        } else if (deityPhotoPreview && !deityPhotoPreview.startsWith("blob:")) {
+          formData.append("deityPhotoUrl", deityPhotoPreview);
+        }
+
         let res;
         if (isEdit && id) {
           res = await updateTempleAPI(numericTempleId || id, formData);
@@ -194,7 +269,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           res = await createTempleAPI(formData);
         }
 
-        if (res.success) {
+        if (res.success || res.data) {
           showSnackbar(
             isEdit ? "Temple updated successfully" : "Temple created successfully",
             "success"
@@ -210,7 +285,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         console.error("Temple submit error:", error);
         showSnackbar(
           error.response?.data?.message ||
-          `Error ${isEdit ? "updating" : "creating"} temple. Please try again.`,
+            `Error ${isEdit ? "updating" : "creating"} temple. Please try again.`,
           "error"
         );
       } finally {
@@ -235,8 +310,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         (formik.values.state || "").toLowerCase().trim()
     );
     if (selectedStateObj && selectedStateObj.isoCode) {
-      const cities =
-        City.getCitiesOfState("IN", selectedStateObj.isoCode) || [];
+      const cities = City.getCitiesOfState("IN", selectedStateObj.isoCode) || [];
       return Array.from(new Set(cities.map((c) => c.name))).sort((a, b) =>
         a.localeCompare(b)
       );
@@ -244,6 +318,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
     return [];
   }, [formik.values.state]);
 
+  // Fetch details on edit
   useEffect(() => {
     if (isEdit && id) {
       const fetchTemple = async () => {
@@ -254,46 +329,63 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
             const temple = res.data.data || res.data;
             if (temple.id) {
               setNumericTempleId(temple.id);
-              if (typeof window !== "undefined") {
-                localStorage.setItem("last_temple_id", String(temple.id));
-                sessionStorage.setItem("last_temple_id", String(temple.id));
-                if (temple.slug) {
-                  const s = String(temple.slug).toLowerCase();
-                  localStorage.setItem(`slug_to_id_${s}`, String(temple.id));
-                  sessionStorage.setItem(`slug_to_id_${s}`, String(temple.id));
-                  localStorage.setItem(`temple_slug_${s}`, String(temple.id));
-                  sessionStorage.setItem(`temple_slug_${s}`, String(temple.id));
-                }
-              }
             }
-            if (temple.slug && /^\d+$/.test(String(id))) {
-              window.history.replaceState(null, "", `/admin/temples/edit/${temple.slug}`);
-            }
+
             formik.setValues({
               name: temple.name || "",
-              description: temple.description || "",
+              primaryDeity: temple.primaryDeity || "",
+              trustName: temple.trustName || "",
+              contactName: temple.contactName || "",
+              phone: temple.phone || "",
+              email: temple.email || "",
+              address: temple.address || "",
               state: temple.state || "",
               city: temple.city || "",
-              address: temple.address || "",
+              description: temple.description || "",
+              openingTime: formatSecondsToTimeInput(temple.openingTime),
+              closingTime: formatSecondsToTimeInput(temple.closingTime),
+              trustRegNo: temple.trustRegNo || "",
               metaTitle: temple.metaTitle || "",
               metaDescription: temple.metaDescription || "",
             });
 
-            const existingImg = temple.downloadUrl || temple.imageUrl;
-            if (existingImg) {
-              setImagePreview(existingImg);
+            // Parse Aartis if present
+            if (temple.aartis) {
+              try {
+                const parsed =
+                  typeof temple.aartis === "string"
+                    ? JSON.parse(temple.aartis)
+                    : temple.aartis;
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                  setAartis(
+                    parsed.map((a: any) => ({
+                      name: a.name || "",
+                      time: formatSecondsToTimeInput(a.time),
+                      description: a.description || "",
+                    }))
+                  );
+                }
+              } catch (e) {
+                console.warn("Could not parse existing temple aartis:", e);
+              }
             }
 
-            initialDataRef.current = {
-              name: temple.name || "",
-              description: temple.description || "",
-              state: temple.state || "",
-              city: temple.city || "",
-              address: temple.address || "",
-              metaTitle: temple.metaTitle || "",
-              metaDescription: temple.metaDescription || "",
-              hasImage: Boolean(existingImg),
-            };
+            // Existing media files
+            const existingImg = temple.downloadUrl || temple.imageUrl;
+            if (existingImg) setImagePreview(existingImg);
+
+            const existingTrustDoc =
+              temple.trustDocDownloadUrl || temple.trustDocUrl;
+            if (existingTrustDoc) {
+              setTrustDocPreview(existingTrustDoc);
+              setTrustDocName("Trust Document (Uploaded)");
+            }
+
+            const existingDeityPhoto =
+              temple.deityPhotoDownloadUrl || temple.deityPhotoUrl;
+            if (existingDeityPhoto) setDeityPhotoPreview(existingDeityPhoto);
+
+            initialDataRef.current = temple;
           } else {
             showSnackbar("Temple not found", "error");
             router.push("/admin/temples");
@@ -310,6 +402,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
     }
   }, [isEdit, id]);
 
+  // Main Image Handlers
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -331,9 +424,74 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
     setImageFile(null);
     setImagePreview(null);
     setImageRemoved(true);
-    if (!isEdit) {
-      setImageError("Temple image is required");
+    if (!isEdit) setImageError("Temple main cover image is required");
+  };
+
+  // Trust Doc Handlers
+  const handleTrustDocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setTrustDocFile(file);
+      setTrustDocName(file.name);
+      if (file.type.startsWith("image/")) {
+        setTrustDocPreview(URL.createObjectURL(file));
+      } else {
+        setTrustDocPreview(null);
+      }
+      setTrustDocRemoved(false);
+      e.target.value = "";
     }
+  };
+
+  const handleRemoveTrustDoc = () => {
+    setTrustDocFile(null);
+    setTrustDocPreview(null);
+    setTrustDocName("");
+    setTrustDocRemoved(true);
+  };
+
+  // Deity Photo Handlers
+  const handleDeityPhotoChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      try {
+        const webpFile = await convertImageToWebP(file);
+        setDeityPhotoFile(webpFile);
+        setDeityPhotoPreview(URL.createObjectURL(webpFile));
+      } catch (err) {
+        setDeityPhotoFile(file);
+        setDeityPhotoPreview(URL.createObjectURL(file));
+      }
+      setDeityPhotoRemoved(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveDeityPhoto = () => {
+    setDeityPhotoFile(null);
+    setDeityPhotoPreview(null);
+    setDeityPhotoRemoved(true);
+  };
+
+  // Aarti list functions
+  const handleAddAarti = () => {
+    setAartis((prev) => [...prev, { name: "", time: "", description: "" }]);
+  };
+
+  const handleRemoveAarti = (index: number) => {
+    setAartis((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAartiChange = (
+    index: number,
+    field: keyof AartiItem,
+    value: string
+  ) => {
+    setAartis((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
   };
 
   if (loading) {
@@ -347,7 +505,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   return (
     <FormikProvider value={formik}>
       <FormikValidationSnackbar />
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pb: 6 }}>
         {/* Header & Breadcrumbs */}
         <Box>
           <Breadcrumbs
@@ -388,450 +546,61 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
             }}
           >
             {isEdit
-              ? "Update temple details and location."
-              : "Create a new temple listing with location and details."}
+              ? "Update shrine profile, timings, trust verification, and media."
+              : "Register a sacred shrine with trust details, visiting hours, aartis, and photos."}
           </Typography>
         </Box>
 
         <form onSubmit={formik.handleSubmit}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 4,
-              borderRadius: "16px",
-              border: "1px solid #e2e8f0",
-              bgcolor: "white",
-              display: "flex",
-              flexDirection: "column",
-              gap: 3.5,
-            }}
-          >
-            {/* 1. Temple Image Upload (At the Very Top) */}
-            <Box>
-              <Typography
-                sx={{
-                  fontFamily: FONTS.OUTFIT,
-                  fontWeight: 700,
-                  mb: 1,
-                  color: "#1e293b",
-                }}
-              >
-                Temple Image {!isEdit && "*"}
-              </Typography>
-              {imagePreview ? (
-                <Box
-                  sx={{
-                    width: "100%",
-                    minHeight: "72px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "12px",
-                    bgcolor: "#f8fafc",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    px: 2.5,
-                    py: 1.5,
-                    gap: 2,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Box
-                      component="img"
-                      src={imagePreview}
-                      alt="Temple Preview"
-                      sx={{
-                        width: 52,
-                        height: 52,
-                        objectFit: "cover",
-                        borderRadius: "8px",
-                        border: "1px solid #e2e8f0",
-                      }}
-                    />
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontWeight: 600,
-                          color: "#1e293b",
-                          fontSize: "0.95rem",
-                        }}
-                      >
-                        {imageFile ? "New Image Selected" : "Temple Image"}
-                      </Typography>
-                      <Typography sx={{ color: "#64748b", fontSize: "0.8rem" }}>
-                        Click Change to replace or Remove to clear
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        borderRadius: "8px",
-                        borderColor: "#cbd5e1",
-                        color: "#334155",
-                        textTransform: "none",
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 600,
-                        fontSize: "0.85rem",
-                        "&:hover": { borderColor: COLORS.PRIMARY, color: COLORS.PRIMARY },
-                      }}
-                    >
-                      Change Image
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={handleImageChange}
-                      />
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      size="small"
-                      startIcon={<DeleteOutlineIcon fontSize="small" />}
-                      onClick={handleRemoveImage}
-                      sx={{
-                        borderRadius: "8px",
-                        textTransform: "none",
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 600,
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      Remove Image
-                    </Button>
-                  </Box>
-                </Box>
-              ) : (
-                <Box
-                  component="label"
-                  sx={{
-                    width: "100%",
-                    minHeight: "68px",
-                    border: "1px dashed #cbd5e1",
-                    borderRadius: "12px",
-                    bgcolor: "#f8fafc",
-                    display: "flex",
-                    alignItems: "center",
-                    px: 2.5,
-                    py: 1.5,
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    "&:hover": {
-                      borderColor: COLORS.PRIMARY,
-                      bgcolor: "#FFF0E6",
-                    },
-                  }}
-                >
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      width: "100%",
-                    }}
-                  >
-                    <CloudUploadIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontWeight: 600,
-                          fontSize: "0.95rem",
-                          color: "#334155",
-                        }}
-                      >
-                        Click to upload temple image
-                      </Typography>
-                      <Typography sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
-                        PNG, JPG, WebP up to 10MB
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              )}
-              {imageError && (
-                <Typography sx={{ fontSize: "0.75rem", color: "#d32f2f", mt: 0.5, ml: 1 }}>
-                  {imageError}
-                </Typography>
-              )}
-            </Box>
-
-            {/* 2. Temple Name */}
-            <TextField
-              fullWidth
-              name="name"
-              label="Temple Name *"
-              placeholder="e.g., Shri Hanuman Mandir"
-              variant="outlined"
-              value={formik.values.name}
-              onKeyDown={allowOnlyTitleCharsOnKeyDown}
-              onChange={(e) => {
-                formik.setFieldValue("name", sanitizeTitleInput(e.target.value));
-                formik.setFieldTouched("name", true, false);
-              }}
-              onBlur={formik.handleBlur}
-              error={
-                Boolean(formik.errors.name) &&
-                (formik.touched.name || Boolean(formik.values.name))
-              }
-              helperText={
-                (formik.touched.name || Boolean(formik.values.name))
-                  ? formik.errors.name
-                  : undefined
-              }
-              sx={{
-                "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-              }}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}>
+            {/* 1. Temple Profile & Location Details */}
+            <TempleProfileSection
+              formik={formik}
+              stateOptions={stateOptions}
+              cityOptions={cityOptions}
             />
 
-            {/* 3. Description (Rich Text Editor) */}
-            <TiptapEditor
-              label="Description *"
-              value={formik.values.description}
-              onChange={(html) => {
-                formik.setFieldValue("description", html);
-                formik.setFieldTouched("description", true, false);
-              }}
-              onBlur={() => formik.setFieldTouched("description", true, true)}
-              placeholder="Enter detailed description of the temple with rich formatting..."
-              minHeight={250}
-              error={
-                Boolean(formik.errors.description) &&
-                (formik.touched.description || Boolean(formik.values.description))
-              }
-              helperText={
-                (formik.touched.description || Boolean(formik.values.description))
-                  ? (formik.errors.description as string)
-                  : undefined
-              }
+            {/* 2. Timings & Seva Offerings */}
+            <TempleTimingsSection
+              formik={formik}
+              aartis={aartis}
+              onAddAarti={handleAddAarti}
+              onRemoveAarti={handleRemoveAarti}
+              onAartiChange={handleAartiChange}
             />
 
-            {/* 4. Location Details */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-              <Typography
-                sx={{
-                  fontFamily: FONTS.OUTFIT,
-                  fontWeight: 700,
-                  fontSize: "1.05rem",
-                  color: "#1e293b",
-                }}
-              >
-                Location Details
-              </Typography>
+            {/* 3. Trust Verification & Media Uploads */}
+            <TempleMediaSection
+              formik={formik}
+              isEdit={isEdit}
+              imagePreview={imagePreview}
+              imageFile={imageFile}
+              imageError={imageError}
+              onImageChange={handleImageChange}
+              onRemoveImage={handleRemoveImage}
+              trustDocFile={trustDocFile}
+              trustDocPreview={trustDocPreview}
+              trustDocName={trustDocName}
+              onTrustDocChange={handleTrustDocChange}
+              onRemoveTrustDoc={handleRemoveTrustDoc}
+              deityPhotoFile={deityPhotoFile}
+              deityPhotoPreview={deityPhotoPreview}
+              onDeityPhotoChange={handleDeityPhotoChange}
+              onRemoveDeityPhoto={handleRemoveDeityPhoto}
+            />
 
-              {/* State & City Filter */}
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Autocomplete
-                    freeSolo
-                    forcePopupIcon
-                    options={stateOptions}
-                    value={formik.values.state || ""}
-                    onChange={(_, newValue) => {
-                      const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                      formik.setFieldValue("state", val, true);
-                      formik.setFieldTouched("state", true, false);
-                      formik.setFieldValue("city", "");
-                      formik.setFieldTouched("city", false, false);
-                    }}
-                    onInputChange={(_, newInputValue, reason) => {
-                      if (reason === "input") {
-                        const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                        formik.setFieldValue("state", val, true);
-                        formik.setFieldTouched("state", true, false);
-                      } else if (reason === "clear") {
-                        formik.setFieldValue("state", "");
-                        formik.setFieldTouched("state", true, false);
-                        formik.setFieldValue("city", "");
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        name="state"
-                        label="State *"
-                        placeholder="Select or type State"
-                        variant="outlined"
-                        error={Boolean(
-                          formik.touched.state &&
-                          formik.errors.state &&
-                          !formik.values.state?.trim()
-                        )}
-                        helperText={
-                          formik.touched.state &&
-                            formik.errors.state &&
-                            !formik.values.state?.trim()
-                            ? (formik.errors.state as string)
-                            : undefined
-                        }
-                        sx={{
-                          "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Autocomplete
-                    freeSolo
-                    forcePopupIcon
-                    disabled={!formik.values.state}
-                    options={cityOptions}
-                    value={formik.values.city || ""}
-                    onChange={(_, newValue) => {
-                      const val = (newValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                      formik.setFieldValue("city", val, true);
-                      formik.setFieldTouched("city", true, false);
-                    }}
-                    onInputChange={(_, newInputValue, reason) => {
-                      if (reason === "input") {
-                        const val = (newInputValue || "").replace(/[^a-zA-Z\s.-]/g, "");
-                        formik.setFieldValue("city", val, true);
-                        formik.setFieldTouched("city", true, false);
-                      } else if (reason === "clear") {
-                        formik.setFieldValue("city", "");
-                        formik.setFieldTouched("city", true, false);
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        name="city"
-                        label="City *"
-                        placeholder={
-                          !formik.values.state
-                            ? "Select State first"
-                            : "Select or type City"
-                        }
-                        variant="outlined"
-                        error={Boolean(
-                          formik.touched.city &&
-                          formik.errors.city &&
-                          !formik.values.city?.trim()
-                        )}
-                        helperText={
-                          formik.touched.city &&
-                            formik.errors.city &&
-                            !formik.values.city?.trim()
-                            ? (formik.errors.city as string)
-                            : undefined
-                        }
-                        sx={{
-                          "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
-
-              {/* Address Field (under State & City) */}
-              <TextField
-                fullWidth
-                name="address"
-                label="Address *"
-                placeholder="e.g., Sector 62, Near Central Market"
-                variant="outlined"
-                value={formik.values.address}
-                onKeyDown={allowOnlyAddressCharsOnKeyDown}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  formik.setFieldTouched("address", true, true);
-                }}
-                onBlur={formik.handleBlur}
-                error={
-                  Boolean(formik.errors.address) &&
-                  (formik.touched.address || Boolean(formik.values.address))
-                }
-                helperText={
-                  (formik.touched.address || Boolean(formik.values.address))
-                    ? formik.errors.address
-                    : undefined
-                }
-                sx={{
-                  "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-                }}
-              />
-            </Box>
-
-            {/* 5. SEO / Metadata Details */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-              <Box>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    fontWeight: 700,
-                    fontSize: "1.05rem",
-                    color: "#1e293b",
-                  }}
-                >
-                  SEO / Search Engine Optimization
-                </Typography>
-                <Typography sx={{ color: "#64748b", fontSize: "0.85rem", mt: 0.5 }}>
-                  Add meta title and description to optimize this temple page for search engines and social sharing.
-                </Typography>
-              </Box>
-
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    name="metaTitle"
-                    label="Meta Title (SEO)"
-                    placeholder="e.g., JK Temple (Shri Radhakrishna Temple) - Kanpur | History & Darshan"
-                    variant="outlined"
-                    value={formik.values.metaTitle}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={Boolean(formik.touched.metaTitle && formik.errors.metaTitle)}
-                    helperText={formik.touched.metaTitle ? formik.errors.metaTitle : undefined}
-                    sx={{
-                      "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-                    }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={3}
-                    name="metaDescription"
-                    label="Meta Description (SEO)"
-                    placeholder="e.g., Explore JK Temple in Kanpur. Discover its unique Nagara architecture, timings, rituals, and serene gardens."
-                    variant="outlined"
-                    value={formik.values.metaDescription}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={Boolean(formik.touched.metaDescription && formik.errors.metaDescription)}
-                    helperText={formik.touched.metaDescription ? formik.errors.metaDescription : undefined}
-                    sx={{
-                      "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-
-            <Divider sx={{ my: 1 }} />
+            {/* 4. SEO & Discoverability */}
+            <TempleSeoSection formik={formik} />
 
             {/* Bottom Actions */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+                mt: 1,
+              }}
+            >
               <Button
                 variant="outlined"
                 component={NextLink}
@@ -839,13 +608,13 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                 sx={{
                   borderRadius: "12px",
                   textTransform: "none",
-                  borderColor: "#cbd5e1",
-                  color: "#64748b",
+                  borderColor: "#CBD5E1",
+                  color: "#64748B",
                   fontWeight: 600,
                   px: 3.5,
                   py: 1.2,
                   fontFamily: FONTS.OUTFIT,
-                  "&:hover": { borderColor: "#94a3b8", bgcolor: "#f8fafc" },
+                  "&:hover": { borderColor: "#94A3B8", bgcolor: "#F8FAFC" },
                 }}
               >
                 Cancel
@@ -875,7 +644,7 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                 )}
               </Button>
             </Box>
-          </Paper>
+          </Box>
         </form>
       </Box>
     </FormikProvider>

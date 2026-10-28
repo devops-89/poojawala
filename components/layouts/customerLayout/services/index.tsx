@@ -85,6 +85,7 @@ export const ServicesPage = () => {
     if (urlState || urlCity || urlSearch || urlCategoryId || urlCategory || urlPage) {
       if (urlState) setSelectedState(urlState);
       if (urlCity) setSelectedCity(urlCity);
+      else if (urlState) setSelectedCity("All");
       if (urlSearch) setSearchTerm(urlSearch);
       if (urlCategoryId) setSelectedCategoryId(urlCategoryId);
       if (urlCategory) setSelectedCategoryName(urlCategory);
@@ -159,7 +160,7 @@ export const ServicesPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [isOnline]);
+  }, [searchParams, isOnline, isOffline]);
 
   useEffect(() => {
     if (isOnline) {

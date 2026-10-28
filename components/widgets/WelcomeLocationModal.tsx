@@ -81,15 +81,25 @@ export default function WelcomeLocationModal() {
     setOpen(false);
 
     const params = new URLSearchParams();
-    if (selectedState && selectedState !== "All") {
-      params.append("state", selectedState);
+    params.set("isOffline", "true");
+
+    if (
+      selectedState &&
+      selectedState !== "All" &&
+      selectedState !== "All States"
+    ) {
+      params.set("state", selectedState);
     }
-    if (selectedCity && selectedCity !== "All") {
-      params.append("city", selectedCity);
+    if (
+      selectedCity &&
+      selectedCity !== "All" &&
+      selectedCity !== "All Cities"
+    ) {
+      params.set("city", selectedCity);
     }
 
     const queryString = params.toString();
-    const targetUrl = queryString ? `/services?${queryString}` : "/services";
+    const targetUrl = `/services?${queryString}`;
 
     router.push(targetUrl);
   };
@@ -103,9 +113,9 @@ export default function WelcomeLocationModal() {
       slotProps={{
         paper: {
           sx: {
-            borderRadius: "24px",
-            maxWidth: 480,
-            width: "90%",
+            borderRadius: "20px",
+            maxWidth: 440,
+            width: "92%",
             p: 0,
             overflow: "hidden",
             boxShadow: "0 20px 60px rgba(0, 0, 0, 0.2)",
@@ -117,7 +127,7 @@ export default function WelcomeLocationModal() {
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 3, sm: 4 },
+          p: { xs: 2.5, sm: 3.5 },
           bgcolor: "#FFFDFB",
           position: "relative",
           background: "linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%)",
@@ -191,8 +201,9 @@ export default function WelcomeLocationModal() {
               >
                 SELECT STATE
               </Typography>
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <Autocomplete
+                  size="small"
                   openOnFocus
                   forcePopupIcon
                   options={stateOptions}
@@ -206,44 +217,41 @@ export default function WelcomeLocationModal() {
                       sx: { zIndex: 1400 },
                     },
                   }}
-                  renderInput={(params: any) => {
-                    const { InputProps, ...restParams } = params;
-                    return (
-                      <TextField
-                        {...restParams}
-                        placeholder="Select State"
-                        autoComplete="off"
-                        slotProps={{
-                          input: {
-                            ...InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <LocationOnIcon
-                                    sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
-                                  />
-                                </InputAdornment>
-                                {InputProps?.startAdornment}
-                              </>
-                            ),
+                  renderInput={(params: any) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      placeholder="Select State"
+                      autoComplete="off"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <>
+                            <InputAdornment position="start" sx={{ mr: 0.5, ml: 0.5 }}>
+                              <LocationOnIcon
+                                sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
+                              />
+                            </InputAdornment>
+                            {params.InputProps?.startAdornment}
+                          </>
+                        ),
+                      }}
+                      sx={{
+                        bgcolor: COLORS.WHITE,
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                          fontFamily: FONTS.PRIMARY,
+                          fontSize: "13.5px",
+                          minHeight: "42px",
+                          "& fieldset": { borderColor: "#E2E8F0" },
+                          "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
+                          "&.Mui-focused fieldset": {
+                            borderColor: COLORS.BRAND_ORANGE,
                           },
-                        }}
-                        sx={{
-                          bgcolor: COLORS.WHITE,
-                          "& .MuiOutlinedInput-root": {
-                            borderRadius: "12px",
-                            fontFamily: FONTS.PRIMARY,
-                            fontSize: "14px",
-                            "& fieldset": { borderColor: "#E2E8F0" },
-                            "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
-                            "&.Mui-focused fieldset": {
-                              borderColor: COLORS.BRAND_ORANGE,
-                            },
-                          },
-                        }}
-                      />
-                    );
-                  }}
+                        },
+                      }}
+                    />
+                  )}
                 />
               </FormControl>
             </Box>
@@ -262,8 +270,9 @@ export default function WelcomeLocationModal() {
               >
                 SELECT CITY
               </Typography>
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <Autocomplete
+                  size="small"
                   openOnFocus
                   forcePopupIcon
                   disabled={!selectedState}
@@ -275,51 +284,46 @@ export default function WelcomeLocationModal() {
                       sx: { zIndex: 1400 },
                     },
                   }}
-                  renderInput={(params: any) => {
-                    const { InputProps, ...restParams } = params;
-                    return (
-                      <TextField
-                        {...restParams}
-                        placeholder={
-                          !selectedState ? "Select State first" : "Select City"
-                        }
-                        autoComplete="off"
-                        helperText={
-                          !selectedState
-                            ? "Select state to enable city selection"
-                            : undefined
-                        }
-                        slotProps={{
-                          input: {
-                            ...InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <LocationOnIcon
-                                    sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
-                                  />
-                                </InputAdornment>
-                                {InputProps?.startAdornment}
-                              </>
-                            ),
+                  renderInput={(params: any) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      placeholder={
+                        !selectedState ? "Select State first" : "Select City"
+                      }
+                      autoComplete="off"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <>
+                            <InputAdornment position="start" sx={{ mr: 0.5, ml: 0.5 }}>
+                              <LocationOnIcon
+                                sx={{
+                                  color: selectedState ? COLORS.PRIMARY : "#94A3B8",
+                                  fontSize: 18,
+                                }}
+                              />
+                            </InputAdornment>
+                            {params.InputProps?.startAdornment}
+                          </>
+                        ),
+                      }}
+                      sx={{
+                        bgcolor: selectedState ? COLORS.WHITE : "#F8FAFC",
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                          fontFamily: FONTS.PRIMARY,
+                          fontSize: "13.5px",
+                          minHeight: "42px",
+                          "& fieldset": { borderColor: "#E2E8F0" },
+                          "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
+                          "&.Mui-focused fieldset": {
+                            borderColor: COLORS.BRAND_ORANGE,
                           },
-                        }}
-                        sx={{
-                          bgcolor: COLORS.WHITE,
-                          "& .MuiOutlinedInput-root": {
-                            borderRadius: "12px",
-                            fontFamily: FONTS.PRIMARY,
-                            fontSize: "14px",
-                            "& fieldset": { borderColor: "#E2E8F0" },
-                            "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
-                            "&.Mui-focused fieldset": {
-                              borderColor: COLORS.BRAND_ORANGE,
-                            },
-                          },
-                        }}
-                      />
-                    );
-                  }}
+                        },
+                      }}
+                    />
+                  )}
                 />
               </FormControl>
             </Box>
@@ -328,21 +332,21 @@ export default function WelcomeLocationModal() {
             <Button
               type="submit"
               variant="contained"
-              startIcon={<SearchIcon />}
+              startIcon={<SearchIcon sx={{ fontSize: 18 }} />}
               sx={{
-                mt: 1,
-                py: 1.4,
-                borderRadius: "12px",
+                mt: 0.5,
+                py: 1.15,
+                borderRadius: "10px",
                 bgcolor: COLORS.BRAND_ORANGE,
                 color: COLORS.WHITE,
                 fontFamily: FONTS.PRIMARY,
                 fontWeight: 700,
-                fontSize: "15px",
+                fontSize: "14.5px",
                 textTransform: "none",
-                boxShadow: `0 8px 20px ${COLORS.PRIMARY_SHADOW}`,
+                boxShadow: `0 6px 16px ${COLORS.PRIMARY_SHADOW}`,
                 "&:hover": {
                   bgcolor: "#E55800",
-                  boxShadow: `0 10px 25px ${COLORS.PRIMARY_SHADOW}`,
+                  boxShadow: `0 8px 20px ${COLORS.PRIMARY_SHADOW}`,
                 },
               }}
             >

@@ -32,6 +32,26 @@ export default function ConfirmDeleteDialog({
   onConfirm,
   loading = false,
 }: ConfirmDeleteDialogProps) {
+  // Preserve last valid props so that during closing exit animation,
+  // title, itemName, and customMessage do not flicker or flash default text!
+  const lastPropsRef = React.useRef({
+    title,
+    itemName,
+    customMessage,
+  });
+
+  if (open) {
+    lastPropsRef.current = {
+      title,
+      itemName,
+      customMessage,
+    };
+  }
+
+  const activeTitle = open ? title : lastPropsRef.current.title;
+  const activeItemName = open ? itemName : lastPropsRef.current.itemName;
+  const activeCustomMessage = open ? customMessage : lastPropsRef.current.customMessage;
+
   return (
     <Dialog
       open={open}
@@ -53,7 +73,7 @@ export default function ConfirmDeleteDialog({
           color: COLORS.SLATE_DARK,
         }}
       >
-        {title}
+        {activeTitle}
       </DialogTitle>
       <DialogContent>
         <DialogContentText
@@ -63,11 +83,11 @@ export default function ConfirmDeleteDialog({
             color: "#475569",
           }}
         >
-          {customMessage ? (
-            customMessage
-          ) : itemName ? (
+          {activeCustomMessage ? (
+            activeCustomMessage
+          ) : activeItemName ? (
             <>
-              Are you sure you want to delete <strong>&quot;{itemName}&quot;</strong>? This action cannot be undone.
+              Are you sure you want to delete <strong>&quot;{activeItemName}&quot;</strong>? This action cannot be undone.
             </>
           ) : (
             "Are you sure you want to delete this item? This action cannot be undone."

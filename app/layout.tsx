@@ -11,6 +11,7 @@ import ThemeRegistry from "@/theme/ThemeRegistry";
 import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
 import ScrollToTop from "@/components/widgets/ScrollToTop";
+import GlobalModalScrollLock from "@/components/widgets/GlobalModalScrollLock";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -20,7 +21,10 @@ export const metadata: Metadata = {
   description:
     "Book experienced Pandits & Purohits online or offline with 1pooja for authentic religious services and a seamless spiritual experience",
   verification: {
-    google: "2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw",
+    google: [
+      "-gaSrqYc7JoMx1PzVFmk4HZ6BXPHLPUp5pMOHNmLRrQ",
+      "2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw",
+    ],
   },
   alternates: {
     canonical: "https://1pooja.com/",
@@ -79,8 +83,7 @@ export default function RootLayout({
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l: ';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-WNHPFBJ2');`,
           }}
         />
-        {/* End Google Tag Manager */}
-
+        <meta name="google-site-verification" content="-gaSrqYc7JoMx1PzVFmk4HZ6BXPHLPUp5pMOHNmLRrQ" />
         <meta name="google-site-verification" content="2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw" />
 
         {/* OG Tags */}
@@ -156,6 +159,7 @@ export default function RootLayout({
 
         <ThemeRegistry>
           <ScrollToTop />
+          <GlobalModalScrollLock />
           <Suspense fallback={null}>
             <Navbar />
           </Suspense>

@@ -52,8 +52,7 @@ export default function ServiceDetailsBookingInfoSidebar({
           maxWidth: 440,
         }}
       >
-        Share your preferred date, time, and requirements. We'll confirm your
-        booking within 24 hours — no advance payment needed.
+        Share your preferred date, time, and requirements.
       </Typography>
 
       {/* Get Inquiry Card Option */}

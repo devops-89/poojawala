@@ -26,6 +26,36 @@ body {
   font-family: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 
+/* Prevent background screen from scrolling when any modal or dialog is open */
+html:has(body[style*="overflow: hidden"]),
+html:has(body[style*="overflow:hidden"]),
+html:has(.MuiDialog-root:not([aria-hidden="true"])),
+html:has(.MuiModal-root:not(.MuiMenu-root):not(.MuiPopover-root):not([aria-hidden="true"])),
+body[style*="overflow: hidden"],
+body[style*="overflow:hidden"],
+body:has(.MuiDialog-root:not([aria-hidden="true"])),
+body:has(.MuiModal-root:not(.MuiMenu-root):not(.MuiPopover-root):not([aria-hidden="true"])) {
+  overflow: hidden !important;
+}
+
+body[style*="overflow: hidden"] main,
+body[style*="overflow:hidden"] main,
+body:has(.MuiDialog-root:not([aria-hidden="true"])) main,
+body:has(.MuiModal-root:not(.MuiMenu-root):not(.MuiPopover-root):not([aria-hidden="true"])) main {
+  overflow: hidden !important;
+}
+
+.MuiBackdrop-root {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+.MuiDialog-root,
+.MuiModal-root,
+.MuiDialog-paper {
+  overscroll-behavior: contain !important;
+}
+
 .MuiAppBar-root {
   padding-right: 0px !important;
 }

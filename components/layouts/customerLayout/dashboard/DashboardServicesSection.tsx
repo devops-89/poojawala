@@ -63,7 +63,7 @@ export default function DashboardServicesSection({
 
         <Button
           component={NextLink}
-          href="/customer/services"
+          href="/customer/services?isOffline=true"
           endIcon={<ArrowForwardIcon />}
           sx={{ color: COLORS.PRIMARY, textTransform: "none", fontWeight: 700 }}
         >
@@ -164,7 +164,7 @@ export default function DashboardServicesSection({
           </Box>
 
           <Button
-            onClick={() => router.push("/customer/services")}
+            onClick={() => router.push("/customer/services?isOffline=true")}
             variant="contained"
             sx={{
               bgcolor: COLORS.PRIMARY,
