@@ -117,7 +117,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       path: "/admin/complaints",
     },
     {
-      text: "Contact Msgs",
+      text: "Contact Enquiries",
       icon: <EmailIcon fontSize="small" />,
       path: "/admin/contact-messages",
     },

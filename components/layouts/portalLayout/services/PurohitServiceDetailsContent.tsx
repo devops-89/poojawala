@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import {
   getPurohitServicesAPI,
   getServiceByIdAPI,
+  registerServiceSlugMapping,
 } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
@@ -44,24 +45,26 @@ export default function PurohitServiceDetailsContent() {
   }, [fetchProfile]);
 
   const fetchServiceData = async () => {
-    if (!params.id) return;
+    const identifier = (params.slug || params.id) as string;
+    if (!identifier) return;
     setLoading(true);
     try {
       const [res, myRes] = await Promise.all([
-        getServiceByIdAPI(params.id as string),
+        getServiceByIdAPI(identifier),
         getPurohitServicesAPI(1, 100),
       ]);
 
-      if (res.success) {
-        let rawData = res.data;
-        while (
-          rawData &&
-          rawData.data &&
-          typeof rawData.data === "object" &&
-          !rawData.id
-        ) {
-          rawData = rawData.data;
-        }
+      let rawData = res?.data;
+      while (
+        rawData &&
+        rawData.data &&
+        typeof rawData.data === "object" &&
+        !rawData.id
+      ) {
+        rawData = rawData.data;
+      }
+
+      if (rawData?.id) {
         setService(rawData);
 
         // Check if already added
@@ -69,9 +72,19 @@ export default function PurohitServiceDetailsContent() {
           myRes?.data?.data?.map((ps: any) => ps.serviceId) ||
           myRes?.data?.map((ps: any) => ps.serviceId) ||
           [];
-        setIsAlreadyAdded(myServiceIds.includes(Number(params.id)));
+        setIsAlreadyAdded(myServiceIds.includes(Number(rawData.id)));
+
+        if (rawData.slug) {
+          registerServiceSlugMapping(rawData.slug, rawData.id);
+          if (/^\d+$/.test(String(identifier)) && typeof window !== "undefined") {
+            const basePath = window.location.pathname.startsWith("/partner/my-services")
+              ? "/partner/my-services"
+              : "/partner/services";
+            window.history.replaceState(null, "", `${basePath}/${rawData.slug}`);
+          }
+        }
       } else {
-        showSnackbar(res.message || "Failed to load service details", "error");
+        showSnackbar(res?.message || "Failed to load service details", "error");
       }
     } catch (error: any) {
       console.error("Failed to fetch service details:", error);
@@ -83,7 +96,7 @@ export default function PurohitServiceDetailsContent() {
 
   useEffect(() => {
     fetchServiceData();
-  }, [params.id, showSnackbar]);
+  }, [params.id, params.slug, showSnackbar]);
 
   const handleScrollToAddForm = () => {
     const el = document.getElementById("purohit-add-form-section");

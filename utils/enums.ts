@@ -236,3 +236,19 @@ export enum VENUE_TYPE {
   TEMPLE = 'TEMPLE',
   ONLINE = 'ONLINE',
 }
+
+export const RASHI_OPTIONS = [
+  "मेष (Aries)",
+  "वृषभ (Taurus)",
+  "मिथुन (Gemini)",
+  "कर्क (Cancer)",
+  "सिंह (Leo)",
+  "कन्या (Virgo)",
+  "तुला (Libra)",
+  "वृश्चिक (Scorpio)",
+  "धनु (Sagittarius)",
+  "मकर (Capricorn)",
+  "कुंभ (Aquarius)",
+  "मीन (Pisces)",
+] as const;
+

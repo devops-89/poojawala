@@ -49,6 +49,15 @@ const parseList = (val: any): string[] => {
   return [];
 };
 
+const capitalizeName = (str?: string): string => {
+  if (!str) return "";
+  return str
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 export default function CustomerAstrologerCard({
   astrologer,
 }: CustomerAstrologerCardProps) {
@@ -61,41 +70,43 @@ export default function CustomerAstrologerCard({
     }
   };
 
-  // 1. Name
+  // 1. Name with capitalized first & last name
+  const fName = capitalizeName(astrologer?.firstName);
+  const lName = capitalizeName(astrologer?.lastName);
   const fullName =
-    `${astrologer?.firstName || ""} ${astrologer?.lastName || ""}`.trim() ||
-    astrologer?.username ||
-    "Vedic Astrologer";
+    [fName, lName].filter(Boolean).join(" ") ||
+    capitalizeName(astrologer?.username) ||
+    "";
 
-  // 2. Specializations & Languages
+  // 2. Specializations & Languages (NO static fallback)
   const specializations = parseList(
     profile?.specializations || profile?.specialization
   );
   const languages = parseList(profile?.languages || profile?.language);
 
-  // 3. Qualifications & Specification
+  // 3. Qualifications & Specification (NO static fallback)
   const qualifications = parseList(
     profile?.qualification || profile?.qualifications
   );
   const primaryQualification = qualifications[0] || "";
   const specification = profile?.specification || "";
 
-  // 4. Experience
+  // 4. Experience (NO static fallback)
   const expYears = profile?.experienceYears ?? profile?.experience;
-  const experience = expYears ? `${expYears}+ Yrs Exp` : "Experienced";
+  const experience = expYears ? `${expYears}+ Yrs Exp` : "";
 
-  // 5. Astrology Price
+  // 5. Astrology Price (NO fake fallback)
   const rawPrice =
     profile?.astrologyPrice ??
     astrologer?.astrologyPrice ??
     profile?.ratePerMinute ??
     astrologer?.ratePerMinute;
-  const priceDisplay =
-    rawPrice != null && rawPrice !== ""
-      ? `₹${Number(rawPrice).toFixed(2)}`
-      : "₹0.00";
+  const numPrice = Number(rawPrice);
+  const hasPrice =
+    rawPrice != null && rawPrice !== "" && !isNaN(numPrice) && numPrice > 0;
+  const priceDisplay = hasPrice ? `₹${numPrice.toLocaleString("en-IN")}` : null;
 
-  // 6. Location
+  // 6. Location (NO static fallback)
   const city = profile?.city || astrologer?.city || "";
   const state = profile?.state || astrologer?.state || "";
   const locationText = [city, state].filter(Boolean).join(", ");
@@ -105,12 +116,22 @@ export default function CustomerAstrologerCard({
   const hasRating = !isNaN(numRating) && numRating > 0;
   const rating = hasRating ? numRating.toFixed(1) : null;
 
-  // 8. Profile Image
+  // 8. Profile Image (NO placeholder images)
   const imageSrc =
     astrologer?.profileImage ||
     astrologer?.image ||
     profile?.profileImage ||
+    profile?.avatar ||
     "";
+
+  // Initials for avatar
+  const initials =
+    fullName
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase())
+      .join("") || "A";
 
   return (
     <Grid size={{ xs: 12, lg: 6 }} sx={{ display: "flex" }}>
@@ -168,13 +189,14 @@ export default function CustomerAstrologerCard({
               sx={{
                 width: "100%",
                 height: "100%",
-                bgcolor: "#ea580c",
-                fontSize: "2.4rem",
+                background: "linear-gradient(135deg, #FF6200 0%, #D32F2F 100%)",
+                fontSize: "2rem",
                 fontWeight: 700,
                 fontFamily: FONTS.OUTFIT,
+                color: "#ffffff",
               }}
             >
-              {fullName.charAt(0).toUpperCase()}
+              {initials}
             </Avatar>
           )}
 
@@ -252,20 +274,22 @@ export default function CustomerAstrologerCard({
                 </Tooltip>
               </Box>
 
-              <Chip
-                icon={<SchoolIcon sx={{ fontSize: "14px !important", color: "#c2410c" }} />}
-                label={experience}
-                size="small"
-                sx={{
-                  bgcolor: "#ffedd5",
-                  color: "#c2410c",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  height: 22,
-                  borderRadius: "6px",
-                  flexShrink: 0,
-                }}
-              />
+              {experience && (
+                <Chip
+                  icon={<SchoolIcon sx={{ fontSize: "14px !important", color: "#c2410c" }} />}
+                  label={experience}
+                  size="small"
+                  sx={{
+                    bgcolor: "#ffedd5",
+                    color: "#c2410c",
+                    fontWeight: 700,
+                    fontSize: "11px",
+                    height: 22,
+                    borderRadius: "6px",
+                    flexShrink: 0,
+                  }}
+                />
+              )}
             </Box>
 
             {/* Specification / Domain Subtitle */}
@@ -321,9 +345,9 @@ export default function CustomerAstrologerCard({
             </Box>
 
             {/* Specialization Chips */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.6, mb: 1 }}>
-              {specializations.length > 0 ? (
-                specializations.slice(0, 4).map((spec, i) => (
+            {specializations.length > 0 && (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.6, mb: 1 }}>
+                {specializations.slice(0, 4).map((spec, i) => (
                   <Chip
                     key={i}
                     label={spec}
@@ -338,23 +362,9 @@ export default function CustomerAstrologerCard({
                       borderRadius: "6px",
                     }}
                   />
-                ))
-              ) : (
-                <Chip
-                  label="Vedic Astrology"
-                  size="small"
-                  sx={{
-                    bgcolor: "#f8fafc",
-                    border: "1px solid #e2e8f0",
-                    color: "#334155",
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    height: 22,
-                    borderRadius: "6px",
-                  }}
-                />
-              )}
-            </Box>
+                ))}
+              </Box>
+            )}
 
             {/* Languages */}
             {languages.length > 0 && (
@@ -376,39 +386,41 @@ export default function CustomerAstrologerCard({
 
           {/* Rate & Consultation Button Footer */}
           <Box sx={{ mt: "auto", pt: 1.5, borderTop: "1px dashed #e2e8f0" }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 2,
-                mb: 1.2,
-              }}
-            >
-              <Box>
-                <Typography
-                  sx={{
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "0.5px",
-                    color: "#94a3b8",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  ASTROLOGY PRICE
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    fontWeight: 800,
-                    color: COLORS.PRIMARY,
-                    fontSize: "17px",
-                  }}
-                >
-                  {priceDisplay}
-                </Typography>
+            {hasPrice && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 2,
+                  mb: 1.2,
+                }}
+              >
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      letterSpacing: "0.5px",
+                      color: "#94a3b8",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    ASTROLOGY PRICE
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 800,
+                      color: COLORS.PRIMARY,
+                      fontSize: "17px",
+                    }}
+                  >
+                    {priceDisplay}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
+            )}
 
             <Button
               variant="contained"

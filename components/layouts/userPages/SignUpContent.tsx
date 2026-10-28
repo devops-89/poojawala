@@ -5,7 +5,6 @@ import SignUpBrandingSide from "@/components/layouts/userPages/components/SignUp
 import SignUpStep1Personal from "@/components/layouts/userPages/components/SignUpStep1Personal";
 import SignUpStep2Address from "@/components/layouts/userPages/components/SignUpStep2Address";
 import SignUpStepperHeader from "@/components/layouts/userPages/components/SignUpStepperHeader";
-import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import {
   extractBackendErrorMessage,
@@ -342,131 +341,123 @@ export default function SignUpContent() {
           {/* Left Side Branding */}
           <SignUpBrandingSide />
 
-          {/* Right Side Form */}
-          <Box
-            sx={{
-              flex: { md: 1.15, lg: 1.2 },
-              p: { xs: 2, sm: 2.25, md: "20px 24px" },
-              "@media (max-height: 740px)": {
-                p: { xs: 2, md: "14px 20px" },
-              },
-              "@media (max-height: 660px)": {
-                p: { xs: 1.5, md: "10px 16px" },
-              },
-              bgcolor: "rgba(255, 255, 255, 0.88)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <Formik
-              initialValues={initialValues}
-              validationSchema={fullValidationSchema}
-              validateOnChange={false}
-              validateOnBlur={true}
-              onSubmit={async (values, { setSubmitting }) => {
-                try {
-                  const res = await sendOtpAPI({
-                    phone: values.phone,
-                    email: values.email,
-                    role: "CUSTOMER",
-                  });
-                  if (res.success || res.statusCode === 200) {
-                    sessionStorage.setItem(
-                      "signupData",
-                      JSON.stringify(values)
-                    );
-                    showSnackbar("OTP sent successfully!", "success");
-                    const targetOtpUrl = redirectParam
-                      ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
-                      : "/verify-otp";
-                    router.replace(targetOtpUrl);
-                  } else {
-                    showSnackbar(
-                      res.message || "Failed to send OTP",
-                      "error"
-                    );
-                  }
-                } catch (error: any) {
-                  showSnackbar(
-                    extractBackendErrorMessage(error, "Failed to send OTP"),
-                    "error"
-                  );
-                } finally {
-                  setSubmitting(false);
-                }
-              }}
-            >
-              {({
-                isSubmitting,
-                values,
-                setFieldValue,
-                setTouched,
-              }) => (
-                <Box component={Form}>
-                  <FormikValidationSnackbar />
-
-                  {/* Header with Step Progress */}
-                  <SignUpStepperHeader
-                    currentStep={currentStep}
-                    onStep1Click={() => setCurrentStep(1)}
-                    onStep2Click={async () => {
+              {/* Right Side Form */}
+              <Box
+                sx={{
+                  flex: 1.5,
+                  p: { xs: 3, md: 4 },
+                  bgcolor: "#fff",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <Formik
+                  initialValues={initialValues}
+                  validationSchema={fullValidationSchema}
+                  validateOnChange={true}
+                  validateOnBlur={true}
+                  onSubmit={async (values, { setSubmitting }) => {
+                    try {
+                      const res = await sendOtpAPI({
+                        phone: values.phone,
+                        email: values.email,
+                        role: "CUSTOMER",
+                      });
+                      if (res.success || res.statusCode === 200) {
+                        sessionStorage.setItem(
+                          "signupData",
+                          JSON.stringify(values)
+                        );
+                        showSnackbar(res?.message || "OTP sent successfully!", "success");
+                        const targetOtpUrl = redirectParam
+                          ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
+                          : "/verify-otp";
+                        router.replace(targetOtpUrl);
+                      } else {
+                        showSnackbar(
+                          res?.message || "Failed to send OTP",
+                          "error"
+                        );
+                      }
+                    } catch (error: any) {
+                      showSnackbar(
+                        extractBackendErrorMessage(error, "Failed to send OTP"),
+                        "error"
+                      );
+                    } finally {
+                      setSubmitting(false);
+                    }
+                  }}
+                >
+                  {({
+                    isSubmitting,
+                    values,
+                    setFieldValue,
+                    setTouched,
+                  }) => {
+                    const handleStep1Next = async () => {
                       try {
                         await step1ValidationSchema.validate(values, {
                           abortEarly: false,
                         });
                         setCurrentStep(2);
                       } catch (err: any) {
+                        if (err.inner) {
+                          const touchedObj: any = {};
+                          err.inner.forEach((e: any) => {
+                            if (e.path) touchedObj[e.path] = true;
+                          });
+                          setTouched(touchedObj);
+                        }
                         showSnackbar(
-                          "Please complete personal details first",
+                          "Please fill all required personal details correctly",
                           "error"
                         );
                       }
-                    }}
-                  />
+                    };
 
-                  {/* STEP 1 */}
-                  {currentStep === 1 && (
-                    <SignUpStep1Personal
-                      onNext={async () => {
-                        try {
-                          await step1ValidationSchema.validate(values, {
-                            abortEarly: false,
-                          });
-                          setCurrentStep(2);
-                        } catch (err: any) {
-                          if (err.inner) {
-                            const touchedObj: any = {};
-                            err.inner.forEach((e: any) => {
-                              if (e.path) touchedObj[e.path] = true;
-                            });
-                            setTouched(touchedObj);
+                    return (
+                      <Box
+                        component={Form}
+                        onKeyDown={(e: React.KeyboardEvent) => {
+                          if (e.key === "Enter") {
+                            const target = e.target as HTMLElement;
+                            if (target.tagName?.toLowerCase() === "textarea") return;
+                            if (currentStep === 1) {
+                              e.preventDefault();
+                              handleStep1Next();
+                            }
                           }
-                          showSnackbar(
-                            "Please fill all required personal details correctly",
-                            "error"
-                          );
-                        }
-                      }}
-                    />
-                  )}
+                        }}
+                      >
+                        {/* Header with Step Progress */}
+                        <SignUpStepperHeader
+                          currentStep={currentStep}
+                          onStep1Click={() => setCurrentStep(1)}
+                          onStep2Click={handleStep1Next}
+                        />
 
-                  {/* STEP 2 */}
-                  {currentStep === 2 && (
-                    <SignUpStep2Address
-                      isFetchingLocation={isFetchingLocation}
-                      isSubmitting={isSubmitting}
-                      onFetchLocation={() =>
-                        handleFetchCurrentLocation(setFieldValue)
-                      }
-                      onBack={() => setCurrentStep(1)}
-                    />
-                  )}
-                </Box>
-              )}
-            </Formik>
+                        {/* STEP 1 */}
+                        {currentStep === 1 && (
+                          <SignUpStep1Personal onNext={handleStep1Next} />
+                        )}
+
+                        {/* STEP 2 */}
+                        {currentStep === 2 && (
+                          <SignUpStep2Address
+                            isFetchingLocation={isFetchingLocation}
+                            isSubmitting={isSubmitting}
+                            onFetchLocation={() =>
+                              handleFetchCurrentLocation(setFieldValue)
+                            }
+                            onBack={() => setCurrentStep(1)}
+                          />
+                        )}
+                      </Box>
+                    );
+                  }}
+                </Formik>
 
             {/* Divider */}
             <Box

@@ -20,15 +20,15 @@ export default function CustomerTempleCard({ temple }: CustomerTempleCardProps) 
   const router = useRouter();
 
   const handleCardClick = () => {
-    if (temple?.id) {
-      router.push(`/customer/temple/${temple.id}`);
+    if (temple?.id || temple?.slug) {
+      router.push(`/customer/temple/${temple.slug || temple.id}`);
     }
   };
 
   const handleBookPujaClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (temple?.id) {
-      router.push(`/customer/temple/${temple.id}#temple-services-section`);
+    if (temple?.id || temple?.slug) {
+      router.push(`/customer/temple/${temple.slug || temple.id}#temple-services-section`);
     }
   };
 

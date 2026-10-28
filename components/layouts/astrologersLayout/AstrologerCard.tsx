@@ -5,7 +5,6 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import StarIcon from '@mui/icons-material/Star';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { Box, Button, Card, CardContent, Typography, Avatar, Chip } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { FONTS } from '@/utils/fonts';
@@ -26,23 +25,25 @@ export interface AstrologerCardProps {
   astrologyPrice?: string | number;
   bio?: string;
   city?: string;
+  state?: string;
 }
 
 export default function AstrologerCard({
   id,
   title,
   image,
-  category = 'Vedic Astrologer',
-  specification,
+  category = '',
+  specification = '',
   specializations = [],
-  specialization,
-  language = 'Hindi, English',
-  experience = '5+ Years',
-  rating = 'New',
+  specialization = '',
+  language = '',
+  experience = '',
+  rating = '',
   ratePerMinute,
   astrologyPrice,
-  bio,
-  city,
+  bio = '',
+  city = '',
+  state = '',
 }: AstrologerCardProps) {
   const router = useRouter();
 
@@ -76,22 +77,29 @@ export default function AstrologerCard({
     handleCardClick();
   };
 
+  // Price logic: prominent in card body, no static fallback
   const rawPrice =
     astrologyPrice !== undefined && astrologyPrice !== null && astrologyPrice !== ''
       ? astrologyPrice
       : ratePerMinute;
   const numPrice = Number(rawPrice);
-  const displayRate =
-    rawPrice != null && rawPrice !== '' && !isNaN(numPrice) && numPrice > 0
-      ? `₹${numPrice.toFixed(2)}`
-      : 'Consultation Available';
+  const hasPrice = rawPrice != null && rawPrice !== '' && !isNaN(numPrice) && numPrice > 0;
 
-  const initials = title
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join('') || 'A';
+  // Rating logic: only show if rating > 0, do not show 'New' badge
+  const numRating = Number(rating);
+  const hasRating = !isNaN(numRating) && numRating > 0 && String(rating).toLowerCase() !== 'new';
+  const displayRating = hasRating ? numRating.toFixed(1) : null;
+
+  // Initials for avatar when profileImage is null
+  const initials =
+    title
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase())
+      .join('') || 'A';
+
+  const locationText = [city, state].filter(Boolean).join(', ');
 
   return (
     <Card
@@ -99,7 +107,7 @@ export default function AstrologerCard({
       sx={{
         width: '100%',
         height: '100%',
-        minHeight: '480px',
+        minHeight: '460px',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
@@ -119,86 +127,62 @@ export default function AstrologerCard({
         },
       }}
     >
-      {/* Top Banner Row: Rate Tag & Rating Badge */}
+      {/* Top Area: Optional Top-Right Rating Badge & Centered Avatar */}
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          p: 2,
-          pb: 0,
-        }}
-      >
-        {/* Rate Badge */}
-        <Box
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 0.6,
-            bgcolor: '#FFF5EB',
-            color: '#E65100',
-            border: '1px solid #FFE0B2',
-            px: 1.4,
-            py: 0.4,
-            borderRadius: '16px',
-            fontSize: '12px',
-            fontWeight: 800,
-            fontFamily: FONTS.PRIMARY,
-          }}
-        >
-          <AutoAwesomeIcon sx={{ fontSize: 13, color: '#FF6200' }} />
-          {displayRate}
-        </Box>
-
-        {/* Rating Badge */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            bgcolor: '#FFFDF0',
-            border: '1px solid #FEE588',
-            px: 1.2,
-            py: 0.35,
-            borderRadius: '16px',
-          }}
-        >
-          <StarIcon sx={{ fontSize: '15px', color: '#F59E0B' }} />
-          <Typography
-            sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#78350F',
-            }}
-          >
-            {rating}
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* Top Avatar Area */}
-      <Box
-        sx={{
+          position: 'relative',
           width: '100%',
-          pt: 1.5,
+          pt: 3,
           pb: 1,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
+        {/* Rating Badge (Only shown if rating > 0) */}
+        {displayRating && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 14,
+              right: 14,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              bgcolor: '#FFFDF0',
+              border: '1px solid #FEE588',
+              px: 1.2,
+              py: 0.35,
+              borderRadius: '16px',
+              zIndex: 2,
+            }}
+          >
+            <StarIcon sx={{ fontSize: '14px', color: '#F59E0B' }} />
+            <Typography
+              sx={{
+                fontFamily: FONTS.PRIMARY,
+                fontSize: '12px',
+                fontWeight: 700,
+                color: '#78350F',
+              }}
+            >
+              {displayRating}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Profile Avatar */}
         <Avatar
-          src={image}
+          src={image || undefined}
           alt={title}
           sx={{
             height: '110px',
             width: '110px',
             border: '3px solid #FFF5EB',
             boxShadow: '0 8px 24px rgba(255, 98, 0, 0.12)',
-            bgcolor: COLORS.PRIMARY,
+            background: 'linear-gradient(135deg, #FF6200 0%, #D32F2F 100%)',
             color: '#fff',
-            fontSize: '28px',
+            fontSize: '30px',
             fontWeight: 800,
             fontFamily: FONTS.PRIMARY,
           }}
@@ -245,7 +229,7 @@ export default function AstrologerCard({
           <VerifiedIcon sx={{ color: '#0284C7', fontSize: '18px' }} />
         </Box>
 
-        {/* Qualification */}
+        {/* Qualification / Category */}
         {category && (
           <Typography
             sx={{
@@ -342,56 +326,108 @@ export default function AstrologerCard({
           </Box>
         )}
 
-        {/* Details Row: Language, Experience, City */}
+        {/* Details Row: Language, Experience, Location */}
+        {(experience || language || locationText) && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 1.6,
+              color: '#64748b',
+              mb: 2,
+              mt: 'auto',
+              pt: 1.2,
+              borderTop: '1px dashed #F1E5D8',
+              width: '100%',
+            }}
+          >
+            {experience && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <WorkspacePremiumIcon sx={{ fontSize: '15px', color: '#FF6200' }} />
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '11.5px', fontWeight: 600 }}>
+                  {experience}
+                </Typography>
+              </Box>
+            )}
+            {language && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <LanguageIcon sx={{ fontSize: '14px', color: '#FF6200' }} />
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '11.5px', fontWeight: 600 }}>
+                  {language}
+                </Typography>
+              </Box>
+            )}
+            {locationText && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <LocationOnIcon sx={{ fontSize: '14px', color: '#FF6200' }} />
+                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '11.5px', fontWeight: 600 }}>
+                  {locationText}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        )}
+
+        {/* Bottom Price & Action Row */}
         <Box
           sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 1.6,
-            color: '#64748b',
-            mb: 2,
-            mt: 'auto',
-            pt: 1,
-            borderTop: '1px dashed #F1E5D8',
             width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: hasPrice ? 'space-between' : 'center',
+            gap: 1.5,
+            pt: 0.5,
+            mt: (experience || language || locationText) ? 0 : 'auto',
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <WorkspacePremiumIcon sx={{ fontSize: '15px', color: '#FF6200' }} />
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '11.5px', fontWeight: 600 }}>
-              {experience}
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <LanguageIcon sx={{ fontSize: '14px', color: '#FF6200' }} />
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '11.5px', fontWeight: 600 }}>
-              {language}
-            </Typography>
-          </Box>
-          {city && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <LocationOnIcon sx={{ fontSize: '14px', color: '#FF6200' }} />
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '11.5px', fontWeight: 600 }}>
-                {city}
+          {hasPrice && (
+            <Box sx={{ textAlign: 'left', minWidth: '95px' }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.PRIMARY,
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  color: '#94A3B8',
+                  lineHeight: 1.1,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                Fee
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.PRIMARY,
+                  fontSize: '20px',
+                  fontWeight: 800,
+                  color: '#E65100',
+                  lineHeight: 1.2,
+                }}
+              >
+                ₹{numPrice.toLocaleString('en-IN')}
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: '#64748B',
+                    ml: 0.4,
+                  }}
+                >
+                  /session
+                </Typography>
               </Typography>
             </Box>
           )}
-        </Box>
 
-        {/* Action Button */}
-        <Box
-          sx={{
-            width: '100%',
-            mt: 0.5,
-          }}
-        >
           <Button
             variant="contained"
             onClick={handleBook}
             sx={{
-              width: '100%',
+              flexGrow: 1,
+              maxWidth: hasPrice ? '170px' : '100%',
               background: 'linear-gradient(135deg, #FF6200 0%, #E65100 100%)',
               color: 'white',
               borderRadius: '24px',
@@ -402,6 +438,7 @@ export default function AstrologerCard({
               fontSize: '14px',
               fontFamily: FONTS.PRIMARY,
               boxShadow: '0 4px 14px rgba(255, 98, 0, 0.28)',
+              whiteSpace: 'nowrap',
               transition: 'all 0.2s ease',
               '&:hover': {
                 background: 'linear-gradient(135deg, #E65100 0%, #CC3E00 100%)',

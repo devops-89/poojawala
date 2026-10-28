@@ -24,6 +24,7 @@ import { Field } from "formik";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
 import { useState } from "react";
 import { FONTS } from "@/utils/fonts";
+import { COLORS, RASHI_OPTIONS } from "@/utils/enums";
 import {
   allowOnlyLettersOnKeyDown,
   sanitizeLettersOnly,
@@ -159,9 +160,15 @@ export default function SignUpStep1Personal({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onNext();
+    }
+  };
+
   return (
-    <Grid container spacing={1.15}>
-      {/* First Name */}
+    <Grid container spacing={2.25} onKeyDown={handleKeyDown}>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
           First Name{" "}
@@ -466,60 +473,59 @@ export default function SignUpStep1Personal({
               select
               fullWidth
               size="small"
+              label="Rashi"
+              variant="outlined"
               value={field.value || ""}
-              onChange={(e) => form.setFieldValue("rashi", e.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Brightness7OutlinedIcon
-                        sx={{ color: "#9CA3AF", fontSize: 20 }}
-                      />
-                    </InputAdornment>
-                  ),
-                },
-                select: {
-                  displayEmpty: true,
-                  renderValue: (selected: any) => {
-                    if (!selected) {
-                      return (
-                        <Typography
-                          sx={{
-                            color: "#9CA3AF",
-                            fontSize: "0.875rem",
-                            fontFamily: FONTS.OUTFIT,
-                          }}
-                        >
-                          Select your rashi
-                        </Typography>
-                      );
-                    }
-                    return selected;
-                  },
-                },
+              onChange={(e) => {
+                form.setFieldValue("rashi", e.target.value);
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
+              slotProps={{
+                select: {
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left",
+                    },
+                    transformOrigin: {
+                      vertical: "top",
+                      horizontal: "left",
+                    },
+                    slotProps: {
+                      paper: {
+                        sx: {
+                          mt: 0.6,
+                          maxHeight: 260,
+                          borderRadius: "12px",
+                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)",
+                        },
+                      },
+                    },
+                  },
+                },
+              }}
               sx={inputStyles}
             >
-              <MenuItem value="" disabled>
-                <Typography
+              <MenuItem value="" sx={{ fontFamily: FONTS.OUTFIT, color: "#94a3b8" }}>
+                <em>None</em>
+              </MenuItem>
+              {RASHI_OPTIONS.map((option) => (
+                <MenuItem
+                  key={option}
+                  value={option}
                   sx={{
-                    color: "#9CA3AF",
-                    fontSize: "0.875rem",
                     fontFamily: FONTS.OUTFIT,
+                    fontSize: "0.875rem",
+                    py: 1,
+                    "&.Mui-selected": {
+                      bgcolor: "#FFF0E6 !important",
+                      fontWeight: 600,
+                      color: COLORS.BRAND_ORANGE,
+                    },
                   }}
                 >
-                  Select your rashi
-                </Typography>
-              </MenuItem>
-              {RASHI_OPTIONS.map((opt) => (
-                <MenuItem
-                  key={opt}
-                  value={opt}
-                  sx={{ fontFamily: FONTS.OUTFIT, fontSize: "0.875rem" }}
-                >
-                  {opt}
+                  {option}
                 </MenuItem>
               ))}
             </TextField>

@@ -50,13 +50,9 @@ export const metadata: Metadata = {
     images: ["https://1pooja.com/images/logo.webp"],
   },
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icon.webp", type: "image/webp", sizes: "512x512" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    shortcut: "/favicon.svg",
-    apple: "/apple-touch-icon.webp",
+    icon: "/1PoojalogoFavicon.png",
+    shortcut: "/1PoojalogoFavicon.png",
+    apple: "/1PoojalogoFavicon.png",
   },
 };
 
@@ -74,6 +70,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/1PoojalogoFavicon.png" />
+        <link rel="shortcut icon" href="/1PoojalogoFavicon.png" />
+        <link rel="apple-touch-icon" href="/1PoojalogoFavicon.png" />
         {/* Google Tag Manager - As high as possible in <head> */}
         <script
           dangerouslySetInnerHTML={{

@@ -1,6 +1,6 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+import { COLORS, RASHI_OPTIONS } from "@/utils/enums";
 import {
   addCustomerAddressAPI,
   deleteCustomerAddressAPI,

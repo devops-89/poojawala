@@ -1,10 +1,11 @@
 "use client";
 
-import { getTempleByIdAPI } from "@/api/templeControllers";
+import { getTempleByIdAPI, registerTempleSlugMapping } from "@/api/templeControllers";
 import WebsiteWhyPoojawalaSection from "@/components/layouts/servicesLayout/WebsiteWhyPoojawalaSection";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useLoaderStore } from "@/stores/loaderStore";
 import { COLORS } from "@/utils/enums";
-import { Box, Button, CircularProgress, Container, Paper, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import WebsiteTempleAboutSection from "./WebsiteTempleAboutSection";
@@ -18,61 +19,65 @@ export default function WebsiteTempleDetailsContent() {
   const router = useRouter();
   const [temple, setTemple] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+  const { showLoader, hideLoader } = useLoaderStore();
+
+  const identifier = (params.slug || params.id) as string;
 
   useEffect(() => {
     // Reset window to top on temple details mount
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
+    if (!identifier) return;
+
     const fetchTemple = async () => {
-      const identifier = (params.slug || params.id) as string;
-      if (!identifier) return;
-
-      if (
-        temple &&
-        (temple.slug === identifier || String(temple.id) === String(identifier))
-      ) {
-        return;
-      }
-
       setLoading(true);
+      setErrorMessage(null);
+      showLoader("Loading temple details...");
       try {
         const res = await getTempleByIdAPI(identifier);
-        if (res?.success) {
-          const rawData = res.data?.data || res.data;
+        let rawData = res?.data;
+        while (rawData?.data && !rawData?.id) {
+          rawData = rawData.data;
+        }
+
+        if (rawData?.id) {
           setTemple(rawData);
-          if (rawData?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_temple_id", String(rawData.id));
-            sessionStorage.setItem("last_temple_id", String(rawData.id));
-            if (rawData.slug) {
-              const s = String(rawData.slug).toLowerCase();
-              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              localStorage.setItem(`temple_slug_${s}`, String(rawData.id));
-              sessionStorage.setItem(`temple_slug_${s}`, String(rawData.id));
-              const currentPath = window.location.pathname;
-              const targetPath = `/temples/${rawData.slug}`;
-              if (currentPath !== targetPath) {
-                window.history.replaceState(null, "", targetPath);
-              }
+          setErrorMessage(null);
+          if (rawData.slug) {
+            registerTempleSlugMapping(rawData.slug, rawData.id);
+            if (/^\d+$/.test(String(identifier))) {
+              router.replace(`/temples/${rawData.slug}`);
             }
           }
           // Keep viewport at top after content loads
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         } else {
-          showSnackbar(res?.message || "Failed to load temple details", "error");
+          setTemple(null);
+          const msg = res?.message || "Failed to load temple details";
+          setErrorMessage(msg);
+          showSnackbar(msg, "error");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch temple details:", error);
-        showSnackbar("Error fetching temple details", "error");
+        setTemple(null);
+        const msg = error?.response?.data?.message || "Error fetching temple details";
+        setErrorMessage(msg);
+        showSnackbar(msg, "error");
       } finally {
         setLoading(false);
+        hideLoader();
       }
     };
 
     fetchTemple();
-  }, [params.id, params.slug, showSnackbar, temple]);
+
+    return () => {
+      hideLoader();
+    };
+  }, [identifier, showLoader, hideLoader]);
 
   useEffect(() => {
     if (!loading && temple) {
@@ -87,20 +92,13 @@ export default function WebsiteTempleDetailsContent() {
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     } else {
-      router.push(
-        `/services?templeId=${temple?.id}&temple=${encodeURIComponent(
-          temple?.name || ""
-        )}`
-      );
+      router.push(`/services?templeId=${temple?.id}`);
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 14 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
-      </Box>
-    );
+  // While loading, GlobalLoader handles overlay
+  if (loading || (!temple && !errorMessage)) {
+    return <Box sx={{ minHeight: "75vh", bgcolor: "#FFFDF9" }} />;
   }
 
   if (!temple) {

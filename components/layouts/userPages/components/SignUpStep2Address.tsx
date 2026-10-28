@@ -105,7 +105,7 @@ export default function SignUpStep2Address({
   isSubmitting,
   onBack,
 }: SignUpStep2AddressProps) {
-  const { values, setFieldValue, errors, touched } = useFormikContext<any>();
+  const { values, setFieldValue, errors, touched, submitForm } = useFormikContext<any>();
 
   const initialGeoData = useMemo(
     () => ({
@@ -149,13 +149,13 @@ export default function SignUpStep2Address({
     const newLat = String(addressData.latitude || "0");
     const newLng = String(addressData.longitude || "0");
 
-    setFieldValue("addressLabel", addressData.addressLabel || "Home");
-    setFieldValue("fullAddress", addressData.fullAddress || "");
-    setFieldValue("city", addressData.city || "");
-    setFieldValue("state", addressData.state || "");
-    setFieldValue("pincode", addressData.pincode || "");
-    setFieldValue("latitude", newLat);
-    setFieldValue("longitude", newLng);
+    if (addressData.addressLabel) setFieldValue("addressLabel", addressData.addressLabel);
+    if (addressData.fullAddress) setFieldValue("fullAddress", addressData.fullAddress);
+    if (addressData.city) setFieldValue("city", addressData.city);
+    if (addressData.state) setFieldValue("state", addressData.state);
+    if (addressData.pincode) setFieldValue("pincode", addressData.pincode);
+    if (newLat && newLat !== "0") setFieldValue("latitude", newLat);
+    if (newLng && newLng !== "0") setFieldValue("longitude", newLng);
   }, [
     addressData.addressLabel,
     addressData.fullAddress,
@@ -167,9 +167,27 @@ export default function SignUpStep2Address({
     setFieldValue,
   ]);
 
+  const syncAndSubmit = () => {
+    if (addressData.fullAddress) setFieldValue("fullAddress", addressData.fullAddress);
+    if (addressData.city) setFieldValue("city", addressData.city);
+    if (addressData.state) setFieldValue("state", addressData.state);
+    if (addressData.pincode) setFieldValue("pincode", addressData.pincode);
+    if (addressData.addressLabel) setFieldValue("addressLabel", addressData.addressLabel || "Home");
+    submitForm();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Enter") {
+      const target = e.target as HTMLElement;
+      if (target.tagName?.toLowerCase() === "textarea") return;
+      e.preventDefault();
+      syncAndSubmit();
+    }
+  };
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-      {/* Location Button inline in front of Heading */}
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }} onKeyDown={handleKeyDown}>
+      {/* Location Button at top */}
       <Box
         sx={{
           display: "flex",
@@ -227,21 +245,12 @@ export default function SignUpStep2Address({
                 e.preventDefault();
               }
             }}
-            onChange={(e) =>
-              handlePincodeChange(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-            slotProps={{
-              htmlInput: { maxLength: 6, inputMode: "numeric" },
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PinDropOutlinedIcon
-                      sx={{ color: "#9CA3AF", fontSize: 20 }}
-                    />
-                  </InputAdornment>
-                ),
-              },
+            onChange={(e) => {
+              const pin = e.target.value.replace(/\D/g, '').slice(0, 6);
+              handlePincodeChange(pin);
+              setFieldValue("pincode", pin);
             }}
+            slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
             variant="outlined"
             error={touched.pincode && Boolean(errors.pincode)}
             helperText={touched.pincode && (errors.pincode as string)}
@@ -448,6 +457,7 @@ export default function SignUpStep2Address({
             type="submit"
             fullWidth
             disabled={isSubmitting}
+            onClick={syncAndSubmit}
             variant="contained"
             endIcon={
               isSubmitting ? (

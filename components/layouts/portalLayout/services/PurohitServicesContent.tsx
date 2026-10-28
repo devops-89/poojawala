@@ -119,8 +119,12 @@ export default function PurohitServicesContent() {
     fetchServices();
   }, [page, debouncedSearch, selectedCity, selectedState]);
 
-  const handleCardClick = (serviceId: number, _isAlreadyAdded?: boolean) => {
-    router.push(`/partner/services/${serviceId}`);
+  const handleCardClick = (service: any, _isAlreadyAdded?: boolean) => {
+    const targetSlug =
+      typeof service === "object"
+        ? service.slug || service.id
+        : service;
+    router.push(`/partner/services/${targetSlug}`);
   };
 
   // Indian States & Cities calculation
@@ -205,7 +209,7 @@ export default function PurohitServicesContent() {
               <Grid size={{ xs: 12, lg: 6 }} key={service.id} sx={{ display: 'flex' }}>
                 <Paper
                   elevation={0}
-                  onClick={() => handleCardClick(service.id, isAlreadyAdded)}
+                  onClick={() => handleCardClick(service, isAlreadyAdded)}
                   sx={{
                     width: '100%',
                     p: 2.5,
@@ -418,7 +422,7 @@ export default function PurohitServicesContent() {
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!isAlreadyAdded) {
-                            handleCardClick(service.id, isAlreadyAdded);
+                            handleCardClick(service, isAlreadyAdded);
                           }
                         }}
                         sx={{

@@ -111,7 +111,10 @@ export default function VerifyOtpContent() {
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleVerify();
+    } else if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
@@ -277,7 +280,15 @@ export default function VerifyOtpContent() {
                   Code sent to <span style={{ fontWeight: 700, color: '#1A1A1A' }}>{signupData?.email || 'your email'}</span>
                 </Typography>
 
-                <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, justifyContent: 'space-between', mb: 4 }}>
+                <Box
+                  sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, justifyContent: 'space-between', mb: 4 }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleVerify();
+                    }
+                  }}
+                >
                   {otp.map((digit, index) => (
                     <TextField
                       key={index}

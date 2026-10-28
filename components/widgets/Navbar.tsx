@@ -172,7 +172,7 @@ function NavbarContent() {
                 },
               }}
             >
-              Register as Astrologer
+              Register as Astrologer/Purohit
             </Button>
             <Button
               component={NextLink}
@@ -369,7 +369,7 @@ function NavbarContent() {
               },
             }}
           >
-            Register as Astrologer
+            Register as Astrologer/Purohit
           </Button>
         </Box>
       </Drawer>

@@ -35,6 +35,8 @@ export default function AddBlogContent() {
         isFeatured: Boolean(values.isFeatured),
         authorName: values.authorName || "",
         coverImage: values.coverImage || "",
+        metaTitle: values.metaTitle ? values.metaTitle.trim() : "",
+        metaDescription: values.metaDescription ? values.metaDescription.trim() : "",
       };
 
       if (imageFile) {

@@ -68,6 +68,8 @@ const validationSchema = Yup.object().shape({
       if (!val) return false;
       return /[a-zA-Z]/.test(val);
     }),
+  metaTitle: Yup.string().trim().optional(),
+  metaDescription: Yup.string().trim().optional(),
 });
 
 import { TempleFormProps } from "@/utils/types";
@@ -90,6 +92,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
     state: string;
     city: string;
     address: string;
+    metaTitle: string;
+    metaDescription: string;
     hasImage: boolean;
   } | null>(null);
 
@@ -100,6 +104,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
       state: "",
       city: "",
       address: "",
+      metaTitle: "",
+      metaDescription: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -117,9 +123,20 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         const isStateSame = (values.state || "").trim() === (init.state || "").trim();
         const isCitySame = values.city.trim() === init.city.trim();
         const isAddressSame = values.address.trim() === init.address.trim();
+        const isMetaTitleSame = (values.metaTitle || "").trim() === (init.metaTitle || "").trim();
+        const isMetaDescSame = (values.metaDescription || "").trim() === (init.metaDescription || "").trim();
         const isImageSame = !imageFile && !imageRemoved;
 
-        if (isNameSame && isDescSame && isStateSame && isCitySame && isAddressSame && isImageSame) {
+        if (
+          isNameSame &&
+          isDescSame &&
+          isStateSame &&
+          isCitySame &&
+          isAddressSame &&
+          isMetaTitleSame &&
+          isMetaDescSame &&
+          isImageSame
+        ) {
           showSnackbar("No changes have been made", "info");
           return;
         }
@@ -135,6 +152,16 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         }
         formData.append("city", values.city.trim());
         formData.append("address", values.address.trim());
+        if (values.metaTitle && values.metaTitle.trim()) {
+          formData.append("metaTitle", values.metaTitle.trim());
+        } else if (isEdit) {
+          formData.append("metaTitle", "");
+        }
+        if (values.metaDescription && values.metaDescription.trim()) {
+          formData.append("metaDescription", values.metaDescription.trim());
+        } else if (isEdit) {
+          formData.append("metaDescription", "");
+        }
         if (imageFile) {
           formData.append("imageUrl", imageFile);
         } else if (imageRemoved) {
@@ -248,6 +275,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               state: temple.state || "",
               city: temple.city || "",
               address: temple.address || "",
+              metaTitle: temple.metaTitle || "",
+              metaDescription: temple.metaDescription || "",
             });
 
             const existingImg = temple.downloadUrl || temple.imageUrl;
@@ -261,6 +290,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               state: temple.state || "",
               city: temple.city || "",
               address: temple.address || "",
+              metaTitle: temple.metaTitle || "",
+              metaDescription: temple.metaDescription || "",
               hasImage: Boolean(existingImg),
             };
           } else {
@@ -641,8 +672,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                         )}
                         helperText={
                           formik.touched.state &&
-                          formik.errors.state &&
-                          !formik.values.state?.trim()
+                            formik.errors.state &&
+                            !formik.values.state?.trim()
                             ? (formik.errors.state as string)
                             : undefined
                         }
@@ -695,8 +726,8 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                         )}
                         helperText={
                           formik.touched.city &&
-                          formik.errors.city &&
-                          !formik.values.city?.trim()
+                            formik.errors.city &&
+                            !formik.values.city?.trim()
                             ? (formik.errors.city as string)
                             : undefined
                         }
@@ -736,6 +767,65 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                   "& .MuiOutlinedInput-root": { borderRadius: "12px" },
                 }}
               />
+            </Box>
+
+            {/* 5. SEO / Metadata Details */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+              <Box>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: "1.05rem",
+                    color: "#1e293b",
+                  }}
+                >
+                  SEO / Search Engine Optimization
+                </Typography>
+                <Typography sx={{ color: "#64748b", fontSize: "0.85rem", mt: 0.5 }}>
+                  Add meta title and description to optimize this temple page for search engines and social sharing.
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    fullWidth
+                    name="metaTitle"
+                    label="Meta Title (SEO)"
+                    placeholder="e.g., JK Temple (Shri Radhakrishna Temple) - Kanpur | History & Darshan"
+                    variant="outlined"
+                    value={formik.values.metaTitle}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={Boolean(formik.touched.metaTitle && formik.errors.metaTitle)}
+                    helperText={formik.touched.metaTitle ? formik.errors.metaTitle : undefined}
+                    sx={{
+                      "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+                    }}
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={3}
+                    name="metaDescription"
+                    label="Meta Description (SEO)"
+                    placeholder="e.g., Explore JK Temple in Kanpur. Discover its unique Nagara architecture, timings, rituals, and serene gardens."
+                    variant="outlined"
+                    value={formik.values.metaDescription}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={Boolean(formik.touched.metaDescription && formik.errors.metaDescription)}
+                    helperText={formik.touched.metaDescription ? formik.errors.metaDescription : undefined}
+                    sx={{
+                      "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+                    }}
+                  />
+                </Grid>
+              </Grid>
             </Box>
 
             <Divider sx={{ my: 1 }} />

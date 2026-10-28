@@ -9,16 +9,18 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   IconButton,
   TextField,
   Typography,
-  Chip,
-  Avatar,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
 import { submitContactFormAPI } from "@/api/userControllers";
 import { getMeAPI } from "@/api/authControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
@@ -31,64 +33,158 @@ interface ServiceInquiryModalProps {
   onClose: () => void;
   serviceId: number | string;
   serviceName?: string;
+  planName?: string;
 }
+
+const getMinDateTime = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
 
 export default function ServiceInquiryModal({
   open,
   onClose,
   serviceId,
   serviceName,
+  planName,
 }: ServiceInquiryModalProps) {
   const { showSnackbar } = useSnackbarStore();
   const { profile, fetchProfile } = useUserStore();
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
+  const [preferredDateTime, setPreferredDateTime] = useState("");
+  const [address, setAddress] = useState("");
   const [message, setMessage] = useState("");
+  const [minDateTime, setMinDateTime] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{ subject?: string; message?: string }>({});
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    subject?: string;
+    preferredDateTime?: string;
+    address?: string;
+    message?: string;
+  }>({});
 
   useEffect(() => {
     if (open) {
-      fetchProfile();
-      setSubject("");
+      setMinDateTime(getMinDateTime());
+      const planSuffix = planName
+        ? ` (${planName.charAt(0).toUpperCase() + planName.slice(1)} Plan)`
+        : "";
+      setSubject(serviceName ? `Inquiry for ${serviceName}${planSuffix}` : "");
       setMessage("");
+      setPreferredDateTime("");
+      setAddress("");
       setErrors({});
-    }
-  }, [open, fetchProfile]);
 
-  // Extract logged in user data (directly from me API, profile or sessionStorage)
-  const getUserData = async () => {
-    let u: any = profile;
-    if (!u || (!u.firstName && !u.name)) {
-      try {
-        const meRes = await getMeAPI();
-        u = meRes?.data?.user || meRes?.data?.data || meRes?.data;
-      } catch (e) {
-        try {
-          u = await fetchProfile(true);
-        } catch (err) {}
-      }
-    }
-    if (!u && typeof window !== "undefined") {
-      try {
-        const stored = sessionStorage.getItem("user");
-        if (stored) u = JSON.parse(stored);
-      } catch (e) {}
-    }
+      // Fetch user profile to prefill name, email, and address
+      const loadUser = async () => {
+        let u: any = profile;
+        if (!u || (!u.firstName && !u.name)) {
+          try {
+            u = await fetchProfile(true);
+          } catch (e) {}
+        }
+        if (!u || (!u.firstName && !u.name)) {
+          try {
+            const meRes = await getMeAPI();
+            u = meRes?.data?.user || meRes?.data?.data || meRes?.data;
+          } catch (e) {}
+        }
+        if (!u && typeof window !== "undefined") {
+          try {
+            const stored = sessionStorage.getItem("user");
+            if (stored) u = JSON.parse(stored);
+          } catch (e) {}
+        }
 
-    const firstName = u?.firstName || "";
-    const lastName = u?.lastName || "";
-    const name = [firstName, lastName].filter(Boolean).join(" ").trim() || u?.name || u?.username || "";
-    const email = u?.email || "";
-    return { name, firstName, lastName, email };
-  };
+        const fName = u?.firstName || "";
+        const lName = u?.lastName || "";
+        const fullName =
+          [fName, lName].filter(Boolean).join(" ").trim() ||
+          u?.name ||
+          u?.username ||
+          "";
+        const userEmail = u?.email || "";
+
+        setName(fullName);
+        setEmail(userEmail);
+
+        // Prefill address from user addresses if available
+        if (Array.isArray(u?.addresses) && u.addresses.length > 0) {
+          const addr = u.addresses.find((a: any) => a.isDefault) || u.addresses[0];
+          if (addr) {
+            const formatted = [
+              addr.addressLine1 || addr.address || addr.flatNo || addr.houseNo,
+              addr.addressLine2 || addr.street || addr.area,
+              addr.landmark,
+              addr.city,
+              addr.state,
+              addr.pincode || addr.postalCode,
+            ]
+              .filter(Boolean)
+              .join(", ");
+            if (formatted) setAddress(formatted);
+          }
+        } else if (u?.address && typeof u.address === "string") {
+          setAddress(u.address);
+        }
+      };
+
+      loadUser();
+    }
+  }, [open, serviceName, planName]);
 
   const validate = () => {
-    const newErrors: { subject?: string; message?: string } = {};
+    const newErrors: {
+      name?: string;
+      email?: string;
+      subject?: string;
+      preferredDateTime?: string;
+      address?: string;
+      message?: string;
+    } = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Full Name is required";
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email Address is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
     if (!subject.trim()) {
       newErrors.subject = "Subject is required";
     } else if (subject.trim().length < 4) {
       newErrors.subject = "Subject must be at least 4 characters";
+    }
+
+    if (!preferredDateTime) {
+      newErrors.preferredDateTime = "Preferred Date & Time is required";
+    } else {
+      const selected = new Date(preferredDateTime).getTime();
+      const now = new Date().getTime();
+      if (isNaN(selected)) {
+        newErrors.preferredDateTime = "Please enter a valid date and time";
+      } else if (selected < now - 60000) {
+        newErrors.preferredDateTime = "Date & time cannot be in the past";
+      }
+    }
+
+    if (!address.trim()) {
+      newErrors.address = "Address / Venue is required";
+    } else if (address.trim().length < 5) {
+      newErrors.address = "Address must be at least 5 characters";
     }
 
     if (!message.trim()) {
@@ -107,20 +203,27 @@ export default function ServiceInquiryModal({
 
     setSubmitting(true);
     try {
-      const userData = await getUserData();
       const payload: Record<string, any> = {
-        name: userData.name,
-        email: userData.email,
-        serviceId: Number(serviceId) || serviceId,
+        name: name.trim(),
+        email: email.trim(),
         subject: subject.trim(),
         message: message.trim(),
+        serviceId: String(serviceId),
+        preferredDateTime: new Date(preferredDateTime).toISOString(),
+        address: address.trim(),
       };
 
       const res = await submitContactFormAPI(payload);
 
-      if (res?.success || res?.data || res?.statusCode === 200 || res?.statusCode === 201) {
+      if (
+        res?.success ||
+        res?.data ||
+        res?.statusCode === 200 ||
+        res?.statusCode === 201
+      ) {
         showSnackbar(
-          res?.message || "Inquiry submitted successfully! Our team will get back to you shortly.",
+          res?.message ||
+            "Inquiry submitted successfully! Our team will get back to you shortly.",
           "success"
         );
         onClose();
@@ -130,7 +233,9 @@ export default function ServiceInquiryModal({
     } catch (err: any) {
       console.error("Error submitting service inquiry:", err);
       showSnackbar(
-        err?.response?.data?.message || err?.message || "Failed to submit inquiry",
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to submit inquiry",
         "error"
       );
     } finally {
@@ -142,7 +247,7 @@ export default function ServiceInquiryModal({
     <Dialog
       open={open}
       onClose={submitting ? undefined : onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       slotProps={{
         paper: {
@@ -168,8 +273,8 @@ export default function ServiceInquiryModal({
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Box
             sx={{
-              width: 40,
-              height: 40,
+              width: 42,
+              height: 42,
               borderRadius: "12px",
               bgcolor: "rgba(255, 98, 0, 0.1)",
               display: "flex",
@@ -197,7 +302,7 @@ export default function ServiceInquiryModal({
               sx={{
                 fontFamily: FONTS.PRIMARY,
                 color: "#64748b",
-                fontSize: "12px",
+                fontSize: "12.5px",
               }}
             >
               Send your questions or custom requirements to our team
@@ -218,22 +323,117 @@ export default function ServiceInquiryModal({
         </IconButton>
       </DialogTitle>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <DialogContent sx={{ pt: 1, pb: 2 }}>
-          {/* Form Fields: Only Subject and Message */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+            {/* Row 1: Name and Email (Prefilled from Profile) */}
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Full Name"
+                  placeholder="e.g. Rohan Sharma"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name)
+                      setErrors((prev) => ({ ...prev, name: undefined }));
+                  }}
+                  error={Boolean(errors.name)}
+                  helperText={errors.name}
+                  disabled={submitting}
+                  slotProps={{
+                    inputLabel: { required: true },
+                    input: {
+                      startAdornment: (
+                        <PersonIcon
+                          sx={{
+                            color: "#94a3b8",
+                            fontSize: 20,
+                            mr: 1,
+                          }}
+                        />
+                      ),
+                    },
+                  }}
+                  sx={{
+                    bgcolor: "#FFFDF9",
+                    borderRadius: "10px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Email Address"
+                  placeholder="e.g. rohan@yopmail.com"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email)
+                      setErrors((prev) => ({ ...prev, email: undefined }));
+                  }}
+                  error={Boolean(errors.email)}
+                  helperText={errors.email}
+                  disabled={submitting}
+                  slotProps={{
+                    inputLabel: { required: true },
+                    input: {
+                      startAdornment: (
+                        <EmailIcon
+                          sx={{
+                            color: "#94a3b8",
+                            fontSize: 20,
+                            mr: 1,
+                          }}
+                        />
+                      ),
+                    },
+                  }}
+                  sx={{
+                    bgcolor: "#FFFDF9",
+                    borderRadius: "10px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            {/* Row 2: Subject */}
             <TextField
+              required
               fullWidth
               label="Subject"
-              placeholder="e.g., Custom Samagri request / Date inquiry / Pandit requirements"
+              placeholder="e.g., Satyanarayan Pooja Booking Inquiry"
               value={subject}
               onChange={(e) => {
                 setSubject(e.target.value);
-                if (errors.subject) setErrors((prev) => ({ ...prev, subject: undefined }));
+                if (errors.subject)
+                  setErrors((prev) => ({ ...prev, subject: undefined }));
               }}
               error={Boolean(errors.subject)}
               helperText={errors.subject}
               disabled={submitting}
+              slotProps={{
+                inputLabel: { required: true },
+              }}
               sx={{
                 bgcolor: "#FFFDF9",
                 borderRadius: "10px",
@@ -247,20 +447,124 @@ export default function ServiceInquiryModal({
               }}
             />
 
+            {/* Row 3: Preferred Date & Time + Address */}
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Preferred Date & Time"
+                  type="datetime-local"
+                  value={preferredDateTime}
+                  onChange={(e) => {
+                    setPreferredDateTime(e.target.value);
+                    if (errors.preferredDateTime)
+                      setErrors((prev) => ({
+                        ...prev,
+                        preferredDateTime: undefined,
+                      }));
+                  }}
+                  error={Boolean(errors.preferredDateTime)}
+                  helperText={
+                    errors.preferredDateTime ||
+                    "Select future pooja date & time"
+                  }
+                  disabled={submitting}
+                  slotProps={{
+                    inputLabel: { shrink: true, required: true },
+                    htmlInput: { min: minDateTime },
+                    input: {
+                      startAdornment: (
+                        <CalendarMonthIcon
+                          sx={{
+                            color: "#94a3b8",
+                            fontSize: 20,
+                            mr: 1,
+                          }}
+                        />
+                      ),
+                    },
+                  }}
+                  sx={{
+                    bgcolor: "#FFFDF9",
+                    borderRadius: "10px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Address / Venue"
+                  placeholder="e.g. Flat 301, Palm Grove Apts, Whitefield, Bangalore"
+                  value={address}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    if (errors.address)
+                      setErrors((prev) => ({ ...prev, address: undefined }));
+                  }}
+                  error={Boolean(errors.address)}
+                  helperText={
+                    errors.address || "Pooja venue or residential address"
+                  }
+                  disabled={submitting}
+                  slotProps={{
+                    inputLabel: { required: true },
+                    input: {
+                      startAdornment: (
+                        <LocationOnIcon
+                          sx={{
+                            color: "#94a3b8",
+                            fontSize: 20,
+                            mr: 1,
+                          }}
+                        />
+                      ),
+                    },
+                  }}
+                  sx={{
+                    bgcolor: "#FFFDF9",
+                    borderRadius: "10px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontFamily: FONTS.PRIMARY,
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            {/* Row 4: Message */}
             <TextField
+              required
               fullWidth
               multiline
               rows={4}
               label="Your Message"
-              placeholder="Please describe your requirements, questions about muhurat, specific vidhi details, or any custom arrangements..."
+              placeholder="Looking to book pooja for housewarming ceremony, muhurat details, pandit requirements..."
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
-                if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
+                if (errors.message)
+                  setErrors((prev) => ({ ...prev, message: undefined }));
               }}
               error={Boolean(errors.message)}
               helperText={errors.message}
               disabled={submitting}
+              slotProps={{
+                inputLabel: { required: true },
+              }}
               sx={{
                 bgcolor: "#FFFDF9",
                 borderRadius: "10px",
@@ -276,7 +580,7 @@ export default function ServiceInquiryModal({
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 2, pt: 1, gap: 1.5 }}>
+        <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, gap: 1.5 }}>
           <Button
             onClick={onClose}
             disabled={submitting}

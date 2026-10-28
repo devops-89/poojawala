@@ -95,7 +95,10 @@ export interface AdminDetailsHeaderProps {
 export interface ITemple {
   id: number | string;
   name: string;
+  slug?: string;
   description?: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
   imageUrl?: string;
   downloadUrl?: string;
   city?: string;
@@ -121,6 +124,8 @@ export interface TempleFormValues {
   city: string;
   state?: string;
   address: string;
+  metaTitle?: string;
+  metaDescription?: string;
   imageUrl?: string;
   isActive?: boolean;
 }

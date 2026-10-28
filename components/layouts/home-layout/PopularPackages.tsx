@@ -62,6 +62,12 @@ export default function PopularPackages() {
         const apiPackages = activeOnly.map((item: any) => {
           const priceStr = formatServicePriceRange(item);
 
+          if (typeof window !== "undefined" && item.id && item.slug) {
+            const s = String(item.slug).toLowerCase();
+            localStorage.setItem(`slug_to_id_${s}`, String(item.id));
+            sessionStorage.setItem(`slug_to_id_${s}`, String(item.id));
+          }
+
           return {
             id: item.id,
             slug: item.slug,
@@ -93,7 +99,7 @@ export default function PopularPackages() {
   }, []);
 
   return (
-    <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: "#FFF" }}>
+    <Box id="popular-packages" sx={{ py: { xs: 6, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}>
       <Container maxWidth="lg">
         {/* Header Section */}
         <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
@@ -134,7 +140,12 @@ export default function PopularPackages() {
             >
               <Button
                 endIcon={<ArrowForwardIcon fontSize="small" />}
-                onClick={() => router.push("/services")}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    sessionStorage.setItem("home_restore_section", "popular-packages");
+                  }
+                  router.push("/services");
+                }}
                 sx={{
                   color: "#D32F2F",
                   background: "transparent",
@@ -166,7 +177,12 @@ export default function PopularPackages() {
           >
             <Button
               endIcon={<ArrowForwardIcon fontSize="small" />}
-              onClick={() => router.push("/services")}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("home_restore_section", "popular-packages");
+                }
+                router.push("/services");
+              }}
               sx={{
                 color: "#D32F2F",
                 background: "transparent",
@@ -212,7 +228,12 @@ export default function PopularPackages() {
               >
                 <Card
                   elevation={0}
-                  onClick={() => router.push(`/services/${pkg.id}`)}
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      sessionStorage.setItem("home_restore_section", "popular-packages");
+                    }
+                    router.push(`/services/${pkg.slug || pkg.id}`);
+                  }}
                   sx={{
                     width: "100%",
                     height: "100%",
@@ -386,7 +407,10 @@ export default function PopularPackages() {
                       variant="outlined"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push("/sign-up?from=book-now");
+                        if (typeof window !== "undefined") {
+                          sessionStorage.setItem("home_restore_section", "popular-packages");
+                        }
+                        router.push(`/services/${pkg.slug || pkg.id}`);
                       }}
                       sx={{
                         width: "100%",

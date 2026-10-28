@@ -20,6 +20,15 @@ import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
 
+const capitalizeName = (str?: string): string => {
+  if (!str) return '';
+  return str
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const parseList = (val: any): string[] => {
   if (!val) return [];
   if (Array.isArray(val)) {
@@ -88,11 +97,13 @@ export default function AstrologerGrid() {
         const formatted = fetchedList.map((item: any) => {
           const profile = item.astrologerProfile || item.profile || {};
 
-          // 1. Name
+          // 1. Name with capitalized first & last name
+          const fName = capitalizeName(item.firstName || '');
+          const lName = capitalizeName(item.lastName || '');
           const fullName =
-            `${item.firstName || ''} ${item.lastName || ''}`.trim() ||
-            item.username ||
-            'Vedic Astrologer';
+            [fName, lName].filter(Boolean).join(' ') ||
+            capitalizeName(item.username || '') ||
+            '';
 
           // 2. Specializations
           const specs = parseList(
@@ -101,50 +112,54 @@ export default function AstrologerGrid() {
           const specification = profile.specification || item.specification || '';
           const specStr = specs.length > 0 ? specs.join(', ') : specification;
 
-          // 3. Languages
+          // 3. Languages (NO static fallback)
           const langs = parseList(
             profile.languages || profile.language || item.languages
           );
-          const langStr = langs.length > 0 ? langs.join(', ') : 'Hindi, English';
+          const langStr = langs.length > 0 ? langs.join(', ') : '';
 
-          // 4. Qualifications
+          // 4. Qualifications (NO static fallback)
           const quals = parseList(profile.qualification || profile.qualifications || item.qualification);
           const category =
             quals.length > 0
               ? quals[0]
-              : (specification || 'Vedic Astrologer');
+              : (specification || '');
 
-          // 5. Experience
+          // 5. Experience (NO static fallback)
           const expYears =
             profile.experienceYears ?? profile.experience ?? item.experienceYears;
-          const experience = expYears ? `${expYears}+ Years` : '5+ Years';
+          const experience = expYears ? `${expYears}+ Years` : '';
 
-          // 6. Rating
+          // 6. Rating (only if > 0, otherwise empty string)
           const rawRating = item.avgRating ?? profile.avgRating ?? item.averageRating;
           const numRating = Number(rawRating || 0);
-          const rating = numRating > 0 ? numRating.toFixed(1) : 'New';
+          const rating = !isNaN(numRating) && numRating > 0 ? numRating.toFixed(1) : '';
 
           // 7. Astrology Price
-          const astrologyPrice =
+          const rawPrice =
             profile.astrologyPrice ??
             item.astrologyPrice ??
             profile.ratePerMinute ??
             item.ratePerMinute;
+          const numPrice = Number(rawPrice);
+          const astrologyPrice =
+            rawPrice != null && rawPrice !== '' && !isNaN(numPrice) && numPrice > 0
+              ? numPrice
+              : null;
 
-          // 8. City
+          // 8. City & State
           const city = profile.city || item.city || '';
+          const state = profile.state || item.state || '';
 
           // 9. Bio
           const bio = profile.bio || item.bio || '';
 
-          // 10. Image
-          const numId = Number(item.id) || 1;
-          const fallbackImg = `/images/purohits/pandit${(numId % 6) + 1}.webp`;
+          // 10. Image (ONLY real image, NO placeholder cartoon)
           const image =
             item.profileImage ||
             profile.profileImage ||
             profile.avatar ||
-            fallbackImg;
+            '';
 
           return {
             id: item.userId || item.id,
@@ -161,6 +176,7 @@ export default function AstrologerGrid() {
             ratePerMinute: astrologyPrice,
             bio,
             city,
+            state,
           };
         });
 

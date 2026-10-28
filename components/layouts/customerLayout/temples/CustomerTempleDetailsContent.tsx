@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import { useRouter } from "next/navigation";
-import { getTempleByIdAPI } from "@/api/templeControllers";
+import { getTempleByIdAPI, registerTempleSlugMapping } from "@/api/templeControllers";
 import { getServicesAPI } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useLoaderStore } from "@/stores/loaderStore";
 import { COLORS } from "@/utils/enums";
 import { FONTS } from "@/utils/fonts";
 import CustomerTempleHero from "./CustomerTempleHero";
@@ -24,6 +25,7 @@ export default function CustomerTempleDetailsContent({
 }: CustomerTempleDetailsContentProps) {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+  const { showLoader, hideLoader } = useLoaderStore();
 
   const [temple, setTemple] = useState<any>(null);
   const [services, setServices] = useState<any[]>([]);
@@ -49,19 +51,19 @@ export default function CustomerTempleDetailsContent({
       }
       try {
         setLoading(true);
+        showLoader("Loading temple details...");
         const res = await getTempleByIdAPI(templeId);
-        if (res?.success) {
-          const rawData = res.data?.data || res.data;
-          setTemple(rawData);
-          if (rawData?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_temple_id", String(rawData.id));
-            sessionStorage.setItem("last_temple_id", String(rawData.id));
+        if (res?.success || res?.data) {
+          let rawData = res.data;
+          while (rawData?.data && !rawData?.id) {
+            rawData = rawData.data;
+          }
+          if (rawData?.id) {
+            setTemple(rawData);
             if (rawData.slug) {
-              const s = String(rawData.slug).toLowerCase();
-              localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
-              localStorage.setItem(`temple_slug_${s}`, String(rawData.id));
-              sessionStorage.setItem(`temple_slug_${s}`, String(rawData.id));
+              registerTempleSlugMapping(rawData.slug, rawData.id);
+            }
+            if (typeof window !== "undefined" && rawData.slug) {
               const currentPath = window.location.pathname;
               const basePath = currentPath.startsWith("/customer/temple/")
                 ? "/customer/temple"
@@ -71,6 +73,8 @@ export default function CustomerTempleDetailsContent({
                 window.history.replaceState(null, "", targetPath);
               }
             }
+          } else {
+            showSnackbar(res?.message || "Temple not found", "error");
           }
         } else {
           showSnackbar(res?.message || "Failed to load temple details", "error");
@@ -80,11 +84,12 @@ export default function CustomerTempleDetailsContent({
         showSnackbar("Error fetching temple details", "error");
       } finally {
         setLoading(false);
+        hideLoader();
       }
     };
 
     fetchTemple();
-  }, [templeId, showSnackbar]);
+  }, [templeId, showSnackbar, showLoader, hideLoader]);
 
   // Fetch associated services for this temple
   useEffect(() => {

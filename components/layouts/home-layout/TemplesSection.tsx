@@ -61,9 +61,10 @@ export default function TemplesSection() {
   }, []);
 
   const handleTempleClick = (temple: TempleItem) => {
-    router.push(
-      `/services?templeId=${temple.id}&temple=${encodeURIComponent(temple.name)}`,
-    );
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("home_restore_section", "temples-section");
+    }
+    router.push(`/temples/${temple.slug || temple.id}`);
   };
 
   if (!loading && temples.length === 0) {
@@ -442,10 +443,12 @@ export default function TemplesSection() {
   return (
     <Box
       component="section"
+      id="temples-section"
       sx={{
         py: { xs: 6, md: 9 },
         bgcolor: "#FFFDF9",
         position: "relative",
+        scrollMarginTop: "90px",
       }}
     >
       <Container maxWidth="lg">
@@ -526,7 +529,12 @@ export default function TemplesSection() {
             >
               <Button
                 endIcon={<ArrowForwardIcon fontSize="small" />}
-                onClick={() => router.push("/services")}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    sessionStorage.setItem("home_restore_section", "temples-section");
+                  }
+                  router.push("/temples");
+                }}
                 sx={{
                   color: "#D32F2F",
                   background: "transparent",

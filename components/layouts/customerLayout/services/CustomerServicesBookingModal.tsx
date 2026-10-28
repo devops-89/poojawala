@@ -4,6 +4,7 @@ import { COLORS } from "@/utils/enums";
 import { useUserStore } from "@/stores/userStore";
 import { useEffect, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import { ALL_INDIAN_LANGUAGES } from "@/utils/serviceDetailsUtils";
 import {
   Box,
   Button,
@@ -231,15 +232,35 @@ export default function CustomerServicesBookingModal({
             />
           </Grid>
           <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="Language"
-              placeholder="e.g. Hindi, Sanskrit"
-              value={bookingForm.language}
-              onChange={(e) =>
-                setBookingForm({ ...bookingForm, language: e.target.value })
-              }
-            />
+            <FormControl fullWidth>
+              <InputLabel id="booking-modal-language-label">Language</InputLabel>
+              <Select
+                labelId="booking-modal-language-label"
+                label="Language"
+                value={bookingForm.language || "Hindi"}
+                onChange={(e) =>
+                  setBookingForm({ ...bookingForm, language: e.target.value })
+                }
+                MenuProps={{
+                  disableScrollLock: true,
+                  slotProps: {
+                    paper: {
+                      sx: { maxHeight: 280, borderRadius: "10px" },
+                    },
+                  },
+                }}
+              >
+                {ALL_INDIAN_LANGUAGES.map((lang) => (
+                  <MenuItem
+                    key={lang}
+                    value={lang}
+                    sx={{ fontFamily: FONTS.PRIMARY, fontSize: "14px" }}
+                  >
+                    {lang}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid size={{ xs: 12 }}>
             <FormControl component="fieldset">

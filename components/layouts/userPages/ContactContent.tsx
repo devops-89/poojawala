@@ -211,8 +211,18 @@ export default function ContactContent() {
                     }
                   }}
                 >
-                  {({ isSubmitting, touched, errors }) => (
-                    <Box component={Form}>
+                  {({ isSubmitting, touched, errors, submitForm }) => (
+                    <Box
+                      component={Form}
+                      onKeyDown={(e: React.KeyboardEvent) => {
+                        if (e.key === "Enter") {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName?.toLowerCase() === "textarea") return;
+                          e.preventDefault();
+                          submitForm();
+                        }
+                      }}
+                    >
                       <FormikValidationSnackbar />
                       <Grid container spacing={3}>
                         <Grid size={{ xs: 12, md: 6 }}>

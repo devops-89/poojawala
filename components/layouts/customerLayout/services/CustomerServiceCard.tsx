@@ -17,9 +17,9 @@ export default function CustomerServiceCard({
   const router = useRouter();
 
   const handleCardClick = () => {
-    const targetId = service?.id || service?._id;
-    if (targetId) {
-      router.push(`/customer/services/${targetId}`);
+    const target = service?.slug || service?.id || service?._id;
+    if (target) {
+      router.push(`/customer/services/${target}`);
     }
   };
 

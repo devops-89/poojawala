@@ -113,7 +113,10 @@ export default function WebsiteServicePlansSection({
 
   const handleBookPlan = (planName: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const targetUrl = `/customer/services/${service?.id}`;
+    const targetSlug = service?.slug || service?.id;
+    const targetUrl = targetSlug
+      ? `/customer/services/${targetSlug}${planName ? `?plan=${planName}` : ""}`
+      : "/customer/services";
     if (typeof window !== "undefined") {
       sessionStorage.setItem("post_login_redirect", targetUrl);
       const token =
@@ -126,14 +129,14 @@ export default function WebsiteServicePlansSection({
         return;
       }
     }
-    router.push(`/sign-in?redirect=${encodeURIComponent(targetUrl)}`);
+    router.push(`/sign-up?redirect=${encodeURIComponent(targetUrl)}&from=booking`);
   };
 
   // If no plans exist in API, don't render section
   if (!basicPlan && !standardPlan) return null;
 
   return (
-    <Box sx={{ py: { xs: 5, md: 7 }, borderTop: "1px solid #F3E8DB" }}>
+    <Box id="puja-plans-section" sx={{ py: { xs: 5, md: 7 }, borderTop: "1px solid #F3E8DB" }}>
       {isSinglePlan ? (
         /* Single Plan Horizontal Card (Matching Customer Layout for Online / Single-Plan Services) */
         <Box sx={{ maxWidth: "900px", mx: "auto" }}>

@@ -8,7 +8,8 @@ import WebsiteServiceDetailsHero from "./WebsiteServiceDetailsHero";
 import WebsiteServicePlansSection from "./WebsiteServicePlansSection";
 import WebsiteWhyPoojawalaSection from "./WebsiteWhyPoojawalaSection";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import { Box, Button, CircularProgress, Container, Paper, Typography } from "@mui/material";
+import { useLoaderStore } from "@/stores/loaderStore";
+import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -19,66 +20,97 @@ export default function WebsiteServiceDetailsContent() {
   const router = useRouter();
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+  const { showLoader, hideLoader } = useLoaderStore();
+
+  const identifier = (params.slug || params.id) as string;
 
   useEffect(() => {
     // Scroll window immediately to top when navigating to service details
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
+    if (!identifier) return;
+
     const fetchService = async () => {
-      const identifier = (params.slug || params.id) as string;
-      if (!identifier) return;
-
-      if (
-        service &&
-        (service.slug === identifier || String(service.id) === String(identifier))
-      ) {
-        return;
-      }
-
       setLoading(true);
+      setErrorMessage(null);
+      showLoader("Loading service details...");
       try {
         const res = await getServiceByIdAPI(identifier);
-        if (res.success) {
-          let rawData = res.data;
-          if (rawData && rawData.data) {
-            rawData = rawData.data;
-          }
-          if (rawData && rawData.data) {
-            rawData = rawData.data;
-          }
+        let rawData = res?.data;
+
+        while (rawData?.data && !rawData?.id) {
+          rawData = rawData.data;
+        }
+
+        if (rawData?.id) {
           setService(rawData);
-          if (rawData?.id && typeof window !== "undefined") {
-            localStorage.setItem("last_service_id", String(rawData.id));
-            sessionStorage.setItem("last_service_id", String(rawData.id));
+          setErrorMessage(null);
+          if (typeof document !== "undefined") {
+            const seoTitle =
+              (rawData.metaTitle && rawData.metaTitle.trim()) ||
+              (rawData.name ? `${rawData.name} | 1Pooja` : "Service Details | 1Pooja");
+            document.title = seoTitle;
+
+            const seoDesc =
+              (rawData.metaDescription && rawData.metaDescription.trim()) ||
+              (rawData.description || rawData.shortDescription
+                ? String(rawData.shortDescription || rawData.description)
+                    .replace(/<[^>]*>?/gm, "")
+                    .slice(0, 160)
+                : "");
+            if (seoDesc) {
+              let metaDescTag = document.querySelector('meta[name="description"]');
+              if (!metaDescTag) {
+                metaDescTag = document.createElement("meta");
+                metaDescTag.setAttribute("name", "description");
+                document.head.appendChild(metaDescTag);
+              }
+              metaDescTag.setAttribute("content", seoDesc);
+            }
+          }
+          if (typeof window !== "undefined") {
             if (rawData?.slug) {
               const s = String(rawData.slug).toLowerCase();
               localStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
               sessionStorage.setItem(`slug_to_id_${s}`, String(rawData.id));
               localStorage.setItem(`service_slug_${s}`, String(rawData.id));
               sessionStorage.setItem(`service_slug_${s}`, String(rawData.id));
-              const currentPath = window.location.pathname;
-              const targetPath = `/services/${rawData.slug}`;
-              if (currentPath !== targetPath) {
-                window.history.replaceState(null, "", targetPath);
-              }
             }
           }
-          // Keep viewport at top after content loads
+
+          // If accessed via numeric ID in URL, replace browser URL with clean slug
+          if (rawData?.slug && /^\d+$/.test(String(identifier).trim())) {
+            router.replace(`/services/${rawData.slug}`);
+          }
+
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         } else {
-          showSnackbar(res.message || "Failed to load service details", "error");
+          setService(null);
+          const msg = res?.message || "Service details not found";
+          setErrorMessage(msg);
+          showSnackbar(msg, "error");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch service details:", error);
-        showSnackbar("Error fetching service details", "error");
+        setService(null);
+        const msg = error?.response?.data?.message || "Error fetching service details";
+        setErrorMessage(msg);
+        showSnackbar(msg, "error");
       } finally {
         setLoading(false);
+        hideLoader();
       }
     };
+
     fetchService();
-  }, [params.id, params.slug, showSnackbar, service]);
+
+    return () => {
+      hideLoader();
+    };
+  }, [identifier, showLoader, hideLoader]);
 
   useEffect(() => {
     if (!loading && service) {
@@ -111,18 +143,15 @@ export default function WebsiteServiceDetailsContent() {
           return;
         }
       }
-      router.push(`/sign-in?redirect=${encodeURIComponent(targetUrl)}`);
+      router.push(`/sign-up?redirect=${encodeURIComponent(targetUrl)}&from=booking`);
     } else {
-      router.push("/sign-in");
+      router.push("/sign-up?from=booking");
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
-      </Box>
-    );
+  // While loading, GlobalLoader handles the overlay
+  if (loading || (!service && !errorMessage)) {
+    return <Box sx={{ minHeight: "75vh", bgcolor: "#FFFDF9" }} />;
   }
 
   if (!service) {

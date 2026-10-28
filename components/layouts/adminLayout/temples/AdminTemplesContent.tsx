@@ -170,7 +170,7 @@ export default function AdminTemplesContent() {
       render: (temple: ITemple) => (
         <Typography
           component={NextLink}
-          href={`/admin/temples/${temple.id}`}
+          href={`/admin/temples/${temple.slug || temple.id}`}
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
@@ -235,12 +235,12 @@ export default function AdminTemplesContent() {
               {
                 label: "View Details",
                 icon: <VisibilityIcon fontSize="small" />,
-                href: `/admin/temples/${temple.id}`,
+                href: `/admin/temples/${temple.slug || temple.id}`,
               },
               {
                 label: "Edit",
                 icon: <EditIcon fontSize="small" />,
-                href: `/admin/temples/edit/${temple.id}`,
+                href: `/admin/temples/edit/${temple.slug || temple.id}`,
               },
               {
                 label: "Delete",

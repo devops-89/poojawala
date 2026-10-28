@@ -342,70 +342,63 @@ export default function SignInContent() {
 
                       showSnackbar("Login successful!", "success");
 
-                      if (role === "CUSTOMER") {
-                        const redirectUrl =
-                          searchParams.get("redirect") ||
-                          sessionStorage.getItem("post_login_redirect");
-                        if (
-                          redirectUrl &&
-                          redirectUrl.startsWith("/customer/")
+                        if (role === "CUSTOMER") {
+                          const redirectUrl =
+                            searchParams.get("redirect") ||
+                            sessionStorage.getItem("post_login_redirect");
+                          if (redirectUrl && redirectUrl.startsWith("/customer/")) {
+                            sessionStorage.removeItem("post_login_redirect");
+                            router.replace(redirectUrl);
+                          } else {
+                            router.replace("/customer/dashboard");
+                          }
+                        } else if (role === "PUROHIT" || role === "ASTROLOGER") {
+                          if (role === "ASTROLOGER") {
+                            router.replace("/partner/astrologybookings");
+                          } else {
+                            router.replace("/partner/dashboard");
+                          }
+                        } else if (
+                          role === "ADMIN" ||
+                          role === "SUPERADMIN" ||
+                          role === "SUPER_ADMIN"
                         ) {
-                          sessionStorage.removeItem("post_login_redirect");
-                          router.replace(redirectUrl);
+                          router.replace("/admin/dashboard");
                         } else {
-                          router.replace("/customer/dashboard");
+                          router.replace("/");
                         }
-                      } else if (role === "PUROHIT" || role === "ASTROLOGER") {
-                        if (role === "ASTROLOGER") {
-                          router.replace("/partner/astrologybookings");
-                        } else {
-                          router.replace("/partner/dashboard");
-                        }
-                      } else if (
-                        role === "ADMIN" ||
-                        role === "SUPERADMIN" ||
-                        role === "SUPER_ADMIN"
-                      ) {
-                        router.replace("/admin/dashboard");
-                      } else {
-                        router.replace("/");
                       }
+                    } catch (error: any) {
+                      console.error("Login failed", error);
+                      const rawMsg = extractBackendErrorMessage(
+                        error,
+                        "Invalid email or password",
+                      );
+                      const finalMsg =
+                        !rawMsg ||
+                        rawMsg.toLowerCase() === "validation failed" ||
+                        rawMsg.toLowerCase() === "bad request"
+                          ? "Invalid email or password"
+                          : rawMsg;
+                      showSnackbar(finalMsg, "error");
+                    } finally {
+                      setSubmitting(false);
                     }
-                  } catch (error: any) {
-                    console.error("Login failed", error);
-                    const rawMsg = extractBackendErrorMessage(
-                      error,
-                      "Invalid email or password"
-                    );
-                    const finalMsg =
-                      !rawMsg ||
-                      rawMsg.toLowerCase() === "validation failed" ||
-                      rawMsg.toLowerCase() === "bad request"
-                        ? "Invalid email or password"
-                        : rawMsg;
-                    showSnackbar(finalMsg, "error");
-                  } finally {
-                    setSubmitting(false);
-                  }
-                }}
-              >
-                {({ isSubmitting }) => (
-                  <Box component={Form}>
-                    <FormikValidationSnackbar />
-
-                    {/* Email Field */}
-                    <Box sx={{ mb: 2 }}>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT_ONLY,
-                          fontSize: "13.5px",
-                          fontWeight: 600,
-                          color: "#374151",
-                          mb: 0.7,
-                        }}
-                      >
-                        Email address
-                      </Typography>
+                  }}
+                >
+                  {({ isSubmitting, touched, errors, submitForm }) => (
+                    <Box
+                      component={Form}
+                      onKeyDown={(e: React.KeyboardEvent) => {
+                        if (e.key === "Enter") {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName?.toLowerCase() === "textarea") return;
+                          e.preventDefault();
+                          submitForm();
+                        }
+                      }}
+                    >
+                      <FormikValidationSnackbar />
                       <Field name="email">
                         {({ field, form, meta }: any) => (
                           <TextField
