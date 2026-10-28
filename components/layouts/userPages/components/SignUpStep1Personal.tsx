@@ -39,10 +39,10 @@ const today = new Date();
 const fifteenYearsAgo = new Date(
   today.getFullYear() - 15,
   today.getMonth(),
-  today.getDate()
+  today.getDate(),
 );
 const maxDobDate = `${fifteenYearsAgo.getFullYear()}-${String(
-  fifteenYearsAgo.getMonth() + 1
+  fifteenYearsAgo.getMonth() + 1,
 ).padStart(2, "0")}-${String(fifteenYearsAgo.getDate()).padStart(2, "0")}`;
 
 const RASHI_OPTIONS = [
@@ -63,7 +63,7 @@ const RASHI_OPTIONS = [
 export interface SignUpStep1PersonalProps {
   onNext: () => void;
 }
-//sdfg
+
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
     fontFamily: FONTS.OUTFIT,
@@ -164,7 +164,10 @@ export default function SignUpStep1Personal({
       {/* First Name */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          First Name <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          First Name{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="firstName">
           {({ field, form, meta }: any) => (
@@ -178,7 +181,7 @@ export default function SignUpStep1Personal({
               onChange={(e) => {
                 form.setFieldValue(
                   "firstName",
-                  sanitizeLettersOnly(e.target.value)
+                  sanitizeLettersOnly(e.target.value),
                 );
               }}
               slotProps={{
@@ -203,7 +206,10 @@ export default function SignUpStep1Personal({
       {/* Last Name */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Last Name <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Last Name{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="lastName">
           {({ field, form, meta }: any) => (
@@ -217,7 +223,7 @@ export default function SignUpStep1Personal({
               onChange={(e) => {
                 form.setFieldValue(
                   "lastName",
-                  sanitizeLettersOnly(e.target.value)
+                  sanitizeLettersOnly(e.target.value),
                 );
               }}
               slotProps={{
@@ -242,7 +248,10 @@ export default function SignUpStep1Personal({
       {/* Email Address */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Email Address <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Email Address{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="email">
           {({ field, form, meta }: any) => (
@@ -279,7 +288,10 @@ export default function SignUpStep1Personal({
       {/* Phone Number */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Phone Number <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Phone Number{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="phone">
           {({ field, form, meta }: any) => (
@@ -326,8 +338,8 @@ export default function SignUpStep1Personal({
                 !/^[6-9]/.test(field.value)
                   ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
                   : meta.touched
-                  ? meta.error
-                  : undefined
+                    ? meta.error
+                    : undefined
               }
               sx={{
                 ...inputStyles,
@@ -350,7 +362,10 @@ export default function SignUpStep1Personal({
       {/* Date of Birth */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Date of Birth <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Date of Birth{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="dob">
           {({ field, form, meta }: any) => (
@@ -397,7 +412,10 @@ export default function SignUpStep1Personal({
       {/* Place of Birth */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Place of Birth <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Place of Birth{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="birthPlace">
           {({ field, form, meta }: any) => (
@@ -411,7 +429,7 @@ export default function SignUpStep1Personal({
               onChange={(e) => {
                 form.setFieldValue(
                   "birthPlace",
-                  sanitizeLettersOnly(e.target.value)
+                  sanitizeLettersOnly(e.target.value),
                 );
               }}
               slotProps={{
@@ -436,7 +454,10 @@ export default function SignUpStep1Personal({
       {/* Rashi */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Rashi <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Rashi{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="rashi">
           {({ field, form, meta }: any) => (
@@ -521,7 +542,7 @@ export default function SignUpStep1Personal({
               onChange={(e) => {
                 form.setFieldValue(
                   "gotra",
-                  sanitizeLettersOnly(e.target.value)
+                  sanitizeLettersOnly(e.target.value),
                 );
               }}
               slotProps={{
@@ -546,7 +567,10 @@ export default function SignUpStep1Personal({
       {/* Password */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Password <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Password{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="password">
           {({ field, meta }: any) => (
@@ -600,7 +624,10 @@ export default function SignUpStep1Personal({
       {/* Confirm Password */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Confirm Password <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          Confirm Password{" "}
+          <Box component="span" sx={{ color: "#FF6200" }}>
+            *
+          </Box>
         </Typography>
         <Field name="confirmPassword">
           {({ field, meta }: any) => (
@@ -686,4 +713,3 @@ export default function SignUpStep1Personal({
     </Grid>
   );
 }
-
