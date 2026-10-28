@@ -1,20 +1,23 @@
 "use client";
+
 import { getMeAPI, loginAPI } from "@/api/authControllers";
 import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Container,
   FormControlLabel,
-  Grid,
   IconButton,
   InputAdornment,
   Link as MuiLink,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -32,7 +35,6 @@ import {
   EMAIL_STRICT_REGEX,
   EMAIL_STRICT_MESSAGE,
 } from "@/utils/helpers";
-
 import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 
 const validationSchema = Yup.object().shape({
@@ -82,7 +84,11 @@ export default function SignInContent() {
           } else {
             router.replace("/partner/dashboard");
           }
-        } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+        } else if (
+          role === "ADMIN" ||
+          role === "SUPERADMIN" ||
+          role === "SUPER_ADMIN"
+        ) {
           router.replace("/admin/dashboard");
         }
       } catch (e) {}
@@ -90,177 +96,251 @@ export default function SignInContent() {
   }, [router, searchParams]);
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #FFFDF9 0%, #FFE5D4 100%)",
-        display: "flex",
-        alignItems: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Background Decor */}
-      <Box
-        component="img"
-        src="/images/home/chakra.webp"
-        alt="Chakra Decor Left"
-        sx={{
-          position: "absolute",
-          top: -150,
-          left: -150,
-          width: "500px",
-          opacity: 0.5,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-      <Box
-        component="img"
-        src="/images/home/chakraright.webp"
-        alt="Chakra Decor Right"
-        sx={{
-          position: "absolute",
-          bottom: -150,
-          right: -150,
-          width: "500px",
-          opacity: 0.5,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
+    <>
 
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, py: 10 }}>
-        <Grid
-          container
-          spacing={0}
-          sx={{ justifyContent: "center", alignItems: "center" }}
+      <Box
+        sx={{
+          minHeight: "100vh",
+          backgroundImage: "url('/images/login-bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: { xs: "70% center", md: "center" },
+          backgroundRepeat: "no-repeat",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          py: { xs: 4, md: 6 },
+          px: { xs: 2, sm: 3, md: 4 },
+        }}
+      >
+        {/* Top Header: Desktop has Logo Left + Back Button Right; Mobile has ONLY the Grand Centered Logo */}
+        <Box
+          sx={{
+            position: { xs: "relative", md: "absolute" },
+            top: { xs: 0, md: 28 },
+            left: 0,
+            right: 0,
+            px: { xs: 2, sm: 4, md: 6 },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "center", md: "space-between" },
+            width: "100%",
+            mb: { xs: 3.5, md: 0 },
+            zIndex: 10,
+          }}
         >
-          <Grid size={{ xs: 12, md: 10, lg: 8 }}>
-            <Paper
+          {/* Logo: Centered & Much Bigger on Mobile; Left-aligned on Desktop */}
+          <Box
+            component={Link}
+            href="/"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              order: 1,
+              transition: "transform 0.2s ease",
+              "&:hover": { transform: "scale(1.04)" },
+            }}
+          >
+            <Box
+              component="img"
+              src="/images/1Poojalogo.webp"
+              alt="1Pooja Logo"
               sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                borderRadius: "24px",
-                overflow: "hidden",
-                boxShadow: "0 24px 80px rgba(0,0,0,0.18)",
-                border: "1px solid #FFE0D0",
+                height: { xs: "72px", sm: "76px", md: "52px" },
+                width: "auto",
+                objectFit: "contain",
+                filter: "drop-shadow(0 3px 12px rgba(0, 0, 0, 0.08))",
               }}
-            >
-              {/* Left Side Branding */}
+            />
+          </Box>
+
+          {/* Desktop Back Navigation: Top-Right on Desktop; Hidden on Mobile (placed below card on mobile) */}
+          <Button
+            component={Link}
+            href="/"
+            startIcon={
               <Box
                 sx={{
-                  flex: 1,
-                  background:
-                    "linear-gradient(135deg, #FF6200 0%, #FF9100 100%)",
-                  p: 5,
                   display: "flex",
-                  flexDirection: "column",
+                  alignItems: "center",
                   justifyContent: "center",
-                  color: "white",
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 98, 0, 0.12)",
+                  color: COLORS.PRIMARY,
+                  transition: "all 0.25s ease",
                 }}
               >
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    fontWeight: 800,
-                    mb: 2,
-                  }}
-                >
-                  Welcome Back!
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    fontSize: "16px",
-                    lineHeight: 1.6,
-                    opacity: 0.9,
-                    mb: 4,
-                  }}
-                >
-                  Sign in to manage your pooja bookings, view upcoming
-                  appointments, and consult with our verified Purohits.
-                </Typography>
-                <Box
-                  component="img"
-                  src="/images/home/poojaPackages/dhanush.webp"
-                  sx={{
-                    width: "250px",
-                    filter: "brightness(0) invert(1)",
-                    opacity: 0.8,
-                  }}
-                />
+                <ArrowBackIcon sx={{ fontSize: 16 }} />
               </Box>
+            }
+            sx={{
+              display: { xs: "none", md: "inline-flex" },
+              order: 2,
+              color: "#1F1A17",
+              bgcolor: "#FFFFFF",
+              border: "1.5px solid rgba(255, 98, 0, 0.28)",
+              borderRadius: "32px",
+              pl: 1.2,
+              pr: 2.6,
+              py: 0.8,
+              fontFamily: FONTS.OUTFIT_ONLY,
+              fontWeight: 600,
+              fontSize: "14px",
+              letterSpacing: "0.1px",
+              textTransform: "none",
+              boxShadow:
+                "0 6px 20px -3px rgba(255, 98, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.05)",
+              transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+              "& .MuiButton-startIcon": {
+                mr: 1.2,
+              },
+              "&:hover": {
+                bgcolor: "#FFFFFF",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
+                transform: "translateY(-2px)",
+                boxShadow:
+                  "0 10px 28px -3px rgba(255, 98, 0, 0.32), 0 4px 12px rgba(0, 0, 0, 0.08)",
+                "& .MuiButton-startIcon > div": {
+                  bgcolor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                  transform: "translateX(-2px)",
+                },
+              },
+              "&:active": {
+                transform: "translateY(0)",
+              },
+            }}
+          >
+            Back to Website
+          </Button>
+        </Box>
 
-              {/* Right Side Form */}
-              <Box sx={{ flex: 1.2, p: { xs: 4, md: 6 }, bgcolor: "#fff" }}>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    fontWeight: 800,
-                    color: "#1A1A1A",
-                    mb: 1,
-                  }}
-                >
-                  Sign In
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    color: "#666",
-                    mb: 4,
-                  }}
-                >
-                  Please Enter your Details.
-                </Typography>
+        {/* Master Card Container */}
+        <Container
+          maxWidth="lg"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            position: "relative",
+            zIndex: 1,
+            px: { xs: 1.5, sm: 3 },
+          }}
+        >
+          <Box
+            sx={{
+              maxWidth: { xs: "100%", sm: "480px", md: "1050px" },
+              width: "100%",
+              borderRadius: { xs: "24px", sm: "32px" },
+              overflow: "hidden",
+              boxShadow:
+                "0 35px 85px -15px rgba(190, 85, 20, 0.22), 0 18px 40px -6px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 -1px 2px rgba(255, 255, 255, 0.4)",
+              border: "1.5px solid rgba(255, 255, 255, 0.95)",
+              outline: "1px solid rgba(230, 195, 160, 0.3)",
+              background:
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.22) 100%)",
+              backdropFilter: "blur(6px) saturate(140%)",
+              WebkitBackdropFilter: "blur(6px) saturate(140%)",
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              position: "relative",
+            }}
+          >
+            {/* Left Column: Sign-in Form */}
+            <Box
+              sx={{
+                flex: { md: 1 },
+                p: { xs: "32px 22px", sm: "40px 32px", md: "48px 44px" },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                position: "relative",
+                overflow: "hidden",
+                zIndex: 2,
+              }}
+            >
 
-                <Formik
-                  initialValues={{ email: "", password: "", rememberMe: false }}
-                  validationSchema={validationSchema}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    try {
-                      const response = await loginAPI({
-                        email: values.email,
-                        password: values.password,
-                      });
-                      if (response.success || response.token || response.accessToken || response.poojawalaPurohitCsrfToken || response.poojawalaCustomerCsrfToken || response.poojawalaAstrologerCsrfToken) {
-                        const token =
-                          response.tokens?.access?.token ||
-                          response.token ||
-                          response.accessToken;
-                        let userObj = response.user || response.data?.user;
-                        if (token) {
-                          try {
-                            const meResponse = await getMeAPI(token);
-                            userObj =
-                              meResponse?.user ||
-                              meResponse?.data ||
-                              meResponse ||
-                              userObj;
-                          } catch (err) {
-                            console.warn("getMeAPI notice:", err);
-                          }
+              <Typography
+                variant="h3"
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: { xs: "26px", sm: "30px", md: "36px" },
+                  color: "#1F1A17",
+                  letterSpacing: "-0.5px",
+                  mb: 1,
+                }}
+              >
+                Welcome Back
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT_ONLY,
+                  fontSize: "14.5px",
+                  color: "#6B7280",
+                  mb: 3.5,
+                }}
+              >
+                Sign in to continue to your account.
+              </Typography>
+
+              <Formik
+                initialValues={{ email: "", password: "", rememberMe: false }}
+                validationSchema={validationSchema}
+                onSubmit={async (values, { setSubmitting }) => {
+                  try {
+                    const response = await loginAPI({
+                      email: values.email,
+                      password: values.password,
+                    });
+                    if (
+                      response.success ||
+                      response.token ||
+                      response.accessToken ||
+                      response.poojawalaPurohitCsrfToken ||
+                      response.poojawalaCustomerCsrfToken ||
+                      response.poojawalaAstrologerCsrfToken
+                    ) {
+                      const token =
+                        response.tokens?.access?.token ||
+                        response.token ||
+                        response.accessToken;
+                      let userObj = response.user || response.data?.user;
+                      if (token) {
+                        try {
+                          const meResponse = await getMeAPI(token);
+                          userObj =
+                            meResponse?.user ||
+                            meResponse?.data ||
+                            meResponse ||
+                            userObj;
+                        } catch (err) {
+                          console.warn("getMeAPI notice:", err);
                         }
+                      }
 
-                        if (userObj) {
-                          sessionStorage.setItem("user", JSON.stringify(userObj));
-                        }
+                      if (userObj) {
+                        sessionStorage.setItem("user", JSON.stringify(userObj));
+                      }
 
-                        const role = userObj?.role || response?.user?.role || response?.role;
-                        if (role) {
-                          sessionStorage.setItem("role", role);
-                          sessionStorage.setItem("activeRole", role);
-                        }
+                      const role =
+                        userObj?.role || response?.user?.role || response?.role;
+                      if (role) {
+                        sessionStorage.setItem("role", role);
+                        sessionStorage.setItem("activeRole", role);
+                      }
 
-                        const csrf = extractRoleCsrfToken(response, role);
+                      const csrf = extractRoleCsrfToken(response, role);
 
-                        if (csrf) {
-                          saveRoleCsrfToken(csrf, role);
-                        }
+                      if (csrf) {
+                        saveRoleCsrfToken(csrf, role);
+                      }
 
-                        showSnackbar("Login successful!", "success");
+                      showSnackbar("Login successful!", "success");
 
                         if (role === "CUSTOMER") {
                           const redirectUrl =
@@ -319,44 +399,151 @@ export default function SignInContent() {
                       }}
                     >
                       <FormikValidationSnackbar />
-                      <Field name="email">
+
+                      {/* Email Field */}
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT_ONLY,
+                            fontSize: "13.5px",
+                            fontWeight: 600,
+                            color: "#374151",
+                            mb: 0.7,
+                          }}
+                        >
+                          Email address
+                        </Typography>
+                        <Field name="email">
                         {({ field, form, meta }: any) => (
                           <TextField
                             {...field}
                             fullWidth
-                            label="Email"
+                            placeholder="you@example.com"
                             variant="outlined"
-                            margin="normal"
                             type="email"
                             onKeyDown={allowOnlyEmailCharsOnKeyDown}
                             onChange={(e) => {
-                              form.setFieldValue("email", sanitizeEmailInput(e.target.value));
+                              form.setFieldValue(
+                                "email",
+                                sanitizeEmailInput(e.target.value)
+                              );
                             }}
                             error={meta.touched && !!meta.error}
                             helperText={meta.touched && meta.error}
+                            slotProps={{
+                              input: {
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <MailOutlinedIcon
+                                      sx={{
+                                        color:
+                                          meta.touched && meta.error
+                                            ? "#E53E3E"
+                                            : "#9CA3AF",
+                                        fontSize: 20,
+                                      }}
+                                    />
+                                  </InputAdornment>
+                                ),
+                              },
+                            }}
                             sx={{
                               "& .MuiOutlinedInput-root": {
-                                fontFamily: FONTS.PRIMARY,
+                                fontFamily: FONTS.OUTFIT_ONLY,
+                                borderRadius: "12px",
+                                backgroundColor: "rgba(255, 255, 255, 0.52)",
+                                backdropFilter: "blur(10px)",
+                                WebkitBackdropFilter: "blur(10px)",
+                                transition: "all 0.2s ease-in-out",
+                                "&:has(input:-webkit-autofill)": {
+                                  backgroundColor: "#FFFFFF !important",
+                                },
+                                "& fieldset": {
+                                  borderColor: "rgba(220, 200, 185, 0.75)",
+                                  borderWidth: "1.2px",
+                                },
+                                "&:hover": {
+                                  backgroundColor: "rgba(255, 255, 255, 0.72)",
+                                },
+                                "&:hover fieldset": {
+                                  borderColor: COLORS.PRIMARY,
+                                },
+                                "&.Mui-focused": {
+                                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                  boxShadow:
+                                    "0 0 0 4px rgba(255, 98, 0, 0.12)",
+                                  "& fieldset": {
+                                    borderColor: COLORS.PRIMARY,
+                                    borderWidth: "1.5px",
+                                  },
+                                },
+                                "&.Mui-error": {
+                                  backgroundColor: "#FFF8F7",
+                                  "& fieldset": {
+                                    borderColor: "#E53E3E",
+                                  },
+                                },
+                                "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active":
+                                  {
+                                    WebkitBoxShadow:
+                                      "0 0 0 1000px #FFFFFF inset !important",
+                                    WebkitTextFillColor: "#181411 !important",
+                                    caretColor: "#181411",
+                                    borderRadius: "0px !important",
+                                    transition:
+                                      "background-color 50000s ease-in-out 0s",
+                                  },
                               },
-                              "& .MuiInputLabel-root": {
-                                fontFamily: FONTS.PRIMARY,
+                              "& .MuiFormHelperText-root": {
+                                fontFamily: FONTS.OUTFIT_ONLY,
+                                fontSize: "12px",
+                                marginLeft: "4px",
+                                marginTop: "4px",
                               },
                             }}
                           />
                         )}
                       </Field>
+                    </Box>
 
+                    {/* Password Field */}
+                    <Box sx={{ mb: 1 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT_ONLY,
+                          fontSize: "13.5px",
+                          fontWeight: 600,
+                          color: "#374151",
+                          mb: 0.7,
+                        }}
+                      >
+                        Password
+                      </Typography>
                       <Field name="password">
                         {({ field, meta }: any) => (
                           <TextField
                             {...field}
                             fullWidth
-                            label="Password"
+                            placeholder="Enter your password"
                             type={showPassword ? "text" : "password"}
                             variant="outlined"
-                            margin="normal"
+                            error={meta.touched && !!meta.error}
+                            helperText={meta.touched && meta.error}
                             slotProps={{
                               input: {
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <LockOutlinedIcon
+                                      sx={{
+                                        color:
+                                          meta.touched && meta.error
+                                            ? "#E53E3E"
+                                            : "#9CA3AF",
+                                        fontSize: 20,
+                                      }}
+                                    />
+                                  </InputAdornment>
+                                ),
                                 endAdornment: (
                                   <InputAdornment position="end">
                                     <IconButton
@@ -365,138 +552,191 @@ export default function SignInContent() {
                                         setShowPassword(!showPassword)
                                       }
                                       edge="end"
+                                      size="small"
+                                      sx={{ color: "#6B7280" }}
                                     >
                                       {showPassword ? (
-                                        <VisibilityOff />
+                                        <VisibilityOff sx={{ fontSize: 20 }} />
                                       ) : (
-                                        <Visibility />
+                                        <Visibility sx={{ fontSize: 20 }} />
                                       )}
                                     </IconButton>
                                   </InputAdornment>
                                 ),
                               },
                             }}
-                            error={meta.touched && !!meta.error}
-                            helperText={meta.touched && meta.error}
                             sx={{
-                              mb: 1,
                               "& .MuiOutlinedInput-root": {
-                                fontFamily: FONTS.PRIMARY,
+                                fontFamily: FONTS.OUTFIT_ONLY,
+                                borderRadius: "12px",
+                                backgroundColor: "rgba(255, 255, 255, 0.52)",
+                                backdropFilter: "blur(10px)",
+                                WebkitBackdropFilter: "blur(10px)",
+                                transition: "all 0.2s ease-in-out",
+                                "&:has(input:-webkit-autofill)": {
+                                  backgroundColor: "#FFFFFF !important",
+                                },
+                                "& fieldset": {
+                                  borderColor: "rgba(220, 200, 185, 0.75)",
+                                  borderWidth: "1.2px",
+                                },
+                                "&:hover": {
+                                  backgroundColor: "rgba(255, 255, 255, 0.72)",
+                                },
+                                "&:hover fieldset": {
+                                  borderColor: COLORS.PRIMARY,
+                                },
+                                "&.Mui-focused": {
+                                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                  boxShadow:
+                                    "0 0 0 4px rgba(255, 98, 0, 0.12)",
+                                  "& fieldset": {
+                                    borderColor: COLORS.PRIMARY,
+                                    borderWidth: "1.5px",
+                                  },
+                                },
+                                "&.Mui-error": {
+                                  backgroundColor: "#FFF8F7",
+                                  "& fieldset": {
+                                    borderColor: "#E53E3E",
+                                  },
+                                },
+                                "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active":
+                                  {
+                                    WebkitBoxShadow:
+                                      "0 0 0 1000px #FFFFFF inset !important",
+                                    WebkitTextFillColor: "#181411 !important",
+                                    caretColor: "#181411",
+                                    borderRadius: "0px !important",
+                                    transition:
+                                      "background-color 50000s ease-in-out 0s",
+                                  },
                               },
-                              "& .MuiInputLabel-root": {
-                                fontFamily: FONTS.PRIMARY,
+                              "& .MuiFormHelperText-root": {
+                                fontFamily: FONTS.OUTFIT_ONLY,
+                                fontSize: "12px",
+                                marginLeft: "4px",
+                                marginTop: "4px",
                               },
                             }}
                           />
                         )}
                       </Field>
+                    </Box>
 
-                      <Box
+                    {/* Remember me & Forgot Password */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mt: 1,
+                        mb: 3,
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Field
+                            as={Checkbox}
+                            name="rememberMe"
+                            size="small"
+                            sx={{
+                              color: "#D1D5DB",
+                              "&.Mui-checked": { color: COLORS.PRIMARY },
+                            }}
+                          />
+                        }
+                        label={
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.OUTFIT_ONLY,
+                              fontSize: "13.5px",
+                              color: "#4B5563",
+                              userSelect: "none",
+                            }}
+                          >
+                            Remember me
+                          </Typography>
+                        }
+                      />
+                      <MuiLink
+                        component={Link}
+                        href="/forgot-password?redirect=/sign-in"
+                        underline="hover"
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 4,
-                        }}
-                      >
-                        <FormControlLabel
-                          control={
-                            <Field
-                              as={Checkbox}
-                              name="rememberMe"
-                              size="small"
-                              sx={{
-                                color: COLORS.PRIMARY,
-                                "&.Mui-checked": { color: COLORS.PRIMARY },
-                              }}
-                            />
-                          }
-                          label={
-                            <Typography
-                              sx={{
-                                fontFamily: FONTS.PRIMARY,
-                                fontSize: "14px",
-                                color: "#555",
-                              }}
-                            >
-                              Remember me
-                            </Typography>
-                          }
-                        />
-                        <MuiLink
-                          component={Link}
-                          href="/forgot-password?redirect=/sign-in"
-                          underline="hover"
-                          sx={{
-                            fontFamily: FONTS.PRIMARY,
-                            fontSize: "14px",
-                            color: COLORS.PRIMARY,
-                            fontWeight: 600,
-                          }}
-                        >
-                          Forgot Password?
-                        </MuiLink>
-                      </Box>
-
-                      <Button
-                        type="submit"
-                        fullWidth
-                        disabled={isSubmitting}
-                        variant="contained"
-                        sx={{
-                          background: COLORS.PRIMARY,
-                          color: "white",
-                          py: 1.5,
-                          borderRadius: "31px",
-                          textTransform: "none",
-                          fontWeight: 700,
-                          fontSize: "16px",
-                          boxShadow: "0 8px 20px rgba(255, 98, 0, 0.3)",
+                          fontFamily: FONTS.OUTFIT_ONLY,
+                          fontSize: "13.5px",
+                          color: COLORS.PRIMARY,
+                          fontWeight: 600,
+                          transition: "color 0.2s ease",
                           "&:hover": {
-                            background: COLORS.PRIMARY_DARK,
-                            boxShadow: "0 8px 25px rgba(255, 98, 0, 0.4)",
+                            color: COLORS.PRIMARY_DARK,
                           },
                         }}
                       >
-                        {isSubmitting ? "Signing In..." : "Sign In"}
-                      </Button>
-
-                      <Box sx={{ mt: 2 }}>
-                        <Button
-                          component={Link}
-                          href="/"
-                          fullWidth
-                          variant="outlined"
-                          startIcon={<ArrowBackIcon />}
-                          sx={{
-                            py: 1.2,
-                            borderRadius: "31px",
-                            borderColor: "#FFE0D0",
-                            color: "#475569",
-                            fontFamily: FONTS.PRIMARY,
-                            fontWeight: 600,
-                            fontSize: "15px",
-                            textTransform: "none",
-                            transition: "all 0.2s ease",
-                            "&:hover": {
-                              bgcolor: "#FFF0E6",
-                              color: COLORS.PRIMARY,
-                              borderColor: COLORS.PRIMARY,
-                            },
-                          }}
-                        >
-                          Go to Website
-                        </Button>
-                      </Box>
+                        Forgot password?
+                      </MuiLink>
                     </Box>
-                  )}
-                </Formik>
+
+                    {/* Submit Button */}
+                    <Button
+                      type="submit"
+                      fullWidth
+                      disabled={isSubmitting}
+                      variant="contained"
+                      endIcon={
+                        isSubmitting ? (
+                          <CircularProgress size={18} sx={{ color: "white" }} />
+                        ) : (
+                          <ArrowForwardIcon sx={{ fontSize: 18 }} />
+                        )
+                      }
+                      sx={{
+                        background:
+                          "linear-gradient(135deg, #FF6200 0%, #FF8533 100%)",
+                        color: "white",
+                        py: 1.5,
+                        borderRadius: "14px",
+                        textTransform: "none",
+                        fontFamily: FONTS.OUTFIT_ONLY,
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.2px",
+                        boxShadow: "0 10px 24px -4px rgba(255, 98, 0, 0.4)",
+                        transition: "all 0.25s ease",
+                        "&:hover": {
+                          background:
+                            "linear-gradient(135deg, #E65800 0%, #FF7315 100%)",
+                          boxShadow: "0 14px 28px -4px rgba(255, 98, 0, 0.5)",
+                          transform: "translateY(-1.5px)",
+                        },
+                        "&:active": {
+                          transform: "translateY(0)",
+                        },
+                        "&.Mui-disabled": {
+                          background: "#E5E7EB",
+                          color: "#9CA3AF",
+                        },
+                      }}
+                    >
+                      {isSubmitting ? "Signing In..." : "Sign In"}
+                    </Button>
+                  </Box>
+                )}
+              </Formik>
+
+              {/* Sign Up Link */}
+              <Box
+                sx={{
+                  mt: 2,
+                  pt: 0.5,
+                  textAlign: "center",
+                }}
+              >
                 <Typography
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    color: "#666",
-                    textAlign: "center",
-                    mt: 4,
+                    fontFamily: FONTS.OUTFIT_ONLY,
+                    color: "#6B7280",
                     fontSize: "14px",
                   }}
                 >
@@ -504,23 +744,253 @@ export default function SignInContent() {
                   <Link
                     href={
                       redirectParam
-                        ? `/sign-up?redirect=${encodeURIComponent(redirectParam)}`
+                        ? `/sign-up?redirect=${encodeURIComponent(
+                            redirectParam
+                          )}`
                         : "/sign-up"
                     }
                     style={{
                       color: COLORS.PRIMARY,
                       fontWeight: 700,
                       textDecoration: "none",
+                      marginLeft: "4px",
                     }}
                   >
                     Sign Up
                   </Link>
                 </Typography>
               </Box>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+            </Box>
+
+            {/* Vertical Center Divider with Ornamental Motif */}
+            <Box
+              sx={{
+                display: { xs: "none", md: "block" },
+                position: "relative",
+                width: "1px",
+                alignSelf: "stretch",
+                my: 5,
+                background:
+                  "linear-gradient(to bottom, transparent 0%, rgba(220, 190, 160, 0.6) 12%, rgba(220, 190, 160, 0.6) 88%, transparent 100%)",
+              }}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%) rotate(45deg)",
+                  bgcolor: "#FFFFFF",
+                  border: "1px solid rgba(230, 195, 165, 0.8)",
+                  width: 14,
+                  height: 14,
+                  borderRadius: "3px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 2px 8px rgba(220, 100, 30, 0.15)",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 6,
+                    bgcolor: COLORS.PRIMARY,
+                    borderRadius: "1px",
+                  }}
+                />
+              </Box>
+            </Box>
+
+            {/* Right Column: Sacred Branding & Lotus Om Background */}
+            <Box
+              sx={{
+                flex: { md: 1.05 },
+                p: { md: "48px 44px" },
+                position: "relative",
+                overflow: "hidden",
+                display: { xs: "none", md: "flex" },
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                zIndex: 1,
+              }}
+            >
+              {/* Top Sacred Eyebrow */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  mb: 2,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT_ONLY,
+                    fontSize: "11.5px",
+                    fontWeight: 700,
+                    letterSpacing: "2.2px",
+                    color: "#C26D1E",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  A Sacred Connection
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 18,
+                      height: "1px",
+                      bgcolor: "rgba(194, 109, 30, 0.4)",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      width: 5,
+                      height: 5,
+                      rotate: "45deg",
+                      bgcolor: "#C26D1E",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      width: 18,
+                      height: "1px",
+                      bgcolor: "rgba(194, 109, 30, 0.4)",
+                    }}
+                  />
+                </Box>
+              </Box>
+
+              {/* Main Headline */}
+              <Typography
+                variant="h3"
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  fontSize: { xs: "26px", sm: "32px", md: "36px" },
+                  lineHeight: 1.25,
+                  color: "#1F1A17",
+                  letterSpacing: "-0.5px",
+                  mb: 1.8,
+                  position: "relative",
+                  zIndex: 2,
+                }}
+              >
+                Your devotion.
+                <br />
+                Our responsibility.
+              </Typography>
+
+              {/* Description */}
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT_ONLY,
+                  fontSize: "14.5px",
+                  lineHeight: 1.65,
+                  color: "#6B7280",
+                  maxWidth: "360px",
+                  position: "relative",
+                  zIndex: 2,
+                }}
+              >
+                Book pooja services, consult verified purohits, and stay
+                connected with authentic divine traditions.
+              </Typography>
+
+              {/* Sacred Lotus Om Artwork: /images/logincard-bg.png */}
+              <Box
+                component="img"
+                src="/images/logincard-bg.png"
+                alt="Sacred Lotus Om Artwork"
+                sx={{
+                  position: "absolute",
+                  bottom: { xs: -10, md: -15 },
+                  right: { xs: -10, md: -15 },
+                  width: { xs: "220px", sm: "270px", md: "320px", lg: "350px" },
+                  height: "auto",
+                  objectFit: "contain",
+                  pointerEvents: "none",
+                  zIndex: 0,
+                  opacity: { xs: 0.88, md: 0.95 },
+                }}
+              />
+            </Box>
+          </Box>
+        </Container>
+
+        {/* Mobile Back Button: Centered Cleanly Below the Card */}
+        <Box
+          sx={{
+            display: { xs: "flex", md: "none" },
+            justifyContent: "center",
+            width: "100%",
+            mt: 3,
+            position: "relative",
+            zIndex: 2,
+          }}
+        >
+          <Button
+            component={Link}
+            href="/"
+            startIcon={
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 26,
+                  height: 26,
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 98, 0, 0.12)",
+                  color: COLORS.PRIMARY,
+                  transition: "all 0.25s ease",
+                }}
+              >
+                <ArrowBackIcon sx={{ fontSize: 15 }} />
+              </Box>
+            }
+            sx={{
+              color: "#1F1A17",
+              bgcolor: "#FFFFFF",
+              border: "1.5px solid rgba(255, 98, 0, 0.28)",
+              borderRadius: "32px",
+              pl: 1.2,
+              pr: 2.4,
+              py: 0.8,
+              fontFamily: FONTS.OUTFIT_ONLY,
+              fontWeight: 600,
+              fontSize: "13.5px",
+              letterSpacing: "0.1px",
+              textTransform: "none",
+              boxShadow:
+                "0 6px 20px -3px rgba(255, 98, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.05)",
+              transition: "all 0.25s ease",
+              "& .MuiButton-startIcon": {
+                mr: 1,
+              },
+              "&:hover": {
+                bgcolor: "#FFFFFF",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
+                transform: "translateY(-1.5px)",
+                boxShadow: "0 8px 24px -3px rgba(255, 98, 0, 0.28)",
+              },
+              "&:active": {
+                transform: "translateY(0)",
+              },
+            }}
+          >
+            Back to Website
+          </Button>
+        </Box>
+      </Box>
+    </>
   );
 }

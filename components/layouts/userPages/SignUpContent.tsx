@@ -13,7 +13,8 @@ import {
   ADDRESS_STRICT_REGEX,
   ADDRESS_STRICT_MESSAGE,
 } from "@/utils/helpers";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,9 +27,9 @@ const today = new Date();
 const fifteenYearsAgo = new Date(
   today.getFullYear() - 15,
   today.getMonth(),
-  today.getDate()
+  today.getDate(),
 );
-
+//xsdfgh
 const step1ValidationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
@@ -36,19 +37,18 @@ const step1ValidationSchema = Yup.object().shape({
     .matches(EMAIL_STRICT_REGEX, EMAIL_STRICT_MESSAGE)
     .required("Email is required"),
   phone: Yup.string()
-    .matches(/^[6-9][0-9]{9}$/, "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9")
+    .matches(
+      /^[6-9][0-9]{9}$/,
+      "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9",
+    )
     .required("Phone number is required"),
   dob: Yup.string()
     .required("Date of birth is required")
-    .test(
-      "is-valid-date",
-      "Please enter a valid Date of Birth",
-      (val) => {
-        if (!val) return false;
-        const d = new Date(val);
-        return !isNaN(d.getTime());
-      }
-    )
+    .test("is-valid-date", "Please enter a valid Date of Birth", (val) => {
+      if (!val) return false;
+      const d = new Date(val);
+      return !isNaN(d.getTime());
+    })
     .test(
       "is-15-years-old",
       "Date of birth must be at least 15 years ago",
@@ -56,7 +56,7 @@ const step1ValidationSchema = Yup.object().shape({
         if (!val) return false;
         const d = new Date(val);
         return !isNaN(d.getTime()) && d <= fifteenYearsAgo;
-      }
+      },
     ),
   birthPlace: Yup.string().required("Birth place is required"),
   rashi: Yup.string().optional(),
@@ -78,7 +78,7 @@ const fullValidationSchema = step1ValidationSchema.concat(
     city: Yup.string().required("City is required"),
     state: Yup.string().required("State is required"),
     pincode: Yup.string().required("Pincode is required"),
-  })
+  }),
 );
 
 export default function SignUpContent() {
@@ -130,7 +130,11 @@ export default function SignUpContent() {
           }
         } else if (role === "PUROHIT") {
           router.replace("/partner/dashboard");
-        } else if (role === "ADMIN" || role === "SUPERADMIN" || role === "SUPER_ADMIN") {
+        } else if (
+          role === "ADMIN" ||
+          role === "SUPERADMIN" ||
+          role === "SUPER_ADMIN"
+        ) {
           router.replace("/admin/dashboard");
         }
       } catch (e) {}
@@ -153,7 +157,7 @@ export default function SignUpContent() {
 
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
           );
           if (res.ok) {
             const data = await res.json();
@@ -166,7 +170,7 @@ export default function SignUpContent() {
                 addressObj.town ||
                 addressObj.village ||
                 addressObj.state_district ||
-                ""
+                "",
             );
             setFieldValue("state", addressObj.state || "");
             setFieldValue("pincode", addressObj.postcode || "");
@@ -182,10 +186,10 @@ export default function SignUpContent() {
         console.error(error);
         showSnackbar(
           "Failed to fetch location. Please allow location access.",
-          "error"
+          "error",
         );
         setIsFetchingLocation(false);
-      }
+      },
     );
   };
 
@@ -220,217 +224,371 @@ export default function SignUpContent() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#FFFDF9",
+        backgroundImage: "url('/images/signup-bg1.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: { xs: "flex-start", md: "center" },
         alignItems: "center",
         position: "relative",
-        overflow: "hidden",
-        py: { xs: 3, md: 5 },
+        overflowX: "hidden",
+        overflowY: "auto",
+        py: { xs: 2, sm: 2.5, md: 3 },
+        px: { xs: 1.5, sm: 2.5, md: 3 },
+        "@media (max-height: 740px)": {
+          py: { xs: 2, md: 1.5 },
+        },
+        "@media (max-height: 660px)": {
+          py: { xs: 1.5, md: 1 },
+        },
       }}
     >
-      {/* Background Decor */}
+      {/* Top Header: Desktop Back Navigation (Hidden on Mobile) */}
       <Box
-        component="img"
-        src="/images/home/chakra.webp"
-        alt="Chakra Decor Left"
         sx={{
           position: "absolute",
-          top: -150,
-          left: -150,
-          width: "500px",
-          opacity: 0.4,
-          pointerEvents: "none",
-          zIndex: 0,
+          top: 20,
+          right: 0,
+          px: { xs: 2, sm: 4, md: 6 },
+          display: { xs: "none", md: "flex" },
+          alignItems: "center",
+          justifyContent: "flex-end",
+          width: "100%",
+          zIndex: 10,
         }}
-      />
-      <Box
-        component="img"
-        src="/images/home/chakraright.webp"
-        alt="Chakra Decor Right"
-        sx={{
-          position: "absolute",
-          bottom: -150,
-          right: -150,
-          width: "500px",
-          opacity: 0.4,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
+      >
+        <Button
+          component={Link}
+          href={signInHref}
+          startIcon={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                bgcolor: "rgba(255, 98, 0, 0.12)",
+                color: "#FF6200",
+              }}
+            >
+              <ArrowBackIcon sx={{ fontSize: 14 }} />
+            </Box>
+          }
+          sx={{
+            color: "#1F1A17",
+            bgcolor: "#FFFFFF",
+            border: "1.5px solid rgba(255, 98, 0, 0.28)",
+            borderRadius: "32px",
+            pl: 1.2,
+            pr: 2.2,
+            py: 0.6,
+            fontFamily: FONTS.OUTFIT_ONLY,
+            fontWeight: 600,
+            fontSize: "13px",
+            textTransform: "none",
+            boxShadow:
+              "0 4px 14px -2px rgba(255, 98, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)",
+            transition: "all 0.25s ease",
+            "&:hover": {
+              bgcolor: "#FFFFFF",
+              borderColor: "#FF6200",
+              transform: "translateY(-1px)",
+              boxShadow: "0 6px 18px -2px rgba(255, 98, 0, 0.28)",
+            },
+          }}
+        >
+          Back to Sign In
+        </Button>
+      </Box>
 
       <Container
         maxWidth="lg"
+        disableGutters
         sx={{
           position: "relative",
           zIndex: 1,
-          px: { xs: 2, md: 3 },
+          px: { xs: 0, sm: 1 },
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
         }}
       >
-        <Grid
-          container
-          spacing={0}
-          sx={{ justifyContent: "center", alignItems: "center" }}
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: { xs: "100%", sm: "600px", md: "890px", lg: "900px" },
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            borderRadius: { xs: "20px", md: "24px" },
+            overflow: "hidden",
+            boxSizing: "border-box",
+            background:
+              "linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 250, 245, 0.22) 100%)",
+            backdropFilter: "blur(14px) saturate(140%)",
+            WebkitBackdropFilter: "blur(14px) saturate(140%)",
+            border: "1.5px solid rgba(255, 255, 255, 0.85)",
+            boxShadow:
+              "0 35px 85px -15px rgba(210, 100, 30, 0.22), 0 15px 35px rgba(0, 0, 0, 0.06), inset 0 2px 2px rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(255, 255, 255, 0.4)",
+          }}
         >
-          <Grid size={{ xs: 12, md: 11, lg: 10 }}>
-            <Paper
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                borderRadius: "24px",
-                overflow: "hidden",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
-                border: "1px solid #FFE0D0",
+          {/* Left Side Branding */}
+          <SignUpBrandingSide />
+
+          {/* Right Side Form */}
+          <Box
+            sx={{
+              flex: 1.5,
+              width: "100%",
+              boxSizing: "border-box",
+              p: { xs: "20px 16px", sm: 3, md: "22px 26px" },
+              background:
+                "linear-gradient(165deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 252, 248, 0.25) 100%)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Formik
+              initialValues={initialValues}
+              validationSchema={fullValidationSchema}
+              validateOnChange={true}
+              validateOnBlur={true}
+              onSubmit={async (values, { setSubmitting }) => {
+                try {
+                  const res = await sendOtpAPI({
+                    phone: values.phone,
+                    email: values.email,
+                    role: "CUSTOMER",
+                  });
+                  if (res.success || res.statusCode === 200) {
+                    sessionStorage.setItem(
+                      "signupData",
+                      JSON.stringify(values),
+                    );
+                    showSnackbar(
+                      res?.message || "OTP sent successfully!",
+                      "success",
+                    );
+                    const targetOtpUrl = redirectParam
+                      ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
+                      : "/verify-otp";
+                    router.replace(targetOtpUrl);
+                  } else {
+                    showSnackbar(res?.message || "Failed to send OTP", "error");
+                  }
+                } catch (error: any) {
+                  showSnackbar(
+                    extractBackendErrorMessage(error, "Failed to send OTP"),
+                    "error",
+                  );
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
-              {/* Left Side Branding */}
-              <SignUpBrandingSide />
-
-              {/* Right Side Form */}
-              <Box
-                sx={{
-                  flex: 1.5,
-                  p: { xs: 3, md: 4 },
-                  bgcolor: "#fff",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={fullValidationSchema}
-                  validateOnChange={true}
-                  validateOnBlur={true}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    try {
-                      const res = await sendOtpAPI({
-                        phone: values.phone,
-                        email: values.email,
-                        role: "CUSTOMER",
+              {({ isSubmitting, values, setFieldValue, setTouched }) => {
+                const handleStep1Next = async () => {
+                  try {
+                    await step1ValidationSchema.validate(values, {
+                      abortEarly: false,
+                    });
+                    setCurrentStep(2);
+                  } catch (err: any) {
+                    if (err.inner) {
+                      const touchedObj: any = {};
+                      err.inner.forEach((e: any) => {
+                        if (e.path) touchedObj[e.path] = true;
                       });
-                      if (res.success || res.statusCode === 200) {
-                        sessionStorage.setItem(
-                          "signupData",
-                          JSON.stringify(values)
-                        );
-                        showSnackbar(res?.message || "OTP sent successfully!", "success");
-                        const targetOtpUrl = redirectParam
-                          ? `/verify-otp?redirect=${encodeURIComponent(redirectParam)}`
-                          : "/verify-otp";
-                        router.replace(targetOtpUrl);
-                      } else {
-                        showSnackbar(
-                          res?.message || "Failed to send OTP",
-                          "error"
-                        );
-                      }
-                    } catch (error: any) {
-                      showSnackbar(
-                        extractBackendErrorMessage(error, "Failed to send OTP"),
-                        "error"
-                      );
-                    } finally {
-                      setSubmitting(false);
+                      setTouched(touchedObj);
                     }
-                  }}
-                >
-                  {({
-                    isSubmitting,
-                    values,
-                    setFieldValue,
-                    setTouched,
-                  }) => {
-                    const handleStep1Next = async () => {
-                      try {
-                        await step1ValidationSchema.validate(values, {
-                          abortEarly: false,
-                        });
-                        setCurrentStep(2);
-                      } catch (err: any) {
-                        if (err.inner) {
-                          const touchedObj: any = {};
-                          err.inner.forEach((e: any) => {
-                            if (e.path) touchedObj[e.path] = true;
-                          });
-                          setTouched(touchedObj);
-                        }
-                        showSnackbar(
-                          "Please fill all required personal details correctly",
-                          "error"
-                        );
-                      }
-                    };
-
-                    return (
-                      <Box
-                        component={Form}
-                        onKeyDown={(e: React.KeyboardEvent) => {
-                          if (e.key === "Enter") {
-                            const target = e.target as HTMLElement;
-                            if (target.tagName?.toLowerCase() === "textarea") return;
-                            if (currentStep === 1) {
-                              e.preventDefault();
-                              handleStep1Next();
-                            }
-                          }
-                        }}
-                      >
-                        {/* Header with Step Progress */}
-                        <SignUpStepperHeader
-                          currentStep={currentStep}
-                          onStep1Click={() => setCurrentStep(1)}
-                          onStep2Click={handleStep1Next}
-                        />
-
-                        {/* STEP 1 */}
-                        {currentStep === 1 && (
-                          <SignUpStep1Personal onNext={handleStep1Next} />
-                        )}
-
-                        {/* STEP 2 */}
-                        {currentStep === 2 && (
-                          <SignUpStep2Address
-                            isFetchingLocation={isFetchingLocation}
-                            isSubmitting={isSubmitting}
-                            onFetchLocation={() =>
-                              handleFetchCurrentLocation(setFieldValue)
-                            }
-                            onBack={() => setCurrentStep(1)}
-                          />
-                        )}
-                      </Box>
+                    showSnackbar(
+                      "Please fill all required personal details correctly",
+                      "error",
                     );
-                  }}
-                </Formik>
+                  }
+                };
 
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT_ONLY,
-                    color: "#666",
-                    textAlign: "center",
-                    mt: 2.5,
-                    fontSize: "13.5px",
-                  }}
-                >
-                  Already have an account?{" "}
-                  <Link
-                    href={signInHref}
-                    style={{
-                      color: COLORS.PRIMARY,
-                      fontWeight: 700,
-                      textDecoration: "none",
+                return (
+                  <Box
+                    component={Form}
+                    sx={{
+                      width: "100%",
+                      overflow: "hidden",
+                      boxSizing: "border-box",
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        const target = e.target as HTMLElement;
+                        if (target.tagName?.toLowerCase() === "textarea")
+                          return;
+                        if (currentStep === 1) {
+                          e.preventDefault();
+                          handleStep1Next();
+                        }
+                      }
                     }}
                   >
-                    Sign In
-                  </Link>
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
+                    {/* Header with Step Progress */}
+                    <SignUpStepperHeader
+                      currentStep={currentStep}
+                      onStep1Click={() => setCurrentStep(1)}
+                      onStep2Click={handleStep1Next}
+                    />
+
+                    {/* STEP 1 */}
+                    {currentStep === 1 && (
+                      <SignUpStep1Personal onNext={handleStep1Next} />
+                    )}
+
+                    {/* STEP 2 */}
+                    {currentStep === 2 && (
+                      <SignUpStep2Address
+                        isFetchingLocation={isFetchingLocation}
+                        isSubmitting={isSubmitting}
+                        onFetchLocation={() =>
+                          handleFetchCurrentLocation(setFieldValue)
+                        }
+                        onBack={() => setCurrentStep(1)}
+                      />
+                    )}
+                  </Box>
+                );
+              }}
+            </Formik>
+
+            {/* Divider */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                my: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "1px",
+                  bgcolor: "rgba(220, 200, 185, 0.55)",
+                }}
+              />
+              <Typography
+                sx={{
+                  px: 1.5,
+                  fontSize: "11px",
+                  color: "#9CA3AF",
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 500,
+                }}
+              >
+                or
+              </Typography>
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "1px",
+                  bgcolor: "rgba(220, 200, 185, 0.55)",
+                }}
+              />
+            </Box>
+
+            {/* Already have an account */}
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: "#6B7280",
+                textAlign: "center",
+                fontSize: "13px",
+                fontWeight: 500,
+              }}
+            >
+              Already have an account?{" "}
+              <Link
+                href={signInHref}
+                style={{
+                  color: "#FF6200",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                Sign In
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
       </Container>
+
+      {/* Mobile Back to Sign In (Centered below card, exactly like Login) */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          justifyContent: "center",
+          width: "100%",
+          mt: 2.5,
+          mb: 1.5,
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <Button
+          component={Link}
+          href={signInHref}
+          startIcon={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 26,
+                height: 26,
+                borderRadius: "50%",
+                bgcolor: "rgba(255, 98, 0, 0.12)",
+                color: "#FF6200",
+                transition: "all 0.25s ease",
+              }}
+            >
+              <ArrowBackIcon sx={{ fontSize: 15 }} />
+            </Box>
+          }
+          sx={{
+            color: "#1F1A17",
+            bgcolor: "#FFFFFF",
+            border: "1.5px solid rgba(255, 98, 0, 0.28)",
+            borderRadius: "32px",
+            pl: 1.2,
+            pr: 2.4,
+            py: 0.8,
+            fontFamily: FONTS.OUTFIT_ONLY,
+            fontWeight: 600,
+            fontSize: "13.5px",
+            letterSpacing: "0.1px",
+            textTransform: "none",
+            boxShadow:
+              "0 6px 20px -3px rgba(255, 98, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.05)",
+            transition: "all 0.25s ease",
+            "& .MuiButton-startIcon": {
+              mr: 1,
+            },
+            "&:hover": {
+              bgcolor: "#FFFFFF",
+              borderColor: "#FF6200",
+              color: "#FF6200",
+              transform: "translateY(-1.5px)",
+              boxShadow: "0 8px 24px -3px rgba(255, 98, 0, 0.28)",
+            },
+            "&:active": {
+              transform: "translateY(0)",
+            },
+          }}
+        >
+          Back to Sign In
+        </Button>
+      </Box>
     </Box>
   );
 }

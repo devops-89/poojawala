@@ -1,6 +1,6 @@
-'use client';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
+"use client";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
   Button,
@@ -11,22 +11,22 @@ import {
   Pagination,
   TextField,
   Typography,
-} from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
-import PurohitCard from './PurohitCard';
+} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import PurohitCard from "./PurohitCard";
 
-import { getPublicPurohitsListAPI } from '@/api/userControllers';
-import EmptyStateCard from '@/components/widgets/EmptyStateCard';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import { FONTS } from '@/utils/fonts';
-import { COLORS } from '@/utils/enums';
+import { getPublicPurohitsListAPI } from "@/api/userControllers";
+import EmptyStateCard from "@/components/widgets/EmptyStateCard";
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 export default function PurohitGrid() {
   const [purohits, setPurohits] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,7 +43,11 @@ export default function PurohitGrid() {
     const fetchPurohits = async () => {
       try {
         setLoading(true);
-        const response = await getPublicPurohitsListAPI(page, itemsPerPage, debouncedQuery);
+        const response = await getPublicPurohitsListAPI(
+          page,
+          itemsPerPage,
+          debouncedQuery,
+        );
 
         let fetchedPurohits = [];
         if (response?.data?.data && Array.isArray(response.data.data)) {
@@ -66,43 +70,64 @@ export default function PurohitGrid() {
             });
           }
 
-          let availStr = 'Contact for details';
-          if (hasOnline && hasOffline) availStr = 'Online & Offline';
-          else if (hasOnline) availStr = 'Online';
-          else if (hasOffline) availStr = 'Offline';
+          let availStr = "Contact for details";
+          if (hasOnline && hasOffline) availStr = "Online & Offline";
+          else if (hasOnline) availStr = "Online";
+          else if (hasOffline) availStr = "Offline";
 
-          let languageStr = 'Not specified';
+          let languageStr = "Not specified";
           if (Array.isArray(p.languages)) {
-            languageStr = p.languages.join(', ');
-          } else if (typeof p.languages === 'string') {
-            languageStr = p.languages.split(',').map((s: string) => s.trim()).filter(Boolean).join(', ');
+            languageStr = p.languages.join(", ");
+          } else if (typeof p.languages === "string") {
+            languageStr = p.languages
+              .split(",")
+              .map((s: string) => s.trim())
+              .filter(Boolean)
+              .join(", ");
           }
 
-          let specStr = '';
+          let specStr = "";
           if (Array.isArray(p.specialization)) {
-            specStr = p.specialization.join(', ');
-          } else if (typeof p.specialization === 'string') {
-            specStr = p.specialization.split(',').map((s: string) => s.trim()).filter(Boolean).join(', ');
+            specStr = p.specialization.join(", ");
+          } else if (typeof p.specialization === "string") {
+            specStr = p.specialization
+              .split(",")
+              .map((s: string) => s.trim())
+              .filter(Boolean)
+              .join(", ");
           }
 
           return {
             id: p.userId || p.id,
-            title: `${p.purohitFirstName || ''} ${p.lastName || ''}`.trim() || p.username || 'Purohit',
-            image: p.profileImage || '/images/purohits/pandit1.webp',
-            category: p.qualification || 'Purohit',
+            title:
+              `${p.purohitFirstName || ""} ${p.lastName || ""}`.trim() ||
+              p.username ||
+              "Purohit",
+            image: p.profileImage || "/images/purohits/pandit1.webp",
+            category: p.qualification || "Purohit",
             language: languageStr,
-            experience: p.experienceYears ? `${p.experienceYears}+ Years` : '',
-            rating: parseFloat(p.averageRating || 0) > 0 ? parseFloat(p.averageRating).toFixed(1) : 'New',
+            experience: p.experienceYears ? `${p.experienceYears}+ Years` : "",
+            rating:
+              parseFloat(p.averageRating || 0) > 0
+                ? parseFloat(p.averageRating).toFixed(1)
+                : "New",
             availability: availStr,
-            duration: '', // Removed static duration
-            bio: p.bio || '',
+            duration: "", // Removed static duration
+            bio: p.bio || "",
             specialization: specStr,
           };
         });
 
         setPurohits(formatted);
-        const backendTotal = response?.data?.data?.total || response?.data?.total || response?.data?.data?.totalItems || response?.data?.totalItems;
-        setTotalPurohits(backendTotal || (page * itemsPerPage + (formatted.length === itemsPerPage ? 1 : 0)));
+        const backendTotal =
+          response?.data?.data?.total ||
+          response?.data?.total ||
+          response?.data?.data?.totalItems ||
+          response?.data?.totalItems;
+        setTotalPurohits(
+          backendTotal ||
+            page * itemsPerPage + (formatted.length === itemsPerPage ? 1 : 0),
+        );
       } catch (error) {
         console.error("Error fetching purohits:", error);
       } finally {
@@ -118,11 +143,15 @@ export default function PurohitGrid() {
     setPage(1);
   }, [searchQuery]);
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
     setPage(value);
     if (gridTopRef.current) {
-      const y = gridTopRef.current.getBoundingClientRect().top + window.scrollY - 120;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const y =
+        gridTopRef.current.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
 
@@ -133,10 +162,10 @@ export default function PurohitGrid() {
       {/* Header Row */}
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          justifyContent: 'space-between',
-          alignItems: { xs: 'flex-start', md: 'center' },
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          justifyContent: "space-between",
+          alignItems: { xs: "flex-start", md: "center" },
           gap: 2,
           mb: 3.5,
         }}
@@ -147,8 +176,8 @@ export default function PurohitGrid() {
             sx={{
               fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
-              color: '#1A1A1A',
-              fontSize: { xs: '20px', sm: '24px' },
+              color: "#1A1A1A",
+              fontSize: { xs: "20px", sm: "24px" },
               mb: 0.5,
             }}
           >
@@ -157,8 +186,8 @@ export default function PurohitGrid() {
           <Typography
             sx={{
               fontFamily: FONTS.PRIMARY,
-              color: '#64748b',
-              fontSize: '14px',
+              color: "#64748b",
+              fontSize: "14px",
               fontWeight: 500,
             }}
           >
@@ -253,7 +282,7 @@ export default function PurohitGrid() {
 
       {/* List Content */}
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
           <CircularProgress sx={{ color: COLORS.PRIMARY }} />
         </Box>
       ) : purohits.length === 0 ? (
@@ -263,9 +292,13 @@ export default function PurohitGrid() {
           description="No verified purohits were found matching your search term. Try searching for another name or language!"
         />
       ) : (
-        <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
-          {purohits.map(Purohit => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={Purohit.id} sx={{ display: 'flex' }}>
+        <Grid container spacing={3} sx={{ alignItems: "stretch" }}>
+          {purohits.map((Purohit) => (
+            <Grid
+              size={{ xs: 12, sm: 6, md: 4 }}
+              key={Purohit.id}
+              sx={{ display: "flex" }}
+            >
               <PurohitCard
                 id={Purohit.id}
                 title={Purohit.title}
@@ -284,21 +317,21 @@ export default function PurohitGrid() {
       )}
       {/* Pagination */}
       {totalPages > 1 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <Pagination
             count={totalPages}
             page={page}
             onChange={handlePageChange}
             shape="rounded"
             sx={{
-              '& .MuiPaginationItem-root': {
+              "& .MuiPaginationItem-root": {
                 fontFamily: FONTS.PRIMARY,
-                '&.Mui-selected': {
+                "&.Mui-selected": {
                   bgcolor: COLORS.PRIMARY,
-                  color: 'white',
-                  '&:hover': { bgcolor: COLORS.PRIMARY_DARK }
-                }
-              }
+                  color: "white",
+                  "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+                },
+              },
             }}
           />
         </Box>

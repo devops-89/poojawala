@@ -1,14 +1,17 @@
 "use client";
 
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
+  Box,
   Button,
   Grid,
   IconButton,
   InputAdornment,
   MenuItem,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Field } from "formik";
 import { MuiTelInput } from "@/components/widgets/MuiTelInput";
@@ -41,25 +44,125 @@ export interface SignUpStep1PersonalProps {
 }
 
 const inputStyles = {
+  "& .MuiInputLabel-root": {
+    fontFamily: FONTS.OUTFIT,
+    fontSize: "0.85rem",
+    fontWeight: 500,
+    color: "#6B7280",
+    transition:
+      "color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms",
+    "&.Mui-focused": {
+      color: "#FF6200",
+      fontWeight: 600,
+    },
+    "&.Mui-error": {
+      color: "#d32f2f",
+    },
+  },
+  "& .MuiInputLabel-root:not(.MuiInputLabel-shrink)": {
+    transform: "translate(14px, 11px) scale(1)",
+    pointerEvents: "none",
+  },
+  "& .MuiInputLabel-shrink": {
+    transform: "translate(14px, -9px) scale(0.75) !important",
+  },
+  "& .MuiFormLabel-asterisk, & .MuiInputLabel-asterisk": {
+    color: "#FF6200",
+    fontWeight: 700,
+  },
+  "& .MuiOutlinedInput-root:not(.Mui-focused) input::placeholder": {
+    opacity: 0,
+  },
   "& .MuiOutlinedInput-root": {
     fontFamily: FONTS.OUTFIT,
-    borderRadius: "12px",
-    fontSize: "0.9rem",
-    bgcolor: "#FFFDF9",
+    borderRadius: "10px",
+    fontSize: "0.85rem",
+    bgcolor: "rgba(255, 255, 255, 0.68)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    color: "#1F1A17",
+    height: "44px",
+    boxSizing: "border-box",
+    transition: "background-color 0.2s ease, box-shadow 0.2s ease",
+    "@media (max-height: 660px)": {
+      height: "39px",
+    },
+    "& fieldset": {
+      borderColor: "rgba(220, 205, 190, 0.7)",
+      borderWidth: "1.2px",
+      transition: "all 0.2s ease",
+    },
+    "&:hover": {
+      bgcolor: "rgba(255, 255, 255, 0.82)",
+    },
     "&:hover fieldset": {
       borderColor: "#FF9100",
     },
     "&.Mui-focused fieldset": {
-      borderColor: COLORS.BRAND_ORANGE,
+      borderColor: "#FF6200",
+      borderWidth: "1.5px",
+    },
+    "&.Mui-focused": {
+      bgcolor: "#FFFFFF",
+      boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.12)",
     },
   },
-  "& .MuiInputLabel-root": {
+  "& .MuiPickersOutlinedInput-root": {
     fontFamily: FONTS.OUTFIT,
-    fontSize: "0.875rem",
+    borderRadius: "10px",
+    fontSize: "0.85rem",
+    bgcolor: "rgba(255, 255, 255, 0.68)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    color: "#1F1A17",
+    height: "44px",
+    boxSizing: "border-box",
+    transition: "background-color 0.2s ease, box-shadow 0.2s ease",
+    "@media (max-height: 660px)": {
+      height: "39px",
+    },
+    "& fieldset": {
+      borderColor: "rgba(220, 205, 190, 0.7)",
+      borderWidth: "1.2px",
+      transition: "all 0.2s ease",
+    },
+    "&:hover": {
+      bgcolor: "rgba(255, 255, 255, 0.82)",
+    },
+    "&:hover fieldset": {
+      borderColor: "#FF9100",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#FF6200",
+      borderWidth: "1.5px",
+    },
+    "&.Mui-focused": {
+      bgcolor: "#FFFFFF",
+      boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.12)",
+    },
+  },
+  "& .MuiInputBase-input": {
+    fontFamily: FONTS.OUTFIT,
+    height: "100%",
+    boxSizing: "border-box",
+    py: 0,
+    fontSize: "0.85rem",
+    "&::placeholder": {
+      color: "#9CA3AF",
+      opacity: 1,
+    },
+  },
+  "& .MuiSelect-select": {
+    display: "flex",
+    alignItems: "center",
+    height: "100% !important",
+    boxSizing: "border-box",
+    py: "0 !important",
   },
   "& .MuiFormHelperText-root": {
-    fontSize: "0.75rem",
-    margin: "3px 0 -3px 0",
+    fontFamily: FONTS.OUTFIT,
+    fontSize: "0.72rem",
+    margin: "2px 0 -2px 0",
   },
 };
 
@@ -77,7 +180,8 @@ export default function SignUpStep1Personal({
   };
 
   return (
-    <Grid container spacing={2.25} onKeyDown={handleKeyDown}>
+    <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.25 }} onKeyDown={handleKeyDown}>
+      {/* First Name */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="firstName">
           {({ field, form, meta }: any) => (
@@ -89,7 +193,10 @@ export default function SignUpStep1Personal({
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
-                form.setFieldValue("firstName", sanitizeLettersOnly(e.target.value));
+                form.setFieldValue(
+                  "firstName",
+                  sanitizeLettersOnly(e.target.value),
+                );
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
@@ -99,6 +206,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Last Name */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="lastName">
           {({ field, form, meta }: any) => (
@@ -110,7 +218,10 @@ export default function SignUpStep1Personal({
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
-                form.setFieldValue("lastName", sanitizeLettersOnly(e.target.value));
+                form.setFieldValue(
+                  "lastName",
+                  sanitizeLettersOnly(e.target.value),
+                );
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
@@ -120,6 +231,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Email Address */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="email">
           {({ field, form, meta }: any) => (
@@ -142,6 +254,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Phone Number */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="phone">
           {({ field, form, meta }: any) => (
@@ -177,20 +290,27 @@ export default function SignUpStep1Personal({
               }}
               error={
                 (meta.touched || Boolean(field.value)) &&
-                (Boolean(meta.error) || (field.value && field.value.length > 0 && !/^[6-9]/.test(field.value)))
+                (Boolean(meta.error) ||
+                  (field.value &&
+                    field.value.length > 0 &&
+                    !/^[6-9]/.test(field.value)))
               }
               helperText={
-                field.value && field.value.length > 0 && !/^[6-9]/.test(field.value)
+                field.value &&
+                field.value.length > 0 &&
+                !/^[6-9]/.test(field.value)
                   ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
                   : meta.touched
-                  ? meta.error
-                  : undefined
+                    ? meta.error
+                    : undefined
               }
               sx={{
                 ...inputStyles,
                 "& .MuiTelInput-IconButton": {
                   pointerEvents: "none",
                   cursor: "default",
+                  pl: 1,
+                  pr: 0.5,
                 },
                 "& .MuiTelInput-Button": {
                   pointerEvents: "none",
@@ -202,13 +322,14 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Date of Birth */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="dob">
           {({ field, form, meta }: any) => (
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
-                label="Date of Birth *"
                 format="DD/MM/YYYY"
+                label="Date of Birth *"
                 value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
                 maxDate={moment(maxDobDate)}
                 onChange={(newValue) => {
@@ -235,6 +356,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Place of Birth */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="birthPlace">
           {({ field, form, meta }: any) => (
@@ -246,7 +368,10 @@ export default function SignUpStep1Personal({
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
-                form.setFieldValue("birthPlace", sanitizeLettersOnly(e.target.value));
+                form.setFieldValue(
+                  "birthPlace",
+                  sanitizeLettersOnly(e.target.value),
+                );
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
@@ -256,6 +381,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Rashi */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="rashi">
           {({ field, form, meta }: any) => (
@@ -264,7 +390,7 @@ export default function SignUpStep1Personal({
               select
               fullWidth
               size="small"
-              label="Rashi"
+              label="Rashi *"
               variant="outlined"
               value={field.value || ""}
               onChange={(e) => {
@@ -298,9 +424,6 @@ export default function SignUpStep1Personal({
               }}
               sx={inputStyles}
             >
-              <MenuItem value="" sx={{ fontFamily: FONTS.OUTFIT, color: "#94a3b8" }}>
-                <em>None</em>
-              </MenuItem>
               {RASHI_OPTIONS.map((option) => (
                 <MenuItem
                   key={option}
@@ -324,6 +447,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Gotra */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="gotra">
           {({ field, form, meta }: any) => (
@@ -335,7 +459,10 @@ export default function SignUpStep1Personal({
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
-                form.setFieldValue("gotra", sanitizeLettersOnly(e.target.value));
+                form.setFieldValue(
+                  "gotra",
+                  sanitizeLettersOnly(e.target.value),
+                );
               }}
               error={meta.touched && !!meta.error}
               helperText={meta.touched && meta.error}
@@ -345,6 +472,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Password */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="password">
           {({ field, meta }: any) => (
@@ -365,9 +493,15 @@ export default function SignUpStep1Personal({
                         edge="end"
                       >
                         {showPassword ? (
-                          <VisibilityOff fontSize="small" />
+                          <VisibilityOff
+                            fontSize="small"
+                            sx={{ color: "#9CA3AF" }}
+                          />
                         ) : (
-                          <Visibility fontSize="small" />
+                          <Visibility
+                            fontSize="small"
+                            sx={{ color: "#9CA3AF" }}
+                          />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -382,6 +516,7 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Confirm Password */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Field name="confirmPassword">
           {({ field, meta }: any) => (
@@ -404,9 +539,15 @@ export default function SignUpStep1Personal({
                         edge="end"
                       >
                         {showConfirmPassword ? (
-                          <VisibilityOff fontSize="small" />
+                          <VisibilityOff
+                            fontSize="small"
+                            sx={{ color: "#9CA3AF" }}
+                          />
                         ) : (
-                          <Visibility fontSize="small" />
+                          <Visibility
+                            fontSize="small"
+                            sx={{ color: "#9CA3AF" }}
+                          />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -421,29 +562,34 @@ export default function SignUpStep1Personal({
         </Field>
       </Grid>
 
+      {/* Next Button */}
       <Grid size={{ xs: 12 }}>
         <Button
           type="button"
           fullWidth
           onClick={onNext}
           variant="contained"
+          endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
           sx={{
-            mt: 1,
-            background: "linear-gradient(135deg, #FF6200 0%, #F05A00 100%)",
-            color: "white",
-            py: 1.25,
-            borderRadius: "30px",
+            mt: 0.85,
+            background: "linear-gradient(135deg, #FF6200 0%, #FF7A1A 100%)",
+            color: "#ffffff",
+            py: 0.85,
+            borderRadius: "10px",
             textTransform: "none",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            fontSize: "15px",
-            boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
+            fontSize: "13.5px",
+            boxShadow: "0 4px 12px rgba(255, 98, 0, 0.28)",
+            transition: "all 0.25s ease",
             "&:hover": {
-              background: "linear-gradient(135deg, #E65800 0%, #D04F00 100%)",
-              boxShadow: "0 8px 25px rgba(255, 98, 0, 0.4)",
+              background: "linear-gradient(135deg, #E65800 0%, #FF6200 100%)",
+              boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
+              transform: "translateY(-1px)",
             },
           }}
         >
-          Next: Address Details →
+          Next: Address Details
         </Button>
       </Grid>
     </Grid>

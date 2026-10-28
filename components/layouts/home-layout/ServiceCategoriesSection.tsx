@@ -2,7 +2,14 @@
 
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Box, Button, Container, Grid, Skeleton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

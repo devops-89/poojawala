@@ -32,9 +32,11 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const addressDebounceRef = useRef<any>(null);
   const lastSearchedQueryRef = useRef<string>("");
 
-  // Dynamically load Mapbox CSS
   useEffect(() => {
-    if (typeof document !== "undefined" && !document.getElementById("mapbox-css-cdn")) {
+    if (
+      typeof document !== "undefined" &&
+      !document.getElementById("mapbox-css-cdn")
+    ) {
       const link = document.createElement("link");
       link.id = "mapbox-css-cdn";
       link.rel = "stylesheet";
@@ -45,7 +47,6 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
   const initialId = initialData?.id ?? null;
 
-  // Initialize or update Map ONLY when Dialog opens or initialId changes
   useEffect(() => {
     if (!open) {
       if (mapInstanceRef.current) {
@@ -61,7 +62,12 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       const constructedAddress =
         initialData.fullAddress ||
         initialData.addressLine1 ||
-        [initialData.streetName, initialData.city, initialData.state, initialData.pincode]
+        [
+          initialData.streetName,
+          initialData.city,
+          initialData.state,
+          initialData.pincode,
+        ]
           .filter(Boolean)
           .join(", ");
 
@@ -69,7 +75,9 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         id: initialData.id,
         venueType: initialData.venueType || "HOME",
         fullAddress: constructedAddress,
-        addressLabel: isEdit ? (initialData.addressLabel || "Home") : (initialData.addressLabel || ""),
+        addressLabel: isEdit
+          ? initialData.addressLabel || "Home"
+          : initialData.addressLabel || "",
         streetName: initialData.streetName || "",
         city: initialData.city || "",
         state: initialData.state || "",
@@ -114,8 +122,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       markerRef.current = null;
     }
 
-    const token =
-      process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     mapboxgl.accessToken = token;
 
     const defaultLat =
@@ -200,7 +207,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     });
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${lat}&lon=${lng}`
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${lat}&lon=${lng}`,
       );
       if (res.ok) {
         const d = await res.json();
@@ -276,18 +283,18 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
           err.code === 1
             ? "Location permission was denied. Please allow location access."
             : err.code === 2
-            ? "Your location is unavailable right now."
-            : "Getting location timed out. Try again.";
+              ? "Your location is unavailable right now."
+              : "Getting location timed out. Try again.";
         setStatusMessage({ text: msg, type: "error" });
       },
-      { enableHighAccuracy: true, timeout: 15000 }
+      { enableHighAccuracy: true, timeout: 15000 },
     );
   };
 
   const geoFromFields = async (
     overridePin?: string,
     force = false,
-    overrideAddress?: string
+    overrideAddress?: string,
   ) => {
     const pin = (
       typeof overridePin === "string" ? overridePin : addressData.pincode || ""
@@ -316,38 +323,31 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     setStatusMessage({ text: "Finding location...", type: "info" });
 
     try {
-      const token =
-        process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
-      // Build progressive queries from most specific to broader radius
+      const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
       const searchQueries: string[] = [];
-
       if (address) {
-        // 1. Full combination (address + city + state + pin)
         searchQueries.push(
-          [address, city, state, validPin ? pin : ""].filter(Boolean).join(", ")
+          [address, city, state, validPin ? pin : ""]
+            .filter(Boolean)
+            .join(", "),
         );
-        // 2. Address + city + state
         if (city || state) {
-          searchQueries.push(
-            [address, city, state].filter(Boolean).join(", ")
-          );
+          searchQueries.push([address, city, state].filter(Boolean).join(", "));
         }
-        // 3. Address alone
         searchQueries.push(address);
-
-        // 4. Extract area/road keywords if address has multiple words
         const words = address.split(/\s+/);
         if (words.length > 2) {
           const partialAddress = words.slice(1).join(" ");
           searchQueries.push(
-            [partialAddress, city, state].filter(Boolean).join(", ")
+            [partialAddress, city, state].filter(Boolean).join(", "),
           );
         }
       }
 
       if (validPin) {
-        searchQueries.push([pin, city, state, "India"].filter(Boolean).join(", "));
+        searchQueries.push(
+          [pin, city, state, "India"].filter(Boolean).join(", "),
+        );
         searchQueries.push(pin);
       }
 
@@ -362,7 +362,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       for (const q of searchQueries) {
         try {
           const mbUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-            q
+            q,
           )}.json?access_token=${token}&country=IN&limit=1`;
           const res = await fetch(mbUrl);
           if (res.ok) {
@@ -384,7 +384,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         for (const q of searchQueries) {
           try {
             const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=${encodeURIComponent(
-              q
+              q,
             )}`;
             const res = await fetch(nomUrl);
             if (res.ok) {
@@ -405,7 +405,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       if (lat === null && validPin) {
         try {
           const postRes = await fetch(
-            `https://api.postalpincode.in/pincode/${pin}`
+            `https://api.postalpincode.in/pincode/${pin}`,
           );
           if (postRes.ok) {
             const postData = await postRes.json();
@@ -420,8 +420,8 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
               const fallbackState = po.State || "";
               const geoRes = await fetch(
                 `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-                  [fallbackCity, fallbackState].filter(Boolean).join(", ")
-                )}.json?access_token=${token}&country=IN&limit=1`
+                  [fallbackCity, fallbackState].filter(Boolean).join(", "),
+                )}.json?access_token=${token}&country=IN&limit=1`,
               );
               if (geoRes.ok) {
                 const geoData = await geoRes.json();
@@ -475,7 +475,10 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
   const lookupPincode = async (pin: string) => {
     setIsSearchingGeo(true);
-    setStatusMessage({ text: "Loading location & address details for pincode...", type: "info" });
+    setStatusMessage({
+      text: "Loading location & address details for pincode...",
+      type: "info",
+    });
 
     try {
       let fetchedCity = "";
@@ -485,7 +488,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       // 1. Fetch details from Postal Pincode API
       try {
         const postRes = await fetch(
-          `https://api.postalpincode.in/pincode/${pin}`
+          `https://api.postalpincode.in/pincode/${pin}`,
         );
         if (postRes.ok) {
           const postData = await postRes.json();
@@ -518,7 +521,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
       try {
         const mbUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          query
+          query,
         )}.json?access_token=${token}&country=IN&limit=1`;
         const res = await fetch(mbUrl);
         if (res.ok) {
@@ -531,7 +534,10 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
             const context = feat.context || [];
             for (const item of context) {
-              if (item.id.startsWith("place") || item.id.startsWith("district")) {
+              if (
+                item.id.startsWith("place") ||
+                item.id.startsWith("district")
+              ) {
                 if (!fetchedCity) fetchedCity = item.text;
               }
               if (item.id.startsWith("region")) {
@@ -548,7 +554,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       if (!foundCoords) {
         try {
           const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=${encodeURIComponent(
-            `${pin}, India`
+            `${pin}, India`,
           )}`;
           const res = await fetch(nomUrl);
           if (res.ok) {
@@ -573,7 +579,9 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         pincode: pin,
         city: fetchedCity || prev.city,
         state: fetchedState || prev.state,
-        fullAddress: prev.fullAddress?.trim() ? prev.fullAddress : defaultAddressStr,
+        fullAddress: prev.fullAddress?.trim()
+          ? prev.fullAddress
+          : defaultAddressStr,
         latitude: lat.toFixed(6),
         longitude: lon.toFixed(6),
       }));

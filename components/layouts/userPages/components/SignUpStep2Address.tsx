@@ -1,12 +1,20 @@
 "use client";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import PinDropOutlinedIcon from "@mui/icons-material/PinDropOutlined";
 import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   Grid,
+  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,7 +24,6 @@ import AddressLocationButton from "@/components/widgets/addressModal/AddressLoca
 import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPreview";
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
 import {
   allowOnlyLettersOnKeyDown,
   sanitizeLettersOnly,
@@ -33,18 +40,72 @@ export interface SignUpStep2AddressProps {
 
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    fontFamily: FONTS.PRIMARY,
+    fontFamily: FONTS.OUTFIT,
     borderRadius: "10px",
-    fontSize: "0.875rem",
+    fontSize: "0.835rem",
+    bgcolor: "rgba(255, 255, 255, 0.68)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    color: "#1F1A17",
+    height: "44px",
+    boxSizing: "border-box",
+    transition: "background-color 0.2s ease, box-shadow 0.2s ease",
+    "@media (max-height: 660px)": {
+      height: "39px",
+    },
+    "& fieldset": {
+      borderColor: "rgba(220, 205, 190, 0.7)",
+      borderWidth: "1.2px",
+      transition: "all 0.2s ease",
+    },
+    "&:hover": {
+      bgcolor: "rgba(255, 255, 255, 0.82)",
+    },
+    "&:hover fieldset": {
+      borderColor: "#FF9100",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#FF6200",
+      borderWidth: "1.5px",
+    },
+    "&.Mui-focused": {
+      bgcolor: "#FFFFFF",
+      boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.12)",
+    },
   },
-  "& .MuiInputLabel-root": {
-    fontFamily: FONTS.PRIMARY,
-    fontSize: "0.875rem",
+  "& .MuiOutlinedInput-root.MuiInputBase-multiline": {
+    height: "auto",
+    minHeight: "68px",
+    py: 1,
+  },
+  "& .MuiInputBase-input": {
+    fontFamily: FONTS.OUTFIT,
+    height: "100%",
+    boxSizing: "border-box",
+    py: 0,
+    fontSize: "0.835rem",
+    "&::placeholder": {
+      color: "#9CA3AF",
+      opacity: 1,
+    },
+  },
+  "& .MuiInputBase-inputMultiline": {
+    height: "auto",
   },
   "& .MuiFormHelperText-root": {
-    fontSize: "0.75rem",
-    margin: "2px 0 -4px 0",
+    fontFamily: FONTS.OUTFIT,
+    fontSize: "0.72rem",
+    margin: "1px 0 -1px 0",
   },
+};
+
+const labelStyles = {
+  fontFamily: FONTS.OUTFIT,
+  fontSize: "12px",
+  fontWeight: 700,
+  color: "#374151",
+  mb: 0.3,
+  display: "block",
 };
 
 export default function SignUpStep2Address({
@@ -139,16 +200,16 @@ export default function SignUpStep2Address({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          flexWrap: "wrap",
           gap: 1,
         }}
       >
         <Typography
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            fontSize: "0.95rem",
-            color: "#1e293b",
+            fontSize: { xs: "0.85rem", sm: "0.92rem" },
+            color: "#1F1A17",
+            whiteSpace: "nowrap",
           }}
         >
           Delivery Location & Address
@@ -157,21 +218,34 @@ export default function SignUpStep2Address({
         <AddressLocationButton
           isFetchingLocation={isFetchingLocation}
           onFetchLocation={fetchCurrentLocation}
+          size="small"
         />
       </Box>
 
       <Grid container spacing={1.25}>
         {/* ROW 1: PINCODE & ADDRESS LABEL IN 2-COLUMN GRID */}
         <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography sx={labelStyles}>
+            Pincode <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          </Typography>
           <TextField
             fullWidth
             size="small"
-            label="Pincode *"
+            placeholder="Enter 6-digit pincode"
             value={addressData.pincode}
             onKeyDown={(e) => {
               if (
                 !/\d/.test(e.key) &&
-                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', 'Home', 'End'].includes(e.key) &&
+                ![
+                  "Backspace",
+                  "Delete",
+                  "ArrowLeft",
+                  "ArrowRight",
+                  "Tab",
+                  "Enter",
+                  "Home",
+                  "End",
+                ].includes(e.key) &&
                 !e.ctrlKey &&
                 !e.metaKey
               ) {
@@ -192,10 +266,13 @@ export default function SignUpStep2Address({
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography sx={labelStyles}>
+            Address Label <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          </Typography>
           <TextField
             fullWidth
             size="small"
-            label="Address Label (e.g., Home, Office) *"
+            placeholder="e.g. Home, Office"
             value={addressData.addressLabel}
             onChange={(e) => {
               setAddressData((prev) => ({
@@ -203,6 +280,15 @@ export default function SignUpStep2Address({
                 addressLabel: e.target.value,
               }));
               setFieldValue("addressLabel", e.target.value);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <HomeOutlinedIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+              },
             }}
             variant="outlined"
             error={touched.addressLabel && Boolean(errors.addressLabel)}
@@ -213,12 +299,15 @@ export default function SignUpStep2Address({
 
         {/* ROW 2: FULL ADDRESS */}
         <Grid size={{ xs: 12 }}>
+          <Typography sx={labelStyles}>
+            Full Address <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          </Typography>
           <TextField
             fullWidth
             size="small"
             multiline
             rows={2}
-            label="Full Address *"
+            placeholder="House/Flat No., Apartment, Street, Locality"
             value={addressData.fullAddress}
             onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={(e) => {
@@ -236,16 +325,30 @@ export default function SignUpStep2Address({
 
         {/* ROW 3: CITY & STATE IN 2-COLUMN GRID */}
         <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography sx={labelStyles}>
+            City <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          </Typography>
           <TextField
             fullWidth
             size="small"
-            label="City *"
+            placeholder="Enter city"
             value={addressData.city}
             onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) => {
               const cleanVal = sanitizeLettersOnly(e.target.value);
               setAddressData((prev) => ({ ...prev, city: cleanVal }));
               setFieldValue("city", cleanVal);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LocationCityOutlinedIcon
+                      sx={{ color: "#9CA3AF", fontSize: 20 }}
+                    />
+                  </InputAdornment>
+                ),
+              },
             }}
             variant="outlined"
             error={touched.city && Boolean(errors.city)}
@@ -255,16 +358,28 @@ export default function SignUpStep2Address({
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography sx={labelStyles}>
+            State <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+          </Typography>
           <TextField
             fullWidth
             size="small"
-            label="State *"
+            placeholder="Enter state"
             value={addressData.state}
             onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) => {
               const cleanVal = sanitizeLettersOnly(e.target.value);
               setAddressData((prev) => ({ ...prev, state: cleanVal }));
               setFieldValue("state", cleanVal);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <MapOutlinedIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+              },
             }}
             variant="outlined"
             error={touched.state && Boolean(errors.state)}
@@ -283,16 +398,18 @@ export default function SignUpStep2Address({
                 size="small"
                 sx={{
                   py: 0.25,
-                  color: COLORS.PRIMARY,
-                  "&.Mui-checked": { color: COLORS.PRIMARY },
+                  color: "#FF6200",
+                  "&.Mui-checked": { color: "#FF6200" },
                 }}
               />
             }
             label={
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
-                  fontSize: "0.825rem",
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "0.85rem",
+                  color: "#4B5563",
+                  fontWeight: 500,
                 }}
               >
                 Set as default delivery address
@@ -308,10 +425,11 @@ export default function SignUpStep2Address({
         statusMessage={statusMessage}
         isSearchingGeo={isSearchingGeo}
         onFindLocation={() => geoFromFields(undefined, true)}
+        height={{ xs: "105px", sm: "115px", md: "125px" }}
       />
 
       {/* Action Buttons */}
-      <Grid container spacing={1.5} sx={{ mt: 1 }}>
+      <Grid container spacing={1.5} sx={{ mt: 0.75 }}>
         <Grid size={{ xs: 12, sm: 6 }}>
           <Button
             type="button"
@@ -320,18 +438,20 @@ export default function SignUpStep2Address({
             variant="outlined"
             startIcon={<ArrowBackIcon fontSize="small" />}
             sx={{
-              py: 1,
-              borderRadius: "24px",
-              borderColor: "#FFE0D0",
-              color: "#475569",
-              fontFamily: FONTS.PRIMARY,
+              py: 0.85,
+              borderRadius: "10px",
+              borderColor: "rgba(220, 205, 190, 0.8)",
+              color: "#4B5563",
+              bgcolor: "#FFFFFF",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
-              fontSize: "14px",
+              fontSize: "13.5px",
               textTransform: "none",
+              transition: "all 0.2s ease",
               "&:hover": {
-                bgcolor: "#FFF0E6",
-                color: COLORS.PRIMARY,
-                borderColor: COLORS.PRIMARY,
+                bgcolor: "rgba(255, 240, 230, 0.5)",
+                color: "#FF6200",
+                borderColor: "#FF6200",
               },
             }}
           >
@@ -346,18 +466,28 @@ export default function SignUpStep2Address({
             disabled={isSubmitting}
             onClick={syncAndSubmit}
             variant="contained"
+            endIcon={
+              isSubmitting ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : (
+                <CheckCircleIcon sx={{ fontSize: 17 }} />
+              )
+            }
             sx={{
-              background: COLORS.PRIMARY,
+              background: "linear-gradient(135deg, #FF6200 0%, #FF7A1A 100%)",
               color: "white",
-              py: 1,
-              borderRadius: "24px",
+              py: 0.85,
+              borderRadius: "10px",
               textTransform: "none",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: "15px",
-              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+              fontSize: "13.5px",
+              boxShadow: "0 4px 12px rgba(255, 98, 0, 0.28)",
+              transition: "all 0.25s ease",
               "&:hover": {
-                background: COLORS.PRIMARY_DARK,
+                background: "linear-gradient(135deg, #E65800 0%, #FF6200 100%)",
                 boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
+                transform: "translateY(-1px)",
               },
             }}
           >
@@ -368,4 +498,5 @@ export default function SignUpStep2Address({
     </Box>
   );
 }
+
 

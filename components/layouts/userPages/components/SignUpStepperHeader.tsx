@@ -1,11 +1,10 @@
 "use client";
 
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PersonIcon from "@mui/icons-material/Person";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
 
 export interface SignUpStepperHeaderProps {
   currentStep: 1 | 2;
@@ -19,26 +18,38 @@ export default function SignUpStepperHeader({
   onStep2Click,
 }: SignUpStepperHeaderProps) {
   return (
-    <Box sx={{ mb: 2.5 }}>
+    <Box
+      sx={{
+        mb: 1.5,
+        "@media (max-height: 660px)": {
+          mb: 0.85,
+        },
+      }}
+    >
+      {/* Title */}
       <Typography
-        variant="h5"
+        variant="h4"
         sx={{
-          fontFamily: FONTS.OUTFIT_ONLY,
-          fontWeight: 700,
-          color: "#1A1A1A",
-          fontSize: { xs: "1.25rem", md: "1.45rem" },
+          fontFamily: FONTS.OUTFIT,
+          fontWeight: 800,
+          color: "#1F1A17",
+          fontSize: { xs: "20px", sm: "22px", md: "23px" },
           lineHeight: 1.2,
-          mb: 0.5,
+          letterSpacing: "-0.4px",
+          mb: 0.25,
         }}
       >
         Create an Account
       </Typography>
+
+      {/* Step Subtitle */}
       <Typography
         sx={{
-          fontFamily: FONTS.OUTFIT_ONLY,
-          color: "#666",
-          mb: 2,
-          fontSize: "0.85rem",
+          fontFamily: FONTS.OUTFIT,
+          color: "#6B7280",
+          fontSize: { xs: "12px", md: "12.5px" },
+          fontWeight: 500,
+          mb: 1.25,
         }}
       >
         Step {currentStep} of 2:{" "}
@@ -47,18 +58,23 @@ export default function SignUpStepperHeader({
           : "Delivery Address Details"}
       </Typography>
 
-      {/* Step Progress Indicators */}
+      {/* Segmented Pill Stepper */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 1.5,
-          p: 0.75,
-          bgcolor: "#FFFDF9",
-          border: "1px solid #FFE0D0",
-          borderRadius: "14px",
+          gap: { xs: 0.5, sm: 0.85 },
+          p: "3px",
+          bgcolor: "rgba(255, 246, 237, 0.55)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.75)",
+          borderRadius: "12px",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
+        {/* Step 1 Button */}
         <Box
           onClick={onStep1Click}
           sx={{
@@ -66,35 +82,46 @@ export default function SignUpStepperHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 1,
+            gap: { xs: 0.5, sm: 0.75 },
             cursor: "pointer",
-            py: 1,
-            px: 1.5,
-            borderRadius: "10px",
-            bgcolor: currentStep === 1 ? COLORS.BRAND_ORANGE : "transparent",
-            color: currentStep === 1 ? COLORS.WHITE : "#666",
+            py: { xs: 0.65, sm: 0.55 },
+            px: { xs: 0.5, sm: 1.2 },
+            borderRadius: "9px",
+            background:
+              currentStep === 1
+                ? "linear-gradient(135deg, #FF6200 0%, #FF7A1A 100%)"
+                : "transparent",
+            color: currentStep === 1 ? "#ffffff" : "#6B7280",
             boxShadow:
               currentStep === 1
-                ? `0 4px 12px ${COLORS.PRIMARY_SHADOW}`
+                ? "0 3px 10px rgba(255, 98, 0, 0.28)"
                 : "none",
             transition: "all 0.25s ease",
             "&:hover": {
-              bgcolor: currentStep === 1 ? COLORS.PRIMARY_DARK : "#FFF0E6",
+              color: currentStep === 1 ? "#ffffff" : "#1F1A17",
+              bgcolor: currentStep === 1 ? undefined : "rgba(255, 235, 220, 0.4)",
             },
           }}
         >
-          <PersonIcon sx={{ fontSize: 19 }} />
+          <PersonOutlineOutlinedIcon sx={{ fontSize: { xs: 15, sm: 16 } }} />
           <Typography
             sx={{
               fontWeight: 700,
-              fontSize: "0.85rem",
-              fontFamily: FONTS.OUTFIT_ONLY,
+              fontSize: { xs: "11.5px", sm: "12.5px" },
+              whiteSpace: "nowrap",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
-            1. Personal Details
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              1. Personal Details
+            </Box>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+              1. Personal
+            </Box>
           </Typography>
         </Box>
 
+        {/* Step 2 Button */}
         <Box
           onClick={onStep2Click}
           sx={{
@@ -102,35 +129,46 @@ export default function SignUpStepperHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 1,
+            gap: { xs: 0.5, sm: 0.75 },
             cursor: "pointer",
-            py: 1,
-            px: 1.5,
-            borderRadius: "10px",
-            bgcolor: currentStep === 2 ? COLORS.BRAND_ORANGE : "transparent",
-            color: currentStep === 2 ? COLORS.WHITE : "#666",
+            py: { xs: 0.65, sm: 0.55 },
+            px: { xs: 0.5, sm: 1.2 },
+            borderRadius: "9px",
+            background:
+              currentStep === 2
+                ? "linear-gradient(135deg, #FF6200 0%, #FF7A1A 100%)"
+                : "transparent",
+            color: currentStep === 2 ? "#ffffff" : "#6B7280",
             boxShadow:
               currentStep === 2
-                ? `0 4px 12px ${COLORS.PRIMARY_SHADOW}`
+                ? "0 3px 10px rgba(255, 98, 0, 0.28)"
                 : "none",
             transition: "all 0.25s ease",
             "&:hover": {
-              bgcolor: currentStep === 2 ? COLORS.PRIMARY_DARK : "#FFF0E6",
+              color: currentStep === 2 ? "#ffffff" : "#1F1A17",
+              bgcolor: currentStep === 2 ? undefined : "rgba(255, 235, 220, 0.4)",
             },
           }}
         >
-          <LocationOnIcon sx={{ fontSize: 19 }} />
+          <LocationOnOutlinedIcon sx={{ fontSize: { xs: 15, sm: 17 } }} />
           <Typography
             sx={{
               fontWeight: 700,
-              fontSize: "0.85rem",
-              fontFamily: FONTS.OUTFIT_ONLY,
+              fontSize: { xs: "11.5px", sm: "13px" },
+              whiteSpace: "nowrap",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
-            2. Address Details
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              2. Address Details
+            </Box>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+              2. Address
+            </Box>
           </Typography>
         </Box>
       </Box>
     </Box>
   );
 }
+

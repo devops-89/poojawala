@@ -738,18 +738,28 @@ export default function PortalRegisterContent() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        bgcolor: "#FFFDF9",
+        backgroundImage: "url('/images/login-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: { xs: "70% center", md: "center" },
+        backgroundRepeat: "no-repeat",
+        position: "relative",
       }}
     >
       <RegisterHeader />
 
-      <Container maxWidth="md" sx={{ py: 8, flexGrow: 1 }}>
+      <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 }, flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Paper
           sx={{
+            width: "100%",
             p: { xs: 3, md: 5 },
             borderRadius: "24px",
-            boxShadow: "0 12px 40px rgba(0,0,0,0.06)",
-            border: "1px solid #eee",
+            background:
+              "linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 250, 245, 0.22) 100%)",
+            backdropFilter: "blur(14px) saturate(140%)",
+            WebkitBackdropFilter: "blur(14px) saturate(140%)",
+            border: "1.5px solid rgba(255, 255, 255, 0.85)",
+            boxShadow:
+              "0 25px 65px -12px rgba(210, 100, 30, 0.16), 0 10px 30px rgba(0, 0, 0, 0.05)",
           }}
         >
           <Stepper
