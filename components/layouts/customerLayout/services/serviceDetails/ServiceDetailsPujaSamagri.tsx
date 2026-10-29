@@ -416,8 +416,8 @@ export default function ServiceDetailsPujaSamagri({
                     sx={{
                       position: "relative",
                       width: isSingle ? { xs: "100%", md: "340px" } : "100%",
-                      height: isSingle ? { xs: 210, md: "auto" } : 210,
-                      minHeight: isSingle ? { md: 210 } : undefined,
+                      height: isSingle ? { xs: 320, md: "auto" } : { xs: 280, sm: 310, md: 340 },
+                      minHeight: isSingle ? { md: 320 } : { xs: 280, sm: 310, md: 340 },
                       flexShrink: 0,
                       overflow: "hidden",
                     }}
@@ -430,6 +430,11 @@ export default function ServiceDetailsPujaSamagri({
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
+                        objectPosition: "center top",
+                        transition: "transform 0.35s ease",
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
                       }}
                     />
                     {isAdded && (
@@ -449,6 +454,7 @@ export default function ServiceDetailsPujaSamagri({
                           alignItems: "center",
                           gap: 0.5,
                           boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                          zIndex: 2,
                         }}
                       >
                         <CheckIcon sx={{ fontSize: 14 }} /> Added

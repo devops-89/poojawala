@@ -91,9 +91,11 @@ export default function CustomerServiceCard({
             overflow: "hidden",
             flexShrink: 0,
             bgcolor: "#FFF8F2",
+            border: "1px solid #F3E4D6",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            p: 1.5,
           }}
         >
           <Box
@@ -101,9 +103,11 @@ export default function CustomerServiceCard({
             src={imageSrc}
             alt={serviceTitle}
             sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: { xs: "contain", sm: "cover" },
+              maxWidth: "100%",
+              maxHeight: "100%",
+              width: "auto",
+              height: "auto",
+              objectFit: "contain",
               transition: "transform 0.3s ease",
               "&:hover": { transform: "scale(1.05)" },
             }}

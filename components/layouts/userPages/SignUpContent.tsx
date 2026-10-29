@@ -29,7 +29,7 @@ const fifteenYearsAgo = new Date(
   today.getMonth(),
   today.getDate(),
 );
-//xsdfgh
+
 const step1ValidationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
