@@ -1,12 +1,13 @@
 'use client';
 
 import { Box, Container, Typography } from '@mui/material';
+import Image from 'next/image';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
 
 export default function WhyPoojawala() {
   return (
-    <Box sx={{ position: 'relative',overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '850px' }, py: { xs: 8, md: 10 }, display: 'flex', alignItems: 'center' ,pb:10}}>
+    <Box sx={{ position: 'relative', overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '850px' }, py: { xs: 8, md: 10 }, display: 'flex', alignItems: 'center', pb: 10 }}>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', maxWidth: '875px', pr: { md: 5 }, display: 'flex', flexDirection: 'column' }}>
           <Typography 
@@ -17,26 +18,30 @@ export default function WhyPoojawala() {
               fontSize: { xs: '32px', md: '48px' }, 
               color: '#141414',
               lineHeight: 'normal',
-              mb: '4px', // Very tight spacing as per Figma
-              mt:-4
+              mb: '4px',
+              mt: -4
             }}
           >
             Why 1Pooja ?
           </Typography>
           
-          <Box 
-            component="img"
-            src="/images/home/whyLine.webp"
-            alt="Decoration Line"
-            sx={{ width: { xs: '250px', md: '390px' }, height: '34px', mb: '40px' }} 
-          />
+          <Box sx={{ mb: '40px' }}>
+            <Image 
+              src="/images/home/whyLine.webp"
+              alt="Decoration Line"
+              width={390}
+              height={34}
+              loading="lazy"
+              style={{ width: '100%', maxWidth: '390px', height: 'auto', objectFit: 'contain' }}
+            />
+          </Box>
 
           <Typography 
             sx={{ 
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 400,
-              fontSize: { xs: '16px', md: '24px' },
-              color: '#141414',
+              fontFamily: FONTS.PRIMARY, 
+              fontWeight: 400, 
+              fontSize: { xs: '16px', md: '24px' }, 
+              color: '#141414', 
               lineHeight: '130.6%',
               mb: '28px'
             }}
@@ -46,10 +51,10 @@ export default function WhyPoojawala() {
           
           <Typography 
             sx={{ 
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 400,
-              fontSize: { xs: '16px', md: '24px' },
-              color: '#141414',
+              fontFamily: FONTS.PRIMARY, 
+              fontWeight: 400, 
+              fontSize: { xs: '16px', md: '24px' }, 
+              color: '#141414', 
               lineHeight: '130.6%'
             }}
           >
@@ -58,7 +63,7 @@ export default function WhyPoojawala() {
         </Box>
       </Container>
       
-      {/* Right Side Background Decorations */}
+      {/* Right Side Background Decorations (Hidden on mobile) */}
       <Box 
         sx={{
           position: 'absolute',
@@ -69,40 +74,50 @@ export default function WhyPoojawala() {
           height: '100%',
           zIndex: 1,
           pointerEvents: 'none',
-          display: { xs: 'none', md: 'block' } // Hide on mobile for better text reading
+          display: { xs: 'none', md: 'block' }
         }}
       >
         {/* Chakra Right */}
         <Box 
-          component="img"
-          src="/images/home/chakraright.webp"
-          alt="Chakra Pattern"
           sx={{
             position: 'absolute',
             right: 0,
             top: '50%',
-            transform: 'translate(30%, -50%)', // Mathematically bleeds exactly 50% regardless of screen size
+            transform: 'translate(30%, -50%)',
             width: '700px',
             height: '700px',
-            objectFit: 'contain'
           }}
-        />
+        >
+          <Image 
+            src="/images/home/chakraright.webp"
+            alt="Chakra Pattern"
+            width={700}
+            height={700}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+        </Box>
         
         {/* Thali Image */}
         <Box 
-          component="img"
-          src="/images/home/thali.webp"
-          alt="Pooja Thali"
           sx={{
             position: 'absolute',
             right: 0,
             top: '50%',
-            transform: 'translate(30%, -50%)', // Mathematically bleeds exactly 50% regardless of screen size
+            transform: 'translate(30%, -50%)',
             width: '650px',
             height: '650px',
-            objectFit: 'contain'
           }}
-        />
+        >
+          <Image 
+            src="/images/home/thali.webp"
+            alt="Pooja Thali"
+            width={650}
+            height={650}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+        </Box>
       </Box>
     </Box>
   );

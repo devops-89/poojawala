@@ -112,7 +112,7 @@ export interface ITemple {
   openingTime?: string;
   closingTime?: string;
   trustRegNo?: string;
-  aartis?: Array<{ name: string; time: string; description?: string }> | string;
+  aartis?: Array<{ id?: number | string; name: string; time: string; description?: string; isDeleted?: boolean }> | string;
   trustDocUrl?: string;
   trustDocDownloadUrl?: string;
   deityPhotoUrl?: string;

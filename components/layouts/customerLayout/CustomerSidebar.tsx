@@ -3,6 +3,8 @@ import { logoutAPI } from "@/api/authControllers";
 import { clearRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
+import { useCartStore } from "@/stores/cartStore";
+import { useSocketStore } from "@/stores/socketStore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -52,9 +54,19 @@ export default function CustomerSidebar({
       console.error("Logout notice:", error);
     } finally {
       clearRoleCsrfToken();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
+      }
+      useUserStore.getState().clearProfile();
+      useCartStore.getState().clearCart();
+      useSocketStore.getState().clearNotifications();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        router.push("/sign-in");
+        window.location.href = "/sign-in";
       }, 300);
     }
   };

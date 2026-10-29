@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -15,7 +17,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { City, State } from "country-state-city";
+import { City, State } from "@/utils/indianLocations";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { COLORS } from "@/utils/enums";
@@ -29,30 +32,30 @@ export default function WelcomeLocationModal() {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
-  // States & Cities Data
+  // States & Cities Data (only computed when modal is actually opened)
   const indianStates = React.useMemo(
-    () => State.getStatesOfCountry("IN") || [],
-    [],
+    () => (open ? State.getStatesOfCountry("IN") || [] : []),
+    [open],
   );
 
   const stateOptions = React.useMemo(() => {
+    if (!open) return [];
     return indianStates.map((s) => s.name).sort((a, b) => a.localeCompare(b));
-  }, [indianStates]);
+  }, [open, indianStates]);
 
   const selectedStateObj = React.useMemo(() => {
-    if (!selectedState) return null;
+    if (!open || !selectedState) return null;
     return indianStates.find(
       (s) => s.name.toLowerCase().trim() === selectedState.toLowerCase().trim(),
     );
-  }, [selectedState, indianStates]);
+  }, [open, selectedState, indianStates]);
 
   const cityOptions = React.useMemo(() => {
-    const rawCities = selectedStateObj
-      ? City.getCitiesOfState("IN", selectedStateObj.isoCode) || []
-      : [];
+    if (!open || !selectedStateObj) return [];
+    const rawCities = City.getCitiesOfState("IN", selectedStateObj.isoCode) || [];
     const names = rawCities.map((c) => c.name);
     return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
-  }, [selectedStateObj]);
+  }, [open, selectedStateObj]);
 
   useEffect(() => {
     // Only run on home route '/'
@@ -151,11 +154,12 @@ export default function WelcomeLocationModal() {
 
         {/* Branding & Logo */}
         <Box sx={{ textCenter: "center", textAlign: "center", mb: 2 }}>
-          <Box
-            component="img"
+          <Image
             src="/images/1Poojalogo.webp"
             alt="1Pooja"
-            sx={{ height: 38, objectFit: "contain", mx: "auto", mb: 1.5 }}
+            width={116}
+            height={47}
+            style={{ height: "38px", width: "auto", objectFit: "contain", margin: "0 auto 12px auto", display: "block" }}
           />
           <Typography
             variant="h5"

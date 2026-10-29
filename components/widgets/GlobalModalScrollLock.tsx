@@ -36,7 +36,7 @@ export default function GlobalModalScrollLock() {
       attributes: true,
       attributeFilter: ["style", "class"],
       childList: true,
-      subtree: true,
+      subtree: false,
     });
 
     syncScrollLock();

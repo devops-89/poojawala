@@ -9,6 +9,7 @@ import {
   Container,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
@@ -155,14 +156,16 @@ export default function UpcomingFestivals() {
             Upcoming Festivals and Offers
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Box
-              component="img"
+            <Image
               src="/images/home/poojaPackages/dhanush.webp"
               alt="Decorative Arch"
-              sx={{
-                width: "750px",
-                height: "47px",
-                maxWidth: "100%",
+              width={750}
+              height={47}
+              loading="lazy"
+              style={{
+                width: "100%",
+                maxWidth: "750px",
+                height: "auto",
                 objectFit: "contain",
               }}
             />
@@ -171,8 +174,9 @@ export default function UpcomingFestivals() {
 
         {/* Cards Section */}
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
-            <CircularProgress sx={{ color: COLORS.PRIMARY }} />
+          <Box sx={{ display: "flex", gap: 3, justifyContent: "center" }}>
+            <Box sx={{ bgcolor: "#FBF7F0", borderRadius: "20px", height: "260px", flex: 1, maxWidth: "550px", border: "1px solid #E5E7EB" }} />
+            <Box sx={{ bgcolor: "#FBF7F0", borderRadius: "20px", height: "260px", flex: 1, maxWidth: "550px", border: "1px solid #E5E7EB", display: { xs: "none", md: "block" } }} />
           </Box>
         ) : festivalsData.length === 0 ? (
           <EmptyStateCard

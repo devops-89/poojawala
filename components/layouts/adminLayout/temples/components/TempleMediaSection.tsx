@@ -4,13 +4,19 @@ import { COLORS } from "@/utils/enums";
 import { FONTS } from "@/utils/fonts";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
@@ -57,6 +63,35 @@ export default function TempleMediaSection({
   onDeityPhotoChange,
   onRemoveDeityPhoto,
 }: TempleMediaSectionProps) {
+  const [docImgError, setDocImgError] = React.useState(false);
+
+  React.useEffect(() => {
+    setDocImgError(false);
+  }, [trustDocFile, trustDocPreview]);
+
+  const isPdf =
+    docImgError ||
+    (trustDocFile &&
+      (trustDocFile.type === "application/pdf" ||
+        trustDocFile.name.toLowerCase().endsWith(".pdf"))) ||
+    (typeof trustDocPreview === "string" &&
+      (trustDocPreview.toLowerCase().includes(".pdf") ||
+        trustDocPreview.toLowerCase().includes("/pdf") ||
+        trustDocName.toLowerCase().endsWith(".pdf") ||
+        (!trustDocFile &&
+          !/\.(jpg|jpeg|png|webp|avif|gif)($|\?)/i.test(trustDocPreview))));
+
+  const [previewModal, setPreviewModal] = React.useState<{
+    open: boolean;
+    title: string;
+    url: string;
+    isPdf?: boolean;
+  }>({
+    open: false,
+    title: "",
+    url: "",
+    isPdf: false,
+  });
   return (
     <Paper
       elevation={0}
@@ -181,6 +216,35 @@ export default function TempleMediaSection({
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<VisibilityOutlinedIcon fontSize="small" />}
+                onClick={() =>
+                  setPreviewModal({
+                    open: true,
+                    title: "Main Temple Cover Image",
+                    url: imagePreview || "",
+                    isPdf: false,
+                  })
+                }
+                sx={{
+                  borderRadius: "8px",
+                  borderColor: "#CBD5E1",
+                  color: "#334155",
+                  textTransform: "none",
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 600,
+                  fontSize: "0.85rem",
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY,
+                    color: COLORS.PRIMARY,
+                    bgcolor: "#FFF7ED",
+                  },
+                }}
+              >
+                View
+              </Button>
               <Button
                 component="label"
                 variant="outlined"
@@ -313,21 +377,37 @@ export default function TempleMediaSection({
                   minWidth: 0,
                 }}
               >
-                {trustDocPreview ? (
+                {!isPdf && trustDocPreview ? (
                   <Box
                     component="img"
                     src={trustDocPreview}
                     alt="Trust Deed Preview"
+                    onError={() => setDocImgError(true)}
                     sx={{
                       width: 44,
                       height: 44,
                       objectFit: "cover",
                       borderRadius: "8px",
                       border: "1px solid #E2E8F0",
+                      flexShrink: 0,
                     }}
                   />
                 ) : (
-                  <PictureAsPdfIcon sx={{ color: "#DC2626", fontSize: 36 }} />
+                  <Box
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "8px",
+                      bgcolor: "#FEE2E2",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: "1px solid #FECACA",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <PictureAsPdfIcon sx={{ color: "#DC2626", fontSize: 26 }} />
+                  </Box>
                 )}
                 <Box sx={{ minWidth: 0 }}>
                   <Typography
@@ -340,7 +420,7 @@ export default function TempleMediaSection({
                       maxWidth: "180px",
                     }}
                   >
-                    {trustDocName || "Trust Document"}
+                    {trustDocName || (isPdf ? "Trust Document (PDF)" : "Trust Document")}
                   </Typography>
                   <Typography sx={{ color: "#64748B", fontSize: "0.75rem" }}>
                     Document attached
@@ -348,6 +428,39 @@ export default function TempleMediaSection({
                 </Box>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<VisibilityOutlinedIcon fontSize="small" />}
+                  onClick={() =>
+                    setPreviewModal({
+                      open: true,
+                      title: "Trust Deed / Registration Document",
+                      url:
+                        trustDocPreview ||
+                        (trustDocFile ? URL.createObjectURL(trustDocFile) : ""),
+                      isPdf: isPdf,
+                    })
+                  }
+                  sx={{
+                    borderRadius: "8px",
+                    borderColor: "#CBD5E1",
+                    color: "#334155",
+                    textTransform: "none",
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    px: 1.25,
+                    py: 0.35,
+                    "&:hover": {
+                      borderColor: COLORS.PRIMARY,
+                      color: COLORS.PRIMARY,
+                      bgcolor: "#FFF7ED",
+                    },
+                  }}
+                >
+                  View
+                </Button>
                 <Button
                   component="label"
                   size="small"
@@ -471,6 +584,39 @@ export default function TempleMediaSection({
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<VisibilityOutlinedIcon fontSize="small" />}
+                  onClick={() =>
+                    setPreviewModal({
+                      open: true,
+                      title: "Main Shrine / Deity Photo",
+                      url:
+                        deityPhotoPreview ||
+                        (deityPhotoFile ? URL.createObjectURL(deityPhotoFile) : ""),
+                      isPdf: false,
+                    })
+                  }
+                  sx={{
+                    borderRadius: "8px",
+                    borderColor: "#CBD5E1",
+                    color: "#334155",
+                    textTransform: "none",
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    px: 1.25,
+                    py: 0.35,
+                    "&:hover": {
+                      borderColor: COLORS.PRIMARY,
+                      color: COLORS.PRIMARY,
+                      bgcolor: "#FFF7ED",
+                    },
+                  }}
+                >
+                  View
+                </Button>
+                <Button
                   component="label"
                   size="small"
                   sx={{
@@ -544,6 +690,157 @@ export default function TempleMediaSection({
           )}
         </Grid>
       </Grid>
+
+      {/* Media & Document Preview Modal */}
+      <Dialog
+        open={previewModal.open}
+        onClose={() =>
+          setPreviewModal({ open: false, title: "", url: "", isPdf: false })
+        }
+        maxWidth="md"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: { borderRadius: "16px", overflow: "hidden" },
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 700,
+            fontSize: "1.05rem",
+            color: "#1e293b",
+            px: 2.5,
+            py: 1.75,
+            borderBottom: "1px solid #E2E8F0",
+          }}
+        >
+          {previewModal.title}
+          <IconButton
+            onClick={() =>
+              setPreviewModal({
+                open: false,
+                title: "",
+                url: "",
+                isPdf: false,
+              })
+            }
+            size="small"
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            p: 2,
+            minHeight: "50vh",
+            maxHeight: "75vh",
+            bgcolor: "#0f172a",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "auto",
+          }}
+        >
+          {previewModal.url &&
+            (!previewModal.isPdf &&
+            !previewModal.url.toLowerCase().includes(".pdf") ? (
+              <Box
+                component="img"
+                src={previewModal.url}
+                alt={previewModal.title}
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "70vh",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+              />
+            ) : (
+              <object
+                data={previewModal.url}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+                style={{
+                  minHeight: "65vh",
+                  borderRadius: "8px",
+                  border: "none",
+                }}
+              >
+                <iframe
+                  src={
+                    previewModal.url.startsWith("blob:") ||
+                    previewModal.url.startsWith("data:")
+                      ? previewModal.url
+                      : `https://docs.google.com/gview?url=${encodeURIComponent(
+                          previewModal.url
+                        )}&embedded=true`
+                  }
+                  width="100%"
+                  height="100%"
+                  style={{
+                    minHeight: "65vh",
+                    border: "none",
+                    borderRadius: "8px",
+                  }}
+                  title={previewModal.title}
+                />
+              </object>
+            ))}
+        </DialogContent>
+        <DialogActions
+          sx={{ px: 2.5, py: 1.5, borderTop: "1px solid #E2E8F0" }}
+        >
+          {previewModal.url && (
+            <Button
+              component="a"
+              href={previewModal.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outlined"
+              size="small"
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                color: COLORS.PRIMARY,
+                borderColor: COLORS.PRIMARY,
+                "&:hover": { borderColor: COLORS.PRIMARY_DARK },
+              }}
+            >
+              Open in New Window ↗
+            </Button>
+          )}
+          <Button
+            onClick={() =>
+              setPreviewModal({
+                open: false,
+                title: "",
+                url: "",
+                isPdf: false,
+              })
+            }
+            variant="contained"
+            size="small"
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 600,
+              bgcolor: COLORS.PRIMARY,
+              "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }

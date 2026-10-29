@@ -225,9 +225,35 @@ export const clearRoleCsrfToken = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("role");
     sessionStorage.removeItem("activeRole");
+    sessionStorage.removeItem("post_login_redirect");
+    sessionStorage.clear();
+
     localStorage.removeItem("user");
     localStorage.removeItem("role");
     localStorage.removeItem("activeRole");
+    localStorage.removeItem("post_login_redirect");
+    localStorage.removeItem("csrfToken");
+
+    // Clear any client-side auth cookies
+    const authCookies = [
+      "accessToken",
+      "refreshToken",
+      "token",
+      "csrftoken",
+      "csrf-token",
+      "poojawala-customer-csrf-token",
+      "poojawala-admin-csrf-token",
+      "poojawala-purohit-csrf-token",
+      "poojawala-astrologer-csrf-token",
+      "customercsrftoken",
+      "admincsrftoken",
+      "purohitcsrftoken",
+      "astrologercsrftoken",
+    ];
+    authCookies.forEach((name) => {
+      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+    });
   } catch (e) {}
 };
 
@@ -751,6 +777,7 @@ userSecuredApi.interceptors.request.use(
 const userPublicApi = axios.create({
   baseURL: SERVER_ENDPOINTS.USER_BASEURL,
   withCredentials: true,
+  timeout: 8000,
   headers: {
     'ngrok-skip-browser-warning': 'true',
   },

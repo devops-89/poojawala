@@ -92,8 +92,9 @@ export default function Testimonials() {
       </Container>
 
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
-          <CircularProgress sx={{ color: "#CC2E2E" }} />
+        <Box sx={{ display: "flex", gap: 3, justifyContent: "center", py: 2 }}>
+          <Box sx={{ bgcolor: "#FBF7F0", borderRadius: "20px", height: "220px", flex: 1, border: "1px solid #F0E6D8" }} />
+          <Box sx={{ bgcolor: "#FBF7F0", borderRadius: "20px", height: "220px", flex: 1, border: "1px solid #F0E6D8", display: { xs: "none", sm: "block" } }} />
         </Box>
       ) : reviews.length === 0 ? (
         <EmptyStateCard
@@ -121,12 +122,13 @@ export default function Testimonials() {
                 height: "10px",
                 bgcolor: "#CC2E2E",
                 opacity: 0.4,
-                transition: "all 0.3s ease",
+                display: "inline-block",
+                willChange: "transform, opacity",
+                transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
                 margin: "0 !important",
               },
               ".swiper-pagination-bullet-active": {
-                width: "12px",
-                height: "12px",
+                transform: "scale(1.2)",
                 opacity: 1,
               },
             }}

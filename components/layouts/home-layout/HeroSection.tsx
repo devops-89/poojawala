@@ -1,184 +1,76 @@
-"use client";
-import { Box, Button, Container, Typography } from "@mui/material";
 import Link from "next/link";
-import { useEffect } from "react";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
 
 export default function HeroSection() {
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // Clean up any lingering hash from address bar so URL remains clean
-    if (window.location.hash) {
-      window.history.replaceState(null, "", window.location.pathname + window.location.search);
-    }
-
-    const targetSection = sessionStorage.getItem("home_restore_section");
-    if (!targetSection) return;
-    sessionStorage.removeItem("home_restore_section");
-
-    const doScroll = () => {
-      const el = document.getElementById(targetSection);
-      if (el) {
-        el.scrollIntoView({ behavior: "instant" as ScrollBehavior, block: "start" });
-        return true;
-      }
-      return false;
-    };
-
-    if (!doScroll()) {
-      requestAnimationFrame(doScroll);
-    }
-  }, []);
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: { xs: "auto", md: "calc(100vh - 80px)" },
-        minHeight: { xs: "380px", sm: "460px", md: "calc(100vh - 80px)" },
-        maxHeight: { md: "calc(100vh - 80px)" },
-        backgroundImage: {
-          xs: "linear-gradient(180deg, rgba(12, 6, 2, 0.78) 0%, rgba(12, 6, 2, 0.52) 60%, rgba(12, 6, 2, 0.18) 100%), url(/images/home/hero/heroSectionHome.webp)",
-          sm: "linear-gradient(90deg, rgba(12, 6, 2, 0.82) 0%, rgba(12, 6, 2, 0.55) 55%, rgba(12, 6, 2, 0.12) 80%, transparent 100%), url(/images/home/hero/heroSectionHome.webp)",
-          md: "linear-gradient(90deg, rgba(12, 6, 2, 0.84) 0%, rgba(12, 6, 2, 0.55) 42%, rgba(12, 6, 2, 0.15) 68%, transparent 85%), url(/images/home/hero/heroSectionHome.webp)",
-        },
-        backgroundSize: "cover",
-        backgroundPosition: { xs: "top right", md: "center" },
-        backgroundRepeat: "no-repeat",
-        display: "flex",
-        flexDirection: "column",
-        pt: { xs: 3.5, sm: 4, md: 4 },
-        pb: { xs: 4, sm: 5, md: 6 },
-      }}
-    >
-      <Container
-        maxWidth="lg"
-        sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}
-      >
-        {/* Content */}
-        <Box sx={{ maxWidth: { xs: "100%", md: "580px" }, mt: "auto", mb: "auto", position: "relative", zIndex: 2 }}>
-          <Typography
-            component="h1"
-            sx={{
-              fontFamily: FONTS.DM_SANS,
-              fontWeight: 800,
-              color: "#FFFFFF",
-              mb: { xs: 1.5, md: 3 },
-              fontSize: { xs: "1.85rem", sm: "2.4rem", md: "48px" },
-              lineHeight: { xs: 1.2, md: 1.22 },
-              letterSpacing: "-0.03em",
-              textShadow: "0 2px 10px rgba(0, 0, 0, 0.85), 0 4px 20px rgba(0, 0, 0, 0.7)",
-            }}
+    <section className="relative w-full overflow-hidden flex flex-col pt-8 sm:pt-10 md:pt-12 pb-10 sm:pb-12 md:pb-16 min-h-[380px] sm:min-h-[460px] md:h-[calc(100vh-80px)]">
+      {/* Background Image: Native picture for instantaneous discovery and paint */}
+      <picture className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        <source
+          media="(max-width: 599px)"
+          srcSet="/images/homeHero-mobile.webp"
+        />
+        <source
+          media="(min-width: 600px)"
+          srcSet="/images/homeHero.webp"
+        />
+        <img
+          src="/images/homeHero-mobile.webp"
+          alt="Hero background"
+          width={750}
+          height={422}
+          // @ts-ignore
+          fetchPriority="high"
+          loading="eager"
+          decoding="sync"
+          className="absolute inset-0 w-full h-full object-cover object-right-top md:object-center"
+        />
+      </picture>
+
+      {/* Dark gradient overlay for text readability */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#0c0602]/80 via-[#0c0602]/50 to-transparent sm:bg-gradient-to-r sm:from-[#0c0602]/85 sm:via-[#0c0602]/55 sm:to-transparent"
+      />
+
+      <div className="relative z-[2] w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow flex flex-col justify-center">
+        <div className="max-w-xl my-auto">
+          <h1
+            style={{ fontFamily: FONTS.DM_SANS }}
+            className="font-extrabold text-white text-[1.85rem] sm:text-4xl md:text-5xl leading-[1.2] tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)] mb-3 sm:mb-4"
           >
             Sacred Rituals,
-            <Box component="span" sx={{ display: "block" }}>
-              Trusted Pandits,
-            </Box>
-            <Box
-              component="span"
-              sx={{
-                display: "block",
-                fontWeight: 800,
-                color: "#FFB300",
-                mt: 0.5,
-                textShadow: "0 2px 10px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 179, 0, 0.5)",
-              }}
-            >
+            <span className="block">Trusted Pandits,</span>
+            <span className="block text-[#FFB300] mt-1 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
               One Booking Away
-            </Box>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              fontFamily: FONTS.DM_SANS,
-              color: "#F1F5F9",
-              fontWeight: 500,
-              mb: { xs: 3, md: 4 },
-              fontSize: { xs: "14.5px", sm: "15px", md: "16px" },
-              lineHeight: 1.6,
-              maxWidth: "480px",
-              letterSpacing: "0em",
-              textShadow: "0 1px 4px rgba(0, 0, 0, 0.9)",
-            }}
+            </span>
+          </h1>
+
+          <p
+            style={{ fontFamily: FONTS.DM_SANS }}
+            className="text-[#F1F5F9] font-medium text-sm sm:text-[15px] md:text-base leading-relaxed max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] mb-6 sm:mb-8"
           >
             Book verified Pandits for Puja, Astrology, and Vastu — at home, at a
             temple, or online — in under 5 minutes.
-          </Typography>
+          </p>
 
-          <Box
-            sx={{
-              display: "flex",
-              gap: { xs: 1, md: 2 },
-              flexWrap: "wrap",
-              "&:has(.talk-to:hover) .book-now": {
-                background: "transparent",
-                color: COLORS.PRIMARY,
-                borderColor: COLORS.PRIMARY,
-                border: `2px solid ${COLORS.PRIMARY}`,
-                boxShadow: "none",
-              },
-            }}
-          >
-            <Button
-              className="book-now"
-              component={Link}
-              variant="contained"
+          <div className="flex gap-3 sm:gap-4 flex-wrap">
+            <Link
               href="/sign-up?from=book-now"
-              sx={{
-                background: COLORS.PRIMARY,
-                border: `2px solid ${COLORS.PRIMARY}`,
-                color: COLORS.WHITE,
-                px: { xs: 2.5, md: 4 },
-                py: { xs: 0.9, md: 1.5 },
-                borderRadius: "30px",
-                fontWeight: 700,
-                textTransform: "none",
-                fontSize: { xs: "0.85rem", md: "1rem" },
-                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  background: COLORS.PRIMARY_HOVER,
-                  borderColor: COLORS.PRIMARY_HOVER,
-                  boxShadow: "0 4px 14px rgba(255, 98, 0, 0.4)",
-                },
-              }}
+              prefetch={false}
+              className="inline-flex items-center justify-center bg-[#FF6200] hover:bg-[#E05600] text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border-2 border-[#FF6200] shadow-[0_4px_14px_rgba(255,98,0,0.4)] transition-all duration-300"
             >
               Book Now
-            </Button>
-            <Button
-              className="talk-to"
-              component={Link}
-              variant="outlined"
+            </Link>
+            <Link
               href="/astrologers"
-              sx={{
-                borderColor: "rgba(255, 255, 255, 0.85)",
-                color: "#FFFFFF",
-                background: "rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(6px)",
-                px: { xs: 2.5, md: 4 },
-                py: { xs: 0.9, md: 1.5 },
-                borderRadius: "30px",
-                fontWeight: 700,
-                textTransform: "none",
-                fontSize: { xs: "0.85rem", md: "1rem" },
-                borderWidth: "2px",
-                textShadow: "0 1px 3px rgba(0,0,0,0.7)",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  borderColor: COLORS.PRIMARY,
-                  background: COLORS.PRIMARY,
-                  color: COLORS.WHITE,
-                  borderWidth: "2px",
-                  textShadow: "none",
-                },
-              }}
+              prefetch={false}
+              className="inline-flex items-center justify-center bg-white/10 hover:bg-[#FF6200] hover:border-[#FF6200] text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border-2 border-white/85 backdrop-blur-md transition-all duration-300"
             >
               Talk to an Astrologer
-            </Button>
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

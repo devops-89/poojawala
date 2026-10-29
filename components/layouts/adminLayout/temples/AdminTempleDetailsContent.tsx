@@ -722,6 +722,7 @@ export default function AdminTempleDetailsContent() {
                         if (Array.isArray(parsed)) aartiList = parsed;
                       } catch {}
                     }
+                    aartiList = aartiList.filter((a: any) => !a.isDeleted);
                     if (aartiList.length === 0) return null;
                     return (
                       <Box sx={{ mt: 1, pt: 1.5, borderTop: "1px solid #F1F5F9" }}>

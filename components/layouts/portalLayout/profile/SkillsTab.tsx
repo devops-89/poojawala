@@ -14,7 +14,7 @@ import {
   createFilterOptions,
   AutocompleteRenderValueGetItemProps,
 } from "@mui/material";
-import { State, City } from "country-state-city";
+import { State, City } from "@/utils/indianLocations";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import { cleanItem } from "@/components/layouts/adminLayout/astrologers/EditAstrologerForm";

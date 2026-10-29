@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
+import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { FONTS } from "@/utils/fonts";
@@ -55,6 +56,7 @@ function NavbarContent() {
     { name: "Online Services", href: "/services?isOnline=true" },
     { name: "Temples", href: "/temples" },
     { name: "Astrologers", href: "/astrologers" },
+    { name: "Contact Us", href: "/contact" },
   ];
 
   const handleDrawerToggle = () => {
@@ -78,16 +80,19 @@ function NavbarContent() {
             underline="none"
             sx={{ display: "flex", alignItems: "center" }}
           >
-            <Box
-              component="img"
+            <Image
               src="/images/1Poojalogo.webp"
               alt="1Pooja"
-              sx={{
-                height: { xs: "34px", sm: "38px", md: "46px" },
+              width={116}
+              height={47}
+              priority
+              style={{
+                height: "auto",
+                maxHeight: "46px",
+                width: "auto",
                 objectFit: "contain",
                 filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
                 transition: "transform 0.2s ease",
-                "&:hover": { transform: "scale(1.02)" },
               }}
             />
           </Link>
@@ -107,6 +112,7 @@ function NavbarContent() {
                   key={link.name}
                   component={NextLink}
                   href={link.href}
+                  prefetch={false}
                   underline="none"
                   sx={{
                     color: isActive ? "#D32F2F" : "#666",
@@ -127,32 +133,8 @@ function NavbarContent() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Button
               component={NextLink}
-              href="/contact"
-              variant="outlined"
-              sx={{
-                display: { xs: "none", md: "inline-flex" },
-                borderColor: "#e2e8f0",
-                color: "#475569",
-                borderRadius: "30px",
-                textTransform: "none",
-                fontWeight: 600,
-                px: 2.2,
-                py: 0.8,
-                fontSize: "14px",
-                fontFamily: FONTS.PRIMARY,
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  borderColor: COLORS.PRIMARY,
-                  bgcolor: "#FFF0E6",
-                  color: COLORS.PRIMARY,
-                },
-              }}
-            >
-              Contact Us
-            </Button>
-            <Button
-              component={NextLink}
               href="/partner"
+              prefetch={false}
               variant="outlined"
               sx={{
                 display: { xs: "none", md: "inline-flex" },
@@ -177,6 +159,7 @@ function NavbarContent() {
             <Button
               component={NextLink}
               href="/sign-in"
+              prefetch={false}
               variant="contained"
               sx={{
                 display: { xs: "none", md: "inline-flex" },
@@ -248,12 +231,15 @@ function NavbarContent() {
             underline="none"
             sx={{ display: "flex", alignItems: "center" }}
           >
-            <Box
-              component="img"
+            <Image
               src="/images/1Poojalogo.webp"
               alt="1Pooja"
-              sx={{
-                height: "36px",
+              width={116}
+              height={47}
+              style={{
+                height: "auto",
+                maxHeight: "36px",
+                width: "auto",
                 objectFit: "contain",
                 filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
               }}
@@ -273,6 +259,7 @@ function NavbarContent() {
                 <ListItemButton
                   component={NextLink}
                   href={link.href}
+                  prefetch={false}
                   onClick={handleDrawerToggle}
                   sx={{
                     borderRadius: "12px",
@@ -303,30 +290,6 @@ function NavbarContent() {
 
         {/* Action Buttons — right below links */}
         <Box sx={{ px: 2, pt: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
-          <Button
-            component={NextLink}
-            href="/contact"
-            variant="outlined"
-            fullWidth
-            onClick={handleDrawerToggle}
-            sx={{
-              borderColor: "#e2e8f0",
-              color: "#475569",
-              borderRadius: "30px",
-              textTransform: "none",
-              py: 1.2,
-              fontWeight: 600,
-              fontSize: "14px",
-              fontFamily: FONTS.PRIMARY,
-              "&:hover": {
-                borderColor: COLORS.PRIMARY,
-                bgcolor: "#FFF0E6",
-                color: COLORS.PRIMARY,
-              },
-            }}
-          >
-            Contact Us
-          </Button>
           <Button
             component={NextLink}
             href="/sign-in"
@@ -377,9 +340,23 @@ function NavbarContent() {
   );
 }
 
+const NavbarPlaceholder = () => (
+  <Box
+    sx={{
+      position: "sticky",
+      top: 0,
+      zIndex: 1100,
+      borderBottom: "1px solid #eee",
+      bgcolor: "#fff",
+      height: "79px",
+      width: "100%",
+    }}
+  />
+);
+
 export default function Navbar() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<NavbarPlaceholder />}>
       <NavbarContent />
     </Suspense>
   );

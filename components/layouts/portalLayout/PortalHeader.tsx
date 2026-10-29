@@ -26,6 +26,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocketStore } from '@/stores/socketStore';
 import { useUserStore } from '@/stores/userStore';
+import { useSnackbarStore } from '@/stores/snackbarStore';
 import { logoutAPI } from '@/api/authControllers';
 import { clearRoleCsrfToken } from '@/api/config';
 import { FONTS } from '@/utils/fonts';
@@ -43,6 +44,7 @@ export default function PortalHeader({
   isAstrologer = false,
 }: PortalHeaderProps) {
   const router = useRouter();
+  const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const { unreadCount, notifications, clearNotifications } = useSocketStore();
   const { profile, fetchProfile } = useUserStore();
 
@@ -87,15 +89,22 @@ export default function PortalHeader({
   const handleLogout = async () => {
     try {
       await logoutAPI();
-    } catch (e) {
-      console.error('Logout error:', e);
+    } catch (error: any) {
+      console.error("Logout notice:", error);
     } finally {
       clearRoleCsrfToken();
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         sessionStorage.clear();
-        localStorage.clear();
-        window.location.href = '/sign-in';
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
       }
+      useUserStore.getState().clearProfile();
+      showSnackbar("Logout successful", "success");
+      setTimeout(() => {
+        window.location.href = "/partner";
+      }, 300);
     }
   };
 

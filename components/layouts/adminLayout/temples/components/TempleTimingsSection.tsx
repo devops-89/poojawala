@@ -16,9 +16,11 @@ import {
 import { inputSx, labelSx } from "@/utils/templeFormUtils";
 
 export interface AartiItem {
+  id?: number | string;
   name: string;
   time: string;
   description?: string;
+  isDeleted?: boolean;
 }
 
 interface TempleTimingsSectionProps {
@@ -218,7 +220,7 @@ export default function TempleTimingsSection({
             <IconButton
               size="small"
               onClick={() => onRemoveAarti(index)}
-              disabled={aartis.length === 1 && !aarti.name && !aarti.time}
+              disabled={aartis.length === 1 && !aarti.name && !aarti.time && !aarti.id}
               sx={{
                 color: "#94A3B8",
                 "&:hover": { color: "#DC2626", bgcolor: "#FEE2E2" },
@@ -228,6 +230,28 @@ export default function TempleTimingsSection({
             </IconButton>
           </Box>
         ))}
+
+        {aartis.length === 0 && (
+          <Box
+            sx={{
+              p: 2.5,
+              borderRadius: "12px",
+              border: "1px dashed #E2E8F0",
+              bgcolor: "#F8FAFC",
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "13px",
+                fontFamily: FONTS.OUTFIT,
+                color: "#94A3B8",
+              }}
+            >
+              No aartis scheduled. Click &quot;+ Add Aarti&quot; above to add one.
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Paper>
   );

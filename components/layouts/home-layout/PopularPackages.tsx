@@ -13,11 +13,63 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import { formatServicePriceRange, stripHtml } from "@/utils/helpers";
+
+const DEFAULT_PACKAGES = [
+  {
+    id: "annaprashan-puja",
+    slug: "annaprashan-puja",
+    title: "Annaprashan Puja",
+    description: "Sacred first rice-feeding ritual for the baby, seeking good health and long life with Vedic blessings.",
+    duration: "2-3 hrs",
+    price: "₹2,100 - ₹5,100",
+    unit: "/ ceremony",
+    image: "/images/home/poojaPackages/satyanarayan.webp",
+    isOnline: true,
+    isOffline: true,
+  },
+  {
+    id: "bhoomi-puja",
+    slug: "bhoomi-puja",
+    title: "Bhoomi Puja",
+    description: "Vedic ceremony performed before beginning construction on a plot to appease Bhoomi Devi and remove Vastu defects.",
+    duration: "2-3 hrs",
+    price: "₹3,500 - ₹7,500",
+    unit: "/ ceremony",
+    image: "/images/home/poojaPackages/satyanarayan.webp",
+    isOnline: false,
+    isOffline: true,
+  },
+  {
+    id: "brihaspati-vrat-udayapan-puja",
+    slug: "brihaspati-vrat-udayapan-puja",
+    title: "Brihaspati Vrat Udayapan Puja",
+    description: "Auspicious concluding rituals for the Thursday Vrat dedicated to Lord Brihaspati for wisdom, health and prosperity.",
+    duration: "2-3 hrs",
+    price: "₹2,500 - ₹5,100",
+    unit: "/ ceremony",
+    image: "/images/home/poojaPackages/satyanarayan.webp",
+    isOnline: true,
+    isOffline: true,
+  },
+  {
+    id: "durga-puja",
+    slug: "durga-puja",
+    title: "Durga Puja & Chandi Havan",
+    description: "Divine ceremony dedicated to Goddess Durga for victory over obstacles, protection, wealth and peace.",
+    duration: "3-4 hrs",
+    price: "₹4,100 - ₹9,500",
+    unit: "/ ceremony",
+    image: "/images/home/poojaPackages/satyanarayan.webp",
+    isOnline: true,
+    isOffline: true,
+  },
+];
 
 const formatDuration = (mins: number) => {
   if (!mins) return "2-3 hrs";
@@ -31,8 +83,8 @@ const formatDuration = (mins: number) => {
 
 export default function PopularPackages() {
   const router = useRouter();
-  const [packages, setPackages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [packages, setPackages] = useState<any[]>(DEFAULT_PACKAGES);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -95,7 +147,12 @@ export default function PopularPackages() {
         setLoading(false);
       }
     };
-    fetchServices();
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      window.requestIdleCallback(() => fetchServices(), { timeout: 4000 });
+    } else {
+      const timer = setTimeout(fetchServices, 3000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
@@ -117,14 +174,16 @@ export default function PopularPackages() {
             Popular Pooja Packages
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
-            <Box
-              component="img"
+            <Image
               src="/images/home/poojaPackages/dhanush.webp"
               alt="Decorative Arch"
-              sx={{
-                width: { xs: "90%", sm: "80%", md: "650px" },
-                height: { xs: "auto", md: "40px" },
-                maxWidth: "100%",
+              width={650}
+              height={40}
+              loading="lazy"
+              style={{
+                width: "90%",
+                maxWidth: "650px",
+                height: "auto",
                 objectFit: "contain",
               }}
             />
@@ -203,9 +262,17 @@ export default function PopularPackages() {
 
         {/* Packages Grid / Loading / Empty Notification State */}
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-            <CircularProgress sx={{ color: COLORS.PRIMARY }} />
-          </Box>
+          <Grid container spacing={{ xs: 3, sm: 3, md: 3.5 }} sx={{ justifyContent: "center" }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box sx={{ bgcolor: "#FFFFFF", borderRadius: "24px", border: "1.5px solid #EFE6D5", p: 2, height: "320px", display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <Box sx={{ bgcolor: "#FAF4EE", borderRadius: "14px", height: "160px" }} />
+                  <Box sx={{ bgcolor: "#F5EFE6", borderRadius: "4px", height: "20px", width: "70%", mx: "auto" }} />
+                  <Box sx={{ bgcolor: "#FAF4EE", borderRadius: "4px", height: "14px", width: "50%", mx: "auto", mt: "auto" }} />
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         ) : packages.length === 0 ? (
           <EmptyStateCard
             icon={<AutoAwesomeOutlinedIcon sx={{ fontSize: 32 }} />}
@@ -275,16 +342,13 @@ export default function PopularPackages() {
                         bgcolor: "#FAF4EE",
                       }}
                     >
-                      <Box
-                        component="img"
+                      <Image
                         src={pkg.image}
                         alt={pkg.title}
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                        }}
+                        fill
+                        unoptimized={typeof pkg.image === "string" && pkg.image.startsWith("http")}
+                        sizes="(max-width: 600px) 380px, (max-width: 960px) 45vw, 280px"
+                        style={{ objectFit: "cover" }}
                       />
                     </Box>
                     <Typography

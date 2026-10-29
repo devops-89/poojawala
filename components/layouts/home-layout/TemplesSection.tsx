@@ -12,6 +12,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { TempleItem } from "@/utils/types";
@@ -34,7 +35,7 @@ export default function TemplesSection() {
     const fetchTemples = async () => {
       try {
         setLoading(true);
-        const res = await getTemplesAPI(1, 30, "", true);
+        const res = await getTemplesAPI(1, 6, "", true);
         let list: any[] = [];
         if (res) {
           if (Array.isArray(res)) {
@@ -110,13 +111,19 @@ export default function TemplesSection() {
           sx={{
             position: "absolute",
             inset: 0,
-            backgroundImage: `url(${imageUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
             transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
-        />
+        >
+          <Image
+            src={imageUrl}
+            alt={temple.name || "Temple"}
+            fill
+            unoptimized={typeof imageUrl === "string" && imageUrl.startsWith("http")}
+            sizes="(max-width: 600px) 380px, (max-width: 960px) 45vw, 360px"
+            style={{ objectFit: "cover" }}
+            loading="lazy"
+          />
+        </Box>
 
         {/* Dark Gradient Overlay */}
         <Box
@@ -278,13 +285,19 @@ export default function TemplesSection() {
             sx={{
               position: "absolute",
               inset: 0,
-              backgroundImage: `url(${imageUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
               transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
-          />
+          >
+            <Image
+              src={imageUrl}
+              alt={temple.name || "Temple"}
+              fill
+              unoptimized={typeof imageUrl === "string" && imageUrl.startsWith("http")}
+              sizes="(max-width: 600px) 100vw, 400px"
+              style={{ objectFit: "cover" }}
+              loading="lazy"
+            />
+          </Box>
           <Box
             sx={{
               position: "absolute",
@@ -490,14 +503,16 @@ export default function TemplesSection() {
 
           {/* Decorative Arch Divider */}
           <Box sx={{ display: "flex", justifyContent: "center", pb: 1.5 }}>
-            <Box
-              component="img"
+            <Image
               src="/images/home/poojaPackages/dhanush.webp"
               alt="Decorative Arch"
-              sx={{
-                width: { xs: "90%", sm: "80%", md: "650px" },
-                height: { xs: "auto", md: "40px" },
-                maxWidth: "100%",
+              width={650}
+              height={40}
+              loading="lazy"
+              style={{
+                width: "90%",
+                maxWidth: "650px",
+                height: "auto",
                 objectFit: "contain",
               }}
             />
@@ -565,16 +580,18 @@ export default function TemplesSection() {
             },
             "& .swiper-pagination-bullet": {
               bgcolor: "#CCCCCC",
-              opacity: 0.7,
+              opacity: 0.6,
               width: "10px",
               height: "10px",
-              transition: "all 0.3s ease",
+              borderRadius: "50%",
+              display: "inline-block",
+              willChange: "transform, opacity",
+              transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
             },
             "& .swiper-pagination-bullet-active": {
               bgcolor: COLORS.PRIMARY,
               opacity: 1,
-              width: "24px",
-              borderRadius: "6px",
+              transform: "scale(1.25)",
             },
           }}
         >

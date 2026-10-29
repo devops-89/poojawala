@@ -1,6 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
-import mapboxgl from "mapbox-gl";
+import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import { AddressFormData, StatusMessage } from "@/utils/types";
 import { sanitizeAddressInput } from "@/utils/helpers";
@@ -26,8 +26,9 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   });
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
-  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const mapInstanceRef = useRef<MapboxMap | null>(null);
+  const markerRef = useRef<MapboxMarker | null>(null);
+  const mapboxglRef = useRef<any>(null);
   const exactRef = useRef<boolean>(false);
   const addressDebounceRef = useRef<any>(null);
   const lastSearchedQueryRef = useRef<string>("");
@@ -113,7 +114,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     };
   }, [open, initialId]);
 
-  const initMap = () => {
+  const initMap = async () => {
     if (!mapContainerRef.current) return;
 
     if (mapInstanceRef.current) {
@@ -121,6 +122,10 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       mapInstanceRef.current = null;
       markerRef.current = null;
     }
+
+    const mapboxglModule = await import("mapbox-gl");
+    const mapboxgl = mapboxglModule.default || mapboxglModule;
+    mapboxglRef.current = mapboxgl;
 
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     mapboxgl.accessToken = token;
@@ -169,6 +174,9 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
   const placeMarkerOnMap = (lat: number, lng: number, zoom?: number) => {
     if (!mapInstanceRef.current) return;
+
+    const mapboxgl = mapboxglRef.current;
+    if (!mapboxgl) return;
 
     if (!markerRef.current) {
       const marker = new mapboxgl.Marker({

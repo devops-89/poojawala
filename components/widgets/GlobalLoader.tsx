@@ -1,13 +1,15 @@
 'use client';
 
 import React from 'react';
-import { Backdrop, CircularProgress, Typography, Box } from '@mui/material';
+import { Backdrop, CircularProgress, Typography } from '@mui/material';
 import { useLoaderStore } from '@/stores/loaderStore';
 import { COLORS } from '@/utils/enums';
 import { FONTS } from '@/utils/fonts';
 
 export default function GlobalLoader() {
   const { isLoading, message } = useLoaderStore();
+
+  if (!isLoading) return null;
 
   return (
     <Backdrop

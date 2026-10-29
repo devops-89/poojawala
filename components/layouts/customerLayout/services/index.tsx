@@ -6,7 +6,7 @@ import { getCustomerAddressesAPI } from "@/api/userControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { Box, CircularProgress, Grid, Pagination } from "@mui/material";
-import { City, State } from "country-state-city";
+import { City, State } from "@/utils/indianLocations";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CustomerServiceCard from "./CustomerServiceCard";

@@ -1,8 +1,7 @@
-"use client";
 import headphone from "@/public/images/home/hero/headphone.webp";
 import lock from "@/public/images/home/hero/lock.webp";
 import righttick from "@/public/images/home/hero/righttick.webp";
-import { Box, Container, Typography } from "@mui/material";
+import Image from "next/image";
 
 const features = [
   {
@@ -24,70 +23,33 @@ const features = [
 
 export default function Features() {
   return (
-    <Box
-      sx={{
-        background:
-          "linear-gradient(180deg, rgba(255, 225, 195, 0.95) 0%, rgba(255, 255, 255, 1) 100%)",
-        py: 4,
-      }}
-    >
-      <Container maxWidth="lg">
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: { xs: "space-around", md: "space-between" },
-            alignItems: "flex-start",
-            gap: { xs: 1, md: 2 },
-          }}
-        >
+    <section className="bg-gradient-to-b from-[#FFE1C3]/95 to-white py-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-row justify-around md:justify-between items-start gap-2 md:gap-4">
           {features.map((feature, index) => (
-            <Box
+            <div
               key={index}
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                alignItems: "center",
-                gap: { xs: 1, md: 2 },
-                textAlign: { xs: "center", md: "left" },
-              }}
+              className="flex flex-col md:flex-row items-center gap-1 md:gap-3 text-center md:text-left"
             >
-              <Box
-                component="img"
-                src={typeof feature.icon === 'string' ? feature.icon : feature.icon.src}
+              <Image
+                src={feature.icon}
                 alt={feature.title}
-                sx={{
-                  width: { xs: 32, md: 40 },
-                  height: { xs: 32, md: 40 },
-                  objectFit: "contain",
-                }}
+                width={36}
+                height={36}
+                className="w-9 h-9 object-contain"
               />
-              <Box>
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontWeight: 600,
-                    color: "#1A1A1A",
-                    lineHeight: 1.2,
-                    fontSize: { xs: "13px", sm: "14px", md: "16px" },
-                  }}
-                >
+              <div>
+                <p className="font-semibold text-[#1A1A1A] leading-tight text-xs sm:text-sm md:text-base">
                   {feature.title}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "#666",
-                    fontSize: { xs: "11px", sm: "12px", md: "14px" },
-                  }}
-                >
+                </p>
+                <p className="text-[#666] text-[11px] sm:text-xs md:text-sm">
                   {feature.subtitle}
-                </Typography>
-              </Box>
-            </Box>
+                </p>
+              </div>
+            </div>
           ))}
-        </Box>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </section>
   );
 }

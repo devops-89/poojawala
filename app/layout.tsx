@@ -1,10 +1,8 @@
-if (typeof window !== "undefined" && typeof (Array.prototype as any).toSorted !== "function") {
-  (Array.prototype as any).toSorted = function (compareFn?: (a: any, b: any) => number) {
-    return Array.from(this).sort(compareFn);
-  };
-}
+
 
 import { Suspense } from "react";
+import Script from "next/script";
+import { DM_Sans, Outfit } from "next/font/google";
 import Navbar from "@/components/widgets/Navbar";
 import Footer from "@/components/widgets/Footer";
 import ThemeRegistry from "@/theme/ThemeRegistry";
@@ -12,8 +10,22 @@ import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
 import ScrollToTop from "@/components/widgets/ScrollToTop";
 import GlobalModalScrollLock from "@/components/widgets/GlobalModalScrollLock";
+import GlobalDropdownScrollClose from "@/components/widgets/GlobalDropdownScrollClose";
 import type { Metadata } from "next";
 import "./globals.css";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+  
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://1pooja.com"),
@@ -77,12 +89,7 @@ export default function RootLayout({
         <link rel="icon" href="/1PoojalogoFavicon.png" />
         <link rel="shortcut icon" href="/1PoojalogoFavicon.png" />
         <link rel="apple-touch-icon" href="/1PoojalogoFavicon.png" />
-        {/* Google Tag Manager - As high as possible in <head> */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l: ';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-WNHPFBJ2');`,
-          }}
-        />
+
         <meta name="google-site-verification" content="-gaSrqYc7JoMx1PzVFmk4HZ6BXPHLPUp5pMOHNmLRrQ" />
         <meta name="google-site-verification" content="2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw" />
 
@@ -129,23 +136,59 @@ export default function RootLayout({
         />
 
         {/* Performance hints for PageSpeed Insights */}
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
         <link
           rel="preload"
           as="image"
-          href="/images/home/hero/heroSectionHome.webp"
+          href="/images/homeHero-mobile.webp"
           type="image/webp"
+          media="(max-width: 599px)"
           // @ts-ignore
           fetchPriority="high"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap"
-          rel="stylesheet"
+          rel="preload"
+          as="image"
+          href="/images/homeHero.webp"
+          type="image/webp"
+          media="(min-width: 600px)"
+          // @ts-ignore
+          fetchPriority="high"
         />
       </head>
-      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9]">
+      <body suppressHydrationWarning className={`${dmSans.variable} ${outfit.variable} min-h-screen flex flex-col bg-[#FFFDF9] text-[#2D2926] antialiased selection:bg-[#FF7F3F] selection:text-[#FFFDF9]`}>
+        {/* Google Tag Manager with lazyOnload strategy to prevent blocking main thread */}
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+              function loadGtmScript() {
+                var f = document.getElementsByTagName('script')[0],
+                    j = document.createElement('script');
+                j.async = true;
+                j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WNHPFBJ2';
+                f.parentNode.insertBefore(j, f);
+              }
+              if (window.__gtmLoaded) return;
+              ['scroll', 'touchstart', 'click', 'keydown'].forEach(function(e) {
+                window.addEventListener(e, function() {
+                  if (window.__gtmLoaded) return;
+                  window.__gtmLoaded = true;
+                  loadGtmScript();
+                }, { once: true, passive: true });
+              });
+              setTimeout(function() {
+                if (!window.__gtmLoaded) {
+                  window.__gtmLoaded = true;
+                  loadGtmScript();
+                }
+              }, 6000);
+            `,
+          }}
+        />
         {/* Google Tag Manager (noscript) immediately after opening <body> */}
         <noscript>
           <iframe
@@ -160,7 +203,8 @@ export default function RootLayout({
         <ThemeRegistry>
           <ScrollToTop />
           <GlobalModalScrollLock />
-          <Suspense fallback={null}>
+          <GlobalDropdownScrollClose />
+          <Suspense fallback={<div style={{ height: "79px", width: "100%", background: "#fff", borderBottom: "1px solid #eee", position: "sticky", top: 0, zIndex: 1100 }} />}>
             <Navbar />
           </Suspense>
           <main className="flex-grow flex flex-col w-full relative">

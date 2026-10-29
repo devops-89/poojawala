@@ -29,7 +29,7 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import { City, State } from "country-state-city";
+import { City, State } from "@/utils/indianLocations";
 import { FormikProvider, useFormik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
@@ -41,6 +41,10 @@ import TempleTimingsSection, {
   AartiItem,
 } from "./components/TempleTimingsSection";
 import TempleMediaSection from "./components/TempleMediaSection";
+import TempleServicesSection, {
+  TempleServiceItem,
+  createEmptyTempleService,
+} from "./components/TempleServicesSection";
 import TempleSeoSection from "./components/TempleSeoSection";
 
 export type { AartiItem };
@@ -137,6 +141,12 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   const [aartis, setAartis] = useState<AartiItem[]>([
     { name: "", time: "", description: "" },
   ]);
+  const [deletedAartis, setDeletedAartis] = useState<
+    Array<{ id: number | string; isDeleted: boolean }>
+  >([]);
+
+  // Services list
+  const [services, setServices] = useState<TempleServiceItem[]>([]);
 
   const initialDataRef = useRef<any>(null);
 
@@ -211,12 +221,118 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
         // Aartis Array stringified
         const validAartis = aartis
           .filter((a) => a.name && a.name.trim() !== "")
-          .map((a) => ({
-            name: a.name.trim(),
-            time: formatTimeToSeconds(a.time),
-            description: a.description?.trim() || "",
-          }));
-        formData.append("aartis", JSON.stringify(validAartis));
+          .map((a) => {
+            const item: any = {
+              name: a.name.trim(),
+              time: formatTimeToSeconds(a.time),
+              description: a.description?.trim() || "",
+            };
+            if (a.id !== undefined && a.id !== null) {
+              item.id = !isNaN(Number(a.id)) ? Number(a.id) : a.id;
+            }
+            return item;
+          });
+
+        const deletedPayload = deletedAartis.map((d) => ({
+          id: !isNaN(Number(d.id)) ? Number(d.id) : d.id,
+          isDeleted: true,
+        }));
+
+        const finalAartis = [...validAartis, ...deletedPayload];
+        formData.append("aartis", JSON.stringify(finalAartis));
+
+        // Services Array stringified (Pooja / Seva Offerings)
+        const invalidNamedService = services.find(
+          (s) =>
+            (!s.name || !s.name.trim()) &&
+            (Boolean(s.description?.trim()) ||
+              (s.plans?.basic?.price !== "" && s.plans?.basic?.price !== undefined))
+        );
+        if (invalidNamedService) {
+          showSnackbar(
+            "Please provide a service name for all added services, or remove blank ones",
+            "error"
+          );
+          setIsSubmitting(false);
+          return;
+        }
+
+        const validServices = services
+          .filter((s) => s.name && s.name.trim() !== "")
+          .map((s, sIdx) => {
+            const basicFeatures = (s.plans?.basic?.features || [])
+              .filter((f) => f && f.title && f.title.trim())
+              .map((f) => ({
+                title: f.title.trim(),
+                type: f.type || "NORMAL",
+                value:
+                  f.type === "PRICE"
+                    ? f.value !== undefined && f.value !== ""
+                      ? String(f.value).trim()
+                      : "0"
+                    : "true",
+              }));
+
+            const plansPayload: any = {
+              basic: {
+                price: Number(s.plans?.basic?.price) || 0,
+                features: basicFeatures,
+              },
+            };
+
+            if (s.isOffline && s.plans?.standard) {
+              const standardFeatures = (s.plans.standard.features || [])
+                .filter((f) => f && f.title && f.title.trim())
+                .map((f) => ({
+                  title: f.title.trim(),
+                  type: f.type || "NORMAL",
+                  value:
+                    f.type === "PRICE"
+                      ? f.value !== undefined && f.value !== ""
+                        ? String(f.value).trim()
+                        : "0"
+                      : "true",
+                }));
+
+              plansPayload.standard = {
+                price: Number(s.plans.standard.price) || 0,
+                features: standardFeatures,
+              };
+            }
+
+            if (s.iconFile) {
+              formData.append(`service_${sIdx}_icon`, s.iconFile);
+            }
+
+            return {
+              ...(s.id ? { id: s.id } : {}),
+              name: s.name.trim(),
+              ...(s.categoryId ? { categoryId: s.categoryId } : {}),
+              description: s.description?.trim() || "",
+              plans: plansPayload,
+              commissionPercentage:
+                s.commissionPercentage !== "" && !isNaN(Number(s.commissionPercentage))
+                  ? Number(s.commissionPercentage)
+                  : 0,
+              tokenPercentage:
+                s.tokenPercentage !== "" && !isNaN(Number(s.tokenPercentage))
+                  ? Number(s.tokenPercentage)
+                  : 0,
+              durationMinutes:
+                s.durationMinutes !== "" && !isNaN(Number(s.durationMinutes))
+                  ? Number(s.durationMinutes)
+                  : 0,
+              requiresVenue: Boolean(s.requiresVenue),
+              isOnline: Boolean(s.isOnline),
+              isOffline: Boolean(s.isOffline),
+              ...(s.languages && s.languages.length > 0 ? { languages: s.languages } : {}),
+              ...(s.iconPreview && !s.iconPreview.startsWith("blob:") ? { iconUrl: s.iconPreview } : {}),
+            };
+          });
+
+        if (validServices.length > 0) {
+          formData.append("services", JSON.stringify(validServices));
+        }
 
         // 1. Main Cover Image (imageUrl)
         if (imageFile) {
@@ -357,17 +473,89 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                     ? JSON.parse(temple.aartis)
                     : temple.aartis;
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                  setAartis(
-                    parsed.map((a: any) => ({
-                      name: a.name || "",
-                      time: formatSecondsToTimeInput(a.time),
-                      description: a.description || "",
-                    }))
-                  );
+                  const activeList = parsed.filter((a: any) => !a.isDeleted);
+                  if (activeList.length > 0) {
+                    setAartis(
+                      activeList.map((a: any) => ({
+                        id:
+                          a.id !== undefined && a.id !== null
+                            ? !isNaN(Number(a.id))
+                              ? Number(a.id)
+                              : a.id
+                            : undefined,
+                        name: a.name || "",
+                        time: formatSecondsToTimeInput(a.time),
+                        description: a.description || "",
+                      }))
+                    );
+                  } else {
+                    setAartis([{ name: "", time: "", description: "" }]);
+                  }
                 }
               } catch (e) {
                 console.warn("Could not parse existing temple aartis:", e);
               }
+            }
+
+            // Parse Services if present
+            if (
+              temple.services &&
+              Array.isArray(temple.services) &&
+              temple.services.length > 0
+            ) {
+              setServices(
+                temple.services.map((s: any) => {
+                  let sPlans = s.plans;
+                  if (typeof sPlans === "string") {
+                    try {
+                      sPlans = JSON.parse(sPlans);
+                    } catch {}
+                  }
+                  return {
+                    id: s.id,
+                    name: s.name || "",
+                    categoryId: s.categoryId || s.category?.id || "",
+                    description: s.description || "",
+                    iconPreview: s.downloadUrl || s.icon || s.iconUrl || null,
+                    languages: Array.isArray(s.languages)
+                      ? s.languages.map((l: any) =>
+                          typeof l === "string"
+                            ? { name: l }
+                            : { name: l.name || l.title || "" }
+                        )
+                      : [],
+                    durationMinutes: s.durationMinutes || 60,
+                    commissionPercentage: s.commissionPercentage || 10,
+                    tokenPercentage: s.tokenPercentage || 30,
+                    requiresVenue: s.requiresVenue ?? true,
+                    isOnline: Boolean(s.isOnline),
+                    isOffline:
+                      s.isOffline !== undefined ? Boolean(s.isOffline) : !s.isOnline,
+                    plans: {
+                      basic: {
+                        price: sPlans?.basic?.price ?? "",
+                        features: Array.isArray(sPlans?.basic?.features)
+                          ? sPlans.basic.features.map((f: any) => ({
+                              title: f.title || f.key || "",
+                              type: f.type || "NORMAL",
+                              value: f.value ?? "true",
+                            }))
+                          : [],
+                      },
+                      standard: {
+                        price: sPlans?.standard?.price ?? "",
+                        features: Array.isArray(sPlans?.standard?.features)
+                          ? sPlans.standard.features.map((f: any) => ({
+                              title: f.title || f.key || "",
+                              type: f.type || "NORMAL",
+                              value: f.value ?? "true",
+                            }))
+                          : [],
+                      },
+                    },
+                  };
+                })
+              );
             }
 
             // Existing media files
@@ -481,6 +669,20 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   };
 
   const handleRemoveAarti = (index: number) => {
+    const aartiToRemove = aartis[index];
+    if (
+      aartiToRemove &&
+      aartiToRemove.id !== undefined &&
+      aartiToRemove.id !== null
+    ) {
+      const aartiId = !isNaN(Number(aartiToRemove.id))
+        ? Number(aartiToRemove.id)
+        : aartiToRemove.id;
+      setDeletedAartis((prev) => {
+        if (prev.some((d) => d.id === aartiId)) return prev;
+        return [...prev, { id: aartiId, isDeleted: true }];
+      });
+    }
     setAartis((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -492,6 +694,19 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
     setAartis((prev) =>
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
+  };
+
+  // Service list functions
+  const handleAddService = () => {
+    setServices((prev) => [...prev, createEmptyTempleService()]);
+  };
+
+  const handleRemoveService = (index: number) => {
+    setServices((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateService = (index: number, updated: TempleServiceItem) => {
+    setServices((prev) => prev.map((s, i) => (i === index ? updated : s)));
   };
 
   if (loading) {
@@ -589,7 +804,15 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               onRemoveDeityPhoto={handleRemoveDeityPhoto}
             />
 
-            {/* 4. SEO & Discoverability */}
+            {/* 4. Temple Services Offered (Pooja / Seva) */}
+            <TempleServicesSection
+              services={services}
+              onAddService={handleAddService}
+              onRemoveService={handleRemoveService}
+              onUpdateService={handleUpdateService}
+            />
+
+            {/* 5. SEO & Discoverability */}
             <TempleSeoSection formik={formik} />
 
             {/* Bottom Actions */}

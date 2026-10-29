@@ -124,9 +124,19 @@ export default function CustomerHeader() {
       console.error("Logout notice:", error);
     } finally {
       clearRoleCsrfToken();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
+      }
+      useUserStore.getState().clearProfile();
+      useCartStore.getState().clearCart();
+      useSocketStore.getState().clearNotifications();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        router.push("/sign-in");
+        window.location.href = "/sign-in";
       }, 300);
     }
   };

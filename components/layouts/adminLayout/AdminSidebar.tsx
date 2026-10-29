@@ -2,6 +2,7 @@
 import { logoutAPI } from "@/api/authControllers";
 import { clearRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useUserStore } from "@/stores/userStore";
 import CategoryIcon from "@mui/icons-material/Category";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -63,9 +64,17 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       console.error("Logout notice:", error);
     } finally {
       clearRoleCsrfToken();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
+      }
+      useUserStore.getState().clearProfile();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        router.push("/admin");
+        window.location.href = "/admin";
       }, 300);
     }
   };

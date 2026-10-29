@@ -49,7 +49,7 @@ export default function TempleSeoSection({ formik }: TempleSeoSectionProps) {
               color: "#1E293B",
             }}
           >
-            4. SEO / Search Engine Optimization
+            5. SEO / Search Engine Optimization
           </Typography>
           <Typography
             sx={{

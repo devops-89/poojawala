@@ -49,11 +49,18 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
     } catch (error: any) {
       console.error("Logout notice:", error);
     } finally {
-      clearRoleCsrfToken();
       clearProfile();
+      clearRoleCsrfToken();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
+      }
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        router.push("/sign-in");
+        window.location.href = "/partner";
       }, 300);
     }
   };

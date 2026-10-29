@@ -16,7 +16,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { City, State } from "country-state-city";
+import { City, State } from "@/utils/indianLocations";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -28,7 +28,7 @@ export default function CustomerDashboardHero() {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfile(true);
   }, [fetchProfile]);
 
   // Extract user first name or full name from profile

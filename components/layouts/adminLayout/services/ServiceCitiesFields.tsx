@@ -17,7 +17,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { City, State } from "country-state-city";
+import { City, State } from "@/utils/indianLocations";
 import { useFormikContext } from "formik";
 import React, { useMemo, useState } from "react";
 

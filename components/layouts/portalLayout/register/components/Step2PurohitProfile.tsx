@@ -18,7 +18,7 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Grid from '@mui/material/Grid';
 import { FormikProps } from 'formik';
-import { State, City } from 'country-state-city';
+import { State, City } from '@/utils/indianLocations';
 import { QUALIFICATIONS, LANGUAGES, SPECIALIZATIONS } from '../constants';
 import {
   cleanItem,

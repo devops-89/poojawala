@@ -16,6 +16,8 @@ export default function GlobalSnackbar() {
     hideSnackbar();
   };
 
+  if (!open) return null;
+
   return (
     <Snackbar
       key={key}
@@ -47,7 +49,7 @@ export default function GlobalSnackbar() {
           px: 2.5,
           py: 1,
           fontWeight: 600,
-          fontFamily: FONTS.INTER,
+          fontFamily: FONTS.DM_SANS,
           display: 'flex',
           alignItems: 'center',
           '& .MuiAlert-icon': {

@@ -3,6 +3,7 @@
 import { getMeAPI, loginAPI } from "@/api/authControllers";
 import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useUserStore } from "@/stores/userStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
@@ -293,6 +294,15 @@ export default function SignInContent() {
                 validationSchema={validationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
                   try {
+                    // Reset stale in-memory profile and session data
+                    useUserStore.getState().clearProfile();
+                    if (typeof window !== "undefined") {
+                      sessionStorage.clear();
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("role");
+                      localStorage.removeItem("activeRole");
+                    }
+
                     const response = await loginAPI({
                       email: values.email,
                       password: values.password,
@@ -309,66 +319,77 @@ export default function SignInContent() {
                         response.tokens?.access?.token ||
                         response.token ||
                         response.accessToken;
-                      let userObj = response.user || response.data?.user;
-                      if (token) {
-                        try {
-                          const meResponse = await getMeAPI(token);
-                          userObj =
-                            meResponse?.user ||
-                            meResponse?.data ||
-                            meResponse ||
-                            userObj;
-                        } catch (err) {
-                          console.warn("getMeAPI notice:", err);
-                        }
-                      }
+                      let userObj = response.user || response.data?.user || response?.data;
 
-                      if (userObj) {
-                        sessionStorage.setItem("user", JSON.stringify(userObj));
+                      // Always fetch fresh authenticated profile from backend
+                      try {
+                        const meResponse = await getMeAPI(token);
+                        const freshUser =
+                          meResponse?.user ||
+                          meResponse?.data?.user ||
+                          meResponse?.data ||
+                          meResponse;
+                        if (
+                          freshUser &&
+                          typeof freshUser === "object" &&
+                          (freshUser.id || freshUser.email || freshUser.firstName || freshUser.name)
+                        ) {
+                          userObj = freshUser;
+                        }
+                      } catch (err) {
+                        console.warn("getMeAPI on login notice:", err);
                       }
 
                       const role =
-                        userObj?.role || response?.user?.role || response?.role;
+                        userObj?.role || response?.user?.role || response?.data?.user?.role || response?.role || "CUSTOMER";
+
+                      if (userObj) {
+                        sessionStorage.setItem("user", JSON.stringify(userObj));
+                        useUserStore.getState().setProfile(userObj);
+                      }
+
                       if (role) {
                         sessionStorage.setItem("role", role);
                         sessionStorage.setItem("activeRole", role);
                       }
 
                       const csrf = extractRoleCsrfToken(response, role);
-
                       if (csrf) {
                         saveRoleCsrfToken(csrf, role);
                       }
 
                       showSnackbar("Login successful!", "success");
 
+                      setTimeout(() => {
+                        let targetUrl = "/";
                         if (role === "CUSTOMER") {
                           const redirectUrl =
                             searchParams.get("redirect") ||
-                            sessionStorage.getItem("post_login_redirect");
+                            (typeof window !== "undefined"
+                              ? sessionStorage.getItem("post_login_redirect")
+                              : null);
                           if (redirectUrl && redirectUrl.startsWith("/customer/")) {
                             sessionStorage.removeItem("post_login_redirect");
-                            router.replace(redirectUrl);
+                            targetUrl = redirectUrl;
                           } else {
-                            router.replace("/customer/dashboard");
+                            targetUrl = "/customer/dashboard";
                           }
                         } else if (role === "PUROHIT" || role === "ASTROLOGER") {
-                          if (role === "ASTROLOGER") {
-                            router.replace("/partner/astrologybookings");
-                          } else {
-                            router.replace("/partner/dashboard");
-                          }
+                          targetUrl =
+                            role === "ASTROLOGER"
+                              ? "/partner/astrologybookings"
+                              : "/partner/dashboard";
                         } else if (
                           role === "ADMIN" ||
                           role === "SUPERADMIN" ||
                           role === "SUPER_ADMIN"
                         ) {
-                          router.replace("/admin/dashboard");
-                        } else {
-                          router.replace("/");
+                          targetUrl = "/admin/dashboard";
                         }
-                      }
-                    } catch (error: any) {
+                        window.location.href = targetUrl;
+                      }, 300);
+                    }
+                  } catch (error: any) {
                       console.error("Login failed", error);
                       const rawMsg = extractBackendErrorMessage(
                         error,

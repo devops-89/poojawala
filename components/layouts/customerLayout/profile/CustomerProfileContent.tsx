@@ -30,7 +30,7 @@ export default function CustomerProfileContent() {
   const router = useRouter();
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfile(true);
   }, [fetchProfile]);
 
   if (loading) {

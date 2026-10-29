@@ -22,7 +22,7 @@ import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
 import { getPurohitPayoutRange } from '@/utils/payoutHelper';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { City, State } from 'country-state-city';
+import { City, State } from '@/utils/indianLocations';
 import PurohitServicesFilters from './PurohitServicesFilters';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';

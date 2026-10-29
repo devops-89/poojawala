@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Do not show sidebar on the login page
   if (pathname === '/admin') {
-    return <Box sx={{ bgcolor: '#F8FAFC', minHeight: '100vh' }}>{children}</Box>;
+    return <Box sx={{ minHeight: '100vh' }}>{children}</Box>;
   }
 
   return (

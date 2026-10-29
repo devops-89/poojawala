@@ -105,6 +105,8 @@ export default function ServiceCard({
           component="img"
           src={image}
           alt={title}
+          loading="lazy"
+          decoding="async"
           sx={{
             maxWidth: '100%',
             maxHeight: '100%',

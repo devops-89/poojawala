@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -100,12 +101,15 @@ export default function Footer() {
                 underline="none"
                 sx={{ display: "inline-block", mb: 1.5 }}
               >
-                <Box
-                  component="img"
+                <Image
                   src="/images/1Poojalogo.webp"
                   alt="1Pooja"
-                  sx={{
-                    height: { xs: "38px", md: "46px" },
+                  width={116}
+                  height={47}
+                  loading="lazy"
+                  style={{
+                    height: "47px",
+                    width: "116px",
                     objectFit: "contain",
                     filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
                   }}
