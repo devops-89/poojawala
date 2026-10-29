@@ -39,7 +39,7 @@ export const useUserStore = create<UserState>((set, get) => ({
           } else if (!currentProfile && sessionUser) {
             set({ profile: sessionUser });
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     }
 
@@ -50,17 +50,17 @@ export const useUserStore = create<UserState>((set, get) => ({
       }
       return get().profile;
     }
-    
+
     set({ loading: true, error: null });
     try {
       const res = await getMeAPI();
       const fetchedUser =
         res?.user || res?.data?.user || res?.data?.data || res?.data || res;
-      
+
       const sessionUserStr = typeof window !== "undefined" ? sessionStorage.getItem("user") : null;
       let localUser: any = null;
       if (sessionUserStr) {
-        try { localUser = JSON.parse(sessionUserStr); } catch (e) {}
+        try { localUser = JSON.parse(sessionUserStr); } catch (e) { }
       }
 
       const isValidFetchedUser =
@@ -85,7 +85,7 @@ export const useUserStore = create<UserState>((set, get) => ({
               sessionStorage.setItem("role", finalProfile.role);
               sessionStorage.setItem("activeRole", finalProfile.role);
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       } else if (localUser) {
         finalProfile = localUser;
@@ -100,12 +100,11 @@ export const useUserStore = create<UserState>((set, get) => ({
             sessionStorage.removeItem("user");
             sessionStorage.removeItem("role");
             sessionStorage.removeItem("activeRole");
-          } catch (e) {}
+          } catch (e) { }
         }
         set({ profile: null, loading: false, error: "Unauthorized" });
         return null;
       }
-
       try {
         const userStr = typeof window !== "undefined" ? sessionStorage.getItem("user") : null;
         if (userStr) {
@@ -113,7 +112,7 @@ export const useUserStore = create<UserState>((set, get) => ({
           set({ profile: localUser, loading: false });
           return localUser;
         }
-      } catch (e) {}
+      } catch (e) { }
       set({ error: error.message || 'Failed to fetch profile', loading: false });
       return null;
     }
@@ -127,7 +126,7 @@ export const useUserStore = create<UserState>((set, get) => ({
           sessionStorage.setItem("role", data.role);
           sessionStorage.setItem("activeRole", data.role);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     set({ profile: data, loading: false });
   }
