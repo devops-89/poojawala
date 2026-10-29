@@ -432,7 +432,7 @@ export default function CustomerProductsContent() {
                     sx={{
                       position: "relative",
                       width: "100%",
-                      height: 210,
+                      height: { xs: 280, sm: 310, md: 340 },
                       overflow: "hidden",
                     }}
                   >
@@ -444,6 +444,11 @@ export default function CustomerProductsContent() {
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
+                        objectPosition: "center top",
+                        transition: "transform 0.35s ease",
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
                       }}
                     />
                     {/* Top Right Badges */}

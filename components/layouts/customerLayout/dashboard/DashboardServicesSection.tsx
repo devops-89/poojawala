@@ -192,6 +192,8 @@ export default function DashboardServicesSection({
             const imageSrc =
               item.iconDownloadurl ||
               item.iconUrl ||
+              item.bannerDownloadurl ||
+              item.bannerUrl ||
               item.imageUrl ||
               item.image ||
               item.bannerImage ||
@@ -243,6 +245,15 @@ export default function DashboardServicesSection({
                       position: "relative",
                       width: isSingle ? { xs: "100%", md: "360px" } : "100%",
                       minWidth: isSingle ? { md: "360px" } : undefined,
+                      height: isSingle ? { xs: 300, md: "100%" } : { xs: 260, sm: 290, md: 320 },
+                      minHeight: isSingle ? { md: 300 } : { xs: 260, sm: 290, md: 320 },
+                      bgcolor: "#FAF4EE",
+                      borderBottom: "1px solid #EFE6D5",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      p: 1,
+                      overflow: "hidden",
                       flexShrink: 0,
                     }}
                   >
@@ -251,9 +262,17 @@ export default function DashboardServicesSection({
                       image={imageSrc}
                       alt={item.name}
                       sx={{
-                        objectFit: "cover",
-                        height: isSingle ? { xs: 220, md: "100%" } : 160,
-                        minHeight: isSingle ? { md: 220 } : undefined,
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        width: "auto",
+                        height: "auto",
+                        objectFit: "contain",
+                        objectPosition: "center",
+                        borderRadius: "8px",
+                        transition: "transform 0.3s ease",
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
                       }}
                     />
                     {item.isUpcomingFestival && (
