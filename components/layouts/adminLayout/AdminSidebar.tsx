@@ -115,6 +115,7 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       icon: <LocalAtmIcon fontSize="small" />,
       path: "/admin/finance",
       children: [
+        { text: "Payments", path: "/admin/finance/payments" },
         { text: "Booking Settlements", path: "/admin/finance/bookings" },
         { text: "Partner Payouts", path: "/admin/finance/payouts" },
       ],

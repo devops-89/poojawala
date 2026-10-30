@@ -118,3 +118,29 @@ export const payOrderPaymentAPI = async (orderId: string | number) => {
   }
 };
 
+
+
+export const getAllPaymentsAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  status?: string,
+  paymentType?: string,
+) => {
+  try {
+    let route = `/payments/all?page=${page}&limit=${limit}`;
+    if (search && search.trim()) {
+      route += `&search=${encodeURIComponent(search.trim())}`;
+    }
+    if (status && status !== "ALL") {
+      route += `&status=${encodeURIComponent(status)}`;
+    }
+    if (paymentType && paymentType !== "ALL") {
+      route += `&paymentType=${encodeURIComponent(paymentType)}`;
+    }
+    const res = await paymentSecuredApi.get(route);
+    return res.data;
+  } catch (error: any) {
+    throw error?.response?.data || error.message || error;
+  }
+};

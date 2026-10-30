@@ -218,6 +218,8 @@ export default function CustomerTempleDetailsContent({
   const heroImage =
     temple?.downloadUrl ||
     temple?.imageUrl ||
+    temple?.deityPhotoDownloadUrl ||
+    temple?.deityPhotoUrl ||
     temple?.bannerDownloadUrl ||
     temple?.bannerUrl ||
     DEFAULT_BANNER;

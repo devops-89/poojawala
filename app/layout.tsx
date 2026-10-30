@@ -163,29 +163,35 @@ export default function RootLayout({
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              window.dataLayer = window.dataLayer || [];
-              window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
-              function loadGtmScript() {
-                var f = document.getElementsByTagName('script')[0],
-                    j = document.createElement('script');
-                j.async = true;
-                j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WNHPFBJ2';
-                f.parentNode.insertBefore(j, f);
-              }
-              if (window.__gtmLoaded) return;
-              ['scroll', 'touchstart', 'click', 'keydown'].forEach(function(e) {
-                window.addEventListener(e, function() {
-                  if (window.__gtmLoaded) return;
-                  window.__gtmLoaded = true;
-                  loadGtmScript();
-                }, { once: true, passive: true });
-              });
-              setTimeout(function() {
-                if (!window.__gtmLoaded) {
-                  window.__gtmLoaded = true;
-                  loadGtmScript();
+              (function() {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+                function loadGtmScript() {
+                  var f = document.getElementsByTagName('script')[0],
+                      j = document.createElement('script');
+                  j.async = true;
+                  j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WNHPFBJ2';
+                  if (f && f.parentNode) {
+                    f.parentNode.insertBefore(j, f);
+                  } else {
+                    document.head.appendChild(j);
+                  }
                 }
-              }, 6000);
+                if (window.__gtmLoaded) return;
+                ['scroll', 'touchstart', 'click', 'keydown'].forEach(function(e) {
+                  window.addEventListener(e, function() {
+                    if (window.__gtmLoaded) return;
+                    window.__gtmLoaded = true;
+                    loadGtmScript();
+                  }, { once: true, passive: true });
+                });
+                setTimeout(function() {
+                  if (!window.__gtmLoaded) {
+                    window.__gtmLoaded = true;
+                    loadGtmScript();
+                  }
+                }, 6000);
+              })();
             `,
           }}
         />

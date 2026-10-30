@@ -140,6 +140,8 @@ export default function WebsiteTempleDetailsContent() {
   const heroImage =
     temple.downloadUrl ||
     temple.imageUrl ||
+    temple.deityPhotoDownloadUrl ||
+    temple.deityPhotoUrl ||
     temple.image ||
     DEFAULT_BANNER;
 

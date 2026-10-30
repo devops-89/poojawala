@@ -147,6 +147,9 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
 
   // Services list
   const [services, setServices] = useState<TempleServiceItem[]>([]);
+  const [deletedServices, setDeletedServices] = useState<
+    Array<{ id: number | string; isDeleted: boolean }>
+  >([]);
 
   const initialDataRef = useRef<any>(null);
 
@@ -257,6 +260,12 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
           return;
         }
 
+        const templeCity = values.city?.trim() || "";
+        const templeState = values.state?.trim() || "";
+        const defaultTempleCities = templeCity
+          ? [{ name: templeCity, state: templeState }]
+          : [];
+
         const validServices = services
           .filter((s) => s.name && s.name.trim() !== "")
           .map((s, sIdx) => {
@@ -304,6 +313,11 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               formData.append(`service_${sIdx}_icon`, s.iconFile);
             }
 
+            // Automatically attach temple's city & state to service cities
+            const serviceCities = defaultTempleCities.length > 0
+              ? defaultTempleCities
+              : (Array.isArray(s.cities) && s.cities.length > 0 ? s.cities : []);
+
             return {
               ...(s.id ? { id: s.id } : {}),
               name: s.name.trim(),
@@ -325,13 +339,19 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               requiresVenue: Boolean(s.requiresVenue),
               isOnline: Boolean(s.isOnline),
               isOffline: Boolean(s.isOffline),
+              cities: serviceCities,
               ...(s.languages && s.languages.length > 0 ? { languages: s.languages } : {}),
               ...(s.iconPreview && !s.iconPreview.startsWith("blob:") ? { iconUrl: s.iconPreview } : {}),
             };
           });
 
-        if (validServices.length > 0) {
-          formData.append("services", JSON.stringify(validServices));
+        const deletedServicesPayload = isEdit
+          ? deletedServices.filter((d) => !validServices.some((s) => s.id === d.id))
+          : [];
+        const finalServices = [...validServices, ...deletedServicesPayload];
+
+        if (finalServices.length > 0) {
+          formData.append("services", JSON.stringify(finalServices));
         }
 
         // 1. Main Cover Image (imageUrl)
@@ -524,6 +544,12 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
                             : { name: l.name || l.title || "" }
                         )
                       : [],
+                    cities: Array.isArray(s.cities)
+                      ? s.cities.map((c: any) => ({
+                          name: typeof c === "string" ? c : c.name || "",
+                          state: typeof c === "object" ? c.state || "" : "",
+                        }))
+                      : [],
                     durationMinutes: s.durationMinutes || 60,
                     commissionPercentage: s.commissionPercentage || 10,
                     tokenPercentage: s.tokenPercentage || 30,
@@ -702,6 +728,14 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
   };
 
   const handleRemoveService = (index: number) => {
+    const itemToRemove = services[index];
+    if (itemToRemove && itemToRemove.id !== undefined && itemToRemove.id !== null) {
+      const removedId = itemToRemove.id;
+      setDeletedServices((prev) => [
+        ...prev.filter((d) => d.id !== removedId),
+        { id: removedId, isDeleted: true },
+      ]);
+    }
     setServices((prev) => prev.filter((_, i) => i !== index));
   };
 

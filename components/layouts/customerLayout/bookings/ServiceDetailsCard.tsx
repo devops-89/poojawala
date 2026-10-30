@@ -7,6 +7,43 @@ interface Props {
   booking: any;
 }
 
+const formatList = (val: any): string => {
+  if (!val) return "";
+  if (Array.isArray(val)) {
+    return val
+      .map((item) => {
+        if (typeof item === "object" && item !== null) {
+          return item.name || item.title || item.label || JSON.stringify(item);
+        }
+        return String(item).trim();
+      })
+      .filter(Boolean)
+      .join(", ");
+  }
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (!trimmed) return "";
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((item) => {
+            if (typeof item === "object" && item !== null) {
+              return item.name || item.title || item.label || JSON.stringify(item);
+            }
+            return String(item).trim();
+          })
+          .filter(Boolean)
+          .join(", ");
+      }
+    } catch {
+      // not JSON string
+    }
+    return trimmed;
+  }
+  return String(val);
+};
+
 export default function ServiceDetailsCard({ booking }: Props) {
   const isAstrology = booking?.bookingType === 'ASTROLOGY' || Boolean(booking?.astrologer);
 
@@ -16,6 +53,10 @@ export default function ServiceDetailsCard({ booking }: Props) {
     const astroName = astro
       ? `${astro.firstName || ''} ${astro.lastName || ''}`.trim()
       : 'Astrologer';
+
+    const specializationsText = formatList(profile?.specializations ?? profile?.specialization);
+    const languagesText = formatList(profile?.languages ?? profile?.language);
+    const qualificationText = formatList(profile?.qualification ?? profile?.qualifications);
 
     return (
       <Paper sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', height: '100%' }}>
@@ -50,11 +91,11 @@ export default function ServiceDetailsCard({ booking }: Props) {
               {astro?.phone || 'N/A'}
             </Typography>
           </Box>
-          {profile?.specializations && profile.specializations.length > 0 && (
+          {Boolean(specializationsText) && (
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Specializations</Typography>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
-                {profile.specializations.join(', ')}
+                {specializationsText}
               </Typography>
             </Box>
           )}
@@ -66,19 +107,19 @@ export default function ServiceDetailsCard({ booking }: Props) {
               </Typography>
             </Box>
           )}
-          {profile?.languages && profile.languages.length > 0 && (
+          {Boolean(languagesText) && (
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Languages</Typography>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
-                {profile.languages.join(', ')}
+                {languagesText}
               </Typography>
             </Box>
           )}
-          {profile?.qualification && profile.qualification.length > 0 && (
+          {Boolean(qualificationText) && (
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Qualification</Typography>
               <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
-                {profile.qualification.join(', ')}
+                {qualificationText}
               </Typography>
             </Box>
           )}

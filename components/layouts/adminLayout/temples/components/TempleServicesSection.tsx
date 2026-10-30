@@ -46,6 +46,7 @@ export interface TempleServiceItem {
   categoryId?: string | number;
   description: string;
   languages?: Array<{ name: string; code?: string }>;
+  cities?: Array<{ name: string; state: string }>;
   iconFile?: File | null;
   iconPreview?: string | null;
   durationMinutes: number | string;
@@ -71,6 +72,7 @@ export const createEmptyTempleService = (): TempleServiceItem => ({
   categoryId: "",
   description: "",
   languages: [],
+  cities: [],
   iconFile: null,
   iconPreview: null,
   durationMinutes: "",
