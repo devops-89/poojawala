@@ -124,7 +124,9 @@ export default function CustomerCartDrawer() {
   };
 
   useEffect(() => {
-    fetchCartFromApi();
+    if (isOpen) {
+      fetchCartFromApi();
+    }
   }, [isOpen, fetchCartFromApi]);
 
   const totalItems = getTotalItems();

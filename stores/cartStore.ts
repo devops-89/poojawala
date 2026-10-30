@@ -82,28 +82,39 @@ interface CartState {
   cartTotal: number;
   totalItemsCount: number;
   isOpen: boolean;
+  isInitialized: boolean;
+  isLoading: boolean;
+  lastFetched: number | null;
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
   setCartFromApi: (res: any) => void;
-  fetchCartFromApi: () => Promise<void>;
+  fetchCartFromApi: (force?: boolean) => Promise<void>;
+  refreshCart: () => Promise<void>;
   setCartItems: (items: CartItem[]) => void;
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
   removeItem: (id: string | number) => void;
   updateQuantity: (id: string | number, quantity: number) => void;
   clearCart: () => void;
+  resetCart: () => void;
   isInCart: (id: string | number) => boolean;
   getTotalPrice: () => number;
   getTotalItems: () => number;
 }
+
+let inFlightFetchPromise: Promise<void> | null = null;
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   cartTotal: 0,
   totalItemsCount: 0,
   isOpen: false,
+  isInitialized: false,
+  isLoading: false,
+  lastFetched: null,
 
   openCart: () => set({ isOpen: true }),
+  refreshCart: async () => { return get().fetchCartFromApi(true); },
   closeCart: () => set({ isOpen: false }),
   toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
@@ -114,27 +125,57 @@ export const useCartStore = create<CartState>((set, get) => ({
         items: parsed.items,
         cartTotal: parsed.total,
         totalItemsCount: parsed.totalItems,
+        isInitialized: true,
+        isLoading: false,
+        lastFetched: Date.now(),
       });
     } else {
       // Re-fetch full cart if response did not include items array
-      get().fetchCartFromApi();
+      get().fetchCartFromApi(true);
     }
   },
 
-  fetchCartFromApi: async () => {
-    try {
-      const res = await getCartAPI();
-      const parsed = parseCartApiResponse(res);
-      if (parsed) {
-        set({
-          items: parsed.items,
-          cartTotal: parsed.total,
-          totalItemsCount: parsed.totalItems,
-        });
-      }
-    } catch (err) {
-      console.error("Failed to fetch cart from API:", err);
+  fetchCartFromApi: async (force = false) => {
+    // If cart is already initialized in state and force is false, skip API call
+    if (!force && get().isInitialized) {
+      return;
     }
+
+    // Deduplicate simultaneous in-flight API requests
+    if (inFlightFetchPromise) {
+      return inFlightFetchPromise;
+    }
+
+    inFlightFetchPromise = (async () => {
+      set({ isLoading: true });
+      try {
+        const res = await getCartAPI();
+        const parsed = parseCartApiResponse(res);
+        if (parsed) {
+          set({
+            items: parsed.items,
+            cartTotal: parsed.total,
+            totalItemsCount: parsed.totalItems,
+            isInitialized: true,
+            isLoading: false,
+            lastFetched: Date.now(),
+          });
+        } else {
+          set({
+            isInitialized: true,
+            isLoading: false,
+            lastFetched: Date.now(),
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch cart from API:", err);
+        set({ isLoading: false });
+      } finally {
+        inFlightFetchPromise = null;
+      }
+    })();
+
+    return inFlightFetchPromise;
   },
 
   setCartItems: (items) => {
@@ -144,6 +185,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       items,
       cartTotal: calculatedTotal,
       totalItemsCount: calculatedTotalQty,
+      isInitialized: true,
     });
   },
 
@@ -177,6 +219,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         items: updated,
         cartTotal: calculatedTotal,
         totalItemsCount: calculatedTotalQty,
+        isInitialized: true,
       };
     });
   },
@@ -192,6 +235,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         items: updated,
         cartTotal: calculatedTotal,
         totalItemsCount: calculatedTotalQty,
+        isInitialized: true,
       };
     });
   },
@@ -213,11 +257,31 @@ export const useCartStore = create<CartState>((set, get) => ({
         items: updated,
         cartTotal: calculatedTotal,
         totalItemsCount: calculatedTotalQty,
+        isInitialized: true,
       };
     });
   },
 
-  clearCart: () => set({ items: [], cartTotal: 0, totalItemsCount: 0 }),
+  clearCart: () =>
+    set({
+      items: [],
+      cartTotal: 0,
+      totalItemsCount: 0,
+      isInitialized: true,
+    }),
+
+  resetCart: () => {
+    inFlightFetchPromise = null;
+    set({
+      items: [],
+      cartTotal: 0,
+      totalItemsCount: 0,
+      isOpen: false,
+      isInitialized: false,
+      isLoading: false,
+      lastFetched: null,
+    });
+  },
 
   isInCart: (id) => {
     return get().items.some(

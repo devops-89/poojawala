@@ -132,7 +132,7 @@ export default function CustomerHeader() {
         localStorage.removeItem("csrfToken");
       }
       useUserStore.getState().clearProfile();
-      useCartStore.getState().clearCart();
+      useCartStore.getState().resetCart();
       useSocketStore.getState().clearNotifications();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
