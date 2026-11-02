@@ -4,7 +4,7 @@ import { COLORS } from "@/utils/enums";
 import { useUserStore } from "@/stores/userStore";
 import { useEffect, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { ALL_INDIAN_LANGUAGES } from "@/utils/serviceDetailsUtils";
+import { ALL_INDIAN_LANGUAGES, extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 import {
   Box,
   Button,
@@ -162,6 +162,21 @@ export default function CustomerServicesBookingModal({
 
   const currentBookingMode = service?.isOnline ? "ONLINE" : "OFFLINE";
 
+  const availableLanguages = useMemo(() => {
+    const list = extractServiceLanguages(service?.languages);
+    if (list.length > 0) return list;
+    return ALL_INDIAN_LANGUAGES;
+  }, [service?.languages]);
+
+  useEffect(() => {
+    if (open && availableLanguages.length > 0) {
+      if (!bookingForm.language || !availableLanguages.includes(bookingForm.language)) {
+        const defaultLang = availableLanguages.includes("Hindi") ? "Hindi" : availableLanguages[0];
+        setBookingForm((prev: any) => ({ ...prev, language: defaultLang }));
+      }
+    }
+  }, [open, availableLanguages, bookingForm.language, setBookingForm]);
+
   const now = new Date();
   const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
     .toISOString()
@@ -237,7 +252,7 @@ export default function CustomerServicesBookingModal({
               <Select
                 labelId="booking-modal-language-label"
                 label="Language"
-                value={bookingForm.language || "Hindi"}
+                value={bookingForm.language || (availableLanguages[0] || "Hindi")}
                 onChange={(e) =>
                   setBookingForm({ ...bookingForm, language: e.target.value })
                 }
@@ -250,7 +265,7 @@ export default function CustomerServicesBookingModal({
                   },
                 }}
               >
-                {ALL_INDIAN_LANGUAGES.map((lang) => (
+                {availableLanguages.map((lang) => (
                   <MenuItem
                     key={lang}
                     value={lang}

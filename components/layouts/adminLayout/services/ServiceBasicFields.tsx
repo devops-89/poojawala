@@ -17,6 +17,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -121,12 +122,35 @@ export default function ServiceBasicFields({
             (touched.categoryId || Boolean(values.categoryId))
           }
         >
-          <InputLabel id="service-category-label">Select Category *</InputLabel>
+          <InputLabel id="service-category-label" shrink>
+            Select Category *
+          </InputLabel>
           <Select
             labelId="service-category-label"
             label="Select Category *"
             name="categoryId"
             value={values.categoryId || ""}
+            displayEmpty
+            renderValue={(selected) => {
+              if (!selected) {
+                return (
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: "#94a3b8",
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: "0.95rem",
+                    }}
+                  >
+                    Select Service Category
+                  </Typography>
+                );
+              }
+              const cat = categories.find(
+                (c: any) => String(c.id || c._id) === String(selected)
+              );
+              return cat ? (cat.name || cat.title) : selected;
+            }}
             onChange={(e: any) => {
               if (setFieldValue) {
                 setFieldValue("categoryId", e.target.value);
@@ -162,9 +186,6 @@ export default function ServiceBasicFields({
               fontFamily: FONTS.OUTFIT,
             }}
           >
-            <MenuItem value="" disabled>
-              <em>Select Service Category</em>
-            </MenuItem>
             {categories.map((cat: any) => (
               <MenuItem key={cat.id || cat._id} value={cat.id || cat._id}>
                 {cat.name || cat.title}
@@ -184,12 +205,35 @@ export default function ServiceBasicFields({
           variant="outlined"
           error={touched.templeId && Boolean(errors.templeId)}
         >
-          <InputLabel id="service-temple-label">Select Temple</InputLabel>
+          <InputLabel id="service-temple-label" shrink>
+            Select Temple
+          </InputLabel>
           <Select
             labelId="service-temple-label"
             label="Select Temple"
             name="templeId"
             value={values.templeId || ""}
+            displayEmpty
+            renderValue={(selected) => {
+              if (!selected) {
+                return (
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: "#94a3b8",
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: "0.95rem",
+                    }}
+                  >
+                    Select Temple
+                  </Typography>
+                );
+              }
+              const temple = temples.find(
+                (t: any) => String(t.id || t._id) === String(selected)
+              );
+              return temple ? temple.name : selected;
+            }}
             onChange={(e: any) => {
               if (setFieldValue) {
                 setFieldValue("templeId", e.target.value);
@@ -224,9 +268,6 @@ export default function ServiceBasicFields({
               fontFamily: FONTS.OUTFIT,
             }}
           >
-            <MenuItem value="">
-              <em>Select Temple</em>
-            </MenuItem>
             {temples.map((temple: any) => (
               <MenuItem key={temple.id || temple._id} value={temple.id || temple._id}>
                 {temple.name}
@@ -250,17 +291,29 @@ export default function ServiceBasicFields({
           type="number"
           value={values.sortOrder ?? ""}
           onChange={(e: any) => {
-            if (Number(e.target.value) < 0) return;
             handleChange(e);
-            if (setFieldTouched) setFieldTouched("sortOrder", true, false);
+            if (setFieldTouched) setFieldTouched("sortOrder", true, true);
           }}
           onKeyDown={(e) => {
-            if (e.key === "-" || e.key === "e") e.preventDefault();
+            if (["-", "+", "e", "E", "."].includes(e.key)) {
+              e.preventDefault();
+            }
           }}
           onWheel={(e: any) => e.target.blur()}
           onBlur={handleBlur}
           error={touched.sortOrder && Boolean(errors.sortOrder)}
-          slotProps={{ htmlInput: { min: 0 } }}
+          helperText={
+            touched.sortOrder && errors.sortOrder
+              ? (errors.sortOrder as string)
+              : undefined
+          }
+          slotProps={{
+            htmlInput: {
+              min: 1,
+              max: 1000,
+              step: 1,
+            },
+          }}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
           }}

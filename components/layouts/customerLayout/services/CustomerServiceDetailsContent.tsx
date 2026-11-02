@@ -1,6 +1,7 @@
 "use client";
 import { COLORS } from "@/utils/enums";
 import { formatServicePriceRange } from "@/utils/helpers";
+import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 import { getServiceByIdAPI, registerServiceSlugMapping } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
@@ -165,7 +166,7 @@ export default function CustomerServiceDetailsContent() {
 
   const citiesList = parseJsonList(service.cities);
   const benefitsList = parseJsonList(service.benefits);
-  const languagesList = parseJsonList(service.languages);
+  const languagesList = extractServiceLanguages(service.languages);
 
   const formattedCities =
     citiesList.length > 0
@@ -176,12 +177,7 @@ export default function CustomerServiceDetailsContent() {
       : "";
 
   const formattedLanguages =
-    languagesList.length > 0
-      ? languagesList
-          .map((l: any) => (typeof l === "string" ? l : l?.name || ""))
-          .filter(Boolean)
-          .join(" · ")
-      : "";
+    languagesList.length > 0 ? languagesList.join(" · ") : "";
 
   const durationText = service.durationMinutes
     ? service.durationMinutes >= 60

@@ -14,33 +14,50 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormikContext } from "formik";
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { ALL_INDIAN_LANGUAGES } from "@/utils/serviceDetailsUtils";
 
 const COMMON_LANGUAGES = ALL_INDIAN_LANGUAGES;
 
+export interface ServiceLanguagesFieldsRef {
+  validateOnContinue: () => boolean;
+}
+
 interface ServiceLanguagesFieldsProps {
   languages: Array<{ name: string; code?: string }>;
+  errors?: Record<string, any>;
+  touched?: Record<string, any>;
   handleChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   handleBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
-export default function ServiceLanguagesFields({
-  languages = [],
-  setFieldValue,
-}: ServiceLanguagesFieldsProps) {
+const ServiceLanguagesFields = forwardRef<
+  ServiceLanguagesFieldsRef,
+  ServiceLanguagesFieldsProps
+>(function ServiceLanguagesFields(
+  {
+    languages = [],
+    errors,
+    touched,
+    setFieldValue,
+  }: ServiceLanguagesFieldsProps,
+  ref
+) {
   const formik = useFormikContext<any>();
   const updateLanguages = (newList: Array<{ name: string; code?: string }>) => {
     if (setFieldValue) {
-      setFieldValue("languages", newList);
+      setFieldValue("languages", newList, true);
     } else if (formik?.setFieldValue) {
-      formik.setFieldValue("languages", newList);
+      formik.setFieldValue("languages", newList, true);
     }
   };
 
   const [inputVal, setInputVal] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const formikError = touched?.languages && errors?.languages ? String(errors.languages) : null;
+  const activeError = errorMsg || formikError;
 
   const handleSaveLanguage = () => {
     const trimmed = inputVal.trim();
@@ -72,11 +89,48 @@ export default function ServiceLanguagesFields({
   const handleDeleteLanguage = (index: number) => {
     const updated = languages.filter((_, i) => i !== index);
     updateLanguages(updated);
+    if (updated.length === 0) {
+      setErrorMsg("Please add at least one language");
+    }
   };
+
+  useImperativeHandle(ref, () => ({
+    validateOnContinue: () => {
+      const trimmed = inputVal.trim();
+      let currentLanguages = [...languages];
+
+      if (trimmed) {
+        const alreadyExists = currentLanguages.some(
+          (l) => l.name?.toLowerCase().trim() === trimmed.toLowerCase()
+        );
+        if (!alreadyExists) {
+          currentLanguages.push({ name: trimmed });
+          updateLanguages(currentLanguages);
+          setInputVal("");
+          setErrorMsg(null);
+        }
+      }
+
+      if (currentLanguages.length === 0) {
+        setErrorMsg("Please add at least one language");
+        if (typeof document !== "undefined") {
+          const container = document.getElementById("service-languages-section");
+          if (container) {
+            container.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+        return false;
+      }
+
+      setErrorMsg(null);
+      return true;
+    },
+  }));
 
   return (
     <Grid size={{ xs: 12 }}>
       <Box
+        id="service-languages-section"
         sx={{
           border: "1px solid #e2e8f0",
           borderRadius: "16px",
@@ -94,7 +148,7 @@ export default function ServiceLanguagesFields({
               fontSize: "1.05rem",
             }}
           >
-            Languages
+            Languages *
           </Typography>
           <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
             Add languages supported for this ritual. Type or choose from common Vedic languages.
@@ -133,14 +187,19 @@ export default function ServiceLanguagesFields({
                   size="small"
                   label="Add Language *"
                   placeholder="e.g. Hindi, Sanskrit, English"
+                  onBlur={() => {
+                    if (languages.length === 0 && !inputVal.trim()) {
+                      setErrorMsg("Please add at least one language");
+                    }
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
                       handleSaveLanguage();
                     }
                   }}
-                  error={Boolean(errorMsg)}
-                  helperText={errorMsg || undefined}
+                  error={Boolean(activeError)}
+                  helperText={activeError || undefined}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
@@ -182,13 +241,22 @@ export default function ServiceLanguagesFields({
             sx={{
               p: 3,
               textAlign: "center",
-              bgcolor: "white",
+              bgcolor: activeError ? "#fef2f2" : "white",
               borderRadius: "12px",
-              border: "1px dashed #cbd5e1",
+              border: activeError ? "1px dashed #fca5a5" : "1px dashed #cbd5e1",
             }}
           >
-            <Typography sx={{ color: "#94a3b8", fontSize: "0.9rem", fontFamily: FONTS.OUTFIT }}>
-              No languages added yet. Type a language name above and click &quot;Save Language&quot; or press Enter.
+            <Typography
+              sx={{
+                color: activeError ? "#dc2626" : "#94a3b8",
+                fontSize: "0.9rem",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: activeError ? 600 : 400,
+              }}
+            >
+              {activeError
+                ? activeError
+                : 'No languages added yet. Type a language name above and click "Save Language" or press Enter.'}
             </Typography>
           </Box>
         ) : (
@@ -226,4 +294,6 @@ export default function ServiceLanguagesFields({
       </Box>
     </Grid>
   );
-}
+});
+
+export default ServiceLanguagesFields;

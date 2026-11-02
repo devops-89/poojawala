@@ -227,6 +227,30 @@ export const parsePlanFeatures = (
   };
 };
 
+export const extractServiceLanguages = (languagesRaw: any): string[] => {
+  if (!languagesRaw) return [];
+  let list: string[] = [];
+  if (Array.isArray(languagesRaw)) {
+    list = languagesRaw
+      .map((l: any) => (typeof l === "string" ? l.trim() : (l?.name || "").trim()))
+      .filter(Boolean);
+  } else if (typeof languagesRaw === "string") {
+    try {
+      const parsed = JSON.parse(languagesRaw);
+      if (Array.isArray(parsed)) {
+        list = parsed
+          .map((l: any) => (typeof l === "string" ? l.trim() : (l?.name || "").trim()))
+          .filter(Boolean);
+      } else if (typeof parsed === "string") {
+        list = [parsed.trim()];
+      }
+    } catch {
+      list = languagesRaw.split(",").map((s: string) => s.trim()).filter(Boolean);
+    }
+  }
+  return Array.from(new Set(list));
+};
+
 export const ALL_INDIAN_LANGUAGES = [
   "Hindi",
   "English",

@@ -6,7 +6,7 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { customerCreateBookingAPI } from "@/api/bookingControllers";
 import { getCustomerAddressesAPI } from "@/api/userControllers";
-import { checkCityMatch, ALL_INDIAN_LANGUAGES } from "@/utils/serviceDetailsUtils";
+import { checkCityMatch, ALL_INDIAN_LANGUAGES, extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 
 interface UseServiceBookingProps {
   serviceId: number;
@@ -193,37 +193,24 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
   };
 
   const availableLanguages = useMemo(() => {
-    let list: string[] = [];
-    if (service?.languages) {
-      const raw = service.languages;
-      if (Array.isArray(raw)) {
-        list = raw
-          .map((l: any) => (typeof l === "string" ? l.trim() : (l?.name || "").trim()))
-          .filter(Boolean);
-      } else if (typeof raw === "string") {
-        try {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            list = parsed
-              .map((l: any) => (typeof l === "string" ? l.trim() : (l?.name || "").trim()))
-              .filter(Boolean);
-          }
-        } catch {
-          list = raw.split(",").map((s: string) => s.trim()).filter(Boolean);
-        }
-      }
+    const list = extractServiceLanguages(service?.languages);
+    if (list.length > 0) {
+      return list;
     }
-    // Combine any service-specific languages first, then all languages used in India
-    const combined = [...list, ...ALL_INDIAN_LANGUAGES];
-    return Array.from(new Set(combined));
+    return ALL_INDIAN_LANGUAGES;
   }, [service?.languages]);
 
-  const [bookingForm, setBookingForm] = useState({
-    scheduledDate: "",
-    scheduledTime: "",
-    paymentOption: "TOKEN",
-    language: "Hindi",
-    specialInstructions: "",
+  const [bookingForm, setBookingForm] = useState(() => {
+    const list = extractServiceLanguages(service?.languages);
+    const languages = list.length > 0 ? list : ALL_INDIAN_LANGUAGES;
+    const defaultLang = languages.includes("Hindi") ? "Hindi" : languages[0] || "Hindi";
+    return {
+      scheduledDate: "",
+      scheduledTime: "",
+      paymentOption: "TOKEN",
+      language: defaultLang,
+      specialInstructions: "",
+    };
   });
 
   useEffect(() => {
@@ -421,7 +408,7 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
         featureIds: finalFeatureIds,
         specialInstructions: bookingForm.specialInstructions || "",
         customFields: {
-          language: bookingForm.language || "Hindi",
+          language: bookingForm.language || (availableLanguages[0] || "Hindi"),
           ...(profile?.gotra ? { gotra: profile.gotra } : {}),
         },
       };

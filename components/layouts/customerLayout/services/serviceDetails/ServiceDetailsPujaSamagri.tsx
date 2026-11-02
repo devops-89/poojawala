@@ -220,7 +220,7 @@ export default function ServiceDetailsPujaSamagri({
               mb: 1.5,
             }}
           >
-            {title || "Add pooja items to your booking"}
+            {title || "Essential Pooja Samagri for Your Ritual"}
           </Typography>
 
           <Typography

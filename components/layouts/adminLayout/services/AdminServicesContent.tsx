@@ -90,6 +90,9 @@ export default function AdminServicesContent() {
     }
     const initialType = getInitialServiceType();
     setServiceType(initialType);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("admin_services_type", initialType);
+    }
     setIsMounted(true);
   }, []);
 
@@ -425,6 +428,12 @@ export default function AdminServicesContent() {
     return cols;
   }, [serviceType]);
 
+  const createServiceHref = useMemo(() => {
+    if (serviceType === "ONLINE_POOJA") return "/admin/services/add?type=online_pooja";
+    if (serviceType === "TEMPLE") return "/admin/services/add?type=temple";
+    return "/admin/services/add?type=offline_pooja";
+  }, [serviceType]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <AdminPageHeader
@@ -437,7 +446,12 @@ export default function AdminServicesContent() {
           setPage(0);
         }}
         actionButtonText="Create Service"
-        actionButtonHref="/admin/services/add"
+        actionButtonHref={createServiceHref}
+        onActionButtonClick={() => {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("admin_services_type", serviceType);
+          }
+        }}
         actionButtonIcon={<AddIcon />}
       />
 
