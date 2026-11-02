@@ -1,7 +1,7 @@
 "use client";
 
-import { getMeAPI, loginAPI } from "@/api/authControllers";
-import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
+import { getMeAPI, loginAPI, logoutAPI } from "@/api/authControllers";
+import { extractRoleCsrfToken, saveRoleCsrfToken, clearRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -92,7 +92,7 @@ export default function SignInContent() {
         ) {
           router.replace("/admin/dashboard");
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [router, searchParams]);
 
@@ -340,8 +340,42 @@ export default function SignInContent() {
                         console.warn("getMeAPI on login notice:", err);
                       }
 
-                      const role =
-                        userObj?.role || response?.user?.role || response?.data?.user?.role || response?.role || "CUSTOMER";
+                      const role = String(
+                        userObj?.role ||
+                        response?.user?.role ||
+                        response?.data?.user?.role ||
+                        response?.role ||
+                        "CUSTOMER"
+                      ).toUpperCase();
+
+                      // Block ADMIN role from signing in through customer/public sign-in page
+                      if (
+                        role === "ADMIN" ||
+                        role === "SUPERADMIN" ||
+                        role === "SUPER_ADMIN"
+                      ) {
+                        try {
+                          await logoutAPI();
+                        } catch (logoutErr) {
+                          console.warn("Admin auto-logout notice:", logoutErr);
+                        } finally {
+                          clearRoleCsrfToken();
+                          if (typeof window !== "undefined") {
+                            sessionStorage.clear();
+                            localStorage.removeItem("user");
+                            localStorage.removeItem("role");
+                            localStorage.removeItem("activeRole");
+                            localStorage.removeItem("csrfToken");
+                          }
+                          useUserStore.getState().clearProfile();
+                        }
+
+                        showSnackbar(
+                          "Access denied: Administrators must log in through the Admin Portal.",
+                          "error"
+                        );
+                        return;
+                      }
 
                       if (userObj) {
                         sessionStorage.setItem("user", JSON.stringify(userObj));
@@ -390,51 +424,51 @@ export default function SignInContent() {
                       }, 300);
                     }
                   } catch (error: any) {
-                      console.error("Login failed", error);
-                      const rawMsg = extractBackendErrorMessage(
-                        error,
-                        "Invalid email or password",
-                      );
-                      const finalMsg =
-                        !rawMsg ||
+                    console.error("Login failed", error);
+                    const rawMsg = extractBackendErrorMessage(
+                      error,
+                      "Invalid email or password",
+                    );
+                    const finalMsg =
+                      !rawMsg ||
                         rawMsg.toLowerCase() === "validation failed" ||
                         rawMsg.toLowerCase() === "bad request"
-                          ? "Invalid email or password"
-                          : rawMsg;
-                      showSnackbar(finalMsg, "error");
-                    } finally {
-                      setSubmitting(false);
-                    }
-                  }}
-                >
-                  {({ isSubmitting, touched, errors, submitForm }) => (
-                    <Box
-                      component={Form}
-                      onKeyDown={(e: React.KeyboardEvent) => {
-                        if (e.key === "Enter") {
-                          const target = e.target as HTMLElement;
-                          if (target.tagName?.toLowerCase() === "textarea") return;
-                          e.preventDefault();
-                          submitForm();
-                        }
-                      }}
-                    >
-                      <FormikValidationSnackbar />
+                        ? "Invalid email or password"
+                        : rawMsg;
+                    showSnackbar(finalMsg, "error");
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+              >
+                {({ isSubmitting, touched, errors, submitForm }) => (
+                  <Box
+                    component={Form}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        const target = e.target as HTMLElement;
+                        if (target.tagName?.toLowerCase() === "textarea") return;
+                        e.preventDefault();
+                        submitForm();
+                      }
+                    }}
+                  >
+                    <FormikValidationSnackbar />
 
-                      {/* Email Field */}
-                      <Box sx={{ mb: 2 }}>
-                        <Typography
-                          sx={{
-                            fontFamily: FONTS.OUTFIT_ONLY,
-                            fontSize: "13.5px",
-                            fontWeight: 600,
-                            color: "#374151",
-                            mb: 0.7,
-                          }}
-                        >
-                          Email address
-                        </Typography>
-                        <Field name="email">
+                    {/* Email Field */}
+                    <Box sx={{ mb: 2 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT_ONLY,
+                          fontSize: "13.5px",
+                          fontWeight: 600,
+                          color: "#374151",
+                          mb: 0.7,
+                        }}
+                      >
+                        Email address
+                      </Typography>
+                      <Field name="email">
                         {({ field, form, meta }: any) => (
                           <TextField
                             {...field}
@@ -505,15 +539,15 @@ export default function SignInContent() {
                                   },
                                 },
                                 "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active":
-                                  {
-                                    WebkitBoxShadow:
-                                      "0 0 0 1000px #FFFFFF inset !important",
-                                    WebkitTextFillColor: "#181411 !important",
-                                    caretColor: "#181411",
-                                    borderRadius: "0px !important",
-                                    transition:
-                                      "background-color 50000s ease-in-out 0s",
-                                  },
+                                {
+                                  WebkitBoxShadow:
+                                    "0 0 0 1000px #FFFFFF inset !important",
+                                  WebkitTextFillColor: "#181411 !important",
+                                  caretColor: "#181411",
+                                  borderRadius: "0px !important",
+                                  transition:
+                                    "background-color 50000s ease-in-out 0s",
+                                },
                               },
                               "& .MuiFormHelperText-root": {
                                 fontFamily: FONTS.OUTFIT_ONLY,
@@ -623,15 +657,15 @@ export default function SignInContent() {
                                   },
                                 },
                                 "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active":
-                                  {
-                                    WebkitBoxShadow:
-                                      "0 0 0 1000px #FFFFFF inset !important",
-                                    WebkitTextFillColor: "#181411 !important",
-                                    caretColor: "#181411",
-                                    borderRadius: "0px !important",
-                                    transition:
-                                      "background-color 50000s ease-in-out 0s",
-                                  },
+                                {
+                                  WebkitBoxShadow:
+                                    "0 0 0 1000px #FFFFFF inset !important",
+                                  WebkitTextFillColor: "#181411 !important",
+                                  caretColor: "#181411",
+                                  borderRadius: "0px !important",
+                                  transition:
+                                    "background-color 50000s ease-in-out 0s",
+                                },
                               },
                               "& .MuiFormHelperText-root": {
                                 fontFamily: FONTS.OUTFIT_ONLY,
@@ -766,8 +800,8 @@ export default function SignInContent() {
                     href={
                       redirectParam
                         ? `/sign-up?redirect=${encodeURIComponent(
-                            redirectParam
-                          )}`
+                          redirectParam
+                        )}`
                         : "/sign-up"
                     }
                     style={{

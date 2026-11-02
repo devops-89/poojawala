@@ -2,6 +2,7 @@
 
 import { addPurohitServiceAPI } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useUserStore } from "@/stores/userStore";
 import { getPurohitPayoutRange } from "@/utils/payoutHelper";
 import AddIcon from "@mui/icons-material/Add";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -32,9 +33,39 @@ export default function PurohitServiceDetailsAddForm({
 }: Props) {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+  const userProfile = useUserStore((state) => state.profile);
   const [submitting, setSubmitting] = useState(false);
 
+  const userObj = userProfile?.data || userProfile;
+  const p = userObj?.profile || userObj;
+  const isOnlineAvailable = Boolean(p?.isOnlineAvailable ?? userObj?.isOnlineAvailable);
+  const isOfflineAvailable = Boolean(p?.isOfflineAvailable ?? userObj?.isOfflineAvailable);
+
+  const isServiceOnline = Boolean(service?.isOnline);
+  const isServiceOffline = Boolean(service?.isOffline);
+
+  let isModeRestricted = false;
+  let modeRestrictionMessage = "";
+
+  if (!isOnlineAvailable && !isOfflineAvailable) {
+    isModeRestricted = true;
+    modeRestrictionMessage =
+      "Both Online and Offline service modes are disabled in your profile. Please enable at least one mode in Profile Settings to add ceremonies.";
+  } else if (isServiceOnline && !isServiceOffline && !isOnlineAvailable) {
+    isModeRestricted = true;
+    modeRestrictionMessage =
+      "This ceremony is Online Only, but Online Puja is disabled in your profile.";
+  } else if (isServiceOffline && !isServiceOnline && !isOfflineAvailable) {
+    isModeRestricted = true;
+    modeRestrictionMessage =
+      "This ceremony is In-Person / Offline Only, but Offline Visit is disabled in your profile.";
+  }
+
   const handleAddService = async () => {
+    if (isModeRestricted) {
+      showSnackbar(modeRestrictionMessage, "warning");
+      return;
+    }
     try {
       setSubmitting(true);
       const payload = [
@@ -251,36 +282,99 @@ export default function PurohitServiceDetailsAddForm({
                 </Box>
               </Box>
 
-              <Button
-                variant="contained"
-                onClick={handleAddService}
-                disabled={submitting}
-                startIcon={
-                  !submitting ? (
-                    <AddIcon sx={{ color: `${COLORS.WHITE} !important` }} />
-                  ) : null
-                }
-                sx={{
-                  bgcolor: `${COLORS.PRIMARY} !important`,
-                  color: `${COLORS.WHITE} !important`,
-                  fontWeight: 800,
-                  fontSize: "16px",
-                  py: 1.6,
-                  borderRadius: "30px",
-                  textTransform: "none",
-                  fontFamily: FONTS.PRIMARY,
-                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.25)",
-                  "&:hover": {
-                    bgcolor: `${COLORS.PRIMARY_DARK} !important`,
-                  },
-                }}
-              >
-                {submitting ? (
-                  <CircularProgress size={24} sx={{ color: "white" }} />
-                ) : (
-                  "Confirm & Add Service to Profile"
-                )}
-              </Button>
+              {isModeRestricted ? (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: "12px",
+                      bgcolor: "#fff7ed",
+                      border: "1px solid #fed7aa",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.PRIMARY,
+                        fontSize: "13px",
+                        color: "#9a3412",
+                        fontWeight: 600,
+                        lineHeight: 1.5,
+                        mb: 1,
+                      }}
+                    >
+                      ⚠️ {modeRestrictionMessage}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => router.push("/partner/profile?tab=skills")}
+                      sx={{
+                        color: COLORS.PRIMARY,
+                        borderColor: COLORS.PRIMARY,
+                        textTransform: "none",
+                        fontWeight: 700,
+                        borderRadius: "20px",
+                        fontSize: "12px",
+                        fontFamily: FONTS.PRIMARY,
+                        "&:hover": {
+                          borderColor: COLORS.PRIMARY_DARK,
+                          bgcolor: "#ffedd5",
+                        },
+                      }}
+                    >
+                      Update Profile Skills
+                    </Button>
+                  </Box>
+
+                  <Button
+                    variant="contained"
+                    disabled={true}
+                    sx={{
+                      bgcolor: "#e2e8f0 !important",
+                      color: "#94a3b8 !important",
+                      fontWeight: 800,
+                      fontSize: "15px",
+                      py: 1.6,
+                      borderRadius: "30px",
+                      textTransform: "none",
+                      fontFamily: FONTS.PRIMARY,
+                    }}
+                  >
+                    Service Mode Not Available in Profile
+                  </Button>
+                </Box>
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={handleAddService}
+                  disabled={submitting}
+                  startIcon={
+                    !submitting ? (
+                      <AddIcon sx={{ color: `${COLORS.WHITE} !important` }} />
+                    ) : null
+                  }
+                  sx={{
+                    bgcolor: `${COLORS.PRIMARY} !important`,
+                    color: `${COLORS.WHITE} !important`,
+                    fontWeight: 800,
+                    fontSize: "16px",
+                    py: 1.6,
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    fontFamily: FONTS.PRIMARY,
+                    boxShadow: "0 8px 24px rgba(255, 98, 0, 0.25)",
+                    "&:hover": {
+                      bgcolor: `${COLORS.PRIMARY_DARK} !important`,
+                    },
+                  }}
+                >
+                  {submitting ? (
+                    <CircularProgress size={24} sx={{ color: "white" }} />
+                  ) : (
+                    "Confirm & Add Service to Profile"
+                  )}
+                </Button>
+              )}
             </Box>
           )}
         </Grid>

@@ -24,7 +24,6 @@ import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 import ServiceDetailsBreadcrumbs from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsBreadcrumbs";
 import ServiceDetailsFaqSection from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsFaqSection";
 import ServiceDetailsHeroSection from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsHeroSection";
-import ServiceDetailsInfoGrid from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsInfoGrid";
 
 import PurohitServiceDetailsAddForm from "./PurohitServiceDetailsAddForm";
 import PurohitServicePlansSection from "./PurohitServicePlansSection";
@@ -288,21 +287,7 @@ export default function PurohitServiceDetailsContent() {
       {/* 3. Service Plans & Purohit Carry Items Section */}
       <PurohitServicePlansSection service={service} />
 
-      {/* 4. Service Details & Service Areas Section (Reused, Venue displays Customer Location) */}
-      <ServiceDetailsInfoGrid
-        service={service}
-        durationText={durationText}
-        priceDisplay={priceDisplay}
-        languagesList={languagesList}
-        displayCities={displayCities}
-        getFormattedFestivalDate={getFormattedFestivalDate}
-      />
-
-      <ServiceDetailsFaqSection
-        serviceName={service.name || service.title}
-        faqItems={purohitFaqItems}
-      />
-
+      {/* 4. Add to Profile Form (Moved UP) */}
       <PurohitServiceDetailsAddForm
         service={service}
         isAlreadyAdded={isAlreadyAdded}
@@ -310,6 +295,12 @@ export default function PurohitServiceDetailsContent() {
           setIsAlreadyAdded(true);
           fetchServiceData();
         }}
+      />
+
+      {/* 5. FAQ Section (Moved to BOTTOM) */}
+      <ServiceDetailsFaqSection
+        serviceName={service.name || service.title}
+        faqItems={purohitFaqItems}
       />
     </Box>
   );

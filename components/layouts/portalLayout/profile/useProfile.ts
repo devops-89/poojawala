@@ -22,6 +22,11 @@ export function useProfile() {
 
   const [activeTab, setActiveTab] = useState(() => {
     if (typeof window !== "undefined") {
+      const urlTab = new URLSearchParams(window.location.search).get("tab");
+      if (urlTab) {
+        sessionStorage.setItem("profileActiveTab", urlTab);
+        return urlTab;
+      }
       return sessionStorage.getItem("profileActiveTab") || "personal";
     }
     return "personal";

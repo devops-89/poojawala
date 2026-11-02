@@ -11,6 +11,7 @@ import GlobalLoader from "@/components/widgets/GlobalLoader";
 import ScrollToTop from "@/components/widgets/ScrollToTop";
 import GlobalModalScrollLock from "@/components/widgets/GlobalModalScrollLock";
 import GlobalDropdownScrollClose from "@/components/widgets/GlobalDropdownScrollClose";
+import PublicRouteGuard from "@/components/widgets/PublicRouteGuard";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -207,6 +208,9 @@ export default function RootLayout({
         {/* End Google Tag Manager (noscript) */}
 
         <ThemeRegistry>
+          <Suspense fallback={null}>
+            <PublicRouteGuard />
+          </Suspense>
           <ScrollToTop />
           <GlobalModalScrollLock />
           <GlobalDropdownScrollClose />

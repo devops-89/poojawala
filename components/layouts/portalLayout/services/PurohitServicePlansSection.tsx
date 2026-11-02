@@ -69,11 +69,32 @@ const getPlanPayout = (service: any, planKey: "basic" | "standard") => {
 export default function PurohitServicePlansSection({
   service,
 }: PurohitServicePlansSectionProps) {
+  const isOnlineOnly = Boolean(service?.isOnline) && !service?.isOffline;
+
+  // Online rituals do not require carrying physical samagri/items, so hide section for online services
+  if (isOnlineOnly) {
+    return null;
+  }
+
   const basicItems = getCarryItems(service, "basic");
   const standardItems = getCarryItems(service, "standard");
 
   const basicPayout = getPlanPayout(service, "basic");
   const standardPayout = getPlanPayout(service, "standard");
+
+  // Standard plan only shows if service is NOT online-only and standard plan actually exists with price/payout > 0
+  const hasStandardPlan =
+    !isOnlineOnly &&
+    Boolean(
+      service?.plans?.standard &&
+        (Number(standardPayout) > 0 ||
+          Number(service?.plans?.standard?.price) > 0)
+    );
+
+  const planChipLabel = isOnlineOnly ? "ONLINE PLAN" : "BASIC PLAN";
+  const planTitle = isOnlineOnly
+    ? "Online Ritual Package"
+    : "Basic Ritual Package";
 
   return (
     <Box sx={{ mt: 5, mb: 6 }}>
@@ -111,13 +132,15 @@ export default function PurohitServicePlansSection({
             ml: 2.5,
           }}
         >
-          Package payouts and required pooja items for each ritual option
+          {hasStandardPlan
+            ? "Package payouts and required pooja items for each ritual option"
+            : "Package payout and ritual details for this ceremony"}
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
-        {/* Basic Plan Card */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* Basic / Online Plan Card */}
+        <Grid size={{ xs: 12, md: hasStandardPlan ? 6 : 8, lg: hasStandardPlan ? 6 : 6 }}>
           <Paper
             elevation={0}
             sx={{
@@ -144,7 +167,7 @@ export default function PurohitServicePlansSection({
             >
               <Box>
                 <Chip
-                  label="BASIC PLAN"
+                  label={planChipLabel}
                   size="small"
                   sx={{
                     bgcolor: COLORS.PRIMARY,
@@ -162,7 +185,7 @@ export default function PurohitServicePlansSection({
                     fontFamily: FONTS.OUTFIT,
                   }}
                 >
-                  Basic Ritual Package
+                  {planTitle}
                 </Typography>
               </Box>
               <Box sx={{ textAlign: "right" }}>
@@ -251,154 +274,158 @@ export default function PurohitServicePlansSection({
                     fontStyle: "italic",
                   }}
                 >
-                  No items listed for Basic Plan
+                  {isOnlineOnly
+                    ? "Online Ritual — Remote / Video Ceremony (No physical items to carry)"
+                    : "No items listed for Basic Plan"}
                 </Typography>
               )}
             </Box>
           </Paper>
         </Grid>
 
-        {/* Standard Plan Card */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 3.5,
-              borderRadius: "24px",
-              bgcolor: "#f0fdf4",
-              border: "1px solid #bbf7d0",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 4px 20px rgba(22, 163, 74, 0.03)",
-            }}
-          >
-            {/* Header with Payout */}
-            <Box
+        {/* Standard Plan Card - Rendered ONLY if standard plan exists */}
+        {hasStandardPlan && (
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Paper
+              elevation={0}
               sx={{
+                p: 3.5,
+                borderRadius: "24px",
+                bgcolor: "#f0fdf4",
+                border: "1px solid #bbf7d0",
+                height: "100%",
                 display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 2.5,
-                pb: 2,
-                borderBottom: "1px solid #dcfce7",
+                flexDirection: "column",
+                boxShadow: "0 4px 20px rgba(22, 163, 74, 0.03)",
               }}
             >
-              <Box>
-                <Chip
-                  label="STANDARD PLAN"
-                  size="small"
-                  sx={{
-                    bgcolor: "#16a34a",
-                    color: "white",
-                    fontWeight: 800,
-                    fontSize: "0.75rem",
-                    mb: 0.5,
-                  }}
-                />
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 800,
-                    color: COLORS.SLATE_DARK,
-                    fontFamily: FONTS.OUTFIT,
-                  }}
-                >
-                  Standard Complete Package
-                </Typography>
+              {/* Header with Payout */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2.5,
+                  pb: 2,
+                  borderBottom: "1px solid #dcfce7",
+                }}
+              >
+                <Box>
+                  <Chip
+                    label="STANDARD PLAN"
+                    size="small"
+                    sx={{
+                      bgcolor: "#16a34a",
+                      color: "white",
+                      fontWeight: 800,
+                      fontSize: "0.75rem",
+                      mb: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 800,
+                      color: COLORS.SLATE_DARK,
+                      fontFamily: FONTS.OUTFIT,
+                    }}
+                  >
+                    Standard Complete Package
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: "right" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "0.72rem",
+                      color: COLORS.SLATE_MUTED,
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    Purohit Payout
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 800,
+                      color: "#16a34a",
+                      fontFamily: FONTS.OUTFIT,
+                    }}
+                  >
+                    ₹{Number(standardPayout).toLocaleString("en-IN")}
+                  </Typography>
+                </Box>
               </Box>
-              <Box sx={{ textAlign: "right" }}>
-                <Typography
-                  sx={{
-                    fontSize: "0.72rem",
-                    color: COLORS.SLATE_MUTED,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  Purohit Payout
-                </Typography>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 800,
-                    color: "#16a34a",
-                    fontFamily: FONTS.OUTFIT,
-                  }}
-                >
-                  ₹{Number(standardPayout).toLocaleString("en-IN")}
-                </Typography>
-              </Box>
-            </Box>
 
-            {/* Required Items Title */}
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: "0.95rem",
-                color: COLORS.SLATE_DARK,
-                mb: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                fontFamily: FONTS.OUTFIT,
-              }}
-            >
-              <InventoryIcon sx={{ color: "#15803d", fontSize: "1.15rem" }} />
-              Required Items to Carry ({standardItems.length})
-            </Typography>
+              {/* Required Items Title */}
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
+                  color: COLORS.SLATE_DARK,
+                  mb: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  fontFamily: FONTS.OUTFIT,
+                }}
+              >
+                <InventoryIcon sx={{ color: "#15803d", fontSize: "1.15rem" }} />
+                Required Items to Carry ({standardItems.length})
+              </Typography>
 
-            {/* Carry Items as Bullet Points */}
-            <Box sx={{ flex: 1 }}>
-              <Grid container spacing={1.2}>
-                {standardItems.map((item: string, idx: number) => (
-                  <Grid size={{ xs: 12, sm: 6 }} key={`std-item-${idx}`}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.2,
-                      }}
-                    >
+              {/* Carry Items as Bullet Points */}
+              <Box sx={{ flex: 1 }}>
+                <Grid container spacing={1.2}>
+                  {standardItems.map((item: string, idx: number) => (
+                    <Grid size={{ xs: 12, sm: 6 }} key={`std-item-${idx}`}>
                       <Box
                         sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          bgcolor: "#16a34a",
-                          flexShrink: 0,
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontSize: "0.88rem",
-                          fontWeight: 600,
-                          color: "#334155",
-                          lineHeight: 1.4,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1.2,
                         }}
                       >
-                        {item}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
-              {standardItems.length === 0 && (
-                <Typography
-                  sx={{
-                    fontSize: "0.85rem",
-                    color: "#94a3b8",
-                    fontStyle: "italic",
-                  }}
-                >
-                  No items listed for Standard Plan
-                </Typography>
-              )}
-            </Box>
-          </Paper>
-        </Grid>
+                        <Box
+                          sx={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            bgcolor: "#16a34a",
+                            flexShrink: 0,
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontSize: "0.88rem",
+                            fontWeight: 600,
+                            color: "#334155",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {item}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+                {standardItems.length === 0 && (
+                  <Typography
+                    sx={{
+                      fontSize: "0.85rem",
+                      color: "#94a3b8",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    No items listed for Standard Plan
+                  </Typography>
+                )}
+              </Box>
+            </Paper>
+          </Grid>
+        )}
       </Grid>
     </Box>
   );

@@ -23,9 +23,11 @@ interface PurohitServicesFiltersProps {
   // Mode filter (Online / Offline / All Modes)
   selectedMode?: string;
   onModeChange: (value: string) => void;
+  modeOptions?: string[];
+  isModeFilterDisabled?: boolean;
 }
 
-const MODE_OPTIONS = ["All Modes", "Online", "Offline"];
+const DEFAULT_MODE_OPTIONS = ["All Modes", "Online", "Offline"];
 
 export default function PurohitServicesFilters({
   searchTerm,
@@ -38,6 +40,8 @@ export default function PurohitServicesFilters({
   onCityChange,
   selectedMode = "All",
   onModeChange,
+  modeOptions = DEFAULT_MODE_OPTIONS,
+  isModeFilterDisabled = false,
 }: PurohitServicesFiltersProps) {
   const [localSearch, setLocalSearch] = useState(searchTerm || "");
 
@@ -85,15 +89,14 @@ export default function PurohitServicesFilters({
       <Grid size={{ xs: 12, sm: 4 }}>
         <Autocomplete
           openOnFocus
-          options={MODE_OPTIONS}
+          disabled={isModeFilterDisabled || modeOptions.length <= 1}
+          options={modeOptions}
           value={
-            !selectedMode || selectedMode === "All" || selectedMode === "All Modes"
-              ? "All Modes"
-              : selectedMode === "Online"
-              ? "Online"
-              : selectedMode === "Offline"
-              ? "Offline"
-              : selectedMode
+            modeOptions.includes(selectedMode)
+              ? selectedMode
+              : (!selectedMode || selectedMode === "All" || selectedMode === "All Modes")
+              ? (modeOptions.includes("All Modes") ? "All Modes" : modeOptions[0] || "All Modes")
+              : (modeOptions[0] || selectedMode)
           }
           onChange={(_, newValue) => {
             const val =
@@ -105,14 +108,18 @@ export default function PurohitServicesFilters({
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Filter by Mode"
+              label={
+                modeOptions.length === 1
+                  ? `Service Mode (${modeOptions[0]} Only)`
+                  : "Filter by Mode"
+              }
               placeholder="Select Mode"
               variant="outlined"
               autoComplete="off"
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "12px",
-                  bgcolor: "white",
+                  bgcolor: isModeFilterDisabled || modeOptions.length <= 1 ? "#F8FAFC" : "white",
                   "& fieldset": { borderColor: "#E0E0E0" },
                 },
               }}

@@ -42,6 +42,45 @@ export default function PurohitServicesContent() {
   const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get('search') || "");
   const [selectedCity, setSelectedCity] = useState<string>(searchParams.get('city') || "All");
   const [selectedState, setSelectedState] = useState<string>(searchParams.get('state') || "All");
+  const { showSnackbar } = useSnackbarStore();
+  const userProfile = useUserStore((state) => state.profile);
+  const { fetchProfile } = useUserStore();
+
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [purohitAvailability, setPurohitAvailability] = useState<{
+    isOnline: boolean;
+    isOffline: boolean;
+  } | null>(() => {
+    const userObj = userProfile?.data || userProfile;
+    const p = userObj?.profile || userObj;
+    if (p && (p.isOnlineAvailable !== undefined || p.isOfflineAvailable !== undefined)) {
+      return {
+        isOnline: Boolean(p?.isOnlineAvailable ?? userObj?.isOnlineAvailable),
+        isOffline: Boolean(p?.isOfflineAvailable ?? userObj?.isOfflineAvailable),
+      };
+    }
+    return null;
+  });
+
+  const modeOptions = useMemo(() => {
+    if (!profileLoaded && !purohitAvailability) {
+      return ["All Modes", "Online", "Offline"];
+    }
+    const isOnline = purohitAvailability ? purohitAvailability.isOnline : false;
+    const isOffline = purohitAvailability ? purohitAvailability.isOffline : false;
+
+    if (isOnline && isOffline) {
+      return ["All Modes", "Online", "Offline"];
+    }
+    if (isOnline && !isOffline) {
+      return ["Online"];
+    }
+    if (!isOnline && isOffline) {
+      return ["Offline"];
+    }
+    return [];
+  }, [purohitAvailability, profileLoaded]);
+
   const initialMode = useMemo(() => {
     const m = searchParams.get('mode');
     if (m) {
@@ -54,12 +93,37 @@ export default function PurohitServicesContent() {
   }, [searchParams]);
   const [selectedMode, setSelectedMode] = useState<string>(initialMode);
 
+  // Sync selectedMode with Purohit profile availability constraints
+  useEffect(() => {
+    if (!purohitAvailability) return;
+    const { isOnline, isOffline } = purohitAvailability;
+
+    if (isOnline && !isOffline) {
+      if (selectedMode !== "Online") {
+        setSelectedMode("Online");
+      }
+    } else if (!isOnline && isOffline) {
+      if (selectedMode !== "Offline") {
+        setSelectedMode("Offline");
+      }
+    } else if (isOnline && isOffline) {
+      if (selectedMode !== "Online" && selectedMode !== "Offline" && selectedMode !== "All") {
+        setSelectedMode("All");
+      }
+    }
+  }, [purohitAvailability, selectedMode]);
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (page > 1) params.set('page', String(page));
     if (selectedState && selectedState !== 'All') params.set('state', selectedState);
     if (selectedCity && selectedCity !== 'All') params.set('city', selectedCity);
-    if (selectedMode && selectedMode !== 'All' && selectedMode !== 'All Modes') {
+    if (
+      selectedMode &&
+      selectedMode !== 'All' &&
+      selectedMode !== 'All Modes' &&
+      modeOptions.includes(selectedMode)
+    ) {
       params.set('mode', selectedMode.toLowerCase());
     }
     if (searchTerm) params.set('search', searchTerm);
@@ -67,10 +131,7 @@ export default function PurohitServicesContent() {
     const queryStr = params.toString();
     const newUrl = queryStr ? `${window.location.pathname}?${queryStr}` : window.location.pathname;
     window.history.replaceState(null, '', newUrl);
-  }, [page, selectedState, selectedCity, selectedMode, searchTerm]);
-
-  const { showSnackbar } = useSnackbarStore();
-  const { fetchProfile } = useUserStore();
+  }, [page, selectedState, selectedCity, selectedMode, searchTerm, modeOptions]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -89,16 +150,39 @@ export default function PurohitServicesContent() {
       const profileRes = await fetchProfile();
       const currentProfile = profileRes || useUserStore.getState().profile;
       const userObj = currentProfile?.data || currentProfile;
+      const p = userObj?.profile || userObj;
+
+      const onlineAvail = Boolean(p?.isOnlineAvailable ?? userObj?.isOnlineAvailable);
+      const offlineAvail = Boolean(p?.isOfflineAvailable ?? userObj?.isOfflineAvailable);
+      setPurohitAvailability({ isOnline: onlineAvail, isOffline: offlineAvail });
+      setProfileLoaded(true);
+
+      // If Purohit has neither mode enabled, do not fetch any services
+      if (!onlineAvail && !offlineAvail) {
+        setServices([]);
+        setTotalPages(1);
+        setLoading(false);
+        return;
+      }
 
       const cityParam =
         selectedCity && selectedCity !== "All" ? selectedCity : undefined;
       const stateParam =
         selectedState && selectedState !== "All" ? selectedState : undefined;
 
-      const isOnlineParam =
-        selectedMode.toLowerCase() === "online" ? true : undefined;
-      const isOfflineParam =
-        selectedMode.toLowerCase() === "offline" ? true : undefined;
+      let isOnlineParam: boolean | undefined = undefined;
+      let isOfflineParam: boolean | undefined = undefined;
+
+      if (onlineAvail && !offlineAvail) {
+        isOnlineParam = true;
+      } else if (!onlineAvail && offlineAvail) {
+        isOfflineParam = true;
+      } else {
+        isOnlineParam =
+          selectedMode.toLowerCase() === "online" ? true : undefined;
+        isOfflineParam =
+          selectedMode.toLowerCase() === "offline" ? true : undefined;
+      }
 
       const [res, myRes] = await Promise.all([
         getAllServicesAPI(
@@ -200,6 +284,68 @@ export default function PurohitServicesContent() {
         </Box>
       </Box>
 
+      {/* Mode Availability Warning Banner if both modes disabled */}
+      {profileLoaded &&
+        purohitAvailability &&
+        !purohitAvailability.isOnline &&
+        !purohitAvailability.isOffline && (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              borderRadius: "16px",
+              bgcolor: "#fff7ed",
+              border: "1px solid #fed7aa",
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "flex-start", sm: "center" },
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            <Box>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: "#9a3412",
+                  fontSize: "16px",
+                }}
+              >
+                Service Modes Not Enabled
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.PRIMARY,
+                  color: "#7c2d12",
+                  fontSize: "14px",
+                  mt: 0.5,
+                }}
+              >
+                Both Online and Offline service modes are disabled in your profile. Please enable Online Puja or In-Person Visit in your Profile Skills to view and add services.
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              onClick={() => router.push("/partner/profile?tab=skills")}
+              sx={{
+                bgcolor: COLORS.PRIMARY,
+                color: "white",
+                fontWeight: 700,
+                textTransform: "none",
+                borderRadius: "20px",
+                px: 3,
+                py: 1,
+                fontFamily: FONTS.OUTFIT,
+                flexShrink: 0,
+                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+              }}
+            >
+              Update Profile Skills
+            </Button>
+          </Paper>
+        )}
+
       {/* Search & State/City/Mode Filters */}
       <PurohitServicesFilters
         searchTerm={searchTerm}
@@ -222,6 +368,7 @@ export default function PurohitServicesContent() {
           setSelectedMode(val);
           setPage(1);
         }}
+        modeOptions={modeOptions}
       />
 
       {loading ? (
@@ -234,7 +381,12 @@ export default function PurohitServicesContent() {
             <Grid size={{ xs: 12 }}>
               <Paper sx={{ p: 4, textAlign: 'center', borderRadius: '16px' }}>
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.SLATE_MUTED }}>
-                  No services available at the moment.
+                  {profileLoaded &&
+                  purohitAvailability &&
+                  !purohitAvailability.isOnline &&
+                  !purohitAvailability.isOffline
+                    ? "No service modes enabled in your profile. Please enable Online or Offline mode in Profile Skills to browse services."
+                    : "No services available at the moment."}
                 </Typography>
               </Paper>
             </Grid>
