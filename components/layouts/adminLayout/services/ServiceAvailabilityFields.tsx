@@ -7,9 +7,12 @@ import {
   FormControlLabel,
   Grid,
   Switch,
-  TextField,
   Typography,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import moment from "moment";
 import React from "react";
 
 interface ServiceAvailabilityFieldsProps {
@@ -205,7 +208,13 @@ export default function ServiceAvailabilityFields({
               <Switch
                 name="isUpcomingFestival"
                 checked={Boolean(values.isUpcomingFestival)}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  if (!e.target.checked && setFieldValue) {
+                    setFieldValue("festivalStartDate", "");
+                    setFieldValue("festivalEndDate", "");
+                  }
+                }}
                 sx={{
                   "& .MuiSwitch-switchBase.Mui-checked": {
                     color: COLORS.PRIMARY,
@@ -231,7 +240,7 @@ export default function ServiceAvailabilityFields({
         </Box>
 
         {/* Mode validation error */}
-        {hasModeError && (
+        {hasModeError && (touched.isOnline || touched.isOffline) && (
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
@@ -248,56 +257,96 @@ export default function ServiceAvailabilityFields({
         )}
 
         {values.isUpcomingFestival && (
-          <Grid container spacing={3} sx={{ mt: 2 }}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                name="festivalStartDate"
-                label="Festival Start Date *"
-                variant="outlined"
-                type="datetime-local"
-                slotProps={{ inputLabel: { shrink: true } }}
-                value={values.festivalStartDate}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={
-                  touched.festivalStartDate && Boolean(errors.festivalStartDate)
-                }
-                helperText={
-                  touched.festivalStartDate && errors.festivalStartDate
-                }
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    bgcolor: "white",
-                  },
-                }}
-              />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Grid container spacing={3} sx={{ mt: 2 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <DateTimePicker
+                  label="Festival Start Date *"
+                  format="DD/MM/YYYY hh:mm A"
+                  value={
+                    values.festivalStartDate && moment(values.festivalStartDate).isValid()
+                      ? moment(values.festivalStartDate)
+                      : null
+                  }
+                  disablePast
+                  minDateTime={moment()}
+                  onChange={(newValue: any) => {
+                    if (setFieldValue) {
+                      const startIso = newValue && newValue.isValid() ? newValue.toISOString() : "";
+                      setFieldValue("festivalStartDate", startIso, true);
+                      if (values.festivalEndDate) {
+                        setFieldValue("festivalEndDate", values.festivalEndDate, true);
+                      }
+                    }
+                  }}
+                  slotProps={{
+                    textField: {
+                      name: "festivalStartDate",
+                      fullWidth: true,
+                      onBlur: handleBlur,
+                      variant: "outlined",
+                      error:
+                        touched.festivalStartDate &&
+                        Boolean(errors.festivalStartDate),
+                      helperText:
+                        touched.festivalStartDate && errors.festivalStartDate,
+                      sx: {
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "12px",
+                          bgcolor: "white",
+                        },
+                      },
+                    } as any,
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <DateTimePicker
+                  label="Festival End Date *"
+                  format="DD/MM/YYYY hh:mm A"
+                  value={
+                    values.festivalEndDate && moment(values.festivalEndDate).isValid()
+                      ? moment(values.festivalEndDate)
+                      : null
+                  }
+                  disablePast
+                  minDateTime={
+                    values.festivalStartDate && moment(values.festivalStartDate).isValid()
+                      ? moment(values.festivalStartDate).clone().add(1, "minute")
+                      : moment().clone().add(1, "minute")
+                  }
+                  onChange={(newValue: any) => {
+                    if (setFieldValue) {
+                      setFieldValue(
+                        "festivalEndDate",
+                        newValue && newValue.isValid() ? newValue.toISOString() : "",
+                        true
+                      );
+                    }
+                  }}
+                  slotProps={{
+                    textField: {
+                      name: "festivalEndDate",
+                      fullWidth: true,
+                      onBlur: handleBlur,
+                      variant: "outlined",
+                      error:
+                        touched.festivalEndDate &&
+                        Boolean(errors.festivalEndDate),
+                      helperText:
+                        touched.festivalEndDate && errors.festivalEndDate,
+                      sx: {
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "12px",
+                          bgcolor: "white",
+                        },
+                      },
+                    } as any,
+                  }}
+                />
+              </Grid>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                name="festivalEndDate"
-                label="Festival End Date *"
-                variant="outlined"
-                type="datetime-local"
-                slotProps={{ inputLabel: { shrink: true } }}
-                value={values.festivalEndDate}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={
-                  touched.festivalEndDate && Boolean(errors.festivalEndDate)
-                }
-                helperText={touched.festivalEndDate && errors.festivalEndDate}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    bgcolor: "white",
-                  },
-                }}
-              />
-            </Grid>
-          </Grid>
+          </LocalizationProvider>
         )}
       </Box>
     </Grid>

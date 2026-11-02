@@ -11,7 +11,12 @@ export const getContactMessagesAPI = async (
       page: page.toString(),
       limit: limit.toString(),
     });
-    if (status) params.append('status', status);
+    if (status) {
+      const normalizedStatus = status.toUpperCase();
+      if (normalizedStatus === "DRAFT" || normalizedStatus === "READ") {
+        params.append("status", normalizedStatus);
+      }
+    }
     if (search) params.append('search', search);
 
     const response = await userSecuredApi.get(`/contact-us/all?${params.toString()}`);

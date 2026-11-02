@@ -10,7 +10,10 @@ export const getAllComplaintsAPI = async (
     params.append('page', String(page));
     params.append('limit', String(limit));
     if (status && status !== 'All') {
-      params.append('status', status);
+      const validStatuses = ['OPEN', 'UNDER_REVIEW', 'RESOLVED', 'REJECTED', 'CLOSED'];
+      if (validStatuses.includes(status.toUpperCase())) {
+        params.append('status', status.toUpperCase());
+      }
     }
     const response = await userSecuredApi.get("/complaints/all", { params });
     return response.data;

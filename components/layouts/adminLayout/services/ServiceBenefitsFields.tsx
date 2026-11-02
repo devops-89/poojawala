@@ -26,7 +26,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormikContext } from "formik";
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
+
+export interface ServiceBenefitsFieldsRef {
+  validateOnContinue: () => boolean;
+}
 
 interface ServiceBenefitsFieldsProps {
   benefits: Array<{ title: string; description: string }>;
@@ -35,10 +39,13 @@ interface ServiceBenefitsFieldsProps {
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
-export default function ServiceBenefitsFields({
-  benefits = [],
-  setFieldValue,
-}: ServiceBenefitsFieldsProps) {
+const ServiceBenefitsFields = forwardRef<
+  ServiceBenefitsFieldsRef,
+  ServiceBenefitsFieldsProps
+>(function ServiceBenefitsFields(
+  { benefits = [], setFieldValue }: ServiceBenefitsFieldsProps,
+  ref
+) {
   const formik = useFormikContext<any>();
   const updateBenefits = (newList: Array<{ title: string; description: string }>) => {
     if (setFieldValue) {
@@ -52,13 +59,43 @@ export default function ServiceBenefitsFields({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [titleInput, setTitleInput] = useState("");
   const [descInput, setDescInput] = useState("");
-  const [inputError, setInputError] = useState<string | null>(null);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [descError, setDescError] = useState<string | null>(null);
+
+  const validateFields = (): boolean => {
+    let isValid = true;
+    const trimmedTitle = titleInput.trim();
+    const trimmedDesc = descInput.trim();
+
+    if (!trimmedTitle) {
+      setTitleError("Please enter benefit title");
+      isValid = false;
+    } else if (!TITLE_STRICT_REGEX.test(trimmedTitle)) {
+      setTitleError(TITLE_STRICT_MESSAGE);
+      isValid = false;
+    } else {
+      setTitleError(null);
+    }
+
+    if (!trimmedDesc) {
+      setDescError("Please enter benefit description");
+      isValid = false;
+    } else if (!DESCRIPTION_STRICT_REGEX.test(trimmedDesc)) {
+      setDescError(DESCRIPTION_STRICT_MESSAGE);
+      isValid = false;
+    } else {
+      setDescError(null);
+    }
+
+    return isValid;
+  };
 
   const handleStartAdd = () => {
     setEditingIndex(null);
     setTitleInput("");
     setDescInput("");
-    setInputError(null);
+    setTitleError(null);
+    setDescError(null);
     setIsAdding(true);
   };
 
@@ -68,7 +105,8 @@ export default function ServiceBenefitsFields({
       setTitleInput(item.title || "");
       setDescInput(item.description || "");
       setEditingIndex(index);
-      setInputError(null);
+      setTitleError(null);
+      setDescError(null);
       setIsAdding(true);
     }
   };
@@ -78,27 +116,17 @@ export default function ServiceBenefitsFields({
     setEditingIndex(null);
     setTitleInput("");
     setDescInput("");
-    setInputError(null);
+    setTitleError(null);
+    setDescError(null);
   };
 
-  const handleSave = () => {
+  const handleSave = (): boolean => {
+    if (!validateFields()) {
+      return false;
+    }
+
     const trimmedTitle = titleInput.trim();
     const trimmedDesc = descInput.trim();
-
-    if (!trimmedTitle) {
-      setInputError("Please enter benefit title");
-      return;
-    }
-
-    if (!TITLE_STRICT_REGEX.test(trimmedTitle)) {
-      setInputError(TITLE_STRICT_MESSAGE);
-      return;
-    }
-
-    if (trimmedDesc && !DESCRIPTION_STRICT_REGEX.test(trimmedDesc)) {
-      setInputError(DESCRIPTION_STRICT_MESSAGE);
-      return;
-    }
 
     let updated: Array<{ title: string; description: string }>;
     if (editingIndex !== null && editingIndex >= 0 && editingIndex < benefits.length) {
@@ -122,8 +150,29 @@ export default function ServiceBenefitsFields({
     setEditingIndex(null);
     setTitleInput("");
     setDescInput("");
-    setInputError(null);
+    setTitleError(null);
+    setDescError(null);
+    return true;
   };
+
+  useImperativeHandle(ref, () => ({
+    validateOnContinue: () => {
+      if (!isAdding) {
+        return true;
+      }
+      const isValid = validateFields();
+      if (!isValid) {
+        if (typeof document !== "undefined") {
+          const container = document.getElementById("service-benefits-section");
+          if (container) {
+            container.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+        return false;
+      }
+      return handleSave();
+    },
+  }));
 
   const handleDelete = (index: number) => {
     const updated = benefits.filter((_, i) => i !== index);
@@ -136,6 +185,7 @@ export default function ServiceBenefitsFields({
   return (
     <Grid size={{ xs: 12 }}>
       <Box
+        id="service-benefits-section"
         sx={{
           border: "1px solid #e2e8f0",
           borderRadius: "16px",
@@ -246,11 +296,30 @@ export default function ServiceBenefitsFields({
                     }
                   }}
                   onChange={(e) => {
-                    setTitleInput(sanitizeTitleInput(e.target.value));
-                    if (inputError) setInputError(null);
+                    const val = sanitizeTitleInput(e.target.value);
+                    setTitleInput(val);
+                    if (titleError) {
+                      if (!val.trim()) {
+                        setTitleError("Please enter benefit title");
+                      } else if (!TITLE_STRICT_REGEX.test(val.trim())) {
+                        setTitleError(TITLE_STRICT_MESSAGE);
+                      } else {
+                        setTitleError(null);
+                      }
+                    }
                   }}
-                  error={Boolean(inputError)}
-                  helperText={inputError || undefined}
+                  onBlur={() => {
+                    const trimmed = titleInput.trim();
+                    if (!trimmed) {
+                      setTitleError("Please enter benefit title");
+                    } else if (!TITLE_STRICT_REGEX.test(trimmed)) {
+                      setTitleError(TITLE_STRICT_MESSAGE);
+                    } else {
+                      setTitleError(null);
+                    }
+                  }}
+                  error={Boolean(titleError)}
+                  helperText={titleError || undefined}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
@@ -266,7 +335,7 @@ export default function ServiceBenefitsFields({
                   multiline
                   rows={2.5}
                   size="small"
-                  label="Description"
+                  label="Description *"
                   placeholder="e.g. Performed according to Vedic scriptures with certified Purohits and custom Sankalp."
                   value={descInput}
                   onKeyDown={(e) => {
@@ -278,9 +347,30 @@ export default function ServiceBenefitsFields({
                     }
                   }}
                   onChange={(e) => {
-                    setDescInput(sanitizeDescriptionInput(e.target.value));
-                    if (inputError) setInputError(null);
+                    const val = sanitizeDescriptionInput(e.target.value);
+                    setDescInput(val);
+                    if (descError) {
+                      if (!val.trim()) {
+                        setDescError("Please enter benefit description");
+                      } else if (!DESCRIPTION_STRICT_REGEX.test(val.trim())) {
+                        setDescError(DESCRIPTION_STRICT_MESSAGE);
+                      } else {
+                        setDescError(null);
+                      }
+                    }
                   }}
+                  onBlur={() => {
+                    const trimmed = descInput.trim();
+                    if (!trimmed) {
+                      setDescError("Please enter benefit description");
+                    } else if (!DESCRIPTION_STRICT_REGEX.test(trimmed)) {
+                      setDescError(DESCRIPTION_STRICT_MESSAGE);
+                    } else {
+                      setDescError(null);
+                    }
+                  }}
+                  error={Boolean(descError)}
+                  helperText={descError || undefined}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
@@ -447,4 +537,6 @@ export default function ServiceBenefitsFields({
       </Box>
     </Grid>
   );
-}
+});
+
+export default ServiceBenefitsFields;

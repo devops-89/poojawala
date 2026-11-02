@@ -30,6 +30,7 @@ export interface AdminStatusSelectProps {
   options?: StatusOption[];
   onChange?: (newValue: string) => void;
   readOnly?: boolean;
+  textTransform?: "uppercase" | "capitalize" | "none";
 }
 
 export interface Column<T = any> {

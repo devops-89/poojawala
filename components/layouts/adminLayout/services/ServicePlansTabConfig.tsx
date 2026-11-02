@@ -184,17 +184,17 @@ export default function ServicePlansTabConfig({
                 type="number"
                 value={values.basicPrice}
                 onChange={(e: any) => {
-                  if (Number(e.target.value) < 0) return;
+                  
                   handleChange(e as any);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                  if (["-", "+", "e", "E"].includes(e.key)) e.preventDefault();
                 }}
                 onWheel={(e: any) => e.target.blur()}
                 onBlur={handleBlur}
                 error={touched.basicPrice && Boolean(errors.basicPrice)}
                 helperText={touched.basicPrice && errors.basicPrice}
-                slotProps={{ htmlInput: { min: 0 } }}
+                slotProps={{ htmlInput: { min: 1, max: 1000000 } }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -338,7 +338,7 @@ export default function ServicePlansTabConfig({
                                 type="number"
                                 value={featValue === "true" ? "" : featValue}
                                 onChange={(e: any) => {
-                                  if (Number(e.target.value) < 0) return;
+                                  
                                   handleChange(e);
                                 }}
                                 onKeyDown={(e) => {
@@ -347,7 +347,7 @@ export default function ServicePlansTabConfig({
                                 }}
                                 onWheel={(e: any) => e.target.blur()}
                                 onBlur={handleBlur}
-                                slotProps={{ htmlInput: { min: 0 } }}
+                                slotProps={{ htmlInput: { min: 1, max: 1000000 } }}
                                 sx={{
                                   flex: { xs: "1", sm: "1.5" },
                                   "& .MuiOutlinedInput-root": {
@@ -519,17 +519,17 @@ export default function ServicePlansTabConfig({
                 type="number"
                 value={values.standardPrice}
                 onChange={(e: any) => {
-                  if (Number(e.target.value) < 0) return;
+                  
                   handleChange(e as any);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                  if (["-", "+", "e", "E"].includes(e.key)) e.preventDefault();
                 }}
                 onWheel={(e: any) => e.target.blur()}
                 onBlur={handleBlur}
                 error={touched.standardPrice && Boolean(errors.standardPrice)}
                 helperText={touched.standardPrice && errors.standardPrice}
-                slotProps={{ htmlInput: { min: 0 } }}
+                slotProps={{ htmlInput: { min: 1, max: 1000000 } }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "12px",
@@ -667,7 +667,7 @@ export default function ServicePlansTabConfig({
                                 type="number"
                                 value={featValue === "true" ? "" : featValue}
                                 onChange={(e: any) => {
-                                  if (Number(e.target.value) < 0) return;
+                                  
                                   handleChange(e);
                                 }}
                                 onKeyDown={(e) => {

@@ -1,6 +1,7 @@
 "use client";
 import { COLORS } from "@/utils/enums";
 import { formatServicePriceRange } from "@/utils/helpers";
+import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
 import WebsiteServiceAboutSection from "./WebsiteServiceAboutSection";
@@ -207,7 +208,7 @@ export default function WebsiteServiceDetailsContent() {
   };
 
   const citiesList = parseJsonList(service.cities);
-  const languagesList = parseJsonList(service.languages);
+  const languagesList = extractServiceLanguages(service.languages);
 
   const formattedCities =
     citiesList.length > 0
@@ -218,12 +219,7 @@ export default function WebsiteServiceDetailsContent() {
       : "";
 
   const formattedLanguages =
-    languagesList.length > 0
-      ? languagesList
-          .map((l: any) => (typeof l === "string" ? l : l?.name || ""))
-          .filter(Boolean)
-          .join(" · ")
-      : "";
+    languagesList.length > 0 ? languagesList.join(" · ") : "";
 
   const durationText = (() => {
     const mins = Number(service?.durationMinutes);

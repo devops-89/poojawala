@@ -19,6 +19,7 @@ import {
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { getPurohitPayoutRange } from "@/utils/payoutHelper";
+import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 
 import ServiceDetailsBreadcrumbs from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsBreadcrumbs";
 import ServiceDetailsFaqSection from "@/components/layouts/customerLayout/services/serviceDetails/ServiceDetailsFaqSection";
@@ -167,7 +168,7 @@ export default function PurohitServiceDetailsContent() {
 
   const citiesList = parseJsonList(service.cities);
   const benefitsList = parseJsonList(service.benefits);
-  const languagesList = parseJsonList(service.languages);
+  const languagesList = extractServiceLanguages(service.languages);
 
   const formattedCities = citiesList
     .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
@@ -175,10 +176,7 @@ export default function PurohitServiceDetailsContent() {
     .join(", ");
 
   const formattedLanguages =
-    languagesList
-      .map((l: any) => (typeof l === "string" ? l : l?.name || ""))
-      .filter(Boolean)
-      .join(" · ") || "";
+    languagesList.length > 0 ? languagesList.join(" · ") : "";
 
   const durationText = service.durationMinutes
     ? service.durationMinutes >= 60

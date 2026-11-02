@@ -48,6 +48,23 @@ const STATUS_TABS = [
   { id: "READ", label: "Read" },
 ];
 
+const VALID_CONTACT_STATUSES = ["DRAFT", "READ"];
+
+const sanitizeContactStatus = (val?: string): string => {
+  if (!val) return "ALL";
+  const upper = val.toUpperCase();
+  if (VALID_CONTACT_STATUSES.includes(upper)) return upper;
+  return "ALL";
+};
+
+const formatContactStatus = (status?: string): string => {
+  if (!status) return "Draft";
+  const upper = status.toUpperCase();
+  if (upper === "READ") return "Read";
+  if (upper === "DRAFT") return "Draft";
+  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+};
+
 import {
   getTablePaginationState,
   syncTablePagination,
@@ -64,7 +81,7 @@ export default function AdminContactMessagesContent() {
   const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
+  const [statusFilter, setStatusFilter] = useState(() => sanitizeContactStatus(initialPagination.status));
   const [loading, setLoading] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
@@ -79,7 +96,22 @@ export default function AdminContactMessagesContent() {
     messageObj?: any;
   } | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [replyError, setReplyError] = useState("");
   const [statusUpdating, setStatusUpdating] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlStatus = params.get("status");
+      if (urlStatus && !VALID_CONTACT_STATUSES.includes(urlStatus.toUpperCase())) {
+        params.delete("status");
+        const newUrl = params.toString()
+          ? `${window.location.pathname}?${params.toString()}`
+          : window.location.pathname;
+        window.history.replaceState(null, "", newUrl);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     fetchMessages();
@@ -99,7 +131,9 @@ export default function AdminContactMessagesContent() {
       const res = await getContactMessagesAPI(
         page + 1,
         rowsPerPage,
-        statusFilter === "ALL" ? undefined : statusFilter,
+        statusFilter && VALID_CONTACT_STATUSES.includes(statusFilter.toUpperCase())
+          ? statusFilter.toUpperCase()
+          : undefined,
         search
       );
       if (res.success) {
@@ -130,21 +164,42 @@ export default function AdminContactMessagesContent() {
 
   const handleStatusChange = async () => {
     if (!statusToChange) return;
+
+    if (statusToChange.status === "READ" && !replyText.trim()) {
+      setReplyError("Reply or note message is required");
+      showSnackbar("Please enter a reply or note message before updating status", "error");
+      return;
+    }
+
     setStatusUpdating(true);
     try {
       const res = await updateContactMessageStatusAPI(
         statusToChange.id,
         statusToChange.status,
-        statusToChange.status === "READ" ? replyText : undefined
+        statusToChange.status === "READ" ? replyText.trim() : undefined
       );
       if (res.success) {
         showSnackbar(res.message || "Status updated successfully", "success");
         fetchMessages();
         setStatusModalOpen(false);
         setReplyText("");
+        setReplyError("");
+      } else {
+        showSnackbar(res.message || "Failed to update status", "error");
       }
     } catch (error: any) {
-      showSnackbar("Error updating status", "error");
+      const backendMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        "Error updating status";
+      const formattedError = Array.isArray(backendMessage)
+        ? backendMessage.join(", ")
+        : String(backendMessage);
+      showSnackbar(formattedError, "error");
+      if (statusToChange.status === "READ" && !replyText.trim()) {
+        setReplyError("Reply or note message is required");
+      }
     } finally {
       setStatusUpdating(false);
     }
@@ -220,13 +275,15 @@ export default function AdminContactMessagesContent() {
           <AdminStatusSelect
             value={msg.status || "DRAFT"}
             readOnly={isRead}
+            textTransform="none"
             options={[
-              { value: "DRAFT", label: "DRAFT" },
-              { value: "READ", label: "READ" },
+              { value: "DRAFT", label: "Draft" },
+              { value: "READ", label: "Read" },
             ]}
             onChange={(newStatus) => {
               setStatusToChange({ id: msg.id, status: newStatus, messageObj: msg });
               setReplyText("");
+              setReplyError("");
               setStatusModalOpen(true);
             }}
           />
@@ -289,7 +346,7 @@ export default function AdminContactMessagesContent() {
         tabs={STATUS_TABS}
         activeTab={statusFilter}
         onTabChange={(tab) => {
-          setStatusFilter(tab);
+          setStatusFilter(sanitizeContactStatus(tab));
           setPage(0);
         }}
         keyExtractor={(msg) => msg.id}
@@ -609,15 +666,19 @@ export default function AdminContactMessagesContent() {
                         {moment(selectedMessage.createdAt).format("MMM DD, YYYY · hh:mm A")}
                       </Typography>
                       <Chip
-                        label={selectedMessage.status || "DRAFT"}
+                        label={formatContactStatus(selectedMessage.status)}
                         size="small"
                         sx={{
                           fontWeight: 700,
                           fontFamily: FONTS.OUTFIT,
                           fontSize: "0.75rem",
                           borderRadius: "6px",
-                          bgcolor: selectedMessage.status === "READ" ? "#dcfce7" : "#fef3c7",
-                          color: selectedMessage.status === "READ" ? "#166534" : "#92400e",
+                          textTransform: "none !important",
+                          "& .MuiChip-label": {
+                            textTransform: "none !important",
+                          },
+                          bgcolor: String(selectedMessage.status).toUpperCase() === "READ" ? "#dcfce7" : "#fef3c7",
+                          color: String(selectedMessage.status).toUpperCase() === "READ" ? "#166534" : "#92400e",
                         }}
                       />
                     </Box>
@@ -774,7 +835,7 @@ export default function AdminContactMessagesContent() {
 
       <Dialog open={statusModalOpen} onClose={() => setStatusModalOpen(false)} maxWidth="sm" fullWidth sx={{ "& .MuiDialog-paper": { borderRadius: "16px" } }}>
         <DialogTitle sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b", borderBottom: "1px solid #e2e8f0", pb: 2 }}>
-          {statusToChange?.status === "READ" ? "Update Message Status to READ" : "Change Status"}
+          {statusToChange?.status === "READ" ? "Update Message Status to Read" : "Change Status"}
         </DialogTitle>
         <DialogContent sx={{ pt: 3 }}>
           {statusToChange?.messageObj && (
@@ -825,7 +886,7 @@ export default function AdminContactMessagesContent() {
           {statusToChange?.status === "READ" ? (
             <Box>
               <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#1e293b", mb: 1, fontSize: "0.9rem" }}>
-                Reply / Note Message
+                Reply / Note Message <span style={{ color: "#ef4444" }}>*</span>
               </Typography>
               <TextField
                 fullWidth
@@ -833,18 +894,35 @@ export default function AdminContactMessagesContent() {
                 rows={4}
                 placeholder="Write reply or note message here..."
                 value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px", fontFamily: FONTS.OUTFIT } }}
+                onChange={(e) => {
+                  setReplyText(e.target.value);
+                  if (replyError && e.target.value.trim()) {
+                    setReplyError("");
+                  }
+                }}
+                error={Boolean(replyError)}
+                helperText={replyError}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "12px",
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiFormHelperText-root": {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "0.78rem",
+                    mt: 0.5,
+                  },
+                }}
               />
             </Box>
           ) : (
             <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b" }}>
-              Are you sure you want to change the status of this message to <b>{statusToChange?.status}</b>?
+              Are you sure you want to change the status of this message to <b>{formatContactStatus(statusToChange?.status)}</b>?
             </Typography>
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button onClick={() => setStatusModalOpen(false)} sx={{ color: "#64748b", fontWeight: 600 }}>Cancel</Button>
+          <Button onClick={() => { setStatusModalOpen(false); setReplyError(""); }} sx={{ color: "#64748b", fontWeight: 600 }}>Cancel</Button>
           <Button onClick={handleStatusChange} disabled={statusUpdating} variant="contained" sx={{ bgcolor: COLORS.PRIMARY, color: "white", "&:hover": { bgcolor: COLORS.PRIMARY_DARK }, boxShadow: "none", borderRadius: "8px", px: 3 }}>
             {statusUpdating ? "Submitting..." : "Submit"}
           </Button>

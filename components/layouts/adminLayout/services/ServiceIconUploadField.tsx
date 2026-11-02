@@ -10,12 +10,16 @@ interface ServiceIconUploadFieldProps {
   iconPreview: string | null;
   onIconChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveIcon?: () => void;
+  error?: boolean;
+  helperText?: string;
 }
 
 export default function ServiceIconUploadField({
   iconPreview,
   onIconChange,
   onRemoveIcon,
+  error,
+  helperText,
 }: ServiceIconUploadFieldProps) {
   return (
     <Box>
@@ -33,7 +37,7 @@ export default function ServiceIconUploadField({
         sx={{
           width: "100%",
           minHeight: "56px",
-          border: "1px solid #c4c4c4",
+          border: error ? "1px solid #d32f2f" : "1px solid #c4c4c4",
           borderRadius: "12px",
           display: "flex",
           alignItems: "center",
@@ -41,7 +45,7 @@ export default function ServiceIconUploadField({
           py: 1,
           cursor: "pointer",
           transition: "all 0.2s",
-          "&:hover": { borderColor: "#212121" },
+          "&:hover": { borderColor: error ? "#d32f2f" : "#212121" },
           overflow: "hidden",
         }}
         component="label"
@@ -113,6 +117,19 @@ export default function ServiceIconUploadField({
           </Box>
         )}
       </Box>
+      {error && helperText && (
+        <Typography
+          sx={{
+            color: "#d32f2f",
+            fontSize: "0.75rem",
+            fontFamily: FONTS.OUTFIT,
+            mt: "4px",
+            ml: "14px",
+          }}
+        >
+          {helperText}
+        </Typography>
+      )}
     </Box>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import {
   FormControl,
@@ -31,6 +30,25 @@ export default function ServiceDetailsDateTimeFields({
   onDateChange,
   onTimeChange,
 }: ServiceDetailsDateTimeFieldsProps) {
+  const [timeMenuOpen, setTimeMenuOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!timeMenuOpen) return;
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target && target.closest && target.closest(".MuiPaper-root")) {
+        return;
+      }
+      setTimeMenuOpen(false);
+    };
+    window.addEventListener("scroll", handleScroll, { capture: true, passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll, { capture: true });
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [timeMenuOpen]);
+
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -85,15 +103,30 @@ export default function ServiceDetailsDateTimeFields({
             value={scheduledTime}
             label="Preferred Time"
             displayEmpty
-            onChange={(e) => onTimeChange(e.target.value)}
+            open={timeMenuOpen}
+            onOpen={() => setTimeMenuOpen(true)}
+            onClose={() => setTimeMenuOpen(false)}
+            onChange={(e) => {
+              onTimeChange(e.target.value);
+              setTimeMenuOpen(false);
+            }}
             required
             MenuProps={{
               disableScrollLock: true,
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "left",
+              },
+              transformOrigin: {
+                vertical: "top",
+                horizontal: "left",
+              },
               slotProps: {
                 paper: {
                   sx: {
                     maxHeight: 280,
                     borderRadius: "10px",
+                    mt: 0.5,
                   },
                 },
               },

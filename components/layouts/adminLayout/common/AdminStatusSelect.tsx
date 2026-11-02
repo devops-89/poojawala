@@ -56,6 +56,7 @@ export default function AdminStatusSelect({
   options,
   onChange,
   readOnly = false,
+  textTransform = "uppercase",
 }: AdminStatusSelectProps) {
   const theme = getStatusTheme(value);
 
@@ -66,7 +67,9 @@ export default function AdminStatusSelect({
       : typeof val === "string"
       ? val.replace(/_/g, " ")
       : String(val || "");
-    return labelStr.toUpperCase().trim();
+    return textTransform === "none" || textTransform === "capitalize"
+      ? labelStr.trim()
+      : labelStr.toUpperCase().trim();
   };
 
   const displayLabel = getDisplayLabel(value);
@@ -87,7 +90,7 @@ export default function AdminStatusSelect({
           justifyContent: "center",
           fontSize: "0.75rem",
           letterSpacing: "0.5px",
-          textTransform: "uppercase",
+          textTransform: textTransform,
           whiteSpace: "nowrap",
           boxSizing: "border-box",
         }}
@@ -112,7 +115,7 @@ export default function AdminStatusSelect({
         height: "28px",
         fontSize: "0.75rem",
         letterSpacing: "0.5px",
-        textTransform: "uppercase",
+        textTransform: textTransform,
         "& .MuiOutlinedInput-notchedOutline": { border: "none" },
         "& .MuiSelect-select": {
           display: "inline-flex",
@@ -126,7 +129,7 @@ export default function AdminStatusSelect({
           fontFamily: FONTS.OUTFIT,
           fontSize: "0.75rem",
           letterSpacing: "0.5px",
-          textTransform: "uppercase !important",
+          textTransform: `${textTransform} !important`,
         },
         "& .MuiSvgIcon-root": {
           color: theme.text,

@@ -17,8 +17,8 @@ import {
 } from "@mui/material";
 import { FormikProvider, useFormik } from "formik";
 import NextLink from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as Yup from "yup";
 
 import { addServiceAPI } from "@/api/serviceControllers";
@@ -27,10 +27,10 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 
 import ServiceAvailabilityFields from "./ServiceAvailabilityFields";
 import ServiceBasicFields from "./ServiceBasicFields";
-import ServiceBenefitsFields from "./ServiceBenefitsFields";
+import ServiceBenefitsFields, { ServiceBenefitsFieldsRef } from "./ServiceBenefitsFields";
 import ServiceCitiesFields from "./ServiceCitiesFields";
 import ServiceIconUploadField from "./ServiceIconUploadField";
-import ServiceLanguagesFields from "./ServiceLanguagesFields";
+import ServiceLanguagesFields, { ServiceLanguagesFieldsRef } from "./ServiceLanguagesFields";
 import ServicePlansTabConfig from "./ServicePlansTabConfig";
 import ServicePricingFields from "./ServicePricingFields";
 
@@ -123,31 +123,144 @@ const validationSchema = Yup.object().shape({
   isUpcomingFestival: Yup.boolean(),
   festivalStartDate: Yup.string().when("isUpcomingFestival", {
     is: true,
-    then: (schema) => schema.required("Start date is required"),
+    then: (schema) =>
+      schema
+        .required("Start date is required")
+        .test(
+          "is-future-start-date",
+          "Start date and time cannot be in the past",
+          (value) => {
+            if (!value) return true;
+            const selectedDate = new Date(value);
+            if (isNaN(selectedDate.getTime())) return false;
+            return selectedDate.getTime() >= Date.now() - 60000;
+          }
+        )
+        .test(
+          "is-before-end-date",
+          "Start date and time must be earlier than the end date and time",
+          function (value) {
+            const { festivalEndDate } = this.parent;
+            if (!value || !festivalEndDate) return true;
+            const startDate = new Date(value);
+            const endDate = new Date(festivalEndDate);
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return true;
+            return startDate.getTime() < endDate.getTime();
+          }
+        ),
+    otherwise: (schema) => schema.notRequired(),
   }),
   festivalEndDate: Yup.string().when("isUpcomingFestival", {
     is: true,
-    then: (schema) => schema.required("End date is required"),
+    then: (schema) =>
+      schema
+        .required("End date is required")
+        .test(
+          "is-after-start-date",
+          "End date and time should be later than the start date and time",
+          function (value) {
+            const { festivalStartDate } = this.parent;
+            if (!value) return true;
+            const endDate = new Date(value);
+            if (isNaN(endDate.getTime())) return false;
+            if (festivalStartDate) {
+              const startDate = new Date(festivalStartDate);
+              if (!isNaN(startDate.getTime())) {
+                return endDate.getTime() > startDate.getTime();
+              }
+            }
+            return endDate.getTime() > Date.now() - 60000;
+          }
+        ),
+    otherwise: (schema) => schema.notRequired(),
   }),
+  languages: Yup.array()
+    .of(
+      Yup.object().shape({
+        name: Yup.string().trim().required("Language is required"),
+        code: Yup.string().optional(),
+      })
+    )
+    .min(1, "Please add at least one language"),
   sortOrder: Yup.mixed().test(
-    "is-valid-number",
-    "Sort order must be a valid non-negative number",
-    (val) => {
+    "is-valid-sort-order",
+    "Sort order must be a valid positive integer within defined limit",
+    function (val) {
       if (val === "" || val === undefined || val === null) return true;
-      const num = Number(val);
-      return !isNaN(num) && num >= 0;
+      const str = String(val).trim();
+      const num = Number(str);
+      if (isNaN(num)) {
+        return this.createError({ message: "Sort order must be a valid number" });
+      }
+      if (num < 1) {
+        return this.createError({ message: "Sort order must be a positive integer (minimum 1)" });
+      }
+      if (!Number.isInteger(num) || str.includes(".")) {
+        return this.createError({ message: "Sort order must be a whole integer (no decimals)" });
+      }
+      if (num > 1000) {
+        return this.createError({ message: "Sort order cannot exceed 1,000" });
+      }
+      return true;
     }
   ),
 });
 
 export default function AddServiceForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const steps = ["Basic Information", "Pricing & Details"];
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
+  const [iconTouched, setIconTouched] = useState(false);
+  const benefitsRef = useRef<ServiceBenefitsFieldsRef>(null);
+  const languagesRef = useRef<ServiceLanguagesFieldsRef>(null);
   const { showSnackbar } = useSnackbarStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const getResolvedMode = (): { isOnline: boolean; isOffline: boolean } => {
+    let rawType = "";
+    if (typeof window !== "undefined") {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        rawType = (urlParams.get("type") || urlParams.get("mode") || "").toLowerCase();
+        if (!rawType) {
+          const saved = (sessionStorage.getItem("admin_services_type") || "").toLowerCase();
+          if (saved === "temple") {
+            return { isOnline: false, isOffline: false };
+          }
+          if (saved === "offline_pooja" || saved === "offline") {
+            return { isOnline: false, isOffline: true };
+          }
+          if (saved === "online_pooja" || saved === "online") {
+            return { isOnline: true, isOffline: false };
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (!rawType && searchParams) {
+      rawType = (searchParams.get("type") || searchParams.get("mode") || "").toLowerCase();
+    }
+
+    if (rawType === "temple") {
+      return { isOnline: false, isOffline: false };
+    }
+    if (rawType === "offline" || rawType === "offline_pooja") {
+      return { isOnline: false, isOffline: true };
+    }
+    if (rawType === "online" || rawType === "online_pooja") {
+      return { isOnline: true, isOffline: false };
+    }
+
+    // Default to Online Pooja because the first tab in Services is Online Pooja Services
+    return { isOnline: true, isOffline: false };
+  };
+
+  const initialMode = useMemo(() => getResolvedMode(), [searchParams]);
 
   const handleIconChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -155,6 +268,7 @@ export default function AddServiceForm() {
       const webpFile = await convertImageToWebP(file);
       setIconFile(webpFile);
       setIconPreview(URL.createObjectURL(webpFile));
+      setIconTouched(false);
     }
   };
 
@@ -181,8 +295,8 @@ export default function AddServiceForm() {
       commissionPercentage: "",
       durationMinutes: "",
       requiresVenue: false,
-      isOnline: false,
-      isOffline: true,
+      isOnline: initialMode.isOnline,
+      isOffline: initialMode.isOffline,
       isUpcomingFestival: false,
       festivalStartDate: "",
       festivalEndDate: "",
@@ -193,6 +307,7 @@ export default function AddServiceForm() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       if (!iconFile) {
+        setIconTouched(true);
         showSnackbar("Please upload a service icon", "error");
         return;
       }
@@ -369,7 +484,30 @@ export default function AddServiceForm() {
 
         if (response.success) {
           showSnackbar("Service created successfully", "success");
-          router.push("/admin/services");
+          const isTemple =
+            Boolean(values.templeId) ||
+            searchParams?.get("type")?.toLowerCase() === "temple" ||
+            (typeof window !== "undefined" &&
+              new URLSearchParams(window.location.search).get("type")?.toLowerCase() === "temple") ||
+            (typeof window !== "undefined" &&
+              sessionStorage.getItem("admin_services_type")?.toUpperCase() === "TEMPLE");
+
+          if (isTemple) {
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("admin_services_type", "TEMPLE");
+            }
+            router.push("/admin/services?type=temple");
+          } else if (values.isOnline) {
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("admin_services_type", "ONLINE_POOJA");
+            }
+            router.push("/admin/services?type=online_pooja");
+          } else {
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("admin_services_type", "OFFLINE_POOJA");
+            }
+            router.push("/admin/services?type=offline_pooja");
+          }
         } else {
           showSnackbar(response.message || "Failed to create service", "error");
         }
@@ -384,6 +522,15 @@ export default function AddServiceForm() {
     },
   });
 
+  useEffect(() => {
+    const mode = getResolvedMode();
+    formik.setFieldValue("isOnline", mode.isOnline);
+    formik.setFieldValue("isOffline", mode.isOffline);
+    if (mode.isOnline) {
+      formik.setFieldValue("requiresVenue", false);
+    }
+  }, [searchParams]);
+
   const {
     values,
     errors,
@@ -397,58 +544,70 @@ export default function AddServiceForm() {
 
   const handleNext = async () => {
     if (activeStep === 0) {
-      const fieldLabels: Record<string, string> = {
-        name: "Service Name",
-        categoryId: "Category",
-        description: "Description",
-        festivalStartDate: "Festival Start Date",
-        festivalEndDate: "Festival End Date",
-      };
-
       const step0Fields = [
         "name",
         "categoryId",
+        "sortOrder",
         "description",
         "festivalStartDate",
         "festivalEndDate",
+        "languages",
       ];
       const step0Errors = await formik.validateForm();
 
-      const invalidFields: string[] = [];
+      let hasErrors = false;
       step0Fields.forEach((field) => {
         if (step0Errors[field as keyof typeof step0Errors]) {
           formik.setFieldTouched(field, true, true);
-          invalidFields.push(fieldLabels[field] || field);
+          hasErrors = true;
         }
       });
 
-      if (invalidFields.length > 0) {
-        showSnackbar(
-          `Please complete all required fields in Basic Information before continuing: ${invalidFields.join(", ")}`,
-          "error",
-        );
-        return;
+      if (!iconFile) {
+        setIconTouched(true);
+        hasErrors = true;
       }
 
       if (!values.isOnline && !values.isOffline) {
         formik.setFieldTouched("isOnline", true, true);
         formik.setFieldTouched("isOffline", true, true);
-        showSnackbar(
-          "Please select a service mode: Online or Offline",
-          "error",
-        );
-        return;
-      }
-      if (values.isOnline && values.isOffline) {
+        hasErrors = true;
+      } else if (values.isOnline && values.isOffline) {
         formik.setFieldTouched("isOnline", true, true);
         formik.setFieldTouched("isOffline", true, true);
-        showSnackbar(
-          "Please select only one service mode: Online or Offline",
-          "error",
-        );
+        hasErrors = true;
+      }
+
+      if (benefitsRef.current && !benefitsRef.current.validateOnContinue()) {
+        hasErrors = true;
+      }
+
+      if (languagesRef.current && !languagesRef.current.validateOnContinue()) {
+        hasErrors = true;
+      }
+
+      if (hasErrors) {
         return;
       }
+
       setActiveStep((prevStep) => prevStep + 1);
+    }
+  };
+
+  const handleCancel = () => {
+    if (
+      searchParams?.get("type")?.toLowerCase() === "temple" ||
+      (typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("type")?.toLowerCase() === "temple") ||
+      Boolean(values.templeId)
+    ) {
+      router.push("/admin/services?type=temple");
+    } else if (values.isOnline) {
+      router.push("/admin/services?type=online_pooja");
+    } else if (values.isOffline) {
+      router.push("/admin/services?type=offline_pooja");
+    } else {
+      router.push("/admin/services");
     }
   };
 
@@ -466,7 +625,16 @@ export default function AddServiceForm() {
           sx={{ mb: 3 }}
         >
           <NextLink
-            href="/admin/services"
+            href={
+              searchParams?.get("type")?.toLowerCase() === "temple" ||
+              (typeof window !== "undefined" &&
+                new URLSearchParams(window.location.search).get("type")?.toLowerCase() === "temple") ||
+              Boolean(values.templeId)
+                ? "/admin/services?type=temple"
+                : values.isOnline
+                ? "/admin/services?type=online_pooja"
+                : "/admin/services?type=offline_pooja"
+            }
             style={{ textDecoration: "none", color: "#64748b" }}
           >
             Services
@@ -474,26 +642,55 @@ export default function AddServiceForm() {
           <Typography color="text.primary">Add New Service</Typography>
         </Breadcrumbs>
 
-        <Box sx={{ mb: 4 }}>
-          <Typography
-            variant="h4"
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { sm: "center" },
+            justifyContent: "space-between",
+            gap: 2,
+            mb: 4,
+          }}
+        >
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: "#1e293b",
+              }}
+            >
+              Create New Service
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: "#64748b",
+                mt: 0.5,
+              }}
+            >
+              Configure a new ritual or service to offer on 1Pooja.
+            </Typography>
+          </Box>
+          <Button
+            variant="outlined"
+            onClick={handleCancel}
+            disabled={isSubmitting}
             sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 800,
-              color: "#1e293b",
-            }}
-          >
-            Create New Service
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
               color: "#64748b",
-              mt: 0.5,
+              borderColor: "#cbd5e1",
+              borderRadius: "30px",
+              px: 3.5,
+              py: 1,
+              textTransform: "none",
+              fontWeight: 600,
+              fontFamily: FONTS.OUTFIT,
+              "&:hover": { borderColor: "#94a3b8", bgcolor: "#f1f5f9" },
             }}
           >
-            Configure a new ritual or service to offer on 1Pooja.
-          </Typography>
+            Cancel
+          </Button>
         </Box>
 
         <Paper
@@ -544,6 +741,8 @@ export default function AddServiceForm() {
                   <ServiceIconUploadField
                     iconPreview={iconPreview}
                     onIconChange={handleIconChange}
+                    error={Boolean(iconTouched && !iconFile)}
+                    helperText={iconTouched && !iconFile ? "Service icon is required" : undefined}
                   />
                 </Grid>
 
@@ -558,6 +757,7 @@ export default function AddServiceForm() {
                 />
 
                 <ServiceBenefitsFields
+                  ref={benefitsRef}
                   benefits={values.benefits}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
@@ -572,7 +772,10 @@ export default function AddServiceForm() {
                 )}
 
                 <ServiceLanguagesFields
+                  ref={languagesRef}
                   languages={values.languages}
+                  errors={errors}
+                  touched={touched}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   setFieldValue={setFieldValue}
