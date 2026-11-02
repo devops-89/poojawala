@@ -10,8 +10,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
-import { loginAPI, getMeAPI } from '@/api/authControllers';
-import { extractRoleCsrfToken, saveRoleCsrfToken } from '@/api/config';
+import { loginAPI, getMeAPI, logoutAPI } from '@/api/authControllers';
+import { extractRoleCsrfToken, saveRoleCsrfToken, clearRoleCsrfToken } from '@/api/config';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
 import {
@@ -82,11 +82,42 @@ export default function AdminLoginForm() {
           } catch (err) {
             console.warn("getMeAPI notice:", err);
           }
+          const rawRole = String(userObj?.role || '').toUpperCase();
+          const isAdmin =
+            rawRole === 'ADMIN' ||
+            rawRole === 'SUPER_ADMIN' ||
+            rawRole === 'SUPERADMIN';
+
+          if (!isAdmin) {
+            // Immediately call logout API to terminate session on backend
+            try {
+              await logoutAPI();
+            } catch (logoutErr) {
+              console.warn('Auto-logout notice:', logoutErr);
+            } finally {
+              clearRoleCsrfToken();
+              if (typeof window !== 'undefined') {
+                sessionStorage.clear();
+                localStorage.removeItem('user');
+                localStorage.removeItem('role');
+                localStorage.removeItem('activeRole');
+                localStorage.removeItem('csrfToken');
+              }
+              useUserStore.getState().clearProfile();
+            }
+
+            showSnackbar(
+              'Access denied: This login portal is restricted to Administrators only.',
+              'error'
+            );
+            return;
+          }
+
           if (userObj) {
             sessionStorage.setItem('user', JSON.stringify(userObj));
             useUserStore.getState().setProfile(userObj);
           }
-          const adminRole = userObj?.role || "ADMIN";
+          const adminRole = rawRole || 'ADMIN';
           sessionStorage.setItem('role', adminRole);
           sessionStorage.setItem('activeRole', adminRole);
           const csrf = extractRoleCsrfToken(response, adminRole);
