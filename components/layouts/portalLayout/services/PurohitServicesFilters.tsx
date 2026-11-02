@@ -12,7 +12,6 @@ import React, { useEffect, useState } from "react";
 interface PurohitServicesFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  // State filter
   stateOptions?: string[];
   selectedState?: string;
   onStateChange: (value: string) => void;
@@ -95,8 +94,8 @@ export default function PurohitServicesFilters({
             modeOptions.includes(selectedMode)
               ? selectedMode
               : (!selectedMode || selectedMode === "All" || selectedMode === "All Modes")
-              ? (modeOptions.includes("All Modes") ? "All Modes" : modeOptions[0] || "All Modes")
-              : (modeOptions[0] || selectedMode)
+                ? (modeOptions.includes("All Modes") ? "All Modes" : modeOptions[0] || "All Modes")
+                : (modeOptions[0] || selectedMode)
           }
           onChange={(_, newValue) => {
             const val =
