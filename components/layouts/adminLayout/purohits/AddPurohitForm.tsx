@@ -129,7 +129,6 @@ export default function AddPurohitForm() {
           pb: 8,
         }}
       >
-        {/* Breadcrumbs & Header */}
         <Box>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
