@@ -26,7 +26,7 @@ import AdminTableActionMenu from "../common/AdminTableActionMenu";
 const STATUS_TABS = [
   { id: "All", label: "All" },
   { id: "Approved", label: "Approved" },
-  { id: "Pending Approval", label: "Pending" },
+  { id: "Pending", label: "Pending" },
   { id: "Rejected", label: "Rejected" },
 ];
 
@@ -92,7 +92,7 @@ export default function AdminPurohitsContent() {
           )
             uiStatus = "Approved";
           else if (verificationStatus === "PENDING")
-            uiStatus = "Pending Approval";
+            uiStatus = "Pending";
           else if (verificationStatus === "REJECTED") uiStatus = "Rejected";
 
           return {
