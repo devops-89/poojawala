@@ -43,36 +43,16 @@ export interface SignUpStep1PersonalProps {
   onNext: () => void;
 }
 
+const labelStyles = {
+  fontFamily: FONTS.OUTFIT,
+  fontSize: "12px",
+  fontWeight: 700,
+  color: "#374151",
+  mb: 0.35,
+  display: "block",
+};
+
 const inputStyles = {
-  "& .MuiInputLabel-root": {
-    fontFamily: FONTS.OUTFIT,
-    fontSize: "0.85rem",
-    fontWeight: 500,
-    color: "#6B7280",
-    transition:
-      "color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms",
-    "&.Mui-focused": {
-      color: "#FF6200",
-      fontWeight: 600,
-    },
-    "&.Mui-error": {
-      color: "#d32f2f",
-    },
-  },
-  "& .MuiInputLabel-root:not(.MuiInputLabel-shrink)": {
-    transform: "translate(14px, 11px) scale(1)",
-    pointerEvents: "none",
-  },
-  "& .MuiInputLabel-shrink": {
-    transform: "translate(14px, -9px) scale(0.75) !important",
-  },
-  "& .MuiFormLabel-asterisk, & .MuiInputLabel-asterisk": {
-    color: "#FF6200",
-    fontWeight: 700,
-  },
-  "& .MuiOutlinedInput-root:not(.Mui-focused) input::placeholder": {
-    opacity: 0,
-  },
   "& .MuiOutlinedInput-root": {
     fontFamily: FONTS.OUTFIT,
     borderRadius: "10px",
@@ -171,6 +151,7 @@ export default function SignUpStep1Personal({
 }: SignUpStep1PersonalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === "Enter") {
@@ -180,16 +161,19 @@ export default function SignUpStep1Personal({
   };
 
   return (
-    <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.25 }} onKeyDown={handleKeyDown}>
+    <Grid container spacing={{ xs: 1.25, sm: 1.5, md: 1.75 }} onKeyDown={handleKeyDown}>
       {/* First Name */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          First Name <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="firstName">
           {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="First Name *"
+              placeholder="Enter First Name"
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
@@ -208,13 +192,16 @@ export default function SignUpStep1Personal({
 
       {/* Last Name */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Last Name <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="lastName">
           {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="Last Name *"
+              placeholder="Enter Last Name"
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
@@ -233,13 +220,16 @@ export default function SignUpStep1Personal({
 
       {/* Email Address */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Email Address <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="email">
           {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="Email Address *"
+              placeholder="Enter Email Address"
               variant="outlined"
               type="email"
               onKeyDown={allowOnlyEmailCharsOnKeyDown}
@@ -256,6 +246,9 @@ export default function SignUpStep1Personal({
 
       {/* Phone Number */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Phone Number <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="phone">
           {({ field, form, meta }: any) => (
             <MuiTelInput
@@ -263,12 +256,12 @@ export default function SignUpStep1Personal({
               disableDropdown
               onlyCountries={["IN"]}
               size="small"
-              label="Phone Number *"
+              placeholder="Enter 10-digit mobile number"
               name="phone"
               variant="outlined"
               defaultCountry="IN"
               value={field.value ? "+91" + field.value : ""}
-              onChange={(newValue, info) => {
+              onChange={(_newValue, info) => {
                 const natNum = info.nationalNumber || "";
                 const cleanNum = natNum.replace(/\D/g, "").slice(0, 10);
                 form.setFieldValue("phone", cleanNum);
@@ -297,8 +290,8 @@ export default function SignUpStep1Personal({
               }
               helperText={
                 field.value &&
-                field.value.length > 0 &&
-                !/^[6-9]/.test(field.value)
+                  field.value.length > 0 &&
+                  !/^[6-9]/.test(field.value)
                   ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
                   : meta.touched
                     ? meta.error
@@ -324,17 +317,23 @@ export default function SignUpStep1Personal({
 
       {/* Date of Birth */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Date of Birth <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="dob">
           {({ field, form, meta }: any) => (
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 format="DD/MM/YYYY"
-                label="Date of Birth *"
                 value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
                 maxDate={moment(maxDobDate)}
+                open={calendarOpen}
+                onOpen={() => setCalendarOpen(true)}
+                onClose={() => setCalendarOpen(false)}
                 onChange={(newValue) => {
                   if (newValue && newValue.isValid()) {
                     form.setFieldValue("dob", newValue.format("YYYY-MM-DD"));
+                    form.setFieldError("dob", undefined);
                   } else {
                     form.setFieldValue("dob", "");
                   }
@@ -344,9 +343,9 @@ export default function SignUpStep1Personal({
                     fullWidth: true,
                     size: "small",
                     variant: "outlined",
-                    onBlur: () => form.setFieldTouched("dob", true),
-                    error: meta.touched && !!meta.error,
-                    helperText: meta.touched && meta.error,
+                    onClick: () => setCalendarOpen(true),
+                    error: Boolean(!calendarOpen && meta.touched && meta.error),
+                    helperText: !calendarOpen && meta.touched ? meta.error : undefined,
                     sx: inputStyles,
                   },
                 }}
@@ -358,13 +357,16 @@ export default function SignUpStep1Personal({
 
       {/* Place of Birth */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Place of Birth <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="birthPlace">
           {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="Place of Birth *"
+              placeholder="Enter Place of Birth (City, State)"
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
@@ -383,6 +385,9 @@ export default function SignUpStep1Personal({
 
       {/* Rashi */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Rashi (Zodiac)
+        </Typography>
         <Field name="rashi">
           {({ field, form, meta }: any) => (
             <TextField
@@ -390,7 +395,6 @@ export default function SignUpStep1Personal({
               select
               fullWidth
               size="small"
-              label="Rashi *"
               variant="outlined"
               value={field.value || ""}
               onChange={(e) => {
@@ -400,6 +404,24 @@ export default function SignUpStep1Personal({
               helperText={meta.touched && meta.error}
               slotProps={{
                 select: {
+                  displayEmpty: true,
+                  renderValue: (selected: any) => {
+                    if (!selected) {
+                      return (
+                        <Typography
+                          component="span"
+                          sx={{
+                            color: "#9CA3AF",
+                            fontSize: "0.85rem",
+                            fontFamily: FONTS.OUTFIT,
+                          }}
+                        >
+                          Select Rashi
+                        </Typography>
+                      );
+                    }
+                    return selected;
+                  },
                   MenuProps: {
                     anchorOrigin: {
                       vertical: "bottom",
@@ -409,12 +431,14 @@ export default function SignUpStep1Personal({
                       vertical: "top",
                       horizontal: "left",
                     },
+                    marginThreshold: null,
+                    disableScrollLock: true,
                     slotProps: {
                       paper: {
                         sx: {
-                          mt: 0.6,
-                          maxHeight: 260,
-                          borderRadius: "12px",
+                          mt: 0.5,
+                          maxHeight: 210,
+                          borderRadius: "10px",
                           boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)",
                         },
                       },
@@ -449,13 +473,16 @@ export default function SignUpStep1Personal({
 
       {/* Gotra */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Gotra
+        </Typography>
         <Field name="gotra">
           {({ field, form, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="Gotra"
+              placeholder="Enter Gotra"
               variant="outlined"
               onKeyDown={allowOnlyLettersOnKeyDown}
               onChange={(e) => {
@@ -474,13 +501,16 @@ export default function SignUpStep1Personal({
 
       {/* Password */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Password <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="password">
           {({ field, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="Password *"
+              placeholder="Enter Password (min. 8 characters)"
               type={showPassword ? "text" : "password"}
               variant="outlined"
               slotProps={{
@@ -518,13 +548,16 @@ export default function SignUpStep1Personal({
 
       {/* Confirm Password */}
       <Grid size={{ xs: 12, sm: 6 }}>
+        <Typography sx={labelStyles}>
+          Confirm Password <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
+        </Typography>
         <Field name="confirmPassword">
           {({ field, meta }: any) => (
             <TextField
               {...field}
               fullWidth
               size="small"
-              label="Confirm Password *"
+              placeholder="Confirm your password"
               type={showConfirmPassword ? "text" : "password"}
               variant="outlined"
               slotProps={{

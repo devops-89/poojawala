@@ -1,5 +1,6 @@
 import { attachCsrfHeaders, userSecuredApi } from "./config";
 import { ORDER_STATUS } from "@/utils/enums";
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 
 export const getCustomerOrdersAPI = async (
   page: number = 1,
@@ -52,14 +53,7 @@ export const getAllOrdersAPI = async (
       params.orderStatus = validStatus;
     }
     if (search && search.trim()) {
-      const trimmed = search.trim();
-      params.search = trimmed;
-      const cleanNumericId = trimmed.replace(/^ORD-?/i, "").trim();
-      if (/^\d+$/.test(cleanNumericId)) {
-        params.search = cleanNumericId;
-        params.orderId = cleanNumericId;
-        params.id = cleanNumericId;
-      }
+      params.search = sanitizeAdminSearchTerm(search);
     }
 
     const response = await userSecuredApi.get("/orders/all", {

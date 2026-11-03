@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 
 import {
   getAllBookingsByAdminAPI,
@@ -68,16 +69,51 @@ export default function AdminAstrologyBookingsContent() {
   const fetchBookings = async () => {
     try {
       setIsLoading(true);
+      const cleanedSearch = sanitizeAdminSearchTerm(searchValue);
       const res = await getAllBookingsByAdminAPI(
         page + 1,
         rowsPerPage,
         statusFilter,
-        searchValue,
+        cleanedSearch,
         "ASTROLOGY"
       );
       if (res.success) {
-        setBookings(res.data.bookings || []);
-        setTotalBookings(res.data.pagination?.total || res.data.total || 0);
+        let list = res.data.bookings || [];
+        let total = res.data.pagination?.total || res.data.total || 0;
+
+        if (cleanedSearch) {
+          const q = cleanedSearch.toLowerCase();
+          const filtered = list.filter((b: any) => {
+            const idStr = String(b.id ?? "");
+            const formattedId = `b-${idStr}`.toLowerCase();
+            const astFormattedId = `ast-${idStr}`.toLowerCase();
+            const custName = String(
+              b.customer?.name ||
+              b.customerName ||
+              (b.user ? `${b.user.firstName || ""} ${b.user.lastName || ""}` : "") ||
+              ""
+            ).toLowerCase();
+            const phone = String(
+              b.customer?.phone || b.customerPhone || b.user?.phone || ""
+            );
+            const serviceName = String(b.service?.name || b.serviceName || "").toLowerCase();
+            return (
+              idStr.includes(q) ||
+              formattedId.includes(q) ||
+              astFormattedId.includes(q) ||
+              custName.includes(q) ||
+              phone.includes(q) ||
+              serviceName.includes(q)
+            );
+          });
+          if (filtered.length < list.length) {
+            list = filtered;
+            total = filtered.length;
+          }
+        }
+
+        setBookings(list);
+        setTotalBookings(total);
       } else {
         showSnackbar(res.message || "Failed to fetch astrology bookings", "error");
       }

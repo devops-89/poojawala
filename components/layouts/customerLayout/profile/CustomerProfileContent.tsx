@@ -19,7 +19,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import { Avatar, Box, Chip, Grid, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Chip, CircularProgress, Grid, Paper, Typography } from "@mui/material";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,22 +33,18 @@ export default function CustomerProfileContent() {
     fetchProfile(true);
   }, [fetchProfile]);
 
-  if (loading) {
+  if (loading || !profile) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <Typography sx={{ fontFamily: FONTS.PRIMARY }}>
-          Loading profile...
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <Typography sx={{ fontFamily: FONTS.PRIMARY }}>
-          No profile data found.
-        </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+          py: 8,
+        }}
+      >
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} size={40} />
       </Box>
     );
   }

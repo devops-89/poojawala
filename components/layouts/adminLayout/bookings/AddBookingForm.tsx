@@ -233,7 +233,7 @@ export default function AddBookingForm() {
     setFieldTouched,
   } = formik;
 
-  // Fetch Services filtered by Selected Customer's Default Address City (Debounced)
+  // Fetch Services filtered by Selected Customer's Default Address City & Booking Mode (Debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
       const fetchServices = async () => {
@@ -258,6 +258,9 @@ export default function AddBookingForm() {
             customerCity = values.newCustomerCity;
           }
 
+          const isOnline = values.bookingMode === 'ONLINE';
+          const isOffline = values.bookingMode === 'OFFLINE';
+
           const res = await getServicesAPI(
             1,
             100,
@@ -265,18 +268,31 @@ export default function AddBookingForm() {
             undefined,
             undefined,
             undefined,
-            true,
+            true, // isActive
+            undefined, // isUpcomingFestival
+            isOnline ? undefined : (customerCity || undefined), // Online services are not restricted by customer city
             undefined,
-            customerCity
+            undefined,
+            undefined,
+            isOnline ? true : undefined, // isOnline filter for API
+            isOffline ? true : undefined // isOffline filter for API
           );
           if (res.success) {
-            const list = Array.isArray(res.data?.data)
+            let list = Array.isArray(res.data?.data)
               ? res.data.data
               : Array.isArray(res.data)
               ? res.data
               : Array.isArray(res.services)
               ? res.services
               : [];
+
+            // Strict client-side guarantee based on selected booking mode
+            if (isOnline) {
+              list = list.filter((s: any) => Boolean(s.isOnline));
+            } else if (isOffline) {
+              list = list.filter((s: any) => Boolean(s.isOffline) || !s.isOnline);
+            }
+
             setAllServices(list);
           }
         } catch (error) {
@@ -286,23 +302,36 @@ export default function AddBookingForm() {
       fetchServices();
     }, 500);
     return () => clearTimeout(timer);
-  }, [values.customerId, values.newCustomerCity, values.isNewCustomer, customers]);
+  }, [
+    values.customerId,
+    values.newCustomerCity,
+    values.isNewCustomer,
+    customers,
+    values.bookingMode,
+  ]);
 
-  // Update Plan default selection when Service changes
+  // Update Plan default selection when Service or Booking Mode changes
   useEffect(() => {
     if (values.serviceId) {
       const selectedService = allServices.find(
         (s) => s.id === Number(values.serviceId)
       );
-      const plansObj = selectedService?.plans || {};
-      const planKeys = Object.keys(plansObj).filter(
-        (key) => plansObj[key] && typeof plansObj[key] === 'object'
-      );
-      if (planKeys.length > 0 && !planKeys.includes(values.plan)) {
-        setFieldValue('plan', planKeys[0]);
+      const isOnline =
+        values.bookingMode === 'ONLINE' || Boolean(selectedService?.isOnline);
+
+      if (isOnline) {
+        setFieldValue('plan', 'basic');
+      } else {
+        const plansObj = selectedService?.plans || {};
+        const planKeys = Object.keys(plansObj).filter(
+          (key) => plansObj[key] && typeof plansObj[key] === 'object'
+        );
+        if (planKeys.length > 0 && !planKeys.includes(values.plan)) {
+          setFieldValue('plan', planKeys[0]);
+        }
       }
     }
-  }, [values.serviceId, allServices, values.plan, setFieldValue]);
+  }, [values.serviceId, allServices, values.plan, values.bookingMode, setFieldValue]);
 
   // Fetch Purohits filtered by City, BookingMode & ServiceId
   useEffect(() => {
@@ -543,7 +572,10 @@ export default function AddBookingForm() {
                   variant="outlined"
                   value={values.bookingMode}
                   onChange={(e) => {
+                    const newMode = e.target.value;
                     handleChange(e);
+                    setFieldValue('serviceId', '');
+                    setFieldValue('plan', 'basic');
                     setFieldValue('purohitId', '');
                   }}
                   onBlur={handleBlur}
@@ -594,6 +626,7 @@ export default function AddBookingForm() {
                   label="Select Service *"
                   name="serviceId"
                   variant="outlined"
+                  disabled={!values.bookingMode}
                   value={values.serviceId}
                   onChange={(e) => {
                     handleChange(e);
@@ -603,6 +636,10 @@ export default function AddBookingForm() {
                   error={touched.serviceId && Boolean(errors.serviceId)}
                   helperText={
                     touched.serviceId && (errors.serviceId as string)
+                      ? (errors.serviceId as string)
+                      : !values.bookingMode
+                      ? 'Please select Booking Mode first'
+                      : undefined
                   }
                   sx={{
                     '& .MuiOutlinedInput-root': { borderRadius: '12px' },
@@ -628,15 +665,21 @@ export default function AddBookingForm() {
                     disabled
                     sx={{ fontFamily: FONTS.OUTFIT, color: '#94a3b8' }}
                   >
-                    Select Service
+                    {!values.bookingMode
+                      ? 'Select Booking Mode first'
+                      : values.bookingMode === 'ONLINE'
+                      ? 'Select Online Service'
+                      : 'Select Offline Service'}
                   </MenuItem>
-                  {allServices.length === 0 && (
+                  {allServices.length === 0 && Boolean(values.bookingMode) && (
                     <MenuItem
                       disabled
                       value=""
                       sx={{ fontFamily: FONTS.OUTFIT }}
                     >
-                      No services available for selected city
+                      {values.bookingMode === 'ONLINE'
+                        ? 'No online services available'
+                        : 'No offline services available for selected city'}
                     </MenuItem>
                   )}
                   {allServices.map((s: any) => (

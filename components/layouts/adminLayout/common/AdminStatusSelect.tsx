@@ -60,8 +60,18 @@ export default function AdminStatusSelect({
 }: AdminStatusSelectProps) {
   const theme = getStatusTheme(value);
 
+  const matchedOption = options?.find(
+    (o) =>
+      String(o.value).toUpperCase().trim() ===
+      String(value || "").toUpperCase().trim()
+  );
+  const selectValue = matchedOption ? String(matchedOption.value) : String(value || "");
+
   const getDisplayLabel = (val: any) => {
-    const found = options?.find((o) => String(o.value) === String(val));
+    const valUpper = String(val || "").toUpperCase().trim();
+    const found = options?.find(
+      (o) => String(o.value).toUpperCase().trim() === valUpper
+    );
     const labelStr = found
       ? found.label
       : typeof val === "string"
@@ -72,7 +82,7 @@ export default function AdminStatusSelect({
       : labelStr.toUpperCase().trim();
   };
 
-  const displayLabel = getDisplayLabel(value);
+  const displayLabel = getDisplayLabel(selectValue);
 
   if (readOnly || !options || options.length <= 1 || !onChange) {
     return (
@@ -103,9 +113,30 @@ export default function AdminStatusSelect({
   return (
     <Select
       size="small"
-      value={value}
+      value={selectValue}
       onChange={(e) => onChange(e.target.value)}
       renderValue={(selected) => getDisplayLabel(selected)}
+      MenuProps={{
+        disableScrollLock: true,
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "left",
+        },
+        transformOrigin: {
+          vertical: "top",
+          horizontal: "left",
+        },
+        slotProps: {
+          paper: {
+            sx: {
+              mt: 0.5,
+              borderRadius: "8px",
+              boxShadow:
+                "0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08)",
+            },
+          },
+        },
+      }}
       sx={{
         bgcolor: theme.bg,
         color: theme.text,

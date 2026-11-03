@@ -1,3 +1,4 @@
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 import { userSecuredApi, userPublicApi } from "./config";
 
 export enum PRODUCT_PRICING_UNIT {
@@ -8,6 +9,21 @@ export enum PRODUCT_PRICING_UNIT {
   LITER = 'LITER',   // Sold per litre (oil, gangajal, etc.)
   ML    = 'ML',      // Sold per millilitre (essential oils, etc.)
 }
+
+export const PRODUCT_PRICING_UNIT_LABELS: Record<string, string> = {
+  PIECE: 'Piece',
+  PACK: 'Pack',
+  KG: 'Kg',
+  GRAM: 'Gram',
+  LITER: 'Liter',
+  ML: 'Ml',
+};
+
+export const formatPricingUnit = (unit?: string): string => {
+  if (!unit) return '';
+  const upper = unit.toUpperCase().trim();
+  return PRODUCT_PRICING_UNIT_LABELS[upper] || (unit.charAt(0).toUpperCase() + unit.slice(1).toLowerCase());
+};
 
 export const getAllProductsAPI = async (
   page: number = 1,
@@ -21,7 +37,7 @@ export const getAllProductsAPI = async (
     const params = new URLSearchParams();
     if (page) params.append('page', String(page));
     if (limit) params.append('limit', String(limit));
-    if (search) params.append('search', search);
+    if (search) params.append('search', sanitizeAdminSearchTerm(search));
     const catId = categoryId || category;
     if (catId) params.append('categoryId', String(catId));
     if (isActive !== undefined && isActive !== null && isActive !== '') {
@@ -35,7 +51,7 @@ export const getAllProductsAPI = async (
       const params = new URLSearchParams();
       if (page) params.append('page', String(page));
       if (limit) params.append('limit', String(limit));
-      if (search) params.append('search', search);
+      if (search) params.append('search', sanitizeAdminSearchTerm(search));
       const catId = categoryId || category;
       if (catId) params.append('categoryId', String(catId));
       if (isActive !== undefined && isActive !== null && isActive !== '') {

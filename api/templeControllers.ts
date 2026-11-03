@@ -1,3 +1,4 @@
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 import { userPublicApi, userSecuredApi } from "./config";
 import { createSlug } from "@/utils/helpers";
 
@@ -30,7 +31,7 @@ export const getTemplesAPI = async (
     const params = new URLSearchParams();
     if (page) params.append("page", String(page));
     if (limit) params.append("limit", String(limit));
-    if (search && search.trim()) params.append("search", search.trim());
+    if (search && search.trim()) params.append("search", sanitizeAdminSearchTerm(search));
     if (isActive !== undefined) params.append("isActive", String(isActive));
     if (city && city !== "All" && city !== "All Cities") params.append("city", city);
     if (state && state !== "All" && state !== "All States") params.append("state", state);

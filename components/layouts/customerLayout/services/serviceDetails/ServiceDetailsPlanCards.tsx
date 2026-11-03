@@ -335,19 +335,6 @@ export default function ServiceDetailsPlanCards({
                     >
                       {planTitle}
                     </Typography>
-                    {isSelected && (
-                      <Chip
-                        label="SELECTED"
-                        size="small"
-                        sx={{
-                          bgcolor: COLORS.PRIMARY,
-                          color: "#FFF",
-                          fontWeight: 700,
-                          fontSize: "11px",
-                          height: "22px",
-                        }}
-                      />
-                    )}
                   </Box>
 
                   <Typography

@@ -227,25 +227,41 @@ export const parsePlanFeatures = (
   };
 };
 
+export const formatLanguageName = (name: string): string => {
+  if (!name) return "";
+  const trimmed = name.trim();
+  const lower = trimmed.toLowerCase();
+  if (lower === "english") return "English";
+  if (lower === "hindi") return "Hindi";
+  if (lower === "sanskrit") return "Sanskrit";
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+};
+
 export const extractServiceLanguages = (languagesRaw: any): string[] => {
   if (!languagesRaw) return [];
   let list: string[] = [];
   if (Array.isArray(languagesRaw)) {
     list = languagesRaw
-      .map((l: any) => (typeof l === "string" ? l.trim() : (l?.name || "").trim()))
+      .map((l: any) => {
+        const raw = typeof l === "string" ? l.trim() : (l?.name || "").trim();
+        return formatLanguageName(raw);
+      })
       .filter(Boolean);
   } else if (typeof languagesRaw === "string") {
     try {
       const parsed = JSON.parse(languagesRaw);
       if (Array.isArray(parsed)) {
         list = parsed
-          .map((l: any) => (typeof l === "string" ? l.trim() : (l?.name || "").trim()))
+          .map((l: any) => {
+            const raw = typeof l === "string" ? l.trim() : (l?.name || "").trim();
+            return formatLanguageName(raw);
+          })
           .filter(Boolean);
       } else if (typeof parsed === "string") {
-        list = [parsed.trim()];
+        list = [formatLanguageName(parsed.trim())];
       }
     } catch {
-      list = languagesRaw.split(",").map((s: string) => s.trim()).filter(Boolean);
+      list = languagesRaw.split(",").map((s: string) => formatLanguageName(s.trim())).filter(Boolean);
     }
   }
   return Array.from(new Set(list));

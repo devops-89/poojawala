@@ -6,6 +6,8 @@ import {
   sendOtpAPI,
 } from "@/api/userControllers";
 import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
+import { getMeAPI } from "@/api/authControllers";
+import { useUserStore } from "@/stores/userStore";
 import { useLoaderStore } from "@/stores/loaderStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { COLORS } from "@/utils/enums";
@@ -35,7 +37,9 @@ export default function VerifyOtpContent() {
   const { showLoader, hideLoader } = useLoaderStore();
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [resendTimer, setResendTimer] = useState(30);
+  const [resendTimer, setResendTimer] = useState(60);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const isSuccessRef = useRef(false);
 
   const redirectUrl =
     searchParams.get("redirect") ||
@@ -46,6 +50,9 @@ export default function VerifyOtpContent() {
   const signInHref = redirectUrl
     ? `/sign-in?redirect=${encodeURIComponent(redirectUrl)}`
     : "/sign-in";
+  const signUpHref = redirectUrl
+    ? `/sign-up?step=2&redirect=${encodeURIComponent(redirectUrl)}`
+    : "/sign-up?step=2";
 
   useEffect(() => {
     let interval: any = null;
@@ -70,16 +77,21 @@ export default function VerifyOtpContent() {
         });
         if (res.success || res.statusCode === 200) {
           showSnackbar("OTP resent successfully!", "success");
-          setResendTimer(30);
+          setResendTimer(60);
         } else {
           showSnackbar(res.message || "Failed to resend OTP", "error");
         }
       }
     } catch (err: any) {
-      showSnackbar(
-        extractBackendErrorMessage(err, "Failed to resend OTP"),
-        "error"
-      );
+      const errMsg = extractBackendErrorMessage(err, "Failed to resend OTP");
+      const secondsMatch = errMsg.match(/(\d+)\s*(?:sec|second)/i);
+      if (secondsMatch && secondsMatch[1]) {
+        const secs = parseInt(secondsMatch[1], 10);
+        if (!isNaN(secs) && secs > 0) {
+          setResendTimer(secs);
+        }
+      }
+      showSnackbar(errMsg, "error");
     }
   };
 
@@ -112,6 +124,7 @@ export default function VerifyOtpContent() {
       } catch (e) {}
     }
 
+    useUserStore.getState().clearProfile();
     const data = sessionStorage.getItem("signupData");
     if (data) {
       try {
@@ -211,33 +224,98 @@ export default function VerifyOtpContent() {
           registerRes.statusCode === 200 ||
           registerRes.statusCode === 201
         ) {
-          sessionStorage.removeItem("signupData");
+          const token =
+            registerRes.tokens?.access?.token ||
+            registerRes.accessToken ||
+            registerRes.token ||
+            registerRes.data?.accessToken ||
+            registerRes.data?.token;
 
-          const csrf = extractRoleCsrfToken(
-            registerRes,
-            registerRes.user?.role
-          );
+          let userObj =
+            registerRes.user ||
+            registerRes.data?.user ||
+            registerRes.data?.data ||
+            registerRes.data;
+
+          if (token) {
+            try {
+              const meResponse = await getMeAPI(token);
+              const freshUser =
+                meResponse?.user ||
+                meResponse?.data?.user ||
+                meResponse?.data?.data ||
+                meResponse?.data ||
+                meResponse;
+              if (freshUser && typeof freshUser === "object") {
+                userObj = freshUser;
+              }
+            } catch (e) {
+              console.error("Error fetching fresh profile after register:", e);
+            }
+          }
+
+          const role =
+            userObj?.role ||
+            registerRes.user?.role ||
+            registerRes.role ||
+            "CUSTOMER";
+
+          const csrf =
+            extractRoleCsrfToken(registerRes, role) ||
+            extractRoleCsrfToken(registerRes.data, role);
           if (csrf) {
-            saveRoleCsrfToken(csrf, registerRes.user?.role);
+            saveRoleCsrfToken(csrf, role);
           }
-          if (registerRes.user) {
-            sessionStorage.setItem("user", JSON.stringify(registerRes.user));
-            sessionStorage.setItem("role", registerRes.user.role);
+
+          if (typeof window !== "undefined") {
+            sessionStorage.removeItem("signupData");
+            sessionStorage.removeItem("signup_form_values");
+            sessionStorage.removeItem("signup_current_step");
+            if (token) {
+              sessionStorage.setItem("accessToken", token);
+            }
+            const refreshToken =
+              registerRes.tokens?.refresh?.token ||
+              registerRes.refreshToken ||
+              registerRes.data?.refreshToken;
+            if (refreshToken) {
+              sessionStorage.setItem("refreshToken", refreshToken);
+            }
+            if (role) {
+              sessionStorage.setItem("role", role);
+              sessionStorage.setItem("activeRole", role);
+            }
+            if (userObj) {
+              sessionStorage.setItem("user", JSON.stringify(userObj));
+            }
           }
-          if (registerRes.accessToken) {
-            sessionStorage.setItem("accessToken", registerRes.accessToken);
-          }
-          if (registerRes.refreshToken) {
-            sessionStorage.setItem("refreshToken", registerRes.refreshToken);
+
+          if (userObj) {
+            useUserStore.getState().setProfile(userObj);
           }
 
           showSnackbar("Account created successfully!", "success");
+          isSuccessRef.current = true;
+          setIsRedirecting(true);
+          showLoader("Redirecting to dashboard...");
+
+          const targetUrl =
+            redirectUrl && redirectUrl.startsWith("/customer/")
+              ? redirectUrl
+              : "/customer/dashboard";
+
           if (redirectUrl && redirectUrl.startsWith("/customer/")) {
             sessionStorage.removeItem("post_login_redirect");
-            router.replace(redirectUrl);
-          } else {
-            router.replace("/customer/dashboard");
           }
+
+          setTimeout(() => {
+            if (typeof window !== "undefined") {
+              window.location.href = targetUrl;
+            } else {
+              router.replace(targetUrl);
+            }
+          }, 300);
+          return;
         } else {
           showSnackbar(
             registerRes.message || "Failed to create account",
@@ -253,10 +331,30 @@ export default function VerifyOtpContent() {
         "error"
       );
     } finally {
-      hideLoader();
-      setIsSubmitting(false);
+      if (!isSuccessRef.current) {
+        hideLoader();
+        setIsSubmitting(false);
+      }
     }
   };
+
+  if (isRedirecting) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundImage: "url('/images/signup-bg1.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <CircularProgress size={36} sx={{ color: "#FF6200" }} />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -295,7 +393,7 @@ export default function VerifyOtpContent() {
       >
         <Button
           component={Link}
-          href={signInHref}
+          href={signUpHref} onClick={() => { if (typeof window !== "undefined") sessionStorage.setItem("signup_current_step", "2"); }}
           startIcon={
             <Box
               sx={{
@@ -336,7 +434,7 @@ export default function VerifyOtpContent() {
             },
           }}
         >
-          Back to Sign In
+          Back to Registration
         </Button>
       </Box>
 
@@ -590,7 +688,7 @@ export default function VerifyOtpContent() {
               {isSubmitting ? (
                 <CircularProgress size={22} color="inherit" />
               ) : (
-                "Verify & Create Account"
+                "Sign Up"
               )}
             </Button>
 
@@ -635,11 +733,11 @@ export default function VerifyOtpContent() {
               )}
             </Typography>
 
-            {/* Back to Sign Up Button */}
+            {/* Back to Registration Button */}
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               <Button
                 component={Link}
-                href="/sign-up"
+                href={signUpHref} onClick={() => { if (typeof window !== "undefined") sessionStorage.setItem("signup_current_step", "2"); }}
                 startIcon={
                   <ArrowBackIcon
                     sx={{

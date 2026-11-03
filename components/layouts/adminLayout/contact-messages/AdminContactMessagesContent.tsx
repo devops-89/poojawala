@@ -167,7 +167,6 @@ export default function AdminContactMessagesContent() {
 
     if (statusToChange.status === "READ" && !replyText.trim()) {
       setReplyError("Reply or note message is required");
-      showSnackbar("Please enter a reply or note message before updating status", "error");
       return;
     }
 

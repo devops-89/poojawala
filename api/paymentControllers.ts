@@ -1,4 +1,5 @@
 import { paymentSecuredApi } from "./config";
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 
 export const getMyPaymentsAPI = async (page: number = 1, limit: number = 10) => {
   try {
@@ -117,7 +118,8 @@ export const getAllPaymentsAPI = async (
   try {
     let route = `/payments/all?page=${page}&limit=${limit}`;
     if (search && search.trim()) {
-      route += `&search=${encodeURIComponent(search.trim())}`;
+      const cleanSearch = sanitizeAdminSearchTerm(search);
+      route += `&search=${encodeURIComponent(cleanSearch)}`;
     }
     if (status && status !== "ALL") {
       route += `&status=${encodeURIComponent(status)}`;

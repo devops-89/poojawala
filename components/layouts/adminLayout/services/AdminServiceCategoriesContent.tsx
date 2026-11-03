@@ -260,9 +260,10 @@ export default function AdminServiceCategoriesContent() {
       render: (category) => {
         const type = category.categoryType || "SERVICE";
         const isService = type === "SERVICE";
+        const displayLabel = isService ? "Service" : type === "PRODUCT" ? "Product" : type;
         return (
           <Chip
-            label={type}
+            label={displayLabel}
             size="small"
             sx={{
               fontFamily: FONTS.OUTFIT,

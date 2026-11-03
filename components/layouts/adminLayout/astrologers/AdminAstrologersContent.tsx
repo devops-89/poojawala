@@ -19,7 +19,7 @@ import { AstrologerStatusDialog } from "./AstrologerStatusDialog";
 const STATUS_TABS = [
   { id: "All", label: "All" },
   { id: "Approved", label: "Approved" },
-  { id: "Pending Approval", label: "Pending Approval" },
+  { id: "Pending", label: "Pending" },
   { id: "Rejected", label: "Rejected" },
 ];
 
@@ -61,7 +61,7 @@ export default function AdminAstrologersContent() {
       setLoading(true);
       let backendFilterStatus: string | undefined = undefined;
       if (statusFilter === "Approved") backendFilterStatus = "APPROVED";
-      else if (statusFilter === "Pending Approval")
+      else if (statusFilter === "Pending")
         backendFilterStatus = "PENDING";
       else if (statusFilter === "Rejected") backendFilterStatus = "REJECTED";
 
@@ -87,7 +87,7 @@ export default function AdminAstrologersContent() {
           )
             uiStatus = "Approved";
           else if (verificationStatus === "PENDING")
-            uiStatus = "Pending Approval";
+            uiStatus = "Pending";
           else if (verificationStatus === "REJECTED") uiStatus = "Rejected";
 
           const rawSpecs = profile.specializations || profile.specialization;
@@ -103,19 +103,19 @@ export default function AdminAstrologersContent() {
             ratePerMinute: profile.astrologyPrice
               ? `₹${profile.astrologyPrice}`
               : profile.ratePerMinute
-              ? `₹${profile.ratePerMinute}`
-              : "-",
+                ? `₹${profile.ratePerMinute}`
+                : "-",
             commissionPrice: profile.commissionPercentage
               ? `${profile.commissionPercentage}%`
               : u.commissionPercentage
-              ? `${u.commissionPercentage}%`
-              : profile.commissionPrice
-              ? `₹${profile.commissionPrice}`
-              : u.commissionPrice
-              ? `₹${u.commissionPrice}`
-              : platformCommission
-              ? `${platformCommission}%`
-              : "-",
+                ? `${u.commissionPercentage}%`
+                : profile.commissionPrice
+                  ? `₹${profile.commissionPrice}`
+                  : u.commissionPrice
+                    ? `₹${u.commissionPrice}`
+                    : platformCommission
+                      ? `${platformCommission}%`
+                      : "-",
             status: uiStatus,
             phone: formatPhoneNumber(u.phone, u.countryCode),
             appliedAt: new Date(u.createdAt).toLocaleDateString(),

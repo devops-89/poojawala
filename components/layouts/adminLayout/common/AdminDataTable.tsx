@@ -34,6 +34,7 @@ export default function AdminDataTable<T = any>({
   tabs,
   activeTab,
   onTabChange,
+  extraHeader,
   minWidth = 1000,
   emptyMessage = 'No data found matching your criteria.',
   keyExtractor,
@@ -77,6 +78,9 @@ export default function AdminDataTable<T = any>({
           ))}
         </Tabs>
       )}
+
+      {/* Optional Extra Header (e.g. secondary filter tabs) */}
+      {extraHeader}
 
       {/* Table Container */}
       <TableContainer>

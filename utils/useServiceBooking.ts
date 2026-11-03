@@ -197,17 +197,17 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     if (list.length > 0) {
       return list;
     }
-    return ALL_INDIAN_LANGUAGES;
+    return ["Hindi"];
   }, [service?.languages]);
 
   const [bookingForm, setBookingForm] = useState(() => {
     const list = extractServiceLanguages(service?.languages);
-    const languages = list.length > 0 ? list : ALL_INDIAN_LANGUAGES;
+    const languages = list.length > 0 ? list : ["Hindi"];
     const defaultLang = languages.includes("Hindi") ? "Hindi" : languages[0] || "Hindi";
     return {
       scheduledDate: "",
       scheduledTime: "",
-      paymentOption: "TOKEN",
+      paymentOption: "",
       language: defaultLang,
       specialInstructions: "",
     };
@@ -266,12 +266,22 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     }
   }, [showSnackbar]);
 
+  const [currentTimeTick, setCurrentTimeTick] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTimeTick(Date.now());
+    }, 30000);
+    return () => clearInterval(timer);
+  }, []);
+
   const timeOptions = useMemo(() => {
     const options: { value: string; label: string; disabled: boolean }[] = [];
     const isToday = bookingForm.scheduledDate === todayStr;
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
+    const currentTotalMinutes = currentHour * 60 + currentMinute;
+    const MIN_ADVANCE_MINUTES = 120; // 2 hours advance booking for today
 
     for (let h = 8; h <= 20; h++) {
       for (const m of [0, 30]) {
@@ -282,14 +292,15 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
         const period = h >= 12 ? "PM" : "AM";
         const label = `${String(displayHour).padStart(2, "0")}:${String(m).padStart(2, "0")} ${period}`;
 
-        const isPast =
-          isToday && (h < currentHour || (h === currentHour && m <= currentMinute));
+        const slotTotalMinutes = h * 60 + m;
+        const isPastOrTooSoon =
+          isToday && slotTotalMinutes < currentTotalMinutes + MIN_ADVANCE_MINUTES;
 
-        options.push({ value: timeVal, label, disabled: isPast });
+        options.push({ value: timeVal, label, disabled: isPastOrTooSoon });
       }
     }
     return options;
-  }, [bookingForm.scheduledDate, todayStr]);
+  }, [bookingForm.scheduledDate, todayStr, currentTimeTick]);
 
   const isAllSlotsPassedToday = useMemo(() => {
     if (bookingForm.scheduledDate !== todayStr) return false;
@@ -375,7 +386,49 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
       return;
     }
 
+    const now = new Date();
+    const isToday = bookingForm.scheduledDate === todayStr;
+    const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+    const slotTotalMinutes = h * 60 + m;
+
+    if (isToday) {
+      if (slotTotalMinutes <= currentTotalMinutes) {
+        showSnackbar(
+          "The selected time slot has already passed. Please select a future time slot.",
+          "error"
+        );
+        return;
+      }
+      if (slotTotalMinutes < currentTotalMinutes + 120) {
+        showSnackbar(
+          "Pooja bookings require at least 2 hours advance booking. Please choose a later time slot or future date.",
+          "error"
+        );
+        return;
+      }
+    }
+
+    if (
+      availableLanguages.length > 0 &&
+      bookingForm.language &&
+      !availableLanguages.includes(bookingForm.language)
+    ) {
+      showSnackbar(
+        `Selected language "${bookingForm.language}" is not available for this service. Please select from: ${availableLanguages.join(", ")}`,
+        "error"
+      );
+      return;
+    }
+
     let customerAddressId = selectedAddressId ? Number(selectedAddressId) : null;
+
+    if (!bookingForm.paymentOption) {
+      showSnackbar(
+        "Please select a payment option (Token Amount or Full Payment)",
+        "error"
+      );
+      return;
+    }
 
     if (activeBookingMode === "OFFLINE") {
       if (!customerAddressId) {
@@ -404,7 +457,7 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
         bookingMode: activeBookingMode,
         scheduledAt: scheduledAtIso,
         plan: isOnlineService ? "BASIC" : (selectedPlan ? selectedPlan.toUpperCase() : "BASIC"),
-        paymentOption: bookingForm.paymentOption || "TOKEN",
+        paymentOption: bookingForm.paymentOption,
         featureIds: finalFeatureIds,
         specialInstructions: bookingForm.specialInstructions || "",
         customFields: {
@@ -440,7 +493,7 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
         setBookingForm({
           scheduledDate: "",
           scheduledTime: "",
-          paymentOption: "TOKEN",
+          paymentOption: "",
           language: "Hindi",
           specialInstructions: "",
         });

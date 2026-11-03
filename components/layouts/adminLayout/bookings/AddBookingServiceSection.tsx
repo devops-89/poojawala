@@ -3,14 +3,16 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
 import CheckIcon from '@mui/icons-material/Check';
+import VideocamIcon from '@mui/icons-material/Videocam';
 import {
   Box,
   Card,
+  Chip,
   Divider,
   Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 interface AddBookingServiceSectionProps {
   allServices: any[];
@@ -31,6 +33,91 @@ const formatFeatureKey = (key: string) => {
     .trim();
 };
 
+const getPlanFeaturesList = (
+  planKey: string,
+  planData: any,
+  isOnline: boolean,
+  serviceFeatures?: any[]
+) => {
+  const extracted: { label: string; value?: string }[] = [];
+
+  if (Array.isArray(planData?.features)) {
+    planData.features.forEach((f: any) => {
+      if (f && f.isActive !== false && f.type !== 'PRICE') {
+        const title = f.title || f.name || f.key || '';
+        if (title) {
+          extracted.push({
+            label: formatFeatureKey(title),
+            value: f.value && f.value !== 'true' ? String(f.value) : undefined,
+          });
+        }
+      }
+    });
+  } else if (planData?.features && typeof planData.features === 'object') {
+    Object.entries(planData.features).forEach(([key, val]) => {
+      const lower = key.toLowerCase();
+      if (
+        lower === 'price' ||
+        lower === 'tokenamount' ||
+        lower.includes('payout') ||
+        lower === 'features' ||
+        val === false ||
+        val === 'false' ||
+        val === null ||
+        val === undefined
+      ) {
+        return;
+      }
+      if (typeof val === 'object') return;
+      extracted.push({
+        label: formatFeatureKey(key),
+        value: val === true || val === 'true' ? undefined : String(val),
+      });
+    });
+  }
+
+  // Fallback to serviceFeatures if present
+  if (extracted.length === 0 && Array.isArray(serviceFeatures)) {
+    serviceFeatures
+      .filter(
+        (sf: any) =>
+          !sf.plan || sf.plan.toUpperCase() === planKey.toUpperCase()
+      )
+      .forEach((sf: any) => {
+        const title = sf.title || sf.name || '';
+        if (title) extracted.push({ label: formatFeatureKey(title) });
+      });
+  }
+
+  // If still empty, provide rich descriptive items tailored for online vs offline
+  if (extracted.length === 0) {
+    if (isOnline) {
+      return [
+        { label: 'Live 1-on-1 Interactive Video Pooja with Vedic Purohit' },
+        { label: 'Personalized Sankalp with Family Names & Gotra' },
+        { label: 'Authentic Vedic Mantra Chanting, Stotram & Aarti' },
+        { label: 'Digital Video Recording & E-Prasad Blessings Included' },
+      ];
+    }
+    if (planKey.toLowerCase() === 'standard') {
+      return [
+        { label: 'Senior Certified Vedic Scholar / Purohit at Venue' },
+        { label: 'All Essential Puja Samagri & Havan Setup Included' },
+        { label: 'Complete Extended Rituals, Havan & Aarti Vidhi' },
+        { label: 'Sacred Prasad & Divine Blessings for Family' },
+      ];
+    }
+    return [
+      { label: 'Certified Vedic Purohit Visit at Your Location' },
+      { label: 'Complete Sankalp & Sacred Puja Vidhi' },
+      { label: 'Traditional Vedic Mantra Chanting & Aarti' },
+      { label: 'Purohit Guides Samagri Arrangement' },
+    ];
+  }
+
+  return extracted;
+};
+
 export default function AddBookingServiceSection({
   allServices,
   values,
@@ -40,6 +127,25 @@ export default function AddBookingServiceSection({
     (s) => s.id === Number(values.serviceId)
   );
 
+  const isOnlineMode =
+    values.bookingMode === 'ONLINE' || Boolean(selectedService?.isOnline);
+
+  const plansObj = selectedService?.plans || {};
+  const planKeys = useMemo(
+    () =>
+      Object.keys(plansObj).filter(
+        (key) => plansObj[key] && typeof plansObj[key] === 'object'
+      ),
+    [plansObj]
+  );
+
+  // When online, lock plan to 'basic'
+  useEffect(() => {
+    if (isOnlineMode && values.plan !== 'basic') {
+      setFieldValue('plan', 'basic');
+    }
+  }, [isOnlineMode, values.plan, setFieldValue]);
+
   if (!selectedService) return null;
 
   const imageSrc =
@@ -47,20 +153,26 @@ export default function AddBookingServiceSection({
     selectedService?.iconUrl ||
     selectedService?.coverImage;
 
-  const plansObj = selectedService?.plans || {};
-  const planKeys = Object.keys(plansObj).filter(
-    (key) => plansObj[key] && typeof plansObj[key] === 'object'
-  );
-
   // Selected plan price or fallback
-  const currentPlanKey = values.plan || planKeys[0] || 'basic';
-  const currentPlanObj = plansObj[currentPlanKey] || plansObj['basic'] || plansObj['standard'] || {};
+  const currentPlanKey = isOnlineMode ? 'basic' : values.plan || planKeys[0] || 'basic';
+  const currentPlanObj =
+    plansObj[currentPlanKey] || plansObj['basic'] || plansObj['standard'] || {};
   const displayPrice =
     currentPlanObj?.price ??
     selectedService?.price ??
     selectedService?.priceWithoutSamagri ??
     selectedService?.minPrice ??
     0;
+
+  // For offline services, ensure both basic and standard are shown if available
+  const offlinePlanKeys =
+    planKeys.length > 0
+      ? (planKeys.includes('basic') || planKeys.includes('standard')
+          ? planKeys
+          : ['basic', ...planKeys])
+      : plansObj.standard
+      ? ['basic', 'standard']
+      : ['basic'];
 
   return (
     <Grid size={{ xs: 12 }}>
@@ -122,16 +234,35 @@ export default function AddBookingServiceSection({
           </Box>
         )}
         <Box sx={{ flex: 1 }}>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 700,
-              color: '#1e293b',
-              fontSize: '1.1rem',
-            }}
-          >
-            {selectedService.name}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                color: '#1e293b',
+                fontSize: '1.1rem',
+              }}
+            >
+              {selectedService.name}
+            </Typography>
+            {isOnlineMode && (
+              <Chip
+                label="Online"
+                size="small"
+                icon={<VideocamIcon sx={{ fontSize: '14px !important' }} />}
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  bgcolor: '#EFF6FF',
+                  color: '#1D4ED8',
+                  fontWeight: 700,
+                  fontSize: '11px',
+                  border: '1px solid #BFDBFE',
+                  borderRadius: '6px',
+                  height: 22,
+                }}
+              />
+            )}
+          </Box>
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
@@ -170,7 +301,7 @@ export default function AddBookingServiceSection({
         </Box>
       </Card>
 
-      {/* Select Package Plan Section */}
+      {/* Package Plan Section Header */}
       <Typography
         sx={{
           fontFamily: FONTS.OUTFIT,
@@ -179,20 +310,185 @@ export default function AddBookingServiceSection({
           color: '#1e293b',
         }}
       >
-        Select Package Plan
+        {isOnlineMode ? 'Online Package' : 'Select Package Plan'}
       </Typography>
 
-      {planKeys.length > 0 ? (
+      {/* ONLINE MODE: Single well-presented Online Package Card */}
+      {isOnlineMode ? (
         <Grid container spacing={2}>
-          {planKeys.map((planKey) => {
-            const planData = plansObj[planKey];
-            const isSelected = (values.plan || planKeys[0]) === planKey;
-            const price = planData?.price || 0;
+          <Grid size={{ xs: 12, sm: 8, md: 7 }}>
+            <Card
+              elevation={0}
+              sx={{
+                p: 2.5,
+                borderRadius: '14px',
+                border: '2px solid #FF6200',
+                bgcolor: '#FFF8F5',
+                boxShadow: '0 4px 14px rgba(255, 98, 0, 0.08)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {/* Top Header: Title & Badges + Price */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  mb: 1.5,
+                  gap: 1.5,
+                }}
+              >
+                <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 800,
+                        fontSize: '1.15rem',
+                        color: COLORS.PRIMARY,
+                      }}
+                    >
+                      Online Pooja Package
+                    </Typography>
+                    <Chip
+                      icon={<VideocamIcon sx={{ fontSize: '14px !important' }} />}
+                      label="Live Video"
+                      size="small"
+                      sx={{
+                        bgcolor: '#EFF6FF',
+                        color: '#1D4ED8',
+                        fontWeight: 700,
+                        fontSize: '11px',
+                        border: '1px solid #BFDBFE',
+                        borderRadius: '6px',
+                        height: 22,
+                      }}
+                    />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: '12.5px',
+                      color: '#64748B',
+                    }}
+                  >
+                    1-on-1 Personalized Live Vedic Pooja & Sankalp via Video Call
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    fontSize: '1.4rem',
+                    color: '#10b981',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  ₹{Number(displayPrice).toLocaleString('en-IN')}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ mb: 2, borderColor: '#FED7AA' }} />
+
+              {/* Online Features List */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+                {getPlanFeaturesList('basic', plansObj['basic'] || plansObj[planKeys[0]], true, selectedService?.serviceFeatures).map((f, idx) => (
+                  <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                    <Box
+                      sx={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        bgcolor: '#ECFDF5',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <CheckIcon sx={{ color: '#059669', fontSize: 14 }} />
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: '13px',
+                        color: '#334155',
+                        fontWeight: 600,
+                        fontFamily: FONTS.OUTFIT,
+                      }}
+                    >
+                      {f.label}
+                      {f.value && (
+                        <strong style={{ color: '#0F172A' }}>: {f.value}</strong>
+                      )}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Footer Selected Tag */}
+              <Box
+                sx={{
+                  pt: 1.5,
+                  borderTop: '1px dashed #FDBA74',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '11.5px',
+                    color: '#8A5D3B',
+                    fontFamily: FONTS.OUTFIT,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  * Includes complete live vidhi & video meeting link
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: COLORS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                  }}
+                >
+                  ✓ SELECTED
+                </Typography>
+              </Box>
+            </Card>
+          </Grid>
+        </Grid>
+      ) : (
+        /* OFFLINE MODE: Render both plans (or all offlinePlanKeys) */
+        <Grid container spacing={2}>
+          {offlinePlanKeys.map((planKey) => {
+            const planData = plansObj[planKey] || {};
+            const isSelected = (values.plan || 'basic').toLowerCase() === planKey.toLowerCase();
+            const price =
+              planData?.price ||
+              (planKey === 'basic' ? selectedService?.price : 0) ||
+              0;
+            const features = getPlanFeaturesList(
+              planKey,
+              planData,
+              false,
+              selectedService?.serviceFeatures
+            );
+            const planTitle =
+              planKey.toLowerCase() === 'basic'
+                ? 'Basic Plan'
+                : planKey.toLowerCase() === 'standard'
+                ? 'Standard Plan'
+                : `${planKey.charAt(0).toUpperCase() + planKey.slice(1)} Plan`;
 
             return (
               <Grid size={{ xs: 12, sm: 6 }} key={planKey}>
                 <Card
-                  onClick={() => setFieldValue('plan', planKey)}
+                  onClick={() => setFieldValue('plan', planKey.toLowerCase())}
                   elevation={0}
                   sx={{
                     p: 2.5,
@@ -211,7 +507,7 @@ export default function AddBookingServiceSection({
                   }}
                 >
                   <Box>
-                    {/* Header: Plan Title (Left) & Price (Right Corner) */}
+                    {/* Header: Plan Title & Price */}
                     <Box
                       sx={{
                         display: 'flex',
@@ -226,10 +522,9 @@ export default function AddBookingServiceSection({
                           fontWeight: 800,
                           fontSize: '1.05rem',
                           color: isSelected ? COLORS.PRIMARY : '#1e293b',
-                          textTransform: 'uppercase',
                         }}
                       >
-                        {planKey} Plan
+                        {planTitle}
                       </Typography>
                       <Typography
                         sx={{
@@ -247,93 +542,33 @@ export default function AddBookingServiceSection({
 
                     {/* Features List */}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
-                      {(() => {
-                        const targetFeaturesObj =
-                          planData?.features && typeof planData.features === 'object'
-                            ? planData.features
-                            : planData || {};
-
-                        const featureEntries = Object.entries(targetFeaturesObj).filter(
-                          ([key, val]) => {
-                            const lowerKey = key.toLowerCase();
-                            if (
-                              lowerKey === 'price' ||
-                              lowerKey === 'tokenamount' ||
-                              lowerKey === 'features' ||
-                              lowerKey.includes('payout') ||
-                              val === false ||
-                              val === 'false' ||
-                              val === null ||
-                              val === undefined
-                            ) {
-                              return false;
-                            }
-                            if (typeof val === 'object') return false;
-                            return true;
-                          }
-                        );
-
-                        return featureEntries.map(([key, val]) => {
-                          const isBoolTrue = val === true || val === 'true';
-                          const label = formatFeatureKey(key);
-
-                          if (isBoolTrue) {
-                            return (
-                              <Box
-                                key={key}
-                                sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: 1,
-                                }}
-                              >
-                                <CheckIcon
-                                  sx={{ color: '#10b981', fontSize: 18 }}
-                                />
-                                <Typography
-                                  sx={{
-                                    fontSize: '13px',
-                                    color: '#334155',
-                                    fontWeight: 600,
-                                    fontFamily: FONTS.OUTFIT,
-                                  }}
-                                >
-                                  {label}
-                                </Typography>
-                              </Box>
-                            );
-                          }
-
-                          return (
-                            <Box
-                              key={key}
-                              sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                              }}
-                            >
-                              <CheckIcon
-                                sx={{ color: '#10b981', fontSize: 18 }}
-                              />
-                              <Typography
-                                sx={{
-                                  fontSize: '13px',
-                                  color: '#475569',
-                                  fontFamily: FONTS.OUTFIT,
-                                }}
-                              >
-                                <span style={{ color: '#64748b' }}>
-                                  {label}:
-                                </span>{' '}
-                                <strong style={{ color: '#0f172a' }}>
-                                  {String(val)}
-                                </strong>
-                              </Typography>
-                            </Box>
-                          );
-                        });
-                      })()}
+                      {features.map((f, idx) => (
+                        <Box
+                          key={idx}
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                          }}
+                        >
+                          <CheckIcon
+                            sx={{ color: '#10b981', fontSize: 18 }}
+                          />
+                          <Typography
+                            sx={{
+                              fontSize: '13px',
+                              color: '#334155',
+                              fontWeight: 600,
+                              fontFamily: FONTS.OUTFIT,
+                            }}
+                          >
+                            {f.label}
+                            {f.value && (
+                              <strong style={{ color: '#0F172A' }}>: {f.value}</strong>
+                            )}
+                          </Typography>
+                        </Box>
+                      ))}
                     </Box>
                   </Box>
 
@@ -354,26 +589,6 @@ export default function AddBookingServiceSection({
             );
           })}
         </Grid>
-      ) : (
-        <Card
-          elevation={0}
-          sx={{
-            p: 2,
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            bgcolor: '#f8fafc',
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: '14px',
-              color: '#64748b',
-              fontFamily: FONTS.OUTFIT,
-            }}
-          >
-            Basic Plan selected by default.
-          </Typography>
-        </Card>
       )}
     </Grid>
   );

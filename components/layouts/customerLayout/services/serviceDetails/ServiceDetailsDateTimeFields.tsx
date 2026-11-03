@@ -30,24 +30,7 @@ export default function ServiceDetailsDateTimeFields({
   onDateChange,
   onTimeChange,
 }: ServiceDetailsDateTimeFieldsProps) {
-  const [timeMenuOpen, setTimeMenuOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!timeMenuOpen) return;
-    const handleScroll = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (target && target.closest && target.closest(".MuiPaper-root")) {
-        return;
-      }
-      setTimeMenuOpen(false);
-    };
-    window.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-    window.addEventListener("resize", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll, { capture: true });
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [timeMenuOpen]);
 
   return (
     <Grid container spacing={2}>
@@ -103,29 +86,16 @@ export default function ServiceDetailsDateTimeFields({
             value={scheduledTime}
             label="Preferred Time"
             displayEmpty
-            open={timeMenuOpen}
-            onOpen={() => setTimeMenuOpen(true)}
-            onClose={() => setTimeMenuOpen(false)}
-            onChange={(e) => {
-              onTimeChange(e.target.value);
-              setTimeMenuOpen(false);
-            }}
+            onChange={(e) => onTimeChange(e.target.value)}
             required
             MenuProps={{
-              disableScrollLock: true,
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "left",
-              },
-              transformOrigin: {
-                vertical: "top",
-                horizontal: "left",
-              },
               slotProps: {
                 paper: {
                   sx: {
                     maxHeight: 280,
+                    overflowY: "auto",
                     borderRadius: "10px",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
                     mt: 0.5,
                   },
                 },
@@ -164,11 +134,15 @@ export default function ServiceDetailsDateTimeFields({
               </MenuItem>
             ))}
           </Select>
-          {isAllSlotsPassedToday && (
+          {isAllSlotsPassedToday ? (
             <FormHelperText sx={{ color: "#d97706", fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
-              Slots for today are closed (8:00 AM - 8:00 PM). Please choose another date.
+              Slots for today are closed (minimum 2 hours advance booking required). Please choose another date.
             </FormHelperText>
-          )}
+          ) : scheduledDate === todayStr ? (
+            <FormHelperText sx={{ color: "#8C7A6B", fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+              Note: Same-day pooja bookings require at least 2 hours advance notice.
+            </FormHelperText>
+          ) : null}
         </FormControl>
       </Grid>
     </Grid>

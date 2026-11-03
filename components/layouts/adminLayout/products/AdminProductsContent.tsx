@@ -6,6 +6,7 @@ import {
   deleteProductAPI,
   getAllProductsAPI,
   updateProductStatusAPI,
+  formatPricingUnit,
 } from "@/api/productControllers";
 import AdminDataTable, {
   Column,
@@ -248,7 +249,7 @@ export default function AdminProductsContent() {
           }}
         >
           {product.stockQuantity ?? product.quantity ?? 0}{" "}
-          {product.pricingUnit || product.unit || "Unit"}
+          {formatPricingUnit(product.pricingUnit || product.unit) || "Unit"}
         </Typography>
       ),
     },

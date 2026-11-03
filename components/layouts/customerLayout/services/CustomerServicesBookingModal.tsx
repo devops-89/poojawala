@@ -165,7 +165,7 @@ export default function CustomerServicesBookingModal({
   const availableLanguages = useMemo(() => {
     const list = extractServiceLanguages(service?.languages);
     if (list.length > 0) return list;
-    return ALL_INDIAN_LANGUAGES;
+    return ["Hindi"];
   }, [service?.languages]);
 
   useEffect(() => {
@@ -178,7 +178,8 @@ export default function CustomerServicesBookingModal({
   }, [open, availableLanguages, bookingForm.language, setBookingForm]);
 
   const now = new Date();
-  const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+  const minDateObj = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+  const minDate = new Date(minDateObj.getTime() - minDateObj.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 16);
   const max = new Date(now);
@@ -295,7 +296,7 @@ export default function CustomerServicesBookingModal({
               <RadioGroup
                 row
                 name="paymentOption"
-                value={bookingForm.paymentOption || "TOKEN"}
+                value={bookingForm.paymentOption || ""}
                 onChange={(e) =>
                   setBookingForm({
                     ...bookingForm,

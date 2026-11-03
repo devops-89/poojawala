@@ -63,24 +63,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     handleAddressAdded,
   } = useServiceBooking({ serviceId, service });
 
-  const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!languageMenuOpen) return;
-    const handleScroll = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (target && target.closest && target.closest(".MuiPaper-root")) {
-        return;
-      }
-      setLanguageMenuOpen(false);
-    };
-    window.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-    window.addEventListener("resize", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll, { capture: true });
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [languageMenuOpen]);
 
   return (
     <Paper
@@ -168,27 +151,13 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       labelId="preferred-language-label"
                       label="Preferred Language"
                       value={bookingForm.language || ""}
-                      open={languageMenuOpen}
-                      onOpen={() => setLanguageMenuOpen(true)}
-                      onClose={() => setLanguageMenuOpen(false)}
-                      onChange={(e) => {
-                        handleInputChange("language", e.target.value);
-                        setLanguageMenuOpen(false);
-                      }}
+                      onChange={(e) => handleInputChange("language", e.target.value)}
                       MenuProps={{
-                        disableScrollLock: true,
-                        anchorOrigin: {
-                          vertical: "bottom",
-                          horizontal: "left",
-                        },
-                        transformOrigin: {
-                          vertical: "top",
-                          horizontal: "left",
-                        },
                         slotProps: {
                           paper: {
                             sx: {
                               maxHeight: 280,
+                              overflowY: "auto",
                               borderRadius: "10px",
                               boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
                               mt: 0.5,

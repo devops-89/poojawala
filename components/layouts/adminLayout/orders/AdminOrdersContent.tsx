@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 
 import { getAllOrdersAPI, updateOrderStatusAPI } from "@/api/orderControllers";
 import AdminDataTable, {
@@ -44,10 +45,11 @@ const matchesStatus = (order: any, filter: string) => {
 
 const matchesSearch = (order: any, query: string) => {
   if (!query || !query.trim()) return true;
-  const q = query.toLowerCase().trim();
+  const cleaned = sanitizeAdminSearchTerm(query);
+  const q = (cleaned || query).toLowerCase().trim();
   const rawId = String(order.id ?? order.orderId ?? "").toLowerCase();
   const formattedId = `ord-${rawId}`.toLowerCase();
-  if (rawId.includes(q) || formattedId.includes(q)) return true;
+  if (rawId.includes(q) || formattedId.includes(q) || rawId === cleaned) return true;
 
   const user = order.customer || order.user || {};
   const customerName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.username || "";
@@ -139,11 +141,12 @@ export default function AdminOrdersContent() {
     const requestId = ++currentRequestId.current;
     try {
       setIsLoading(true);
+      const cleanedSearch = sanitizeAdminSearchTerm(searchValue);
       const res = await getAllOrdersAPI(
         page + 1,
         rowsPerPage,
         statusFilter,
-        searchValue,
+        cleanedSearch,
       );
 
       if (requestId !== currentRequestId.current) return;

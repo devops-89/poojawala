@@ -1,5 +1,5 @@
 import { userPublicApi, userSecuredApi } from "./config";
-import { createSlug } from "@/utils/helpers";
+import { createSlug, sanitizeAdminSearchTerm } from "@/utils/helpers";
 
 const serviceSlugToIdMap = new Map<string, string | number>();
 
@@ -87,7 +87,7 @@ export const getServicesAPI = async (
     params.append('page', String(page));
     params.append('limit', String(limit));
     if (search) {
-      params.append('search', search);
+      params.append('search', sanitizeAdminSearchTerm(search));
     }
     if (commissionPercentage) {
       params.append('commissionPercentage', commissionPercentage);
@@ -395,7 +395,7 @@ export const getServiceCategoriesAPI = async (
     const params = new URLSearchParams();
     if (page) params.append('page', String(page));
     if (limit) params.append('limit', String(limit));
-    if (search) params.append('search', search);
+    if (search) params.append('search', sanitizeAdminSearchTerm(search));
     if (isActive !== undefined) params.append('isActive', String(isActive));
     if (categoryType) params.append('categoryType', categoryType);
 

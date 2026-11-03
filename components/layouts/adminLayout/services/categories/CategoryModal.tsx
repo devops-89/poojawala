@@ -511,7 +511,13 @@ export default function CategoryModal({
                     CATEGORY TYPE
                   </Typography>
                   <Chip
-                    label={category.categoryType || "SERVICE"}
+                    label={
+                      (category.categoryType || "SERVICE") === "SERVICE"
+                        ? "Service"
+                        : (category.categoryType || "SERVICE") === "PRODUCT"
+                        ? "Product"
+                        : category.categoryType
+                    }
                     size="small"
                     sx={{
                       mt: 0.5,
@@ -598,8 +604,8 @@ export default function CategoryModal({
               }
               slotProps={{ inputLabel: { shrink: true } }}
             >
-              <MenuItem value="SERVICE">SERVICE</MenuItem>
-              <MenuItem value="PRODUCT">PRODUCT</MenuItem>
+              <MenuItem value="SERVICE">Service</MenuItem>
+              <MenuItem value="PRODUCT">Product</MenuItem>
             </TextField>
 
             <TextField

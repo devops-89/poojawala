@@ -106,7 +106,7 @@ export default function ServiceDetailsPaymentOption({
       <RadioGroup
         row
         name="paymentOption"
-        value={paymentOption}
+        value={paymentOption || ""}
         onChange={(e) => onChangePaymentOption(e.target.value as "TOKEN" | "FULL")}
       >
         <FormControlLabel

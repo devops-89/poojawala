@@ -30,7 +30,6 @@ import NextLink from "next/link";
 import React, { useState } from "react";
 import * as Yup from "yup";
 
-import FormikValidationSnackbar from "@/components/widgets/FormikValidationSnackbar";
 import { TiptapEditor } from "@/components/widgets/TiptapEditor";
 import { convertImageToWebP } from "@/utils/imageHelper";
 
@@ -253,7 +252,6 @@ export default function BlogForm({
           p: { xs: 2, md: 3.5 },
         }}
       >
-        <FormikValidationSnackbar message="Please complete all required fields before publishing the blog." />
 
         {/* Header & Breadcrumbs */}
         <Box

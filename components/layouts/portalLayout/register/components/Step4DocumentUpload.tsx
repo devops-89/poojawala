@@ -10,14 +10,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import { FormikProps } from 'formik';
 import { documentFields } from '../constants';
 import { FONTS } from '@/utils/fonts';
-import { COLORS } from '@/utils/enums';
+import { COLORS, USER_ROLE } from '@/utils/enums';
 
 interface Step4Props {
   formik: FormikProps<any>;
   setPreviewFile: (file: File | null) => void;
+  hideTitle?: boolean;
 }
 
-export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Props) {
+export default function Step4DocumentUpload({ formik, setPreviewFile, hideTitle = false }: Step4Props) {
   const handleFileChange = (docId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.currentTarget.files?.[0];
     if (selectedFile) {
@@ -41,6 +42,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
 
   return (
     <Box>
+      {!hideTitle && (
       <Typography
         variant="h5"
         sx={{
@@ -51,6 +53,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
       >
         Upload Verification Documents
       </Typography>
+      )}
 
       {formik.errors.documents &&
         typeof formik.errors.documents === 'string' && (
@@ -60,7 +63,13 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
         )}
 
       <Grid container spacing={3}>
-        {documentFields.map((doc) => {
+        {documentFields
+          .filter((doc) =>
+            formik.values.role === USER_ROLE.ASTROLOGER
+              ? doc.id !== "templeAffiliationProof"
+              : true
+          )
+          .map((doc) => {
           const file = (formik.values.documents as any)[doc.id] as File | null;
           const error =
             formik.touched.documents?.[

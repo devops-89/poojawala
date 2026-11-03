@@ -3,6 +3,7 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
 import { useUserStore } from "@/stores/userStore";
+import { useSnackbarStore } from "@/stores/snackbarStore";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SearchIcon from "@mui/icons-material/Search";
@@ -27,6 +28,8 @@ export default function CustomerDashboardHero() {
 
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState("");
+  const { showSnackbar } = useSnackbarStore();
 
   useEffect(() => {
     fetchProfile(true);
@@ -67,13 +70,31 @@ export default function CustomerDashboardHero() {
   }, [selectedStateObj]);
 
   const handleSearch = () => {
+    const hasState = Boolean(
+      selectedState &&
+      selectedState !== "All" &&
+      selectedState !== "All States"
+    );
+    const hasCity = Boolean(
+      selectedCity &&
+      selectedCity !== "All" &&
+      selectedCity !== "All Cities"
+    );
+
+    if (!hasState && !hasCity) {
+      setSearchError("Please select at least one filter criterion (State or City) to search.");
+      showSnackbar("Please select at least one filter criterion to search.", "warning");
+      return;
+    }
+
+    setSearchError("");
     const params = new URLSearchParams();
     params.set("isOffline", "true");
-    if (selectedState && selectedState !== "All" && selectedState !== "All States") {
-      params.set("state", selectedState.trim());
+    if (hasState) {
+      params.set("state", selectedState!.trim());
     }
-    if (selectedCity && selectedCity !== "All" && selectedCity !== "All Cities") {
-      params.set("city", selectedCity.trim());
+    if (hasCity) {
+      params.set("city", selectedCity!.trim());
     }
 
     const queryString = params.toString();
@@ -305,6 +326,7 @@ export default function CustomerDashboardHero() {
                       onChange={(_, newValue) => {
                         setSelectedState(newValue);
                         setSelectedCity(null);
+                        if (searchError) setSearchError("");
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -376,7 +398,10 @@ export default function CustomerDashboardHero() {
                       forcePopupIcon
                       options={cityOptions}
                       value={selectedCity}
-                      onChange={(_, newValue) => setSelectedCity(newValue)}
+                      onChange={(_, newValue) => {
+                        setSelectedCity(newValue);
+                        if (searchError) setSearchError("");
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -428,6 +453,20 @@ export default function CustomerDashboardHero() {
                 </Grid>
               </Grid>
 
+              {searchError && (
+                <Typography
+                  sx={{
+                    color: "#d32f2f",
+                    fontSize: "12.5px",
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 600,
+                    mt: -1,
+                  }}
+                >
+                  {searchError}
+                </Typography>
+              )}
+
               {/* Search Button */}
               <Button
                 type="submit"
@@ -457,7 +496,7 @@ export default function CustomerDashboardHero() {
                   },
                 }}
               >
-                Explore Services
+                Search Services
               </Button>
             </Box>
           </Paper>

@@ -1,20 +1,22 @@
-"use client";
-import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
+'use client';
 
-import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState, useEffect } from 'react';
+import NextLink from 'next/link';
 import {
   Box,
   Button,
   InputAdornment,
   TextField,
   Typography,
-} from "@mui/material";
-import NextLink from "next/link";
-import React, { useState, useEffect } from "react";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 
-import { AdminPageHeaderProps } from "@/utils/types";
+import { FONTS } from '@/utils/fonts';
+import { COLORS } from '@/utils/enums';
+import { sanitizeAdminSearchTerm } from '@/utils/helpers';
+import type { AdminPageHeaderProps } from '@/utils/types';
+
 export type { AdminPageHeaderProps };
 
 export default function AdminPageHeader({
@@ -28,16 +30,26 @@ export default function AdminPageHeader({
   actionButtonIcon = <AddIcon />,
   onActionButtonClick,
 }: AdminPageHeaderProps) {
-  const [localSearch, setLocalSearch] = useState(searchValue || "");
+  const [localSearch, setLocalSearch] = useState(searchValue || '');
 
   useEffect(() => {
-    setLocalSearch(searchValue || "");
+    if (!searchValue && localSearch) {
+      setLocalSearch('');
+    } else if (
+      searchValue &&
+      sanitizeAdminSearchTerm(localSearch) !== searchValue
+    ) {
+      setLocalSearch(searchValue);
+    }
   }, [searchValue]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (onSearchChange && localSearch !== (searchValue || "")) {
-        onSearchChange(localSearch);
+      if (onSearchChange) {
+        const cleaned = sanitizeAdminSearchTerm(localSearch);
+        if (cleaned !== (searchValue || '')) {
+          onSearchChange(cleaned);
+        }
       }
     }, 400);
     return () => clearTimeout(timer);
@@ -46,10 +58,10 @@ export default function AdminPageHeader({
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        alignItems: { sm: "center" },
-        justifyContent: "space-between",
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        alignItems: { sm: 'center' },
+        justifyContent: 'space-between',
         gap: 2,
       }}
     >
@@ -59,7 +71,7 @@ export default function AdminPageHeader({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
-            color: "#1e293b",
+            color: '#1e293b',
           }}
         >
           {title}
@@ -68,9 +80,9 @@ export default function AdminPageHeader({
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              color: "#64748b",
+              color: '#64748b',
               mt: 0.5,
-              fontSize: "0.95rem",
+              fontSize: '0.95rem',
             }}
           >
             {subtitle}
@@ -78,27 +90,27 @@ export default function AdminPageHeader({
         )}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
         {onSearchChange !== undefined && (
           <TextField
             size="small"
-            placeholder={searchPlaceholder || "Search..."}
+            placeholder={searchPlaceholder || 'Search...'}
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
             slotProps={{
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon fontSize="small" sx={{ color: "#94a3b8" }} />
+                    <SearchIcon fontSize="small" sx={{ color: '#94a3b8' }} />
                   </InputAdornment>
                 ),
               },
             }}
             sx={{
-              width: { xs: "100%", sm: 280, md: 320 },
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "12px",
-                bgcolor: "white",
+              width: { xs: '100%', sm: 280, md: 320 },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '12px',
+                bgcolor: 'white',
                 fontFamily: FONTS.OUTFIT,
               },
             }}
@@ -107,22 +119,22 @@ export default function AdminPageHeader({
 
         {actionButtonText && (
           <Button
-            component={actionButtonHref ? NextLink : "button"}
-            href={actionButtonHref || "#"}
+            component={actionButtonHref ? NextLink : 'button'}
+            href={actionButtonHref || '#'}
             onClick={onActionButtonClick}
             variant="contained"
             sx={{
               background: COLORS.PRIMARY,
-              color: "white",
-              textTransform: "none",
-              borderRadius: "12px",
+              color: 'white',
+              textTransform: 'none',
+              borderRadius: '12px',
               fontWeight: 600,
               py: 1,
               px: 3,
-              boxShadow: "none",
+              boxShadow: 'none',
               fontFamily: FONTS.OUTFIT,
-              whiteSpace: "nowrap",
-              "&:hover": { background: COLORS.PRIMARY_DARK, boxShadow: "none" },
+              whiteSpace: 'nowrap',
+              '&:hover': { background: COLORS.PRIMARY_DARK, boxShadow: 'none' },
             }}
             startIcon={actionButtonIcon}
           >

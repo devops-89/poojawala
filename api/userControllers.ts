@@ -1,3 +1,4 @@
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 import { userPublicApi, userSecuredApi } from "./config";
 
 export const getAllUsersAPI = async (
@@ -34,7 +35,18 @@ export const submitContactFormAPI = async (data: any) => {
 
 export const addPurohitByAdminAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post("/users/admin/add-purohit", data);
+    const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+    const response = await userSecuredApi.post(
+      "/users/admin/add-purohit",
+      data,
+      isFormData
+        ? {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        : undefined
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -43,7 +55,18 @@ export const addPurohitByAdminAPI = async (data: any) => {
 
 export const addAstrologerByAdminAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post("/users/admin/add-astrologer", data);
+    const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+    const response = await userSecuredApi.post(
+      "/users/admin/add-astrologer",
+      data,
+      isFormData
+        ? {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        : undefined
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -74,7 +97,7 @@ export const getPurohitsAPI = async (
       page: page.toString(),
       limit: limit.toString(),
     });
-    if (search) params.append('search', search);
+    if (search) params.append('search', sanitizeAdminSearchTerm(search));
     if (verificationStatus) params.append('verificationStatus', verificationStatus);
     if (status) params.append('status', status);
     if (city) params.append('city', city);
@@ -101,7 +124,7 @@ export const getAstrologersAPI = async (
       page: page.toString(),
       limit: limit.toString(),
     });
-    if (search) params.append('search', search);
+    if (search) params.append('search', sanitizeAdminSearchTerm(search));
     if (verificationStatus) params.append('verificationStatus', verificationStatus);
     if (status) params.append('status', status);
     if (city) params.append('city', city);
@@ -141,7 +164,7 @@ export const getPublicPurohitsListAPI = async (
     params.append('page', String(page));
     params.append('limit', String(limit));
     if (search) {
-      params.append('search', search);
+      params.append('search', sanitizeAdminSearchTerm(search));
     }
     const response = await userPublicApi.get(`/users/purohits`, { params });
     return response.data;
@@ -161,7 +184,7 @@ export const getPublicAstrologersListAPI = async (
     page: String(page),
     limit: String(limit),
   });
-  if (search) params.append('search', search);
+  if (search) params.append('search', sanitizeAdminSearchTerm(search));
   const res2 = await userPublicApi.get(`/users/get?${params.toString()}`);
   if (res2?.data?.success || res2?.data?.data) {
     return res2.data;
@@ -180,7 +203,7 @@ export const getCustomersListAPI = async (
     params.append('page', String(page));
     params.append('limit', String(limit));
     if (search) {
-      params.append('search', search);
+      params.append('search', sanitizeAdminSearchTerm(search));
     }
     if (status) {
       params.append('status', status);
@@ -200,7 +223,7 @@ export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMod
     params.append('page', '1');
     params.append('limit', '100');
 
-    if (search) params.append('search', search);
+    if (search) params.append('search', sanitizeAdminSearchTerm(search));
     if (serviceId && !isNaN(Number(serviceId))) {
       params.append('serviceId', String(Number(serviceId)));
     }

@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import React from "react";
+import { formatPricingUnit } from "@/api/productControllers";
 
 interface ProductTableRowProps {
   product: any;
@@ -87,7 +88,7 @@ export default function ProductTableRow({
       {/* Quantity & Unit */}
       <TableCell>
         <Chip
-          label={`${product.quantity ?? 1} ${pricingUnit}`}
+          label={`${product.quantity ?? 1} ${formatPricingUnit(pricingUnit)}`}
           size="small"
           sx={{
             bgcolor: "#f1f5f9",

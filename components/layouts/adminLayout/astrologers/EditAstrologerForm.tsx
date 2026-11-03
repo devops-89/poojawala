@@ -356,11 +356,7 @@ export default function EditAstrologerForm({ id }: EditAstrologerFormProps) {
           raw = raw.data;
         }
         const u = raw?.user || raw;
-        if (u?.isAdminCreated || u?.is_admin_created || u?.isadmincreated) {
-          showSnackbar("Admin created astrologers cannot be edited", "warning");
-          router.push("/admin/astrologers");
-          return;
-        }
+
         const profile = u.astrologerProfile || u.profile || {};
         const bankAccountsList =
           u.bankAccounts ||

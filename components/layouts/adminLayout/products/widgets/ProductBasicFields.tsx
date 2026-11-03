@@ -1,7 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 
-import { PRODUCT_PRICING_UNIT } from "@/api/productControllers";
+import { PRODUCT_PRICING_UNIT, formatPricingUnit } from "@/api/productControllers";
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
@@ -224,7 +224,7 @@ export default function ProductBasicFields() {
                 value={unit}
                 sx={{ fontFamily: FONTS.OUTFIT }}
               >
-                {unit}
+                {formatPricingUnit(unit)}
               </MenuItem>
             ))}
           </Select>

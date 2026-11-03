@@ -229,14 +229,15 @@ export default function AdminComplaintsContent() {
       id: "status",
       label: "STATUS",
       render: (item) => {
+        const currentStatus = (item.status || "OPEN").toUpperCase().trim();
         const isFinal =
-          item.status === COMPLAINT_STATUS.REJECTED ||
-          item.status === COMPLAINT_STATUS.CLOSED ||
-          item.status === COMPLAINT_STATUS.RESOLVED;
+          currentStatus === COMPLAINT_STATUS.REJECTED ||
+          currentStatus === COMPLAINT_STATUS.CLOSED ||
+          currentStatus === COMPLAINT_STATUS.RESOLVED;
 
         const availableStatuses = Object.values(COMPLAINT_STATUS).filter((s) => {
           // If complaint is currently UNDER_REVIEW, OPEN is not an allowed transition
-          if (item.status === COMPLAINT_STATUS.UNDER_REVIEW && s === COMPLAINT_STATUS.OPEN) {
+          if (currentStatus === COMPLAINT_STATUS.UNDER_REVIEW && s === COMPLAINT_STATUS.OPEN) {
             return false;
           }
           return true;
@@ -244,15 +245,15 @@ export default function AdminComplaintsContent() {
 
         return (
           <AdminStatusSelect
-            value={item.status}
+            value={currentStatus}
             readOnly={isFinal}
             options={availableStatuses.map((s) => ({
               value: s,
               label: s.replace(/_/g, " "),
             }))}
             onChange={(newStatus) => {
-              if (newStatus === item.status) return;
-              setStatusUpdateTarget({ id: item.id, newStatus });
+              if (newStatus.toUpperCase() === currentStatus) return;
+              setStatusUpdateTarget({ id: item.id, newStatus: newStatus.toUpperCase() });
               setAdminRemark("");
               setRemarkTouched(false);
             }}

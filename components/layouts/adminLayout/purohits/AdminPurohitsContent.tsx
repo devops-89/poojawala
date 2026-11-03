@@ -26,7 +26,7 @@ import AdminTableActionMenu from "../common/AdminTableActionMenu";
 const STATUS_TABS = [
   { id: "All", label: "All" },
   { id: "Approved", label: "Approved" },
-  { id: "Pending Approval", label: "Pending Approval" },
+  { id: "Pending Approval", label: "Pending" },
   { id: "Rejected", label: "Rejected" },
 ];
 
@@ -67,7 +67,7 @@ export default function AdminPurohitsContent() {
       setLoading(true);
       let backendFilterStatus: string | undefined = undefined;
       if (statusFilter === "Approved") backendFilterStatus = "APPROVED";
-      else if (statusFilter === "Pending Approval")
+      else if (statusFilter === "Pending")
         backendFilterStatus = "PENDING";
       else if (statusFilter === "Rejected") backendFilterStatus = "REJECTED";
 
@@ -238,16 +238,16 @@ export default function AdminPurohitsContent() {
         const options =
           purohit.status === "Approved"
             ? [
-                { value: "Approved", label: "Approved" },
-                { value: "Rejected", label: "Rejected" },
-              ]
+              { value: "Approved", label: "Approved" },
+              { value: "Rejected", label: "Rejected" },
+            ]
             : purohit.status === "Rejected"
-            ? [
+              ? [
                 { value: "Rejected", label: "Rejected" },
                 { value: "Approved", label: "Approved" },
               ]
-            : [
-                { value: "Pending Approval", label: "Pending Approval" },
+              : [
+                { value: "Pending", label: "Pending" },
                 { value: "Approved", label: "Approved" },
                 { value: "Rejected", label: "Rejected" },
               ];
@@ -308,8 +308,8 @@ export default function AdminPurohitsContent() {
       render: (purohit) => {
         const isAdminCreated = Boolean(
           purohit?.isAdminCreated ||
-            purohit?.is_admin_created ||
-            purohit?.isadmincreated
+          purohit?.is_admin_created ||
+          purohit?.isadmincreated
         );
 
         return (

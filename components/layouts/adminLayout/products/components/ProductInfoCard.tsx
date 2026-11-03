@@ -9,6 +9,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { Box, Divider, Paper, Typography } from "@mui/material";
 import React from "react";
+import { formatPricingUnit } from "@/api/productControllers";
 
 export interface ProductInfoCardProps {
   product: any;
@@ -159,7 +160,7 @@ export default function ProductInfoCard({ product }: ProductInfoCardProps) {
                 fontFamily: FONTS.OUTFIT,
               }}
             >
-              {pricingUnit}
+              {formatPricingUnit(pricingUnit) || pricingUnit}
             </Typography>
           </Box>
         </Box>

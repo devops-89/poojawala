@@ -6,6 +6,8 @@ import {
   Chip,
   CircularProgress,
   IconButton,
+  Tab,
+  Tabs,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -21,8 +23,9 @@ import {
   getAllPaymentsAPI,
 } from "@/api/paymentControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
-import { COLORS } from "@/utils/enums";
+import { COLORS, PAYMENT_STATUS } from "@/utils/enums";
 import { FONTS } from "@/utils/fonts";
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 import {
   getTablePaginationState,
   syncTablePagination,
@@ -34,6 +37,18 @@ const PAYMENT_TYPE_TABS = [
   { id: "PRODUCT_PAYMENT", label: "Product Orders" },
   { id: "ASTROLOGY_PAYMENT", label: "Astrology Bookings" },
 ];
+
+const PAYMENT_STATUS_TABS = [
+  { id: "ALL", label: "All" },
+  { id: PAYMENT_STATUS.CREATED, label: "Created" },
+  { id: PAYMENT_STATUS.PENDING, label: "Pending" },
+  { id: PAYMENT_STATUS.SUCCESS, label: "Success" },
+  { id: PAYMENT_STATUS.FAILED, label: "Failed" },
+];
+
+export const cleanPaymentSearchTerm = (term: string): string => {
+  return sanitizeAdminSearchTerm(term);
+};
 
 export default function AdminPaymentsContent() {
   const { showSnackbar } = useSnackbarStore();
@@ -49,6 +64,7 @@ export default function AdminPaymentsContent() {
   const [loading, setLoading] = useState(true);
 
   const [paymentTypeTab, setPaymentTypeTab] = useState<string>("ALL");
+  const [statusTab, setStatusTab] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState("");
   const [downloadingId, setDownloadingId] = useState<string | number | null>(null);
 
@@ -56,20 +72,27 @@ export default function AdminPaymentsContent() {
   useEffect(() => {
     syncTablePagination(
       "admin_payments_state",
-      { page, rowsPerPage },
-      { defaultLimit: 10 },
+      { page, rowsPerPage, status: statusTab },
+      {
+        defaultLimit: 10,
+        defaultStatus: "ALL",
+        extraUrlParams: {
+          type: paymentTypeTab !== "ALL" ? paymentTypeTab : null,
+        },
+      },
     );
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, statusTab, paymentTypeTab]);
 
   const fetchPayments = useCallback(async () => {
     setLoading(true);
     try {
+      const cleanedSearch = cleanPaymentSearchTerm(searchTerm);
       const res = await getAllPaymentsAPI(
         page + 1,
         rowsPerPage,
-        searchTerm,
-        undefined,
-        paymentTypeTab,
+        cleanedSearch,
+        statusTab !== "ALL" ? statusTab : undefined,
+        paymentTypeTab !== "ALL" ? paymentTypeTab : undefined,
       );
 
       let list: any[] = [];
@@ -78,38 +101,84 @@ export default function AdminPaymentsContent() {
       // Extract list and total from various possible response formats
       if (Array.isArray(res?.data?.items)) {
         list = res.data.items;
-        total = res.data.pagination?.total || list.length;
+        total = res.data.pagination?.total ?? list.length;
       } else if (Array.isArray(res?.items)) {
         list = res.items;
-        total = res.pagination?.total || list.length;
+        total = res.pagination?.total ?? list.length;
       } else if (Array.isArray(res?.data?.data)) {
         list = res.data.data;
-        total = res.data.meta?.total || res.data.total || list.length;
+        total = res.data.meta?.total ?? res.data.total ?? list.length;
       } else if (Array.isArray(res?.data)) {
         list = res.data;
-        total = res.meta?.total || res.total || list.length;
+        total = res.meta?.total ?? res.total ?? list.length;
       } else if (Array.isArray(res?.data?.payments)) {
         list = res.data.payments;
-        total = res.data.total || list.length;
+        total = res.data.total ?? list.length;
       } else if (Array.isArray(res?.payments)) {
         list = res.payments;
-        total = res.total || list.length;
+        total = res.total ?? list.length;
       } else if (Array.isArray(res)) {
         list = res;
         total = res.length;
       }
 
-      // Client-side fallback filter if backend does not filter by paymentType
-      if (paymentTypeTab !== "ALL") {
-        const filteredList = list.filter((item: any) => {
+      // Client-side fallback filter if backend does not filter by paymentType or status
+      const activeType = paymentTypeTab;
+      const activeStatus = statusTab;
+
+      let filteredList = list;
+
+      if (activeType !== "ALL") {
+        filteredList = filteredList.filter((item: any) => {
           const type = String(item.paymentType || "").toUpperCase();
-          return type === paymentTypeTab;
+          return type === activeType;
+        });
+      }
+
+      if (activeStatus !== "ALL") {
+        filteredList = filteredList.filter((item: any) => {
+          const st = String(item.status || item.paymentStatus || "").toUpperCase();
+          return st === activeStatus;
+        });
+      }
+
+      if (cleanedSearch) {
+        const q = cleanedSearch.toLowerCase();
+        const searchFiltered = filteredList.filter((item: any) => {
+          const rawId = String(item.id ?? "").toLowerCase();
+          const payId = String(item.paymentId ?? "").toLowerCase();
+          const customer = String(
+            item.customer ||
+              (item.customerDetails
+                ? `${item.customerDetails.firstName || ""} ${item.customerDetails.lastName || ""}`
+                : "") ||
+              item.user?.name ||
+              item.userName ||
+              ""
+          ).toLowerCase();
+          const phone = String(
+            item.customerDetails?.phone || item.user?.phone || ""
+          ).toLowerCase();
+          const rzpId = String(
+            item.razorpayPaymentId || item.razorpayOrderId || ""
+          ).toLowerCase();
+          return (
+            rawId.includes(q) ||
+            payId.includes(q) ||
+            customer.includes(q) ||
+            phone.includes(q) ||
+            rzpId.includes(q)
+          );
         });
 
-        if (filteredList.length !== list.length) {
-          list = filteredList;
-          total = filteredList.length;
+        if (searchFiltered.length < filteredList.length) {
+          filteredList = searchFiltered;
         }
+      }
+
+      if (filteredList.length !== list.length) {
+        list = filteredList;
+        total = filteredList.length;
       }
 
       setPayments(list);
@@ -123,7 +192,7 @@ export default function AdminPaymentsContent() {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, searchTerm, paymentTypeTab, showSnackbar]);
+  }, [page, rowsPerPage, searchTerm, paymentTypeTab, statusTab, showSnackbar]);
 
   useEffect(() => {
     fetchPayments();
@@ -477,7 +546,43 @@ export default function AdminPaymentsContent() {
         onActionButtonClick={fetchPayments}
       />
 
-      {/* 2. Admin DataTable with Tabs attached directly to table container */}
+      {/* 2. Primary Payment Type Tabs (outside table card, matching Services layout) */}
+      <Box sx={{ borderBottom: "1px solid #E2E8F0" }}>
+        <Tabs
+          value={paymentTypeTab}
+          onChange={(_, val) => {
+            setPaymentTypeTab(val);
+            setPage(0);
+          }}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            "& .MuiTab-root": {
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: "15px",
+              textTransform: "none",
+              color: "#64748B",
+              minHeight: "48px",
+              px: 3,
+              "&.Mui-selected": {
+                color: COLORS.PRIMARY,
+              },
+            },
+            "& .MuiTabs-indicator": {
+              bgcolor: COLORS.PRIMARY,
+              height: "3px",
+              borderRadius: "3px 3px 0 0",
+            },
+          }}
+        >
+          {PAYMENT_TYPE_TABS.map((tab) => (
+            <Tab key={tab.id} value={tab.id} label={tab.label} />
+          ))}
+        </Tabs>
+      </Box>
+
+      {/* 3. Admin DataTable with Status Tabs attached directly to table container */}
       <AdminDataTable
         columns={columns}
         data={payments}
@@ -490,10 +595,10 @@ export default function AdminPaymentsContent() {
           setRowsPerPage(newLimit);
           setPage(0);
         }}
-        tabs={PAYMENT_TYPE_TABS}
-        activeTab={paymentTypeTab}
+        tabs={PAYMENT_STATUS_TABS}
+        activeTab={statusTab}
         onTabChange={(tabId) => {
-          setPaymentTypeTab(tabId);
+          setStatusTab(tabId);
           setPage(0);
         }}
         minWidth={950}

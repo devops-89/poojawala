@@ -15,11 +15,9 @@ interface PurohitServicesFiltersProps {
   stateOptions?: string[];
   selectedState?: string;
   onStateChange: (value: string) => void;
-  // City filter
   cityOptions?: string[];
   selectedCity?: string;
   onCityChange: (value: string) => void;
-  // Mode filter (Online / Offline / All Modes)
   selectedMode?: string;
   onModeChange: (value: string) => void;
   modeOptions?: string[];
@@ -84,7 +82,6 @@ export default function PurohitServicesFilters({
         />
       </Grid>
 
-      {/* Online / Offline Mode Filter */}
       <Grid size={{ xs: 12, sm: 4 }}>
         <Autocomplete
           openOnFocus

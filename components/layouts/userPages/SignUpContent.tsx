@@ -15,7 +15,7 @@ import {
 } from "@/utils/helpers";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -71,23 +71,83 @@ const step1ValidationSchema = Yup.object().shape({
 
 const fullValidationSchema = step1ValidationSchema.concat(
   Yup.object().shape({
-    addressLabel: Yup.string().required("Address label is required"),
+    addressLabel: Yup.string().trim().required("Address label is required"),
     fullAddress: Yup.string()
-      .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
-      .required("Full address is required"),
-    city: Yup.string().required("City is required"),
-    state: Yup.string().required("State is required"),
-    pincode: Yup.string().required("Pincode is required"),
+      .trim()
+      .required("Full address is required")
+      .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE),
+    city: Yup.string().trim().required("City is required"),
+    state: Yup.string().trim().required("State is required"),
+    pincode: Yup.string()
+      .trim()
+      .matches(/^[1-9][0-9]{5}$/, "Please enter a valid 6-digit Indian pincode")
+      .required("Pincode is required"),
   }),
 );
 
-export default function SignUpContent() {
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
+function FormikValuesPersist({ currentStep }: { currentStep: number }) {
+  const { values } = useFormikContext<any>();
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("signup_form_values", JSON.stringify(values));
+      } catch (e) {}
+    }
+  }, [values, currentStep]);
+  return null;
+}
+
+export default function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showSnackbar } = useSnackbarStore();
+
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+
+  const [formInitialValues, setFormInitialValues] = useState<any>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    dob: "",
+    birthPlace: "",
+    rashi: "",
+    gotra: "",
+    password: "",
+    confirmPassword: "",
+
+    venueType: "HOME",
+    addressLabel: "Home",
+    fullAddress: "",
+    city: "",
+    state: "",
+    pincode: "",
+    latitude: "",
+    longitude: "",
+    isDefault: true,
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved =
+          sessionStorage.getItem("signup_form_values") ||
+          sessionStorage.getItem("signupData");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setFormInitialValues((prev: any) => ({ ...prev, ...parsed }));
+        }
+      } catch (e) {}
+
+      const stepParam = searchParams?.get("step");
+      const savedStep = sessionStorage.getItem("signup_current_step");
+      if (stepParam === "2" || savedStep === "2") {
+        setCurrentStep(2);
+      }
+    }
+  }, [searchParams]);
 
   let redirectParam = searchParams?.get("redirect");
   const serviceIdParam = searchParams?.get("serviceId");
@@ -115,31 +175,7 @@ export default function SignUpContent() {
     }
   }, [searchParams, showSnackbar]);
 
-  useEffect(() => {
-    const userStr = sessionStorage.getItem("user");
-    if (userStr) {
-      try {
-        const userObj = JSON.parse(userStr);
-        const role = userObj?.role;
-        if (role === "CUSTOMER") {
-          if (redirectParam && redirectParam.startsWith("/customer/")) {
-            sessionStorage.removeItem("post_login_redirect");
-            router.replace(redirectParam);
-          } else {
-            router.replace("/customer/dashboard");
-          }
-        } else if (role === "PUROHIT") {
-          router.replace("/partner/dashboard");
-        } else if (
-          role === "ADMIN" ||
-          role === "SUPERADMIN" ||
-          role === "SUPER_ADMIN"
-        ) {
-          router.replace("/admin/dashboard");
-        }
-      } catch (e) {}
-    }
-  }, [router, redirectParam]);
+// Permitting access to /sign-up even if already logged in
 
   const handleFetchCurrentLocation = (setFieldValue: any) => {
     if (!navigator.geolocation) {
@@ -355,7 +391,8 @@ export default function SignUpContent() {
             }}
           >
             <Formik
-              initialValues={initialValues}
+              initialValues={formInitialValues}
+              enableReinitialize={true}
               validationSchema={fullValidationSchema}
               validateOnChange={true}
               validateOnBlur={true}
@@ -399,6 +436,16 @@ export default function SignUpContent() {
                       abortEarly: false,
                     });
                     setCurrentStep(2);
+                    if (typeof window !== "undefined") {
+                      sessionStorage.setItem("signup_current_step", "2");
+                      sessionStorage.setItem(
+                        "signup_form_values",
+                        JSON.stringify(values),
+                      );
+                      const url = new URL(window.location.href);
+                      url.searchParams.set("step", "2");
+                      window.history.replaceState({}, "", url.toString());
+                    }
                   } catch (err: any) {
                     if (err.inner) {
                       const touchedObj: any = {};
@@ -407,10 +454,16 @@ export default function SignUpContent() {
                       });
                       setTouched(touchedObj);
                     }
-                    showSnackbar(
-                      "Please fill all required personal details correctly",
-                      "error",
-                    );
+                  }
+                };
+
+                const handleStepBack = () => {
+                  setCurrentStep(1);
+                  if (typeof window !== "undefined") {
+                    sessionStorage.setItem("signup_current_step", "1");
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete("step");
+                    window.history.replaceState({}, "", url.toString());
                   }
                 };
 
@@ -435,9 +488,10 @@ export default function SignUpContent() {
                     }}
                   >
                     {/* Header with Step Progress */}
+                    <FormikValuesPersist currentStep={currentStep} />
                     <SignUpStepperHeader
                       currentStep={currentStep}
-                      onStep1Click={() => setCurrentStep(1)}
+                      onStep1Click={handleStepBack}
                       onStep2Click={handleStep1Next}
                     />
 
@@ -454,7 +508,7 @@ export default function SignUpContent() {
                         onFetchLocation={() =>
                           handleFetchCurrentLocation(setFieldValue)
                         }
-                        onBack={() => setCurrentStep(1)}
+                        onBack={handleStepBack}
                       />
                     )}
                   </Box>

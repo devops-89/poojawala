@@ -106,9 +106,9 @@ export const sanitizeEmailInput = (val: string): string => {
  * Strict Address validation regex and helpers:
  * Strictly allows letters, digits, whitespace, and standard address punctuation (,, ., -, /, #, ', :, (, ), &)
  */
-export const ADDRESS_STRICT_REGEX = /^[a-zA-Z0-9\s,&.\-/#':()]+$/;
+export const ADDRESS_STRICT_REGEX = /^[\p{L}\p{N}\s,&.\-/#':()+;"_[\]@!]+$/u;
 export const ADDRESS_STRICT_MESSAGE =
-  "Address can only contain letters, numbers, spaces, and standard address characters (, . - / # ' : () &)";
+  "Address can only contain letters, numbers, spaces, and standard address characters (, . - / # ' : () & + \" ; _ [ ] @ !)";
 
 export const allowOnlyAddressCharsOnKeyDown = (
   e: React.KeyboardEvent<HTMLElement>,
@@ -130,13 +130,13 @@ export const allowOnlyAddressCharsOnKeyDown = (
     return;
   }
   // Allow alphanumeric, whitespace, and standard address characters
-  if (!/^[a-zA-Z0-9\s,&.\-/#':()]$/.test(e.key)) {
+  if (!/^[\p{L}\p{N}\s,&.\-/#':()+;"_[\]@!]$/u.test(e.key)) {
     e.preventDefault();
   }
 };
 
 export const sanitizeAddressInput = (val: string): string => {
-  return (val || "").replace(/[^a-zA-Z0-9\s,&.\-/#':()]/g, "");
+  return (val || "").replace(/[^\p{L}\p{N}\s,&.\-/#':()+;"_[\]@!]/gu, "");
 };
 
 /**
@@ -181,9 +181,9 @@ export const sanitizeTitleInput = (val: string): string => {
  * Allows letters, numbers, spaces, newlines, and standard text punctuation (., ! ? ' " : ; () & / % -)
  * Disallows symbols like @ # $ ^ * < > { } [ ] _ = + | ~ `
  */
-export const DESCRIPTION_STRICT_REGEX = /^[a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]+$/;
+export const DESCRIPTION_STRICT_REGEX = /^[^<>]+$/;
 export const DESCRIPTION_STRICT_MESSAGE =
-  "Description cannot contain special characters like @, #, $, ^, *, <, >, {, }, [, ], =, +, ~, |";
+  "Description cannot contain < or > characters";
 
 export const allowOnlyDescriptionCharsOnKeyDown = (
   e: React.KeyboardEvent<HTMLElement>,
@@ -204,13 +204,13 @@ export const allowOnlyDescriptionCharsOnKeyDown = (
   ) {
     return;
   }
-  if (!/^[a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]$/.test(e.key)) {
+  if (e.key === "<" || e.key === ">") {
     e.preventDefault();
   }
 };
 
 export const sanitizeDescriptionInput = (val: string): string => {
-  return (val || "").replace(/[^a-zA-Z0-9\s.,!?'":;()&\/%\n\r\-]/g, "");
+  return (val || "").replace(/[<>]/g, "");
 };
 
 export interface BankFormValues {
@@ -361,3 +361,19 @@ export const formatServicePriceRange = (service: any, prefix = "₹"): string =>
   return `${prefix}0`;
 };
   
+
+export const sanitizeAdminSearchTerm = (term?: string | null): string => {
+  if (!term) return "";
+  const trimmed = String(term).trim();
+  const knownPrefixMatch = trimmed.match(
+    /^[#\s]*(?:b|pay|ast|p|ord|comp|c|usr|u|tmp|t|srv|s|rev)[-_\s]*(\d+)$/i
+  );
+  if (knownPrefixMatch) {
+    return knownPrefixMatch[1];
+  }
+  const genericHyphenMatch = trimmed.match(/^[#\s]*[a-zA-Z]{1,4}[-_]+(\d+)$/);
+  if (genericHyphenMatch) {
+    return genericHyphenMatch[1];
+  }
+  return trimmed;
+};

@@ -116,7 +116,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
   const initMap = async () => {
     if (!mapContainerRef.current) return;
-
+    try {
     if (mapInstanceRef.current) {
       mapInstanceRef.current.remove();
       mapInstanceRef.current = null;
@@ -170,6 +170,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       placeMarkerOnMap(lat, lng);
       reverseGeocode(lat, lng);
     });
+    } catch (_err) {}
   };
 
   const placeMarkerOnMap = (lat: number, lng: number, zoom?: number) => {
@@ -237,7 +238,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
         setAddressData((prev) => ({
           ...prev,
-          fullAddress: displayAddress,
+          fullAddress: sanitizeAddressInput(displayAddress),
           city: rawCity,
           state: a.state || prev.state,
           pincode: (a.postcode || prev.pincode).replace(/\s/g, ""),
@@ -587,9 +588,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         pincode: pin,
         city: fetchedCity || prev.city,
         state: fetchedState || prev.state,
-        fullAddress: prev.fullAddress?.trim()
-          ? prev.fullAddress
-          : defaultAddressStr,
+        fullAddress: sanitizeAddressInput(defaultAddressStr) || prev.fullAddress,
         latitude: lat.toFixed(6),
         longitude: lon.toFixed(6),
       }));

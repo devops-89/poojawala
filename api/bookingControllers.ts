@@ -1,4 +1,5 @@
 import { attachCsrfHeaders, paymentSecuredApi, userSecuredApi } from "./config";
+import { sanitizeAdminSearchTerm } from "@/utils/helpers";
 
 export const createBookingByAdminAPI = async (data: any) => {
   try {
@@ -93,7 +94,10 @@ export const getAllBookingsByAdminAPI = async (
       limit: limit.toString(),
     });
     if (status && status !== 'All Bookings') params.append('status', status.toUpperCase());
-    if (search) params.append('search', search);
+    if (search && search.trim()) {
+      const cleanSearch = sanitizeAdminSearchTerm(search);
+      params.append('search', cleanSearch);
+    }
     if (bookingType) params.append('bookingType', bookingType);
 
     const response = await userSecuredApi.get(`/bookings/all?${params.toString()}`);

@@ -116,7 +116,7 @@ export default function SignUpStep2Address({
 
   const initialGeoData = useMemo(
     () => ({
-      addressLabel: values.addressLabel || "Home",
+      addressLabel: values.addressLabel || "",
       fullAddress: values.fullAddress || "",
       city: values.city || "",
       state: values.state || "",
@@ -491,7 +491,7 @@ export default function SignUpStep2Address({
               },
             }}
           >
-            {isSubmitting ? "Signing Up..." : "Sign Up & Send OTP"}
+            {isSubmitting ? "Sending OTP..." : "Send OTP"}
           </Button>
         </Grid>
       </Grid>

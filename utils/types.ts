@@ -62,6 +62,7 @@ export interface AdminDataTableProps<T = any> {
   tabs?: TabOption[];
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
+  extraHeader?: React.ReactNode;
   minWidth?: number | string;
   emptyMessage?: string;
   keyExtractor?: (item: T, index?: number) => string | number;

@@ -69,9 +69,10 @@ const fieldSx = {
 
 interface Step2Props {
   formik: FormikProps<any>;
+  hideTitle?: boolean;
 }
 
-export default function Step2PurohitProfile({ formik }: Step2Props) {
+export default function Step2PurohitProfile({ formik, hideTitle = false }: Step2Props) {
   const [platformCommission, setPlatformCommission] = useState<string>('');
 
   useEffect(() => {
@@ -207,20 +208,22 @@ export default function Step2PurohitProfile({ formik }: Step2Props) {
 
   return (
     <Box>
-      <Typography
-        variant="h5"
-        sx={{
-          fontFamily: FONTS.OUTFIT,
-          fontWeight: 700,
-          mb: 3,
-        }}
-      >
-        {formik.values.role === USER_ROLE.ASTROLOGER
-          ? 'Astrologer Profile'
-          : formik.values.role === USER_ROLE.PUROHIT
-          ? 'Purohit Profile'
-          : 'Professional Profile'}
-      </Typography>
+      {!hideTitle && (
+        <Typography
+          variant="h5"
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 700,
+            mb: 3,
+          }}
+        >
+          {formik.values.role === USER_ROLE.ASTROLOGER
+            ? 'Astrologer Profile'
+            : formik.values.role === USER_ROLE.PUROHIT
+            ? 'Purohit Profile'
+            : 'Professional Profile'}
+        </Typography>
+      )}
 
       <Grid container spacing={2.5}>
         {/* State */}

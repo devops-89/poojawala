@@ -1,5 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
+import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 import { customerCreateBookingAPI } from "@/api/bookingControllers";
 import { getAllServicesAPI } from "@/api/serviceControllers";
 import { getCustomerAddressesAPI } from "@/api/userControllers";
@@ -52,7 +53,7 @@ export const ServicesPage = () => {
     scheduledAt: "",
     specialInstructions: "",
     bookingMode: "OFFLINE",
-    paymentOption: "TOKEN",
+    paymentOption: "",
     language: "Hindi",
   });
 
@@ -187,7 +188,7 @@ export const ServicesPage = () => {
       scheduledAt: "",
       specialInstructions: "",
       bookingMode: "ONLINE",
-      paymentOption: "TOKEN",
+      paymentOption: "",
       language: "Hindi",
     });
   };
@@ -195,6 +196,34 @@ export const ServicesPage = () => {
   const handleBookNowSubmit = async () => {
     if (!bookingForm.scheduledAt) {
       showSnackbar("Please select a scheduled date and time", "error");
+      return;
+    }
+    const scheduledTimeMs = new Date(bookingForm.scheduledAt).getTime();
+    const nowMs = Date.now();
+    if (scheduledTimeMs <= nowMs) {
+      showSnackbar("The selected time slot has already passed. Please select a future time slot.", "error");
+      return;
+    }
+    if (scheduledTimeMs < nowMs + 2 * 60 * 60 * 1000) {
+      showSnackbar("Pooja bookings require at least 2 hours advance booking. Please choose a future time slot.", "error");
+      return;
+    }
+
+    const targetService = filteredServices.find((s) => s.id === selectedServiceId);
+    const serviceLangs = extractServiceLanguages(targetService?.languages);
+    if (serviceLangs.length > 0 && bookingForm.language && !serviceLangs.includes(bookingForm.language)) {
+      showSnackbar(
+        `Selected language "${bookingForm.language}" is not available for this service. Please select from: ${serviceLangs.join(", ")}`,
+        "error"
+      );
+      return;
+    }
+
+    if (!bookingForm.paymentOption) {
+      showSnackbar(
+        "Please select a payment option (Token Amount or Full Payment)",
+        "error"
+      );
       return;
     }
     setSubmittingBooking(true);
@@ -229,7 +258,7 @@ export const ServicesPage = () => {
         customerAddressId: customerAddressId ? Number(customerAddressId) : null,
         specialInstructions: bookingForm.specialInstructions || "",
         plan: "BASIC",
-        paymentOption: bookingForm.paymentOption || "TOKEN",
+        paymentOption: bookingForm.paymentOption,
         bookingMode: finalBookingMode,
         customFields: {
           language: bookingForm.language || "Hindi",

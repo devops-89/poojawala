@@ -18,11 +18,13 @@ import { allowOnlyLettersOnKeyDown, sanitizeLettersOnly } from '@/utils/helpers'
 
 interface Step3Props {
   formik: FormikProps<any>;
+  hideTitle?: boolean;
 }
 
-export default function Step3BankDetails({ formik }: Step3Props) {
+export default function Step3BankDetails({ formik, hideTitle = false }: Step3Props) {
   return (
     <Box>
+      {!hideTitle && (
       <Typography
         variant="h5"
         sx={{
@@ -33,6 +35,7 @@ export default function Step3BankDetails({ formik }: Step3Props) {
       >
         Bank or UPI Details
       </Typography>
+      )}
 
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
         <FormControl component="fieldset">

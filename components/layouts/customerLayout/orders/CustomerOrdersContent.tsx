@@ -37,35 +37,45 @@ import CustomerOrdersHero from "./CustomerOrdersHero";
 import CustomerOrdersTrackingSteps from "./CustomerOrdersTrackingSteps";
 
 const formatApiOrder = (raw: any): CustomerOrder => {
-  const items = Array.isArray(raw.items)
-    ? raw.items.map((it: any) => ({
-        id: String(it.id || it.productId),
-        productId: Number(it.productId || it.product?.id || it.id),
-        title:
-          it.productNameSnapshot ||
-          it.product?.name ||
-          it.productName ||
-          it.name ||
-          it.title ||
-          "Pooja Item",
-        quantity: Number(it.quantity) || 1,
-        price:
-          Number(
-            it.unitPriceSnapshot ||
-              it.product?.price ||
-              it.unitPrice ||
-              it.price ||
-              it.totalAmount,
-          ) || 0,
-        image:
-          it.productImageSnapshot ||
-          it.product?.imageUrl ||
-          it.productImage ||
-          it.image ||
-          it.imageUrl ||
-          "/images/productsHero.webp",
-      }))
-    : [];
+  const rawItemsList = Array.isArray(raw.items)
+    ? raw.items
+    : Array.isArray(raw.orderItems)
+      ? raw.orderItems
+      : [];
+
+  const items = rawItemsList.map((it: any) => ({
+    id: String(it.id || it.productId),
+    productId: Number(it.productId || it.product?.id || it.id),
+    title:
+      it.productNameSnapshot ||
+      it.productName ||
+      it.product?.name ||
+      it.product?.title ||
+      it.name ||
+      it.title ||
+      "Pooja Item",
+    quantity: Number(it.quantity) || 1,
+    price:
+      Number(
+        it.unitPriceSnapshot ||
+          it.unitPrice ||
+          it.product?.price ||
+          it.product?.unitPrice ||
+          it.price ||
+          (it.totalAmount && it.quantity
+            ? Number(it.totalAmount) / Number(it.quantity)
+            : it.totalAmount) ||
+          0
+      ) || 0,
+    image:
+      it.productImageSnapshot ||
+      it.productImage ||
+      it.product?.imageUrl ||
+      it.product?.image ||
+      it.image ||
+      it.imageUrl ||
+      "/images/productsHero.webp",
+  }));
 
   const rawStatus = (
     raw.orderStatus ||
@@ -180,6 +190,8 @@ export default function CustomerOrdersContent() {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const addItemToCart = useCartStore((state) => state.addItem);
   const openCartDrawer = useCartStore((state) => state.openCart);
+  const fetchCartFromApi = useCartStore((state) => state.fetchCartFromApi);
+  const setCartFromApi = useCartStore((state) => state.setCartFromApi);
 
   const getInitialState = () => {
     const paramStatus = searchParams.get("status") as OrderStatusFilter | null;
@@ -438,7 +450,7 @@ export default function CustomerOrdersContent() {
       showSnackbar(`Reordering items from ${order.orderNumber}...`, "info");
 
       // Execute POST /cart/items API calls sending exact productId and quantity for each item
-      await Promise.all(
+      const responses = await Promise.all(
         order.items.map((item) => {
           const targetProductId = item.productId ?? item.id;
           const targetQty = Number(item.quantity) || 1;
@@ -446,21 +458,16 @@ export default function CustomerOrdersContent() {
         }),
       );
 
-      // Sync Zustand Cart Store with exact productId and quantity
-      order.items.forEach((item) => {
-        const targetProductId = item.productId ?? item.id;
-        const targetQty = Number(item.quantity) || 1;
-        addItemToCart({
-          id: String(targetProductId),
-          title: item.title,
-          price: item.price,
-          image: item.image,
-          quantity: targetQty,
-        });
-      });
+      // Update cart store with the latest response from server
+      if (responses.length > 0 && responses[responses.length - 1]) {
+        setCartFromApi(responses[responses.length - 1]);
+      }
+
+      // Always perform a full cart refresh from the server to guarantee all prices, images, and subtotals are 100% accurate
+      await fetchCartFromApi(true);
 
       showSnackbar(
-        `Successfully reordered ${order.items.length} items from ORD-${order.id}!`,
+        `Successfully reordered ${order.items.length} items from ${order.orderNumber || `ORD-${order.id}`}!`,
         "success",
       );
       openCartDrawer();
