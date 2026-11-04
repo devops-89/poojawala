@@ -60,7 +60,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
       }
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        window.location.href = "/partner";
+        window.location.href = "/sign-in";
       }, 300);
     }
   };

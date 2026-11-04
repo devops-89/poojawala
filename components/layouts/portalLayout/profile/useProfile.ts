@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   addBankAccountAPI,
   addServiceAreaAPI,
@@ -13,7 +13,7 @@ import {
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
-import { validateBankForm, extractBackendErrorMessage } from "@/utils/helpers";
+import { validateBankForm, extractBackendErrorMessage, validateAddressPayload, sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
 import { cleanItem, parseList } from "@/components/layouts/adminLayout/astrologers/EditAstrologerForm";
 
 export function useProfile() {
@@ -124,6 +124,32 @@ export function useProfile() {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
+  // Initial Data Baseline for Dirty Tracking
+  const [initialData, setInitialData] = useState<{
+    personal: {
+      firstName: string;
+      lastName: string;
+      username: string;
+      dob: string;
+      birthPlace: string;
+      bio: string;
+    };
+    skills: {
+      city: string;
+      state: string;
+      qualification: string;
+      experienceYears: string;
+      languages: string[];
+      specializations: string[];
+      isOnlineAvailable: boolean;
+      isOfflineAvailable: boolean;
+      rate: string;
+    };
+    documents: {
+      aadhaarNumber: string;
+    };
+  } | null>(null);
+
   useEffect(() => {
     fetchProfile().finally(() => setLoading(false));
   }, [fetchProfile]);
@@ -186,8 +212,113 @@ export function useProfile() {
       setProfileImageUrl(profile.profileImage || null);
       setServiceAreas(profile.serviceAreas || []);
       setBankAccounts(profile.bankAccounts || []);
+
+      setInitialData({
+        personal: {
+          firstName: profile.firstName || "",
+          lastName: profile.lastName || "",
+          username: profile.username || "",
+          dob: formattedDob,
+          birthPlace: profile.birthPlace || "",
+          bio: p.bio || profile.bio || "",
+        },
+        skills: {
+          city: p.city || profile.city || "",
+          state: p.state || profile.state || "",
+          qualification: cleanedQual,
+          experienceYears: (p.experienceYears || profile.experienceYears) ? (p.experienceYears || profile.experienceYears).toString() : "",
+          languages: parseList(rawLangs),
+          specializations: parseList(rawSpecs),
+          isOnlineAvailable: p.isOnlineAvailable ?? profile.isOnlineAvailable ?? true,
+          isOfflineAvailable: p.isOfflineAvailable ?? profile.isOfflineAvailable ?? false,
+          rate: priceStr,
+        },
+        documents: {
+          aadhaarNumber: p.aadhaarNumber || profile.aadhaarNumber || "",
+        },
+      });
     }
   }, [profile]);
+
+  const isPersonalDirty = useMemo(() => {
+    if (!initialData) return false;
+    if (profileImage !== null) return true;
+    const p = initialData.personal;
+    return (
+      firstName.trim() !== p.firstName.trim() ||
+      lastName.trim() !== p.lastName.trim() ||
+      username.trim() !== p.username.trim() ||
+      dob !== p.dob ||
+      birthPlace.trim() !== p.birthPlace.trim() ||
+      bio.trim() !== p.bio.trim()
+    );
+  }, [initialData, profileImage, firstName, lastName, username, dob, birthPlace, bio]);
+
+  const isSkillsDirty = useMemo(() => {
+    if (!initialData) return false;
+    const s = initialData.skills;
+
+    const currentLangs = Array.from(new Set(languages.map(cleanItem).filter(Boolean))).sort();
+    const initLangs = Array.from(new Set(s.languages.map(cleanItem).filter(Boolean))).sort();
+    const langsChanged =
+      currentLangs.length !== initLangs.length ||
+      currentLangs.some((lang, i) => lang !== initLangs[i]);
+
+    const currentSpecs = Array.from(new Set(specializations.map(cleanItem).filter(Boolean))).sort();
+    const initSpecs = Array.from(new Set(s.specializations.map(cleanItem).filter(Boolean))).sort();
+    const specsChanged =
+      currentSpecs.length !== initSpecs.length ||
+      currentSpecs.some((spec, i) => spec !== initSpecs[i]);
+
+    const currentRate = (astrologyPrice || ratePerMinute || "").trim();
+    const initRate = s.rate.trim();
+
+    return (
+      city.trim() !== s.city.trim() ||
+      state.trim() !== s.state.trim() ||
+      qualification.trim() !== s.qualification.trim() ||
+      experienceYears.trim() !== s.experienceYears.trim() ||
+      Boolean(isOnlineAvailable) !== Boolean(s.isOnlineAvailable) ||
+      Boolean(isOfflineAvailable) !== Boolean(s.isOfflineAvailable) ||
+      currentRate !== initRate ||
+      langsChanged ||
+      specsChanged
+    );
+  }, [
+    initialData,
+    city,
+    state,
+    qualification,
+    experienceYears,
+    languages,
+    specializations,
+    isOnlineAvailable,
+    isOfflineAvailable,
+    ratePerMinute,
+    astrologyPrice,
+  ]);
+
+  const isDocumentsDirty = useMemo(() => {
+    if (!initialData) return false;
+    if (
+      aadhaarDoc !== null ||
+      panDoc !== null ||
+      certificateDoc !== null ||
+      templeAffiliationProofDoc !== null
+    ) {
+      return true;
+    }
+    return (
+      aadhaarNumber.trim() !== initialData.documents.aadhaarNumber.trim()
+    );
+  }, [
+    initialData,
+    aadhaarDoc,
+    panDoc,
+    certificateDoc,
+    templeAffiliationProofDoc,
+    aadhaarNumber,
+  ]);
 
   const handleLanguageChange = (event: any) => {
     const {
@@ -292,6 +423,7 @@ export function useProfile() {
       await updateProfileAPI(formData);
       showSnackbar("Profile updated successfully!", "success");
 
+      setProfileImage(null);
       setAadhaarDoc(null);
       setPanDoc(null);
       setCertificateDoc(null);
@@ -310,12 +442,6 @@ export function useProfile() {
 
   const handleSaveAddress = async (overrideData?: any) => {
     const targetData = overrideData || addressForm;
-    const missing = [];
-    if (!targetData.addressLabel?.trim()) missing.push("Address Label");
-    if (!targetData.fullAddress?.trim()) missing.push("Full Address");
-    if (!targetData.city?.trim()) missing.push("City");
-    if (!targetData.state?.trim()) missing.push("State");
-    if (!targetData.pincode?.trim()) missing.push("Pincode");
 
     const finalStreetName =
       targetData.streetName?.trim() ||
@@ -323,12 +449,17 @@ export function useProfile() {
       targetData.fullAddress?.split(",")[0]?.trim() ||
       "Main Area";
 
-    if (finalStreetName.length < 2) {
-      missing.push("Street Name / Area");
-    }
+    const validation = validateAddressPayload({
+      pincode: targetData.pincode,
+      addressLabel: targetData.addressLabel,
+      fullAddress: targetData.fullAddress,
+      streetName: finalStreetName,
+      city: targetData.city,
+      state: targetData.state,
+    });
 
-    if (missing.length > 0) {
-      showSnackbar(`Please fill in required fields: ${missing.join(", ")}`, "error");
+    if (!validation.isValid) {
+      showSnackbar(validation.firstError || "Please check address fields", "error");
       return;
     }
 
@@ -336,7 +467,12 @@ export function useProfile() {
     try {
       const payload: any = {
         ...targetData,
-        streetName: finalStreetName,
+        pincode: sanitizePincodeInput(targetData.pincode),
+        addressLabel: sanitizeAddressLabelInput(targetData.addressLabel),
+        fullAddress: sanitizeAddressInput(targetData.fullAddress),
+        streetName: sanitizeAddressInput(finalStreetName),
+        city: sanitizeLettersOnly(targetData.city),
+        state: sanitizeLettersOnly(targetData.state),
       };
       if (!payload.latitude || payload.latitude === "0" || String(payload.latitude).trim() === "") delete (payload as any).latitude;
       if (!payload.longitude || payload.longitude === "0" || String(payload.longitude).trim() === "") delete (payload as any).longitude;
@@ -397,12 +533,12 @@ export function useProfile() {
     setSelectedAddressId(area.id);
     setAddressForm({
       id: area.id,
-      addressLabel: area.addressLabel || "",
-      streetName: area.streetName || "",
-      fullAddress: area.fullAddress || "",
-      city: area.city || "",
-      state: area.state || "",
-      pincode: area.pincode || "",
+      addressLabel: sanitizeAddressLabelInput(area.addressLabel || ""),
+      streetName: sanitizeAddressInput(area.streetName || ""),
+      fullAddress: sanitizeAddressInput(area.fullAddress || ""),
+      city: sanitizeLettersOnly(area.city || ""),
+      state: sanitizeLettersOnly(area.state || ""),
+      pincode: sanitizePincodeInput(area.pincode || ""),
       isDefault: area.isDefault || false,
       latitude: area.latitude || "",
       longitude: area.longitude || "",
@@ -592,6 +728,9 @@ export function useProfile() {
     setActiveTab,
     loading,
     saving,
+    isPersonalDirty,
+    isSkillsDirty,
+    isDocumentsDirty,
 
     // Personal info
     firstName, setFirstName,

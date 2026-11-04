@@ -1,6 +1,6 @@
 'use client';
 
-import { resendOtpAPI, resetPasswordAPI } from '@/api/authControllers';
+import { resendOtpAPI, resetPasswordAPI, LOGIN_PAGE } from '@/api/authControllers';
 import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { COLORS } from '@/utils/enums';
@@ -47,6 +47,13 @@ export default function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
   const redirect = searchParams.get('redirect') || '/sign-in';
+  const pageParam = searchParams.get('page')?.toUpperCase();
+  const isFromAdmin =
+    pageParam === 'ADMIN_PAGE' ||
+    redirect === '/admin' ||
+    redirect.startsWith('/admin') ||
+    redirect.toLowerCase().includes('admin');
+  const pageType = isFromAdmin ? LOGIN_PAGE.ADMIN_PAGE : LOGIN_PAGE.HOME_PAGE;
 
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const [timer, setTimer] = useState(30);

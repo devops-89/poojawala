@@ -86,7 +86,8 @@ export const getAllBookingsByAdminAPI = async (
   limit: number = 10,
   status?: string,
   search?: string,
-  bookingType: string = 'POOJA'
+  bookingType: string = 'POOJA',
+  bookingMode?: string
 ) => {
   try {
     const params = new URLSearchParams({
@@ -99,6 +100,7 @@ export const getAllBookingsByAdminAPI = async (
       params.append('search', cleanSearch);
     }
     if (bookingType) params.append('bookingType', bookingType);
+    if (bookingMode) params.append('bookingMode', bookingMode.toUpperCase());
 
     const response = await userSecuredApi.get(`/bookings/all?${params.toString()}`);
     return response.data;

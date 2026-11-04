@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import moment from "moment";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { customerCreateBookingAPI } from "@/api/bookingControllers";
@@ -12,6 +15,74 @@ interface UseServiceBookingProps {
   serviceId: number;
   service?: any;
 }
+
+export const getBookingValidationSchema = (
+  activeBookingMode: string,
+  todayStr: string,
+  availableLanguages: string[]
+) =>
+  Yup.object().shape({
+    scheduledDate: Yup.string()
+      .trim()
+      .required("Scheduled date is required")
+      .test("not-in-past", "Date cannot be in the past", (value) => {
+        if (!value) return false;
+        return moment(value, "YYYY-MM-DD").isSameOrAfter(moment(todayStr, "YYYY-MM-DD"), "day");
+      })
+      .test("max-3-months", "Booking is allowed up to 3 months in advance only", (value) => {
+        if (!value) return false;
+        const maxDate = moment().add(3, "months").endOf("day");
+        return moment(value, "YYYY-MM-DD").isSameOrBefore(maxDate, "day");
+      }),
+    scheduledTime: Yup.string()
+      .trim()
+      .required("Preferred time slot is required")
+      .test("valid-time-range", "Please select a time between 08:00 AM and 08:00 PM", (value) => {
+        if (!value) return false;
+        const [hStr, mStr] = value.split(":");
+        const h = parseInt(hStr, 10);
+        const m = parseInt(mStr, 10);
+        if (isNaN(h)) return false;
+        return (h >= 8 && h < 20) || (h === 20 && m === 0);
+      })
+      .test("advance-notice", "Same-day bookings require at least 2 hours advance notice", function (value) {
+        if (!value) return false;
+        const { scheduledDate } = this.parent;
+        if (scheduledDate === todayStr) {
+          const [hStr, mStr] = value.split(":");
+          const h = parseInt(hStr, 10);
+          const m = parseInt(mStr, 10);
+          const now = new Date();
+          const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+          const slotTotalMinutes = h * 60 + m;
+          if (slotTotalMinutes <= currentTotalMinutes) {
+            return this.createError({ message: "The selected time slot has already passed" });
+          }
+          if (slotTotalMinutes < currentTotalMinutes + 120) {
+            return this.createError({
+              message: "Same-day bookings require at least 2 hours advance notice",
+            });
+          }
+        }
+        return true;
+      }),
+    paymentOption: Yup.string()
+      .trim()
+      .required("Please select a payment option (Token Amount or Full Payment)")
+      .oneOf(["TOKEN", "FULL"], "Please select a valid payment option"),
+    language: Yup.string().optional(),
+    customerAddressId: Yup.mixed().test(
+      "address-required",
+      "Please select or add a pooja delivery address",
+      function (value) {
+        if (activeBookingMode === "OFFLINE") {
+          return Boolean(value);
+        }
+        return true;
+      }
+    ),
+    specialInstructions: Yup.string().max(500, "Special instructions must be under 500 characters"),
+  });
 
 export function useServiceBooking({ serviceId, service }: UseServiceBookingProps) {
   const router = useRouter();
@@ -41,6 +112,14 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
   const [addresses, setAddresses] = useState<any[]>([]);
   const [addressesLoading, setAddressesLoading] = useState(true);
   const [selectedAddressId, setSelectedAddressId] = useState<number | string>("");
+
+  const updateSelectedAddressId = (id: number | string) => {
+    setSelectedAddressId(id);
+    formik.setFieldValue("customerAddressId", id ? String(id) : "");
+    if (formik.errors.customerAddressId) {
+      formik.setFieldError("customerAddressId", undefined);
+    }
+  };
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
 
@@ -98,64 +177,56 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     ) {
       return true;
     }
-    if (!serviceCities || serviceCities.length === 0) {
-      return true;
-    }
+    const mode = (service?.bookingMode || "").toUpperCase();
+    if (mode === "ONLINE") return true;
     return false;
-  }, [service?.isGlobal, serviceCities]);
-
-  const isOnlineService = Boolean(
-    service?.isOnline === true ||
-    String(service?.isOnline).toLowerCase() === "true" ||
-    service?.isOnline === 1 ||
-    String(service?.isOnline) === "1" ||
-    (service as any)?.bookingMode === "ONLINE"
-  );
+  }, [service?.isGlobal, service?.bookingMode]);
 
   const activeBookingMode = useMemo(() => {
-    return isOnlineService ? "ONLINE" : "OFFLINE";
-  }, [isOnlineService]);
+    const mode = (service?.bookingMode || "").toUpperCase();
+    if (mode === "BOTH") {
+      return selectedPlan === "standard" ? "ONLINE" : "OFFLINE";
+    }
+    if (mode === "ONLINE") return "ONLINE";
+    return "OFFLINE";
+  }, [service?.bookingMode, selectedPlan]);
+
+  const isOnlineService = activeBookingMode === "ONLINE";
 
   const matchingAddresses = useMemo(() => {
     if (isGlobal || isOnlineService) return addresses;
-    if (!addresses || addresses.length === 0) return [];
+    if (!serviceCities || serviceCities.length === 0) return [];
     return addresses.filter((addr) =>
       serviceCities.some((sc) => checkCityMatch(addr, sc))
     );
-  }, [isGlobal, isOnlineService, addresses, serviceCities]);
+  }, [addresses, serviceCities, isGlobal, isOnlineService]);
 
   const isBookingAllowedForUser = useMemo(() => {
     if (isGlobal || isOnlineService) return true;
+    if (!serviceCities || serviceCities.length === 0) return true;
+    if (addressesLoading) return true;
+    if (!addresses || addresses.length === 0) return false;
     return matchingAddresses.length > 0;
-  }, [isGlobal, isOnlineService, matchingAddresses.length]);
+  }, [isGlobal, isOnlineService, serviceCities, addressesLoading, addresses, matchingAddresses]);
 
   const userCitiesText = useMemo(() => {
-    const list = Array.from(new Set(addresses.map((a: any) => a?.city).filter(Boolean)));
-    return list.join(", ");
+    if (!addresses || addresses.length === 0) return "";
+    const names = Array.from(
+      new Set(
+        addresses
+          .map((a) => (a?.city || a?.state || "").trim())
+          .filter(Boolean)
+      )
+    );
+    return names.join(", ");
   }, [addresses]);
 
   const selectedAddress = useMemo(() => {
-    const pool = isGlobal || isOnlineService ? addresses : matchingAddresses;
-    if (!pool || pool.length === 0) return null;
-    if (selectedAddressId) {
-      const found = pool.find((a: any) => String(a.id) === String(selectedAddressId));
-      if (found) return found;
-    }
-    return (
-      pool.find(
-        (a: any) =>
-          a.isDefault === true ||
-          String(a.isDefault).toLowerCase() === "true" ||
-          a.isdefault === true ||
-          a.is_default === true
-      ) ||
-      pool[0] ||
-      null
-    );
-  }, [addresses, matchingAddresses, selectedAddressId, isGlobal, isOnlineService]);
+    if (!selectedAddressId) return null;
+    return addresses.find((a) => String(a.id) === String(selectedAddressId)) || null;
+  }, [addresses, selectedAddressId]);
 
-  const handleAddressAdded = async (newAddrResponse?: any) => {
-    if (activeBookingMode === "ONLINE" || isOnlineService) return;
+  const handleAddressAdded = async (newAddress?: any) => {
     let addrList: any[] = [];
     try {
       const res = await getCustomerAddressesAPI();
@@ -163,20 +234,10 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
       else if (res?.data && Array.isArray(res.data)) addrList = res.data;
       else if (Array.isArray(res)) addrList = res;
     } catch (e) {
-      console.error("Failed to fetch customer addresses after add:", e);
+      console.error("Failed to re-fetch addresses:", e);
     }
-
-    if (addrList.length === 0) {
-      await fetchProfile(true);
-      const userObj = profile?.data || profile;
-      if (userObj?.addresses && Array.isArray(userObj.addresses)) {
-        addrList = userObj.addresses;
-      }
-    }
-
     setAddresses(addrList);
-
-    const createdId = newAddrResponse?.id || newAddrResponse?.data?.id;
+    const createdId = newAddress?.id || newAddress?.data?.id;
     if (createdId) {
       setSelectedAddressId(createdId);
     } else if (addrList.length > 0) {
@@ -200,32 +261,152 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     return ["Hindi"];
   }, [service?.languages]);
 
-  const [bookingForm, setBookingForm] = useState(() => {
+  const initialDefaultLang = useMemo(() => {
     const list = extractServiceLanguages(service?.languages);
     const languages = list.length > 0 ? list : ["Hindi"];
-    const defaultLang = languages.includes("Hindi") ? "Hindi" : languages[0] || "Hindi";
-    return {
+    return languages.includes("Hindi") ? "Hindi" : languages[0] || "Hindi";
+  }, [service?.languages]);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const executeBooking = async (values: {
+    scheduledDate: string;
+    scheduledTime: string;
+    paymentOption: string;
+    language: string;
+    specialInstructions: string;
+    customerAddressId?: any;
+  }) => {
+    let customerAddressId = values.customerAddressId || selectedAddressId;
+    if (activeBookingMode === "OFFLINE" && !customerAddressId) {
+      showSnackbar(
+        "No address found. Please add an address in your profile first.",
+        "error"
+      );
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const timeFormatted =
+        values.scheduledTime.length === 5
+          ? `${values.scheduledTime}:00`
+          : values.scheduledTime;
+      const scheduledAtIso = `${values.scheduledDate}T${timeFormatted}.000Z`;
+
+      const finalFeatureIds = showAddons
+        ? selectedFeatureIds.map((id) => Number(id)).filter((id) => !isNaN(id))
+        : [];
+
+      const payload: any = {
+        serviceId: Number(serviceId),
+        bookingMode: activeBookingMode,
+        scheduledAt: scheduledAtIso,
+        plan: isOnlineService ? "BASIC" : (selectedPlan ? selectedPlan.toUpperCase() : "BASIC"),
+        paymentOption: values.paymentOption,
+        featureIds: finalFeatureIds,
+        specialInstructions: values.specialInstructions || "",
+        customFields: {
+          language: values.language || (availableLanguages[0] || "Hindi"),
+          ...(profile?.gotra ? { gotra: profile.gotra } : {}),
+        },
+      };
+
+      if (customerAddressId) {
+        payload.customerAddressId = Number(customerAddressId);
+      }
+
+      if (selectedAddress) {
+        payload.address = {
+          venueType: selectedAddress.venueType || selectedAddress.addressType || "HOME",
+          addressLabel: selectedAddress.addressLabel || selectedAddress.label || "Home",
+          fullAddress:
+            selectedAddress.fullAddress ||
+            [selectedAddress.addressLine1 || selectedAddress.street, selectedAddress.city, selectedAddress.state, selectedAddress.pincode || selectedAddress.postalCode]
+              .filter(Boolean)
+              .join(", "),
+          city: selectedAddress.city || "",
+          state: selectedAddress.state || "",
+          pincode: String(selectedAddress.pincode || selectedAddress.postalCode || ""),
+          latitude: selectedAddress.latitude != null ? Number(selectedAddress.latitude) : 0,
+          longitude: selectedAddress.longitude != null ? Number(selectedAddress.longitude) : 0,
+          isDefault: Boolean(selectedAddress.isDefault),
+        };
+      }
+
+      const res = await customerCreateBookingAPI(payload);
+      if (res.success || res.statusCode === 201 || res.statusCode === 200) {
+        formik.resetForm();
+
+        const resData = res.data?.data || res.data || res;
+        const paymentUrl =
+          resData?.payment?.paymentUrl ||
+          resData?.paymentUrl ||
+          resData?.razorpayPaymentLinkId ||
+          resData?.paymentLink ||
+          resData?.razorpayPaymentLink ||
+          resData?.short_url ||
+          res?.data?.payment?.paymentUrl ||
+          res?.payment?.paymentUrl;
+
+        if (
+          paymentUrl &&
+          typeof paymentUrl === "string" &&
+          (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://"))
+        ) {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("booking_payment_pending", "true");
+          }
+          showSnackbar("Redirecting to payment...", "info");
+          window.location.href = paymentUrl;
+        } else {
+          showSnackbar("Booking request created successfully!", "success");
+          router.push("/customer/bookings");
+        }
+      } else {
+        showSnackbar(res.message || "Failed to create booking request", "error");
+      }
+    } catch (error: any) {
+      console.error("Booking failed:", error);
+      showSnackbar(
+        error.response?.data?.message || "Failed to create booking request",
+        "error"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const formik = useFormik({
+    initialValues: {
       scheduledDate: "",
       scheduledTime: "",
       paymentOption: "",
-      language: defaultLang,
+      language: initialDefaultLang,
       specialInstructions: "",
-    };
+      customerAddressId: selectedAddressId ? String(selectedAddressId) : "",
+    },
+    enableReinitialize: false,
+    validationSchema: getBookingValidationSchema(activeBookingMode, todayStr, availableLanguages),
+    onSubmit: async (values) => {
+      await executeBooking(values);
+    },
   });
 
   useEffect(() => {
+    formik.setFieldValue("customerAddressId", selectedAddressId ? String(selectedAddressId) : "");
+  }, [selectedAddressId]);
+
+  useEffect(() => {
     if (availableLanguages.length > 0) {
-      setBookingForm((prev) => {
-        if (!prev.language || !availableLanguages.includes(prev.language)) {
-          const defaultLang = availableLanguages.includes("Hindi") ? "Hindi" : availableLanguages[0];
-          return { ...prev, language: defaultLang };
-        }
-        return prev;
-      });
+      if (!formik.values.language || !availableLanguages.includes(formik.values.language)) {
+        const defaultLang = availableLanguages.includes("Hindi") ? "Hindi" : availableLanguages[0];
+        formik.setFieldValue("language", defaultLang);
+      }
     }
   }, [availableLanguages]);
 
-  const [submitting, setSubmitting] = useState(false);
+  const bookingForm = formik.values;
 
   const showAddons = activeBookingMode === "OFFLINE";
 
@@ -311,7 +492,7 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     if (bookingForm.scheduledTime) {
       const selectedOpt = timeOptions.find((o) => o.value === bookingForm.scheduledTime);
       if (selectedOpt && selectedOpt.disabled) {
-        setBookingForm((prev) => ({ ...prev, scheduledTime: "" }));
+        formik.setFieldValue("scheduledTime", "");
       }
     }
   }, [timeOptions, bookingForm.scheduledTime]);
@@ -356,9 +537,9 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
                 a.isdefault === true ||
                 a.is_default === true
             ) || eligible[0];
-          if (defaultAddr) setSelectedAddressId(defaultAddr.id);
+          if (defaultAddr) updateSelectedAddressId(defaultAddr.id);
         } else {
-          setSelectedAddressId("");
+          updateSelectedAddressId("");
         }
       }
       setAddressesLoading(false);
@@ -367,174 +548,39 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
   }, [profile, activeBookingMode, isOnlineService, isGlobal, serviceCities]);
 
   const handleInputChange = (field: string, value: any) => {
-    setBookingForm((prev) => ({ ...prev, [field]: value }));
+    formik.setFieldValue(field, value);
+    if (formik.errors[field as keyof typeof formik.errors]) {
+      formik.setFieldError(field, undefined);
+    }
   };
 
-  const handleConfirmBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!bookingForm.scheduledDate || !bookingForm.scheduledTime) {
-      showSnackbar("Please select both scheduled date and time", "error");
+  const handleConfirmBooking = async (e?: React.FormEvent) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+    const currentValues = {
+      ...formik.values,
+      customerAddressId: selectedAddressId
+        ? String(selectedAddressId)
+        : formik.values.customerAddressId,
+    };
+    if (selectedAddressId && formik.values.customerAddressId !== String(selectedAddressId)) {
+      formik.setFieldValue("customerAddressId", String(selectedAddressId));
+    }
+    const errors = await formik.validateForm(currentValues);
+    if (Object.keys(errors).length > 0) {
+      formik.setTouched({
+        scheduledDate: true,
+        scheduledTime: true,
+        paymentOption: true,
+        language: true,
+        customerAddressId: true,
+        specialInstructions: true,
+      });
+      // Show validation errors cleanly only below inputs; do not show duplicate snackbar
       return;
     }
-
-    const [hStr, mStr] = bookingForm.scheduledTime.split(":");
-    const h = parseInt(hStr, 10);
-    const m = parseInt(mStr, 10);
-    if (isNaN(h) || h < 8 || h > 20 || (h === 20 && m > 0)) {
-      showSnackbar("Please select a time between 08:00 AM and 08:00 PM", "error");
-      return;
-    }
-
-    const now = new Date();
-    const isToday = bookingForm.scheduledDate === todayStr;
-    const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
-    const slotTotalMinutes = h * 60 + m;
-
-    if (isToday) {
-      if (slotTotalMinutes <= currentTotalMinutes) {
-        showSnackbar(
-          "The selected time slot has already passed. Please select a future time slot.",
-          "error"
-        );
-        return;
-      }
-      if (slotTotalMinutes < currentTotalMinutes + 120) {
-        showSnackbar(
-          "Pooja bookings require at least 2 hours advance booking. Please choose a later time slot or future date.",
-          "error"
-        );
-        return;
-      }
-    }
-
-    if (
-      availableLanguages.length > 0 &&
-      bookingForm.language &&
-      !availableLanguages.includes(bookingForm.language)
-    ) {
-      showSnackbar(
-        `Selected language "${bookingForm.language}" is not available for this service. Please select from: ${availableLanguages.join(", ")}`,
-        "error"
-      );
-      return;
-    }
-
-    let customerAddressId = selectedAddressId ? Number(selectedAddressId) : null;
-
-    if (!bookingForm.paymentOption) {
-      showSnackbar(
-        "Please select a payment option (Token Amount or Full Payment)",
-        "error"
-      );
-      return;
-    }
-
-    if (activeBookingMode === "OFFLINE") {
-      if (!customerAddressId) {
-        showSnackbar(
-          "No address found. Please add an address in your profile first.",
-          "error"
-        );
-        return;
-      }
-    }
-
-    setSubmitting(true);
-    try {
-      const timeFormatted =
-        bookingForm.scheduledTime.length === 5
-          ? `${bookingForm.scheduledTime}:00`
-          : bookingForm.scheduledTime;
-      const scheduledAtIso = `${bookingForm.scheduledDate}T${timeFormatted}.000Z`;
-
-      const finalFeatureIds = showAddons
-        ? selectedFeatureIds.map((id) => Number(id)).filter((id) => !isNaN(id))
-        : [];
-
-      const payload: any = {
-        serviceId: Number(serviceId),
-        bookingMode: activeBookingMode,
-        scheduledAt: scheduledAtIso,
-        plan: isOnlineService ? "BASIC" : (selectedPlan ? selectedPlan.toUpperCase() : "BASIC"),
-        paymentOption: bookingForm.paymentOption,
-        featureIds: finalFeatureIds,
-        specialInstructions: bookingForm.specialInstructions || "",
-        customFields: {
-          language: bookingForm.language || (availableLanguages[0] || "Hindi"),
-          ...(profile?.gotra ? { gotra: profile.gotra } : {}),
-        },
-      };
-
-      if (customerAddressId) {
-        payload.customerAddressId = Number(customerAddressId);
-      }
-
-      if (selectedAddress) {
-        payload.address = {
-          venueType: selectedAddress.venueType || selectedAddress.addressType || "HOME",
-          addressLabel: selectedAddress.addressLabel || selectedAddress.label || "Home",
-          fullAddress:
-            selectedAddress.fullAddress ||
-            [selectedAddress.addressLine1 || selectedAddress.street, selectedAddress.city, selectedAddress.state, selectedAddress.pincode || selectedAddress.postalCode]
-              .filter(Boolean)
-              .join(", "),
-          city: selectedAddress.city || "",
-          state: selectedAddress.state || "",
-          pincode: String(selectedAddress.pincode || selectedAddress.postalCode || ""),
-          latitude: selectedAddress.latitude != null ? Number(selectedAddress.latitude) : 0,
-          longitude: selectedAddress.longitude != null ? Number(selectedAddress.longitude) : 0,
-          isDefault: Boolean(selectedAddress.isDefault),
-        };
-      }
-
-      const res = await customerCreateBookingAPI(payload);
-      if (res.success || res.statusCode === 201 || res.statusCode === 200) {
-        setBookingForm({
-          scheduledDate: "",
-          scheduledTime: "",
-          paymentOption: "",
-          language: "Hindi",
-          specialInstructions: "",
-        });
-
-        const resData = res.data?.data || res.data || res;
-        const paymentUrl =
-          resData?.payment?.paymentUrl ||
-          resData?.paymentUrl ||
-          resData?.razorpayPaymentLinkId ||
-          resData?.paymentLink ||
-          resData?.razorpayPaymentLink ||
-          resData?.short_url ||
-          res?.data?.payment?.paymentUrl ||
-          res?.payment?.paymentUrl;
-
-        if (
-          paymentUrl &&
-          typeof paymentUrl === "string" &&
-          (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://"))
-        ) {
-          if (typeof window !== "undefined") {
-            sessionStorage.setItem("booking_payment_pending", "true");
-          }
-          showSnackbar("Redirecting to payment...", "info");
-          window.location.href = paymentUrl;
-        } else {
-          showSnackbar("Booking request created successfully!", "success");
-          router.push("/customer/bookings");
-        }
-      } else {
-        showSnackbar(res.message || "Failed to create booking request", "error");
-      }
-    } catch (error: any) {
-      console.error("Booking failed:", error);
-      showSnackbar(
-        error.response?.data?.message || "Failed to create booking request",
-        "error"
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    formik.handleSubmit();
   };
 
   return {
@@ -552,6 +598,7 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     matchingAddresses,
     selectedAddressId,
     bookingForm,
+    formik,
     availableLanguages,
     timeOptions,
     isAllSlotsPassedToday,
@@ -559,7 +606,7 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     todayStr,
     addressModalOpen,
     inquiryModalOpen,
-    setSelectedAddressId,
+    setSelectedAddressId: updateSelectedAddressId,
     setAddressModalOpen,
     setInquiryModalOpen,
     handleSelectPlan,

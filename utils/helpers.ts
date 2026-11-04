@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 
 export const createSlug = (str: string): string => {
@@ -106,9 +107,9 @@ export const sanitizeEmailInput = (val: string): string => {
  * Strict Address validation regex and helpers:
  * Strictly allows letters, digits, whitespace, and standard address punctuation (,, ., -, /, #, ', :, (, ), &)
  */
-export const ADDRESS_STRICT_REGEX = /^[\p{L}\p{N}\s,&.\-/#':()+;"_[\]@!]+$/u;
+export const ADDRESS_STRICT_REGEX = /^[\p{L}\p{N}\s,.\-/#':()&]+$/u;
 export const ADDRESS_STRICT_MESSAGE =
-  "Address can only contain letters, numbers, spaces, and standard address characters (, . - / # ' : () & + \" ; _ [ ] @ !)";
+  "Address can only contain letters, numbers, spaces, and standard punctuation (, . - / # ' : () &)";
 
 export const allowOnlyAddressCharsOnKeyDown = (
   e: React.KeyboardEvent<HTMLElement>,
@@ -130,13 +131,176 @@ export const allowOnlyAddressCharsOnKeyDown = (
     return;
   }
   // Allow alphanumeric, whitespace, and standard address characters
-  if (!/^[\p{L}\p{N}\s,&.\-/#':()+;"_[\]@!]$/u.test(e.key)) {
+  if (!/^[\p{L}\p{N}\s,.\-/#':()&]$/u.test(e.key)) {
     e.preventDefault();
   }
 };
 
 export const sanitizeAddressInput = (val: string): string => {
-  return (val || "").replace(/[^\p{L}\p{N}\s,&.\-/#':()+;"_[\]@!]/gu, "");
+  return (val || "").replace(/[^\p{L}\p{N}\s,.-/#':()&]/gu, "");
+};
+
+/**
+ * Strict Indian Pincode validation:
+ * 6 digits starting with 1-9 (never 0)
+ */
+export const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
+export const PINCODE_MESSAGE =
+  "Please enter a valid 6-digit Indian Pincode starting with 1-9 (e.g. 110001)";
+
+export const sanitizePincodeInput = (val: string): string => {
+  return (val || "").replace(/\D/g, "").slice(0, 6);
+};
+
+/**
+ * Strict Address Label validation (e.g., Home, Office, Temple, Flat 4B):
+ * Allows letters, numbers, spaces, and simple punctuation (- ' . ( ) /)
+ * Disallows quotes, colons, braces, angle brackets, and complex symbols.
+ */
+export const ADDRESS_LABEL_REGEX = /^[\p{L}\p{N}\s\-'.()\/]{2,50}$/u;
+export const ADDRESS_LABEL_MESSAGE =
+  "Address label can only contain letters, numbers, spaces, and simple punctuation (- ' . ( ) /)";
+
+export const allowOnlyAddressLabelCharsOnKeyDown = (
+  e: React.KeyboardEvent<HTMLElement>,
+) => {
+  if (
+    e.ctrlKey ||
+    e.metaKey ||
+    [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Enter",
+      "Home",
+      "End",
+    ].includes(e.key)
+  ) {
+    return;
+  }
+  if (!/^[\p{L}\p{N}\s\-'.()\/]$/u.test(e.key)) {
+    e.preventDefault();
+  }
+};
+
+export const sanitizeAddressLabelInput = (val: string): string => {
+  return (val || "").replace(/[^\p{L}\p{N}\s\-'.()\/]/gu, "").slice(0, 50);
+};
+
+export const isValidAddressLabel = (val: string): boolean => {
+  const trimmed = (val || "").trim();
+  return (
+    trimmed.length >= 2 &&
+    ADDRESS_LABEL_REGEX.test(trimmed) &&
+    /[\p{L}\p{N}]/u.test(trimmed)
+  );
+};
+
+/**
+ * Strict City/State validation:
+ * Allows letters, spaces, and basic name punctuation (. - ')
+ * Disallows numbers, quotes, colons, braces, symbols
+ */
+export const CITY_STATE_REGEX = /^[\p{L}\s.'-]{2,60}$/u;
+export const CITY_MESSAGE =
+  "City can only contain letters and spaces (min 2 characters)";
+export const STATE_MESSAGE =
+  "State can only contain letters and spaces (min 2 characters)";
+
+export const isValidCityOrState = (val: string): boolean => {
+  const trimmed = (val || "").trim();
+  return (
+    trimmed.length >= 2 &&
+    CITY_STATE_REGEX.test(trimmed) &&
+    /[\p{L}].*[\p{L}]/u.test(trimmed)
+  );
+};
+
+export const isValidAddress = (val: string): boolean => {
+  const trimmed = (val || "").trim();
+  return (
+    trimmed.length >= 3 &&
+    ADDRESS_STRICT_REGEX.test(trimmed) &&
+    /[\p{L}\p{N}]/u.test(trimmed)
+  );
+};
+
+export interface AddressValidationErrors {
+  pincode?: string;
+  addressLabel?: string;
+  fullAddress?: string;
+  streetName?: string;
+  city?: string;
+  state?: string;
+}
+
+export const validateAddressPayload = (data: {
+  pincode?: string;
+  addressLabel?: string;
+  fullAddress?: string;
+  streetName?: string;
+  city?: string;
+  state?: string;
+}): { isValid: boolean; errors: AddressValidationErrors; firstError?: string } => {
+  const errors: AddressValidationErrors = {};
+  const pin = (data.pincode || "").trim();
+  const label = (data.addressLabel || "").trim();
+  const full = (data.fullAddress || "").trim();
+  const street = (data.streetName || "").trim();
+  const city = (data.city || "").trim();
+  const state = (data.state || "").trim();
+
+  // Pincode validation
+  if (!pin) {
+    errors.pincode = "Pincode is required";
+  } else if (!PINCODE_REGEX.test(pin)) {
+    errors.pincode = PINCODE_MESSAGE;
+  }
+
+  // Address Label validation
+  if (!label) {
+    errors.addressLabel = "Address label is required";
+  } else if (!isValidAddressLabel(label)) {
+    errors.addressLabel = ADDRESS_LABEL_MESSAGE;
+  }
+
+  // Full Address validation
+  if (!full) {
+    errors.fullAddress = "Full address is required";
+  } else if (!isValidAddress(full)) {
+    errors.fullAddress = ADDRESS_STRICT_MESSAGE;
+  }
+
+  // Street Name validation (if provided)
+  if (street) {
+    if (!ADDRESS_STRICT_REGEX.test(street) || !/[\p{L}\p{N}]/u.test(street)) {
+      errors.streetName =
+        "Street Name / Area can only contain letters, numbers, spaces, and standard punctuation (, . - / # ' : () &)";
+    }
+  }
+
+  // City validation
+  if (!city) {
+    errors.city = "City is required";
+  } else if (!isValidCityOrState(city)) {
+    errors.city = CITY_MESSAGE;
+  }
+
+  // State validation
+  if (!state) {
+    errors.state = "State is required";
+  } else if (!isValidCityOrState(state)) {
+    errors.state = STATE_MESSAGE;
+  }
+
+  const firstError = Object.values(errors)[0];
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+    firstError,
+  };
 };
 
 /**
@@ -376,4 +540,90 @@ export const sanitizeAdminSearchTerm = (term?: string | null): string => {
     return genericHyphenMatch[1];
   }
   return trimmed;
+};
+
+/**
+ * Check if the currently logged-in user is a CUSTOMER
+ */
+export const isCustomerLoggedIn = (): boolean => {
+  if (typeof window === "undefined") return false;
+  try {
+    const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+    if (!userStr) return false;
+    const user = JSON.parse(userStr);
+    const role = String(
+      user?.role ||
+        sessionStorage.getItem("role") ||
+        sessionStorage.getItem("activeRole") ||
+        ""
+    ).toUpperCase();
+    return role === "CUSTOMER";
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Return appropriate destination URL for a service based on whether customer is logged in.
+ * - Logged-in Customer: /customer/services/[slug]
+ * - Unauthenticated / Public: /services/[slug]
+ */
+export const getServiceNavigationUrl = (slugOrId: string | number): string => {
+  if (!slugOrId) return "/services";
+  const isCust = isCustomerLoggedIn();
+  return isCust ? `/customer/services/${slugOrId}` : `/services/${slugOrId}`;
+};
+
+
+/**
+ * Format scheduledAt ISO string (e.g. 2026-11-14T09:00:00.000Z).
+ * When time is present in ISO string, parse as UTC so that the user's selected time (09:00)
+ * is preserved without unwanted timezone offsets (e.g. +5:30 turning 9:00 AM into 2:30 PM).
+ */
+export const formatScheduledDateTime = (
+  dateVal: any,
+  format = "DD MMM YYYY, hh:mm A"
+): string => {
+  if (!dateVal) return "N/A";
+  try {
+    const str = String(dateVal).trim();
+    if (!str) return "N/A";
+    const m = str.includes("T") ? moment.utc(str) : moment(str);
+    if (m.isValid()) {
+      return m.format(format);
+    }
+  } catch (e) {}
+  return String(dateVal);
+};
+
+export const formatScheduledDate = (
+  dateVal: any,
+  format = "DD MMM YYYY"
+): string => {
+  if (!dateVal) return "N/A";
+  try {
+    const str = String(dateVal).trim();
+    if (!str) return "N/A";
+    const m = str.includes("T") ? moment.utc(str) : moment(str);
+    if (m.isValid()) {
+      return m.format(format);
+    }
+  } catch (e) {}
+  return String(dateVal);
+};
+
+export const formatScheduledTime = (
+  dateVal: any,
+  format = "hh:mm A"
+): string => {
+  if (!dateVal) return "N/A";
+  try {
+    const str = String(dateVal).trim();
+    if (!str) return "N/A";
+    const m = str.includes("T") ? moment.utc(str) : moment(str);
+    if (m.isValid()) {
+      return m.format(format);
+    }
+  } catch (e) {}
+  return String(dateVal);
 };

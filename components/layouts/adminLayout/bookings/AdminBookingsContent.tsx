@@ -9,6 +9,7 @@ import {
   updateBookingStatusAPI,
 } from "@/api/bookingControllers";
 import { getPurohitsAPI } from "@/api/userControllers";
+import { formatScheduledDateTime } from "@/utils/helpers";
 import AdminDataTable, {
   Column,
 } from "@/components/layouts/adminLayout/common/AdminDataTable";
@@ -19,9 +20,12 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import AddIcon from "@mui/icons-material/Add";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
+  Alert,
   Autocomplete,
   Box,
+  CircularProgress,
   Button,
   Dialog,
   DialogActions,
@@ -29,6 +33,8 @@ import {
   DialogTitle,
   FormControl,
   IconButton,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -56,13 +62,51 @@ import {
 } from "@/utils/paginationHelper";
 
 export default function AdminBookingsContent() {
+  const searchParams = useSearchParams();
   const initialPagination = getTablePaginationState("admin_bookings_state", {
     defaultStatus: "All Bookings",
     defaultLimit: 10,
+    searchParams,
   });
 
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState(initialPagination.status);
+
+  const modeFromUrl = searchParams.get("mode")?.toUpperCase();
+  const [bookingMode, setBookingMode] = useState<"OFFLINE" | "ONLINE">(
+    modeFromUrl === "ONLINE" || modeFromUrl === "OFFLINE" ? modeFromUrl : "OFFLINE"
+  );
+
+  // Sync booking mode if URL search param changes
+  useEffect(() => {
+    if (
+      modeFromUrl &&
+      (modeFromUrl === "ONLINE" || modeFromUrl === "OFFLINE") &&
+      modeFromUrl !== bookingMode
+    ) {
+      setBookingMode(modeFromUrl);
+      setPage(0);
+    }
+  }, [modeFromUrl]);
+
+  const handleBookingModeChange = (
+    _event: React.SyntheticEvent,
+    newMode: "OFFLINE" | "ONLINE"
+  ) => {
+    if (newMode && newMode !== bookingMode) {
+      setBookingMode(newMode);
+      setPage(0);
+    }
+  };
+
+  // Sync status filter if URL search param changes
+  const statusFromUrl = searchParams.get("status");
+  useEffect(() => {
+    if (statusFromUrl && statusFromUrl !== statusFilter) {
+      setStatusFilter(statusFromUrl);
+      setPage(0);
+    }
+  }, [statusFromUrl]);
 
   const [assignTarget, setAssignTarget] = useState<string | number | null>(null);
   const [selectedPurohit, setSelectedPurohit] = useState<string | number>("");
@@ -86,17 +130,33 @@ export default function AdminBookingsContent() {
     status: string;
   } | null>(null);
   const [purohitsList, setPurohitsList] = useState<any[]>([]);
+  const [isFetchingPurohits, setIsFetchingPurohits] = useState(false);
+  const [assignTargetBooking, setAssignTargetBooking] = useState<any>(null);
   const { showSnackbar } = useSnackbarStore();
   const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
 
   const handleOpenAssignModal = async (bookingId: string | number) => {
     setAssignTarget(bookingId);
     const targetBooking = bookings.find((b: any) => b.id === bookingId);
-    const city =
-      targetBooking?.addressSnapshot?.city ||
-      targetBooking?.customerAddress?.city ||
-      targetBooking?.city ||
-      undefined;
+    setAssignTargetBooking(targetBooking || null);
+    setSelectedPurohit("");
+    setPurohitsList([]);
+    setIsFetchingPurohits(true);
+
+    const isOnline =
+      targetBooking?.bookingMode === "ONLINE" ||
+      bookingMode === "ONLINE" ||
+      Boolean(targetBooking?.service?.isOnline);
+
+    const isOffline = !isOnline;
+
+    const city = isOffline
+      ? targetBooking?.addressSnapshot?.city ||
+        targetBooking?.customerAddress?.city ||
+        targetBooking?.city ||
+        undefined
+      : undefined;
+
     const serviceId =
       targetBooking?.serviceId ||
       targetBooking?.service?.id ||
@@ -110,14 +170,45 @@ export default function AdminBookingsContent() {
         "APPROVED",
         undefined,
         city,
-        serviceId
+        serviceId,
+        isOnline ? true : undefined,
+        isOffline ? true : undefined
       );
       if (res.success) {
-        setPurohitsList(res.data?.data || []);
+        let list = Array.isArray(res.data?.data)
+          ? res.data.data
+          : Array.isArray(res.data)
+          ? res.data
+          : [];
+
+        if (isOnline) {
+          list = list.filter((p: any) => {
+            const prof = p.profile || p;
+            if (prof.isOnlineAvailable !== undefined) {
+              return Boolean(prof.isOnlineAvailable);
+            }
+            return true;
+          });
+        } else if (isOffline) {
+          list = list.filter((p: any) => {
+            const prof = p.profile || p;
+            if (prof.isOfflineAvailable !== undefined) {
+              return Boolean(prof.isOfflineAvailable);
+            }
+            return true;
+          });
+        }
+
+        setPurohitsList(list);
+      } else {
+        setPurohitsList([]);
       }
     } catch (error) {
       console.error("Failed to fetch purohits:", error);
       showSnackbar("Failed to fetch purohits", "error");
+      setPurohitsList([]);
+    } finally {
+      setIsFetchingPurohits(false);
     }
   };
 
@@ -130,7 +221,8 @@ export default function AdminBookingsContent() {
         rowsPerPage,
         statusFilter,
         cleanedSearch,
-        "POOJA"
+        "POOJA",
+        bookingMode
       );
       if (res.success) {
         let list = res.data.bookings || [];
@@ -182,7 +274,7 @@ export default function AdminBookingsContent() {
 
   useEffect(() => {
     fetchBookings();
-  }, [page, rowsPerPage, statusFilter, searchValue, refreshTrigger]);
+  }, [page, rowsPerPage, statusFilter, searchValue, bookingMode, refreshTrigger]);
 
   const confirmUpdateStatus = async () => {
     if (!confirmStatusChange) return;
@@ -368,18 +460,10 @@ export default function AdminBookingsContent() {
             fontSize: "0.9rem",
           }}
         >
-          {booking.scheduledAt || booking.createdAt
-            ? new Date(booking.scheduledAt || booking.createdAt).toLocaleString(
-                "en-US",
-                {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                }
-              )
+          {booking.scheduledAt
+            ? formatScheduledDateTime(booking.scheduledAt)
+            : booking.createdAt
+            ? new Date(booking.createdAt).toLocaleDateString()
             : "-"}
         </Typography>
       ),
@@ -474,6 +558,36 @@ export default function AdminBookingsContent() {
         actionButtonIcon={<AddIcon />}
       />
 
+      <Box sx={{ borderBottom: "1px solid #E2E8F0" }}>
+        <Tabs
+          value={bookingMode}
+          onChange={handleBookingModeChange}
+          sx={{
+            minHeight: "48px",
+            "& .MuiTab-root": {
+              fontFamily: FONTS.PRIMARY,
+              fontWeight: 600,
+              fontSize: "15px",
+              textTransform: "none",
+              color: "#64748B",
+              minHeight: "48px",
+              px: 3,
+              "&.Mui-selected": {
+                color: COLORS.PRIMARY,
+              },
+            },
+            "& .MuiTabs-indicator": {
+              bgcolor: COLORS.PRIMARY,
+              height: "3px",
+              borderRadius: "3px 3px 0 0",
+            },
+          }}
+        >
+          <Tab value="OFFLINE" label="Offline Bookings" />
+          <Tab value="ONLINE" label="Online Bookings" />
+        </Tabs>
+      </Box>
+
       <AdminDataTable
         columns={columns}
         data={bookings}
@@ -493,27 +607,40 @@ export default function AdminBookingsContent() {
           setPage(0);
         }}
         keyExtractor={(booking) => booking.id}
-        emptyMessage="No bookings found matching your criteria."
+        emptyMessage={
+          bookingMode === "OFFLINE"
+            ? "No offline bookings found matching your criteria."
+            : "No online bookings found matching your criteria."
+        }
       />
 
       {/* Assign Purohit Modal */}
       <Dialog
         open={Boolean(assignTarget)}
-        onClose={() => setAssignTarget(null)}
-        sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1, minWidth: 400 } }}
+        onClose={() => {
+          setAssignTarget(null);
+          setAssignTargetBooking(null);
+          setSelectedPurohit("");
+          setPurohitsList([]);
+        }}
+        sx={{ "& .MuiDialog-paper": { borderRadius: "16px", p: 1, minWidth: { xs: "90%", sm: 420 }, maxWidth: 480 } }}
       >
         <DialogTitle
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#1e293b",
+            pb: 0.5,
           }}
         >
           Assign Purohit
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
-          <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+          <FormControl fullWidth size="small" sx={{ mt: 0.5 }}>
             <Autocomplete
+              loading={isFetchingPurohits}
+              loadingText="Loading available approved purohits..."
+              noOptionsText="No approved purohits found"
               options={purohitsList}
               isOptionEqualToValue={(option: any, val: any) =>
                 option?.id === val?.id
@@ -537,10 +664,42 @@ export default function AdminBookingsContent() {
                 const phone =
                   option.phone || option.user?.phone || "";
                 const name = `${fName} ${lName}`.trim() || `Purohit #${option.id}`;
-                const label = phone ? `${name} (${phone})` : name;
+                const prof = option.profile || option;
+                const isOnlineAvail = Boolean(prof.isOnlineAvailable);
+                const isOfflineAvail = Boolean(prof.isOfflineAvailable);
+                const cityStr = prof.city || option.city || "";
+
                 return (
                   <li {...props} key={option.id}>
-                    {label}
+                    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", py: 0.5 }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography sx={{ fontWeight: 600, fontSize: "14px", color: "#1e293b", fontFamily: FONTS.OUTFIT }}>
+                          {name}
+                        </Typography>
+                        {phone && (
+                          <Typography sx={{ fontSize: "12px", color: "#64748b", fontFamily: FONTS.OUTFIT }}>
+                            {phone}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Box sx={{ display: "flex", gap: 1, mt: 0.3, alignItems: "center" }}>
+                        {cityStr && (
+                          <Typography sx={{ fontSize: "11px", color: "#94a3b8", fontFamily: FONTS.OUTFIT }}>
+                            {cityStr}
+                          </Typography>
+                        )}
+                        {isOnlineAvail && (
+                          <Box component="span" sx={{ fontSize: "10px", bgcolor: "#E0F2FE", color: "#0369A1", px: 0.8, py: 0.1, borderRadius: "4px", fontWeight: 600 }}>
+                            Online
+                          </Box>
+                        )}
+                        {isOfflineAvail && (
+                          <Box component="span" sx={{ fontSize: "10px", bgcolor: "#FEF3C7", color: "#92400E", px: 0.8, py: 0.1, borderRadius: "4px", fontWeight: 600 }}>
+                            Offline
+                          </Box>
+                        )}
+                      </Box>
+                    </Box>
                   </li>
                 );
               }}
@@ -548,6 +707,7 @@ export default function AdminBookingsContent() {
               onChange={(_, newValue) => {
                 setSelectedPurohit(newValue ? newValue.id : "");
               }}
+              disabled={isFetchingPurohits}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -557,17 +717,55 @@ export default function AdminBookingsContent() {
               )}
             />
           </FormControl>
+
+          {!isFetchingPurohits && purohitsList.length === 0 && (
+            <Alert
+              severity="warning"
+              icon={<InfoOutlinedIcon fontSize="small" />}
+              sx={{
+                mt: 2,
+                borderRadius: "10px",
+                fontSize: "0.825rem",
+                fontFamily: FONTS.OUTFIT,
+                bgcolor: "#FFFBEB",
+                color: "#92400E",
+                border: "1px solid #FDE68A",
+                "& .MuiAlert-icon": { color: "#D97706" },
+              }}
+            >
+              No approved purohits are currently registered or available for{" "}
+              {assignTargetBooking?.bookingMode === "ONLINE" || bookingMode === "ONLINE"
+                ? "online bookings"
+                : `offline bookings${
+                    assignTargetBooking?.addressSnapshot?.city ||
+                    assignTargetBooking?.customerAddress?.city ||
+                    assignTargetBooking?.city
+                      ? ` in ${
+                          assignTargetBooking?.addressSnapshot?.city ||
+                          assignTargetBooking?.customerAddress?.city ||
+                          assignTargetBooking?.city
+                        }`
+                      : ""
+                  }`}
+              .
+            </Alert>
+          )}
         </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
+        <DialogActions sx={{ p: 2, pt: 1 }}>
           <Button
-            onClick={() => setAssignTarget(null)}
+            onClick={() => {
+              setAssignTarget(null);
+              setAssignTargetBooking(null);
+              setSelectedPurohit("");
+              setPurohitsList([]);
+            }}
             sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleAssignPurohit}
-            disabled={isLoading}
+            disabled={isLoading || isFetchingPurohits || !selectedPurohit}
             variant="contained"
             sx={{
               background: COLORS.PRIMARY,

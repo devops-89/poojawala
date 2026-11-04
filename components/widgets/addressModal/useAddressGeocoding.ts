@@ -3,7 +3,7 @@ import { COLORS } from "@/utils/enums";
 import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import { AddressFormData, StatusMessage } from "@/utils/types";
-import { sanitizeAddressInput } from "@/utils/helpers";
+import { PINCODE_REGEX, sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
 
 export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
@@ -75,14 +75,14 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       setAddressData({
         id: initialData.id,
         venueType: initialData.venueType || "HOME",
-        fullAddress: constructedAddress,
-        addressLabel: isEdit
+        fullAddress: sanitizeAddressInput(constructedAddress),
+        addressLabel: sanitizeAddressLabelInput(isEdit
           ? initialData.addressLabel || "Home"
-          : initialData.addressLabel || "",
-        streetName: initialData.streetName || "",
-        city: initialData.city || "",
-        state: initialData.state || "",
-        pincode: initialData.pincode || initialData.zipCode || "",
+          : initialData.addressLabel || ""),
+        streetName: sanitizeAddressInput(initialData.streetName || ""),
+        city: sanitizeLettersOnly(initialData.city || ""),
+        state: sanitizeLettersOnly(initialData.state || ""),
+        pincode: sanitizePincodeInput(initialData.pincode || initialData.zipCode || ""),
         latitude: initialData.latitude ? String(initialData.latitude) : "0",
         longitude: initialData.longitude ? String(initialData.longitude) : "0",
         isDefault: Boolean(initialData.isDefault),
@@ -579,23 +579,21 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
         }
       }
 
-      const defaultAddressStr = [fetchedArea, fetchedCity, fetchedState]
-        .filter(Boolean)
-        .join(", ");
-
       setAddressData((prev) => ({
         ...prev,
         pincode: pin,
         city: fetchedCity || prev.city,
         state: fetchedState || prev.state,
-        fullAddress: sanitizeAddressInput(defaultAddressStr) || prev.fullAddress,
-        latitude: lat.toFixed(6),
-        longitude: lon.toFixed(6),
+        fullAddress: prev.fullAddress,
+        latitude: foundCoords ? lat.toFixed(6) : prev.latitude,
+        longitude: foundCoords ? lon.toFixed(6) : prev.longitude,
       }));
 
-      placeMarkerOnMap(lat, lon, 15);
+      if (foundCoords) {
+        placeMarkerOnMap(lat, lon, 15);
+      }
       setStatusMessage({
-        text: "City, State & location auto-filled from Pincode!",
+        text: "City, State & coordinates auto-filled from Pincode!",
         type: "success",
       });
     } catch (err) {
@@ -606,11 +604,11 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   };
 
   const handlePincodeChange = (val: string) => {
-    const digitsOnly = val.replace(/\D/g, "").slice(0, 6);
+    const digitsOnly = sanitizePincodeInput(val);
     setAddressData((prev) => ({ ...prev, pincode: digitsOnly }));
     setStatusMessage({ text: "", type: "" });
 
-    if (digitsOnly.length === 6) {
+    if (PINCODE_REGEX.test(digitsOnly)) {
       lookupPincode(digitsOnly);
     }
   };
@@ -618,29 +616,10 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const handleAddressInputChange = (val: string) => {
     const cleanVal = sanitizeAddressInput(val);
     setAddressData((prev) => ({ ...prev, fullAddress: cleanVal }));
-
-    if (addressDebounceRef.current) {
-      clearTimeout(addressDebounceRef.current);
-    }
-
-    const trimmed = cleanVal.trim();
-    if (trimmed.length >= 10 && trimmed !== lastSearchedQueryRef.current) {
-      addressDebounceRef.current = setTimeout(() => {
-        lastSearchedQueryRef.current = trimmed;
-        geoFromFields(undefined, false, cleanVal);
-      }, 1500);
-    }
   };
 
   const handleAddressInputBlur = () => {
-    const trimmed = (addressData.fullAddress || "").trim();
-    if (trimmed.length >= 5 && trimmed !== lastSearchedQueryRef.current) {
-      if (addressDebounceRef.current) {
-        clearTimeout(addressDebounceRef.current);
-      }
-      lastSearchedQueryRef.current = trimmed;
-      geoFromFields(undefined, false, trimmed);
-    }
+    // When user enters full address manually, coordinates remain based on pincode or current location
   };
 
   const resetForm = () => {

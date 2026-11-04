@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -20,7 +20,17 @@ import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPrevi
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput } from "@/utils/helpers";
+import {
+  allowOnlyAddressCharsOnKeyDown,
+  sanitizeAddressInput,
+  allowOnlyAddressLabelCharsOnKeyDown,
+  sanitizeAddressLabelInput,
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  sanitizePincodeInput,
+  validateAddressPayload,
+  AddressValidationErrors,
+} from "@/utils/helpers";
 
 interface AddressModalProps {
   open: boolean;
@@ -57,6 +67,8 @@ export const AddressModal: React.FC<AddressModalProps> = ({
   onFetchCurrentLocation,
   isFetchingLocation,
 }) => {
+  const [errors, setErrors] = useState<AddressValidationErrors>({});
+
   const {
     addressData,
     setAddressData,
@@ -70,7 +82,73 @@ export const AddressModal: React.FC<AddressModalProps> = ({
     handleAddressInputBlur,
   } = useAddressGeocoding(open, addressForm);
 
-  // Sync address form when user clicks Save Location instead of continuous useEffect loop
+  // Clear errors when modal opens or closes
+  useEffect(() => {
+    if (!open) {
+      setErrors({});
+    }
+  }, [open]);
+
+
+
+  const isEdit = Boolean(selectedAddressId || addressForm?.id);
+  const initialAddressRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (open) {
+      initialAddressRef.current = {
+        addressLabel: sanitizeAddressLabelInput(addressForm?.addressLabel || ""),
+        streetName: sanitizeAddressInput(addressForm?.streetName || ""),
+        fullAddress: sanitizeAddressInput(addressForm?.fullAddress || ""),
+        city: sanitizeLettersOnly(addressForm?.city || ""),
+        state: sanitizeLettersOnly(addressForm?.state || ""),
+        pincode: sanitizePincodeInput(addressForm?.pincode || ""),
+        serviceRadiusKm: Number(addressForm?.serviceRadiusKm) || 10,
+        isDefault: Boolean(addressForm?.isDefault),
+        latitude: addressForm?.latitude ? String(addressForm.latitude) : "",
+        longitude: addressForm?.longitude ? String(addressForm.longitude) : "",
+      };
+    }
+  }, [open, selectedAddressId, addressForm?.id]);
+
+  const isAddressDirty = useMemo(() => {
+    const currentStreet = (addressData.streetName ?? addressForm?.streetName ?? "").trim();
+    const currentLabel = (addressData.addressLabel || "").trim();
+    const currentFull = (addressData.fullAddress || "").trim();
+    const currentCity = (addressData.city || "").trim();
+    const currentState = (addressData.state || "").trim();
+    const currentPin = (addressData.pincode || "").trim();
+    const currentRadius = Number(addressData.serviceRadiusKm) || 10;
+    const currentDefault = Boolean(addressData.isDefault);
+    const currentLat = addressData.latitude ? String(addressData.latitude).trim() : "";
+    const currentLng = addressData.longitude ? String(addressData.longitude).trim() : "";
+
+    if (!isEdit) {
+      return Boolean(
+        currentPin &&
+        currentLabel &&
+        currentCity &&
+        currentState &&
+        (currentFull || currentStreet)
+      );
+    }
+
+    const init = initialAddressRef.current || {};
+    return (
+      currentLabel !== (init.addressLabel || "").trim() ||
+      currentStreet !== (init.streetName || "").trim() ||
+      currentFull !== (init.fullAddress || "").trim() ||
+      currentCity !== (init.city || "").trim() ||
+      currentState !== (init.state || "").trim() ||
+      currentPin !== (init.pincode || "").trim() ||
+      currentRadius !== (Number(init.serviceRadiusKm) || 10) ||
+      currentDefault !== Boolean(init.isDefault) ||
+      (currentLat && currentLat !== (init.latitude || "").trim()) ||
+      (currentLng && currentLng !== (init.longitude || "").trim())
+    );
+  }, [isEdit, addressData, addressForm]);
+
+  const isSaveDisabled = savingAddress || !isAddressDirty;
 
   return (
     <Dialog
@@ -103,7 +181,9 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         }}
       >
         <Box component="span">
-          {Boolean(selectedAddressId || addressForm?.id) ? "Edit Service Area" : "Add New Service Area"}
+          {Boolean(selectedAddressId || addressForm?.id)
+            ? "Edit Service Area"
+            : "Add New Service Area"}
         </Box>
         <AddressLocationButton
           isFetchingLocation={isFetchingLocation}
@@ -120,9 +200,38 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 fullWidth
                 label="Pincode *"
                 value={addressData.pincode}
-                onChange={(e) => handlePincodeChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (
+                    e.ctrlKey ||
+                    e.metaKey ||
+                    [
+                      "Backspace",
+                      "Delete",
+                      "ArrowLeft",
+                      "ArrowRight",
+                      "Tab",
+                      "Enter",
+                      "Home",
+                      "End",
+                    ].includes(e.key)
+                  ) {
+                    return;
+                  }
+                  if (!/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => {
+                  const val = sanitizePincodeInput(e.target.value);
+                  handlePincodeChange(val);
+                  if (errors.pincode) {
+                    setErrors((prev) => ({ ...prev, pincode: undefined }));
+                  }
+                }}
                 slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
                 variant="outlined"
+                error={Boolean(errors.pincode)}
+                helperText={errors.pincode}
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
@@ -131,13 +240,21 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 fullWidth
                 label="Address Label (e.g., Home, Office, Temple) *"
                 value={addressData.addressLabel}
-                onChange={(e) =>
+                onKeyDown={allowOnlyAddressLabelCharsOnKeyDown}
+                onChange={(e) => {
+                  const val = sanitizeAddressLabelInput(e.target.value);
                   setAddressData((prev) => ({
                     ...prev,
-                    addressLabel: e.target.value,
-                  }))
-                }
+                    addressLabel: val,
+                  }));
+                  if (errors.addressLabel) {
+                    setErrors((prev) => ({ ...prev, addressLabel: undefined }));
+                  }
+                }}
+                slotProps={{ htmlInput: { maxLength: 50 } }}
                 variant="outlined"
+                error={Boolean(errors.addressLabel)}
+                helperText={errors.addressLabel}
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
@@ -151,17 +268,22 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 label="Full Address *"
                 value={addressData.fullAddress}
                 onKeyDown={allowOnlyAddressCharsOnKeyDown}
-                onChange={(e) => handleAddressInputChange(sanitizeAddressInput(e.target.value))}
+                onChange={(e) => {
+                  const val = sanitizeAddressInput(e.target.value);
+                  handleAddressInputChange(val);
+                  if (errors.fullAddress) {
+                    setErrors((prev) => ({ ...prev, fullAddress: undefined }));
+                  }
+                }}
                 onBlur={handleAddressInputBlur}
                 variant="outlined"
+                error={Boolean(errors.fullAddress)}
+                helperText={
+                  errors.fullAddress ||
+                  "Enter your complete street, house/flat or landmark address details."
+                }
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
-              <Typography
-                variant="caption"
-                sx={{ color: "#6b7280", mt: 0.5, display: "block" }}
-              >
-                Fill any one of address, city or pincode. The map marker updates automatically.
-              </Typography>
             </Grid>
 
             {/* ROW 3: STREET NAME / AREA */}
@@ -170,12 +292,19 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 fullWidth
                 label="Street Name / Area / Landmark *"
                 value={addressData.streetName ?? addressForm.streetName ?? ""}
+                onKeyDown={allowOnlyAddressCharsOnKeyDown}
                 onChange={(e) => {
-                  const val = e.target.value;
+                  const val = sanitizeAddressInput(e.target.value).slice(0, 100);
                   setAddressData((prev) => ({ ...prev, streetName: val }));
                   setAddressForm((prev: any) => ({ ...prev, streetName: val }));
+                  if (errors.streetName) {
+                    setErrors((prev) => ({ ...prev, streetName: undefined }));
+                  }
                 }}
+                slotProps={{ htmlInput: { maxLength: 100 } }}
                 variant="outlined"
+                error={Boolean(errors.streetName)}
+                helperText={errors.streetName}
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
@@ -186,10 +315,18 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 fullWidth
                 label="City *"
                 value={addressData.city}
-                onChange={(e) =>
-                  setAddressData((prev) => ({ ...prev, city: e.target.value }))
-                }
+                onKeyDown={allowOnlyLettersOnKeyDown}
+                onChange={(e) => {
+                  const val = sanitizeLettersOnly(e.target.value).slice(0, 60);
+                  setAddressData((prev) => ({ ...prev, city: val }));
+                  if (errors.city) {
+                    setErrors((prev) => ({ ...prev, city: undefined }));
+                  }
+                }}
+                slotProps={{ htmlInput: { maxLength: 60 } }}
                 variant="outlined"
+                error={Boolean(errors.city)}
+                helperText={errors.city}
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
@@ -198,10 +335,18 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 fullWidth
                 label="State *"
                 value={addressData.state}
-                onChange={(e) =>
-                  setAddressData((prev) => ({ ...prev, state: e.target.value }))
-                }
+                onKeyDown={allowOnlyLettersOnKeyDown}
+                onChange={(e) => {
+                  const val = sanitizeLettersOnly(e.target.value).slice(0, 60);
+                  setAddressData((prev) => ({ ...prev, state: val }));
+                  if (errors.state) {
+                    setErrors((prev) => ({ ...prev, state: undefined }));
+                  }
+                }}
+                slotProps={{ htmlInput: { maxLength: 60 } }}
                 variant="outlined"
+                error={Boolean(errors.state)}
+                helperText={errors.state}
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
@@ -280,21 +425,48 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         </Button>
         <Button
           onClick={() => {
-            const currentStreetName = addressData.streetName ?? addressForm.streetName ?? "";
-            const constructedAddress =
+            const currentStreetName = (
+              addressData.streetName ??
+              addressForm.streetName ??
+              ""
+            ).trim();
+
+            const constructedAddress = (
               addressData.fullAddress ||
-              [currentStreetName, addressData.city, addressData.state, addressData.pincode]
+              [
+                currentStreetName,
+                addressData.city,
+                addressData.state,
+                addressData.pincode,
+              ]
                 .filter(Boolean)
-                .join(", ");
+                .join(", ")
+            ).trim();
+
+            // Validate all address fields with strict regexes
+            const validation = validateAddressPayload({
+              pincode: addressData.pincode,
+              addressLabel: addressData.addressLabel,
+              fullAddress: constructedAddress,
+              streetName: currentStreetName,
+              city: addressData.city,
+              state: addressData.state,
+            });
+
+            if (!validation.isValid) {
+              setErrors(validation.errors);
+              return;
+            }
+            setErrors({});
 
             const updatedForm = {
               ...addressForm,
-              addressLabel: addressData.addressLabel,
-              streetName: currentStreetName,
-              fullAddress: constructedAddress,
-              city: addressData.city,
-              state: addressData.state,
-              pincode: addressData.pincode,
+              addressLabel: sanitizeAddressLabelInput((addressData.addressLabel || "").trim()),
+              streetName: sanitizeAddressInput(currentStreetName),
+              fullAddress: sanitizeAddressInput(constructedAddress),
+              city: sanitizeLettersOnly((addressData.city || "").trim()),
+              state: sanitizeLettersOnly((addressData.state || "").trim()),
+              pincode: sanitizePincodeInput((addressData.pincode || "").trim()),
               latitude: addressData.latitude,
               longitude: addressData.longitude,
               isDefault: addressData.isDefault,
@@ -302,19 +474,22 @@ export const AddressModal: React.FC<AddressModalProps> = ({
             setAddressForm(updatedForm);
             onSaveAddress(updatedForm);
           }}
-          disabled={savingAddress}
+          disabled={isSaveDisabled}
           sx={{
-            bgcolor: "#FF6200 !important",
-            color: "white !important",
+            bgcolor: isSaveDisabled ? "#cbd5e1 !important" : "#FF6200 !important",
+            color: isSaveDisabled ? "#64748b !important" : "white !important",
+            cursor: isSaveDisabled ? "not-allowed !important" : "pointer",
             fontWeight: 700,
             px: 3,
             py: 1,
             borderRadius: "10px",
             textTransform: "none",
-            "&:hover": { bgcolor: "#ea580c !important" },
+            "&:hover": {
+              bgcolor: isSaveDisabled ? "#cbd5e1 !important" : "#ea580c !important",
+            },
           }}
         >
-          {savingAddress ? "Saving..." : "Save Location"}
+          {savingAddress ? "Saving..." : isEdit ? "Update Location" : "Save Location"}
         </Button>
       </DialogActions>
     </Dialog>

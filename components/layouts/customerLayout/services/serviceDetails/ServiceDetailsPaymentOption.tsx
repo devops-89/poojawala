@@ -4,6 +4,7 @@ import React from "react";
 import {
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   Radio,
   RadioGroup,
@@ -20,6 +21,7 @@ interface ServiceDetailsPaymentOptionProps {
   selectedFeatureIds: number[];
   paymentOption: string;
   onChangePaymentOption: (val: string) => void;
+  paymentError?: string;
 }
 
 export default function ServiceDetailsPaymentOption({
@@ -30,6 +32,7 @@ export default function ServiceDetailsPaymentOption({
   selectedFeatureIds,
   paymentOption,
   onChangePaymentOption,
+  paymentError,
 }: ServiceDetailsPaymentOptionProps) {
   const currentPlanObj = plans?.[selectedPlan];
   const basePrice = Number(currentPlanObj?.price || 0);
@@ -89,7 +92,7 @@ export default function ServiceDetailsPaymentOption({
       : "Full Payment";
 
   return (
-    <FormControl component="fieldset">
+    <FormControl component="fieldset" error={Boolean(paymentError)}>
       <FormLabel
         component="legend"
         sx={{
@@ -157,6 +160,11 @@ export default function ServiceDetailsPaymentOption({
           }
         />
       </RadioGroup>
+      {paymentError && (
+        <FormHelperText error sx={{ fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+          {paymentError}
+        </FormHelperText>
+      )}
     </FormControl>
   );
 }

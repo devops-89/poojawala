@@ -46,6 +46,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     matchingAddresses,
     selectedAddressId,
     bookingForm,
+    formik,
     availableLanguages,
     timeOptions,
     isAllSlotsPassedToday,
@@ -112,6 +113,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           <Grid size={{ xs: 12, md: 7 }}>
             <Box
               component="form"
+              noValidate
               onSubmit={handleConfirmBooking}
               sx={{ display: "flex", flexDirection: "column", gap: 3 }}
             >
@@ -119,6 +121,8 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               <ServiceDetailsDateTimeFields
                 scheduledDate={bookingForm.scheduledDate}
                 scheduledTime={bookingForm.scheduledTime}
+                dateError={formik.touched.scheduledDate ? (formik.errors.scheduledDate as string) : undefined}
+                timeError={formik.touched.scheduledTime ? (formik.errors.scheduledTime as string) : undefined}
                 todayStr={todayStr}
                 timeOptions={timeOptions}
                 isAllSlotsPassedToday={isAllSlotsPassedToday}
@@ -204,6 +208,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                 <ServiceDetailsAddressSelector
                   matchingAddresses={matchingAddresses}
                   selectedAddressId={selectedAddressId}
+                  addressError={formik.touched.customerAddressId ? (formik.errors.customerAddressId as string) : undefined}
                   onChangeAddressId={(id) => setSelectedAddressId(id)}
                   onOpenAddAddressModal={() => setAddressModalOpen(true)}
                 />
@@ -217,6 +222,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                 showAddons={showAddons}
                 selectedFeatureIds={selectedFeatureIds}
                 paymentOption={bookingForm.paymentOption}
+                paymentError={formik.touched.paymentOption ? (formik.errors.paymentOption as string) : undefined}
                 onChangePaymentOption={(val) => handleInputChange("paymentOption", val)}
               />
 

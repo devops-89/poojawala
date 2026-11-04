@@ -35,7 +35,7 @@ export default function PublicRouteGuard() {
     }
 
     // User is on a public website route (e.g. /, /services, /temples, /astrologers, /products, /blogs, etc.)
-    // Check if any user (Admin, Customer, Purohit, Astrologer) is currently logged in:
+    // Check if an Admin, Purohit, or Astrologer is currently logged in:
     try {
       const userStr =
         sessionStorage.getItem("user") || localStorage.getItem("user");
@@ -51,23 +51,19 @@ export default function PublicRouteGuard() {
           ""
       ).toUpperCase();
 
-      // Redirect authenticated users away from public website to their respective portal dashboards
+      // If user has role ADMIN, PUROHIT, or ASTROLOGER, they cannot access website pages
       if (
         rawRole === "ADMIN" ||
         rawRole === "SUPER_ADMIN" ||
         rawRole === "SUPERADMIN"
       ) {
         router.replace("/admin/dashboard");
-      } else if (rawRole === "CUSTOMER") {
-        router.replace("/customer/dashboard");
       } else if (rawRole === "PUROHIT") {
         router.replace("/partner/dashboard");
       } else if (rawRole === "ASTROLOGER") {
         router.replace("/partner/astrologybookings");
-      } else if (user.id || user.email) {
-        // Any other authenticated user
-        router.replace("/customer/dashboard");
       }
+      // Note: role === "CUSTOMER" is explicitly allowed to browse the public website!
     } catch (e) {
       // JSON parse error or unauthenticated
     }
@@ -75,4 +71,3 @@ export default function PublicRouteGuard() {
 
   return null;
 }
-

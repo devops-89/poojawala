@@ -1,5 +1,3 @@
-
-
 import { Suspense } from "react";
 import Script from "next/script";
 import { DM_Sans, Outfit } from "next/font/google";
@@ -25,7 +23,7 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   display: "swap",
-  
+
 });
 
 export const metadata: Metadata = {
@@ -67,10 +65,18 @@ export const metadata: Metadata = {
     images: ["https://1pooja.com/images/logo.webp"],
   },
   icons: {
-    icon: "/1PoojalogoFavicon.png",
-    shortcut: "/1PoojalogoFavicon.png",
-    apple: "/1PoojalogoFavicon.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+      { url: "/1PoojalogoFavicon.png", type: "image/png", sizes: "192x192" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
+  manifest: "/manifest.json",
 };
 
 export const viewport = {
@@ -87,9 +93,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/1PoojalogoFavicon.png" />
-        <link rel="shortcut icon" href="/1PoojalogoFavicon.png" />
-        <link rel="apple-touch-icon" href="/1PoojalogoFavicon.png" />
+        {/* Favicons (Google Search compliant - multiples of 48px square) */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/icon-48.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/icon-96.png" />
+        <link rel="icon" type="image/png" sizes="144x144" href="/icon-144.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/1PoojalogoFavicon.png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
 
         <meta name="google-site-verification" content="-gaSrqYc7JoMx1PzVFmk4HZ6BXPHLPUp5pMOHNmLRrQ" />
         <meta name="google-site-verification" content="2bNVtobphfS7u5Cr_thQgNKR-jmCrrTRBuIpAiauIDw" />

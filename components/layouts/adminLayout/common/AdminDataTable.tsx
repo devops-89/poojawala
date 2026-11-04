@@ -41,6 +41,20 @@ export default function AdminDataTable<T = any>({
 }: AdminDataTableProps<T>) {
   const effectiveCount = totalCount !== undefined ? totalCount : data.length;
 
+  const resolvedActiveTab = React.useMemo(() => {
+    if (!tabs || tabs.length === 0) return undefined;
+    // 1. Exact match
+    const exact = tabs.find((t) => t.id === activeTab);
+    if (exact) return exact.id;
+    // 2. Case-insensitive match (e.g. "PENDING" matches "Pending")
+    const ci = tabs.find(
+      (t) => String(t.id).toLowerCase() === String(activeTab).toLowerCase()
+    );
+    if (ci) return ci.id;
+    // 3. Fallback to first tab
+    return tabs[0]?.id;
+  }, [tabs, activeTab]);
+
   return (
     <Paper
       elevation={0}
@@ -54,7 +68,7 @@ export default function AdminDataTable<T = any>({
       {/* Optional Tabs Bar */}
       {tabs && tabs.length > 0 && (
         <Tabs
-          value={activeTab ?? tabs[0]?.id}
+          value={resolvedActiveTab}
           onChange={(_, val) => onTabChange?.(val)}
           variant="scrollable"
           scrollButtons="auto"

@@ -36,11 +36,18 @@ export const addPurohitServiceAPI = async (services: any[]) => {
   }
 };
 
-export const getPurohitServicesAPI = async (page: number = 1, limit: number = 10) => {
+export const getPurohitServicesAPI = async (
+  page: number = 1,
+  limit: number = 10,
+  search: string = ""
+) => {
   try {
     const params = new URLSearchParams();
     params.append('page', String(page));
     params.append('limit', String(limit));
+    if (search && search.trim()) {
+      params.append('search', search.trim());
+    }
     const response = await userSecuredApi.get("/service/purohit-service", { params });
     return response.data;
   } catch (error) {

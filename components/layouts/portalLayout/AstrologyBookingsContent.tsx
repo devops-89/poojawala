@@ -72,28 +72,6 @@ const formatScheduleDateTime = (booking: any) => {
       }
     } catch (e) {}
   }
-
-  if (booking?.scheduledAtIst && typeof booking.scheduledAtIst === 'string') {
-    const parts = booking.scheduledAtIst.split(',');
-    if (parts.length >= 2) {
-      const dPart = parts[0].trim();
-      const tPart = parts[1].trim();
-      const [dd, mm, yyyy] = dPart.split('/');
-      if (dd && mm && yyyy) {
-        const monthNames = [
-          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ];
-        const mIdx = parseInt(mm, 10) - 1;
-        const formattedDate = `${parseInt(dd, 10)} ${monthNames[mIdx] || mm} ${yyyy}`;
-        const cleanTime = tPart.replace(/:\d{2}\s/, ' ').toUpperCase();
-        return { date: formattedDate, time: cleanTime, full: `${formattedDate}, ${cleanTime}` };
-      }
-      return { date: dPart, time: tPart, full: booking.scheduledAtIst };
-    }
-    return { date: booking.scheduledAtIst, time: '', full: booking.scheduledAtIst };
-  }
-
   return { date: 'Flexible', time: 'N/A', full: 'Flexible' };
 };
 
@@ -114,8 +92,7 @@ const formatCreatedDateTime = (booking: any) => {
       }
     } catch (e) {}
   }
-  if (booking?.createdAtIst) return booking.createdAtIst;
-  return null;
+  return 'N/A';
 };
 
 // The 3 statuses requested by the user

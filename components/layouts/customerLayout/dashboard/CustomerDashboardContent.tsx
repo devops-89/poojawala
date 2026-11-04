@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   Box, 
   Typography, 
+  CircularProgress,
   Paper, 
   Table, 
   TableBody, 
@@ -36,6 +37,7 @@ import {
   getTablePaginationState,
   syncTablePagination,
 } from '@/utils/paginationHelper';
+import { formatScheduledDateTime } from '@/utils/helpers';
 
 const getStatusColor = (status: string) => {
   switch (status?.toUpperCase()) {
@@ -59,12 +61,14 @@ export default function CustomerDashboardContent() {
   const pathname = usePathname();
 
   const [bookingType, setBookingType] = useState<'POOJA' | 'ASTROLOGY'>(() => {
-    const typeFromParam = searchParams.get('type')?.toUpperCase();
-    if (typeFromParam === 'ASTROLOGY' || typeFromParam === 'POOJA') {
-      return typeFromParam as 'POOJA' | 'ASTROLOGY';
-    }
     if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem('customer_bookings_type');
+      const urlParams = new URLSearchParams(window.location.search);
+      const typeFromParam = (urlParams.get('type') || urlParams.get('bookingType'))?.toUpperCase();
+      if (typeFromParam === 'ASTROLOGY' || typeFromParam === 'POOJA') {
+        sessionStorage.setItem('customer_bookings_type', typeFromParam);
+        return typeFromParam as 'POOJA' | 'ASTROLOGY';
+      }
+      const saved = sessionStorage.getItem('customer_bookings_type')?.toUpperCase();
       if (saved === 'ASTROLOGY' || saved === 'POOJA') {
         return saved as 'POOJA' | 'ASTROLOGY';
       }
@@ -81,9 +85,8 @@ export default function CustomerDashboardContent() {
   const [tabValue, setTabValue] = useState(0);
   const [page, setPage] = useState(initialPagination.page);
   const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
-
-  const isSwitchingTypeRef = React.useRef(false);
-  const lastNavigatedStatusRef = React.useRef<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const fetchIdRef = React.useRef(0);
 
   useEffect(() => {
     syncTablePagination(
@@ -99,106 +102,77 @@ export default function CustomerDashboardContent() {
 
   const currentTabsList = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
 
-  // Sync state with URL / sessionStorage
+  const isInitialMountRef = React.useRef(true);
+
+  // Clean URL parameters (type, bookingType, razorpay_*) on mount and check payment return
   useEffect(() => {
-    const typeParam = searchParams.get('type')?.toUpperCase();
+    if (typeof window === 'undefined') return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = (urlParams.get('type') || urlParams.get('bookingType'))?.toUpperCase();
     if (typeParam === 'ASTROLOGY' || typeParam === 'POOJA') {
-      if (isSwitchingTypeRef.current) {
-        if (typeParam === bookingType) {
-          isSwitchingTypeRef.current = false;
-        }
-        return;
-      }
+      sessionStorage.setItem('customer_bookings_type', typeParam);
       if (typeParam !== bookingType) {
         setBookingType(typeParam as 'POOJA' | 'ASTROLOGY');
       }
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('customer_bookings_type', typeParam);
-      }
-    } else if (typeof window !== 'undefined') {
-      const savedType = sessionStorage.getItem('customer_bookings_type');
-      if (savedType === 'ASTROLOGY' || savedType === 'POOJA') {
-        if (savedType !== bookingType) {
-          setBookingType(savedType as 'POOJA' | 'ASTROLOGY');
-        }
-        const params = new URLSearchParams(window.location.search);
-        params.set('type', savedType);
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      }
     }
-  }, [searchParams, pathname, router, bookingType]);
+
+    const hasTypeParam = urlParams.has('type') || urlParams.has('bookingType');
+    const pendingBooking = sessionStorage.getItem('booking_payment_pending');
+    const hasPaymentParams =
+      urlParams.get('razorpay_payment_id') ||
+      urlParams.get('razorpay_payment_link_status') ||
+      urlParams.get('payment_id');
+
+    if (pendingBooking || hasPaymentParams) {
+      sessionStorage.removeItem('booking_payment_pending');
+      showSnackbar('Booking request created successfully!', 'success');
+    }
+
+    if (hasTypeParam || hasPaymentParams) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('type');
+      url.searchParams.delete('bookingType');
+      url.searchParams.delete('razorpay_payment_id');
+      url.searchParams.delete('razorpay_payment_link_id');
+      url.searchParams.delete('razorpay_payment_link_reference_id');
+      url.searchParams.delete('razorpay_payment_link_status');
+      url.searchParams.delete('razorpay_signature');
+      url.searchParams.delete('payment_id');
+
+      const newSearch = url.searchParams.toString();
+      const newUrl = url.pathname + (newSearch ? `?${newSearch}` : '');
+      window.history.replaceState(null, '', newUrl);
+    }
+  }, [bookingType, showSnackbar]);
 
   // Sync status tab with URL parameter if present
   useEffect(() => {
-    if (isSwitchingTypeRef.current) {
-      return;
-    }
     const statusParam = searchParams.get('status');
     const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
     if (statusParam) {
       const foundIdx = activeTabs.findIndex(
         (t) => t.toLowerCase() === statusParam.toLowerCase()
       );
-      if (lastNavigatedStatusRef.current !== null) {
-        if (foundIdx === lastNavigatedStatusRef.current) {
-          lastNavigatedStatusRef.current = null;
-        }
-        return;
-      }
       if (foundIdx !== -1 && foundIdx !== tabValue) {
         setTabValue(foundIdx);
-      }
-    } else {
-      if (lastNavigatedStatusRef.current !== null) {
-        if (lastNavigatedStatusRef.current === 0) {
-          lastNavigatedStatusRef.current = null;
-        }
-        return;
-      }
-      if (tabValue !== 0) {
-        setTabValue(0);
       }
     }
   }, [bookingType, searchParams, tabValue]);
 
-  // Check for return from payment redirect (sessionStorage flag or payment params)
+  // Main data fetch for user actions (type switch, tab change, pagination)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const pendingBooking = sessionStorage.getItem("booking_payment_pending");
-      const hasPaymentParams =
-        urlParams.get("razorpay_payment_id") ||
-        urlParams.get("razorpay_payment_link_status") ||
-        urlParams.get("payment_id");
-
-      if (pendingBooking || hasPaymentParams) {
-        sessionStorage.removeItem("booking_payment_pending");
-        showSnackbar("Booking request created successfully!", "success");
-
-        if (hasPaymentParams) {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("razorpay_payment_id");
-          url.searchParams.delete("razorpay_payment_link_id");
-          url.searchParams.delete("razorpay_payment_link_reference_id");
-          url.searchParams.delete("razorpay_payment_link_status");
-          url.searchParams.delete("razorpay_signature");
-          url.searchParams.delete("payment_id");
-          window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
-        }
-      }
-    }
-  }, [showSnackbar]);
-
-  useEffect(() => {
-    let isCancelled = false;
-
     const fetchBookings = async () => {
-      showLoader('Loading bookings...');
+      const currentFetchId = ++fetchIdRef.current;
+      const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
+      const currentStatus = tabValue === 0 ? undefined : activeTabs[tabValue];
+
+      setLoading(true);
+
       try {
-        const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
-        const currentStatus = tabValue === 0 ? undefined : activeTabs[tabValue];
         const res = await getCustomerBookingsAPI(currentStatus, page + 1, rowsPerPage, bookingType);
-        if (isCancelled) return;
+        if (currentFetchId !== fetchIdRef.current) return;
+
         if (res.success && res.data?.bookings) {
           const rawBookings = res.data.bookings;
           const paginated = rawBookings.length > rowsPerPage
@@ -211,37 +185,76 @@ export default function CustomerDashboardContent() {
           setTotalBookings(0);
         }
       } catch (error) {
-        if (isCancelled) return;
+        if (currentFetchId !== fetchIdRef.current) return;
         console.error(error);
         showSnackbar('Failed to fetch bookings', 'error');
         setBookings([]);
         setTotalBookings(0);
       } finally {
-        if (!isCancelled) {
+        if (currentFetchId === fetchIdRef.current) {
+          setLoading(false);
           hideLoader();
         }
       }
     };
+
     fetchBookings();
+  }, [page, rowsPerPage, tabValue, bookingType, showSnackbar, hideLoader]);
+
+  // Silent background refresh for real-time socket events (does not trigger full-screen loader)
+  useEffect(() => {
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      return;
+    }
+
+    if (refreshTrigger === 0) return;
+
+    let isCancelled = false;
+    const timeoutId = setTimeout(async () => {
+      try {
+        const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
+        const currentStatus = tabValue === 0 ? undefined : activeTabs[tabValue];
+        const res = await getCustomerBookingsAPI(currentStatus, page + 1, rowsPerPage, bookingType);
+        if (isCancelled) return;
+
+        if (res.success && res.data?.bookings) {
+          const rawBookings = res.data.bookings;
+          const paginated = rawBookings.length > rowsPerPage
+            ? rawBookings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : rawBookings;
+          setBookings(paginated);
+          setTotalBookings(res.data.pagination?.total || rawBookings.length);
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          console.warn('Silent refresh notice:', error);
+        }
+      }
+    }, 400);
 
     return () => {
       isCancelled = true;
+      clearTimeout(timeoutId);
     };
-  }, [page, rowsPerPage, tabValue, bookingType, refreshTrigger]);
+  }, [refreshTrigger, bookingType, tabValue, page, rowsPerPage]);
 
   const handleBookingTypeChange = (event: React.SyntheticEvent, newValue: 'POOJA' | 'ASTROLOGY') => {
     if (newValue && newValue !== bookingType) {
-      isSwitchingTypeRef.current = true;
-      lastNavigatedStatusRef.current = 0;
       setBookingType(newValue);
       setTabValue(0);
       setPage(0);
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('customer_bookings_type', newValue);
-        const params = new URLSearchParams(window.location.search);
-        params.set('type', newValue);
-        params.delete('status');
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('type') || url.searchParams.has('bookingType') || url.searchParams.has('status')) {
+          url.searchParams.delete('type');
+          url.searchParams.delete('bookingType');
+          url.searchParams.delete('status');
+          const newSearch = url.searchParams.toString();
+          const newUrl = url.pathname + (newSearch ? `?${newSearch}` : '');
+          window.history.replaceState(null, '', newUrl);
+        }
       }
     }
   };
@@ -250,18 +263,20 @@ export default function CustomerDashboardContent() {
     if (newValue !== tabValue) {
       setTabValue(newValue);
       setPage(0);
-      lastNavigatedStatusRef.current = newValue;
       if (typeof window !== 'undefined') {
         const activeTabs = bookingType === 'ASTROLOGY' ? ASTROLOGY_TABS : POOJA_TABS;
         const tabName = activeTabs[newValue];
-        const params = new URLSearchParams(window.location.search);
-        params.set('type', bookingType);
+        const url = new URL(window.location.href);
+        url.searchParams.delete('type');
+        url.searchParams.delete('bookingType');
         if (newValue === 0) {
-          params.delete('status');
+          url.searchParams.delete('status');
         } else {
-          params.set('status', tabName);
+          url.searchParams.set('status', tabName);
         }
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        const newSearch = url.searchParams.toString();
+        const newUrl = url.pathname + (newSearch ? `?${newSearch}` : '');
+        window.history.replaceState(null, '', newUrl);
       }
     }
   };
@@ -387,7 +402,16 @@ export default function CustomerDashboardContent() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {bookings.length === 0 ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
+                        <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
+                        <Typography sx={{ mt: 1.5, fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+                          Loading bookings...
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : bookings.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.PRIMARY, color: '#64748b' }}>
                         No astrology bookings found.
@@ -410,7 +434,7 @@ export default function CustomerDashboardContent() {
                             {astroName}
                           </TableCell>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
-                            {row.scheduledAt ? new Date(row.scheduledAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                            {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                           </TableCell>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>
                             {displayAmt}
@@ -455,7 +479,16 @@ export default function CustomerDashboardContent() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {bookings.length === 0 ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
+                        <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
+                        <Typography sx={{ mt: 1.5, fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+                          Loading bookings...
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : bookings.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.PRIMARY, color: '#64748b' }}>
                         No bookings found.
@@ -471,7 +504,7 @@ export default function CustomerDashboardContent() {
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>B-{row.id}</TableCell>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>{row.service?.name || 'Puja Service'}</TableCell>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
-                            {row.scheduledAt ? new Date(row.scheduledAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                            {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                           </TableCell>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>{displayAmt}</TableCell>
                           <TableCell>
@@ -543,7 +576,14 @@ export default function CustomerDashboardContent() {
 
       {/* Mobile View (Cards) */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mt: 3 }}>
-        {bookings.length === 0 ? (
+        {loading ? (
+          <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF' }}>
+            <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
+            <Typography sx={{ mt: 1.5, fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+              Loading bookings...
+            </Typography>
+          </Paper>
+        ) : bookings.length === 0 ? (
           <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
               No {bookingType === 'ASTROLOGY' ? 'astrology' : 'puja'} bookings found.
@@ -591,7 +631,7 @@ export default function CustomerDashboardContent() {
                     <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Booking Date:</Typography>
                   </Box>
                   <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>
-                    {row.scheduledAt ? new Date(row.scheduledAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                    {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                   </Typography>
                 </Box>
                 
@@ -658,7 +698,7 @@ export default function CustomerDashboardContent() {
                     <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Booking Date:</Typography>
                   </Box>
                   <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>
-                    {row.scheduledAt ? new Date(row.scheduledAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                    {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                   </Typography>
                 </Box>
                 

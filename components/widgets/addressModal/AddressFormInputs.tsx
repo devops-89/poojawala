@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import {
   Checkbox,
   FormControlLabel,
@@ -9,7 +10,16 @@ import {
 import { AddressFormData } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput } from "@/utils/helpers";
+import {
+  allowOnlyAddressCharsOnKeyDown,
+  sanitizeAddressInput,
+  allowOnlyAddressLabelCharsOnKeyDown,
+  sanitizeAddressLabelInput,
+  allowOnlyLettersOnKeyDown,
+  sanitizeLettersOnly,
+  sanitizePincodeInput,
+  AddressValidationErrors,
+} from "@/utils/helpers";
 
 interface AddressFormInputsProps {
   addressData: AddressFormData;
@@ -17,6 +27,8 @@ interface AddressFormInputsProps {
   onPincodeChange: (val: string) => void;
   onAddressInputChange: (val: string) => void;
   onAddressInputBlur?: () => void;
+  errors?: AddressValidationErrors;
+  setErrors?: React.Dispatch<React.SetStateAction<AddressValidationErrors>>;
 }
 
 export default function AddressFormInputs({
@@ -25,6 +37,8 @@ export default function AddressFormInputs({
   onPincodeChange,
   onAddressInputChange,
   onAddressInputBlur,
+  errors = {},
+  setErrors,
 }: AddressFormInputsProps) {
   return (
     <Grid container spacing={{ xs: 1.5, sm: 2 }}>
@@ -34,9 +48,38 @@ export default function AddressFormInputs({
           fullWidth
           label="Pincode *"
           value={addressData.pincode}
-          onChange={(e) => onPincodeChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (
+              e.ctrlKey ||
+              e.metaKey ||
+              [
+                "Backspace",
+                "Delete",
+                "ArrowLeft",
+                "ArrowRight",
+                "Tab",
+                "Enter",
+                "Home",
+                "End",
+              ].includes(e.key)
+            ) {
+              return;
+            }
+            if (!/^\d$/.test(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onChange={(e) => {
+            const val = sanitizePincodeInput(e.target.value);
+            onPincodeChange(val);
+            if (errors?.pincode && setErrors) {
+              setErrors((prev) => ({ ...prev, pincode: undefined }));
+            }
+          }}
           slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
           variant="outlined"
+          error={Boolean(errors?.pincode)}
+          helperText={errors?.pincode}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
             "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
@@ -48,13 +91,21 @@ export default function AddressFormInputs({
           fullWidth
           label="Address Label (e.g., Home, Office) *"
           value={addressData.addressLabel}
-          onChange={(e) =>
+          onKeyDown={allowOnlyAddressLabelCharsOnKeyDown}
+          onChange={(e) => {
+            const val = sanitizeAddressLabelInput(e.target.value);
             setAddressData({
               ...addressData,
-              addressLabel: e.target.value,
-            })
-          }
+              addressLabel: val,
+            });
+            if (errors?.addressLabel && setErrors) {
+              setErrors((prev) => ({ ...prev, addressLabel: undefined }));
+            }
+          }}
+          slotProps={{ htmlInput: { maxLength: 50 } }}
           variant="outlined"
+          error={Boolean(errors?.addressLabel)}
+          helperText={errors?.addressLabel}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
             "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
@@ -71,25 +122,25 @@ export default function AddressFormInputs({
           label="Full Address *"
           value={addressData.fullAddress}
           onKeyDown={allowOnlyAddressCharsOnKeyDown}
-          onChange={(e) => onAddressInputChange(sanitizeAddressInput(e.target.value))}
+          onChange={(e) => {
+            const val = sanitizeAddressInput(e.target.value);
+            onAddressInputChange(val);
+            if (errors?.fullAddress && setErrors) {
+              setErrors((prev) => ({ ...prev, fullAddress: undefined }));
+            }
+          }}
           onBlur={onAddressInputBlur}
           variant="outlined"
+          error={Boolean(errors?.fullAddress)}
+          helperText={
+            errors?.fullAddress ||
+            "Enter your complete street, house/flat or landmark address details."
+          }
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
             "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
           }}
         />
-        <Typography
-          variant="caption"
-          sx={{
-            color: "#6b7280",
-            mt: 0.5,
-            display: "block",
-            fontSize: { xs: "0.72rem", sm: "0.75rem" },
-          }}
-        >
-          Fill any one of address, city or pincode. The map marker and location details update automatically.
-        </Typography>
       </Grid>
 
       {/* ROW 3: CITY & STATE IN 2-COLUMN GRID */}
@@ -98,10 +149,18 @@ export default function AddressFormInputs({
           fullWidth
           label="City *"
           value={addressData.city}
-          onChange={(e) =>
-            setAddressData({ ...addressData, city: e.target.value })
-          }
+          onKeyDown={allowOnlyLettersOnKeyDown}
+          onChange={(e) => {
+            const val = sanitizeLettersOnly(e.target.value).slice(0, 60);
+            setAddressData({ ...addressData, city: val });
+            if (errors?.city && setErrors) {
+              setErrors((prev) => ({ ...prev, city: undefined }));
+            }
+          }}
+          slotProps={{ htmlInput: { maxLength: 60 } }}
           variant="outlined"
+          error={Boolean(errors?.city)}
+          helperText={errors?.city}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
             "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
@@ -113,10 +172,18 @@ export default function AddressFormInputs({
           fullWidth
           label="State *"
           value={addressData.state}
-          onChange={(e) =>
-            setAddressData({ ...addressData, state: e.target.value })
-          }
+          onKeyDown={allowOnlyLettersOnKeyDown}
+          onChange={(e) => {
+            const val = sanitizeLettersOnly(e.target.value).slice(0, 60);
+            setAddressData({ ...addressData, state: val });
+            if (errors?.state && setErrors) {
+              setErrors((prev) => ({ ...prev, state: undefined }));
+            }
+          }}
+          slotProps={{ htmlInput: { maxLength: 60 } }}
           variant="outlined"
+          error={Boolean(errors?.state)}
+          helperText={errors?.state}
           sx={{
             "& .MuiOutlinedInput-root": { borderRadius: "12px" },
             "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },

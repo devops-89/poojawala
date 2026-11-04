@@ -12,6 +12,13 @@ import {
   EMAIL_STRICT_MESSAGE,
   ADDRESS_STRICT_REGEX,
   ADDRESS_STRICT_MESSAGE,
+  ADDRESS_LABEL_REGEX,
+  ADDRESS_LABEL_MESSAGE,
+  PINCODE_REGEX,
+  PINCODE_MESSAGE,
+  CITY_STATE_REGEX,
+  CITY_MESSAGE,
+  STATE_MESSAGE,
 } from "@/utils/helpers";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
@@ -59,7 +66,7 @@ const step1ValidationSchema = Yup.object().shape({
       },
     ),
   birthPlace: Yup.string().required("Birth place is required"),
-  rashi: Yup.string().optional(),
+  rashi: Yup.string().trim().required("Rashi is required"),
   gotra: Yup.string().optional(),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
@@ -71,16 +78,25 @@ const step1ValidationSchema = Yup.object().shape({
 
 const fullValidationSchema = step1ValidationSchema.concat(
   Yup.object().shape({
-    addressLabel: Yup.string().trim().required("Address label is required"),
+    addressLabel: Yup.string()
+      .trim()
+      .matches(ADDRESS_LABEL_REGEX, ADDRESS_LABEL_MESSAGE)
+      .required("Address label is required"),
     fullAddress: Yup.string()
       .trim()
       .required("Full address is required")
       .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE),
-    city: Yup.string().trim().required("City is required"),
-    state: Yup.string().trim().required("State is required"),
+    city: Yup.string()
+      .trim()
+      .matches(CITY_STATE_REGEX, CITY_MESSAGE)
+      .required("City is required"),
+    state: Yup.string()
+      .trim()
+      .matches(CITY_STATE_REGEX, STATE_MESSAGE)
+      .required("State is required"),
     pincode: Yup.string()
       .trim()
-      .matches(/^[1-9][0-9]{5}$/, "Please enter a valid 6-digit Indian pincode")
+      .matches(PINCODE_REGEX, PINCODE_MESSAGE)
       .required("Pincode is required"),
   }),
 );

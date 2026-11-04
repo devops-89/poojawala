@@ -89,7 +89,9 @@ export const getPurohitsAPI = async (
   verificationStatus?: string,
   status?: string,
   city?: string,
-  serviceId?: number | string
+  serviceId?: number | string,
+  isOnlineAvailable?: boolean,
+  isOfflineAvailable?: boolean
 ) => {
   try {
     const params = new URLSearchParams({
@@ -102,6 +104,12 @@ export const getPurohitsAPI = async (
     if (status) params.append('status', status);
     if (city) params.append('city', city);
     if (serviceId) params.append('serviceId', serviceId.toString());
+    if (isOnlineAvailable !== undefined) {
+      params.append('isOnlineAvailable', isOnlineAvailable ? 'true' : 'false');
+    }
+    if (isOfflineAvailable !== undefined) {
+      params.append('isOfflineAvailable', isOfflineAvailable ? 'true' : 'false');
+    }
 
     const response = await userSecuredApi.get(`/users/get?${params.toString()}`);
     return response.data;

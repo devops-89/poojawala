@@ -1,26 +1,35 @@
 import { authPublicApi, authSecuredApi, attachCsrfHeaders, getCsrfToken, getActiveRole, extractRoleCsrfToken, replaceCsrfToken, parseAllCookies } from "./config";
+import { LOGIN_PAGE } from "@/utils/enums";
 
-export const loginAPI = async (data: any) => {
+export { LOGIN_PAGE };
+
+export const loginAPI = async (data: any, page?: LOGIN_PAGE | string) => {
   try {
-    const res = await authPublicApi.post("auth/login", data);
+    const targetPage = page || data?.page;
+    const query = targetPage ? `?page=${encodeURIComponent(targetPage)}` : "";
+    const res = await authPublicApi.post(`auth/login${query}`, data);
     return res.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const forgotPasswordAPI = async (data: { email: string }) => {
+export const forgotPasswordAPI = async (data: { email: string }, page?: LOGIN_PAGE | string) => {
   try {
-    const res = await authPublicApi.post("auth/forgot-password", data);
+    const targetPage = page || (data as any)?.page;
+    const query = targetPage ? `?page=${encodeURIComponent(targetPage)}` : "";
+    const res = await authPublicApi.post(`auth/forgot-password${query}`, data);
     return res.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const resetPasswordAPI = async (data: { email: string; otp: string; password: string }) => {
+export const resetPasswordAPI = async (data: { email: string; otp: string; password: string }, page?: LOGIN_PAGE | string) => {
   try {
-    const res = await authPublicApi.patch("auth/reset-password", data);
+    const targetPage = page || (data as any)?.page;
+    const query = targetPage ? `?page=${encodeURIComponent(targetPage)}` : "";
+    const res = await authPublicApi.patch(`auth/reset-password${query}`, data);
     return res.data;
   } catch (error) {
     throw error;

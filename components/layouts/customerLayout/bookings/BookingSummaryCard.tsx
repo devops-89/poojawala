@@ -1,8 +1,10 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import React from 'react';
+import moment from 'moment';
 import { Box, Typography, Paper, Chip } from '@mui/material';
 import { formatInr, getBookingPaymentDetails } from './bookingPaymentHelper';
+import { formatScheduledDateTime } from '@/utils/helpers';
 
 interface Props {
   booking: any;
@@ -134,11 +136,13 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
           </>
         )}
 
-        {isAstrology && (booking?.scheduledAtIst || booking?.scheduledAt) && (
+        {Boolean(booking?.scheduledAt) && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', pb: 2 }}>
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Scheduled Session</Typography>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+              {isAstrology ? 'Scheduled Session' : 'Scheduled Date & Time'}
+            </Typography>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
-              {booking?.scheduledAtIst || new Date(booking.scheduledAt).toLocaleString('en-IN')}
+              {formatScheduledDateTime(booking.scheduledAt)}
             </Typography>
           </Box>
         )}
@@ -164,10 +168,10 @@ export default function BookingSummaryCard({ booking, statusLabel }: Props) {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>Booked On</Typography>
           <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>
-            {booking?.createdAtIst
-              ? booking.createdAtIst.split(',')[0]
-              : booking?.createdAt
-              ? new Date(booking.createdAt).toLocaleDateString('en-IN')
+            {booking?.createdAt
+              ? moment(booking.createdAt).isValid()
+                ? moment(booking.createdAt).format("DD/MM/YYYY")
+                : new Date(booking.createdAt).toLocaleDateString('en-IN')
               : 'N/A'}
           </Typography>
         </Box>

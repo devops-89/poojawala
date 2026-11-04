@@ -36,17 +36,39 @@ import {
 } from "@/utils/paginationHelper";
 
 export default function AdminPurohitsContent() {
+  const searchParams = useSearchParams();
   const initialPagination = getTablePaginationState("admin_purohits_state", {
     defaultStatus: "All",
     defaultLimit: 10,
+    searchParams,
   });
 
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState(initialPagination.status);
+  const [statusFilter, setStatusFilter] = useState(() => {
+    const raw = initialPagination.status;
+    const match = STATUS_TABS.find(
+      (t) => t.id.toLowerCase() === String(raw).toLowerCase()
+    );
+    return match ? match.id : "All";
+  });
   const [page, setPage] = useState(initialPagination.page);
   const [rowsPerPage, setRowsPerPage] = useState(initialPagination.rowsPerPage);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  // Sync status filter if URL search param changes
+  const statusFromUrl = searchParams.get("status");
+  useEffect(() => {
+    if (statusFromUrl) {
+      const match = STATUS_TABS.find(
+        (t) => t.id.toLowerCase() === statusFromUrl.toLowerCase()
+      );
+      if (match && match.id !== statusFilter) {
+        setStatusFilter(match.id);
+        setPage(0);
+      }
+    }
+  }, [statusFromUrl]);
 
   const [purohits, setPurohits] = useState<any[]>([]);
   const [statusChangeTarget, setStatusChangeTarget] = useState<any>(null);

@@ -7,6 +7,11 @@ import {
   ADDRESS_STRICT_MESSAGE,
   DESCRIPTION_STRICT_REGEX,
   DESCRIPTION_STRICT_MESSAGE,
+  PINCODE_REGEX,
+  PINCODE_MESSAGE,
+  CITY_STATE_REGEX,
+  CITY_MESSAGE,
+  STATE_MESSAGE,
 } from '@/utils/helpers';
 
 export type StepId =
@@ -278,14 +283,20 @@ export const stepValidationSchemas: Record<StepId, any> = {
     serviceArea: yup.object({
       pincode: yup
         .string()
-        .matches(/^[0-9]{6}$/, 'Pincode must be exactly 6 digits')
+        .matches(PINCODE_REGEX, PINCODE_MESSAGE)
         .required('Pincode is required'),
       fullAddress: yup
         .string()
         .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
         .required('Full Address is required'),
-      city: yup.string().required('City is required'),
-      state: yup.string().required('State is required'),
+      city: yup
+        .string()
+        .matches(CITY_STATE_REGEX, CITY_MESSAGE)
+        .required('City is required'),
+      state: yup
+        .string()
+        .matches(CITY_STATE_REGEX, STATE_MESSAGE)
+        .required('State is required'),
       serviceRadiusKm: yup
         .number()
         .min(1, 'Service radius must be at least 1 km')

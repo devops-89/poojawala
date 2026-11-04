@@ -2,6 +2,7 @@
 import React from "react";
 import { FONTS } from "@/utils/fonts";
 import {
+  ADDRESS_STRICT_REGEX,
   allowOnlyAddressCharsOnKeyDown,
   allowOnlyTitleCharsOnKeyDown,
   sanitizeTitleInput,
@@ -274,9 +275,18 @@ export default function TempleProfileSection({
             onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={Boolean(formik.touched.address && formik.errors.address)}
+            error={Boolean(
+              (formik.touched.address ||
+                (formik.values.address &&
+                  !ADDRESS_STRICT_REGEX.test(formik.values.address))) &&
+                formik.errors.address
+            )}
             helperText={
-              formik.touched.address ? formik.errors.address : undefined
+              formik.touched.address ||
+              (formik.values.address &&
+                !ADDRESS_STRICT_REGEX.test(formik.values.address))
+                ? (formik.errors.address as string)
+                : undefined
             }
             sx={inputSx}
           />

@@ -1,7 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { sanitizeAdminSearchTerm } from "@/utils/helpers";
+import { sanitizeAdminSearchTerm, formatScheduledDateTime } from "@/utils/helpers";
 
 import {
   getAllBookingsByAdminAPI,
@@ -38,9 +38,11 @@ import {
 } from "@/utils/paginationHelper";
 
 export default function AdminAstrologyBookingsContent() {
+  const searchParams = useSearchParams();
   const initialPagination = getTablePaginationState("admin_astrology_bookings_state", {
     defaultStatus: "All Bookings",
     defaultLimit: 10,
+    searchParams,
   });
 
   const [searchValue, setSearchValue] = useState("");
@@ -269,18 +271,10 @@ export default function AdminAstrologyBookingsContent() {
             fontSize: "0.9rem",
           }}
         >
-          {booking.scheduledAt || booking.createdAt
-            ? new Date(booking.scheduledAt || booking.createdAt).toLocaleString(
-                "en-US",
-                {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                }
-              )
+          {booking.scheduledAt
+            ? formatScheduledDateTime(booking.scheduledAt)
+            : booking.createdAt
+            ? new Date(booking.createdAt).toLocaleDateString()
             : "-"}
         </Typography>
       ),

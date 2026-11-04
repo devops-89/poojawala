@@ -52,6 +52,7 @@ interface DocumentsTabProps {
   saving: boolean;
   onSave: () => void;
   isAstrologer?: boolean;
+  isDirty?: boolean;
 }
 
 export const DocumentsTab: React.FC<DocumentsTabProps> = ({
@@ -74,6 +75,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
   saving,
   onSave,
   isAstrologer = false,
+  isDirty = false,
 }) => {
   const [previewItem, setPreviewItem] = React.useState<{
     title: string;
@@ -518,19 +520,20 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
         <Button
           variant="contained"
           onClick={onSave}
-          disabled={saving}
+          disabled={saving || !isDirty}
           sx={{
-            background: "#FF6200 !important",
-            color: "white !important",
+            background: (saving || !isDirty) ? "#cbd5e1 !important" : "#FF6200 !important",
+            cursor: (saving || !isDirty) ? "not-allowed !important" : "pointer",
+            color: (saving || !isDirty) ? "#64748b !important" : "white !important",
             borderRadius: "8px",
             px: 4,
             py: 1.2,
             fontWeight: 700,
             textTransform: "none",
-            "&:hover": { background: "#F05A00 !important" },
+            "&:hover": { background: (saving || !isDirty) ? "#cbd5e1 !important" : "#F05A00 !important" },
           }}
         >
-          {saving ? "Saving Documents..." : "Save Documents"}
+          {saving ? "Saving Documents..." : "Update Documents"}
         </Button>
       </Box>
 
@@ -641,7 +644,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
             variant="contained"
             sx={{
               bgcolor: "#FF6200 !important",
-              color: "white !important",
+              color: (saving || !isDirty) ? "#64748b !important" : "white !important",
               borderRadius: "8px",
               px: 3,
               textTransform: "none",

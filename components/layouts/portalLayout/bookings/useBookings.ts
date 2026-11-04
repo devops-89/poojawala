@@ -21,6 +21,7 @@ import { useSocketStore } from "@/stores/socketStore";
 import { getBookingPurohitPayoutDisplay } from "@/utils/payoutHelper";
 import { checkBookingPaymentState } from "./BookingActiveCard";
 import { convertImageToWebP } from "@/utils/imageHelper";
+import { formatScheduledDate, formatScheduledTime } from "@/utils/helpers";
 
 export function useBookings() {
   const { showSnackbar } = useSnackbarStore();
@@ -470,19 +471,8 @@ export function useBookings() {
               ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
               : "Customer",
             ritual: booking.service?.name || "Puja Service",
-            date: booking.scheduledAt
-              ? new Date(booking.scheduledAt).toLocaleDateString("en-IN", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : "N/A",
-            time: booking.scheduledAt
-              ? new Date(booking.scheduledAt).toLocaleTimeString("en-IN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "N/A",
+            date: formatScheduledDate(booking.scheduledAt),
+            time: formatScheduledTime(booking.scheduledAt),
             location: booking.customerAddress?.fullAddress || "N/A",
             distance: "N/A",
             duration: booking.service?.durationMinutes
@@ -517,23 +507,8 @@ export function useBookings() {
               ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
               : "Customer",
             ritual: booking.service?.name || "Puja Service",
-            date: booking.scheduledAtIst
-              ? booking.scheduledAtIst.split(",")[0]
-              : booking.scheduledAt
-                ? new Date(booking.scheduledAt).toLocaleDateString("en-IN", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })
-                : "N/A",
-            time: booking.scheduledAtIst
-              ? booking.scheduledAtIst.split(",")[1]?.trim()
-              : booking.scheduledAt
-                ? new Date(booking.scheduledAt).toLocaleTimeString("en-IN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "N/A",
+            date: formatScheduledDate(booking.scheduledAt),
+            time: formatScheduledTime(booking.scheduledAt),
             location: booking.customerAddress?.fullAddress || "N/A",
             distance: "N/A",
             duration: booking.service?.durationMinutes

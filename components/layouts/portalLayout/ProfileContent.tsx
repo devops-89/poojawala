@@ -295,6 +295,7 @@ export default function ProfileContent() {
               saving={p.saving}
               onSave={p.handleSaveProfile}
               maxDobDate={maxDobDate}
+              isDirty={p.isPersonalDirty}
             />
           )}
 
@@ -327,6 +328,7 @@ export default function ProfileContent() {
               setRatePerMinute={p.setRatePerMinute}
               astrologyPrice={p.astrologyPrice}
               setAstrologyPrice={p.setAstrologyPrice}
+              isDirty={p.isSkillsDirty}
             />
           )}
 
@@ -351,6 +353,7 @@ export default function ProfileContent() {
               saving={p.saving}
               onSave={p.handleSaveProfile}
               isAstrologer={isAstrologer}
+              isDirty={p.isDocumentsDirty}
             />
           )}
 

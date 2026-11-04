@@ -252,3 +252,8 @@ export const RASHI_OPTIONS = [
   "मीन (Pisces)",
 ] as const;
 
+
+export enum LOGIN_PAGE {
+  HOME_PAGE = 'HOME_PAGE',
+  ADMIN_PAGE = 'ADMIN_PAGE',
+}

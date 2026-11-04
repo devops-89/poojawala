@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ServiceCardProps } from '@/utils/types';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
-import { createSlug, stripHtml } from '@/utils/helpers';
+import { createSlug, stripHtml, isCustomerLoggedIn } from '@/utils/helpers';
 
 export default function ServiceCard({
   id,
@@ -42,7 +42,9 @@ export default function ServiceCard({
       sessionStorage.setItem("last_service_id", String(id));
     }
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    router.push(`/services/${targetSlug}`);
+    const isCustomer = Boolean((profile?.role || "").toUpperCase() === "CUSTOMER" || isCustomerLoggedIn());
+    const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+    router.push(targetUrl);
   };
 
   const handleBookNow = (e: React.MouseEvent) => {

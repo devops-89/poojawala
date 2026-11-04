@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange, stripHtml } from "@/utils/helpers";
+import { formatServicePriceRange, stripHtml, isCustomerLoggedIn } from "@/utils/helpers";
 
 const DEFAULT_PACKAGES = [
   {
@@ -299,7 +299,17 @@ export default function PopularPackages() {
                     if (typeof window !== "undefined") {
                       sessionStorage.setItem("home_restore_section", "popular-packages");
                     }
-                    router.push(`/services/${pkg.slug || pkg.id}`);
+                    const isCustomer = isCustomerLoggedIn();
+                    const targetSlug = pkg.slug || pkg.id;
+                    if (pkg.id && typeof window !== "undefined") {
+                      const lower = String(targetSlug).toLowerCase();
+                      localStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
+                      sessionStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
+                      localStorage.setItem("last_service_id", String(pkg.id));
+                      sessionStorage.setItem("last_service_id", String(pkg.id));
+                    }
+                    const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+                    router.push(targetUrl);
                   }}
                   sx={{
                     width: "100%",
@@ -474,7 +484,17 @@ export default function PopularPackages() {
                         if (typeof window !== "undefined") {
                           sessionStorage.setItem("home_restore_section", "popular-packages");
                         }
-                        router.push(`/services/${pkg.slug || pkg.id}`);
+                        const isCustomer = isCustomerLoggedIn();
+                        const targetSlug = pkg.slug || pkg.id;
+                        if (pkg.id && typeof window !== "undefined") {
+                          const lower = String(targetSlug).toLowerCase();
+                          localStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
+                          sessionStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
+                          localStorage.setItem("last_service_id", String(pkg.id));
+                          sessionStorage.setItem("last_service_id", String(pkg.id));
+                        }
+                        const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+                        router.push(targetUrl);
                       }}
                       sx={{
                         width: "100%",

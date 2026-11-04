@@ -30,8 +30,17 @@ export default function PurohitMyServicesContent() {
   });
 
   const [services, setServices] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const [editingService, setEditingService] = useState<any>(null);
   const [editOnlinePrice, setEditOnlinePrice] = useState('');
@@ -59,25 +68,28 @@ export default function PurohitMyServicesContent() {
 
   const fetchMyServices = async () => {
     try {
-      setLoading(true);
-      const res = await getPurohitServicesAPI(page, limit);
+      setTableLoading(true);
+      const res = await getPurohitServicesAPI(page, limit, debouncedQuery);
       if (res?.data?.data) {
         setServices(res.data.data);
-        setTotalItems(res.data.pagination?.total || res.data.data.length);
+        setTotalItems(res.data.pagination?.total ?? res.data.data.length);
       } else {
         setServices([]);
         setTotalItems(0);
       }
     } catch (error: any) {
       showSnackbar(error.response?.data?.message || 'Error loading your services', 'error');
+      setServices([]);
+      setTotalItems(0);
     } finally {
-      setLoading(false);
+      setTableLoading(false);
+      setInitialLoading(false);
     }
   };
 
   useEffect(() => {
     fetchMyServices();
-  }, [page, limit]);
+  }, [page, limit, debouncedQuery]);
 
   const handleEditClick = (ps: any) => {
     setEditingService(ps);
@@ -163,26 +175,18 @@ export default function PurohitMyServicesContent() {
     }
   };
 
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setPage(1);
+  };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  if (loading) {
+  if (initialLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
         <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Box>
     );
   }
-
-  const filteredServices = services.filter((ps: any) =>
-    ps.service?.name?.toLowerCase().includes(debouncedQuery.toLowerCase())
-  );
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -207,13 +211,28 @@ export default function PurohitMyServicesContent() {
         <TextField
           placeholder="Search my services..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           size="small"
-
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: '#94a3b8', fontSize: 20 }} />
+                </InputAdornment>
+              ),
+              endAdornment: tableLoading ? (
+                <InputAdornment position="end">
+                  <CircularProgress size={16} sx={{ color: COLORS.PRIMARY }} />
+                </InputAdornment>
+              ) : null,
+            },
+          }}
           sx={{
             flex: 1,
             '& .MuiOutlinedInput-root': {
               borderRadius: '8px',
+              fontFamily: FONTS.OUTFIT,
+              bgcolor: '#fff',
               '&.Mui-focused fieldset': {
                 borderColor: COLORS.PRIMARY,
               },
@@ -251,18 +270,24 @@ export default function PurohitMyServicesContent() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredServices.length === 0 ? (
+              {tableLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                    <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
+                  </TableCell>
+                </TableRow>
+              ) : services.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                     <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT }}>
-                      {services.length === 0
-                        ? "You haven't added any services yet. Go to \"Add Services\" to add some!"
-                        : "No services found matching your search."}
+                      {debouncedQuery
+                        ? "No services found matching your search."
+                        : "You haven't added any services yet. Go to \"Add Services\" to add some!"}
                     </Typography>
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredServices.map((ps: any, index: number) => (
+                services.map((ps: any, index: number) => (
                   <TableRow key={ps.id || index} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: '#FFFaf5' } }}>
                     <TableCell component="th" scope="row" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: COLORS.SLATE_DARK }}>
                       {ps.service?.name || 'Unknown Service'}
@@ -363,14 +388,18 @@ export default function PurohitMyServicesContent() {
 
       {/* Mobile View */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
-        {filteredServices.length === 0 ? (
+        {tableLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+            <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
+          </Box>
+        ) : services.length === 0 ? (
           <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT, textAlign: 'center', py: 4 }}>
-            {services.length === 0
-              ? "You haven't added any services yet. Go to \"Add Services\" to add some!"
-              : "No services found matching your search."}
+            {debouncedQuery
+              ? "No services found matching your search."
+              : "You haven't added any services yet. Go to \"Add Services\" to add some!"}
           </Typography>
         ) : (
-          filteredServices.map((ps: any, index: number) => (
+          services.map((ps: any, index: number) => (
             <Card key={ps.id || index} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: COLORS.WHITE, borderColor: '#e2e8f0' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1 }}>
                 <Box>

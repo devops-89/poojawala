@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml } from "@/utils/helpers";
+import { stripHtml, isCustomerLoggedIn } from "@/utils/helpers";
 
 export default function UpcomingFestivals() {
   const router = useRouter();
@@ -204,7 +204,17 @@ export default function UpcomingFestivals() {
                   if (typeof window !== "undefined") {
                     sessionStorage.setItem("home_restore_section", "upcoming-festivals");
                   }
-                  router.push(`/services/${fest.slug || fest.id}`);
+                  const isCustomer = isCustomerLoggedIn();
+                  const targetSlug = fest.slug || fest.id;
+                  if (fest.id && typeof window !== "undefined") {
+                    const lower = String(targetSlug).toLowerCase();
+                    localStorage.setItem(`slug_to_id_${lower}`, String(fest.id));
+                    sessionStorage.setItem(`slug_to_id_${lower}`, String(fest.id));
+                    localStorage.setItem("last_service_id", String(fest.id));
+                    sessionStorage.setItem("last_service_id", String(fest.id));
+                  }
+                  const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+                  router.push(targetUrl);
                 }}
                 sx={{
                   cursor: "pointer",
@@ -309,7 +319,17 @@ export default function UpcomingFestivals() {
                       if (typeof window !== "undefined") {
                         sessionStorage.setItem("home_restore_section", "upcoming-festivals");
                       }
-                      router.push(`/services/${fest.slug || fest.id}`);
+                      const isCustomer = isCustomerLoggedIn();
+                      const targetSlug = fest.slug || fest.id;
+                      if (fest.id && typeof window !== "undefined") {
+                        const lower = String(targetSlug).toLowerCase();
+                        localStorage.setItem(`slug_to_id_${lower}`, String(fest.id));
+                        sessionStorage.setItem(`slug_to_id_${lower}`, String(fest.id));
+                        localStorage.setItem("last_service_id", String(fest.id));
+                        sessionStorage.setItem("last_service_id", String(fest.id));
+                      }
+                      const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+                      router.push(targetUrl);
                     }}
                     sx={{
                       background: COLORS.PRIMARY,

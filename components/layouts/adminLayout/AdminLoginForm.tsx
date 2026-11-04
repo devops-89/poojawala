@@ -10,7 +10,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
-import { loginAPI, getMeAPI, logoutAPI } from '@/api/authControllers';
+import { loginAPI, getMeAPI, logoutAPI, LOGIN_PAGE } from '@/api/authControllers';
 import { extractRoleCsrfToken, saveRoleCsrfToken, clearRoleCsrfToken } from '@/api/config';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { useUserStore } from '@/stores/userStore';
@@ -69,7 +69,10 @@ export default function AdminLoginForm() {
           localStorage.removeItem("activeRole");
         }
 
-        const response = await loginAPI({ email: values.email, password: values.password });
+        const response = await loginAPI(
+          { email: values.email, password: values.password },
+          LOGIN_PAGE.ADMIN_PAGE
+        );
         if (response.success || response.token || response.accessToken || response.poojawalaAdminCsrfToken) {
           const token = response.tokens?.access?.token || response.token || response.accessToken;
           let userObj = response.user || response.data?.user || response?.data;

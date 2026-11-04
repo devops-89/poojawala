@@ -82,13 +82,15 @@ const validationSchema = Yup.object().shape({
     .trim()
     .required("Address is required")
     .min(5, "Address must be at least 5 characters")
+    .max(250, "Address cannot exceed 250 characters")
     .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
     .test(
       "meaningful-address",
-      "Address must contain letters, not just numbers or symbols",
+      "Please enter a valid street or location address with letters",
       (val) => {
         if (!val) return false;
-        return /[a-zA-Z]/.test(val);
+        const letters = (val.match(/[\p{L}]/gu) || []).length;
+        return letters >= 2;
       }
     ),
   state: Yup.string().trim().required("State is required"),
@@ -313,10 +315,12 @@ export default function TempleForm({ isEdit = false, id }: TempleFormProps) {
               formData.append(`service_${sIdx}_icon`, s.iconFile);
             }
 
-            // Automatically attach temple's city & state to service cities
-            const serviceCities = defaultTempleCities.length > 0
-              ? defaultTempleCities
-              : (Array.isArray(s.cities) && s.cities.length > 0 ? s.cities : []);
+            // Only attach temple's city & state if service is offline. If service is online, do not send cities.
+            const serviceCities = s.isOffline
+              ? (defaultTempleCities.length > 0
+                  ? defaultTempleCities
+                  : (Array.isArray(s.cities) && s.cities.length > 0 ? s.cities : []))
+              : [];
 
             return {
               ...(s.id ? { id: s.id } : {}),

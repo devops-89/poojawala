@@ -127,6 +127,8 @@ export default function AddBookingPurohitSection({
           value={values.bookingDate ? moment(values.bookingDate) : null}
           disablePast
           minDateTime={moment()}
+          maxDateTime={moment().add(3, 'months').endOf('day')}
+          maxDate={moment().add(3, 'months').endOf('day')}
           onChange={(newValue) => {
             setFieldValue(
               'bookingDate',

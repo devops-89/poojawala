@@ -1,6 +1,6 @@
 'use client';
 
-import { forgotPasswordAPI } from '@/api/authControllers';
+import { forgotPasswordAPI, LOGIN_PAGE } from '@/api/authControllers';
 import FormikValidationSnackbar from '@/components/widgets/FormikValidationSnackbar';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { COLORS } from '@/utils/enums';
@@ -246,18 +246,34 @@ export default function ForgotPasswordContent() {
               validationSchema={validationSchema}
               onSubmit={async (values, { setSubmitting }) => {
                 try {
-                  const response = await forgotPasswordAPI({
-                    email: values.email,
-                  });
+                  const isFromAdmin =
+                    redirect === '/admin' ||
+                    redirect.startsWith('/admin') ||
+                    redirect.toLowerCase().includes('admin');
+                  const pageType = isFromAdmin ? LOGIN_PAGE.ADMIN_PAGE : LOGIN_PAGE.HOME_PAGE;
+
+                  const response = await forgotPasswordAPI(
+                    {
+                      email: values.email,
+                    },
+                    pageType
+                  );
                   if (response.success || response.statusCode === 200) {
                     showSnackbar('OTP sent successfully!', 'success');
                     setTimeout(
                       () =>
-                        router.push(
-                          `/reset-password?email=${encodeURIComponent(
-                            values.email
-                          )}&redirect=${encodeURIComponent(redirect)}`
-                        ),
+                        {
+                          const isFromAdmin =
+                            redirect === '/admin' ||
+                            redirect.startsWith('/admin') ||
+                            redirect.toLowerCase().includes('admin');
+                          const pageType = isFromAdmin ? LOGIN_PAGE.ADMIN_PAGE : LOGIN_PAGE.HOME_PAGE;
+                          router.push(
+                            `/reset-password?email=${encodeURIComponent(
+                              values.email
+                            )}&redirect=${encodeURIComponent(redirect)}&page=${pageType}`
+                          );
+                        },
                       1000
                     );
                   }

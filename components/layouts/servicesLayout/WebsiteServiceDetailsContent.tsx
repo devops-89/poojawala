@@ -1,6 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange } from "@/utils/helpers";
+import { formatServicePriceRange, isCustomerLoggedIn } from "@/utils/helpers";
 import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
@@ -33,6 +33,11 @@ export default function WebsiteServiceDetailsContent() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
     if (!identifier) return;
+
+    if (isCustomerLoggedIn()) {
+      router.replace(`/customer/services/${identifier}`);
+      return;
+    }
 
     const fetchService = async () => {
       setLoading(true);

@@ -29,6 +29,9 @@ import {
   sanitizeLettersOnly,
   allowOnlyAddressCharsOnKeyDown,
   sanitizeAddressInput,
+  allowOnlyAddressLabelCharsOnKeyDown,
+  sanitizeAddressLabelInput,
+  sanitizePincodeInput,
 } from "@/utils/helpers";
 
 export interface SignUpStep2AddressProps {
@@ -253,7 +256,7 @@ export default function SignUpStep2Address({
               }
             }}
             onChange={(e) => {
-              const pin = e.target.value.replace(/\D/g, '').slice(0, 6);
+              const pin = sanitizePincodeInput(e.target.value);
               handlePincodeChange(pin);
               setFieldValue("pincode", pin);
             }}
@@ -274,12 +277,14 @@ export default function SignUpStep2Address({
             size="small"
             placeholder="e.g. Home, Office"
             value={addressData.addressLabel}
+            onKeyDown={allowOnlyAddressLabelCharsOnKeyDown}
             onChange={(e) => {
+              const clean = sanitizeAddressLabelInput(e.target.value);
               setAddressData((prev) => ({
                 ...prev,
-                addressLabel: e.target.value,
+                addressLabel: clean,
               }));
-              setFieldValue("addressLabel", e.target.value);
+              setFieldValue("addressLabel", clean);
             }}
             slotProps={{
               input: {

@@ -9,6 +9,10 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
 import { FONTS } from "@/utils/fonts";
 
 interface ServiceDetailsDateTimeFieldsProps {
@@ -19,6 +23,8 @@ interface ServiceDetailsDateTimeFieldsProps {
   isAllSlotsPassedToday: boolean;
   onDateChange: (date: string) => void;
   onTimeChange: (time: string) => void;
+  dateError?: string;
+  timeError?: string;
 }
 
 export default function ServiceDetailsDateTimeFields({
@@ -29,42 +35,60 @@ export default function ServiceDetailsDateTimeFields({
   isAllSlotsPassedToday,
   onDateChange,
   onTimeChange,
+  dateError,
+  timeError,
 }: ServiceDetailsDateTimeFieldsProps) {
+  const [openCalendar, setOpenCalendar] = React.useState(false);
 
 
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, sm: 6 }}>
-        <TextField
-          fullWidth
-          label="Scheduled Date"
-          type="date"
-          value={scheduledDate}
-          onChange={(e) => onDateChange(e.target.value)}
-          slotProps={{
-            inputLabel: { shrink: true },
-            htmlInput: { min: todayStr },
-          }}
-          required
-          sx={{
-            bgcolor: "#FFFBF7",
-            borderRadius: "10px",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-              fontFamily: FONTS.PRIMARY,
-            },
-            "& .MuiInputLabel-root": {
-              fontFamily: FONTS.PRIMARY,
-              color: "#64534A",
-            },
-          }}
-        />
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <DatePicker
+            label="Scheduled Date"
+            format="DD/MM/YYYY"
+            value={scheduledDate ? moment(scheduledDate, "YYYY-MM-DD") : null}
+            minDate={todayStr ? moment(todayStr, "YYYY-MM-DD") : moment().startOf("day")}
+            maxDate={moment().add(3, "months").endOf("day")}
+            open={openCalendar}
+            onOpen={() => setOpenCalendar(true)}
+            onClose={() => setOpenCalendar(false)}
+            onChange={(newValue) => {
+              if (newValue && newValue.isValid()) {
+                onDateChange(newValue.format("YYYY-MM-DD"));
+              } else {
+                onDateChange("");
+              }
+            }}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                error: Boolean(dateError),
+                helperText: dateError,
+                onClick: () => setOpenCalendar(true),
+                sx: {
+                  bgcolor: "#FFFBF7",
+                  borderRadius: "10px",
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                    fontFamily: FONTS.PRIMARY,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontFamily: FONTS.PRIMARY,
+                    color: Boolean(dateError) ? "#d32f2f" : "#64534A",
+                  },
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
       </Grid>
 
       <Grid size={{ xs: 12, sm: 6 }}>
         <FormControl
           fullWidth
-          required
+          error={Boolean(timeError)}
           sx={{
             bgcolor: "#FFFBF7",
             borderRadius: "10px",
@@ -74,7 +98,7 @@ export default function ServiceDetailsDateTimeFields({
             },
             "& .MuiInputLabel-root": {
               fontFamily: FONTS.PRIMARY,
-              color: "#64534A",
+              color: Boolean(timeError) ? "#d32f2f" : "#64534A",
             },
           }}
         >
@@ -87,7 +111,7 @@ export default function ServiceDetailsDateTimeFields({
             label="Preferred Time"
             displayEmpty
             onChange={(e) => onTimeChange(e.target.value)}
-            required
+            error={Boolean(timeError)}
             MenuProps={{
               slotProps: {
                 paper: {
@@ -134,7 +158,11 @@ export default function ServiceDetailsDateTimeFields({
               </MenuItem>
             ))}
           </Select>
-          {isAllSlotsPassedToday ? (
+          {timeError ? (
+            <FormHelperText error sx={{ fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+              {timeError}
+            </FormHelperText>
+          ) : isAllSlotsPassedToday ? (
             <FormHelperText sx={{ color: "#d97706", fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
               Slots for today are closed (minimum 2 hours advance booking required). Please choose another date.
             </FormHelperText>

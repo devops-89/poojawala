@@ -12,6 +12,7 @@ import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { convertImageToWebP } from "@/utils/imageHelper";
+import { sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput, validateAddressPayload } from "@/utils/helpers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -38,7 +39,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 
 const maxDobDate = (() => {
   const d = new Date();
@@ -131,6 +132,22 @@ function CustomerEditProfileContentInner() {
     }
   }, [profile]);
 
+  const isPersonalDirty = useMemo(() => {
+    if (!profile) return false;
+    if (profileImage !== null) return true;
+    const initialDob = profile.dob ? profile.dob.split("T")[0] : "";
+    return (
+      firstName.trim() !== (profile.firstName || "").trim() ||
+      lastName.trim() !== (profile.lastName || "").trim() ||
+      dob !== initialDob ||
+      birthPlace.trim() !== (profile.birthPlace || "").trim() ||
+      rashi !== (profile.rashi || "") ||
+      gotra.trim() !== (profile.gotra || "").trim()
+    );
+  }, [profile, profileImage, firstName, lastName, dob, birthPlace, rashi, gotra]);
+
+  const isSavePersonalDisabled = saving || !isPersonalDirty;
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -159,6 +176,7 @@ function CustomerEditProfileContentInner() {
       }
 
       await updateProfileAPI(formData);
+      setProfileImage(null);
       await fetchProfile(true);
       showSnackbar("Profile updated successfully", "success");
     } catch (error: any) {
@@ -234,11 +252,11 @@ function CustomerEditProfileContentInner() {
       setSelectedAddressId(address.id);
       setAddressData({
         venueType: address.venueType || "HOME",
-        fullAddress: address.fullAddress || "",
-        addressLabel: address.addressLabel || "",
-        city: address.city || "",
-        state: address.state || "",
-        pincode: address.pincode || "",
+        fullAddress: sanitizeAddressInput(address.fullAddress || ""),
+        addressLabel: sanitizeAddressLabelInput(address.addressLabel || ""),
+        city: sanitizeLettersOnly(address.city || ""),
+        state: sanitizeLettersOnly(address.state || ""),
+        pincode: sanitizePincodeInput(address.pincode || ""),
         latitude: address.latitude || "0",
         longitude: address.longitude || "0",
         isDefault: address.isDefault || false,
@@ -262,19 +280,9 @@ function CustomerEditProfileContentInner() {
 
   const handleSaveAddress = async () => {
     try {
-      const missingFields = [];
-      if (!addressData.addressLabel?.trim())
-        missingFields.push("Address Label");
-      if (!addressData.fullAddress?.trim()) missingFields.push("Full Address");
-      if (!addressData.city?.trim()) missingFields.push("City");
-      if (!addressData.state?.trim()) missingFields.push("State");
-      if (!addressData.pincode?.trim()) missingFields.push("Pincode");
-
-      if (missingFields.length > 0) {
-        showSnackbar(
-          `Please fill in required fields: ${missingFields.join(", ")}`,
-          "error",
-        );
+      const validation = validateAddressPayload(addressData);
+      if (!validation.isValid) {
+        showSnackbar(validation.firstError || "Please check address fields", "error");
         return;
       }
       setSaving(true);
@@ -566,27 +574,29 @@ function CustomerEditProfileContentInner() {
                   <Box
                     component="button"
                     onClick={handleSavePersonal}
-                    disabled={saving}
+                    disabled={isSavePersonalDisabled}
                     sx={{
-                      bgcolor: "#FF6200 !important",
-                      color: "white !important",
+                      bgcolor: isSavePersonalDisabled ? "#cbd5e1 !important" : "#FF6200 !important",
+                      color: isSavePersonalDisabled ? "#64748b !important" : "white !important",
                       px: 4,
                       py: 1.5,
                       borderRadius: "8px",
                       border: "none",
-                      cursor: saving ? "not-allowed" : "pointer",
+                      cursor: isSavePersonalDisabled ? "not-allowed" : "pointer",
                       fontFamily: FONTS.PRIMARY,
                       fontWeight: 700,
                       fontSize: "0.95rem",
                       transition: "background-color 0.2s",
-                      opacity: saving ? 0.7 : 1,
-                      "&:hover": { bgcolor: "#ea580c !important" },
+                      opacity: isSavePersonalDisabled ? 0.7 : 1,
+                      "&:hover": {
+                        bgcolor: isSavePersonalDisabled ? "#cbd5e1 !important" : "#ea580c !important",
+                      },
                     }}
                   >
                     {saving ? (
                       <CircularProgress size={24} color="inherit" />
                     ) : (
-                      "Save Changes"
+                      "Update Changes"
                     )}
                   </Box>
                 </Box>

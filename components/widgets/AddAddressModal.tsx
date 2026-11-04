@@ -12,7 +12,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import AddressFormInputs from "./addressModal/AddressFormInputs";
 import AddressLocationButton from "./addressModal/AddressLocationButton";
 import AddressMapPreview from "./addressModal/AddressMapPreview";
@@ -20,7 +20,7 @@ import { AddAddressModalProps, AddressFormData } from "@/utils/types";
 import { useAddressGeocoding } from "./addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE } from "@/utils/helpers";
+import { validateAddressPayload, AddressValidationErrors, sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
 export type { AddressFormData };
 
 export default function AddAddressModal({
@@ -31,6 +31,7 @@ export default function AddAddressModal({
 }: AddAddressModalProps) {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<AddressValidationErrors>({});
 
   const {
     addressData,
@@ -47,26 +48,42 @@ export default function AddAddressModal({
     resetForm,
   } = useAddressGeocoding(open, initialData);
 
+  const isEdit = Boolean(initialData?.id || addressData?.id);
+  const isAddressDirty = useMemo(() => {
+    const currentLabel = (addressData.addressLabel || "").trim();
+    const currentFull = (addressData.fullAddress || "").trim();
+    const currentCity = (addressData.city || "").trim();
+    const currentState = (addressData.state || "").trim();
+    const currentPin = (addressData.pincode || "").trim();
+    const currentDefault = Boolean(addressData.isDefault);
+    const currentVenue = addressData.venueType || "HOME";
+
+    if (!isEdit) {
+      return Boolean(currentLabel && currentFull && currentCity && currentState && currentPin);
+    }
+
+    const init = initialData || {};
+    return (
+      currentLabel !== (init.addressLabel || "").trim() ||
+      currentFull !== (init.fullAddress || "").trim() ||
+      currentCity !== (init.city || "").trim() ||
+      currentState !== (init.state || "").trim() ||
+      currentPin !== (init.pincode || init.zipCode || "").trim() ||
+      currentDefault !== Boolean(init.isDefault) ||
+      currentVenue !== (init.venueType || "HOME")
+    );
+  }, [isEdit, addressData, initialData]);
+
+  const isSaveDisabled = saving || !isAddressDirty;
+
   const handleSave = async () => {
-    const missingFields = [];
-    if (!addressData.pincode?.trim()) missingFields.push("Pincode");
-    if (!addressData.addressLabel?.trim()) missingFields.push("Address Label");
-    if (!addressData.fullAddress?.trim()) missingFields.push("Full Address");
-    if (!addressData.city?.trim()) missingFields.push("City");
-    if (!addressData.state?.trim()) missingFields.push("State");
-
-    if (missingFields.length > 0) {
-      showSnackbar(
-        `Please fill in required fields: ${missingFields.join(", ")}`,
-        "error"
-      );
+    const validation = validateAddressPayload(addressData);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      showSnackbar(validation.firstError || "Please check address fields", "error");
       return;
     }
-
-    if (!ADDRESS_STRICT_REGEX.test((addressData.fullAddress || "").trim())) {
-      showSnackbar(ADDRESS_STRICT_MESSAGE, "error");
-      return;
-    }
+    setErrors({});
 
     setSaving(true);
     try {
@@ -82,11 +99,11 @@ export default function AddAddressModal({
 
       const payload: any = {
         venueType: addressData.venueType || "HOME",
-        fullAddress: addressData.fullAddress,
-        addressLabel: addressData.addressLabel,
-        city: addressData.city,
-        state: addressData.state,
-        pincode: addressData.pincode,
+        fullAddress: sanitizeAddressInput(addressData.fullAddress || ""),
+        addressLabel: sanitizeAddressLabelInput(addressData.addressLabel || ""),
+        city: sanitizeLettersOnly(addressData.city || ""),
+        state: sanitizeLettersOnly(addressData.state || ""),
+        pincode: sanitizePincodeInput(addressData.pincode || ""),
         latitude: lat && lat !== "0" ? String(lat) : "0",
         longitude: lng && lng !== "0" ? String(lng) : "0",
         isDefault: Boolean(addressData.isDefault),
@@ -170,6 +187,8 @@ export default function AddAddressModal({
             onPincodeChange={handlePincodeChange}
             onAddressInputChange={handleAddressInputChange}
             onAddressInputBlur={handleAddressInputBlur}
+            errors={errors}
+            setErrors={setErrors}
           />
 
           {/* Interactive Map Preview */}
@@ -233,11 +252,12 @@ export default function AddAddressModal({
           </Button>
           <Button
             onClick={handleSave}
-            disabled={saving}
+            disabled={isSaveDisabled}
             sx={{
               width: { xs: "50%", sm: "auto" },
-              bgcolor: "#FF6200 !important",
-              color: "white !important",
+              bgcolor: isSaveDisabled ? "#cbd5e1 !important" : "#FF6200 !important",
+              color: isSaveDisabled ? "#64748b !important" : "white !important",
+              cursor: isSaveDisabled ? "not-allowed !important" : "pointer",
               fontFamily: FONTS.PRIMARY,
               fontWeight: 700,
               px: 3,
@@ -245,11 +265,12 @@ export default function AddAddressModal({
               borderRadius: "10px",
               textTransform: "none",
               boxShadow: "none",
-              "&:hover": { bgcolor: "#ea580c !important" },
-              "&.Mui-disabled": { opacity: 0.7 },
+              "&:hover": {
+                bgcolor: isSaveDisabled ? "#cbd5e1 !important" : "#ea580c !important",
+              },
             }}
           >
-            {saving ? "Saving..." : "Save Address"}
+            {saving ? "Saving..." : isEdit ? "Update Address" : "Save Address"}
           </Button>
         </Box>
       </DialogActions>

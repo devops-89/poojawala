@@ -38,6 +38,10 @@ import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
 
 const parseList = (val: any): string[] => {
   if (!val) return [];
@@ -83,6 +87,7 @@ export default function CustomerAstrologerDetailsContent() {
   // Booking Form State - only scheduledAt
   const todayStr = useMemo(() => getTodayStr(), []);
   const [scheduledDate, setScheduledDate] = useState<string>(todayStr);
+  const [openCalendar, setOpenCalendar] = useState(false);
   const [scheduledTime, setScheduledTime] = useState<string>("");
 
   useEffect(() => {
@@ -243,6 +248,10 @@ export default function CustomerAstrologerDetailsContent() {
         res?.data?.paymentUrl;
 
       if (paymentUrl && typeof paymentUrl === "string") {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("customer_bookings_type", "ASTROLOGY");
+          sessionStorage.setItem("booking_payment_pending", "true");
+        }
         showSnackbar("Booking created! Redirecting to payment...", "success");
         window.location.href = paymentUrl;
         return;
@@ -277,7 +286,10 @@ export default function CustomerAstrologerDetailsContent() {
         res?.message || "Consultation booked successfully!",
         "success"
       );
-      router.push("/customer/bookings?type=ASTROLOGY");
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("customer_bookings_type", "ASTROLOGY");
+      }
+      router.push("/customer/bookings");
     } catch (err: any) {
       console.error("Booking error:", err);
       showSnackbar(
@@ -598,33 +610,38 @@ export default function CustomerAstrologerDetailsContent() {
           <Grid container spacing={3}>
             {/* Consultation Date */}
             <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label="Consultation Date"
-                type="date"
-                required
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                slotProps={{
-                  inputLabel: { shrink: true },
-                  htmlInput: {
-                    min: todayStr, // Past dates disabled
-                  },
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <CalendarMonthIcon sx={{ color: COLORS.PRIMARY, fontSize: 22 }} />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "14px",
-                    fontFamily: FONTS.OUTFIT,
-                  },
-                }}
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  label="Consultation Date"
+                  format="DD/MM/YYYY"
+                  value={scheduledDate ? moment(scheduledDate, "YYYY-MM-DD") : null}
+                  minDate={todayStr ? moment(todayStr, "YYYY-MM-DD") : moment().startOf("day")}
+                  maxDate={moment().add(3, "months").endOf("day")}
+                  open={openCalendar}
+                  onOpen={() => setOpenCalendar(true)}
+                  onClose={() => setOpenCalendar(false)}
+                  onChange={(newValue) => {
+                    if (newValue && newValue.isValid()) {
+                      setScheduledDate(newValue.format("YYYY-MM-DD"));
+                    } else {
+                      setScheduledDate("");
+                    }
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      required: true,
+                      onClick: () => setOpenCalendar(true),
+                      sx: {
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "14px",
+                          fontFamily: FONTS.OUTFIT,
+                        },
+                      },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
             </Grid>
 
             {/* Consultation Time Slot */}

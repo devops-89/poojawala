@@ -1,5 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
+import { formatScheduledDateTime } from "@/utils/helpers";
 
 import {
   getBookingDetailsAPI,
@@ -154,14 +155,7 @@ export default function AdminBookingDetailsContent() {
         >
           <CalendarTodayIcon sx={{ fontSize: 16 }} />
           Scheduled for{" "}
-          {new Date(booking.scheduledAt).toLocaleString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          })}
+          {formatScheduledDateTime(booking.scheduledAt)}
         </Typography>
       </AdminDetailsHeader>
 

@@ -51,6 +51,58 @@ export const BankModal: React.FC<BankModalProps> = ({
   onSaveBank,
   savingBank,
 }) => {
+
+  const isEdit = Boolean(selectedBankId || bankForm?.id);
+  const initialBankRef = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    if (open) {
+      initialBankRef.current = {
+        paymentMethod: bankForm?.paymentMethod || "BANK",
+        accountHolderName: bankForm?.accountHolderName || "",
+        accountNumber: bankForm?.accountNumber || "",
+        ifscCode: bankForm?.ifscCode || "",
+        bankName: bankForm?.bankName || "",
+        accountType: bankForm?.accountType || "SAVINGS",
+        upiId: bankForm?.upiId || "",
+        isPrimary: Boolean(bankForm?.isPrimary),
+      };
+    }
+  }, [open, selectedBankId]);
+
+  const isBankDirty = React.useMemo(() => {
+    const currentMethod = bankForm.paymentMethod || "BANK";
+    const currentHolder = (bankForm.accountHolderName || "").trim();
+    const currentAcc = (bankForm.accountNumber || "").trim();
+    const currentIfsc = (bankForm.ifscCode || "").trim();
+    const currentBankName = (bankForm.bankName || "").trim();
+    const currentType = bankForm.accountType || "SAVINGS";
+    const currentUpi = (bankForm.upiId || "").trim();
+    const currentPrimary = Boolean(bankForm.isPrimary);
+
+    if (!isEdit) {
+      if (currentMethod === "UPI") {
+        return Boolean(currentUpi);
+      }
+      return Boolean(currentHolder && currentAcc && currentIfsc && currentBankName);
+    }
+
+    const init = initialBankRef.current || {};
+    return (
+      currentMethod !== (init.paymentMethod || "BANK") ||
+      currentHolder !== (init.accountHolderName || "").trim() ||
+      currentAcc !== (init.accountNumber || "").trim() ||
+      currentIfsc !== (init.ifscCode || "").trim() ||
+      currentBankName !== (init.bankName || "").trim() ||
+      currentType !== (init.accountType || "SAVINGS") ||
+      currentUpi !== (init.upiId || "").trim() ||
+      currentPrimary !== Boolean(init.isPrimary)
+    );
+  }, [isEdit, bankForm]);
+
+  const isSaveDisabled = savingBank || !isBankDirty;
+
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle
@@ -222,17 +274,20 @@ export const BankModal: React.FC<BankModalProps> = ({
         <Button
           onClick={onSaveBank}
           variant="contained"
-          disabled={savingBank}
+          disabled={isSaveDisabled}
           sx={{
-            background: "#FF6200 !important",
-            color: "white !important",
+            background: isSaveDisabled ? "#cbd5e1 !important" : "#FF6200 !important",
+            cursor: isSaveDisabled ? "not-allowed !important" : "pointer",
+            color: isSaveDisabled ? "#64748b !important" : "white !important",
             borderRadius: "8px",
             fontWeight: 700,
             textTransform: "none",
-            "&:hover": { background: "#F05A00 !important" },
+            "&:hover": {
+              background: isSaveDisabled ? "#cbd5e1 !important" : "#F05A00 !important",
+            },
           }}
         >
-          {savingBank ? "Saving..." : "Save Details"}
+          {savingBank ? "Saving..." : isEdit ? "Update Details" : "Save Details"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,5 +1,6 @@
 'use client';
 import { FONTS } from "@/utils/fonts";
+import { formatScheduledDate, formatScheduledTime } from "@/utils/helpers";
 import { COLORS, USER_ROLE } from "@/utils/enums";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -418,7 +419,7 @@ export default function DashboardContent() {
                         <CalendarTodayIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
                       </Box>
                       <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: '14px', fontWeight: 500 }}>
-                        {booking.scheduledAtIst ? booking.scheduledAtIst.split(',')[0] : (booking.scheduledAt ? new Date(booking.scheduledAt).toLocaleDateString() : 'N/A')}
+                        {booking.scheduledAt ? formatScheduledDate(booking.scheduledAt) : 'N/A'}
                       </Typography>
                     </Box>
 
@@ -427,7 +428,7 @@ export default function DashboardContent() {
                         <AccessTimeIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
                       </Box>
                       <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: '14px', fontWeight: 500 }}>
-                        {booking.scheduledAtIst ? booking.scheduledAtIst.split(',')[1]?.trim() : (booking.scheduledAt ? new Date(booking.scheduledAt).toLocaleTimeString() : 'N/A')}
+                        {booking.scheduledAt ? formatScheduledTime(booking.scheduledAt) : 'N/A'}
                       </Typography>
                     </Box>
 

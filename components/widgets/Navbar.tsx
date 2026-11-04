@@ -1,6 +1,8 @@
 "use client";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Box,
   Button,
@@ -15,17 +17,67 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import Image from "next/image";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useUserStore } from "@/stores/userStore";
+import { useCartStore } from "@/stores/cartStore";
+import { useSocketStore } from "@/stores/socketStore";
+import { useSnackbarStore } from "@/stores/snackbarStore";
+import { logoutAPI } from "@/api/authControllers";
+import { clearRoleCsrfToken } from "@/api/config";
+import { isCustomerLoggedIn } from "@/utils/helpers";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
 function NavbarContent() {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isOffline = searchParams.get("isOffline") === "true";
   const isOnline = searchParams.get("isOnline") === "true";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { profile } = useUserStore();
+  const { showSnackbar } = useSnackbarStore();
+  const [isCustomer, setIsCustomer] = useState(false);
+
+  useEffect(() => {
+    const role = (profile?.role || "").toUpperCase();
+    const hasRole = Boolean(role && ["CUSTOMER", "PUROHIT", "ASTROLOGER", "ADMIN", "SUPER_ADMIN", "SUPERADMIN"].includes(role));
+    setIsCustomer(hasRole || isCustomerLoggedIn());
+  }, [profile]);
+
+  const dashboardHref =
+    (profile?.role || "").toUpperCase() === "ADMIN" ||
+    (profile?.role || "").toUpperCase() === "SUPER_ADMIN" ||
+    (profile?.role || "").toUpperCase() === "SUPERADMIN"
+      ? "/admin/dashboard"
+      : (profile?.role || "").toUpperCase() === "PUROHIT" ||
+        (profile?.role || "").toUpperCase() === "ASTROLOGER"
+      ? "/partner/dashboard"
+      : "/customer/dashboard";
+
+  const handleLogout = async () => {
+    try {
+      await logoutAPI();
+    } catch (error: any) {
+      console.error("Logout notice:", error);
+    } finally {
+      clearRoleCsrfToken();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
+      }
+      useUserStore.getState().clearProfile();
+      useCartStore.getState().resetCart();
+      useSocketStore.getState().clearNotifications();
+      setIsCustomer(false);
+      showSnackbar("Logout successful", "success");
+      router.refresh();
+    }
+  };
 
   if (
     pathname === "/sign-in" ||
@@ -131,52 +183,107 @@ function NavbarContent() {
 
           {/* Desktop Buttons + Mobile Hamburger */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <Button
-              component={NextLink}
-              href="/partner"
-              prefetch={false}
-              variant="outlined"
-              sx={{
-                display: { xs: "none", md: "inline-flex" },
-                borderColor: COLORS.PRIMARY,
-                color: COLORS.PRIMARY,
-                borderRadius: "30px",
-                textTransform: "none",
-                fontWeight: 600,
-                px: 2.2,
-                py: 0.8,
-                fontSize: "14px",
-                fontFamily: FONTS.PRIMARY,
-                "&:hover": {
-                  borderColor: COLORS.PRIMARY_DARK,
-                  bgcolor: "#FFF0E6",
-                  color: COLORS.PRIMARY_DARK,
-                },
-              }}
-            >
-              Register as Astrologer/Purohit
-            </Button>
-            <Button
-              component={NextLink}
-              href="/sign-in"
-              prefetch={false}
-              variant="contained"
-              sx={{
-                display: { xs: "none", md: "inline-flex" },
-                background: COLORS.PRIMARY,
-                color: "white",
-                borderRadius: "30px",
-                textTransform: "none",
-                fontWeight: 600,
-                px: 3,
-                py: 0.8,
-                fontSize: "14px",
-                fontFamily: FONTS.PRIMARY,
-                "&:hover": { background: COLORS.PRIMARY_DARK },
-              }}
-            >
-              Sign In
-            </Button>
+            {isCustomer ? (
+              <>
+                <Button
+                  component={NextLink}
+                  href={dashboardHref}
+                  prefetch={false}
+                  variant="contained"
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    display: { xs: "none", md: "inline-flex" },
+                    background: COLORS.PRIMARY,
+                    color: "white",
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    px: 2.8,
+                    py: 0.8,
+                    fontSize: "14px",
+                    fontFamily: FONTS.PRIMARY,
+                    boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                    "&:hover": { background: COLORS.PRIMARY_DARK },
+                  }}
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
+                  onClick={handleLogout}
+                  variant="outlined"
+                  startIcon={<LogoutIcon sx={{ fontSize: 17 }} />}
+                  sx={{
+                    display: { xs: "none", md: "inline-flex" },
+                    borderColor: "#fed7aa",
+                    color: COLORS.PRIMARY,
+                    bgcolor: "#fff",
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    px: 2.2,
+                    py: 0.8,
+                    fontSize: "14px",
+                    fontFamily: FONTS.PRIMARY,
+                    "&:hover": {
+                      borderColor: "#f87171",
+                      bgcolor: "#fef2f2",
+                      color: "#dc2626",
+                    },
+                  }}
+                >
+                  Log Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={NextLink}
+                  href="/partner"
+                  prefetch={false}
+                  variant="outlined"
+                  sx={{
+                    display: { xs: "none", md: "inline-flex" },
+                    borderColor: COLORS.PRIMARY,
+                    color: COLORS.PRIMARY,
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    px: 2.2,
+                    py: 0.8,
+                    fontSize: "14px",
+                    fontFamily: FONTS.PRIMARY,
+                    "&:hover": {
+                      borderColor: COLORS.PRIMARY_DARK,
+                      bgcolor: "#FFF0E6",
+                      color: COLORS.PRIMARY_DARK,
+                    },
+                  }}
+                >
+                  Register as Astrologer/Purohit
+                </Button>
+                <Button
+                  component={NextLink}
+                  href="/sign-in"
+                  prefetch={false}
+                  variant="contained"
+                  sx={{
+                    display: { xs: "none", md: "inline-flex" },
+                    background: COLORS.PRIMARY,
+                    color: "white",
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    px: 3,
+                    py: 0.8,
+                    fontSize: "14px",
+                    fontFamily: FONTS.PRIMARY,
+                    "&:hover": { background: COLORS.PRIMARY_DARK },
+                  }}
+                >
+                  Sign In
+                </Button>
+              </>
+            )}
 
             {/* Hamburger Icon — Mobile Only */}
             <IconButton
@@ -290,50 +397,104 @@ function NavbarContent() {
 
         {/* Action Buttons — right below links */}
         <Box sx={{ px: 2, pt: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
-          <Button
-            component={NextLink}
-            href="/sign-in"
-            variant="contained"
-            fullWidth
-            onClick={handleDrawerToggle}
-            sx={{
-              background: COLORS.PRIMARY,
-              color: "white",
-              borderRadius: "30px",
-              textTransform: "none",
-              py: 1.2,
-              fontWeight: 600,
-              fontSize: "15px",
-              fontFamily: FONTS.PRIMARY,
-              "&:hover": { background: COLORS.PRIMARY_DARK },
-            }}
-          >
-            Sign In
-          </Button>
-          <Button
-            component={NextLink}
-            href="/partner"
-            variant="outlined"
-            fullWidth
-            onClick={handleDrawerToggle}
-            sx={{
-              borderColor: COLORS.PRIMARY,
-              color: COLORS.PRIMARY,
-              borderRadius: "30px",
-              textTransform: "none",
-              py: 1.2,
-              fontWeight: 600,
-              fontSize: "14px",
-              fontFamily: FONTS.PRIMARY,
-              "&:hover": {
-                borderColor: COLORS.PRIMARY_DARK,
-                bgcolor: "#FFF0E6",
-                color: COLORS.PRIMARY_DARK,
-              },
-            }}
-          >
-            Register as Astrologer/Purohit
-          </Button>
+          {isCustomer ? (
+            <>
+              <Button
+                component={NextLink}
+                href={dashboardHref}
+                variant="contained"
+                fullWidth
+                endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
+                onClick={handleDrawerToggle}
+                sx={{
+                  background: COLORS.PRIMARY,
+                  color: "white",
+                  borderRadius: "30px",
+                  textTransform: "none",
+                  py: 1.2,
+                  fontWeight: 600,
+                  fontSize: "15px",
+                  fontFamily: FONTS.PRIMARY,
+                  "&:hover": { background: COLORS.PRIMARY_DARK },
+                }}
+              >
+                Go to Dashboard
+              </Button>
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
+                onClick={() => {
+                  handleDrawerToggle();
+                  handleLogout();
+                }}
+                sx={{
+                  borderColor: "#fed7aa",
+                  color: COLORS.PRIMARY,
+                  borderRadius: "30px",
+                  textTransform: "none",
+                  py: 1.2,
+                  fontWeight: 600,
+                  fontSize: "15px",
+                  fontFamily: FONTS.PRIMARY,
+                  "&:hover": {
+                    borderColor: "#f87171",
+                    bgcolor: "#fef2f2",
+                    color: "#dc2626",
+                  },
+                }}
+              >
+                Log Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                component={NextLink}
+                href="/sign-in"
+                variant="contained"
+                fullWidth
+                onClick={handleDrawerToggle}
+                sx={{
+                  background: COLORS.PRIMARY,
+                  color: "white",
+                  borderRadius: "30px",
+                  textTransform: "none",
+                  py: 1.2,
+                  fontWeight: 600,
+                  fontSize: "15px",
+                  fontFamily: FONTS.PRIMARY,
+                  "&:hover": { background: COLORS.PRIMARY_DARK },
+                }}
+              >
+                Sign In
+              </Button>
+              <Button
+                component={NextLink}
+                href="/partner"
+                variant="outlined"
+                fullWidth
+                onClick={handleDrawerToggle}
+                sx={{
+                  borderColor: COLORS.PRIMARY,
+                  color: COLORS.PRIMARY,
+                  borderRadius: "30px",
+                  textTransform: "none",
+                  py: 1.2,
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  fontFamily: FONTS.PRIMARY,
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY_DARK,
+                    bgcolor: "#FFF0E6",
+                    color: COLORS.PRIMARY_DARK,
+                  },
+                }}
+              >
+                Register as Astrologer/Purohit
+              </Button>
+            </>
+          )}
         </Box>
       </Drawer>
     </>

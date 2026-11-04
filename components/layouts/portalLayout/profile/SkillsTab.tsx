@@ -49,6 +49,7 @@ interface SkillsTabProps {
   setRatePerMinute?: (val: string) => void;
   astrologyPrice?: string;
   setAstrologyPrice?: (val: string) => void;
+  isDirty?: boolean;
 }
 
 export const SkillsTab: React.FC<SkillsTabProps> = ({
@@ -79,6 +80,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
   setRatePerMinute,
   astrologyPrice,
   setAstrologyPrice,
+  isDirty = false,
 }) => {
   // All Indian States from country-state-city
   const stateOptions = useMemo(() => {
@@ -402,19 +404,20 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
         <Button
           variant="contained"
           onClick={onSave}
-          disabled={saving}
+          disabled={saving || !isDirty}
           sx={{
-            background: "#FF6200 !important",
-            color: "white !important",
+            background: (saving || !isDirty) ? "#cbd5e1 !important" : "#FF6200 !important",
+            cursor: (saving || !isDirty) ? "not-allowed !important" : "pointer",
+            color: (saving || !isDirty) ? "#64748b !important" : "white !important",
             borderRadius: "8px",
             px: 4,
             py: 1.2,
             fontWeight: 700,
             textTransform: "none",
-            "&:hover": { background: "#F05A00 !important" },
+            "&:hover": { background: (saving || !isDirty) ? "#cbd5e1 !important" : "#F05A00 !important" },
           }}
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving ? "Saving..." : "Update Changes"}
         </Button>
       </Box>
     </Box>

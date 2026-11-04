@@ -386,7 +386,7 @@ export default function SignUpStep1Personal({
       {/* Rashi */}
       <Grid size={{ xs: 12, sm: 6 }}>
         <Typography sx={labelStyles}>
-          Rashi (Zodiac)
+          Rashi (Zodiac) <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
         </Typography>
         <Field name="rashi">
           {({ field, form, meta }: any) => (

@@ -8,6 +8,8 @@ export interface GetPaginationOptions {
   defaultLimit?: number;
   defaultStatus?: string;
   statusKey?: string;
+  searchParams?: { get: (key: string) => string | null } | null;
+  allowSessionStorageOnInit?: boolean;
 }
 
 export interface SyncPaginationOptions {
@@ -25,70 +27,61 @@ export function getTablePaginationState(
   const defaultStatus = options?.defaultStatus ?? 'All';
   const statusKey = options?.statusKey ?? 'status';
 
-  if (typeof window === 'undefined') {
-    return {
-      page: 0,
-      rowsPerPage: defaultLimit,
-      status: defaultStatus,
-    };
+  // Read URL search params from passed searchParams (available on SSR & client) or window
+  let paramPage: string | null = null;
+  let paramLimit: string | null = null;
+  let paramStatus: string | null = null;
+
+  if (options?.searchParams) {
+    paramPage = options.searchParams.get('page');
+    paramLimit = options.searchParams.get('limit') || options.searchParams.get('rowsPerPage');
+    paramStatus = options.searchParams.get(statusKey);
+  } else if (typeof window !== 'undefined') {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      paramPage = params.get('page');
+      paramLimit = params.get('limit') || params.get('rowsPerPage');
+      paramStatus = params.get(statusKey);
+    } catch (e) {}
   }
 
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const paramPage = params.get('page');
-    const paramLimit = params.get('limit') || params.get('rowsPerPage');
-    const paramStatus = params.get(statusKey);
-
-    let savedState: any = null;
-    const saved = sessionStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        savedState = JSON.parse(saved);
-      } catch (e) {
-        // ignore JSON parse error
-      }
+  // Determine page (URL is 1-indexed; state is 0-indexed for MUI)
+  let page = 0;
+  if (paramPage) {
+    const parsed = parseInt(paramPage, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      page = parsed - 1;
     }
-
-    // Determine page (URL is 1-indexed; state is 0-indexed for MUI)
-    let page = 0;
-    if (paramPage) {
-      const parsed = parseInt(paramPage, 10);
-      if (!isNaN(parsed) && parsed > 0) {
-        page = parsed - 1;
-      }
-    } else if (savedState && typeof savedState.page === 'number') {
-      page = Math.max(0, savedState.page);
-    }
-
-    // Determine rowsPerPage / limit
-    let rowsPerPage = defaultLimit;
-    if (paramLimit) {
-      const parsed = parseInt(paramLimit, 10);
-      if (!isNaN(parsed) && parsed > 0) {
-        rowsPerPage = parsed;
-      }
-    } else if (savedState && typeof savedState.rowsPerPage === 'number' && savedState.rowsPerPage > 0) {
-      rowsPerPage = savedState.rowsPerPage;
-    } else if (savedState && typeof savedState.limit === 'number' && savedState.limit > 0) {
-      rowsPerPage = savedState.limit;
-    }
-
-    // Determine status / filter
-    let status = defaultStatus;
-    if (paramStatus) {
-      status = paramStatus;
-    } else if (savedState && typeof savedState.status === 'string') {
-      status = savedState.status;
-    }
-
-    return { page, rowsPerPage, status };
-  } catch (err) {
-    return {
-      page: 0,
-      rowsPerPage: defaultLimit,
-      status: defaultStatus,
-    };
   }
+
+  // Determine rowsPerPage / limit
+  let rowsPerPage = defaultLimit;
+  if (paramLimit) {
+    const parsed = parseInt(paramLimit, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      rowsPerPage = parsed;
+    }
+  }
+
+  // Determine status: URL param takes precedence on both SSR and client
+  let status = paramStatus || defaultStatus;
+
+  // On client only: only check sessionStorage if explicitly requested to prevent SSR hydration mismatches
+  if (options?.allowSessionStorageOnInit && typeof window !== 'undefined' && !paramPage && !paramLimit && !paramStatus) {
+    try {
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        const savedState = JSON.parse(saved);
+        if (typeof savedState.page === 'number') page = Math.max(0, savedState.page);
+        if (typeof savedState.rowsPerPage === 'number' && savedState.rowsPerPage > 0) {
+          rowsPerPage = savedState.rowsPerPage;
+        }
+        if (typeof savedState.status === 'string') status = savedState.status;
+      }
+    } catch (e) {}
+  }
+
+  return { page, rowsPerPage, status };
 }
 
 export function syncTablePagination(

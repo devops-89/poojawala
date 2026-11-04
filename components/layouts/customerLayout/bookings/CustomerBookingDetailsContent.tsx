@@ -28,12 +28,14 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import moment from "moment";
 import BookingDetailHero from "./BookingDetailHero";
 import BookingReviewCard from "./BookingReviewCard";
 import BookingSummaryCard from "./BookingSummaryCard";
 import PurohitReviewCard from "./PurohitReviewCard";
 import ServiceDetailsCard from "./ServiceDetailsCard";
 import { getBookingPaymentDetails } from "./bookingPaymentHelper";
+import { formatScheduledDateTime } from "@/utils/helpers";
 import { useSocketStore } from "@/stores/socketStore";
 
 export default function CustomerBookingDetailsContent({
@@ -233,18 +235,8 @@ export default function CustomerBookingDetailsContent({
   const { openModal } = useTicketModalStore();
 
   const formattedDate = useMemo(() => {
-    if (booking?.scheduledAtIst) return booking.scheduledAtIst;
-    if (!booking?.scheduledAt) return "N/A";
-    const date = new Date(booking.scheduledAt);
-    if (isNaN(date.getTime())) return "N/A";
-
-    const timeStr = booking.scheduledTime ? ` at ${booking.scheduledTime}` : "";
-    return (
-      date.toLocaleDateString("en-IN", {
-        dateStyle: "medium",
-      }) + timeStr
-    );
-  }, [booking]);
+    return booking?.scheduledAt ? formatScheduledDateTime(booking.scheduledAt) : "N/A";
+  }, [booking?.scheduledAt]);
 
   const formattedAmount = useMemo(() => {
     const amt =
@@ -311,7 +303,14 @@ export default function CustomerBookingDetailsContent({
   const isPaymentPending = getBookingPaymentDetails(booking).canMakePayment;
 
   const isAstrology = booking?.bookingType === "ASTROLOGY" || Boolean(booking?.astrologer);
-  const backHref = isAstrology ? "/customer/bookings?type=ASTROLOGY" : "/customer/bookings?type=POOJA";
+  const backHref = "/customer/bookings";
+
+  const handleBackToBookings = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("customer_bookings_type", isAstrology ? "ASTROLOGY" : "POOJA");
+    }
+    router.push("/customer/bookings");
+  };
 
   return (
     <Box sx={{ maxWidth: "1100px", mx: "auto", pb: 8 }}>
@@ -355,7 +354,7 @@ export default function CustomerBookingDetailsContent({
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
-            onClick={() => router.push(backHref)}
+            onClick={handleBackToBookings}
             sx={{
               color: "#475569",
               borderColor: "#e2e8f0",
@@ -527,7 +526,7 @@ export default function CustomerBookingDetailsContent({
                 .toISOString()
                 .slice(0, 16);
               const max = new Date(now);
-              max.setMonth(max.getMonth() + 6);
+              max.setMonth(max.getMonth() + 3);
               const maxDate = new Date(
                 max.getTime() - max.getTimezoneOffset() * 60000,
               )

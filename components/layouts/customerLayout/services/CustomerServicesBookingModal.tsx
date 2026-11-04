@@ -183,7 +183,7 @@ export default function CustomerServicesBookingModal({
     .toISOString()
     .slice(0, 16);
   const max = new Date(now);
-  max.setMonth(max.getMonth() + 6);
+  max.setMonth(max.getMonth() + 3);
   const maxDate = new Date(max.getTime() - max.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 16);

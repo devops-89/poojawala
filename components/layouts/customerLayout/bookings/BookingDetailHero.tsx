@@ -1,5 +1,7 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import React, { useMemo } from 'react';
+import moment from 'moment';
 import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -9,6 +11,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { getBookingPaymentDetails, formatInr } from './bookingPaymentHelper';
+import { formatScheduledDateTime } from '@/utils/helpers';
 
 interface Props {
   booking: any;
@@ -59,7 +62,9 @@ export default function BookingDetailHero({
     ? (booking?.service?.name || (booking?.astrologer ? `Astrology Consultation with ${booking.astrologer.firstName || ''} ${booking.astrologer.lastName || ''}`.trim() : 'Astrology Consultation'))
     : (booking?.service?.name ?? 'Service');
 
-  const displayDate = booking?.scheduledAtIst || formattedDate;
+  const displayDate = booking?.scheduledAt
+    ? formatScheduledDateTime(booking.scheduledAt)
+    : (formattedDate || "N/A");
 
   const ratePerMinute =
     booking?.astrologer?.astrologerProfile?.ratePerMinute ||

@@ -8,6 +8,7 @@ import {
   updateServiceAreaAPI,
 } from "@/api/userControllers";
 import { AddressModal } from "@/components/layouts/portalLayout/profile/AddressModal";
+import { validateAddressPayload, sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
 import ConfirmDeleteDialog from "@/components/widgets/ConfirmDeleteDialog";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -103,12 +104,12 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
     setSelectedAddressId(area.id);
     const initialData = {
       id: area.id,
-      addressLabel: area.addressLabel || "Primary Service Area",
-      streetName: area.streetName || "",
-      fullAddress: area.fullAddress || "",
-      city: area.city || "",
-      state: area.state || "",
-      pincode: area.pincode || "",
+      addressLabel: sanitizeAddressLabelInput(area.addressLabel || "Primary Service Area"),
+      streetName: sanitizeAddressInput(area.streetName || ""),
+      fullAddress: sanitizeAddressInput(area.fullAddress || ""),
+      city: sanitizeLettersOnly(area.city || ""),
+      state: sanitizeLettersOnly(area.state || ""),
+      pincode: sanitizePincodeInput(area.pincode || ""),
       isDefault: area.isDefault || false,
       latitude: area.latitude || "",
       longitude: area.longitude || "",
@@ -164,21 +165,37 @@ export const ServiceAreasSection: React.FC<ServiceAreasSectionProps> = ({
       }
     }
 
+    const finalStreetName =
+      targetData.streetName || targetData.addressLabel || "Main Area";
+
     const constructedFullAddress =
       targetData.fullAddress ||
-      [targetData.streetName, targetData.city, targetData.state, targetData.pincode]
+      [finalStreetName, targetData.city, targetData.state, targetData.pincode]
         .filter(Boolean)
         .join(", ");
 
+    const validation = validateAddressPayload({
+      pincode: targetData.pincode,
+      addressLabel: targetData.addressLabel || "Primary Service Area",
+      fullAddress: constructedFullAddress,
+      streetName: finalStreetName,
+      city: targetData.city || defaultCity || "",
+      state: targetData.state || defaultState || "",
+    });
+
+    if (!validation.isValid) {
+      showSnackbar(validation.firstError || "Please check address fields", "error");
+      return;
+    }
+
     const areaPayload = {
       purohitId: Number(purohitId),
-      addressLabel: targetData.addressLabel || "Primary Service Area",
-      streetName:
-        targetData.streetName || targetData.addressLabel || "Main Area",
-      fullAddress: constructedFullAddress,
-      city: targetData.city || defaultCity,
-      state: targetData.state || defaultState,
-      pincode: targetData.pincode,
+      addressLabel: sanitizeAddressLabelInput(targetData.addressLabel || "Primary Service Area"),
+      streetName: sanitizeAddressInput(finalStreetName),
+      fullAddress: sanitizeAddressInput(constructedFullAddress),
+      city: sanitizeLettersOnly(targetData.city || defaultCity || ""),
+      state: sanitizeLettersOnly(targetData.state || defaultState || ""),
+      pincode: sanitizePincodeInput(targetData.pincode),
       latitude: targetData.latitude ? String(targetData.latitude) : undefined,
       longitude: targetData.longitude
         ? String(targetData.longitude)

@@ -14,7 +14,7 @@ import AddressMapPreview from "@/components/widgets/addressModal/AddressMapPrevi
 import { useAddressGeocoding } from "@/components/widgets/addressModal/useAddressGeocoding";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput } from "@/utils/helpers";
+import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput, allowOnlyAddressLabelCharsOnKeyDown, sanitizeAddressLabelInput, allowOnlyLettersOnKeyDown, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
 
 interface Step5ServiceAreaProps {
   formik: any;
@@ -126,7 +126,7 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             fullWidth
             label="Pincode *"
             value={addressData.pincode}
-            onChange={(e) => handlePincodeChange(e.target.value)}
+            onChange={(e) => handlePincodeChange(sanitizePincodeInput(e.target.value))}
             slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
             variant="outlined"
             error={
@@ -146,10 +146,11 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             fullWidth
             label="Address Label *"
             value={addressData.addressLabel}
+            onKeyDown={allowOnlyAddressLabelCharsOnKeyDown}
             onChange={(e) =>
               setAddressData((prev) => ({
                 ...prev,
-                addressLabel: e.target.value,
+                addressLabel: sanitizeAddressLabelInput(e.target.value),
               }))
             }
             variant="outlined"
@@ -193,10 +194,11 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             fullWidth
             label="Street Name / Area / Landmark"
             value={serviceArea.streetName || ""}
+            onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={(e) =>
               setFieldValue("serviceArea", {
                 ...serviceArea,
-                streetName: e.target.value,
+                streetName: sanitizeAddressInput(e.target.value),
               })
             }
             variant="outlined"
@@ -210,8 +212,9 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             fullWidth
             label="City *"
             value={addressData.city}
+            onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) =>
-              setAddressData((prev) => ({ ...prev, city: e.target.value }))
+              setAddressData((prev) => ({ ...prev, city: sanitizeLettersOnly(e.target.value) }))
             }
             variant="outlined"
             error={
@@ -231,8 +234,9 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             fullWidth
             label="State *"
             value={addressData.state}
+            onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) =>
-              setAddressData((prev) => ({ ...prev, state: e.target.value }))
+              setAddressData((prev) => ({ ...prev, state: sanitizeLettersOnly(e.target.value) }))
             }
             variant="outlined"
             error={

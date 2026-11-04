@@ -1,6 +1,6 @@
 "use client";
 
-import { getMeAPI, loginAPI, logoutAPI } from "@/api/authControllers";
+import { getMeAPI, loginAPI, logoutAPI, LOGIN_PAGE } from "@/api/authControllers";
 import { extractRoleCsrfToken, saveRoleCsrfToken, clearRoleCsrfToken } from "@/api/config";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
@@ -303,10 +303,13 @@ export default function SignInContent() {
                       localStorage.removeItem("activeRole");
                     }
 
-                    const response = await loginAPI({
-                      email: values.email,
-                      password: values.password,
-                    });
+                    const response = await loginAPI(
+                      {
+                        email: values.email,
+                        password: values.password,
+                      },
+                      LOGIN_PAGE.HOME_PAGE
+                    );
                     if (
                       response.success ||
                       response.token ||
