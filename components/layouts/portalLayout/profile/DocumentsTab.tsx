@@ -31,7 +31,6 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import BadgeIcon from "@mui/icons-material/Badge";
 import CloseIcon from "@mui/icons-material/Close";
 import { convertImageToWebP } from "@/utils/imageHelper";
-
 interface DocumentsTabProps {
   aadhaarNumber: string;
   setAadhaarNumber: (val: string) => void;
@@ -192,16 +191,16 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
     },
     ...(!isAstrologer
       ? [
-          {
-            id: "templeAffiliationProof",
-            title: "Temple / Vedic Sansthan Proof",
-            desc: "Upload proof of temple affiliation or gurukul certification.",
-            icon: <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
-            file: templeAffiliationProofDoc,
-            setFile: setTempleAffiliationProofDoc,
-            url: templeAffiliationProofUrl,
-          },
-        ]
+        {
+          id: "templeAffiliationProof",
+          title: "Temple / Vedic Sansthan Proof",
+          desc: "Upload proof of temple affiliation or gurukul certification.",
+          icon: <AccountBalanceIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />,
+          file: templeAffiliationProofDoc,
+          setFile: setTempleAffiliationProofDoc,
+          url: templeAffiliationProofUrl,
+        },
+      ]
       : []),
   ];
 
@@ -321,8 +320,8 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                   border: hasNewFile
                     ? "2px solid #FF6200"
                     : hasExistingUrl
-                    ? "1.5px solid #2e7d32"
-                    : "1px dashed #CCCCCC",
+                      ? "1.5px solid #2e7d32"
+                      : "1px dashed #CCCCCC",
                   borderRadius: "14px",
                   bgcolor: "#FFFFFF",
                   p: 2.5,
