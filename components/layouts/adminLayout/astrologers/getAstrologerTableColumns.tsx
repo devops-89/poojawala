@@ -112,17 +112,37 @@ export const getAstrologerTableColumns = ({
       label: "STATUS",
       width: "22%",
       minWidth: 160,
-      render: (astrologer) => (
-        <AdminStatusSelect
-          value={astrologer.status}
-          options={[
-            { value: "Approved", label: "Approved" },
-            { value: "Pending", label: "Pending" },
-            { value: "Rejected", label: "Rejected" },
-          ]}
-          onChange={(newStatus) => onStatusChange(astrologer, newStatus)}
-        />
-      ),
+      render: (astrologer) => {
+        const currentStatus = String(astrologer.status || "").trim().toLowerCase();
+        const options =
+          currentStatus === "approved"
+            ? [
+                { value: "Approved", label: "Approved" },
+                { value: "Rejected", label: "Rejected" },
+              ]
+            : currentStatus === "rejected"
+            ? [
+                { value: "Rejected", label: "Rejected" },
+                { value: "Approved", label: "Approved" },
+              ]
+            : [
+                { value: "Pending", label: "Pending" },
+                { value: "Approved", label: "Approved" },
+                { value: "Rejected", label: "Rejected" },
+              ];
+
+        return (
+          <AdminStatusSelect
+            value={astrologer.status}
+            options={options}
+            onChange={(newStatus) => {
+              if (newStatus !== astrologer.status) {
+                onStatusChange(astrologer, newStatus);
+              }
+            }}
+          />
+        );
+      },
     },
     {
       id: "actions",
