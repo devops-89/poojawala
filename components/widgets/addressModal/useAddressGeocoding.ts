@@ -3,11 +3,12 @@ import { COLORS } from "@/utils/enums";
 import type { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import { AddressFormData, StatusMessage } from "@/utils/types";
-import { PINCODE_REGEX, sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
+import { PINCODE_REGEX, isValidIndianPincodeFormat, sanitizeAddressInput, sanitizeAddressLabelInput, sanitizeLettersOnly, sanitizePincodeInput } from "@/utils/helpers";
 
 export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [isSearchingGeo, setIsSearchingGeo] = useState(false);
+  const [pincodeError, setPincodeError] = useState<string>("");
   const [statusMessage, setStatusMessage] = useState<StatusMessage>({
     text: "",
     type: "",
@@ -102,6 +103,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       });
     }
 
+    setPincodeError("");
     setStatusMessage({ text: "", type: "" });
     lastSearchedQueryRef.current = "";
 
@@ -484,21 +486,44 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
   const lookupPincode = async (pin: string) => {
     setIsSearchingGeo(true);
+    setPincodeError("");
     setStatusMessage({
-      text: "Loading location & address details for pincode...",
+      text: "Checking Indian pincode details...",
       type: "info",
     });
 
     try {
+      // 1. Strict Indian Pincode format & circle prefix check
+      if (!isValidIndianPincodeFormat(pin)) {
+        setPincodeError("Invalid Indian Pincode. Please enter a valid 6-digit Indian postal code.");
+        setStatusMessage({
+          text: "Invalid Indian Pincode. Please check your pincode.",
+          type: "error",
+        });
+        setAddressData((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+        }));
+        setIsSearchingGeo(false);
+        return;
+      }
+
       let fetchedCity = "";
       let fetchedState = "";
       let fetchedArea = "";
+      let isPostalValid: boolean | null = null;
 
-      // 1. Fetch details from Postal Pincode API
+      // 2. Fetch details from official India Post Pincode API
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
         const postRes = await fetch(
           `https://api.postalpincode.in/pincode/${pin}`,
+          { signal: controller.signal }
         );
+        clearTimeout(timeoutId);
+
         if (postRes.ok) {
           const postData = await postRes.json();
           if (
@@ -511,15 +536,86 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
             fetchedCity = po.District || po.Block || po.Circle || "";
             fetchedState = po.State || "";
             fetchedArea = po.Name || "";
+            isPostalValid = true;
+          } else if (
+            Array.isArray(postData) &&
+            (postData[0]?.Status === "Error" ||
+              postData[0]?.Message === "No records found" ||
+              postData[0]?.Status === "Failed")
+          ) {
+            isPostalValid = false;
           }
         }
       } catch (e) {
         console.error("Postal API lookup error:", e);
       }
 
-      // 2. Fetch coordinates from Mapbox Geocoding API
-      const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
+      // 3. If India Post confirmed it does NOT exist, stop immediately
+      if (isPostalValid === false) {
+        setPincodeError("Invalid Indian Pincode. No postal records found for this pincode.");
+        setStatusMessage({
+          text: "Invalid Indian Pincode. No records found in India Post.",
+          type: "error",
+        });
+        setAddressData((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+        }));
+        setIsSearchingGeo(false);
+        return;
+      }
 
+      // 4. If postal API was unreachable, strict fallback to Mapbox postcode
+      const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
+      if (isPostalValid === null) {
+        try {
+          const mbUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+            pin
+          )}.json?access_token=${token}&country=IN&types=postcode&limit=1`;
+          const res = await fetch(mbUrl);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.features?.length > 0) {
+              const feat = data.features[0];
+              if (feat.place_type?.includes("postcode") && feat.text === pin) {
+                isPostalValid = true;
+                const context = feat.context || [];
+                for (const item of context) {
+                  if (item.id.startsWith("place") || item.id.startsWith("district")) {
+                    if (!fetchedCity) fetchedCity = item.text;
+                  }
+                  if (item.id.startsWith("region")) {
+                    if (!fetchedState) fetchedState = item.text;
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Mapbox strict postcode lookup error:", e);
+        }
+
+        if (!isPostalValid) {
+          setPincodeError("Invalid Indian Pincode. No postal records found for this pincode.");
+          setStatusMessage({
+            text: "Invalid Indian Pincode. Location could not be verified.",
+            type: "error",
+          });
+          setAddressData((prev) => ({
+            ...prev,
+            city: "",
+            state: "",
+          }));
+          setIsSearchingGeo(false);
+          return;
+        }
+      }
+
+      // Valid Indian Pincode!
+      setPincodeError("");
+
+      // 5. Fetch coordinates from Mapbox Geocoding API
       const query = [fetchedArea, fetchedCity, fetchedState, pin, "India"]
         .filter(Boolean)
         .join(", ");
@@ -540,26 +636,13 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
             lon = feat.center[0];
             lat = feat.center[1];
             foundCoords = true;
-
-            const context = feat.context || [];
-            for (const item of context) {
-              if (
-                item.id.startsWith("place") ||
-                item.id.startsWith("district")
-              ) {
-                if (!fetchedCity) fetchedCity = item.text;
-              }
-              if (item.id.startsWith("region")) {
-                if (!fetchedState) fetchedState = item.text;
-              }
-            }
           }
         }
       } catch (e) {
         console.error("Mapbox pincode geocode error:", e);
       }
 
-      // 3. Fallback to Nominatim if Mapbox coords not found
+      // 6. Fallback to Nominatim if Mapbox coords not found
       if (!foundCoords) {
         try {
           const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=${encodeURIComponent(
@@ -598,6 +681,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       });
     } catch (err) {
       console.error(err);
+      setPincodeError("Error verifying pincode. Please try again.");
     } finally {
       setIsSearchingGeo(false);
     }
@@ -606,9 +690,11 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
   const handlePincodeChange = (val: string) => {
     const digitsOnly = sanitizePincodeInput(val);
     setAddressData((prev) => ({ ...prev, pincode: digitsOnly }));
-    setStatusMessage({ text: "", type: "" });
 
-    if (PINCODE_REGEX.test(digitsOnly)) {
+    if (digitsOnly.length < 6) {
+      setPincodeError("");
+      setStatusMessage({ text: "", type: "" });
+    } else if (PINCODE_REGEX.test(digitsOnly)) {
       lookupPincode(digitsOnly);
     }
   };
@@ -634,6 +720,7 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
       longitude: "0",
       isDefault: false,
     });
+    setPincodeError("");
     setStatusMessage({ text: "", type: "" });
     exactRef.current = false;
     lastSearchedQueryRef.current = "";
@@ -660,5 +747,6 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
     handleAddressInputChange,
     handleAddressInputBlur,
     resetForm,
+    pincodeError,
   };
-}
+};

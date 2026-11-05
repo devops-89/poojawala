@@ -29,6 +29,9 @@ export default function Step5ServiceArea({
 }: Step5ServiceAreaProps) {
   const { values, setFieldValue, errors, touched } = formik;
   const serviceArea = values.serviceArea || {};
+  const serviceAreaErrors = errors.serviceArea || {};
+  const serviceAreaTouched = touched.serviceArea || {};
+
 
   const initialGeoDataRef = React.useRef<any>(null);
   if (!initialGeoDataRef.current) {
@@ -57,7 +60,20 @@ export default function Step5ServiceArea({
     handlePincodeChange,
     handleAddressInputChange,
     handleAddressInputBlur,
+    pincodeError,
   } = useAddressGeocoding(true, initialGeoDataRef.current);
+
+  useEffect(() => {
+    if (pincodeError) {
+      formik.setFieldError("serviceArea.pincode", pincodeError);
+    } else if (
+      serviceAreaErrors.pincode &&
+      typeof serviceAreaErrors.pincode === "string" &&
+      serviceAreaErrors.pincode.toLowerCase().includes("indian pincode")
+    ) {
+      formik.setFieldError("serviceArea.pincode", undefined);
+    }
+  }, [pincodeError, formik, serviceAreaErrors.pincode]);
 
   // Keep Formik values synced with Geocoding Hook state
   useEffect(() => {
@@ -91,8 +107,6 @@ export default function Step5ServiceArea({
     });
   }, [addressData, setFieldValue]);
 
-  const serviceAreaErrors = errors.serviceArea || {};
-  const serviceAreaTouched = touched.serviceArea || {};
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
@@ -135,14 +149,16 @@ export default function Step5ServiceArea({
             slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
             variant="outlined"
             error={
-              !isAdmin &&
-              Boolean(serviceAreaTouched.pincode) &&
-              Boolean(serviceAreaErrors.pincode)
+              Boolean(pincodeError) ||
+              (!isAdmin &&
+                Boolean(serviceAreaTouched.pincode && serviceAreaErrors.pincode))
             }
             helperText={
-              !isAdmin &&
-              Boolean(serviceAreaTouched.pincode) &&
-              (serviceAreaErrors.pincode as string)
+              pincodeError ||
+              (!isAdmin &&
+                Boolean(serviceAreaTouched.pincode) &&
+                (serviceAreaErrors.pincode as string)) ||
+              undefined
             }
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />

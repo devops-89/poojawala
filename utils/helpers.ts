@@ -148,6 +148,23 @@ export const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
 export const PINCODE_MESSAGE =
   "Please enter a valid 6-digit Indian Pincode starting with 1-9 (e.g. 110001)";
 
+export const VALID_INDIAN_PINCODE_PREFIXES = new Set([
+  "11", "12", "13", "14", "15", "16", "17", "18", "19",
+  "20", "21", "22", "23", "24", "25", "26", "27", "28",
+  "30", "31", "32", "33", "34", "36", "37", "38", "39",
+  "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+  "50", "51", "52", "53", "56", "57", "58", "59",
+  "60", "61", "62", "63", "64", "67", "68", "69",
+  "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+  "80", "81", "82", "83", "84", "85",
+]);
+
+export const isValidIndianPincodeFormat = (val: string): boolean => {
+  const pin = (val || "").trim();
+  if (!PINCODE_REGEX.test(pin)) return false;
+  return VALID_INDIAN_PINCODE_PREFIXES.has(pin.slice(0, 2));
+};
+
 export const sanitizePincodeInput = (val: string): string => {
   return (val || "").replace(/\D/g, "").slice(0, 6);
 };
@@ -255,7 +272,7 @@ export const validateAddressPayload = (data: {
   // Pincode validation
   if (!pin) {
     errors.pincode = "Pincode is required";
-  } else if (!PINCODE_REGEX.test(pin)) {
+  } else if (!isValidIndianPincodeFormat(pin)) {
     errors.pincode = PINCODE_MESSAGE;
   }
 

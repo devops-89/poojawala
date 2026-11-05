@@ -80,7 +80,23 @@ export const AddressModal: React.FC<AddressModalProps> = ({
     handlePincodeChange,
     handleAddressInputChange,
     handleAddressInputBlur,
+    pincodeError,
   } = useAddressGeocoding(open, addressForm);
+
+  useEffect(() => {
+    if (pincodeError) {
+      setErrors((prev) => ({ ...prev, pincode: pincodeError }));
+    } else {
+      setErrors((prev) => {
+        if (prev.pincode && prev.pincode.toLowerCase().includes("indian pincode")) {
+          const next = { ...prev };
+          delete next.pincode;
+          return next;
+        }
+        return prev;
+      });
+    }
+  }, [pincodeError]);
 
   // Clear errors when modal opens or closes
   useEffect(() => {
@@ -148,7 +164,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
     );
   }, [isEdit, addressData, addressForm]);
 
-  const isSaveDisabled = savingAddress || !isAddressDirty;
+  const isSaveDisabled = savingAddress || !isAddressDirty || Boolean(pincodeError);
 
   return (
     <Dialog
@@ -425,6 +441,10 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         </Button>
         <Button
           onClick={() => {
+            if (pincodeError) {
+              setErrors((prev) => ({ ...prev, pincode: pincodeError }));
+              return;
+            }
             const currentStreetName = (
               addressData.streetName ??
               addressForm.streetName ??

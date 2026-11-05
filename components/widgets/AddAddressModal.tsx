@@ -12,7 +12,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AddressFormInputs from "./addressModal/AddressFormInputs";
 import AddressLocationButton from "./addressModal/AddressLocationButton";
 import AddressMapPreview from "./addressModal/AddressMapPreview";
@@ -46,7 +46,23 @@ export default function AddAddressModal({
     handleAddressInputChange,
     handleAddressInputBlur,
     resetForm,
+    pincodeError,
   } = useAddressGeocoding(open, initialData);
+
+  useEffect(() => {
+    if (pincodeError) {
+      setErrors((prev) => ({ ...prev, pincode: pincodeError }));
+    } else {
+      setErrors((prev) => {
+        if (prev.pincode && prev.pincode.toLowerCase().includes("indian pincode")) {
+          const next = { ...prev };
+          delete next.pincode;
+          return next;
+        }
+        return prev;
+      });
+    }
+  }, [pincodeError]);
 
   const isEdit = Boolean(initialData?.id || addressData?.id);
   const isAddressDirty = useMemo(() => {
@@ -74,9 +90,14 @@ export default function AddAddressModal({
     );
   }, [isEdit, addressData, initialData]);
 
-  const isSaveDisabled = saving || !isAddressDirty;
+  const isSaveDisabled = saving || !isAddressDirty || Boolean(pincodeError);
 
   const handleSave = async () => {
+    if (pincodeError) {
+      setErrors((prev) => ({ ...prev, pincode: pincodeError }));
+      showSnackbar(pincodeError, "error");
+      return;
+    }
     const validation = validateAddressPayload(addressData);
     if (!validation.isValid) {
       setErrors(validation.errors);

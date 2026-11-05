@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import { USER_ROLE } from "@/utils/enums";
 import {
+  isValidIndianPincodeFormat,
   EMAIL_STRICT_REGEX,
   EMAIL_STRICT_MESSAGE,
   ADDRESS_STRICT_REGEX,
@@ -133,7 +134,17 @@ export const purohitOnboardValidationSchema = Yup.object().shape({
   }),
 
   serviceArea: Yup.object({
-    pincode: Yup.string().nullable().optional(),
+    pincode: Yup.string()
+      .nullable()
+      .optional()
+      .test(
+        "is-valid-indian-pincode",
+        "Please enter a valid 6-digit Indian Pincode",
+        (val) => {
+          if (!val || !val.trim()) return true;
+          return isValidIndianPincodeFormat(val.trim());
+        }
+      ),
     fullAddress: Yup.string().nullable().optional(),
     streetName: Yup.string().nullable().optional(),
     city: Yup.string().nullable().optional(),
