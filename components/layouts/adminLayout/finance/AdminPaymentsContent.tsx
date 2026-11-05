@@ -40,7 +40,6 @@ const PAYMENT_TYPE_TABS = [
 
 const PAYMENT_STATUS_TABS = [
   { id: "ALL", label: "All" },
-  { id: PAYMENT_STATUS.CREATED, label: "Created" },
   { id: PAYMENT_STATUS.PENDING, label: "Pending" },
   { id: PAYMENT_STATUS.SUCCESS, label: "Success" },
   { id: PAYMENT_STATUS.FAILED, label: "Failed" },
