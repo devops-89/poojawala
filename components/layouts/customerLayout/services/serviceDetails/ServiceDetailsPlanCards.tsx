@@ -112,19 +112,6 @@ export default function ServiceDetailsPlanCards({
         >
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.8 }}>
-              <Chip
-                label="ONLINE PUJA"
-                size="small"
-                sx={{
-                  bgcolor: "#FEF3C7",
-                  color: "#B45309",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  height: "22px",
-                  borderRadius: "6px",
-                  letterSpacing: "0.5px",
-                }}
-              />
               <Typography
                 sx={{
                   fontSize: "12px",
@@ -294,8 +281,8 @@ export default function ServiceDetailsPlanCards({
             plan.features ||
             (service?.serviceFeatures
               ? service.serviceFeatures.filter(
-                  (sf: any) => sf.plan === planKey.toUpperCase(),
-                )
+                (sf: any) => sf.plan === planKey.toUpperCase(),
+              )
               : null);
 
           const normalFeatures: string[] = [];
@@ -311,7 +298,7 @@ export default function ServiceDetailsPlanCards({
                       sf.id === f.id ||
                       (sf.plan === planKey.toUpperCase() &&
                         (sf.title || "").trim().toLowerCase() ===
-                          (f.title || f.name || "").trim().toLowerCase())
+                        (f.title || f.name || "").trim().toLowerCase())
                   );
                   const resolvedId =
                     f.id != null
@@ -340,8 +327,8 @@ export default function ServiceDetailsPlanCards({
 
           const planAddonTotal = showAddons
             ? priceFeatures
-                .filter((pf) => selectedFeatureIds.includes(pf.id))
-                .reduce((sum, pf) => sum + Number(pf.price || 0), 0)
+              .filter((pf) => selectedFeatureIds.includes(pf.id))
+              .reduce((sum, pf) => sum + Number(pf.price || 0), 0)
             : 0;
 
           const totalCardPrice = Number(plan.price || 0) + planAddonTotal;
@@ -557,27 +544,27 @@ export default function ServiceDetailsPlanCards({
                     py: 1,
                     ...(isSelected
                       ? {
-                          bgcolor: "#C84B16 !important",
-                          color: "white !important",
-                          "&:hover": {
-                            bgcolor: "#B03E0F !important",
-                          },
-                        }
+                        bgcolor: "#C84B16 !important",
+                        color: "white !important",
+                        "&:hover": {
+                          bgcolor: "#B03E0F !important",
+                        },
+                      }
                       : {
+                        borderColor: COLORS.PRIMARY,
+                        color: COLORS.PRIMARY,
+                        "&:hover": {
+                          bgcolor: "#FFFBF7",
                           borderColor: COLORS.PRIMARY,
-                          color: COLORS.PRIMARY,
-                          "&:hover": {
-                            bgcolor: "#FFFBF7",
-                            borderColor: COLORS.PRIMARY,
-                          },
-                        }),
+                        },
+                      }),
                   }}
                 >
                   {!isBookingAllowedForUser
                     ? "Make an Enquiry"
                     : isSelected
-                    ? "Selected Plan"
-                    : "Select Plan"}
+                      ? "Selected Plan"
+                      : "Select Plan"}
                 </Button>
               </Paper>
             </Grid>
