@@ -342,6 +342,7 @@ export default function AdminBookingsContent() {
             fontWeight: 700,
             color: COLORS.PRIMARY,
             fontFamily: FONTS.OUTFIT,
+            "&:hover": { textDecoration: "underline" },
           }}
         >
           B-{booking.id}
@@ -607,6 +608,7 @@ export default function AdminBookingsContent() {
           setPage(0);
         }}
         keyExtractor={(booking) => booking.id}
+        getRowHref={(booking) => `/admin/bookings/${booking.id}`}
         emptyMessage={
           bookingMode === "OFFLINE"
             ? "No offline bookings found matching your criteria."

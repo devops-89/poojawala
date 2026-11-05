@@ -369,10 +369,27 @@ export default function AdminBookingSettlementsContent() {
                   return (
                     <TableRow
                       key={item.id}
+                      onClick={(e) => {
+                        const target = e.target as HTMLElement | null;
+                        if (
+                          target &&
+                          target.closest(
+                            'button, a, input, select, textarea, [role="button"], [role="combobox"], [role="menuitem"], [role="option"], .MuiSelect-select, .MuiMenu-root, [data-no-row-click]'
+                          )
+                        ) {
+                          return;
+                        }
+                        if (e.metaKey || e.ctrlKey) {
+                          window.open(`/admin/bookings/${item.id}`, "_blank");
+                        } else {
+                          router.push(`/admin/bookings/${item.id}`);
+                        }
+                      }}
                       sx={{
                         "&:last-child td, &:last-child th": { border: 0 },
-                        "&:hover": { bgcolor: "#f8fafc" },
-                        transition: "background-color 0.2s",
+                        cursor: "pointer",
+                        "&:hover": { bgcolor: "#f1f5f9 !important" },
+                        transition: "background-color 0.15s ease",
                       }}
                     >
                       <TableCell>

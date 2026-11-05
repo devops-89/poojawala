@@ -349,6 +349,7 @@ export default function AdminContactMessagesContent() {
           setPage(0);
         }}
         keyExtractor={(msg) => msg.id}
+        onRowClick={(msg) => fetchMessageById(msg.id)}
         emptyMessage="No contact messages found."
       />
 

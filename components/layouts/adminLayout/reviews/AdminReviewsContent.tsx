@@ -486,6 +486,7 @@ export default function AdminReviewsContent() {
           setPage(0);
         }}
         keyExtractor={(item) => item.id}
+        onRowClick={(item) => handleViewReview(item)}
         emptyMessage={`No ${bookingType === "ASTROLOGY" ? "astrologer" : "pooja"} reviews found matching your criteria.`}
       />
 

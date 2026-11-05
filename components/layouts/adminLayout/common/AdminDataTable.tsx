@@ -3,6 +3,7 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Paper,
   Tabs,
@@ -38,7 +39,10 @@ export default function AdminDataTable<T = any>({
   minWidth = 1000,
   emptyMessage = 'No data found matching your criteria.',
   keyExtractor,
+  onRowClick,
+  getRowHref,
 }: AdminDataTableProps<T>) {
+  const router = useRouter();
   const effectiveCount = totalCount !== undefined ? totalCount : data.length;
 
   const resolvedActiveTab = React.useMemo(() => {
@@ -146,13 +150,42 @@ export default function AdminDataTable<T = any>({
                   ? keyExtractor(item, index)
                   : (item as any)?.id || (item as any)?.orderId || index;
 
+                const rowHref = getRowHref ? getRowHref(item, index) : undefined;
+                const isClickable = Boolean(onRowClick || rowHref);
+
+                const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+                  if (!isClickable) return;
+                  const target = e.target as HTMLElement | null;
+                  if (
+                    target &&
+                    target.closest(
+                      'button, a, input, select, textarea, [role="button"], [role="combobox"], [role="menuitem"], [role="option"], .MuiSelect-select, .MuiMenu-root, [data-no-row-click]'
+                    )
+                  ) {
+                    return;
+                  }
+                  if (onRowClick) {
+                    onRowClick(item, index, e);
+                  } else if (rowHref) {
+                    if (e.metaKey || e.ctrlKey) {
+                      window.open(rowHref, '_blank');
+                    } else {
+                      router.push(rowHref);
+                    }
+                  }
+                };
+
                 return (
                   <TableRow
                     key={rowKey}
+                    onClick={handleRowClick}
                     sx={{
                       '&:last-child td, &:last-child th': { border: 0 },
-                      '&:hover': { bgcolor: '#f8fafc' },
-                      transition: 'background-color 0.2s',
+                      cursor: isClickable ? 'pointer' : 'default',
+                      '&:hover': {
+                        bgcolor: isClickable ? '#f1f5f9 !important' : '#f8fafc',
+                      },
+                      transition: 'background-color 0.15s ease',
                     }}
                   >
                     {columns.map((col) => (

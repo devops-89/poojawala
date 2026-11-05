@@ -602,6 +602,13 @@ export default function AdminPaymentsContent() {
         }}
         minWidth={950}
         keyExtractor={(p, idx) => p.id || p.paymentId || `pay-${idx}`}
+        getRowHref={(p: any) => {
+          const bookingId = p.bookingId || p.linkedBookings?.[0]?.id || (p.type?.toLowerCase().includes("booking") ? p.referenceId : null);
+          const orderId = p.orderId || p.linkedOrder?.id || (p.type?.toLowerCase().includes("order") ? p.referenceId : null);
+          if (bookingId) return `/admin/bookings/${bookingId}`;
+          if (orderId) return `/admin/orders/${orderId}`;
+          return undefined;
+        }}
         emptyMessage="No payments found matching your criteria."
       />
     </Box>

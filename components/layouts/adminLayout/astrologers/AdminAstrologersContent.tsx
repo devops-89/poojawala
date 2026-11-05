@@ -235,6 +235,7 @@ export default function AdminAstrologersContent() {
           setPage(0);
         }}
         keyExtractor={(astrologer) => astrologer.id}
+        getRowHref={(astrologer) => `/admin/purohits/${astrologer.id}`}
         emptyMessage="No astrologers found matching your criteria."
       />
 

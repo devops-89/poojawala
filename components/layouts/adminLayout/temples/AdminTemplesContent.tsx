@@ -393,6 +393,7 @@ export default function AdminTemplesContent() {
           setPage(0);
         }}
         keyExtractor={(temple: ITemple) => temple.id}
+        getRowHref={(temple) => `/admin/temples/${temple.slug || temple.id}`}
         emptyMessage="No temples found matching your criteria."
       />
 

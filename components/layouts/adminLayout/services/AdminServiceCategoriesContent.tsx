@@ -365,6 +365,7 @@ export default function AdminServiceCategoriesContent() {
           setPage(0);
         }}
         keyExtractor={(category, index) => category.id || category._id || index}
+        onRowClick={(category) => handleOpenViewModal(category)}
         emptyMessage="No categories found matching your criteria."
       />
 

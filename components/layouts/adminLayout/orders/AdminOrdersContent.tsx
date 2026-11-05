@@ -522,6 +522,7 @@ export default function AdminOrdersContent() {
           setPage(0);
         }}
         keyExtractor={(order) => order.id || order.orderId}
+        getRowHref={(order) => `/admin/orders/${order.id || order.orderId}`}
         emptyMessage="No product orders found matching your criteria."
       />
 

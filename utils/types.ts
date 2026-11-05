@@ -66,6 +66,8 @@ export interface AdminDataTableProps<T = any> {
   minWidth?: number | string;
   emptyMessage?: string;
   keyExtractor?: (item: T, index?: number) => string | number;
+  onRowClick?: (item: T, index: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
+  getRowHref?: (item: T, index: number) => string | undefined;
   [key: string]: any;
 }
 

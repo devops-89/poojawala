@@ -389,6 +389,7 @@ export default function AdminPurohitsContent() {
           setPage(0);
         }}
         keyExtractor={(purohit) => purohit.id}
+        getRowHref={(purohit) => `/admin/purohits/${purohit.id}`}
         emptyMessage="No purohits found matching your criteria."
       />
 

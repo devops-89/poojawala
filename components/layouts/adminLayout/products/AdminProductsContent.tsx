@@ -341,6 +341,7 @@ export default function AdminProductsContent() {
           setPage(0);
         }}
         keyExtractor={(product) => product.id}
+        getRowHref={(product) => `/admin/products/${product.id}`}
         emptyMessage="No products found matching your criteria."
       />
 

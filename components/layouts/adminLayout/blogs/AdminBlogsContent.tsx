@@ -401,6 +401,7 @@ export default function AdminBlogsContent() {
           setPage(0);
         }}
         keyExtractor={(blog) => blog?.id ?? blog?._id ?? blog?.slug ?? (blog ? getBlogTitle(blog) : "")}
+        getRowHref={(blog) => `/admin/blogs/${blog.id ?? blog._id}`}
         emptyMessage="No blogs found matching your criteria."
       />
 

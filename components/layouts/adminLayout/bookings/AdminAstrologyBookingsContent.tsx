@@ -169,6 +169,7 @@ export default function AdminAstrologyBookingsContent() {
             fontWeight: 700,
             color: COLORS.PRIMARY,
             fontFamily: FONTS.OUTFIT,
+            "&:hover": { textDecoration: "underline" },
           }}
         >
           B-{booking.id}
@@ -360,6 +361,7 @@ export default function AdminAstrologyBookingsContent() {
           setPage(0);
         }}
         keyExtractor={(booking) => booking.id}
+        getRowHref={(booking) => `/admin/bookings/${booking.id}`}
         emptyMessage="No bookings found matching your criteria."
         minWidth="100%"
       />

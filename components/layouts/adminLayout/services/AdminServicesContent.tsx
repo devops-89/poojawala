@@ -505,6 +505,7 @@ export default function AdminServicesContent() {
           setPage(0);
         }}
         keyExtractor={(service) => service.id}
+        getRowHref={(service) => `/admin/services/${service.slug || service.id}`}
         emptyMessage={
           serviceType === "TEMPLE"
             ? "No temple services found matching your criteria."

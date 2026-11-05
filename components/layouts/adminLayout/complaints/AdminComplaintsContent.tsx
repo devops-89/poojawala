@@ -313,6 +313,7 @@ export default function AdminComplaintsContent() {
           setPage(0);
         }}
         keyExtractor={(item) => item.id}
+        onRowClick={(item) => handleViewDetails(item.id)}
         emptyMessage="No complaints found matching your criteria."
       />
 
