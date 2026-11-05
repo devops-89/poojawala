@@ -86,7 +86,7 @@ export default function Step1OtpVerification({
       <Typography
         sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT, mb: 4 }}
       >
-        We've sent a 6-digit OTP to {formik.values.email}{formik.values.mobileNumber ? ` and ${formik.values.countryCode} ${formik.values.mobileNumber}` : ''}.
+        We've sent a 6-digit OTP to {formik.values.email}.
       </Typography>
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 4 }}>
         {formik.values.otp.map((val: string, idx: number) => (
