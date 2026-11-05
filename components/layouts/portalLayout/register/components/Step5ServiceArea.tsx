@@ -19,9 +19,14 @@ import { allowOnlyAddressCharsOnKeyDown, sanitizeAddressInput, allowOnlyAddressL
 interface Step5ServiceAreaProps {
   formik: any;
   hideTitle?: boolean;
+  isAdmin?: boolean;
 }
 
-export default function Step5ServiceArea({ formik, hideTitle = false }: Step5ServiceAreaProps) {
+export default function Step5ServiceArea({
+  formik,
+  hideTitle = false,
+  isAdmin = false,
+}: Step5ServiceAreaProps) {
   const { values, setFieldValue, errors, touched } = formik;
   const serviceArea = values.serviceArea || {};
 
@@ -124,16 +129,18 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Pincode *"
+            label={isAdmin ? "Pincode" : "Pincode *"}
             value={addressData.pincode}
             onChange={(e) => handlePincodeChange(sanitizePincodeInput(e.target.value))}
             slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
             variant="outlined"
             error={
+              !isAdmin &&
               Boolean(serviceAreaTouched.pincode) &&
               Boolean(serviceAreaErrors.pincode)
             }
             helperText={
+              !isAdmin &&
               Boolean(serviceAreaTouched.pincode) &&
               (serviceAreaErrors.pincode as string)
             }
@@ -144,7 +151,7 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Address Label *"
+            label={isAdmin ? "Address Label" : "Address Label *"}
             value={addressData.addressLabel}
             onKeyDown={allowOnlyAddressLabelCharsOnKeyDown}
             onChange={(e) =>
@@ -164,17 +171,19 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             fullWidth
             multiline
             rows={2}
-            label="Full Service Address *"
+            label={isAdmin ? "Full Service Address" : "Full Service Address *"}
             value={addressData.fullAddress}
             onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={(e) => handleAddressInputChange(sanitizeAddressInput(e.target.value))}
             onBlur={handleAddressInputBlur}
             variant="outlined"
             error={
+              !isAdmin &&
               Boolean(serviceAreaTouched.fullAddress) &&
               Boolean(serviceAreaErrors.fullAddress)
             }
             helperText={
+              !isAdmin &&
               Boolean(serviceAreaTouched.fullAddress) &&
               (serviceAreaErrors.fullAddress as string)
             }
@@ -210,7 +219,7 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="City *"
+            label={isAdmin ? "City" : "City *"}
             value={addressData.city}
             onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) =>
@@ -218,10 +227,12 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             }
             variant="outlined"
             error={
+              !isAdmin &&
               Boolean(serviceAreaTouched.city) &&
               Boolean(serviceAreaErrors.city)
             }
             helperText={
+              !isAdmin &&
               Boolean(serviceAreaTouched.city) &&
               (serviceAreaErrors.city as string)
             }
@@ -232,7 +243,7 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="State *"
+            label={isAdmin ? "State" : "State *"}
             value={addressData.state}
             onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) =>
@@ -240,10 +251,12 @@ export default function Step5ServiceArea({ formik, hideTitle = false }: Step5Ser
             }
             variant="outlined"
             error={
+              !isAdmin &&
               Boolean(serviceAreaTouched.state) &&
               Boolean(serviceAreaErrors.state)
             }
             helperText={
+              !isAdmin &&
               Boolean(serviceAreaTouched.state) &&
               (serviceAreaErrors.state as string)
             }

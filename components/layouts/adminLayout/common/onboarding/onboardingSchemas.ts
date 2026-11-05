@@ -133,19 +133,15 @@ export const purohitOnboardValidationSchema = Yup.object().shape({
   }),
 
   serviceArea: Yup.object({
-    pincode: Yup.string()
-      .matches(/^[0-9]{6}$/, "Pincode must be exactly 6 digits")
-      .required("Pincode is required"),
-    fullAddress: Yup.string()
-      .matches(ADDRESS_STRICT_REGEX, ADDRESS_STRICT_MESSAGE)
-      .required("Full Address is required"),
-    city: Yup.string().required("City is required"),
-    state: Yup.string().required("State is required"),
-    serviceRadiusKm: Yup.number()
-      .min(1, "Service radius must be at least 1 km")
-      .max(100, "Service radius cannot exceed 100 km")
-      .required("Service radius is required"),
-  }),
+    pincode: Yup.string().nullable().optional(),
+    fullAddress: Yup.string().nullable().optional(),
+    streetName: Yup.string().nullable().optional(),
+    city: Yup.string().nullable().optional(),
+    state: Yup.string().nullable().optional(),
+    addressLabel: Yup.string().nullable().optional(),
+    serviceRadiusKm: Yup.number().nullable().optional(),
+  }).nullable().optional(),
+  documents: Yup.object().nullable().optional(),
 });
 
 export const astrologerOnboardValidationSchema = Yup.object().shape({
@@ -267,5 +263,6 @@ export const astrologerOnboardValidationSchema = Yup.object().shape({
     }
     return true;
   }),
+  documents: Yup.object().nullable().optional(),
 });
 

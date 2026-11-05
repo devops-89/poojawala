@@ -128,20 +128,28 @@ export async function executePartnerOnboarding({
   // 6. Service Area (for Purohit)
   if (!isAstrologer) {
     const sa = values.serviceArea || {};
-    const serviceAreaObj = {
-      addressLabel: sa.addressLabel || "Primary Service Area",
-      streetName: sa.streetName || "",
-      fullAddress: sa.fullAddress || "",
-      city: sa.city || values.city || "",
-      state: sa.state || values.state || "",
-      pincode: sa.pincode || "",
-      latitude: Number(sa.latitude) || 0,
-      longitude: Number(sa.longitude) || 0,
-      serviceRadiusKm: Number(sa.serviceRadiusKm || 15),
-    };
+    const hasServiceArea = Boolean(
+      sa.fullAddress?.trim() ||
+      sa.pincode?.trim() ||
+      sa.streetName?.trim()
+    );
 
-    fd.append("serviceArea", JSON.stringify(serviceAreaObj));
-    fd.append("serviceRadiusKm", serviceAreaObj.serviceRadiusKm.toString());
+    if (hasServiceArea) {
+      const serviceAreaObj = {
+        addressLabel: sa.addressLabel || "Primary Service Area",
+        streetName: sa.streetName || "",
+        fullAddress: sa.fullAddress || "",
+        city: sa.city || values.city || "",
+        state: sa.state || values.state || "",
+        pincode: sa.pincode || "",
+        latitude: Number(sa.latitude) || 0,
+        longitude: Number(sa.longitude) || 0,
+        serviceRadiusKm: Number(sa.serviceRadiusKm || 15),
+      };
+
+      fd.append("serviceArea", JSON.stringify(serviceAreaObj));
+      fd.append("serviceRadiusKm", serviceAreaObj.serviceRadiusKm.toString());
+    }
   }
 
   // Execute single create partner API with exact FormData payload

@@ -150,31 +150,23 @@ export const getAstrologerTableColumns = ({
       width: "10%",
       minWidth: 70,
       align: "center",
-      render: (astrologer) => {
-        const isAdminCreated = Boolean(
-          astrologer?.isAdminCreated ??
-          astrologer?.is_admin_created ??
-          astrologer?.isadmincreated
-        );
-
-        return (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <AdminTableActionMenu
-              actions={[
-                {
-                  label: "View Profile",
-                  icon: <VisibilityIcon fontSize="small" />,
-                  href: `/admin/purohits/${astrologer.id}`,
-                },
-                !isAdminCreated && {
-                  label: "Edit Profile",
-                  icon: <EditIcon fontSize="small" />,
-                  href: `/admin/astrologers/edit/${astrologer.id}`,
-                },
-              ]}
-            />
-          </Box>
-        );
-      },
+      render: (astrologer) => (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <AdminTableActionMenu
+            actions={[
+              {
+                label: "View Profile",
+                icon: <VisibilityIcon fontSize="small" />,
+                href: `/admin/purohits/${astrologer.id}`,
+              },
+              {
+                label: "Edit Profile",
+                icon: <EditIcon fontSize="small" />,
+                href: `/admin/astrologers/edit/${astrologer.id}`,
+              },
+            ]}
+          />
+        </Box>
+      ),
     },
   ];

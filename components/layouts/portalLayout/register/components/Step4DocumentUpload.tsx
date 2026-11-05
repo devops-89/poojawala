@@ -16,9 +16,15 @@ interface Step4Props {
   formik: FormikProps<any>;
   setPreviewFile: (file: File | null) => void;
   hideTitle?: boolean;
+  isAdmin?: boolean;
 }
 
-export default function Step4DocumentUpload({ formik, setPreviewFile, hideTitle = false }: Step4Props) {
+export default function Step4DocumentUpload({
+  formik,
+  setPreviewFile,
+  hideTitle = false,
+  isAdmin = false,
+}: Step4Props) {
   const handleFileChange = (docId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.currentTarget.files?.[0];
     if (selectedFile) {
@@ -55,7 +61,8 @@ export default function Step4DocumentUpload({ formik, setPreviewFile, hideTitle 
       </Typography>
       )}
 
-      {formik.errors.documents &&
+      {!isAdmin &&
+        formik.errors.documents &&
         typeof formik.errors.documents === 'string' && (
           <Typography color="error" sx={{ mb: 2 }}>
             {formik.errors.documents}
@@ -72,6 +79,7 @@ export default function Step4DocumentUpload({ formik, setPreviewFile, hideTitle 
           .map((doc) => {
           const file = (formik.values.documents as any)[doc.id] as File | null;
           const error =
+            !isAdmin &&
             formik.touched.documents?.[
               doc.id as keyof typeof formik.touched.documents
             ] && (formik.errors.documents as any)?.[doc.id];
@@ -266,7 +274,11 @@ export default function Step4DocumentUpload({ formik, setPreviewFile, hideTitle 
                       }}
                     >
                       {formik.values.identityDocType === 'pan'
-                        ? 'PAN Card *'
+                        ? isAdmin
+                          ? 'PAN Card'
+                          : 'PAN Card *'
+                        : isAdmin
+                        ? 'Aadhaar Card'
                         : 'Aadhaar Card *'}
                     </Typography>
                   </Box>

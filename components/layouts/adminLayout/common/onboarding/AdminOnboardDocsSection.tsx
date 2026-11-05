@@ -26,6 +26,7 @@ export default function AdminOnboardDocsSection({
         formik={formik}
         setPreviewFile={setPreviewFile}
         hideTitle
+        isAdmin
       />
     </Box>
   );

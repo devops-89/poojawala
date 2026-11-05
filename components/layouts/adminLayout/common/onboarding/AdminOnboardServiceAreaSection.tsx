@@ -20,7 +20,7 @@ export default function AdminOnboardServiceAreaSection({
         title="Service Area & Operation Radius"
         subtitle="Primary physical location address, pincode, coordinates, and service radius in KM"
       />
-      <Step5ServiceArea formik={formik} hideTitle />
+      <Step5ServiceArea formik={formik} hideTitle isAdmin />
     </Box>
   );
 }
