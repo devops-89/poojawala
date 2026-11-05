@@ -70,9 +70,14 @@ const fieldSx = {
 interface Step2Props {
   formik: FormikProps<any>;
   hideTitle?: boolean;
+  isAdmin?: boolean;
 }
 
-export default function Step2PurohitProfile({ formik, hideTitle = false }: Step2Props) {
+export default function Step2PurohitProfile({
+  formik,
+  hideTitle = false,
+  isAdmin = false,
+}: Step2Props) {
   const [platformCommission, setPlatformCommission] = useState<string>('');
 
   useEffect(() => {
@@ -666,9 +671,9 @@ export default function Step2PurohitProfile({ formik, hideTitle = false }: Step2
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.8, flexWrap: 'wrap', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#333', fontFamily: FONTS.PRIMARY }}>
-                Bio (About Yourself) *
+                {isAdmin ? 'Bio (About Yourself)' : 'Bio (About Yourself) *'}
               </Typography>
-              {Boolean(formik.values.bio && !isBioManuallyEdited) && (
+              {!isAdmin && Boolean(formik.values.bio && !isBioManuallyEdited) && (
                 <Chip
                   label="Auto-filled"
                   size="small"

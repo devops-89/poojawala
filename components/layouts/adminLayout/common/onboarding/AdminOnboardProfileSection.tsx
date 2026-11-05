@@ -31,7 +31,7 @@ export default function AdminOnboardProfileSection({
             : "Qualifications, experience years, specializations, languages, and availability"
         }
       />
-      <Step2PurohitProfile formik={formik} hideTitle />
+      <Step2PurohitProfile formik={formik} hideTitle isAdmin />
     </Box>
   );
 }

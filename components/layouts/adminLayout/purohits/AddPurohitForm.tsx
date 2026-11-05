@@ -98,10 +98,30 @@ export default function AddPurohitForm() {
           createApi: addPurohitByAdminAPI,
         });
 
-        showSnackbar(
-          "Purohit onboarded successfully with all details!",
-          "success"
+        const hasDocs = Boolean(
+          values.documents &&
+            (values.documents.identityDoc ||
+              values.documents.certificate ||
+              values.documents.templeAffiliationProof ||
+              values.documents.profilePhoto)
         );
+        const sa = values.serviceArea || {};
+        const hasServiceArea = Boolean(
+          sa.fullAddress?.trim() ||
+            sa.pincode?.trim() ||
+            sa.streetName?.trim()
+        );
+
+        let successMsg = "Purohit onboarded successfully with all details!";
+        if (!hasDocs && !hasServiceArea) {
+          successMsg = "Purohit onboarded successfully! (Documents & Service Area pending)";
+        } else if (!hasDocs) {
+          successMsg = "Purohit onboarded successfully! (Documents pending)";
+        } else if (!hasServiceArea) {
+          successMsg = "Purohit onboarded successfully! (Service Area pending)";
+        }
+
+        showSnackbar(successMsg, "success");
         router.push("/admin/purohits");
       } catch (error: any) {
         showSnackbar(

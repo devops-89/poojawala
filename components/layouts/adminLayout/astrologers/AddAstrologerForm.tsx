@@ -86,10 +86,19 @@ export default function AddAstrologerForm() {
           createApi: addAstrologerByAdminAPI,
         });
 
-        showSnackbar(
-          "Astrologer onboarded successfully with all details!",
-          "success"
+        const hasDocs = Boolean(
+          values.documents &&
+            (values.documents.identityDoc ||
+              values.documents.certificate ||
+              values.documents.profilePhoto)
         );
+
+        let successMsg = "Astrologer onboarded successfully with all details!";
+        if (!hasDocs) {
+          successMsg = "Astrologer onboarded successfully! (Documents pending)";
+        }
+
+        showSnackbar(successMsg, "success");
         router.push("/admin/astrologers");
       } catch (error: any) {
         showSnackbar(
