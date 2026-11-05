@@ -109,12 +109,18 @@ export default function CustomerSidebar({
           borderBottom: "1px solid #e2e8f0",
         }}
       >
-        <Box
-          component="img"
-          src="/images/1Poojalogo.webp"
-          alt="1Pooja"
-          sx={{ height: { xs: "30px", md: "38px" }, objectFit: "contain" }}
-        />
+        <NextLink
+          href="/"
+          onClick={() => setMobileOpen(false)}
+          style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
+        >
+          <Box
+            component="img"
+            src="/images/1Poojalogo.webp"
+            alt="1Pooja"
+            sx={{ height: { xs: "30px", md: "38px" }, objectFit: "contain", cursor: "pointer" }}
+          />
+        </NextLink>
       </Box>
 
       <List

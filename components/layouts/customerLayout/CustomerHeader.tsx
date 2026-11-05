@@ -200,7 +200,7 @@ export default function CustomerHeader() {
           </IconButton>
 
           <NextLink
-            href="/customer/dashboard"
+            href="/"
             style={{
               display: "flex",
               alignItems: "center",
@@ -577,12 +577,18 @@ export default function CustomerHeader() {
             borderBottom: "1px solid #f1f5f9",
           }}
         >
-          <Box
-            component="img"
-            src="/images/1Poojalogo.webp"
-            alt="1Pooja"
-            sx={{ height: "32px", objectFit: "contain" }}
-          />
+          <NextLink
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
+          >
+            <Box
+              component="img"
+              src="/images/1Poojalogo.webp"
+              alt="1Pooja"
+              sx={{ height: "32px", objectFit: "contain", cursor: "pointer" }}
+            />
+          </NextLink>
           <IconButton onClick={() => setMobileOpen(false)}>
             <CloseIcon />
           </IconButton>
