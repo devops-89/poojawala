@@ -169,6 +169,37 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     return serviceCities.map((c) => c.name).join(", ");
   }, [serviceCities]);
 
+  const activeBookingMode = useMemo(() => {
+    const isOnline = Boolean(
+      service?.isOnline === true ||
+      String(service?.isOnline).toLowerCase() === "true" ||
+      service?.isOnline === 1
+    );
+    const isOffline = Boolean(
+      service?.isOffline === true ||
+      String(service?.isOffline).toLowerCase() === "true" ||
+      service?.isOffline === 1
+    );
+
+    if (isOnline && !isOffline) return "ONLINE";
+    if (isOffline && !isOnline) return "OFFLINE";
+    if (isOnline && isOffline) {
+      const mode = (service?.bookingMode || "").toUpperCase();
+      if (mode === "ONLINE") return "ONLINE";
+      if (mode === "OFFLINE") return "OFFLINE";
+      return selectedPlan === "standard" ? "ONLINE" : "OFFLINE";
+    }
+
+    const mode = (service?.bookingMode || "").toUpperCase();
+    if (mode === "ONLINE") return "ONLINE";
+    if (mode === "BOTH") {
+      return selectedPlan === "standard" ? "ONLINE" : "OFFLINE";
+    }
+    return "OFFLINE";
+  }, [service?.isOnline, service?.isOffline, service?.bookingMode, selectedPlan]);
+
+  const isOnlineService = activeBookingMode === "ONLINE";
+
   const isGlobal = useMemo(() => {
     if (
       service?.isGlobal === true ||
@@ -177,21 +208,13 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
     ) {
       return true;
     }
+    if (isOnlineService) {
+      return true;
+    }
     const mode = (service?.bookingMode || "").toUpperCase();
     if (mode === "ONLINE") return true;
     return false;
-  }, [service?.isGlobal, service?.bookingMode]);
-
-  const activeBookingMode = useMemo(() => {
-    const mode = (service?.bookingMode || "").toUpperCase();
-    if (mode === "BOTH") {
-      return selectedPlan === "standard" ? "ONLINE" : "OFFLINE";
-    }
-    if (mode === "ONLINE") return "ONLINE";
-    return "OFFLINE";
-  }, [service?.bookingMode, selectedPlan]);
-
-  const isOnlineService = activeBookingMode === "ONLINE";
+  }, [service?.isGlobal, isOnlineService, service?.bookingMode]);
 
   const matchingAddresses = useMemo(() => {
     if (isGlobal || isOnlineService) return addresses;

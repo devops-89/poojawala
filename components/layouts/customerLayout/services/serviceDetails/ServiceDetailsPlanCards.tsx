@@ -40,7 +40,19 @@ export default function ServiceDetailsPlanCards({
   isBookingAllowedForUser = true,
   onOpenInquiry,
 }: ServiceDetailsPlanCardsProps) {
-  if (isOnlineService) {
+  const isOnline = Boolean(
+    isOnlineService ||
+    ((service?.isOnline === true ||
+      String(service?.isOnline).toLowerCase() === "true" ||
+      service?.isOnline === 1) &&
+      !(
+        service?.isOffline === true ||
+        String(service?.isOffline).toLowerCase() === "true" ||
+        service?.isOffline === 1
+      ))
+  );
+
+  if (isOnline) {
     const onlinePlan = plans?.basic || plans?.standard || Object.values(plans || {})[0];
     const onlinePrice = Number(onlinePlan?.price || service?.minPrice || 0);
 
@@ -67,6 +79,13 @@ export default function ServiceDetailsPlanCards({
       });
     }
 
+    if (onlineFeatures.length === 0 && Array.isArray(service?.benefits)) {
+      service.benefits.forEach((b: any) => {
+        const title = b?.title || b?.description;
+        if (title) onlineFeatures.push(title);
+      });
+    }
+
     return (
       <Paper
         elevation={0}
@@ -75,11 +94,11 @@ export default function ServiceDetailsPlanCards({
           borderRadius: "16px",
           border: "1px solid #EADCCF",
           bgcolor: "#FFFFFF",
-          boxShadow: "0 2px 12px rgba(44, 24, 16, 0.04)",
+          boxShadow: "0 2px 14px rgba(44, 24, 16, 0.05)",
           mb: 5,
         }}
       >
-        {/* Header with Price */}
+        {/* Header with Title and Price */}
         <Box
           sx={{
             display: "flex",
@@ -87,37 +106,61 @@ export default function ServiceDetailsPlanCards({
             justifyContent: "space-between",
             alignItems: { xs: "flex-start", sm: "center" },
             gap: 2,
-            pb: 2,
+            pb: 2.5,
             borderBottom: "1px solid #F1E5D8",
           }}
         >
           <Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.8 }}>
+              <Chip
+                label="ONLINE PUJA"
+                size="small"
+                sx={{
+                  bgcolor: "#FEF3C7",
+                  color: "#B45309",
+                  fontWeight: 700,
+                  fontSize: "11px",
+                  height: "22px",
+                  borderRadius: "6px",
+                  letterSpacing: "0.5px",
+                }}
+              />
+              <Typography
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "1px",
+                  color: COLORS.PRIMARY,
+                  textTransform: "uppercase",
+                }}
+              >
+                LIVE VIDEO CONSULTATION
+              </Typography>
+            </Box>
             <Typography
-              sx={{
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "1px",
-                color: COLORS.PRIMARY,
-                textTransform: "uppercase",
-                mb: 0.5,
-              }}
-            >
-              Online Pooja Package
-            </Typography>
-            <Typography
-              variant="h5"
+              variant="h4"
               sx={{
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#2C1810",
-                fontSize: { xs: "20px", sm: "24px" },
+                fontSize: { xs: "22px", sm: "26px" },
               }}
             >
-              Package Inclusions & Features
+              Virtual Online Booking
             </Typography>
           </Box>
 
-          <Box sx={{ textAlign: { xs: "left", sm: "right" } }}>
+          <Box
+            sx={{
+              textAlign: { xs: "left", sm: "right" },
+              bgcolor: "#FFF8F2",
+              px: 2.5,
+              py: 1.5,
+              borderRadius: "14px",
+              border: "1px solid #F7E4D3",
+              minWidth: { sm: 160 },
+            }}
+          >
             <Typography
               sx={{
                 fontSize: "11px",
@@ -135,7 +178,7 @@ export default function ServiceDetailsPlanCards({
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: COLORS.PRIMARY,
-                fontSize: { xs: "28px", sm: "32px" },
+                fontSize: { xs: "26px", sm: "30px" },
                 lineHeight: 1.15,
                 my: 0.3,
               }}
@@ -147,12 +190,25 @@ export default function ServiceDetailsPlanCards({
 
         {/* Feature Points */}
         {onlineFeatures.length > 0 && (
-          <Box sx={{ pt: 2.5 }}>
+          <Box sx={{ pt: 3 }}>
+            <Typography
+              sx={{
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "#8C7A6B",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                mb: 2,
+                fontFamily: FONTS.OUTFIT,
+              }}
+            >
+              Package Inclusions & Features
+            </Typography>
             <Box
               sx={{
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                gap: 1.8,
+                gap: 2,
               }}
             >
               {onlineFeatures.map((feat, idx) => (
@@ -161,13 +217,17 @@ export default function ServiceDetailsPlanCards({
                   sx={{
                     display: "flex",
                     alignItems: "flex-start",
-                    gap: 1.2,
+                    gap: 1.5,
+                    p: 1.8,
+                    bgcolor: "#FAF4EE",
+                    borderRadius: "12px",
+                    border: "1px solid #F1E5D8",
                   }}
                 >
                   <CheckCircleIcon
                     sx={{
                       color: COLORS.PRIMARY,
-                      fontSize: 18,
+                      fontSize: 20,
                       flexShrink: 0,
                       mt: 0.2,
                     }}
@@ -176,8 +236,8 @@ export default function ServiceDetailsPlanCards({
                     sx={{
                       fontFamily: FONTS.PRIMARY,
                       fontSize: "14px",
-                      color: "#3D2B22",
-                      fontWeight: 500,
+                      color: "#2C1810",
+                      fontWeight: 600,
                       lineHeight: 1.5,
                     }}
                   >
