@@ -199,25 +199,27 @@ export default function CustomerHeader() {
             <MenuIcon fontSize="medium" />
           </IconButton>
 
-          <NextLink
-            href="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-            }}
-          >
-            <Box
-              component="img"
-              src="/images/1Poojalogo.webp"
-              alt="1Pooja"
-              sx={{
-                height: { xs: "30px", sm: "34px", md: "38px" },
-                objectFit: "contain",
-                cursor: "pointer",
+          <Tooltip title="Go to Website">
+            <NextLink
+              href="/"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
               }}
-            />
-          </NextLink>
+            >
+              <Box
+                component="img"
+                src="/images/1Poojalogo.webp"
+                alt="1Pooja"
+                sx={{
+                  height: { xs: "30px", sm: "34px", md: "38px" },
+                  objectFit: "contain",
+                  cursor: "pointer",
+                }}
+              />
+            </NextLink>
+          </Tooltip>
         </Box>
 
         {/* Center: Desktop Navigation Links (Hidden on Mobile) */}
@@ -577,18 +579,20 @@ export default function CustomerHeader() {
             borderBottom: "1px solid #f1f5f9",
           }}
         >
-          <NextLink
-            href="/"
-            onClick={() => setMobileOpen(false)}
-            style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
-          >
-            <Box
-              component="img"
-              src="/images/1Poojalogo.webp"
-              alt="1Pooja"
-              sx={{ height: "32px", objectFit: "contain", cursor: "pointer" }}
-            />
-          </NextLink>
+          <Tooltip title="Go to Website">
+            <NextLink
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
+            >
+              <Box
+                component="img"
+                src="/images/1Poojalogo.webp"
+                alt="1Pooja"
+                sx={{ height: "32px", objectFit: "contain", cursor: "pointer" }}
+              />
+            </NextLink>
+          </Tooltip>
           <IconButton onClick={() => setMobileOpen(false)}>
             <CloseIcon />
           </IconButton>
