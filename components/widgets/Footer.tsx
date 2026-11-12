@@ -16,6 +16,8 @@ import {
 import NextLink from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getServicesAPI } from "@/api/serviceControllers";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
@@ -28,9 +30,14 @@ const quickLinks = [
   { name: "Blogs", href: "/blogs" },
 ];
 
-// Top Cities (static, no routes)
-const citiesColumn1 = ["Mumbai", "Bangalore", "New Delhi", "Pune", "Hyderabad", "Chennai"];
-const citiesColumn2 = ["Kolkata", "Ahmedabad", "Jaipur", "Lucknow", "Indore"];
+// Default fallback services (shown during SSR / initial load before API responds)
+const DEFAULT_POPULAR_SERVICES = [
+  { name: "Satyanarayan Puja", href: "/services/satyanaran-katha" },
+  { name: "Griha Pravesh", href: "/services/griha-pravesh" },
+  { name: "Rudrabhishek Puja", href: "/services/online-rudrabhishek-puja" },
+  { name: "Maha Mrityunjaya Jaap", href: "/services/online-maha-mrityunjaya-jaap" },
+  { name: "Navgraha Shanti Puja", href: "/services/online-navgraha-shanti-puja" },
+];
 
 // Social media links
 export const socialLinks = [
@@ -73,6 +80,43 @@ const linkSx = {
 
 export default function Footer() {
   const pathname = usePathname();
+  const [servicesList, setServicesList] = useState<Array<{ name: string; href: string }>>(DEFAULT_POPULAR_SERVICES);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchFooterServices = async () => {
+      try {
+        const response = await getServicesAPI(1, 5, "", undefined, undefined, undefined, true);
+        const items =
+          response?.data?.data && Array.isArray(response.data.data)
+            ? response.data.data
+            : response?.data && Array.isArray(response.data)
+              ? response.data
+              : Array.isArray(response)
+                ? response
+                : [];
+
+        const activeOnly = items
+          .filter((item: any) => item && item.isActive !== false && item.name)
+          .slice(0, 5)
+          .map((item: any) => ({
+            name: item.name,
+            href: item.slug ? `/services/${item.slug}` : `/services?search=${encodeURIComponent(item.name)}`,
+          }));
+
+        if (isMounted && activeOnly.length > 0) {
+          setServicesList(activeOnly);
+        }
+      } catch (error) {
+        console.error("Failed to load dynamic footer services:", error);
+      }
+    };
+
+    fetchFooterServices();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   if (
     pathname === "/sign-in" ||
@@ -126,7 +170,7 @@ export default function Footer() {
                   width: "260px",
                 }}
               >
-                our trusted partner for divine rituals and sacred ceremonies at
+                Our trusted partner for divine rituals and sacred ceremonies at
                 home.
               </Typography>
               <Box sx={{ display: "flex", gap: 2.5, mt: 1 }}>
@@ -151,7 +195,7 @@ export default function Footer() {
             </Grid>
 
             {/* Quick Links Column */}
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
               <Typography
                 sx={{
                   fontFamily: FONTS.PRIMARY,
@@ -180,8 +224,8 @@ export default function Footer() {
               </Box>
             </Grid>
 
-            {/* Top Cities Column */}
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            {/* Popular Pujas Column (Dynamic from API - 5 items, single column) */}
+            <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
               <Typography
                 sx={{
                   fontFamily: FONTS.PRIMARY,
@@ -193,53 +237,25 @@ export default function Footer() {
                   letterSpacing: "0.72px",
                 }}
               >
-                Top Cities
+                Popular Poojas
               </Typography>
-              <Box sx={{ display: "flex", gap: 4 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                    minWidth: "100px",
-                  }}
-                >
-                  {citiesColumn1.map((city) => (
-                    <Typography
-                      key={city}
-                      sx={{
-                        fontFamily: FONTS.PRIMARY,
-                        color: "#757575",
-                        fontSize: "14px",
-                        lineHeight: "15.3px",
-                        letterSpacing: "0.72px",
-                      }}
-                    >
-                      {city}
-                    </Typography>
-                  ))}
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  {citiesColumn2.map((city) => (
-                    <Typography
-                      key={city}
-                      sx={{
-                        fontFamily: FONTS.PRIMARY,
-                        color: "#757575",
-                        fontSize: "14px",
-                        lineHeight: "15.3px",
-                        letterSpacing: "0.72px",
-                      }}
-                    >
-                      {city}
-                    </Typography>
-                  ))}
-                </Box>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {servicesList.slice(0, 5).map((puja) => (
+                  <Link
+                    key={puja.name}
+                    component={NextLink}
+                    href={puja.href}
+                    underline="none"
+                    sx={linkSx}
+                  >
+                    {puja.name}
+                  </Link>
+                ))}
               </Box>
             </Grid>
 
             {/* Contact Us Column */}
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
               <Link
                 component={NextLink}
                 href="/contact"
