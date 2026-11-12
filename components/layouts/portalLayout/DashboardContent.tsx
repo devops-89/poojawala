@@ -75,16 +75,19 @@ export default function DashboardContent() {
     }).catch(console.error);
   }, []);
 
-  const verificationStatus =
+  const verificationStatus = (
     profile?.profile?.verificationStatus ||
     profile?.verificationStatus ||
-    "";
+    ""
+  ).toUpperCase();
   const rejReason =
     profile?.profile?.rejectionReason ||
     profile?.rejectionReason ||
     "";
+  const isApproved = verificationStatus === "APPROVED";
   const isRejected =
-    verificationStatus === "REJECTED" || Boolean(rejReason);
+    verificationStatus === "REJECTED" || (Boolean(rejReason) && !isApproved);
+  const isPending = !isApproved && !isRejected;
 
   const isAstrologer = profile?.role === USER_ROLE.ASTROLOGER;
 
@@ -102,7 +105,7 @@ export default function DashboardContent() {
   const isAdminCreated = Boolean(rawIsAdminCreated);
 
   const showIncompleteProfileCard =
-    isAdminCreated && verificationStatus !== "APPROVED" && !isRejected;
+    isAdminCreated && isPending && (!profile?.profile?.bio && !profile?.profile?.aadhaarNumber);
 
   const stats = [
     { title: 'Total Earnings', value: `₹ ${statsData.totalEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/partner/earnings' },
@@ -142,7 +145,7 @@ export default function DashboardContent() {
               <Typography variant="h3" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '24px', md: '32px' } }}>
                 Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : (profile?.name || (isAstrologer ? 'Astrologer' : 'Partner'))}!
               </Typography>
-              {profile?.status === 'APPROVED' && <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: 28 }} />}
+              {(isApproved || profile?.status === 'APPROVED') && <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: 28 }} />}
             </Box>
             <Typography sx={{ fontFamily: FONTS.OUTFIT, opacity: 0.9, fontSize: '16px', mb: 2 }}>
               Here's what's happening with your {isAstrologer ? 'consultations' : 'pujas'} and bookings today.
@@ -262,6 +265,124 @@ export default function DashboardContent() {
               >
                 Complete Profile
               </Button>
+            </Box>
+          </Box>
+        </Paper>
+      )}
+
+      {/* Profile Verification Pending Banner */}
+      {isPending && !showIncompleteProfileCard && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            mb: 4,
+            borderRadius: "20px",
+            bgcolor: "#FFF8F1",
+            border: "2px solid #FFD8BE",
+            boxShadow: "0 6px 24px rgba(255, 98, 0, 0.08)",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2.5, flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                bgcolor: "#FFE8B6",
+                color: "#E65100",
+                p: 1.5,
+                borderRadius: "14px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <PendingActionsIcon sx={{ fontSize: 32 }} />
+            </Box>
+
+            <Box sx={{ flex: 1, minWidth: 260 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    fontSize: "18px",
+                    color: "#C2410C",
+                  }}
+                >
+                  Profile Verification Pending
+                </Typography>
+                <Chip
+                  label="Pending Approval"
+                  size="small"
+                  sx={{
+                    fontWeight: 700,
+                    borderRadius: "20px",
+                    bgcolor: "#FFEDD5",
+                    color: "#C2410C",
+                    border: "1px solid #FED7AA",
+                  }}
+                />
+              </Box>
+
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "14px",
+                  color: "#4B5563",
+                  lineHeight: 1.6,
+                  mb: 2,
+                }}
+              >
+                Your profile and verification documents are currently under review by our Admin team. Once approved by the Admin, you will start receiving booking requests and your profile will be visible to devotees.
+              </Typography>
+
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    router.push("/partner/profile");
+                  }}
+                  startIcon={<PersonIcon />}
+                  sx={{
+                    borderColor: "#FF6200",
+                    color: "#FF6200",
+                    fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    px: 2.5,
+                    py: 0.8,
+                    "&:hover": {
+                      borderColor: "#E05500",
+                      bgcolor: "#FFF0E6",
+                    },
+                  }}
+                >
+                  View Profile
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    router.push("/partner/profile/edit");
+                  }}
+                  startIcon={<EditIcon />}
+                  sx={{
+                    bgcolor: "#FF6200",
+                    color: "white",
+                    fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    px: 2.5,
+                    py: 0.8,
+                    boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                    "&:hover": {
+                      bgcolor: "#E05500",
+                    },
+                  }}
+                >
+                  Edit Profile
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Paper>
