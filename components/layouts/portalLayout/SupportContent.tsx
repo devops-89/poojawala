@@ -654,7 +654,7 @@ function ComplaintsTable() {
                       </Typography>
                       {selectedComplaint.resolvedBy && (
                         <Typography variant="caption" sx={{ color: '#166534' }}>
-                          Resolved By: {selectedComplaint.resolvedBy.firstName} {selectedComplaint.resolvedBy.lastName || ''} ({selectedComplaint.resolvedBy.email})
+                          Resolved By: {selectedComplaint.resolvedBy.firstName}
                         </Typography>
                       )}
                     </Box>
