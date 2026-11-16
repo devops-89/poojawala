@@ -128,7 +128,7 @@ export default function PopularPackages() {
               item.description ||
               item.shortDescription ||
               "Traditional Vedic pooja performed by an experienced Purohit.",
-            duration: formatDuration(item.durationMinutes),
+            duration: "",
             price: priceStr,
             unit: "/ ceremony",
             image:

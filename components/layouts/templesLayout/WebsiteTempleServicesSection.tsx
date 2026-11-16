@@ -86,9 +86,7 @@ export default function WebsiteTempleServicesSection({
           image: serviceImg,
           description: s.description || "",
           price: computedPriceStr,
-          duration: s.durationMinutes
-            ? `${Math.round(s.durationMinutes / 60)} hr`
-            : s.duration || "2 hrs",
+          duration: "",
           category: s.category?.name || "Temple Pooja",
           isOnline: Boolean(s.isOnline),
           isOffline: Boolean(s.isOffline),

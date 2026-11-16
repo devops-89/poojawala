@@ -237,30 +237,6 @@ export default function CustomerServiceCard({
                   {priceDisplay}
                 </Typography>
               </Box>
-
-              <Box sx={{ textAlign: "right" }}>
-                <Typography
-                  sx={{
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "0.5px",
-                    color: "#94a3b8",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  DURATION
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    fontWeight: 700,
-                    color: "#1e293b",
-                    fontSize: "14px",
-                  }}
-                >
-                  {durationText}
-                </Typography>
-              </Box>
             </Box>
 
             <Button

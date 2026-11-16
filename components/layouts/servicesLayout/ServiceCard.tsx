@@ -116,27 +116,6 @@ export default function ServiceCard({
             borderRadius: '8px',
           }}
         />
-        {duration && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 12,
-              right: 12,
-              bgcolor: 'rgba(255, 255, 255, 0.92)',
-              border: '1px solid #EFE6D5',
-              px: 1.2,
-              py: 0.3,
-              borderRadius: '20px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#5C4A40',
-              fontFamily: FONTS.PRIMARY,
-              backdropFilter: 'blur(4px)',
-            }}
-          >
-            {duration}
-          </Box>
-        )}
       </Box>
 
       {/* Card Content Section */}

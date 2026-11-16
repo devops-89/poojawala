@@ -185,7 +185,7 @@ export default function ServiceGrid({
             categoryId: s.categoryId || s.category?.id || (Array.isArray(s.categories) && s.categories[0]?.id) || (typeof s.category === "object" ? s.category?.id : ""),
             category: resolvedCatName,
             description: s.description || '',
-            duration: s.durationMinutes ? `${Math.round(s.durationMinutes / 60)} hr` : (s.duration || '1 hr'),
+            duration: "",
             price: computedPriceStr,
             image: s.iconDownloadurl || s.iconUrl || s.imageUrl || '/images/home/poojaPackages/satyanarayan.webp',
             language: s.language || 'all',

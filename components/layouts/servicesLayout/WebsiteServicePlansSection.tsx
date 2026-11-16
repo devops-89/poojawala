@@ -69,7 +69,15 @@ export default function WebsiteServicePlansSection({
 
     if (Array.isArray(rawFeatures)) {
       return rawFeatures
-        .filter((f: any) => f && f.isActive !== false && f.type !== "PRICE")
+        .filter(
+          (f: any) =>
+            f &&
+            f.isActive !== false &&
+            f.type !== "PRICE" &&
+            !f.key?.toLowerCase().includes("duration") &&
+            !f.title?.toLowerCase().includes("duration") &&
+            !f.name?.toLowerCase().includes("duration"),
+        )
         .map((f: any) => {
           const title = f.title || f.name || f.key || "";
           return formatKeyName(title);
@@ -90,7 +98,8 @@ export default function WebsiteServicePlansSection({
         lowerKey === "price" ||
         lowerKey === "tokenamount" ||
         lowerKey.includes("payout") ||
-        lowerKey === "features"
+        lowerKey === "features" ||
+        lowerKey.includes("duration")
       ) {
         return;
       }

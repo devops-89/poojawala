@@ -72,39 +72,6 @@ export default function ServiceDetailsInfoGrid({
             }}
           >
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
-              {/* DURATION */}
-              <Box
-                sx={{
-                  p: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  borderBottom: "1px solid #EADCCF",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    letterSpacing: "1px",
-                    color: "#64534A",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  DURATION
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    fontWeight: 700,
-                    fontSize: "15px",
-                    color: "#2C1810",
-                  }}
-                >
-                  {durationText || (service.durationMinutes ? `${service.durationMinutes} mins` : "1-2 hours")}
-                </Typography>
-              </Box>
-
               {/* PRICE RANGE */}
               <Box
                 sx={{

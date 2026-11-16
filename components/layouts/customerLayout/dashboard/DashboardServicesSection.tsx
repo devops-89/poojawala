@@ -2,7 +2,6 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import { formatServicePriceRange } from "@/utils/helpers";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -350,24 +349,6 @@ export default function DashboardServicesSection({
                         useFlexGap
                         sx={{ flexWrap: "wrap", mb: 2 }}
                       >
-                        {durationText && (
-                          <Chip
-                            icon={
-                              <AccessTimeIcon
-                                sx={{ fontSize: "13px !important" }}
-                              />
-                            }
-                            label={durationText}
-                            size="small"
-                            variant="outlined"
-                            sx={{
-                              fontSize: "11px",
-                              fontWeight: 600,
-                              color: "#475569",
-                              borderColor: "#cbd5e1",
-                            }}
-                          />
-                        )}
                         {languagesList.map((lang: string, i: number) => (
                           <Chip
                             key={i}

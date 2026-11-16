@@ -1,6 +1,5 @@
 "use client";
 
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -13,7 +12,7 @@ import { COLORS } from "@/utils/enums";
 
 interface WebsiteServiceDetailsHeroProps {
   service: any;
-  durationText: string;
+  durationText?: string;
   formattedCities: string;
   formattedLanguages: string;
   priceDisplay: string;
@@ -208,36 +207,6 @@ export default function WebsiteServiceDetailsHero({
                       ? "ONLINE POOJA"
                       : "OFFLINE POOJA"}
                 </span>
-              </Box>
-            )}
-
-            {/* Duration Badge */}
-            {durationText && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.85,
-                  px: 2,
-                  py: 0.8,
-                  bgcolor: "rgba(255, 251, 247, 0.9)",
-                  border: "1px solid #FFE0D0",
-                  borderRadius: "10px",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  letterSpacing: "0.5px",
-                  color: COLORS.PRIMARY,
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    bgcolor: "#FFF0E6",
-                    borderColor: COLORS.PRIMARY,
-                    transform: "translateY(-2px)",
-                  },
-                }}
-              >
-                <AccessTimeIcon sx={{ fontSize: 17, color: COLORS.PRIMARY }} />
-                <span>{durationText}</span>
               </Box>
             )}
 

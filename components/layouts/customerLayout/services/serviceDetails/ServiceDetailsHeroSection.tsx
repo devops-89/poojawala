@@ -1,6 +1,5 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SparklesIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -9,7 +8,7 @@ import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
 interface Props {
   service: any;
-  durationText: string;
+  durationText?: string;
   formattedCities?: string;
   formattedLanguages: string;
   priceDisplay: string;
@@ -143,25 +142,6 @@ export default function ServiceDetailsHeroSection({
               mb: 4,
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                px: 2,
-                py: 0.85,
-                bgcolor: "#FFFBF7",
-                border: "1px solid #E4D5C7",
-                borderRadius: "8px",
-                fontSize: "13px",
-                fontWeight: 600,
-                color: "#5C4A40",
-              }}
-            >
-              <AccessTimeIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
-              <span>{durationText}</span>
-            </Box>
-
             {formattedLanguages ? (
               <Box
                 sx={{
