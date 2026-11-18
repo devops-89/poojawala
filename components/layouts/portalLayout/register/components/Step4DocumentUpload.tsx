@@ -93,28 +93,30 @@ export default function Step4DocumentUpload({
 
   return (
     <Box>
-      <Box sx={{ mb: 3 }}>
-        <Typography
-          variant="h5"
-          sx={{
-            fontFamily: 'var(--font-outfit), sans-serif',
-            fontWeight: 700,
-          }}
-        >
-          Upload Verification Documents
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: 'var(--font-outfit), sans-serif',
-            fontWeight: 600,
-            fontSize: '15px',
-            color: '#64748B',
-            mt: 0.4,
-          }}
-        >
-          सत्यापन दस्तावेज़ अपलोड करें
-        </Typography>
-      </Box>
+      {!hideTitle && (
+        <Box sx={{ mb: 3 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+            }}
+          >
+            Upload Verification Documents
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 600,
+              fontSize: '15px',
+              color: '#64748B',
+              mt: 0.4,
+            }}
+          >
+            सत्यापन दस्तावेज़ अपलोड करें
+          </Typography>
+        </Box>
+      )}
 
       {!isAdmin &&
         formik?.errors?.documents &&
@@ -179,7 +181,7 @@ export default function Step4DocumentUpload({
                 <Paper
                   sx={{
                     p: 2.5,
-                    minHeight: '250px',
+                    minHeight: '260px',
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
@@ -188,26 +190,30 @@ export default function Step4DocumentUpload({
                     border: '2px dashed',
                     borderColor: error
                       ? 'error.main'
-                      : file
+                      : hasContent
                         ? '#4CAF50'
                         : '#FFE0D0',
                     borderRadius: '16px',
                     textAlign: 'center',
-                    bgcolor: file ? '#F1F8E9' : '#FFFDF9',
+                    bgcolor: hasContent ? '#F1F8E9' : '#FFFDF9',
                     transition: 'all 0.3s',
                     position: 'relative',
                     '&:hover': {
-                      borderColor: file ? '#4CAF50' : '#FF6200',
-                      bgcolor: file ? '#E8F5E9' : '#FFF8F4',
+                      borderColor: hasContent ? '#4CAF50' : COLORS.PRIMARY,
+                      bgcolor: hasContent ? '#E8F5E9' : '#FFF8F4',
                     },
                   }}
                 >
                   {file && (
                     <IconButton
                       size="small"
-                      onClick={() =>
-                        formik.setFieldValue(`documents.${doc.id}`, null)
-                      }
+                      onClick={() => {
+                        if (onFileChange) {
+                          onFileChange(doc.id, null);
+                        } else if (formik) {
+                          formik.setFieldValue(`documents.${doc.id}`, null);
+                        }
+                      }}
                       sx={{
                         position: 'absolute',
                         top: 10,
@@ -221,33 +227,156 @@ export default function Step4DocumentUpload({
                     </IconButton>
                   )}
 
-                  {/* Title (English & Hindi) at Top */}
-                  <Box sx={{ mb: 1.5, px: 3 }}>
-                    <Typography
+                  {/* Title (English & Hindi) & Document Type Toggle at Top */}
+                  {doc.id === 'identityDoc' ? (
+                    <Box
                       sx={{
-                        fontFamily: 'var(--font-outfit), sans-serif',
-                        fontWeight: 700,
-                        fontSize: '15px',
-                        color: '#1A1A1A',
-                        lineHeight: 1.3,
+                        mb: 1.5,
+                        px: 3,
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                       }}
                     >
-                      {doc.title}
-                    </Typography>
-                    {doc.titleHi && (
                       <Typography
                         sx={{
-                          fontFamily: 'var(--font-outfit), sans-serif',
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 700,
+                          fontSize: '15px',
+                          color: COLORS.DARK,
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {currentIdentityDocType === 'pan'
+                          ? isAdmin
+                            ? 'PAN Card'
+                            : 'PAN Card *'
+                          : isAdmin
+                          ? 'Aadhaar Card'
+                          : 'Aadhaar Card *'}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 600,
                           fontSize: '13px',
                           color: '#64748B',
                           mt: 0.3,
+                          mb: 1,
                         }}
                       >
-                        {doc.titleHi}
+                        {currentIdentityDocType === 'pan'
+                          ? isAdmin
+                            ? 'पैन कार्ड'
+                            : 'पैन कार्ड *'
+                          : isAdmin
+                          ? 'आधार कार्ड'
+                          : 'आधार कार्ड *'}
                       </Typography>
-                    )}
-                  </Box>
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          bgcolor: '#F1F5F9',
+                          p: '3px',
+                          borderRadius: '24px',
+                          border: '1px solid #E2E8F0',
+                        }}
+                      >
+                        <Button
+                          size="small"
+                          type="button"
+                          onClick={() => handleIdentityDocTypeChange('aadhaar')}
+                          sx={{
+                            borderRadius: '20px',
+                            px: 1.8,
+                            py: 0.3,
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            fontFamily: FONTS.OUTFIT,
+                            textTransform: 'none',
+                            boxShadow: 'none',
+                            bgcolor:
+                              currentIdentityDocType === 'aadhaar'
+                                ? COLORS.PRIMARY
+                                : 'transparent',
+                            color:
+                              currentIdentityDocType === 'aadhaar'
+                                ? '#fff'
+                                : '#64748B',
+                            '&:hover': {
+                              bgcolor:
+                                currentIdentityDocType === 'aadhaar'
+                                  ? COLORS.PRIMARY_DARK
+                                  : 'rgba(0,0,0,0.04)',
+                              boxShadow: 'none',
+                            },
+                          }}
+                        >
+                          Aadhaar Card
+                        </Button>
+                        <Button
+                          size="small"
+                          type="button"
+                          onClick={() => handleIdentityDocTypeChange('pan')}
+                          sx={{
+                            borderRadius: '20px',
+                            px: 1.8,
+                            py: 0.3,
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            fontFamily: FONTS.OUTFIT,
+                            textTransform: 'none',
+                            boxShadow: 'none',
+                            bgcolor:
+                              currentIdentityDocType === 'pan'
+                                ? COLORS.PRIMARY
+                                : 'transparent',
+                            color:
+                              currentIdentityDocType === 'pan'
+                                ? '#fff'
+                                : '#64748B',
+                            '&:hover': {
+                              bgcolor:
+                                currentIdentityDocType === 'pan'
+                                  ? COLORS.PRIMARY_DARK
+                                  : 'rgba(0,0,0,0.04)',
+                              boxShadow: 'none',
+                            },
+                          }}
+                        >
+                          PAN Card
+                        </Button>
+                      </Box>
+                    </Box>
+                  ) : (
+                    <Box sx={{ mb: 1.5, px: 3 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 700,
+                          fontSize: '15px',
+                          color: COLORS.DARK,
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {isAdmin ? doc.title.replace(/\s*\*+$/, '') : doc.title}
+                      </Typography>
+                      {doc.titleHi && (
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontWeight: 600,
+                            fontSize: '13px',
+                            color: '#64748B',
+                            mt: 0.3,
+                          }}
+                        >
+                          {isAdmin ? doc.titleHi.replace(/\s*\*+$/, '') : doc.titleHi}
+                        </Typography>
+                      )}
+                    </Box>
+                  )}
 
                   {/* Fixed Height Icon / Preview Box */}
                   <Box
@@ -259,7 +388,7 @@ export default function Step4DocumentUpload({
                       mb: 1,
                     }}
                   >
-                    {isFileImage ? (
+                    {isFileImage && file ? (
                       <Box
                         sx={{
                           width: 48,
@@ -309,15 +438,14 @@ export default function Step4DocumentUpload({
                       <CheckCircleIcon
                         sx={{ fontSize: 44, color: '#4CAF50' }}
                       />
-                    )
-                  ) : (
-                    <CloudUploadIcon
-                      sx={{
-                        fontSize: 44,
-                        color: error ? 'error.main' : '#FF6200',
-                      }}
-                    />
-                  )}
+                    ) : (
+                      <CloudUploadIcon
+                        sx={{
+                          fontSize: 44,
+                          color: error ? 'error.main' : COLORS.PRIMARY,
+                        }}
+                      />
+                    )}
                   </Box>
 
                   {/* Subtitle / Filename */}
