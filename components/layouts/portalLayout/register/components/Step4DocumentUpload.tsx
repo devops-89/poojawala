@@ -39,16 +39,28 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
 
   return (
     <Box>
-      <Typography
-        variant="h5"
-        sx={{
-          fontFamily: 'var(--font-outfit), sans-serif',
-          fontWeight: 700,
-          mb: 3,
-        }}
-      >
-        Upload Verification Documents
-      </Typography>
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontFamily: 'var(--font-outfit), sans-serif',
+            fontWeight: 700,
+          }}
+        >
+          Upload Verification Documents
+        </Typography>
+        <Typography
+          sx={{
+            fontFamily: 'var(--font-outfit), sans-serif',
+            fontWeight: 600,
+            fontSize: '15px',
+            color: '#64748B',
+            mt: 0.4,
+          }}
+        >
+          सत्यापन दस्तावेज़ अपलोड करें
+        </Typography>
+      </Box>
 
       {formik.errors.documents &&
         typeof formik.errors.documents === 'string' && (
@@ -75,7 +87,8 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
               <Paper
                 sx={{
                   p: 2.5,
-                  height: '230px',
+                  minHeight: '250px',
+                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -115,6 +128,34 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                     <CloseIcon fontSize="small" />
                   </IconButton>
                 )}
+
+                {/* Title (English & Hindi) at Top */}
+                <Box sx={{ mb: 1.5, px: 3 }}>
+                  <Typography
+                    sx={{
+                      fontFamily: 'var(--font-outfit), sans-serif',
+                      fontWeight: 700,
+                      fontSize: '15px',
+                      color: '#1A1A1A',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {doc.title}
+                  </Typography>
+                  {doc.titleHi && (
+                    <Typography
+                      sx={{
+                        fontFamily: 'var(--font-outfit), sans-serif',
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        color: '#64748B',
+                        mt: 0.3,
+                      }}
+                    >
+                      {doc.titleHi}
+                    </Typography>
+                  )}
+                </Box>
 
                 {/* Fixed Height Icon Box */}
                 <Box
@@ -166,19 +207,6 @@ export default function Step4DocumentUpload({ formik, setPreviewFile }: Step4Pro
                     />
                   )}
                 </Box>
-
-                {/* Title */}
-                <Typography
-                  sx={{
-                    fontFamily: 'var(--font-outfit), sans-serif',
-                    fontWeight: 700,
-                    fontSize: '15px',
-                    color: '#1A1A1A',
-                    mb: 0.5,
-                  }}
-                >
-                  {doc.title}
-                </Typography>
 
                 {/* Subtitle / Filename */}
                 <Typography
