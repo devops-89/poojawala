@@ -93,18 +93,28 @@ export default function Step4DocumentUpload({
 
   return (
     <Box>
-      {!hideTitle && (
+      <Box sx={{ mb: 3 }}>
         <Typography
           variant="h5"
           sx={{
-            fontFamily: FONTS.OUTFIT,
+            fontFamily: 'var(--font-outfit), sans-serif',
             fontWeight: 700,
-            mb: 3,
           }}
         >
           Upload Verification Documents
         </Typography>
-      )}
+        <Typography
+          sx={{
+            fontFamily: 'var(--font-outfit), sans-serif',
+            fontWeight: 600,
+            fontSize: '15px',
+            color: '#64748B',
+            mt: 0.4,
+          }}
+        >
+          सत्यापन दस्तावेज़ अपलोड करें
+        </Typography>
+      </Box>
 
       {!isAdmin &&
         formik?.errors?.documents &&
@@ -131,7 +141,7 @@ export default function Step4DocumentUpload({
             const error =
               !isAdmin &&
               formik?.touched?.documents?.[
-                doc.id as keyof typeof formik.touched.documents
+              doc.id as keyof typeof formik.touched.documents
               ] &&
               (formik?.errors?.documents as any)?.[doc.id];
 
@@ -145,15 +155,15 @@ export default function Step4DocumentUpload({
               !file &&
               Boolean(
                 existingUrl &&
-                  existingUrl.toLowerCase().split('?')[0].endsWith('.pdf')
+                existingUrl.toLowerCase().split('?')[0].endsWith('.pdf')
               );
             const isUrlImage = !file && Boolean(existingUrl && !isUrlPdf);
 
             const displaySubtitle = file
               ? file.name
               : existingUrl
-              ? 'Uploaded Document'
-              : doc.desc || 'Supports Images (JPG, PNG, WEBP) & PDF';
+                ? 'Uploaded Document'
+                : doc.desc || 'Supports Images (JPG, PNG, WEBP) & PDF';
 
             const handlePreview = () => {
               if (setPreviewTarget) {
@@ -165,7 +175,7 @@ export default function Step4DocumentUpload({
             };
 
             return (
-              <Grid size={{ xs: 12, sm: isAstro ? 4 : 6 }} key={doc.id}>
+              <Grid size={{ xs: 12, sm: 6 }} key={doc.id}>
                 <Paper
                   sx={{
                     p: 2.5,
@@ -178,30 +188,26 @@ export default function Step4DocumentUpload({
                     border: '2px dashed',
                     borderColor: error
                       ? 'error.main'
-                      : hasContent
-                      ? '#4CAF50'
-                      : '#FFE0D0',
+                      : file
+                        ? '#4CAF50'
+                        : '#FFE0D0',
                     borderRadius: '16px',
                     textAlign: 'center',
-                    bgcolor: hasContent ? '#F1F8E9' : '#FFFDF9',
+                    bgcolor: file ? '#F1F8E9' : '#FFFDF9',
                     transition: 'all 0.3s',
                     position: 'relative',
                     '&:hover': {
-                      borderColor: hasContent ? '#4CAF50' : COLORS.PRIMARY,
-                      bgcolor: hasContent ? '#E8F5E9' : '#FFF8F4',
+                      borderColor: file ? '#4CAF50' : '#FF6200',
+                      bgcolor: file ? '#E8F5E9' : '#FFF8F4',
                     },
                   }}
                 >
-                  {hasContent && (
+                  {file && (
                     <IconButton
                       size="small"
-                      onClick={() => {
-                        if (onFileChange) {
-                          onFileChange(doc.id, null);
-                        } else if (formik) {
-                          formik.setFieldValue(`documents.${doc.id}`, null);
-                        }
-                      }}
+                      onClick={() =>
+                        formik.setFieldValue(`documents.${doc.id}`, null)
+                      }
                       sx={{
                         position: 'absolute',
                         top: 10,
@@ -209,12 +215,39 @@ export default function Step4DocumentUpload({
                         color: '#D32F2F',
                         bgcolor: '#FFEBEE',
                         '&:hover': { bgcolor: '#FFCDD2' },
-                        zIndex: 2,
                       }}
                     >
                       <CloseIcon fontSize="small" />
                     </IconButton>
                   )}
+
+                  {/* Title (English & Hindi) at Top */}
+                  <Box sx={{ mb: 1.5, px: 3 }}>
+                    <Typography
+                      sx={{
+                        fontFamily: 'var(--font-outfit), sans-serif',
+                        fontWeight: 700,
+                        fontSize: '15px',
+                        color: '#1A1A1A',
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {doc.title}
+                    </Typography>
+                    {doc.titleHi && (
+                      <Typography
+                        sx={{
+                          fontFamily: 'var(--font-outfit), sans-serif',
+                          fontWeight: 600,
+                          fontSize: '13px',
+                          color: '#64748B',
+                          mt: 0.3,
+                        }}
+                      >
+                        {doc.titleHi}
+                      </Typography>
+                    )}
+                  </Box>
 
                   {/* Fixed Height Icon / Preview Box */}
                   <Box
@@ -276,132 +309,16 @@ export default function Step4DocumentUpload({
                       <CheckCircleIcon
                         sx={{ fontSize: 44, color: '#4CAF50' }}
                       />
-                    ) : (
-                      <CloudUploadIcon
-                        sx={{
-                          fontSize: 44,
-                          color: error ? 'error.main' : COLORS.PRIMARY,
-                        }}
-                      />
-                    )}
-                  </Box>
-
-                  {/* Title & Document Type Toggle */}
-                  {doc.id === 'identityDoc' ? (
-                    <Box
-                      sx={{
-                        mb: 1,
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'inline-flex',
-                          bgcolor: '#F1F5F9',
-                          p: '3px',
-                          borderRadius: '24px',
-                          border: '1px solid #E2E8F0',
-                          mb: 1,
-                        }}
-                      >
-                        <Button
-                          size="small"
-                          type="button"
-                          onClick={() => handleIdentityDocTypeChange('aadhaar')}
-                          sx={{
-                            borderRadius: '20px',
-                            px: 1.8,
-                            py: 0.3,
-                            fontSize: '12px',
-                            fontWeight: 700,
-                            fontFamily: FONTS.OUTFIT,
-                            textTransform: 'none',
-                            boxShadow: 'none',
-                            bgcolor:
-                              currentIdentityDocType === 'aadhaar'
-                                ? COLORS.PRIMARY
-                                : 'transparent',
-                            color:
-                              currentIdentityDocType === 'aadhaar'
-                                ? '#fff'
-                                : '#64748B',
-                            '&:hover': {
-                              bgcolor:
-                                currentIdentityDocType === 'aadhaar'
-                                  ? COLORS.PRIMARY_DARK
-                                  : 'rgba(0,0,0,0.04)',
-                              boxShadow: 'none',
-                            },
-                          }}
-                        >
-                          Aadhaar Card
-                        </Button>
-                        <Button
-                          size="small"
-                          type="button"
-                          onClick={() => handleIdentityDocTypeChange('pan')}
-                          sx={{
-                            borderRadius: '20px',
-                            px: 1.8,
-                            py: 0.3,
-                            fontSize: '12px',
-                            fontWeight: 700,
-                            fontFamily: FONTS.OUTFIT,
-                            textTransform: 'none',
-                            boxShadow: 'none',
-                            bgcolor:
-                              currentIdentityDocType === 'pan'
-                                ? COLORS.PRIMARY
-                                : 'transparent',
-                            color:
-                              currentIdentityDocType === 'pan'
-                                ? '#fff'
-                                : '#64748B',
-                            '&:hover': {
-                              bgcolor:
-                                currentIdentityDocType === 'pan'
-                                  ? COLORS.PRIMARY_DARK
-                                  : 'rgba(0,0,0,0.04)',
-                              boxShadow: 'none',
-                            },
-                          }}
-                        >
-                          PAN Card
-                        </Button>
-                      </Box>
-                      <Typography
-                        sx={{
-                          fontFamily: FONTS.OUTFIT,
-                          fontWeight: 700,
-                          fontSize: '15px',
-                          color: COLORS.DARK,
-                        }}
-                      >
-                        {currentIdentityDocType === 'pan'
-                          ? isAdmin
-                            ? 'PAN Card'
-                            : 'PAN Card *'
-                          : isAdmin
-                          ? 'Aadhaar Card'
-                          : 'Aadhaar Card *'}
-                      </Typography>
-                    </Box>
+                    )
                   ) : (
-                    <Typography
+                    <CloudUploadIcon
                       sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 700,
-                        fontSize: '15px',
-                        color: COLORS.DARK,
-                        mb: 0.5,
+                        fontSize: 44,
+                        color: error ? 'error.main' : '#FF6200',
                       }}
-                    >
-                      {isAdmin ? doc.title.replace(/\s*\*+$/, '') : doc.title}
-                    </Typography>
+                    />
                   )}
+                  </Box>
 
                   {/* Subtitle / Filename */}
                   <Typography

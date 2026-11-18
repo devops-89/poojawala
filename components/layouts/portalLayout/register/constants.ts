@@ -332,8 +332,28 @@ export const selectMenuProps = {
 };
 
 export const documentFields = [
-  { id: 'identityDoc', title: 'Aadhaar / PAN Card *', desc: '' },
-  { id: 'certificate', title: 'Educational Certificates', desc: '' },
-  { id: 'templeAffiliationProof', title: 'Temple Affiliation Proof', desc: '' },
-  { id: 'profilePhoto', title: 'Profile Photograph *', desc: '' },
+  {
+    id: 'profilePhoto',
+    title: 'Profile Photograph *',
+    titleHi: 'प्रोफ़ाइल फ़ोटो *',
+    desc: '',
+  },
+  {
+    id: 'identityDoc',
+    title: 'Aadhaar / PAN Card *',
+    titleHi: 'आधार / पैन कार्ड *',
+    desc: '',
+  },
+  {
+    id: 'certificate',
+    title: 'Educational Certificates',
+    titleHi: 'शैक्षिक प्रमाण-पत्र',
+    desc: '',
+  },
+  {
+    id: 'templeAffiliationProof',
+    title: 'Temple Affiliation Proof',
+    titleHi: 'मंदिर संबद्धता प्रमाण',
+    desc: '',
+  },
 ] as const;
