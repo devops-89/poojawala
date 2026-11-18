@@ -54,7 +54,7 @@ export default function Step0BasicDetails({
           mb: 3,
         }}
       >
-        Basic & Login Details
+        Basic & Login Details (बुनियादी और लॉगिन विवरण)
       </Typography>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12 }}>
@@ -62,7 +62,7 @@ export default function Step0BasicDetails({
             select
             fullWidth
             name="role"
-            label="Role *"
+            label="Role (भूमिका) *"
             variant="outlined"
             value={formik.values.role}
             onChange={formik.handleChange}
@@ -70,15 +70,15 @@ export default function Step0BasicDetails({
             helperText={formik.touched.role && (formik.errors.role as string)}
             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           >
-            <MenuItem value={USER_ROLE.PUROHIT}>Purohit</MenuItem>
-            <MenuItem value={USER_ROLE.ASTROLOGER}>Astrologer</MenuItem>
+            <MenuItem value={USER_ROLE.PUROHIT}>Purohit (पुरोहित)</MenuItem>
+            <MenuItem value={USER_ROLE.ASTROLOGER}>Astrologer (ज्योतिषी)</MenuItem>
           </TextField>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             name="fullName"
-            label="Full Name *"
+            label="Full Name (पूरा नाम) *"
             variant="outlined"
             value={formik.values.fullName}
             onKeyDown={allowOnlyLettersOnKeyDown}
@@ -99,7 +99,7 @@ export default function Step0BasicDetails({
             disableDropdown
             onlyCountries={["IN"]}
             name="mobileNumber"
-            label="Mobile Number *"
+            label="Mobile Number (मोबाइल नंबर) *"
             variant="outlined"
             defaultCountry="IN"
             value={
@@ -160,7 +160,7 @@ export default function Step0BasicDetails({
           <TextField
             fullWidth
             name="email"
-            label="Email Address *"
+            label="Email Address (ईमेल पता) *"
             type="email"
             variant="outlined"
             value={formik.values.email}
@@ -176,7 +176,7 @@ export default function Step0BasicDetails({
         <Grid size={{ xs: 12, sm: 6 }}>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
-              label="Date of Birth *"
+              label="Date of Birth (जन्म तिथि) *"
               format="DD/MM/YYYY"
               value={formik.values.dob ? moment(formik.values.dob, "YYYY-MM-DD") : null}
               maxDate={maxDobDate ? moment(maxDobDate) : undefined}
@@ -206,7 +206,7 @@ export default function Step0BasicDetails({
           <TextField
             fullWidth
             name="password"
-            label="Password *"
+            label="Password (पासवर्ड) *"
             type={showPassword ? "text" : "password"}
             variant="outlined"
             value={formik.values.password}
@@ -236,7 +236,7 @@ export default function Step0BasicDetails({
           <TextField
             fullWidth
             name="confirmPassword"
-            label="Confirm Password *"
+            label="Confirm Password (पासवर्ड की पुष्टि करें) *"
             type={showConfirmPassword ? "text" : "password"}
             variant="outlined"
             value={formik.values.confirmPassword}

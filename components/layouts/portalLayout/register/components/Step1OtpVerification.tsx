@@ -81,12 +81,12 @@ export default function Step1OtpVerification({
           mb: 2,
         }}
       >
-        Verify your Identity
+        Verify your Identity (अपनी पहचान सत्यापित करें)
       </Typography>
       <Typography
         sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT, mb: 4 }}
       >
-        We've sent a 6-digit OTP to {formik.values.email}.
+        We&apos;ve sent a 6-digit OTP to {formik.values.email}. (हमने आपके ईमेल पर 6 अंकों का ओटीपी भेजा है।)
       </Typography>
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 4 }}>
         {formik.values.otp.map((val: string, idx: number) => (

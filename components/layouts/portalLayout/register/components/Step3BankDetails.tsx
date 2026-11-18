@@ -33,7 +33,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
           mb: 3,
         }}
       >
-        Bank or UPI Details
+        Bank or UPI Details (बैंक या यूपीआई विवरण)
       </Typography>
       )}
 
@@ -55,7 +55,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
                       formik.values.paymentMethod === 'BANK' ? 700 : 500,
                   }}
                 >
-                  Bank Account
+                  Bank Account (बैंक खाता)
                 </Typography>
               }
             />
@@ -69,7 +69,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
                       formik.values.paymentMethod === 'UPI' ? 700 : 500,
                   }}
                 >
-                  UPI ID
+                  UPI ID (यूपीआई आईडी)
                 </Typography>
               }
               sx={{ ml: 4 }}
@@ -84,7 +84,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
             <TextField
               fullWidth
               name="upiId"
-              label="UPI ID (e.g. 9876543210@ybl) *"
+              label="UPI ID / यूपीआई आईडी (e.g. 9876543210@ybl) *"
               variant="outlined"
               value={formik.values.upiId}
               onChange={(e) => {
@@ -102,7 +102,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
             <TextField
               fullWidth
               name="accountName"
-              label="Account Holder Name *"
+              label="Account Holder Name (खाताधारक का नाम) *"
               variant="outlined"
               value={formik.values.accountName}
               onKeyDown={allowOnlyLettersOnKeyDown}
@@ -124,7 +124,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
             <TextField
               fullWidth
               name="bankName"
-              label="Bank Name *"
+              label="Bank Name (बैंक का नाम) *"
               variant="outlined"
               value={formik.values.bankName}
               onKeyDown={allowOnlyLettersOnKeyDown}
@@ -142,7 +142,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
             <TextField
               fullWidth
               name="accountNumber"
-              label="Account Number *"
+              label="Account Number (खाता संख्या) *"
               variant="outlined"
               value={formik.values.accountNumber}
               onKeyDown={(e) => {
@@ -174,7 +174,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
             <TextField
               fullWidth
               name="ifscCode"
-              label="IFSC Code *"
+              label="IFSC Code (आईएफएससी कोड) *"
               variant="outlined"
               value={formik.values.ifscCode}
               onChange={(e) => {

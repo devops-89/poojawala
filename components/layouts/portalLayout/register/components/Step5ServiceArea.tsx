@@ -128,7 +128,7 @@ export default function Step5ServiceArea({
             color: COLORS.SLATE_DARK,
           }}
         >
-          Define Primary Service Location & Radius
+          Define Primary Service Location & Radius (प्राथमिक सेवा स्थान और क्षेत्र)
         </Typography>
         )}
 
@@ -143,7 +143,7 @@ export default function Step5ServiceArea({
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label={isAdmin ? "Pincode" : "Pincode *"}
+            label={isAdmin ? "Pincode (पिनकोड)" : "Pincode (पिनकोड) *"}
             value={addressData.pincode}
             onChange={(e) => handlePincodeChange(sanitizePincodeInput(e.target.value))}
             slotProps={{ htmlInput: { maxLength: 6, inputMode: "numeric" } }}
@@ -167,7 +167,7 @@ export default function Step5ServiceArea({
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label={isAdmin ? "Address Label" : "Address Label *"}
+            label={isAdmin ? "Address Label (पते का नाम)" : "Address Label (पते का नाम) *"}
             value={addressData.addressLabel}
             onKeyDown={allowOnlyAddressLabelCharsOnKeyDown}
             onChange={(e) =>
@@ -187,7 +187,7 @@ export default function Step5ServiceArea({
             fullWidth
             multiline
             rows={2}
-            label={isAdmin ? "Full Service Address" : "Full Service Address *"}
+            label={isAdmin ? "Full Service Address (पूरा सेवा पता)" : "Full Service Address (पूरा सेवा पता) *"}
             value={addressData.fullAddress}
             onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={(e) => handleAddressInputChange(sanitizeAddressInput(e.target.value))}
@@ -217,7 +217,7 @@ export default function Step5ServiceArea({
         <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
-            label="Street Name / Area / Landmark"
+            label="Street Name / Area / Landmark (गली / क्षेत्र / पहचान चिह्न)"
             value={serviceArea.streetName || ""}
             onKeyDown={allowOnlyAddressCharsOnKeyDown}
             onChange={(e) =>
@@ -235,7 +235,7 @@ export default function Step5ServiceArea({
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label={isAdmin ? "City" : "City *"}
+            label={isAdmin ? "City (शहर)" : "City (शहर) *"}
             value={addressData.city}
             onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) =>
@@ -259,7 +259,7 @@ export default function Step5ServiceArea({
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label={isAdmin ? "State" : "State *"}
+            label={isAdmin ? "State (राज्य)" : "State (राज्य) *"}
             value={addressData.state}
             onKeyDown={allowOnlyLettersOnKeyDown}
             onChange={(e) =>
@@ -299,7 +299,7 @@ export default function Step5ServiceArea({
                 mb: 0.5,
               }}
             >
-              Service Operating Radius: {serviceArea.serviceRadiusKm || 15} km
+              Service Operating Radius (सेवा क्षेत्र): {serviceArea.serviceRadiusKm || 15} km
             </Typography>
             <Typography
               variant="caption"

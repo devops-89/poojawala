@@ -1,5 +1,6 @@
 import WebsiteBlogDetailsContent from "@/components/layouts/blogsLayout/WebsiteBlogDetailsContent";
 import { getBlogByIdAPI } from "@/api/blogControllers";
+import { findStaticBlogByIdOrSlug } from "@/utils/staticBlogs";
 import { Metadata } from "next";
 
 export async function generateMetadata({
@@ -12,27 +13,38 @@ export async function generateMetadata({
   let blogDesc = "Read step-by-step Puja Vidhis, festival guides, and Vedic wisdom.";
   let imageUrl = "https://1pooja.com/images/logo.webp";
 
-  try {
-    const res = await getBlogByIdAPI(id);
-    const data = res?.data?.data || res?.data || res?.blog || res;
-    if (data) {
-      if (data.metaTitle && data.metaTitle.trim()) {
-        blogTitle = data.metaTitle.trim();
-      } else if (data.title) {
-        blogTitle = `${data.title} | 1Pooja`;
-      }
-      if (data.metaDescription && data.metaDescription.trim()) {
-        blogDesc = data.metaDescription.trim();
-      } else if (data.excerpt || data.content) {
-        blogDesc = String(data.excerpt || data.content)
-          .replace(/<[^>]*>?/gm, "")
-          .slice(0, 160);
-      }
-      if (data.downloadUrl || data.coverImage || data.imageUrl) {
-        imageUrl = data.downloadUrl || data.coverImage || data.imageUrl;
-      }
+  const staticBlog = findStaticBlogByIdOrSlug(id);
+  if (staticBlog) {
+    blogTitle = staticBlog.metaTitle || `${staticBlog.title} | 1Pooja`;
+    blogDesc = staticBlog.metaDescription || staticBlog.excerpt;
+    if (staticBlog.coverImage) {
+      imageUrl = staticBlog.coverImage.startsWith("http")
+        ? staticBlog.coverImage
+        : `https://1pooja.com${staticBlog.coverImage}`;
     }
-  } catch (err) {}
+  } else {
+    try {
+      const res = await getBlogByIdAPI(id);
+      const data = res?.data?.data || res?.data || res?.blog || res;
+      if (data) {
+        if (data.metaTitle && data.metaTitle.trim()) {
+          blogTitle = data.metaTitle.trim();
+        } else if (data.title) {
+          blogTitle = `${data.title} | 1Pooja`;
+        }
+        if (data.metaDescription && data.metaDescription.trim()) {
+          blogDesc = data.metaDescription.trim();
+        } else if (data.excerpt || data.content) {
+          blogDesc = String(data.excerpt || data.content)
+            .replace(/<[^>]*>?/gm, "")
+            .slice(0, 160);
+        }
+        if (data.downloadUrl || data.coverImage || data.imageUrl) {
+          imageUrl = data.downloadUrl || data.coverImage || data.imageUrl;
+        }
+      }
+    } catch (err) {}
+  }
 
   return {
     title: blogTitle,

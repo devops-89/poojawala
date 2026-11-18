@@ -17,6 +17,7 @@ import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getBlogByIdAPI } from "@/api/blogControllers";
+import { findStaticBlogByIdOrSlug } from "@/utils/staticBlogs";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -38,6 +39,12 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
   useEffect(() => {
     const fetchBlogDetails = async () => {
       if (!effectiveId) return;
+      const staticMatch = findStaticBlogByIdOrSlug(effectiveId);
+      if (staticMatch) {
+        setBlog(staticMatch);
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const res = await getBlogByIdAPI(effectiveId);

@@ -12,6 +12,7 @@ import {
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
+import { mergeWithStaticBlogs } from "@/utils/staticBlogs";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
@@ -88,10 +89,10 @@ export default function BlogCardGrid({
         else if (Array.isArray(res?.blogs)) rawList = res.blogs;
 
         const activeBlogs = rawList.filter((b: any) => b.isActive !== false);
-        setFetchedBlogs(activeBlogs);
+        setFetchedBlogs(mergeWithStaticBlogs(activeBlogs));
       } catch (err) {
         console.error("Failed to fetch public blogs", err);
-        setFetchedBlogs([]);
+        setFetchedBlogs(mergeWithStaticBlogs([]));
       } finally {
         setInternalLoading(false);
       }

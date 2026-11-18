@@ -223,10 +223,10 @@ export default function Step2PurohitProfile({
           }}
         >
           {formik.values.role === USER_ROLE.ASTROLOGER
-            ? 'Astrologer Profile'
+            ? 'Astrologer Profile (ज्योतिषी प्रोफ़ाइल)'
             : formik.values.role === USER_ROLE.PUROHIT
-            ? 'Purohit Profile'
-            : 'Professional Profile'}
+            ? 'Purohit Profile (पुरोहित प्रोफ़ाइल)'
+            : 'Professional Profile (पेशेवर प्रोफ़ाइल)'}
         </Typography>
       )}
 
@@ -255,8 +255,8 @@ export default function Step2PurohitProfile({
                 fullWidth
                 size="small"
                 name="state"
-                label="State *"
-                placeholder="Select State"
+                label="State (राज्य) *"
+                placeholder="Select State (राज्य चुनें)"
                 variant="outlined"
                 error={formik.touched.state && Boolean(formik.errors.state)}
                 helperText={formik.touched.state && (formik.errors.state as string)}
@@ -289,8 +289,8 @@ export default function Step2PurohitProfile({
                 fullWidth
                 size="small"
                 name="city"
-                label="City *"
-                placeholder={!formik.values.state ? 'Select State first' : 'Select City'}
+                label="City (शहर) *"
+                placeholder={!formik.values.state ? 'Select State first (पहले राज्य चुनें)' : 'Select City (शहर चुनें)'}
                 variant="outlined"
                 error={formik.touched.city && Boolean(formik.errors.city)}
                 helperText={
@@ -312,8 +312,8 @@ export default function Step2PurohitProfile({
             fullWidth
             size="small"
             name="aadhaarNumber"
-            label="Aadhaar Number *"
-            placeholder="Enter 12-digit Aadhaar number"
+            label="Aadhaar Number (आधार नंबर) *"
+            placeholder="Enter 12-digit Aadhaar number (12 अंकों का आधार नंबर)"
             variant="outlined"
             value={formik.values.aadhaarNumber || ''}
             onKeyDown={(e) => {
@@ -381,8 +381,8 @@ export default function Step2PurohitProfile({
                 fullWidth
                 size="small"
                 name="qualification"
-                label="Qualification *"
-                placeholder="Select or type qualification and press Enter"
+                label="Qualification (योग्यता) *"
+                placeholder="Select or type qualification (योग्यता चुनें या लिखें)"
                 variant="outlined"
                 error={
                   formik.touched.qualification &&
@@ -405,8 +405,8 @@ export default function Step2PurohitProfile({
             size="small"
             type="text"
             name="experienceYears"
-            label="Experience (Years) *"
-            placeholder="e.g. 5"
+            label="Experience in Years (अनुभव - वर्ष) *"
+            placeholder="e.g. 5 (उदा. 5)"
             variant="outlined"
             value={formik.values.experienceYears || ''}
             onKeyDown={(e) => {
@@ -506,9 +506,9 @@ export default function Step2PurohitProfile({
                 fullWidth
                 size="small"
                 name="languages"
-                label="Languages *"
+                label="Languages (भाषाएँ) *"
                 variant="outlined"
-                placeholder={formik.values.languages?.length ? '' : 'Select or type language (e.g. Malayalam) and press Enter'}
+                placeholder={formik.values.languages?.length ? '' : 'Select or type language (भाषा चुनें या लिखें)'}
                 error={
                   formik.touched.languages && Boolean(formik.errors.languages)
                 }
@@ -593,9 +593,9 @@ export default function Step2PurohitProfile({
                 fullWidth
                 size="small"
                 name="specializations"
-                label={formik.values.role === USER_ROLE.ASTROLOGER ? "Specializations (Astrology) *" : "Specializations *"}
+                label={formik.values.role === USER_ROLE.ASTROLOGER ? "Specializations - Astrology (ज्योतिष विशेषज्ञता) *" : "Specializations (विशेषज्ञता) *"}
                 variant="outlined"
-                placeholder={formik.values.specializations?.length ? '' : 'Select or type specializations and press Enter'}
+                placeholder={formik.values.specializations?.length ? '' : 'Select or type specializations (विशेषज्ञता चुनें या लिखें)'}
                 error={
                   formik.touched.specializations &&
                   Boolean(formik.errors.specializations)
@@ -617,7 +617,7 @@ export default function Step2PurohitProfile({
               fullWidth
               size="small"
               name="astrologyPrice"
-              label="Astrology Price (₹) *"
+              label="Astrology Price / ज्योतिष शुल्क (₹) *"
               placeholder="e.g. 1000.00"
               variant="outlined"
               value={formik.values.astrologyPrice || formik.values.ratePerMinute || ''}
@@ -671,7 +671,7 @@ export default function Step2PurohitProfile({
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.8, flexWrap: 'wrap', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#333', fontFamily: FONTS.PRIMARY }}>
-                {isAdmin ? 'Bio (About Yourself)' : 'Bio (About Yourself) *'}
+                {isAdmin ? 'Bio / About Yourself (अपना परिचय)' : 'Bio / About Yourself (अपना परिचय) *'}
               </Typography>
               {!isAdmin && Boolean(formik.values.bio && !isBioManuallyEdited) && (
                 <Chip
@@ -715,7 +715,7 @@ export default function Step2PurohitProfile({
             multiline
             rows={4}
             name="bio"
-            placeholder="Tell us about your background, Vedic education, and ritual experience..."
+            placeholder="Tell us about your background, Vedic education, and ritual experience... (अपने अनुभव और वैदिक शिक्षा के बारे में लिखें...)"
             variant="outlined"
             value={formik.values.bio || ''}
             onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
@@ -745,7 +745,7 @@ export default function Step2PurohitProfile({
                 mb: 0.5,
               }}
             >
-              Service Availability *
+              Service Availability (सेवा उपलब्धता) *
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
               <FormControlLabel
@@ -757,7 +757,7 @@ export default function Step2PurohitProfile({
                     sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
                   />
                 }
-                label="Available for Online Pooja"
+                label="Available for Online Pooja (ऑनलाइन पूजा)"
               />
               <FormControlLabel
                 control={
@@ -768,7 +768,7 @@ export default function Step2PurohitProfile({
                     sx={{ color: COLORS.PRIMARY, '&.Mui-checked': { color: COLORS.PRIMARY } }}
                   />
                 }
-                label="Available for Offline Pooja"
+                label="Available for Offline Pooja (ऑफ़लाइन पूजा)"
               />
             </Box>
             {!formik.values.isOnlineAvailable &&

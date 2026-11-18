@@ -12,6 +12,7 @@ import {
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
+import { mergeWithStaticBlogs } from "@/utils/staticBlogs";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 
@@ -65,17 +66,27 @@ export default function RelatedBlogsSection({ currentBlogId, isAdmin = false }: 
         else if (Array.isArray(res?.data?.data)) rawList = res.data.data;
         else if (Array.isArray(res?.blogs)) rawList = res.blogs;
 
+        const combinedList = isAdmin ? rawList : mergeWithStaticBlogs(rawList);
+
         // Exclude the current blog being read
-        const otherBlogs = rawList.filter(
+        const otherBlogs = combinedList.filter(
           (b: any) =>
             b.isActive !== false &&
-            String(b.id) !== String(currentBlogId)
+            String(b.id) !== String(currentBlogId) &&
+            String(b.slug || "") !== String(currentBlogId)
         );
 
         setRelatedBlogs(otherBlogs.slice(0, 3));
       } catch (err) {
         console.error("Failed to fetch related blogs", err);
-        setRelatedBlogs([]);
+        const fallback = isAdmin
+          ? []
+          : mergeWithStaticBlogs([]).filter(
+              (b: any) =>
+                String(b.id) !== String(currentBlogId) &&
+                String(b.slug || "") !== String(currentBlogId)
+            );
+        setRelatedBlogs(fallback.slice(0, 3));
       }
     };
 

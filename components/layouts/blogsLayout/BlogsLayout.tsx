@@ -3,6 +3,7 @@
 import { Box, Button, Container, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
+import { mergeWithStaticBlogs } from "@/utils/staticBlogs";
 import BlogCardGrid from "./BlogCardGrid";
 import FeaturedBlogSection from "./FeaturedBlogSection";
 import { FONTS } from "@/utils/fonts";
@@ -24,10 +25,10 @@ export default function BlogsLayout() {
         else if (Array.isArray(res?.blogs)) rawList = res.blogs;
 
         const activeBlogs = rawList.filter((b: any) => b.isActive !== false);
-        setBlogs(activeBlogs);
+        setBlogs(mergeWithStaticBlogs(activeBlogs));
       } catch (err) {
         console.error("Failed to fetch public blogs", err);
-        setBlogs([]);
+        setBlogs(mergeWithStaticBlogs([]));
       } finally {
         setLoading(false);
       }

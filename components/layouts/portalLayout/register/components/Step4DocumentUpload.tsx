@@ -253,8 +253,8 @@ export default function Step4DocumentUpload({
                             ? 'PAN Card'
                             : 'PAN Card *'
                           : isAdmin
-                          ? 'Aadhaar Card'
-                          : 'Aadhaar Card *'}
+                            ? 'Aadhaar Card'
+                            : 'Aadhaar Card *'}
                       </Typography>
                       <Typography
                         sx={{
@@ -271,8 +271,8 @@ export default function Step4DocumentUpload({
                             ? 'पैन कार्ड'
                             : 'पैन कार्ड *'
                           : isAdmin
-                          ? 'आधार कार्ड'
-                          : 'आधार कार्ड *'}
+                            ? 'आधार कार्ड'
+                            : 'आधार कार्ड *'}
                       </Typography>
                       <Box
                         sx={{
@@ -293,6 +293,7 @@ export default function Step4DocumentUpload({
                             py: 0.3,
                             fontSize: '12px',
                             fontWeight: 700,
+
                             fontFamily: FONTS.OUTFIT,
                             textTransform: 'none',
                             boxShadow: 'none',
