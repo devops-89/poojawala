@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import OfflineServiceLocationModal from "./OfflineServiceLocationModal";
 
 interface WebsiteServicePlansSectionProps {
   service: any;
@@ -17,6 +18,8 @@ export default function WebsiteServicePlansSection({
 }: WebsiteServicePlansSectionProps) {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<string>("standard");
+  const [locationModalOpen, setLocationModalOpen] = useState<boolean>(false);
+  const [bookingPlanName, setBookingPlanName] = useState<string>("standard");
 
   const isOnlineService = Boolean(service?.isOnline);
   const plans = service?.plans || {};
@@ -122,23 +125,8 @@ export default function WebsiteServicePlansSection({
 
   const handleBookPlan = (planName: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const targetSlug = service?.slug || service?.id;
-    const targetUrl = targetSlug
-      ? `/customer/services/${targetSlug}${planName ? `?plan=${planName}` : ""}`
-      : "/customer/services";
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("post_login_redirect", targetUrl);
-      const token =
-        sessionStorage.getItem("token") ||
-        localStorage.getItem("token") ||
-        sessionStorage.getItem("customercsrftoken");
-      const user = sessionStorage.getItem("user");
-      if (token || user) {
-        router.push(targetUrl);
-        return;
-      }
-    }
-    router.push(`/sign-up?redirect=${encodeURIComponent(targetUrl)}&from=booking`);
+    setBookingPlanName(planName || "standard");
+    setLocationModalOpen(true);
   };
 
   // If no plans exist in API, don't render section
@@ -635,6 +623,14 @@ export default function WebsiteServicePlansSection({
           </Grid>
         </>
       )}
+
+      {/* Offline Service Location & Booking Popup Modal */}
+      <OfflineServiceLocationModal
+        open={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
+        service={service}
+        initialPlan={bookingPlanName}
+      />
     </Box>
   );
 }

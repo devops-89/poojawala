@@ -450,9 +450,9 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
             },
             "& a": {
               color: COLORS.PRIMARY,
-              textDecoration: "underline",
+              textDecoration: "none",
               fontWeight: 600,
-              "&:hover": { color: COLORS.PRIMARY_DARK },
+              "&:hover": { color: COLORS.PRIMARY_DARK, textDecoration: "none" },
             },
             "& strong, & b": {
               fontWeight: 700,
@@ -488,10 +488,14 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                     color: COLORS.PRIMARY,
                     fontSize: { xs: "1.35rem", sm: "1.6rem" },
                     letterSpacing: "-0.01em",
+                    "& a": {
+                      color: "inherit",
+                      textDecoration: "none",
+                      "&:hover": { color: COLORS.PRIMARY_DARK, textDecoration: "none" },
+                    },
                   }}
-                >
-                  {secTitle}
-                </Typography>
+                  dangerouslySetInnerHTML={{ __html: secTitle }}
+                />
 
                 <Box
                   sx={{
@@ -511,7 +515,7 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                       bgcolor: "#FFF8F2",
                       borderRadius: "0 8px 8px 0",
                     },
-                    "& a": { color: COLORS.PRIMARY, textDecoration: "underline" },
+                    "& a": { color: COLORS.PRIMARY, textDecoration: "none", "&:hover": { color: COLORS.PRIMARY_DARK, textDecoration: "none" } },
                   }}
                   dangerouslySetInnerHTML={{ __html: secDesc }}
                 />

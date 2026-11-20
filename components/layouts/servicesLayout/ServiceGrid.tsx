@@ -113,6 +113,20 @@ export default function ServiceGrid({
 
         let activeOnly = fetchedServices.filter((s: any) => s.isActive !== false);
 
+        if (isOffline) {
+          activeOnly = activeOnly.filter(
+            (s: any) =>
+              Boolean(s.isOffline) ||
+              (!Boolean(s.isOnline) && String(s.bookingMode || '').toUpperCase() !== 'ONLINE')
+          );
+        } else if (isOnline) {
+          activeOnly = activeOnly.filter(
+            (s: any) =>
+              Boolean(s.isOnline) ||
+              String(s.bookingMode || '').toUpperCase() === 'ONLINE'
+          );
+        }
+
         if (effectiveCatId) {
           activeOnly = activeOnly.filter((s: any) => {
             const sCatId = s.categoryId || s.category?.id || (typeof s.category === "object" ? s.category?.id : "");

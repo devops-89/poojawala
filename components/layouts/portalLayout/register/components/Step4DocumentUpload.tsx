@@ -503,7 +503,6 @@ export default function Step4DocumentUpload({
                       onChange={(event) => handleFileInputChange(doc.id, event)}
                     />
                   </Button>
-
                   {error && (
                     <Typography
                       color="error"
@@ -520,3 +519,4 @@ export default function Step4DocumentUpload({
     </Box>
   );
 }
+
