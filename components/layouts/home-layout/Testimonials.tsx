@@ -3,13 +3,7 @@
 import React, { useEffect, useState } from "react";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import StarIcon from "@mui/icons-material/Star";
-import {
-  Avatar,
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Avatar, Box, Container, Typography } from "@mui/material";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -17,7 +11,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { getAllReviewsAPI } from "@/api/userControllers";
 import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
 
 export default function Testimonials() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -61,28 +54,31 @@ export default function Testimonials() {
       : [];
 
   return (
-    <Box sx={{ py: 10, bgcolor: "#ffffff", overflow: "hidden", pt: 4 }}>
+    <Box sx={{ py: { xs: 5, md: 9 }, bgcolor: "#ffffff", overflow: "hidden" }}>
       <Container maxWidth="xl">
         <Box sx={{ textAlign: "center", mb: "54px" }}>
           <Typography
             variant="h2"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: { xs: "28px", sm: "36px", md: "48px" },
-              color: "#C82E2E",
-              mb: "15px",
+              fontSize: { xs: "28px", sm: "36px", md: "44px" },
+              lineHeight: 1.25,
+              color: "#1A1A1A",
+              mb: 1.5,
             }}
           >
             What Families Say About Us
           </Typography>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 500,
-              fontSize: { xs: "16px", md: "24px" },
-              lineHeight: "130.6%",
-              color: "#141414",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 400,
+              fontSize: { xs: "14px", md: "16px" },
+              lineHeight: 1.6,
+              color: "#666666",
+              maxWidth: "640px",
+              mx: "auto",
             }}
           >
             Every review reflects our commitment to trust, tradition, and a
@@ -93,8 +89,25 @@ export default function Testimonials() {
 
       {loading ? (
         <Box sx={{ display: "flex", gap: 3, justifyContent: "center", py: 2 }}>
-          <Box sx={{ bgcolor: "#FBF7F0", borderRadius: "20px", height: "220px", flex: 1, border: "1px solid #F0E6D8" }} />
-          <Box sx={{ bgcolor: "#FBF7F0", borderRadius: "20px", height: "220px", flex: 1, border: "1px solid #F0E6D8", display: { xs: "none", sm: "block" } }} />
+          <Box
+            sx={{
+              bgcolor: "#FBF7F0",
+              borderRadius: "20px",
+              height: "220px",
+              flex: 1,
+              border: "1px solid #F0E6D8",
+            }}
+          />
+          <Box
+            sx={{
+              bgcolor: "#FBF7F0",
+              borderRadius: "20px",
+              height: "220px",
+              flex: 1,
+              border: "1px solid #F0E6D8",
+              display: { xs: "none", sm: "block" },
+            }}
+          />
         </Box>
       ) : reviews.length === 0 ? (
         <EmptyStateCard
@@ -124,7 +137,8 @@ export default function Testimonials() {
                 opacity: 0.4,
                 display: "inline-block",
                 willChange: "transform, opacity",
-                transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                transition:
+                  "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
                 margin: "0 !important",
               },
               ".swiper-pagination-bullet-active": {
@@ -192,7 +206,7 @@ export default function Testimonials() {
 
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 500,
                           fontSize: { xs: "14px", md: "16px" },
                           color: "#141414",
@@ -223,7 +237,7 @@ export default function Testimonials() {
                       <Box>
                         <Typography
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             fontSize: { xs: "15px", md: "17px" },
                             lineHeight: "1.2",
@@ -234,7 +248,7 @@ export default function Testimonials() {
                         </Typography>
                         <Typography
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 400,
                             fontSize: { xs: "13px", md: "14px" },
                             color: "#888888",

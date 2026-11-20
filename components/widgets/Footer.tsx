@@ -70,12 +70,14 @@ export const socialLinks = [
 
 // Shared link styles
 const linkSx = {
-  fontFamily: FONTS.PRIMARY,
-  color: "#757575",
-  fontSize: "14px",
-  lineHeight: "15.3px",
-  letterSpacing: "0.72px",
-  "&:hover": { color: "#CC2E2E" },
+  fontFamily: FONTS.OUTFIT,
+  color: "#5A5A5A",
+  fontSize: "14.5px",
+  lineHeight: 1.5,
+  letterSpacing: "normal",
+  transition: "all 0.2s ease",
+  display: "inline-block",
+  "&:hover": { color: COLORS.BRAND_ORANGE, transform: "translateX(2px)" },
 };
 
 export default function Footer() {
@@ -96,12 +98,12 @@ export default function Footer() {
                 ? response
                 : [];
 
-        const activeOnly = items
-          .filter((item: any) => item && item.isActive !== false && item.name)
+        const activeOnly = (items as Array<{ name?: string; slug?: string; isActive?: boolean }>)
+          .filter((item) => item && item.isActive !== false && item.name)
           .slice(0, 5)
-          .map((item: any) => ({
-            name: item.name,
-            href: item.slug ? `/services/${item.slug}` : `/services?search=${encodeURIComponent(item.name)}`,
+          .map((item) => ({
+            name: item.name || "",
+            href: item.slug ? `/services/${item.slug}` : `/services?search=${encodeURIComponent(item.name || "")}`,
           }));
 
         if (isMounted && activeOnly.length > 0) {
@@ -134,46 +136,44 @@ export default function Footer() {
   return (
     <Box component="footer">
       {/* Top Beige Section */}
-      <Box sx={{ bgcolor: "#FEEDE2", py: { xs: 6, md: 10 } }}>
+      <Box sx={{ bgcolor: "#FEEDE2", py: { xs: 5, md: 7 } }}>
         <Container maxWidth="lg">
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 4, md: 4 }}>
             {/* Brand Column */}
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 3.5 }}>
               <Link
                 component={NextLink}
                 href="/"
                 underline="none"
-                sx={{ display: "inline-block", mb: 1.5 }}
+                sx={{ display: "inline-block", mb: 2 }}
               >
                 <Image
                   src="/images/1Poojalogo.webp"
                   alt="1Pooja"
-                  width={116}
-                  height={47}
+                  width={120}
+                  height={48}
                   loading="lazy"
                   style={{
-                    height: "47px",
-                    width: "116px",
+                    height: "auto",
+                    width: "120px",
                     objectFit: "contain",
-                    filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
                   }}
                 />
               </Link>
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
-                  color: "#757575",
-                  fontSize: "14px",
-                  lineHeight: "15.3px",
-                  letterSpacing: "0.72px",
+                  fontFamily: FONTS.OUTFIT,
+                  color: "#5A5A5A",
+                  fontSize: "14.5px",
+                  lineHeight: 1.6,
                   mb: 3,
-                  width: "260px",
+                  maxWidth: "280px",
                 }}
               >
-                Our trusted partner for divine rituals and sacred ceremonies at
+                Your trusted partner for divine rituals and sacred ceremonies at
                 home.
               </Typography>
-              <Box sx={{ display: "flex", gap: 2.5, mt: 1 }}>
+              <Box sx={{ display: "flex", gap: 1.5, mt: 1 }}>
                 {socialLinks.map(({ icon: Icon, href, label }) => (
                   <IconButton
                     key={label}
@@ -183,33 +183,43 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     aria-label={label}
                     sx={{
+                      width: 36,
+                      height: 36,
                       p: 0,
-                      color: "#141414",
-                      "&:hover": { color: "#C82E2E" },
+                      bgcolor: "rgba(0, 0, 0, 0.05)",
+                      color: "#2C1810",
+                      transition: "all 0.25s ease",
+                      "&:hover": {
+                        bgcolor: COLORS.BRAND_ORANGE,
+                        color: "#FFFFFF",
+                        transform: "translateY(-2px)",
+                      },
                     }}
                   >
-                    <Icon sx={{ width: "21.55px", height: "21.55px" }} />
+                    <Icon sx={{ fontSize: "18px" }} />
                   </IconButton>
                 ))}
               </Box>
             </Grid>
 
             {/* Quick Links Column */}
-            <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
+            <Grid size={{ xs: 6, sm: 6, md: 2.5 }}>
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
-                  fontWeight: 600,
-                  color: "#141414",
-                  mb: 3,
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: "#1A1A1A",
+                  mb: 2.5,
                   fontSize: "16px",
-                  lineHeight: "15.3px",
-                  letterSpacing: "0.72px",
+                  lineHeight: 1.3,
+                  display: "inline-block",
+                  pb: "6px",
+                  borderBottom: `2px solid ${COLORS.BRAND_ORANGE}`,
                 }}
               >
                 Quick Links
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 {quickLinks.map((link) => (
                   <Link
                     key={link.name}
@@ -225,21 +235,23 @@ export default function Footer() {
             </Grid>
 
             {/* Popular Pujas Column (Dynamic from API - 5 items, single column) */}
-            <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
+            <Grid size={{ xs: 6, sm: 6, md: 3 }}>
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
-                  fontWeight: 600,
-                  color: "#141414",
-                  mb: 3,
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: "#1A1A1A",
+                  mb: 2.5,
                   fontSize: "16px",
-                  lineHeight: "15.3px",
-                  letterSpacing: "0.72px",
+                  lineHeight: 1.3,
+                  display: "inline-block",
+                  pb: "6px",
+                  borderBottom: `2px solid ${COLORS.BRAND_ORANGE}`,
                 }}
               >
                 Popular Poojas
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 {servicesList.slice(0, 5).map((puja) => (
                   <Link
                     key={puja.name}
@@ -255,48 +267,52 @@ export default function Footer() {
             </Grid>
 
             {/* Contact Us Column */}
-            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
-              <Link
-                component={NextLink}
-                href="/contact"
-                underline="none"
-                sx={{
-                  display: "inline-block",
-                  fontFamily: FONTS.PRIMARY,
-                  fontWeight: 600,
-                  color: "#141414",
-                  mb: 3,
-                  fontSize: "16px",
-                  lineHeight: "15.3px",
-                  letterSpacing: "0.72px",
-                  cursor: "pointer",
-                  transition: "color 0.2s ease",
-                  "&:hover": { color: COLORS.PRIMARY },
-                }}
-              >
-                Contact Us
-              </Link>
-              <Link
-                href="mailto:info@1pooja.com"
-                underline="none"
-                sx={{
-                  ...linkSx,
-                  display: "block",
-                  mb: 4,
-                }}
-              >
-                info@1pooja.com
-              </Link>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Box sx={{ mb: 3.5 }}>
+                <Typography
+                  component={NextLink}
+                  href="/contact"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    color: "#1A1A1A",
+                    mb: 2,
+                    fontSize: "16px",
+                    lineHeight: 1.3,
+                    display: "inline-block",
+                    pb: "6px",
+                    borderBottom: `2px solid ${COLORS.BRAND_ORANGE}`,
+                    textDecoration: "none",
+                    cursor: "pointer",
+                    transition: "color 0.2s ease",
+                    "&:hover": { color: COLORS.BRAND_ORANGE },
+                  }}
+                >
+                  Contact Us
+                </Typography>
+                <Link
+                  href="mailto:info@1pooja.com"
+                  underline="none"
+                  sx={{
+                    ...linkSx,
+                    display: "block",
+                  }}
+                >
+                  info@1pooja.com
+                </Link>
+              </Box>
 
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
-                  fontWeight: 600,
-                  color: "#141414",
-                  mb: 3,
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: "#1A1A1A",
+                  mb: 2,
                   fontSize: "16px",
-                  lineHeight: "15.3px",
-                  letterSpacing: "0.72px",
+                  lineHeight: 1.3,
+                  display: "inline-block",
+                  pb: "6px",
+                  borderBottom: `2px solid ${COLORS.BRAND_ORANGE}`,
                 }}
               >
                 Join Us
@@ -323,32 +339,50 @@ export default function Footer() {
           <Box
             sx={{
               display: "flex",
-              justifyContent: { xs: 'center', md: 'space-between' },
+              justifyContent: { xs: "center", md: "space-between" },
               alignItems: "center",
-              flexDirection: { xs: 'column', md: 'row' },
+              flexDirection: { xs: "column", md: "row" },
               flexWrap: "wrap",
               gap: 2,
             }}
           >
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                color: "#9E9E9E",
-                fontSize: "12px",
+                fontFamily: FONTS.OUTFIT,
+                color: "#757575",
+                fontSize: "13px",
               }}
             >
-              © {new Date().getFullYear()} 1Pooja. All rights reserved.
+              © {new Date().getFullYear()}{" "}
+              <Link
+                component={NextLink}
+                href="/"
+                underline="none"
+                sx={{
+                  color: COLORS.BRAND_ORANGE,
+                  fontWeight: 700,
+                  transition: "opacity 0.2s ease",
+                  "&:hover": {
+                    textDecoration: "underline",
+                    opacity: 0.85,
+                  },
+                }}
+              >
+                1Pooja
+              </Link>
+              . All rights reserved.
             </Typography>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
               <Link
                 component={NextLink}
                 href="/privacy-policy"
                 underline="none"
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   color: "#9E9E9E",
                   fontSize: "12px",
-                  "&:hover": { color: "#CC2E2E" },
+                  transition: "color 0.2s ease",
+                  "&:hover": { color: COLORS.BRAND_ORANGE },
                 }}
               >
                 Privacy Policy
@@ -361,10 +395,11 @@ export default function Footer() {
                 href="/terms-and-conditions"
                 underline="none"
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   color: "#9E9E9E",
                   fontSize: "12px",
-                  "&:hover": { color: "#CC2E2E" },
+                  transition: "color 0.2s ease",
+                  "&:hover": { color: COLORS.BRAND_ORANGE },
                 }}
               >
                 Terms & Conditions

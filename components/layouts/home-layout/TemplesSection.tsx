@@ -458,7 +458,7 @@ export default function TemplesSection() {
       component="section"
       id="temples-section"
       sx={{
-        py: { xs: 6, md: 9 },
+        py: { xs: 5, md: 9 },
         bgcolor: "#FFFDF9",
         position: "relative",
         scrollMarginTop: "90px",
@@ -504,7 +504,7 @@ export default function TemplesSection() {
           {/* Decorative Arch Divider */}
           <Box sx={{ display: "flex", justifyContent: "center", pb: 1.5 }}>
             <Image
-              src="/images/home/poojaPackages/dhanush.webp"
+              src="/images/home/poojaPackages/dhanush.svg"
               alt="Decorative Arch"
               width={650}
               height={40}

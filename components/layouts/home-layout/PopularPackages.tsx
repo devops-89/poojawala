@@ -156,7 +156,7 @@ export default function PopularPackages() {
   }, []);
 
   return (
-    <Box id="popular-packages" sx={{ py: { xs: 6, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}>
+    <Box id="popular-packages" sx={{ py: { xs: 5, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}>
       <Container maxWidth="lg">
         {/* Header Section */}
         <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
@@ -175,7 +175,7 @@ export default function PopularPackages() {
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
             <Image
-              src="/images/home/poojaPackages/dhanush.webp"
+              src="/images/home/poojaPackages/dhanush.svg"
               alt="Decorative Arch"
               width={650}
               height={40}

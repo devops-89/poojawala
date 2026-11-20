@@ -101,7 +101,7 @@ export default function UpcomingFestivals() {
   return (
     <Box
       id="upcoming-festivals"
-      sx={{ position: "relative", py: 8, bgcolor: "#fff", overflow: "hidden", scrollMarginTop: "90px" }}
+      sx={{ position: "relative", py: { xs: 5, md: 9 }, bgcolor: "#fff", overflow: "hidden", scrollMarginTop: "90px" }}
     >
       {/* Left Chakra Decoration */}
       <Box
@@ -145,19 +145,19 @@ export default function UpcomingFestivals() {
             variant="h2"
             component="h2"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: { xs: "28px", sm: "36px", md: "48px" },
-              lineHeight: { xs: "36px", md: "62px" },
-              color: "#141414",
-              mb: "9px",
+              fontSize: { xs: "28px", sm: "36px", md: "44px" },
+              lineHeight: 1.25,
+              color: "#1A1A1A",
+              mb: 1.5,
             }}
           >
             Upcoming Festivals and Offers
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Image
-              src="/images/home/poojaPackages/dhanush.webp"
+              src="/images/home/poojaPackages/dhanush.svg"
               alt="Decorative Arch"
               width={750}
               height={47}
@@ -256,8 +256,8 @@ export default function UpcomingFestivals() {
                 <Box sx={{ position: "relative", zIndex: 2 }}>
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 600,
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 700,
                       fontSize: { xs: "24px", md: "32px" },
                       lineHeight: "130.6%",
                       color: "#fff",
@@ -268,7 +268,7 @@ export default function UpcomingFestivals() {
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 400,
                       fontSize: "20px",
                       lineHeight: "130.6%",
@@ -298,7 +298,7 @@ export default function UpcomingFestivals() {
                 >
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 400,
                       fontSize: "18px",
                       lineHeight: "140%",

@@ -434,7 +434,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",
@@ -478,7 +478,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",
@@ -529,7 +529,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",
@@ -674,7 +674,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",

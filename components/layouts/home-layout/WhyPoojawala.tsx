@@ -3,59 +3,58 @@
 import { Box, Container, Typography } from '@mui/material';
 import Image from 'next/image';
 import { FONTS } from '@/utils/fonts';
-import { COLORS } from '@/utils/enums';
 
 export default function WhyPoojawala() {
   return (
-    <Box sx={{ position: 'relative', overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '850px' }, py: { xs: 8, md: 10 }, display: 'flex', alignItems: 'center', pb: 10 }}>
+    <Box sx={{ position: 'relative', overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '800px' }, py: { xs: 5, md: 9 }, display: 'flex', alignItems: 'center' }}>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', maxWidth: '875px', pr: { md: 5 }, display: 'flex', flexDirection: 'column' }}>
           <Typography 
             variant="h2" 
             sx={{ 
-              fontFamily: FONTS.PRIMARY, 
+              fontFamily: FONTS.OUTFIT, 
               fontWeight: 700, 
-              fontSize: { xs: '32px', md: '48px' }, 
-              color: '#141414',
-              lineHeight: 'normal',
-              mb: '4px',
-              mt: -4
+              fontSize: { xs: '28px', sm: '36px', md: '44px' }, 
+              color: '#1A1A1A',
+              lineHeight: 1.25,
+              mb: 1.5,
+              mt: { xs: 0, md: -2 }
             }}
           >
             Why 1Pooja ?
           </Typography>
           
-          <Box sx={{ mb: '40px' }}>
+          <Box sx={{ mb: { xs: '24px', md: '36px' } }}>
             <Image 
-              src="/images/home/whyLine.webp"
+              src="/images/home/poojaPackages/dhanush.svg"
               alt="Decoration Line"
-              width={390}
-              height={34}
+              width={340}
+              height={22}
               loading="lazy"
-              style={{ width: '100%', maxWidth: '390px', height: 'auto', objectFit: 'contain' }}
+              style={{ width: '100%', maxWidth: '340px', height: 'auto', objectFit: 'contain' }}
             />
           </Box>
 
           <Typography 
             sx={{ 
-              fontFamily: FONTS.PRIMARY, 
+              fontFamily: FONTS.OUTFIT, 
               fontWeight: 400, 
-              fontSize: { xs: '16px', md: '24px' }, 
-              color: '#141414', 
-              lineHeight: '130.6%',
-              mb: '28px'
+              fontSize: { xs: '14px', md: '16px' }, 
+              color: '#555555', 
+              lineHeight: 1.65,
+              mb: '20px'
             }}
           >
-            1Pooja is a trusted online platform that connects families with <span style={{ color: '#CC2E2E', fontStyle: 'italic' }}>verified pandits and purohits</span> for religious ceremonies across India.
+            1Pooja is a trusted online platform that connects families with <span style={{ color: '#CC2E2E', fontStyle: 'italic', fontWeight: 600 }}>verified pandits and purohits</span> for religious ceremonies across India.
           </Typography>
           
           <Typography 
             sx={{ 
-              fontFamily: FONTS.PRIMARY, 
+              fontFamily: FONTS.OUTFIT, 
               fontWeight: 400, 
-              fontSize: { xs: '16px', md: '24px' }, 
-              color: '#141414', 
-              lineHeight: '130.6%'
+              fontSize: { xs: '14px', md: '16px' }, 
+              color: '#555555', 
+              lineHeight: 1.65
             }}
           >
             From Griha Pravesh and Satyanarayan Puja to weddings and festivals, it offers convenient booking, transparent pricing, regional language support, and reliable spiritual services, making traditional rituals simple, accessible, and stress-free.
