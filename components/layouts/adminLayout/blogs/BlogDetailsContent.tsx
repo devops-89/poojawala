@@ -449,10 +449,16 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
               fontSize: "1.1rem",
             },
             "& a": {
-              color: COLORS.PRIMARY,
+              color: "#FF6200 !important",
               textDecoration: "none",
-              fontWeight: 600,
-              "&:hover": { color: COLORS.PRIMARY_DARK, textDecoration: "none" },
+              fontWeight: 700,
+              "&:hover": { color: "#E65800 !important", textDecoration: "none" },
+              "& strong, & b": {
+                color: "#FF6200 !important",
+              },
+            },
+            "& a strong, & a b": {
+              color: "#FF6200 !important",
             },
             "& strong, & b": {
               fontWeight: 700,
@@ -489,9 +495,9 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                     fontSize: { xs: "1.35rem", sm: "1.6rem" },
                     letterSpacing: "-0.01em",
                     "& a": {
-                      color: "inherit",
+                      color: "#FF6200 !important",
                       textDecoration: "none",
-                      "&:hover": { color: COLORS.PRIMARY_DARK, textDecoration: "none" },
+                      "&:hover": { color: "#E65800 !important", textDecoration: "none" },
                     },
                   }}
                   dangerouslySetInnerHTML={{ __html: secTitle }}
@@ -515,7 +521,14 @@ export default function BlogDetailsContent({ blogId }: BlogDetailsContentProps) 
                       bgcolor: "#FFF8F2",
                       borderRadius: "0 8px 8px 0",
                     },
-                    "& a": { color: COLORS.PRIMARY, textDecoration: "none", "&:hover": { color: COLORS.PRIMARY_DARK, textDecoration: "none" } },
+                    "& a": {
+                      color: "#FF6200 !important",
+                      textDecoration: "none",
+                      fontWeight: 700,
+                      "&:hover": { color: "#E65800 !important", textDecoration: "none" },
+                      "& strong, & b": { color: "#FF6200 !important" },
+                    },
+                    "& a strong, & a b": { color: "#FF6200 !important" },
                   }}
                   dangerouslySetInnerHTML={{ __html: secDesc }}
                 />

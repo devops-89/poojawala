@@ -45,12 +45,12 @@ export const STATIC_BLOGS: StaticBlog[] = [
     content: `
       <p>Choosing a Pandit Ji is not just about arranging someone to perform a puja. It is about finding the right person who understands your traditions, respects your beliefs, and knows how to conduct the rituals properly.</p>
       <p>In Hindu tradition, every puja has a purpose. Whether it is a Griha Pravesh, Satyanarayan Katha, Rudrabhishek, or a simple Ganesh Puja, the importance of the ceremony lies in performing the rituals with devotion and following the appropriate vidhi.</p>
-      <p>However, finding a knowledgeable Pandit Ji at the right time is not always easy. Sometimes, families depend on personal references, while others struggle to find someone familiar with their specific rituals. Today, technology has made this process more convenient. Platforms like <a href="/"><strong>1Pooja</strong></a> help families explore religious services and connect with experienced Pandits for different spiritual occasions.</p>
-      <p>If you are planning a religious ceremony and want to <a href="/services?isOnline=true"><strong>Book verified Pandit Ji online</strong></a>, understanding a few important things before making your decision can help you choose the right person.</p>
+      <p>However, finding a knowledgeable Pandit Ji at the right time is not always easy. Sometimes, families depend on personal references, while others struggle to find someone familiar with their specific rituals. Today, technology has made this process more convenient. Platforms like <a href="/" style="color: #FF6200; font-weight: 700; text-decoration: none;">1Pooja</a> help families explore religious services and connect with experienced Pandits for different spiritual occasions.</p>
+      <p>If you are planning a religious ceremony and want to <a href="/services?isOnline=true" style="color: #FF6200; font-weight: 700; text-decoration: none;">Book verified Pandit Ji online</a>, understanding a few important things before making your decision can help you choose the right person.</p>
     `,
     sections: [
       {
-        title: '<a href="/services?isOnline=true">Book Verified Pandit Ji Online</a> for Trusted Vedic Pooja Services',
+        title: '<a href="/services?isOnline=true" style="color: #FF6200; font-weight: 700; text-decoration: none;">Book Verified Pandit Ji Online</a> for Trusted Vedic Pooja Services',
         description: `
           <p>A Pandit Ji does much more than recite mantras during a religious ceremony. He understands the significance of different rituals, their traditional sequences, and the purpose behind the mantras. For example, Griha Pravesh Puja and Bhoomi Puja are both associated with a new home or property, but their procedures and religious purposes are different.</p>
           <p>An experienced Pandit can guide the family regarding:</p>
@@ -65,7 +65,7 @@ export const STATIC_BLOGS: StaticBlog[] = [
         `,
       },
       {
-        title: 'How to <a href="/services?isOnline=true">Book Verified Pandit Ji Online</a> Through <a href="/">1Pooja</a>?',
+        title: 'How to <a href="/services?isOnline=true" style="color: #FF6200; font-weight: 700; text-decoration: none;">Book Verified Pandit Ji Online</a> Through <a href="/" style="color: #FF6200; font-weight: 700; text-decoration: none;">1Pooja</a>?',
         description: `
           <p>Many families today prefer a convenient way to arrange religious ceremonies without spending days searching for a suitable priest. This is where 1Pooja can help. The platform brings religious services together, allowing devotees to explore Pandit booking options for different occasions. Here is a simple approach to arranging your puja through the platform.</p>
           <ul>
@@ -133,7 +133,7 @@ export const STATIC_BLOGS: StaticBlog[] = [
         title: "Final Thoughts",
         description: `
           <p>A puja becomes more meaningful when it is performed with proper preparation, devotion and an understanding of the rituals involved. Choosing a knowledgeable Pandit Ji helps families follow traditional practices while making everyone feel involved in the ceremony.</p>
-          <p>Rather than rushing into a booking at the last moment, take time to understand your requirements, discuss the puja vidhi and confirm all important arrangements. If you are planning your next religious ceremony, <a href="/services?isOnline=true"><strong>Book verified Pandit Ji online</strong></a> through <a href="/">1Pooja</a> and explore the services available for your spiritual needs.</p>
+          <p>Rather than rushing into a booking at the last moment, take time to understand your requirements, discuss the puja vidhi and confirm all important arrangements. If you are planning your next religious ceremony, <a href="/services?isOnline=true" style="color: #FF6200; font-weight: 700; text-decoration: none;">Book verified Pandit Ji online</a> through <a href="/" style="color: #FF6200; font-weight: 700; text-decoration: none;">1Pooja</a> and explore the services available for your spiritual needs.</p>
         `,
       },
     ],
