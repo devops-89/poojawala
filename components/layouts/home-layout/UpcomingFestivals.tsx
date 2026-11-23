@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml, isCustomerLoggedIn } from "@/utils/helpers";
+import { stripHtml, isCustomerLoggedIn, normalizePoojaText } from "@/utils/helpers";
 
 export default function UpcomingFestivals() {
   const router = useRouter();
@@ -75,9 +75,9 @@ export default function UpcomingFestivals() {
               return {
                 id: item.id,
                 slug: item.slug,
-                title: item.name,
+                title: normalizePoojaText(item.name || ""),
                 date: dateString,
-                description: item.description || "",
+                description: normalizePoojaText(item.description || ""),
                 image:
                   item.iconDownloadurl ||
                   item.iconUrl ||
@@ -140,7 +140,7 @@ export default function UpcomingFestivals() {
 
       <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1 }}>
         {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: 6 }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
           <Typography
             variant="h2"
             component="h2"
@@ -270,7 +270,7 @@ export default function UpcomingFestivals() {
                     sx={{
                       fontFamily: FONTS.OUTFIT,
                       fontWeight: 400,
-                      fontSize: "20px",
+                      fontSize: { xs: "15px", sm: "17px", md: "20px" },
                       lineHeight: "130.6%",
                       color: "rgba(255,255,255,0.8)",
                       fontStyle: "italic",
@@ -300,7 +300,7 @@ export default function UpcomingFestivals() {
                     sx={{
                       fontFamily: FONTS.OUTFIT,
                       fontWeight: 400,
-                      fontSize: "18px",
+                      fontSize: { xs: "13.5px", sm: "15px", md: "18px" },
                       lineHeight: "140%",
                       color: "rgba(255,255,255,0.9)",
                       mb: "16px",

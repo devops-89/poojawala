@@ -11,6 +11,28 @@ export const createSlug = (str: string): string => {
     .replace(/^-+|-+$/g, "");
 };
 
+/**
+ * Normalizes any text (especially from API / DB responses) so that
+ * 'puja' / 'pujas' are standardized to 'pooja' / 'poojas' while preserving casing.
+ */
+export const normalizePoojaText = (text: string): string => {
+  if (!text || typeof text !== "string") return text || "";
+  return text.replace(/\bpujas?(['’]s)?\b/gi, (match) => {
+    const hasApostrophe = /['’]s$/i.test(match);
+    const cleanWord = hasApostrophe ? match.slice(0, -2) : match;
+    const isPlural = cleanWord.toLowerCase().endsWith("s");
+    let result = "";
+    if (cleanWord === cleanWord.toUpperCase()) {
+      result = isPlural ? "POOJAS" : "POOJA";
+    } else if (cleanWord[0] === cleanWord[0].toUpperCase()) {
+      result = isPlural ? "Poojas" : "Pooja";
+    } else {
+      result = isPlural ? "poojas" : "pooja";
+    }
+    return hasApostrophe ? `${result}'s` : result;
+  });
+};
+
 export const extractBackendErrorMessage = (
   error: any,
   fallback = "Something went wrong",

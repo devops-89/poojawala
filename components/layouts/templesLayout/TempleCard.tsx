@@ -9,7 +9,7 @@ import React from "react";
 import { TempleItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml } from "@/utils/helpers";
+import { stripHtml, normalizePoojaText } from "@/utils/helpers";
 
 const FALLBACK_TEMPLE_IMAGE = "/images/home/poojaPackages/satyanarayan.webp";
 
@@ -34,7 +34,7 @@ export default function TempleCard({ temple }: TempleCardProps) {
     .filter(Boolean)
     .join(", ");
 
-  const cleanDescription = stripHtml(temple.description);
+  const cleanDescription = normalizePoojaText(stripHtml(temple.description));
 
   return (
     <Card
@@ -143,7 +143,7 @@ export default function TempleCard({ temple }: TempleCardProps) {
               lineHeight: 1.3,
             }}
           >
-            {temple.name}
+            {normalizePoojaText(temple.name)}
           </Typography>
 
           {/* Single Consolidated Location under Name */}

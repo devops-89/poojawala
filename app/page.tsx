@@ -2,12 +2,12 @@ import { Metadata } from 'next';
 import HeroSection from "@/components/layouts/home-layout/HeroSection";
 import Features from "@/components/layouts/home-layout/Features";
 import PopularPackages from "@/components/layouts/home-layout/PopularPackages";
-import LazyPoojaProcess from "@/components/layouts/home-layout/LazyPoojaProcess";
-import LazyServiceCategories from "@/components/layouts/home-layout/LazyServiceCategories";
-import LazyTemples from "@/components/layouts/home-layout/LazyTemples";
-import LazyUpcomingFestivals from "@/components/layouts/home-layout/LazyUpcomingFestivals";
-import LazyTestimonials from "@/components/layouts/home-layout/LazyTestimonials";
-import LazyWhyPoojawala from "@/components/layouts/home-layout/LazyWhyPoojawala";
+import PoojaProcessSection from "@/components/layouts/home-layout/PoojaProcessSection";
+import ServiceCategoriesSection from "@/components/layouts/home-layout/ServiceCategoriesSection";
+import TemplesSection from "@/components/layouts/home-layout/TemplesSection";
+import UpcomingFestivals from "@/components/layouts/home-layout/UpcomingFestivals";
+import Testimonials from "@/components/layouts/home-layout/Testimonials";
+import WhyPoojawala from "@/components/layouts/home-layout/WhyPoojawala";
 import WelcomeLocationModalTrigger from "@/components/widgets/WelcomeLocationModalTrigger";
 import HomeScrollRestoration from "@/components/widgets/HomeScrollRestoration";
 
@@ -17,12 +17,12 @@ export default function Home() {
       <HeroSection />
       <Features />
       <PopularPackages />
-      <LazyPoojaProcess />
-      <LazyServiceCategories />
-      <LazyTemples />
-      <LazyUpcomingFestivals />
-      <LazyTestimonials />
-      <LazyWhyPoojawala />
+      <PoojaProcessSection />
+      <ServiceCategoriesSection />
+      <TemplesSection />
+      <UpcomingFestivals />
+      <Testimonials />
+      <WhyPoojawala />
       <WelcomeLocationModalTrigger />
       <HomeScrollRestoration />
     </div>

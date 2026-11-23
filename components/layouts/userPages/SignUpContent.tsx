@@ -21,14 +21,13 @@ import {
   STATE_MESSAGE,
 } from "@/utils/helpers";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { Form, Formik, useFormikContext } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FONTS } from "@/utils/fonts";
-import { COLORS } from "@/utils/enums";
 
 const today = new Date();
 const fifteenYearsAgo = new Date(
@@ -357,6 +356,33 @@ export default function SignUpContent() {
         </Button>
       </Box>
 
+      {/* Mobile Top Brand Logo (Hidden on Desktop because desktop card has it on the left) */}
+      <Box
+        component={Link}
+        href="/"
+        sx={{
+          display: { xs: "inline-flex", md: "none" },
+          alignItems: "center",
+          justifyContent: "center",
+          mb: { xs: 2, sm: 2.5 },
+          zIndex: 10,
+          transition: "transform 0.2s ease",
+          "&:hover": { transform: "scale(1.04)" },
+        }}
+      >
+        <Box
+          component="img"
+          src="/images/1Poojalogo.webp"
+          alt="1Pooja Logo"
+          sx={{
+            height: { xs: "52px", sm: "58px" },
+            width: "auto",
+            objectFit: "contain",
+            filter: "drop-shadow(0 3px 12px rgba(0, 0, 0, 0.08))",
+          }}
+        />
+      </Box>
+
       <Container
         maxWidth="lg"
         disableGutters
@@ -508,7 +534,6 @@ export default function SignUpContent() {
                     <SignUpStepperHeader
                       currentStep={currentStep}
                       onStep1Click={handleStepBack}
-                      onStep2Click={handleStep1Next}
                     />
 
                     {/* STEP 1 */}
@@ -593,7 +618,7 @@ export default function SignUpContent() {
         </Box>
       </Container>
 
-      {/* Mobile Back to Sign In (Centered below card, exactly like Login) */}
+      {/* Mobile Back to Website (Centered below card, exactly like Login) */}
       <Box
         sx={{
           display: { xs: "flex", md: "none" },
@@ -607,7 +632,7 @@ export default function SignUpContent() {
       >
         <Button
           component={Link}
-          href={signInHref}
+          href="/"
           startIcon={
             <Box
               sx={{
@@ -656,7 +681,7 @@ export default function SignUpContent() {
             },
           }}
         >
-          Back to Sign In
+          Back to Website
         </Button>
       </Box>
     </Box>

@@ -9,13 +9,12 @@ import { FONTS } from "@/utils/fonts";
 export interface SignUpStepperHeaderProps {
   currentStep: 1 | 2;
   onStep1Click: () => void;
-  onStep2Click: () => void;
+  onStep2Click?: () => void;
 }
 
 export default function SignUpStepperHeader({
   currentStep,
   onStep1Click,
-  onStep2Click,
 }: SignUpStepperHeaderProps) {
   return (
     <Box
@@ -76,14 +75,14 @@ export default function SignUpStepperHeader({
       >
         {/* Step 1 Button */}
         <Box
-          onClick={onStep1Click}
+          onClick={currentStep === 2 ? onStep1Click : undefined}
           sx={{
             flex: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: { xs: 0.5, sm: 0.75 },
-            cursor: "pointer",
+            cursor: currentStep === 2 ? "pointer" : "default",
             py: { xs: 0.65, sm: 0.55 },
             px: { xs: 0.5, sm: 1.2 },
             borderRadius: "9px",
@@ -97,10 +96,12 @@ export default function SignUpStepperHeader({
                 ? "0 3px 10px rgba(255, 98, 0, 0.28)"
                 : "none",
             transition: "all 0.25s ease",
-            "&:hover": {
-              color: currentStep === 1 ? "#ffffff" : "#1F1A17",
-              bgcolor: currentStep === 1 ? undefined : "rgba(255, 235, 220, 0.4)",
-            },
+            ...(currentStep === 2 && {
+              "&:hover": {
+                color: "#1F1A17",
+                bgcolor: "rgba(255, 235, 220, 0.4)",
+              },
+            }),
           }}
         >
           <PersonOutlineOutlinedIcon sx={{ fontSize: { xs: 15, sm: 16 } }} />
@@ -121,16 +122,15 @@ export default function SignUpStepperHeader({
           </Typography>
         </Box>
 
-        {/* Step 2 Button */}
+        {/* Step 2 Button (Non-clickable to skip forward - user must fill Step 1 and click Next) */}
         <Box
-          onClick={onStep2Click}
           sx={{
             flex: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: { xs: 0.5, sm: 0.75 },
-            cursor: "pointer",
+            cursor: "default",
             py: { xs: 0.65, sm: 0.55 },
             px: { xs: 0.5, sm: 1.2 },
             borderRadius: "9px",
@@ -144,10 +144,6 @@ export default function SignUpStepperHeader({
                 ? "0 3px 10px rgba(255, 98, 0, 0.28)"
                 : "none",
             transition: "all 0.25s ease",
-            "&:hover": {
-              color: currentStep === 2 ? "#ffffff" : "#1F1A17",
-              bgcolor: currentStep === 2 ? undefined : "rgba(255, 235, 220, 0.4)",
-            },
           }}
         >
           <LocationOnOutlinedIcon sx={{ fontSize: { xs: 15, sm: 17 } }} />

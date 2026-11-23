@@ -12,10 +12,8 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Checkbox,
   CircularProgress,
   Container,
-  FormControlLabel,
   IconButton,
   InputAdornment,
   Link as MuiLink,
@@ -111,7 +109,7 @@ export default function SignInContent() {
           alignItems: "center",
           justifyContent: "center",
           position: "relative",
-          py: { xs: 4, md: 6 },
+          py: { xs: 2.5, sm: 3.5, md: 6 },
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
@@ -127,11 +125,11 @@ export default function SignInContent() {
             alignItems: "center",
             justifyContent: { xs: "center", md: "space-between" },
             width: "100%",
-            mb: { xs: 3.5, md: 0 },
+            mb: { xs: 2, sm: 2.5, md: 0 },
             zIndex: 10,
           }}
         >
-          {/* Logo: Centered & Much Bigger on Mobile; Left-aligned on Desktop */}
+          {/* Logo: Centered on Mobile; Left-aligned on Desktop */}
           <Box
             component={Link}
             href="/"
@@ -149,7 +147,7 @@ export default function SignInContent() {
               src="/images/1Poojalogo.webp"
               alt="1Pooja Logo"
               sx={{
-                height: { xs: "72px", sm: "76px", md: "52px" },
+                height: { xs: "52px", sm: "58px", md: "52px" },
                 width: "auto",
                 objectFit: "contain",
                 filter: "drop-shadow(0 3px 12px rgba(0, 0, 0, 0.08))",
@@ -290,7 +288,7 @@ export default function SignInContent() {
               </Typography>
 
               <Formik
-                initialValues={{ email: "", password: "", rememberMe: false }}
+                initialValues={{ email: "", password: "" }}
                 validationSchema={validationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
                   try {
@@ -682,41 +680,16 @@ export default function SignInContent() {
                       </Field>
                     </Box>
 
-                    {/* Remember me & Forgot Password */}
+                    {/* Forgot Password */}
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between",
+                        justifyContent: "flex-end",
                         alignItems: "center",
                         mt: 1,
                         mb: 3,
                       }}
                     >
-                      <FormControlLabel
-                        control={
-                          <Field
-                            as={Checkbox}
-                            name="rememberMe"
-                            size="small"
-                            sx={{
-                              color: "#D1D5DB",
-                              "&.Mui-checked": { color: COLORS.PRIMARY },
-                            }}
-                          />
-                        }
-                        label={
-                          <Typography
-                            sx={{
-                              fontFamily: FONTS.OUTFIT_ONLY,
-                              fontSize: "13.5px",
-                              color: "#4B5563",
-                              userSelect: "none",
-                            }}
-                          >
-                            Remember me
-                          </Typography>
-                        }
-                      />
                       <MuiLink
                         component={Link}
                         href="/forgot-password?redirect=/sign-in"
@@ -798,7 +771,7 @@ export default function SignInContent() {
                     fontSize: "14px",
                   }}
                 >
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link
                     href={
                       redirectParam
@@ -989,7 +962,7 @@ export default function SignInContent() {
             display: { xs: "flex", md: "none" },
             justifyContent: "center",
             width: "100%",
-            mt: 3,
+            mt: { xs: 2, sm: 2.5, md: 3 },
             position: "relative",
             zIndex: 2,
           }}

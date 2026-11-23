@@ -2,6 +2,10 @@
 import { Box, Button, Container, Grid, IconButton, Paper, TextField, Typography } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SendIcon from '@mui/icons-material/Send';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import { socialLinks } from '@/components/widgets/Footer';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -47,88 +51,303 @@ const validationSchema = Yup.object().shape({
     .required('Message is required'),
 });
 
+const fieldSx = {
+  '& .MuiOutlinedInput-root': {
+    fontFamily: FONTS.OUTFIT,
+    borderRadius: '12px',
+    backgroundColor: '#FFFFFF',
+    fontSize: { xs: '14px', sm: '15px' },
+    '& fieldset': {
+      borderColor: '#E2E8F0',
+      borderWidth: '1.5px',
+    },
+    '&:hover fieldset': {
+      borderColor: '#CBD5E1',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: COLORS.PRIMARY,
+    },
+  },
+  '& .MuiInputLabel-root': {
+    fontFamily: FONTS.OUTFIT,
+    fontSize: { xs: '13.5px', sm: '14.5px' },
+    color: '#64748B',
+    '&.Mui-focused': {
+      color: COLORS.PRIMARY,
+    },
+  },
+  '& .MuiFormHelperText-root': {
+    fontFamily: FONTS.OUTFIT,
+    fontSize: '11.5px',
+  },
+};
+
 export default function ContactContent() {
   const [success, setSuccess] = useState(false);
   const { showSnackbar } = useSnackbarStore();
 
   return (
     <Box sx={{ bgcolor: '#FFFDF9', minHeight: '100vh', position: 'relative' }}>
-      
       {/* Hero Header */}
       <Box
         sx={{
-          pt: 12,
-          pb: 8,
+          pt: { xs: 5, sm: 6, md: 7 },
+          pb: { xs: 4, sm: 5, md: 6 },
           background: 'linear-gradient(135deg, #FF6200 0%, #FF9100 100%)',
           color: 'white',
           textAlign: 'center',
-          position: 'relative'
+          position: 'relative',
+          px: 2,
         }}
       >
-        <Typography variant="h2" component="h1" sx={{ fontFamily: FONTS.DM_SANS, fontWeight: 800, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
+        <Typography
+          variant="h1"
+          component="h1"
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            mb: { xs: 1, sm: 1.5 },
+            fontSize: { xs: '1.85rem', sm: '2.4rem', md: '3.2rem' },
+            lineHeight: 1.2,
+            letterSpacing: '-0.02em',
+          }}
+        >
           Get in Touch
         </Typography>
-        <Typography sx={{ fontFamily: FONTS.DM_SANS, fontSize: '18px', opacity: 0.9, maxWidth: '600px', mx: 'auto', px: 2 }}>
-          Have questions about our puja packages, purohits, or anything else? We'd love to hear from you.
+
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontSize: { xs: '13.5px', sm: '15.5px', md: '16.5px' },
+            fontWeight: 500,
+            opacity: 0.95,
+            maxWidth: '560px',
+            mx: 'auto',
+            lineHeight: 1.6,
+          }}
+        >
+          Have questions about our pooja packages, purohits, or sacred rituals? We'd love to hear from you.
         </Typography>
       </Box>
 
       {/* Main Content Area */}
-      <Container maxWidth="lg" sx={{ position: 'relative', mt: 4, mb: 10, zIndex: 2 }}>
-        <Paper 
-          sx={{ 
-            borderRadius: '24px', 
-            overflow: 'hidden', 
+      <Container
+        maxWidth="lg"
+        sx={{
+          position: 'relative',
+          mt: { xs: 3.5, sm: 4, md: 5 },
+          mb: { xs: 6, sm: 8, md: 10 },
+          px: { xs: 2, sm: 3 },
+          zIndex: 2,
+        }}
+      >
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: { xs: '20px', sm: '24px' },
+            overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
+            border: '1.5px solid #F1E5D8',
             display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' }
+            flexDirection: { xs: 'column', md: 'row' },
+            bgcolor: '#FFFFFF',
           }}
         >
           {/* Contact Details (Left Column) */}
-          <Box sx={{ flex: 1, bgcolor: '#FFF0E6', p: { xs: 4, md: 6 } }}>
-            <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 4 }}>
-              Contact Information
-            </Typography>
-            
-            <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'flex-start' }}>
-              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
-                <EmailIcon />
-              </Box>
-              <Box>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Email</Typography>
-                <Typography
-                  component="a"
-                  href="mailto:info@1pooja.com"
+          <Box
+            sx={{
+              flex: { md: 1 },
+              width: { xs: '100%', md: '38%' },
+              bgcolor: '#FFF7F0',
+              p: { xs: 2.8, sm: 3.5, md: 5 },
+              borderRight: { md: '1.5px solid #F1E5D8' },
+              borderBottom: { xs: '1.5px solid #F1E5D8', md: 'none' },
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Typography
+                variant="h2"
+                component="h2"
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  color: '#1A0B05',
+                  fontSize: { xs: '19px', sm: '22px' },
+                  mb: 1,
+                  lineHeight: 1.25,
+                }}
+              >
+                Contact Information
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  color: '#64748B',
+                  fontSize: { xs: '13px', sm: '14px' },
+                  lineHeight: 1.5,
+                  mb: { xs: 3, sm: 4 },
+                }}
+              >
+                Reach out to our devotee care team anytime for assistance with bookings and ceremonies.
+              </Typography>
+
+              {/* Email */}
+              <Box sx={{ display: 'flex', gap: 1.8, mb: 3, alignItems: 'flex-start' }}>
+                <Box
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
-                    fontWeight: 600,
-                    color: COLORS.CHARCOAL_DARK,
-                    fontSize: '16px',
-                    textDecoration: 'none',
-                    display: 'block',
-                    '&:hover': { color: COLORS.PRIMARY }
+                    bgcolor: '#FFFFFF',
+                    p: 1.2,
+                    borderRadius: '12px',
+                    color: COLORS.PRIMARY,
+                    display: 'flex',
+                    boxShadow: '0 2px 10px rgba(255, 98, 0, 0.1)',
+                    border: '1px solid #FFE4D6',
+                    flexShrink: 0,
                   }}
                 >
-                  info@1pooja.com
-                </Typography>
+                  <EmailIcon sx={{ fontSize: 20 }} />
+                </Box>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      color: '#94A3B8',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.6px',
+                      mb: 0.3,
+                    }}
+                  >
+                    Email
+                  </Typography>
+                  <Typography
+                    component="a"
+                    href="mailto:info@1pooja.com"
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 700,
+                      color: '#1E293B',
+                      fontSize: { xs: '14.5px', sm: '15.5px' },
+                      textDecoration: 'none',
+                      wordBreak: 'break-word',
+                      transition: 'color 0.2s ease',
+                      '&:hover': { color: COLORS.PRIMARY },
+                    }}
+                  >
+                    info@1pooja.com
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Office Address */}
+              <Box sx={{ display: 'flex', gap: 1.8, mb: 3, alignItems: 'flex-start' }}>
+                <Box
+                  sx={{
+                    bgcolor: '#FFFFFF',
+                    p: 1.2,
+                    borderRadius: '12px',
+                    color: COLORS.PRIMARY,
+                    display: 'flex',
+                    boxShadow: '0 2px 10px rgba(255, 98, 0, 0.1)',
+                    border: '1px solid #FFE4D6',
+                    flexShrink: 0,
+                  }}
+                >
+                  <LocationOnIcon sx={{ fontSize: 20 }} />
+                </Box>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      color: '#94A3B8',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.6px',
+                      mb: 0.3,
+                    }}
+                  >
+                    Office Address
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 600,
+                      color: '#1E293B',
+                      fontSize: { xs: '13.5px', sm: '14.5px' },
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    123, Devotion Tower,<br />Sector 4, New Delhi - 110001
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Working Hours */}
+              <Box sx={{ display: 'flex', gap: 1.8, mb: 3, alignItems: 'flex-start' }}>
+                <Box
+                  sx={{
+                    bgcolor: '#FFFFFF',
+                    p: 1.2,
+                    borderRadius: '12px',
+                    color: COLORS.PRIMARY,
+                    display: 'flex',
+                    boxShadow: '0 2px 10px rgba(255, 98, 0, 0.1)',
+                    border: '1px solid #FFE4D6',
+                    flexShrink: 0,
+                  }}
+                >
+                  <AccessTimeIcon sx={{ fontSize: 20 }} />
+                </Box>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      color: '#94A3B8',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.6px',
+                      mb: 0.3,
+                    }}
+                  >
+                    Support Hours
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 600,
+                      color: '#1E293B',
+                      fontSize: { xs: '13.5px', sm: '14.5px' },
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Mon – Sun: 9:00 AM – 8:00 PM IST
+                  </Typography>
+                </Box>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', mb: 4 }}>
-              <Box sx={{ bgcolor: 'white', p: 1.5, borderRadius: '50%', color: COLORS.PRIMARY, display: 'flex' }}>
-                <LocationOnIcon />
-              </Box>
-              <Box>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 0.5 }}>Office Address</Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.CHARCOAL_DARK, fontSize: '16px' }}>123, Devotion Tower,<br/>Sector 4, New Delhi - 110001</Typography>
-              </Box>
-            </Box>
-
-            <Box sx={{ pt: 3, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px', mb: 2, fontWeight: 600 }}>
+            {/* Social Links */}
+            <Box sx={{ pt: 2.5, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  color: '#64748B',
+                  fontSize: '12px',
+                  mb: 1.5,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.6px',
+                }}
+              >
                 Follow Us
               </Typography>
-              <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {socialLinks.map(({ icon: Icon, href, label }) => (
                   <IconButton
                     key={label}
@@ -138,20 +357,22 @@ export default function ContactContent() {
                     rel="noopener noreferrer"
                     aria-label={label}
                     sx={{
-                      bgcolor: 'white',
-                      p: 1.2,
+                      bgcolor: '#FFFFFF',
+                      p: 1,
                       borderRadius: '50%',
-                      color: COLORS.CHARCOAL_DARK,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      color: '#475569',
+                      border: '1px solid #FFE4D6',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
                       transition: 'all 0.2s ease',
                       '&:hover': {
                         bgcolor: COLORS.PRIMARY,
-                        color: 'white',
+                        color: '#FFFFFF',
+                        borderColor: COLORS.PRIMARY,
                         transform: 'translateY(-2px)',
                       },
                     }}
                   >
-                    <Icon sx={{ fontSize: '20px' }} />
+                    <Icon sx={{ fontSize: '18px' }} />
                   </IconButton>
                 ))}
               </Box>
@@ -159,29 +380,114 @@ export default function ContactContent() {
           </Box>
 
           {/* Contact Form (Right Column) */}
-          <Box sx={{ flex: 1.5, bgcolor: '#ffffff', p: { xs: 4, md: 6 } }}>
+          <Box
+            sx={{
+              flex: { md: 1.6 },
+              width: { xs: '100%', md: '62%' },
+              bgcolor: '#FFFFFF',
+              p: { xs: 2.8, sm: 4, md: 5 },
+            }}
+          >
             {success ? (
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                <Box component="img" src="/images/home/poojaPackages/dhanush.svg" sx={{ width: '120px', mb: 3 }} />
-                <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 1 }}>
-                  Message Sent!
+              <Box
+                sx={{
+                  minHeight: { xs: '320px', md: '420px' },
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  py: 4,
+                  px: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    bgcolor: '#ECFDF5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 2,
+                  }}
+                >
+                  <CheckCircleOutlinedIcon sx={{ fontSize: '36px', color: '#10B981' }} />
+                </Box>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    color: '#1A0B05',
+                    fontSize: { xs: '20px', sm: '24px' },
+                    mb: 1,
+                  }}
+                >
+                  Message Sent Successfully!
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED }}>
-                  Thank you for reaching out. Our team will get back to you shortly.
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    color: '#64748B',
+                    fontSize: { xs: '14px', sm: '15px' },
+                    maxWidth: '420px',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Thank you for reaching out to 1Pooja. Our devotee care team has received your message and will get back to you shortly.
                 </Typography>
-                <Button 
+                <Button
                   onClick={() => setSuccess(false)}
-                  sx={{ mt: 4, color: COLORS.PRIMARY, fontWeight: 600, textTransform: 'none' }}
+                  startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    mt: 3.5,
+                    color: COLORS.PRIMARY,
+                    fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
+                    textTransform: 'none',
+                    fontSize: '14px',
+                    borderRadius: '20px',
+                    px: 2.5,
+                    py: 0.8,
+                    border: '1px solid #FFD0B8',
+                    bgcolor: '#FFF7F0',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      bgcolor: '#FFE4D6',
+                      borderColor: COLORS.PRIMARY,
+                    },
+                  }}
                 >
                   Send another message
                 </Button>
               </Box>
             ) : (
               <Box>
-                <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.CHARCOAL_DARK, mb: 1 }}>
+                <Typography
+                  variant="h2"
+                  component="h2"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    color: '#1A0B05',
+                    fontSize: { xs: '19px', sm: '22px' },
+                    mb: 0.6,
+                    lineHeight: 1.25,
+                  }}
+                >
                   Send a Message
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, mb: 4 }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    color: '#64748B',
+                    fontSize: { xs: '13px', sm: '14px' },
+                    mb: { xs: 3, sm: 3.5 },
+                    lineHeight: 1.5,
+                  }}
+                >
                   Fill out the form below and we will get back to you as soon as possible.
                 </Typography>
 
@@ -196,7 +502,7 @@ export default function ContactContent() {
                         subject: values.subject,
                         message: values.message,
                       });
-                      
+
                       if (response.success) {
                         setSuccess(true);
                         showSnackbar('Message sent successfully!', 'success');
@@ -215,39 +521,47 @@ export default function ContactContent() {
                     <Box
                       component={Form}
                       onKeyDown={(e: React.KeyboardEvent) => {
-                        if (e.key === "Enter") {
+                        if (e.key === 'Enter') {
                           const target = e.target as HTMLElement;
-                          if (target.tagName?.toLowerCase() === "textarea") return;
+                          if (target.tagName?.toLowerCase() === 'textarea') return;
                           e.preventDefault();
                           submitForm();
                         }
                       }}
                     >
                       <FormikValidationSnackbar />
-                      <Grid container spacing={3}>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                          <Field 
-                            as={TextField} name="name" fullWidth label="Full Name" variant="outlined"
-                            error={touched.name && !!errors.name} helperText={touched.name && errors.name}
-                            sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
-                          />
+                      <Grid container spacing={{ xs: 2, sm: 2.5 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Field name="name">
+                            {({ field, meta }: any) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Full Name *"
+                                variant="outlined"
+                                error={meta.touched && !!meta.error}
+                                helperText={meta.touched && meta.error}
+                                sx={fieldSx}
+                              />
+                            )}
+                          </Field>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 6 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                           <Field name="email">
                             {({ field, form, meta }: any) => (
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Email Address"
+                                label="Email Address *"
                                 variant="outlined"
                                 type="email"
                                 onKeyDown={allowOnlyEmailCharsOnKeyDown}
                                 onChange={(e) => {
-                                  form.setFieldValue("email", sanitizeEmailInput(e.target.value));
+                                  form.setFieldValue('email', sanitizeEmailInput(e.target.value));
                                 }}
                                 error={meta.touched && !!meta.error}
                                 helperText={meta.touched && meta.error}
-                                sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
+                                sx={fieldSx}
                               />
                             )}
                           </Field>
@@ -258,15 +572,15 @@ export default function ContactContent() {
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Subject"
+                                label="Subject *"
                                 variant="outlined"
                                 onKeyDown={allowOnlyTitleCharsOnKeyDown}
                                 onChange={(e) => {
-                                  form.setFieldValue("subject", sanitizeTitleInput(e.target.value));
+                                  form.setFieldValue('subject', sanitizeTitleInput(e.target.value));
                                 }}
                                 error={meta.touched && !!meta.error}
                                 helperText={meta.touched && meta.error}
-                                sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
+                                sx={fieldSx}
                               />
                             )}
                           </Field>
@@ -277,39 +591,51 @@ export default function ContactContent() {
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Your Message"
+                                label="Your Message *"
                                 variant="outlined"
                                 multiline
                                 rows={4}
                                 onKeyDown={allowOnlyDescriptionCharsOnKeyDown}
                                 onChange={(e) => {
-                                  form.setFieldValue("message", sanitizeDescriptionInput(e.target.value));
+                                  form.setFieldValue('message', sanitizeDescriptionInput(e.target.value));
                                 }}
                                 error={meta.touched && !!meta.error}
                                 helperText={meta.touched && meta.error}
-                                sx={{ '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY }, '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY } }}
+                                sx={fieldSx}
                               />
                             )}
                           </Field>
                         </Grid>
                       </Grid>
 
-                      <Button 
+                      <Button
                         type="submit"
                         disabled={isSubmitting}
-                        variant="contained" 
+                        variant="contained"
+                        endIcon={<SendIcon sx={{ fontSize: 17 }} />}
                         sx={{
-                          mt: 4,
-                          background: COLORS.PRIMARY,
-                          color: 'white',
-                          py: 1.5,
-                          px: 5,
+                          mt: { xs: 3, sm: 3.5 },
+                          background: 'linear-gradient(135deg, #FF6200 0%, #E64A00 100%)',
+                          color: '#FFFFFF',
+                          py: { xs: 1.3, sm: 1.4 },
+                          px: { xs: 3.5, sm: 5 },
+                          width: { xs: '100%', sm: 'auto' },
                           borderRadius: '31px',
                           textTransform: 'none',
                           fontWeight: 700,
-                          fontSize: '16px',
-                          boxShadow: '0 8px 20px rgba(255, 98, 0, 0.3)',
-                          '&:hover': { background: COLORS.PRIMARY_HOVER, boxShadow: '0 8px 25px rgba(255, 98, 0, 0.4)' }
+                          fontSize: { xs: '14.5px', sm: '15px' },
+                          fontFamily: FONTS.OUTFIT,
+                          boxShadow: '0 6px 18px rgba(255, 98, 0, 0.28)',
+                          transition: 'all 0.25s ease',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #E65500 0%, #CC3E00 100%)',
+                            boxShadow: '0 8px 24px rgba(255, 98, 0, 0.4)',
+                            transform: 'translateY(-1px)',
+                          },
+                          '&:disabled': {
+                            background: '#E2E8F0',
+                            color: '#94A3B8',
+                          },
                         }}
                       >
                         {isSubmitting ? 'Sending...' : 'Send Message'}

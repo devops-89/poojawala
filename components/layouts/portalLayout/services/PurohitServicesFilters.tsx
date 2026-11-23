@@ -62,7 +62,7 @@ export default function PurohitServicesFilters({
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search pujas or services..."
+          placeholder="Search poojas or services..."
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
           slotProps={{

@@ -12,7 +12,7 @@ export default function SignUpPage() {
 
 export const metadata: Metadata = {
   title: 'Sign Up | 1Pooja',
-  description: 'Create a 1Pooja account to easily book experienced Pandits, track your puja history, and experience hassle-free divine services.',
+  description: 'Create a 1Pooja account to easily book experienced Pandits, track your pooja history, and experience hassle-free divine services.',
   alternates: {
     canonical: '/sign-up',
   },

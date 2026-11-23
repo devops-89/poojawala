@@ -319,7 +319,7 @@ export default function BlogForm({
                 fullWidth
                 label="Blog Title *"
                 name="title"
-                placeholder="e.g., Complete Satyanarayan Puja Vidhi: Samagri and Procedure"
+                placeholder="e.g., Complete Satyanarayan Pooja Vidhi: Samagri and Procedure"
                 value={formik.values.title}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -381,7 +381,7 @@ export default function BlogForm({
                 fullWidth
                 label="Category *"
                 name="category"
-                placeholder="e.g., Puja & Rituals / Festivals"
+                placeholder="e.g., Pooja & Rituals / Festivals"
                 value={formik.values.category}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -659,7 +659,7 @@ export default function BlogForm({
                     color: "#64748b",
                   }}
                 >
-                  Add structured sections such as Required Samagri, Puja
+                  Add structured sections such as Required Samagri, Pooja
                   Procedure, Katha, Prasad & Aarti, Guidelines etc.
                 </Typography>
               </Box>
@@ -699,7 +699,7 @@ export default function BlogForm({
                   }}
                 >
                   No custom sections added yet. Click &quot;Add Section&quot; to
-                  add structured Puja Vidhi sections.
+                  add structured Pooja Vidhi sections.
                 </Typography>
               </Box>
             ) : (
@@ -752,7 +752,7 @@ export default function BlogForm({
                           fullWidth
                           size="small"
                           label="Section Title *"
-                          placeholder="e.g., Required Samagri / Puja Procedure"
+                          placeholder="e.g., Required Samagri / Pooja Procedure"
                           value={sec.heading || sec.title || ""}
                           onChange={(e) =>
                             handleSectionChange(idx, "heading", e.target.value)
@@ -817,7 +817,7 @@ export default function BlogForm({
                   fullWidth
                   label="Meta Title (SEO)"
                   name="metaTitle"
-                  placeholder="e.g., Diwali Lakshmi Puja Vidhi: Samagri, Procedure and Auspicious Muhurat"
+                  placeholder="e.g., Diwali Lakshmi Pooja Vidhi: Samagri, Procedure and Auspicious Muhurat"
                   value={formik.values.metaTitle || ""}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -839,7 +839,7 @@ export default function BlogForm({
                   rows={3}
                   label="Meta Description (SEO)"
                   name="metaDescription"
-                  placeholder="e.g., Complete guide to performing Diwali Lakshmi Puja at home. Step-by-step vidhi, samagri list, muhurat, and rituals."
+                  placeholder="e.g., Complete guide to performing Diwali Lakshmi Pooja at home. Step-by-step vidhi, samagri list, muhurat, and rituals."
                   value={formik.values.metaDescription || ""}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}

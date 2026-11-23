@@ -1,6 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange, isCustomerLoggedIn } from "@/utils/helpers";
+import { formatServicePriceRange, isCustomerLoggedIn, normalizePoojaText } from "@/utils/helpers";
 import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 
 import { getServiceByIdAPI } from "@/api/serviceControllers";
@@ -55,18 +55,20 @@ export default function WebsiteServiceDetailsContent() {
           setService(rawData);
           setErrorMessage(null);
           if (typeof document !== "undefined") {
-            const seoTitle =
+            const seoTitle = normalizePoojaText(
               (rawData.metaTitle && rawData.metaTitle.trim()) ||
-              (rawData.name ? `${rawData.name} | 1Pooja` : "Service Details | 1Pooja");
+              (rawData.name ? `${rawData.name} | 1Pooja` : "Service Details | 1Pooja")
+            );
             document.title = seoTitle;
 
-            const seoDesc =
+            const seoDesc = normalizePoojaText(
               (rawData.metaDescription && rawData.metaDescription.trim()) ||
               (rawData.description || rawData.shortDescription
                 ? String(rawData.shortDescription || rawData.description)
                     .replace(/<[^>]*>?/gm, "")
                     .slice(0, 160)
-                : "");
+                : "")
+            );
             if (seoDesc) {
               let metaDescTag = document.querySelector('meta[name="description"]');
               if (!metaDescTag) {
@@ -253,7 +255,7 @@ export default function WebsiteServiceDetailsContent() {
     DEFAULT_BANNER;
 
   return (
-    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: 8, pt: 4 }}>
+    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 6, md: 8 }, pt: { xs: 2, md: 4 }, overflowX: "hidden" }}>
       <Container maxWidth="lg">
         {/* Dedicated Website Service Hero Section */}
         <WebsiteServiceDetailsHero
@@ -269,7 +271,7 @@ export default function WebsiteServiceDetailsContent() {
         {/* Dynamic About & Benefits Section */}
         <WebsiteServiceAboutSection service={service} />
 
-        {/* Dynamic Puja Packages Plans Section */}
+        {/* Dynamic Pooja Packages Plans Section */}
         <Box id="puja-plans-section">
           <WebsiteServicePlansSection service={service} />
         </Box>

@@ -13,7 +13,7 @@ export default function RegisterHeader() {
       sx={{
         pt: { xs: 2, md: 3 },
         pb: { xs: 1, md: 1.5 },
-        px: { xs: 2.5, sm: 4, md: 6 },
+        px: { xs: 1.5, sm: 3, md: 6 },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -32,7 +32,7 @@ export default function RegisterHeader() {
           component="img"
           src="/images/1Poojalogo.webp"
           alt="1Pooja"
-          sx={{ height: { xs: '32px', md: '42px' }, objectFit: 'contain' }}
+          sx={{ height: { xs: '30px', sm: '36px', md: '42px' }, objectFit: 'contain' }}
         />
       </MuiLink>
 
@@ -42,10 +42,11 @@ export default function RegisterHeader() {
           color: '#334155',
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          fontSize: { xs: '14px', md: '18px' },
+          fontSize: { xs: '13px', sm: '15px', md: '18px' },
           letterSpacing: '-0.01em',
           display: 'block',
           m: 0,
+          textAlign: 'center',
         }}
       >
         Partner Onboarding
@@ -54,7 +55,7 @@ export default function RegisterHeader() {
       <Button
         component={NextLink}
         href="/"
-        startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+        startIcon={<ArrowBackIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
         sx={{
           bgcolor: 'rgba(255, 255, 255, 0.85)',
           backdropFilter: 'blur(8px)',
@@ -62,12 +63,13 @@ export default function RegisterHeader() {
           border: '1px solid rgba(255, 255, 255, 0.9)',
           boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
           borderRadius: '50px',
-          px: { xs: 2, md: 2.5 },
-          py: 0.8,
+          px: { xs: 1.5, sm: 2, md: 2.5 },
+          py: { xs: 0.6, md: 0.8 },
           fontFamily: FONTS.OUTFIT,
           fontWeight: 600,
-          fontSize: { xs: '0.8rem', md: '0.85rem' },
+          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
           textTransform: 'none',
+          whiteSpace: 'nowrap',
           transition: 'all 0.2s ease-in-out',
           '&:hover': {
             bgcolor: '#FFFFFF',
@@ -77,7 +79,7 @@ export default function RegisterHeader() {
           },
         }}
       >
-        Go to Website
+        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Go to </Box>Website
       </Button>
     </Box>
   );

@@ -49,7 +49,7 @@ export default function HeroSection() {
             style={{ fontFamily: FONTS.OUTFIT }}
             className="text-[#F1F5F9] font-medium text-sm sm:text-[15px] md:text-base leading-relaxed max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] mb-6 sm:mb-8"
           >
-            Book verified Pandits for Puja, Astrology, and Vastu — at home, at a
+            Book verified Pandits for Pooja, Astrology, and Vastu — at home, at a
             temple, or online — in under 5 minutes.
           </p>
 

@@ -25,7 +25,7 @@ export default function CustomerTempleCard({ temple }: CustomerTempleCardProps) 
     }
   };
 
-  const handleBookPujaClick = (e: React.MouseEvent) => {
+  const handleBookPoojaClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (temple?.id || temple?.slug) {
       router.push(`/customer/temple/${temple.slug || temple.id}#temple-services-section`);
@@ -214,7 +214,7 @@ export default function CustomerTempleCard({ temple }: CustomerTempleCardProps) 
 
             <Button
               variant="outlined"
-              onClick={handleBookPujaClick}
+              onClick={handleBookPoojaClick}
               startIcon={<AutoAwesomeIcon sx={{ fontSize: "16px !important" }} />}
               sx={{
                 color: COLORS.PRIMARY,

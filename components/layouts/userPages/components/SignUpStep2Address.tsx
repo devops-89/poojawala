@@ -215,7 +215,12 @@ export default function SignUpStep2Address({
             whiteSpace: "nowrap",
           }}
         >
-          Delivery Location & Address
+          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+            Delivery Location & Address
+          </Box>
+          <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+            Delivery Address
+          </Box>
         </Typography>
 
         <AddressLocationButton
@@ -434,24 +439,31 @@ export default function SignUpStep2Address({
       />
 
       {/* Action Buttons */}
-      <Grid container spacing={1.5} sx={{ mt: 0.75 }}>
-        <Grid size={{ xs: 12, sm: 6 }}>
+      <Grid container spacing={1.25} sx={{ mt: 0.75 }}>
+        <Grid size={{ xs: 4.5, sm: 6 }}>
           <Button
             type="button"
             fullWidth
             onClick={onBack}
             variant="outlined"
-            startIcon={<ArrowBackIcon fontSize="small" />}
+            startIcon={
+              <ArrowBackIcon
+                fontSize="small"
+                sx={{ mr: { xs: -0.5, sm: 0 }, fontSize: { xs: 15, sm: 18 } }}
+              />
+            }
             sx={{
-              py: 0.85,
+              py: { xs: 0.9, sm: 0.85 },
+              px: { xs: 1, sm: 2 },
               borderRadius: "10px",
               borderColor: "rgba(220, 205, 190, 0.8)",
               color: "#4B5563",
               bgcolor: "#FFFFFF",
               fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
-              fontSize: "13.5px",
+              fontSize: { xs: "12.5px", sm: "13.5px" },
               textTransform: "none",
+              whiteSpace: "nowrap",
               transition: "all 0.2s ease",
               "&:hover": {
                 bgcolor: "rgba(255, 240, 230, 0.5)",
@@ -460,11 +472,16 @@ export default function SignUpStep2Address({
               },
             }}
           >
-            Back to Step 1
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              Back to Step 1
+            </Box>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+              Back
+            </Box>
           </Button>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 7.5, sm: 6 }}>
           <Button
             type="submit"
             fullWidth
@@ -475,18 +492,19 @@ export default function SignUpStep2Address({
               isSubmitting ? (
                 <CircularProgress size={16} color="inherit" />
               ) : (
-                <CheckCircleIcon sx={{ fontSize: 17 }} />
+                <CheckCircleIcon sx={{ fontSize: { xs: 16, sm: 17 } }} />
               )
             }
             sx={{
               background: "linear-gradient(135deg, #FF6200 0%, #FF7A1A 100%)",
               color: "white",
-              py: 0.85,
+              py: { xs: 0.9, sm: 0.85 },
               borderRadius: "10px",
               textTransform: "none",
               fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: "13.5px",
+              fontSize: { xs: "13px", sm: "13.5px" },
+              whiteSpace: "nowrap",
               boxShadow: "0 4px 12px rgba(255, 98, 0, 0.28)",
               transition: "all 0.25s ease",
               "&:hover": {
@@ -496,7 +514,7 @@ export default function SignUpStep2Address({
               },
             }}
           >
-            {isSubmitting ? "Sending OTP..." : "Send OTP"}
+            {isSubmitting ? "Sending..." : "Send OTP"}
           </Button>
         </Grid>
       </Grid>

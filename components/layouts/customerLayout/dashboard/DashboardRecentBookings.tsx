@@ -83,7 +83,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1e293b', fontSize: '1.2rem' }}>
-                      {row.service?.name || 'Puja Service'}
+                      {row.service?.name || 'Pooja Service'}
                     </Typography>
                     {(() => {
                       const statusStyle = getStatusColor(row.status);

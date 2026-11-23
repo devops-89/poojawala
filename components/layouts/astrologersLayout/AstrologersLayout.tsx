@@ -58,7 +58,7 @@ export default function AstrologersLayout() {
             <Typography
               component="h1"
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: '#FFFFFF',
                 mb: { xs: 1.5, md: 2.5 },
@@ -84,10 +84,10 @@ export default function AstrologersLayout() {
             <Typography
               variant="body1"
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 color: '#F1F5F9',
                 fontWeight: 500,
-                fontSize: { xs: '14.5px', sm: '15px', md: '16px' },
+                fontSize: { xs: '14px', sm: '15px', md: '16px' },
                 lineHeight: 1.6,
                 maxWidth: '520px',
                 letterSpacing: '0em',

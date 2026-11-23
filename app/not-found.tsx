@@ -172,7 +172,7 @@ export default function NotFound() {
               },
             }}
           >
-            Explore Pujas
+            Explore Poojas
           </Button>
 
           <Button

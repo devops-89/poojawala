@@ -20,6 +20,7 @@ import {
   Step,
   StepLabel,
   Stepper,
+  Typography,
 } from "@mui/material";
 import { useFormik, yupToFormErrors } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -621,65 +622,6 @@ export default function PortalRegisterContent() {
 
   const handleBack = () => {
     setActiveStep((prev) => Math.max(0, prev - 1));
-
-  };
-
-  const handleStepClick = async (targetIndex: number) => {
-    if (targetIndex === activeStep) return;
-
-    // Going backward
-    if (targetIndex < activeStep) {
-      setActiveStep(targetIndex);
-      return;
-    }
-
-    // Going forward - validate current step first
-    const errors = await formik.validateForm();
-    if (Object.keys(errors).length > 0) {
-      const touchedObj: any = {};
-      const markTouched = (obj: any, prefix = "") => {
-        Object.keys(obj).forEach((key) => {
-          const fieldPath = prefix ? `${prefix}.${key}` : key;
-          if (
-            typeof obj[key] === "object" &&
-            obj[key] !== null &&
-            !Array.isArray(obj[key])
-          ) {
-            markTouched(obj[key], fieldPath);
-          } else {
-            touchedObj[fieldPath] = true;
-          }
-        });
-      };
-      markTouched(errors);
-      formik.setTouched(touchedObj);
-
-      const extractErrors = (obj: any): string[] => {
-        let msgs: string[] = [];
-        Object.values(obj).forEach((val: any) => {
-          if (typeof val === "string") {
-            msgs.push(val);
-          } else if (typeof val === "object" && val !== null) {
-            msgs = msgs.concat(extractErrors(val));
-          }
-        });
-        return msgs;
-      };
-
-      const errorMsgs = extractErrors(errors);
-      showSnackbar(
-        errorMsgs[0] || "Please fill in mandatory fields in current step",
-        "error",
-      );
-      return;
-    }
-
-    // Moving forward
-    if (targetIndex === 1 && isOtpVerified) {
-      setActiveStep(2);
-    } else {
-      setActiveStep(targetIndex);
-    }
   };
 
   const handleStepSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -747,12 +689,12 @@ export default function PortalRegisterContent() {
     >
       <RegisterHeader />
 
-      <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 }, flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Container maxWidth="md" sx={{ py: { xs: 2.5, md: 6 }, px: { xs: 1.5, sm: 3 }, flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Paper
           sx={{
             width: "100%",
-            p: { xs: 3, md: 5 },
-            borderRadius: "24px",
+            p: { xs: 2, sm: 3.5, md: 5 },
+            borderRadius: { xs: "18px", md: "24px" },
             background:
               "linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 250, 245, 0.22) 100%)",
             backdropFilter: "blur(14px) saturate(140%)",
@@ -762,42 +704,171 @@ export default function PortalRegisterContent() {
               "0 25px 65px -12px rgba(210, 100, 30, 0.16), 0 10px 30px rgba(0, 0, 0, 0.05)",
           }}
         >
-          <Stepper
-            activeStep={isAdminFlow ? Math.max(0, safeActiveStep - 2) : safeActiveStep}
-            alternativeLabel
+          {/* Desktop Stepper (MD and up) - Non-clickable progress display */}
+          <Box sx={{ display: { xs: "none", md: "block" }, mb: 6 }}>
+            <Stepper
+              activeStep={isAdminFlow ? Math.max(0, safeActiveStep - 2) : safeActiveStep}
+              alternativeLabel
+              sx={{
+                "& .MuiStepIcon-root.Mui-active": { color: COLORS.PRIMARY },
+                "& .MuiStepIcon-root.Mui-completed": { color: COLORS.PRIMARY },
+                "& .MuiStep-root": { cursor: "default", pointerEvents: "none" },
+              }}
+            >
+              {(isAdminFlow ? currentStepList.slice(2) : currentStepList).map(
+                (stepItem) => {
+                  return (
+                    <Step
+                      key={stepItem.id}
+                      sx={{ cursor: "default" }}
+                    >
+                      <StepLabel
+                        sx={{
+                          cursor: "default",
+                          "& .MuiStepLabel-label": {
+                            fontFamily: FONTS.OUTFIT,
+                            fontWeight: 600,
+                            cursor: "default",
+                          },
+                        }}
+                      >
+                        {stepItem.label}
+                      </StepLabel>
+                    </Step>
+                  );
+                },
+              )}
+            </Stepper>
+          </Box>
+
+          {/* Mobile Stepper Header (XS and SM) - Non-clickable progress display */}
+          <Box
             sx={{
-              mb: 6,
-              "& .MuiStepIcon-root.Mui-active": { color: COLORS.PRIMARY },
-              "& .MuiStepIcon-root.Mui-completed": { color: COLORS.PRIMARY },
-              "& .MuiStep-root": { cursor: "pointer" },
+              display: { xs: "flex", md: "none" },
+              flexDirection: "column",
+              gap: 1.5,
+              mb: 3,
+              bgcolor: "rgba(255, 246, 237, 0.7)",
+              border: "1px solid rgba(255, 98, 0, 0.2)",
+              borderRadius: "16px",
+              p: 2,
             }}
           >
-            {(isAdminFlow ? currentStepList.slice(2) : currentStepList).map(
-              (stepItem, index) => {
-                const stepIdx = isAdminFlow ? index + 2 : index;
+            {/* Step Counter & Label */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  fontSize: "12px",
+                  color: COLORS.PRIMARY,
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                  bgcolor: "rgba(255, 98, 0, 0.12)",
+                  px: 1.2,
+                  py: 0.4,
+                  borderRadius: "20px",
+                }}
+              >
+                Step {safeActiveStep + 1} of {currentStepList.length}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  color: "#2C1810",
+                  textAlign: "right",
+                  maxWidth: "60%",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {currentStep.label}
+              </Typography>
+            </Box>
+
+            {/* Progress Bar */}
+            <Box
+              sx={{
+                width: "100%",
+                height: "6px",
+                bgcolor: "rgba(0, 0, 0, 0.08)",
+                borderRadius: "10px",
+                overflow: "hidden",
+              }}
+            >
+              <Box
+                sx={{
+                  width: `${((safeActiveStep + 1) / currentStepList.length) * 100}%`,
+                  height: "100%",
+                  background: `linear-gradient(90deg, ${COLORS.PRIMARY} 0%, #FF8C38 100%)`,
+                  borderRadius: "10px",
+                  transition: "width 0.35s ease-in-out",
+                }}
+              />
+            </Box>
+
+            {/* Step Pills / Indicators (Display only, non-clickable) */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 0.5,
+                mt: 0.5,
+              }}
+            >
+              {currentStepList.map((stepItem, index) => {
+                const isCurrent = safeActiveStep === index;
+                const isCompleted = safeActiveStep > index;
+
                 return (
-                  <Step
+                  <Box
                     key={stepItem.id}
-                    onClick={() => handleStepClick(stepIdx)}
-                    sx={{ cursor: "pointer" }}
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "26px",
+                      borderRadius: "6px",
+                      bgcolor: isCurrent
+                        ? COLORS.PRIMARY
+                        : isCompleted
+                          ? "rgba(46, 125, 50, 0.15)"
+                          : "rgba(0, 0, 0, 0.05)",
+                      color: isCurrent
+                        ? "#FFFFFF"
+                        : isCompleted
+                          ? "#2e7d32"
+                          : "#9E9E9E",
+                      fontWeight: 700,
+                      fontSize: "11px",
+                      fontFamily: FONTS.OUTFIT,
+                      cursor: "default",
+                      userSelect: "none",
+                      transition: "all 0.2s ease",
+                      border: isCurrent
+                        ? `1px solid ${COLORS.PRIMARY}`
+                        : isCompleted
+                          ? "1px solid rgba(46, 125, 50, 0.3)"
+                          : "1px solid transparent",
+                    }}
                   >
-                    <StepLabel
-                      sx={{
-                        cursor: "pointer",
-                        "& .MuiStepLabel-label": {
-                          fontFamily: FONTS.OUTFIT,
-                          fontWeight: 600,
-                          cursor: "pointer",
-                        },
-                      }}
-                    >
-                      {stepItem.label}
-                    </StepLabel>
-                  </Step>
+                    {isCompleted ? "✓" : index + 1}
+                  </Box>
                 );
-              },
-            )}
-          </Stepper>
+              })}
+            </Box>
+          </Box>
 
           <form onSubmit={handleStepSubmit}>
             {currentStep.id === "basic" && (
@@ -846,7 +917,8 @@ export default function PortalRegisterContent() {
                   currentStep.id === "basic" ? "flex-end" : "space-between",
                 alignItems: "center",
                 width: "100%",
-                mt: 6,
+                mt: { xs: 4, md: 6 },
+                gap: 2,
               }}
             >
               {safeActiveStep > 0 && (
@@ -860,7 +932,9 @@ export default function PortalRegisterContent() {
                     textTransform: "none",
                     fontWeight: 600,
                     borderRadius: "30px",
-                    px: 4,
+                    px: { xs: 3, md: 4 },
+                    py: { xs: 0.9, md: 1 },
+                    fontSize: { xs: "13.5px", md: "15px" },
                     boxShadow: "none",
                     "&:hover": {
                       background: COLORS.PRIMARY_DARK,
@@ -884,7 +958,9 @@ export default function PortalRegisterContent() {
                   textTransform: "none",
                   fontWeight: 600,
                   borderRadius: "30px",
-                  px: 4,
+                  px: { xs: 3, md: 4 },
+                  py: { xs: 0.9, md: 1 },
+                  fontSize: { xs: "13.5px", md: "15px" },
                   boxShadow: "none",
                   "&:hover": {
                     background: COLORS.PRIMARY_DARK,

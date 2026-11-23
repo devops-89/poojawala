@@ -29,17 +29,17 @@ const categories = [
     icon: <AutoAwesomeIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
-    id: "Online Puja",
-    label: "Online Puja",
+    id: "Online Pooja",
+    label: "Online Pooja",
     icon: <LaptopMacIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
-    id: "Temple Puja",
-    label: "Temple Puja",
+    id: "Temple Pooja",
+    label: "Temple Pooja",
     icon: <AccountBalanceIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
   {
-    id: "Home Puja & Grah Pravesh",
+    id: "Home Pooja & Grah Pravesh",
     label: "Home & Grah Pravesh",
     icon: <HomeIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
@@ -66,8 +66,8 @@ const categories = [
     ),
   },
   {
-    id: "Festival Special Pujas",
-    label: "Festival Special Pujas",
+    id: "Festival Special Poojas",
+    label: "Festival Special Poojas",
     icon: <SpaIcon sx={{ fontSize: 28, color: COLORS.PRIMARY }} />,
   },
 ];

@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { getServicesAPI } from "@/api/serviceControllers";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { normalizePoojaText } from "@/utils/helpers";
 
 const quickLinks = [
   { name: "Home", href: "/" },
@@ -32,11 +33,11 @@ const quickLinks = [
 
 // Default fallback services (shown during SSR / initial load before API responds)
 const DEFAULT_POPULAR_SERVICES = [
-  { name: "Satyanarayan Puja", href: "/services/satyanaran-katha" },
+  { name: "Satyanarayan Pooja", href: "/services/satyanaran-katha" },
   { name: "Griha Pravesh", href: "/services/griha-pravesh" },
-  { name: "Rudrabhishek Puja", href: "/services/online-rudrabhishek-puja" },
+  { name: "Rudrabhishek Pooja", href: "/services/online-rudrabhishek-puja" },
   { name: "Maha Mrityunjaya Jaap", href: "/services/online-maha-mrityunjaya-jaap" },
-  { name: "Navgraha Shanti Puja", href: "/services/online-navgraha-shanti-puja" },
+  { name: "Navgraha Shanti Pooja", href: "/services/online-navgraha-shanti-puja" },
 ];
 
 // Social media links
@@ -102,7 +103,7 @@ export default function Footer() {
           .filter((item) => item && item.isActive !== false && item.name)
           .slice(0, 5)
           .map((item) => ({
-            name: item.name || "",
+            name: normalizePoojaText(item.name || ""),
             href: item.slug ? `/services/${item.slug}` : `/services?search=${encodeURIComponent(item.name || "")}`,
           }));
 
@@ -234,7 +235,7 @@ export default function Footer() {
               </Box>
             </Grid>
 
-            {/* Popular Pujas Column (Dynamic from API - 5 items, single column) */}
+            {/* Popular Poojas Column (Dynamic from API - 5 items, single column) */}
             <Grid size={{ xs: 6, sm: 6, md: 3 }}>
               <Typography
                 sx={{
@@ -252,15 +253,15 @@ export default function Footer() {
                 Popular Poojas
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                {servicesList.slice(0, 5).map((puja) => (
+                {servicesList.slice(0, 5).map((pooja) => (
                   <Link
-                    key={puja.name}
+                    key={pooja.name}
                     component={NextLink}
-                    href={puja.href}
+                    href={pooja.href}
                     underline="none"
                     sx={linkSx}
                   >
-                    {puja.name}
+                    {normalizePoojaText(pooja.name)}
                   </Link>
                 ))}
               </Box>

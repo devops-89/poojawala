@@ -32,7 +32,7 @@ const steps = [
     number: "3",
     title: "Verified Purohit at Your Doorstep",
     description:
-      "Our expert Purohit arrives on time to perform your ritual. Need samagri & puja items? Easily order complete kits separately on our app!",
+      "Our expert Purohit arrives on time to perform your ritual. Need samagri & pooja items? Easily order complete kits separately on our app!",
   },
   {
     number: "4",
@@ -53,7 +53,7 @@ const promises = [
     icon: <LocalMallOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,
     title: "Pure Samagri Delivery",
     description:
-      "Order 100% pure, organic, and certified puja samagri kits separately directly from our app whenever required.",
+      "Order 100% pure, organic, and certified pooja samagri kits separately directly from our app whenever required.",
   },
   {
     icon: <AccessTimeOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,

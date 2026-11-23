@@ -445,7 +445,7 @@ export default function ServicePlansTabConfig({
                               fullWidth
                               size="small"
                               name={`basicPurohitCarryItems.${index}`}
-                              placeholder="e.g. Ganapati Idol, Puja Thali, Kalash"
+                              placeholder="e.g. Ganapati Idol, Pooja Thali, Kalash"
                               value={item}
                               onKeyDown={allowOnlyTitleCharsOnKeyDown}
                               onChange={(e) => {
@@ -773,7 +773,7 @@ export default function ServicePlansTabConfig({
                             fullWidth
                             size="small"
                             name={`standardPurohitCarryItems.${index}`}
-                            placeholder="e.g. Ganapati Idol, Premium Puja Aasan, Navagraha Puja Items"
+                            placeholder="e.g. Ganapati Idol, Premium Pooja Aasan, Navagraha Pooja Items"
                             value={item}
                             onKeyDown={allowOnlyTitleCharsOnKeyDown}
                             onChange={(e) => {

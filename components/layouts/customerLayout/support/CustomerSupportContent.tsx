@@ -102,11 +102,11 @@ export default function CustomerSupportContent() {
   const faqs = [
     {
       q: "How do I track my refund?",
-      a: 'Refunds are processed within 3-5 business days. You can track the status in the "My Bookings" section under the specific cancelled puja.',
+      a: 'Refunds are processed within 3-5 business days. You can track the status in the "My Bookings" section under the specific cancelled pooja.',
     },
     {
-      q: "Can I reschedule a puja?",
-      a: "Yes, you can reschedule your puja up to 24 hours before the scheduled time without any extra charges.",
+      q: "Can I reschedule a pooja?",
+      a: "Yes, you can reschedule your pooja up to 24 hours before the scheduled time without any extra charges.",
     },
     {
       q: "What if the purohit doesn't arrive?",

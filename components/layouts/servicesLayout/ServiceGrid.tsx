@@ -8,7 +8,7 @@ import { ServiceGridProps } from '@/utils/types';
 import ServiceCard from './ServiceCard';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
-import { formatServicePriceRange } from '@/utils/helpers';
+import { formatServicePriceRange, normalizePoojaText } from '@/utils/helpers';
 
 export default function ServiceGrid({
   activeCategory,
@@ -195,10 +195,10 @@ export default function ServiceGrid({
 
           return {
             id: s.id || s._id,
-            title: s.name || s.title || 'Service',
+            title: normalizePoojaText(s.name || s.title || 'Service'),
             categoryId: s.categoryId || s.category?.id || (Array.isArray(s.categories) && s.categories[0]?.id) || (typeof s.category === "object" ? s.category?.id : ""),
-            category: resolvedCatName,
-            description: s.description || '',
+            category: normalizePoojaText(resolvedCatName),
+            description: normalizePoojaText(s.description || ''),
             duration: "",
             price: computedPriceStr,
             image: s.iconDownloadurl || s.iconUrl || s.imageUrl || '/images/home/poojaPackages/satyanarayan.webp',
@@ -256,12 +256,12 @@ export default function ServiceGrid({
   return (
     <Box ref={gridTopRef}>
       {/* Header Row */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-          <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1A1A1A' }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: { xs: 0.5, sm: 2 }, mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, flexWrap: 'wrap' }}>
+          <Typography variant="h5" component="h2" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', fontSize: { xs: '22px', sm: '26px', md: '28px' } }}>
             Top Services for You
           </Typography>
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#666' }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', color: '#64748B', fontWeight: 500 }}>
             {totalCount || services.length} services available
           </Typography>
         </Box>
@@ -305,7 +305,8 @@ export default function ServiceGrid({
             shape="rounded"
             sx={{
               '& .MuiPaginationItem-root': {
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
                 '&.Mui-selected': {
                   bgcolor: COLORS.PRIMARY,
                   color: 'white',

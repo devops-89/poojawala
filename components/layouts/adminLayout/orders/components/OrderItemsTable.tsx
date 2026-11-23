@@ -121,7 +121,7 @@ export default function OrderItemsTable({ itemsList }: OrderItemsTableProps) {
                 item.productNameSnapshot ||
                 item.product?.name ||
                 item.name ||
-                "Puja Product";
+                "Pooja Product";
 
               const image =
                 item.productImageSnapshot ||

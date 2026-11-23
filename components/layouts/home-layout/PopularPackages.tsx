@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Card,
-  CircularProgress,
   Container,
   Grid,
   Typography,
@@ -18,16 +17,55 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange, stripHtml, isCustomerLoggedIn } from "@/utils/helpers";
+import { formatServicePriceRange, stripHtml, isCustomerLoggedIn, normalizePoojaText } from "@/utils/helpers";
 
-const DEFAULT_PACKAGES = [
+interface PackageItem {
+  id: string | number;
+  slug: string;
+  title: string;
+  description: string;
+  duration: string;
+  price: string;
+  unit: string;
+  image: string;
+  isOnline?: boolean;
+  isOffline?: boolean;
+}
+
+interface RawServiceItem {
+  id?: string | number;
+  slug?: string;
+  name?: string;
+  description?: string;
+  shortDescription?: string;
+  iconDownloadurl?: string;
+  iconUrl?: string;
+  isActive?: boolean;
+  isOnline?: boolean;
+  isOffline?: boolean;
+  [key: string]: unknown;
+}
+
+const DEFAULT_PACKAGES: PackageItem[] = [
   {
     id: "annaprashan-puja",
     slug: "annaprashan-puja",
-    title: "Annaprashan Puja",
-    description: "Sacred first rice-feeding ritual for the baby, seeking good health and long life with Vedic blessings.",
+    title: "Annaprashan Pooja",
+    description: "Celebrate your baby's first rice-feeding ceremony with authentic rituals. Book online Annaprashan Pooja with Vedic blessings.",
     duration: "2-3 hrs",
-    price: "₹2,100 - ₹5,100",
+    price: "₹3,500 - ₹6,500",
+    unit: "/ ceremony",
+    image: "/images/home/poojaPackages/satyanarayan.webp",
+    isOnline: true,
+    isOffline: true,
+  },
+  {
+    id: "rudrabhishek-puja",
+    slug: "online-rudrabhishek-puja",
+    title: "Rudrabhishek Pooja",
+    description: "Invoke Lord Shiva's supreme power for health, peace, and sin destruction. Book authentic Rudrabhishek Pooja featuring sacred rituals.",
+    duration: "2-3 hrs",
+    price: "₹4,800 - ₹33,800",
     unit: "/ ceremony",
     image: "/images/home/poojaPackages/satyanarayan.webp",
     isOnline: true,
@@ -36,34 +74,22 @@ const DEFAULT_PACKAGES = [
   {
     id: "bhoomi-puja",
     slug: "bhoomi-puja",
-    title: "Bhoomi Puja",
-    description: "Vedic ceremony performed before beginning construction on a plot to appease Bhoomi Devi and remove Vastu defects.",
+    title: "Bhoomi Pooja",
+    description: "Invoke Mother Earth's divine blessings before construction or land development. Book authentic Bhoomi Pooja with Vedic rituals.",
     duration: "2-3 hrs",
-    price: "₹3,500 - ₹7,500",
+    price: "₹5,100 - ₹11,000",
     unit: "/ ceremony",
     image: "/images/home/poojaPackages/satyanarayan.webp",
     isOnline: false,
     isOffline: true,
   },
   {
-    id: "brihaspati-vrat-udayapan-puja",
-    slug: "brihaspati-vrat-udayapan-puja",
-    title: "Brihaspati Vrat Udayapan Puja",
-    description: "Auspicious concluding rituals for the Thursday Vrat dedicated to Lord Brihaspati for wisdom, health and prosperity.",
-    duration: "2-3 hrs",
-    price: "₹2,500 - ₹5,100",
-    unit: "/ ceremony",
-    image: "/images/home/poojaPackages/satyanarayan.webp",
-    isOnline: true,
-    isOffline: true,
-  },
-  {
     id: "durga-puja",
     slug: "durga-puja",
-    title: "Durga Puja & Chandi Havan",
-    description: "Divine ceremony dedicated to Goddess Durga for victory over obstacles, protection, wealth and peace.",
+    title: "Durga Pooja & Chandi Havan",
+    description: "Invoke Goddess Durga's fierce divine energy to defeat negativity and ward off evil. Book authentic Durga Pooja ceremony.",
     duration: "3-4 hrs",
-    price: "₹4,100 - ₹9,500",
+    price: "₹4,800 - ₹12,500",
     unit: "/ ceremony",
     image: "/images/home/poojaPackages/satyanarayan.webp",
     isOnline: true,
@@ -71,22 +97,13 @@ const DEFAULT_PACKAGES = [
   },
 ];
 
-const formatDuration = (mins: number) => {
-  if (!mins) return "2-3 hrs";
-  const hrs = Math.floor(mins / 60);
-  if (hrs > 0) {
-    if (mins % 60 === 0) return `${hrs} hrs`;
-    return `${hrs}-${hrs + 1} hrs`;
-  }
-  return `${mins} mins`;
-};
-
 export default function PopularPackages() {
   const router = useRouter();
-  const [packages, setPackages] = useState<any[]>(DEFAULT_PACKAGES);
+  const [packages, setPackages] = useState<PackageItem[]>(DEFAULT_PACKAGES);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchServices = async () => {
       try {
         const response = await getAllServicesAPI(
@@ -110,56 +127,68 @@ export default function PopularPackages() {
               : Array.isArray(response)
                 ? response
                 : [];
-        const activeOnly = items.filter((item: any) => item.isActive !== false);
-        const apiPackages = activeOnly.map((item: any) => {
-          const priceStr = formatServicePriceRange(item);
+        const activeOnly = items.filter((item: RawServiceItem) => item.isActive !== false);
 
-          if (typeof window !== "undefined" && item.id && item.slug) {
-            const s = String(item.slug).toLowerCase();
-            localStorage.setItem(`slug_to_id_${s}`, String(item.id));
-            sessionStorage.setItem(`slug_to_id_${s}`, String(item.id));
-          }
+        if (!isMounted) return;
 
-          return {
-            id: item.id,
-            slug: item.slug,
-            title: item.name,
-            description:
-              item.description ||
-              item.shortDescription ||
-              "Traditional Vedic pooja performed by an experienced Purohit.",
-            duration: "",
-            price: priceStr,
-            unit: "/ ceremony",
-            image:
-              item.iconDownloadurl ||
-              item.iconUrl ||
-              "/images/home/poojaPackages/satyanarayan.webp",
-            isOnline: item.isOnline,
-            isOffline: item.isOffline,
-          };
-        });
-        setPackages(apiPackages.slice(0, 4));
+        if (activeOnly.length > 0) {
+          const apiPackages = activeOnly.map((item: RawServiceItem) => {
+            const priceStr = formatServicePriceRange(item);
+
+            if (typeof window !== "undefined" && item.id && item.slug) {
+              const s = String(item.slug).toLowerCase();
+              localStorage.setItem(`slug_to_id_${s}`, String(item.id));
+              sessionStorage.setItem(`slug_to_id_${s}`, String(item.id));
+            }
+
+            return {
+              id: item.id || "",
+              slug: item.slug || "",
+              title: normalizePoojaText(item.name || ""),
+              description: normalizePoojaText(
+                item.description ||
+                item.shortDescription ||
+                "Traditional Vedic pooja performed by an experienced Purohit."
+              ),
+              duration: "",
+              price: priceStr,
+              unit: "/ ceremony",
+              image:
+                item.iconDownloadurl ||
+                item.iconUrl ||
+                "/images/home/poojaPackages/satyanarayan.webp",
+              isOnline: item.isOnline,
+              isOffline: item.isOffline,
+            };
+          });
+          setPackages(apiPackages.slice(0, 4));
+        } else {
+          // If API returns 0 active services, show empty state
+          setPackages([]);
+        }
       } catch (error) {
         console.error("Failed to fetch popular packages:", error);
-        setPackages([]);
+        // If API fails or offline, show empty state fallback
+        if (isMounted) {
+          setPackages([]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      window.requestIdleCallback(() => fetchServices(), { timeout: 4000 });
-    } else {
-      const timer = setTimeout(fetchServices, 3000);
-      return () => clearTimeout(timer);
-    }
+    fetchServices();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <Box id="popular-packages" sx={{ py: { xs: 5, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}>
       <Container maxWidth="lg">
         {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 }, position: "relative" }}>
           <Typography
             variant="h3"
             component="h2"
@@ -225,43 +254,8 @@ export default function PopularPackages() {
           )}
         </Box>
 
-        {/* Mobile View All Link */}
-        {packages.length > 0 && (
-          <Box
-            sx={{
-              display: { xs: "flex", md: "none" },
-              justifyContent: "flex-end",
-              mb: 3,
-            }}
-          >
-            <Button
-              endIcon={<ArrowForwardIcon fontSize="small" />}
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  sessionStorage.setItem("home_restore_section", "popular-packages");
-                }
-                router.push("/services");
-              }}
-              sx={{
-                color: "#D32F2F",
-                background: "transparent",
-                borderRadius: "31px",
-                textTransform: "none",
-                fontWeight: 600,
-                px: 2,
-                "&:hover": {
-                  background: COLORS.PRIMARY,
-                  color: "#FFFFFF",
-                },
-              }}
-            >
-              View all
-            </Button>
-          </Box>
-        )}
-
         {/* Packages Grid / Loading / Empty Notification State */}
-        {loading ? (
+        {loading && packages.length === 0 ? (
           <Grid container spacing={{ xs: 3, sm: 3, md: 3.5 }} sx={{ justifyContent: "center" }}>
             {Array.from({ length: 4 }).map((_, i) => (
               <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
@@ -378,7 +372,7 @@ export default function PopularPackages() {
                         alignContent: "center",
                       }}
                     >
-                      {pkg.title}
+                      {normalizePoojaText(pkg.title)}
                     </Typography>
                   </Box>
 
@@ -472,7 +466,7 @@ export default function PopularPackages() {
                           mb: 2.5,
                         }}
                       >
-                        {stripHtml(pkg.description)}
+                        {normalizePoojaText(stripHtml(pkg.description))}
                       </Typography>
                     </Box>
 
@@ -523,6 +517,47 @@ export default function PopularPackages() {
               </Grid>
             ))}
           </Grid>
+        )}
+
+        {/* Mobile View All Button at bottom */}
+        {packages.length > 0 && (
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              justifyContent: "center",
+              mt: { xs: 4, sm: 5 },
+            }}
+          >
+            <Button
+              variant="outlined"
+              endIcon={<ArrowForwardIcon fontSize="small" />}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("home_restore_section", "popular-packages");
+                }
+                router.push("/services");
+              }}
+              sx={{
+                color: "#D32F2F",
+                borderColor: "#D32F2F",
+                borderRadius: "31px",
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: "14px",
+                fontFamily: FONTS.OUTFIT,
+                px: 3.5,
+                py: 1,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  background: COLORS.PRIMARY,
+                  borderColor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              View All Pooja Packages
+            </Button>
+          </Box>
         )}
       </Container>
     </Box>

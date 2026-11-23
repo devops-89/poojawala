@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Pooja Products | 1Pooja",
-  description: "Browse and order authentic sacred pooja samagri, diyas, dhoop, and complete puja kits with devotion.",
+  description: "Browse and order authentic sacred pooja samagri, diyas, dhoop, and complete pooja kits with devotion.",
 };
 
 export default function CustomerProductsPage() {

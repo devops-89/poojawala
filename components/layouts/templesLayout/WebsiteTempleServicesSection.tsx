@@ -10,7 +10,7 @@ import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange } from "@/utils/helpers";
+import { formatServicePriceRange, normalizePoojaText } from "@/utils/helpers";
 
 interface WebsiteTempleServicesSectionProps {
   temple: any;
@@ -82,12 +82,12 @@ export default function WebsiteTempleServicesSection({
 
         return {
           id: s.id || s._id,
-          title: s.name || s.title || "Vedic Service",
+          title: normalizePoojaText(s.name || s.title || "Vedic Service"),
           image: serviceImg,
-          description: s.description || "",
+          description: normalizePoojaText(s.description || ""),
           price: computedPriceStr,
           duration: "",
-          category: s.category?.name || "Temple Pooja",
+          category: normalizePoojaText(s.category?.name || "Temple Pooja"),
           isOnline: Boolean(s.isOnline),
           isOffline: Boolean(s.isOffline),
           slug: s.slug || null,
@@ -126,10 +126,11 @@ export default function WebsiteTempleServicesSection({
           <Typography
             variant="h2"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              fontSize: { xs: "24px", md: "30px" },
+              fontSize: { xs: "28px", sm: "36px", md: "42px" },
               color: "#2C1810",
+              lineHeight: 1.25,
               mb: 0.8,
             }}
           >
@@ -138,14 +139,14 @@ export default function WebsiteTempleServicesSection({
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              fontSize: "14px",
-              color: "#8C7A6B",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
+              fontSize: { xs: "14px", md: "16px" },
+              color: "#64748B",
+              fontWeight: 500,
+              lineHeight: 1.5,
+              mt: 0.4,
             }}
           >
-            Sacred Rituals performed at {temple?.name}
+            Sacred rituals and ceremonies performed at {normalizePoojaText(temple?.name || "this temple")}
           </Typography>
         </Box>
 
@@ -159,12 +160,13 @@ export default function WebsiteTempleServicesSection({
             color: "#FFFFFF",
             borderRadius: "28px",
             px: 3,
-            py: 1,
+            py: 1.2,
             fontWeight: 700,
             fontSize: "13.5px",
             fontFamily: FONTS.OUTFIT,
             textTransform: "none",
             boxShadow: "0 4px 14px rgba(255, 98, 0, 0.2)",
+            width: { xs: "100%", sm: "auto" },
             "&:hover": {
               background: "#E05500",
             },
@@ -214,14 +216,14 @@ export default function WebsiteTempleServicesSection({
           <TempleHinduIcon sx={{ fontSize: 44, color: COLORS.PRIMARY, mb: 1.5 }} />
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: "20px",
+              fontSize: { xs: "18px", sm: "20px" },
               color: "#2C1810",
               mb: 1,
             }}
           >
-            Book a Consecrated Pooja at {temple?.name}
+            Book a Consecrated Pooja at {normalizePoojaText(temple?.name || "this Temple")}
           </Typography>
           <Typography
             sx={{
@@ -251,6 +253,7 @@ export default function WebsiteTempleServicesSection({
               fontSize: "14px",
               fontFamily: FONTS.OUTFIT,
               textTransform: "none",
+              width: { xs: "100%", sm: "auto" },
             }}
           >
             Explore & Book Temple Pooja

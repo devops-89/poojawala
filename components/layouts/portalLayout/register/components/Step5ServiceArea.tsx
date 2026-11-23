@@ -125,6 +125,8 @@ export default function Step5ServiceArea({
           sx={{
             fontFamily: FONTS.PRIMARY,
             fontWeight: 700,
+            fontSize: { xs: '16px', sm: '18px', md: '20px' },
+            lineHeight: 1.3,
             color: COLORS.SLATE_DARK,
           }}
         >
@@ -305,7 +307,7 @@ export default function Step5ServiceArea({
               variant="caption"
               sx={{ color: "#64748b", mb: 2, display: "block" }}
             >
-              Select how far (in Kilometers) you are willing to travel from this location to perform pujas.
+              Select how far (in Kilometers) you are willing to travel from this location to perform poojas.
             </Typography>
 
             <Slider

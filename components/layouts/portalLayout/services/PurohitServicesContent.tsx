@@ -322,7 +322,7 @@ export default function PurohitServicesContent() {
                   mt: 0.5,
                 }}
               >
-                Both Online and Offline service modes are disabled in your profile. Please enable Online Puja or In-Person Visit in your Profile Skills to view and add services.
+                Both Online and Offline service modes are disabled in your profile. Please enable Online Pooja or In-Person Visit in your Profile Skills to view and add services.
               </Typography>
             </Box>
             <Button

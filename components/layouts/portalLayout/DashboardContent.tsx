@@ -112,7 +112,7 @@ export default function DashboardContent() {
     { title: 'This Month Earnings', value: `₹ ${statsData.thisMonthEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/partner/earnings' },
     { title: 'This Week Earnings', value: `₹ ${statsData.thisWeekEarnings}`, icon: <AccountBalanceWalletIcon sx={{ fontSize: 40, color: '#4CAF50' }} />, color: '#E8F5E9', link: '/partner/earnings' },
     { title: 'Active Bookings', value: statsData.totalActiveBookings, icon: <EventAvailableIcon sx={{ fontSize: 40, color: '#2196F3' }} />, color: '#E3F2FD', link: isAstrologer ? '/partner/astrologybookings' : '/partner/bookings' },
-    { title: isAstrologer ? 'Completed Consultations' : 'Completed Pujas', value: statsData.totalCompletedBookings, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#FF9800' }} />, color: '#FFF3E0', link: isAstrologer ? '/partner/astrologybookings' : '/partner/bookings' },
+    { title: isAstrologer ? 'Completed Consultations' : 'Completed Poojas', value: statsData.totalCompletedBookings, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#FF9800' }} />, color: '#FFF3E0', link: isAstrologer ? '/partner/astrologybookings' : '/partner/bookings' },
     ...(!isAstrologer
       ? [{ title: 'Active Services', value: statsData.totalActiveServices, icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/my-services' }]
       : [{ title: 'Consultation Rate', value: (profile?.astrologyPrice || profile?.ratePerMinute) ? `₹ ${profile.astrologyPrice || profile.ratePerMinute}` : 'N/A', icon: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#9C27B0' }} />, color: '#F3E5F5', link: '/partner/profile' }])
@@ -148,7 +148,7 @@ export default function DashboardContent() {
               {(isApproved || profile?.status === 'APPROVED') && <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: 28 }} />}
             </Box>
             <Typography sx={{ fontFamily: FONTS.OUTFIT, opacity: 0.9, fontSize: '16px', mb: 2 }}>
-              Here's what's happening with your {isAstrologer ? 'consultations' : 'pujas'} and bookings today.
+              Here's what's happening with your {isAstrologer ? 'consultations' : 'poojas'} and bookings today.
             </Typography>
             
             <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', opacity: 0.9 }}>
@@ -529,7 +529,7 @@ export default function DashboardContent() {
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                     <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: '18px', color: '#1A1A1A' }}>
-                      {booking.service?.name || 'Puja Service'}
+                      {booking.service?.name || 'Pooja Service'}
                     </Typography>
                     <Chip label={booking.status || 'ACCEPTED'} size="small" sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 700, fontSize: '11px', height: '24px', borderRadius: '6px' }} />
                   </Box>

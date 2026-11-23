@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { normalizePoojaText } from "@/utils/helpers";
 import OfflineServiceLocationModal from "./OfflineServiceLocationModal";
 
 interface WebsiteServicePlansSectionProps {
@@ -44,9 +45,9 @@ export default function WebsiteServicePlansSection({
       prasad: "Prasad",
       havan: "Havan",
       aarti: "Aarti",
-      durgaPuja: "Durga Puja",
+      durgaPuja: "Durga Pooja",
       abhishekam: "Abhishekam",
-      pujaSamagri: "Puja Samagri",
+      pujaSamagri: "Pooja Samagri",
       durationMinutes: "Duration",
       numberOfPurohits: "Number of Purohits",
     };
@@ -83,7 +84,7 @@ export default function WebsiteServicePlansSection({
         )
         .map((f: any) => {
           const title = f.title || f.name || f.key || "";
-          return formatKeyName(title);
+          return normalizePoojaText(formatKeyName(title));
         })
         .filter(Boolean);
     }
@@ -113,7 +114,7 @@ export default function WebsiteServicePlansSection({
       const formattedKey = formatKeyName(key);
 
       if (valStr === "true" || val === true) {
-        result.push(formattedKey);
+        result.push(normalizePoojaText(formattedKey));
       }
     });
 
@@ -176,7 +177,7 @@ export default function WebsiteServicePlansSection({
                   variant="h5"
                   sx={{
                     fontFamily: FONTS.OUTFIT,
-                    fontWeight: 800,
+                    fontWeight: 700,
                     color: "#2C1810",
                     fontSize: { xs: "20px", sm: "24px" },
                   }}
@@ -242,8 +243,8 @@ export default function WebsiteServicePlansSection({
                       />
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "14px",
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: { xs: "13.5px", sm: "14px" },
                           color: "#3D2B22",
                           fontWeight: 500,
                           lineHeight: 1.5,
@@ -301,9 +302,9 @@ export default function WebsiteServicePlansSection({
           <Box sx={{ textAlign: "center", maxWidth: "640px", mx: "auto", mb: 5 }}>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "12px",
-                fontWeight: 800,
+                fontWeight: 700,
                 letterSpacing: "1.2px",
                 color: COLORS.PRIMARY,
                 textTransform: "uppercase",
@@ -316,10 +317,10 @@ export default function WebsiteServicePlansSection({
             <Typography
               variant="h3"
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 800,
-                fontSize: { xs: "28px", sm: "36px", md: "40px" },
-                color: "#1A0B05",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: { xs: "28px", sm: "36px", md: "44px" },
+                color: "#1A1A1A",
                 mb: 1.5,
               }}
             >
@@ -328,9 +329,9 @@ export default function WebsiteServicePlansSection({
 
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontSize: { xs: "14.5px", sm: "16px" },
-                color: "#5C4A40",
+                fontFamily: FONTS.OUTFIT,
+                fontSize: { xs: "14px", md: "16px" },
+                color: "#666",
                 lineHeight: 1.6,
               }}
             >
@@ -340,7 +341,7 @@ export default function WebsiteServicePlansSection({
 
           <Grid
             container
-            spacing={4}
+            spacing={{ xs: 2.5, sm: 3, md: 4 }}
             sx={{ justifyContent: "center", alignItems: "stretch" }}
           >
             {/* Basic Plan Card */}
@@ -350,7 +351,7 @@ export default function WebsiteServicePlansSection({
                   elevation={0}
                   onClick={() => setSelectedPlan("basic")}
                   sx={{
-                    p: { xs: 3.5, sm: 4.5 },
+                    p: { xs: 2.5, sm: 3.5, md: 4.5 },
                     borderRadius: "24px",
                     border:
                       selectedPlan === "basic"
@@ -378,9 +379,9 @@ export default function WebsiteServicePlansSection({
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
-                        fontWeight: 800,
-                        fontSize: "26px",
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 700,
+                        fontSize: { xs: "22px", sm: "24px", md: "26px" },
                         color: "#1A0B05",
                         mb: 1.5,
                       }}
@@ -390,9 +391,9 @@ export default function WebsiteServicePlansSection({
 
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 800,
-                        fontSize: { xs: "36px", sm: "42px" },
+                        fontSize: { xs: "28px", sm: "36px", md: "42px" },
                         color: COLORS.PRIMARY,
                         lineHeight: 1.1,
                         mb: 3,
@@ -422,8 +423,8 @@ export default function WebsiteServicePlansSection({
                             />
                             <Typography
                               sx={{
-                                fontFamily: FONTS.PRIMARY,
-                                fontSize: "14.5px",
+                                fontFamily: FONTS.OUTFIT,
+                                fontSize: { xs: "13.5px", sm: "14.5px" },
                                 color: "#3D2B22",
                                 lineHeight: 1.5,
                                 fontWeight: 500,
@@ -448,7 +449,7 @@ export default function WebsiteServicePlansSection({
                       width: "100%",
                       py: 1.4,
                       borderRadius: "12px",
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "15px",
                       textTransform: "none",
@@ -478,7 +479,7 @@ export default function WebsiteServicePlansSection({
                   elevation={0}
                   onClick={() => setSelectedPlan("standard")}
                   sx={{
-                    p: { xs: 3.5, sm: 4.5 },
+                    p: { xs: 2.5, sm: 3.5, md: 4.5 },
                     borderRadius: "24px",
                     border:
                       selectedPlan === "standard"
@@ -527,9 +528,9 @@ export default function WebsiteServicePlansSection({
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
-                        fontWeight: 800,
-                        fontSize: "26px",
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 700,
+                        fontSize: { xs: "22px", sm: "24px", md: "26px" },
                         color: "#1A0B05",
                         mb: 1.5,
                       }}
@@ -539,9 +540,9 @@ export default function WebsiteServicePlansSection({
 
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 800,
-                        fontSize: { xs: "36px", sm: "42px" },
+                        fontSize: { xs: "28px", sm: "36px", md: "42px" },
                         color: COLORS.PRIMARY,
                         lineHeight: 1.1,
                         mb: 3,
@@ -571,8 +572,8 @@ export default function WebsiteServicePlansSection({
                             />
                             <Typography
                               sx={{
-                                fontFamily: FONTS.PRIMARY,
-                                fontSize: "14.5px",
+                                fontFamily: FONTS.OUTFIT,
+                                fontSize: { xs: "13.5px", sm: "14.5px" },
                                 color: "#3D2B22",
                                 lineHeight: 1.5,
                                 fontWeight: 500,
@@ -598,7 +599,7 @@ export default function WebsiteServicePlansSection({
                       width: "100%",
                       py: 1.4,
                       borderRadius: "12px",
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "15px",
                       textTransform: "none",

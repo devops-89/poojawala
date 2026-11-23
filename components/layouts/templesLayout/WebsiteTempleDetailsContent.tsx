@@ -146,7 +146,7 @@ export default function WebsiteTempleDetailsContent() {
     DEFAULT_BANNER;
 
   return (
-    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: 8, pt: 2 }}>
+    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 6, md: 8 }, pt: 2, overflowX: "hidden" }}>
       <Container maxWidth="lg">
         {/* Dedicated Website Temple Hero Section */}
         <WebsiteTempleDetailsHero

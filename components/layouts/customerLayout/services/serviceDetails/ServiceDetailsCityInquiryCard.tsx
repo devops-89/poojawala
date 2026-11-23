@@ -86,7 +86,7 @@ export default function ServiceDetailsCityInquiryCard({
                 lineHeight: 1.5,
               }}
             >
-              Have questions, want to request this puja in your city, or need a custom date? Send us an inquiry and our divine coordination team will assist you!
+              Have questions, want to request this pooja in your city, or need a custom date? Send us an inquiry and our divine coordination team will assist you!
             </Typography>
           </Box>
         </Box>

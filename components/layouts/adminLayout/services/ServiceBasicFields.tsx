@@ -361,7 +361,7 @@ export default function ServiceBasicFields({
           fullWidth
           name="metaTitle"
           label="Meta Title (SEO)"
-          placeholder="e.g., Book Online Annaprashan Puja | Expert Vedic Acharya"
+          placeholder="e.g., Book Online Annaprashan Pooja | Expert Vedic Acharya"
           variant="outlined"
           value={values.metaTitle || ""}
           onChange={handleChange}

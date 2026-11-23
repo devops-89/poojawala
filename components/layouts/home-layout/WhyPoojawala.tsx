@@ -6,7 +6,7 @@ import { FONTS } from '@/utils/fonts';
 
 export default function WhyPoojawala() {
   return (
-    <Box sx={{ position: 'relative', overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '800px' }, py: { xs: 5, md: 9 }, display: 'flex', alignItems: 'center' }}>
+    <Box id="why-poojawala" sx={{ position: 'relative', overflow: 'hidden', bgcolor: '#ffffff', minHeight: { xs: 'auto', md: '800px' }, py: { xs: 5, md: 9 }, display: 'flex', alignItems: 'center', scrollMarginTop: '90px' }}>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', maxWidth: '875px', pr: { md: 5 }, display: 'flex', flexDirection: 'column' }}>
           <Typography 
@@ -57,7 +57,7 @@ export default function WhyPoojawala() {
               lineHeight: 1.65
             }}
           >
-            From Griha Pravesh and Satyanarayan Puja to weddings and festivals, it offers convenient booking, transparent pricing, regional language support, and reliable spiritual services, making traditional rituals simple, accessible, and stress-free.
+            From Griha Pravesh and Satyanarayan Pooja to weddings and festivals, it offers convenient booking, transparent pricing, regional language support, and reliable spiritual services, making traditional rituals simple, accessible, and stress-free.
           </Typography>
         </Box>
       </Container>

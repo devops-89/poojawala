@@ -44,7 +44,7 @@ const getBlogTitle = (blog: any) => {
 
 const getBlogContentSnippet = (blog: any) => {
   const rawText = blog.excerpt || blog.content || blog.body || blog.description || "";
-  if (!rawText) return "Explore sacred insights, Vedic procedures, and authentic Samagri guidelines for your puja.";
+  if (!rawText) return "Explore sacred insights, Vedic procedures, and authentic Samagri guidelines for your pooja.";
   const text = rawText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
   return text.length > 140 ? text.slice(0, 140) + "..." : text;
 };

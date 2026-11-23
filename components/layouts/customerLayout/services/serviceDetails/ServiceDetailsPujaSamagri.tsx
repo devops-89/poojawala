@@ -108,7 +108,7 @@ export default function ServiceDetailsPujaSamagri({
 
               return {
                 id: String(p.id || idx + 1),
-                title: p.name || p.title || `Puja Item ${idx + 1}`,
+                title: p.name || p.title || `Pooja Item ${idx + 1}`,
                 description:
                   p.description ||
                   p.shortDescription ||
@@ -375,7 +375,7 @@ export default function ServiceDetailsPujaSamagri({
           </Typography>
         </Paper>
       ) : (
-        /* Grid of Puja Samagri Cards (Max 6) */
+        /* Grid of Pooja Samagri Cards (Max 6) */
         <Grid container spacing={3}>
           {displayItems.map((item) => {
             const isAdded = selectedItems.includes(item.id);

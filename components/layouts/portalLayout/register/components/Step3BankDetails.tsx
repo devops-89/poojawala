@@ -30,14 +30,16 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          mb: 3,
+          fontSize: { xs: '18px', sm: '20px', md: '24px' },
+          lineHeight: 1.3,
+          mb: { xs: 2, md: 3 },
         }}
       >
         Bank or UPI Details (बैंक या यूपीआई विवरण)
       </Typography>
       )}
 
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ mb: { xs: 3, md: 4 }, display: 'flex', justifyContent: 'center' }}>
         <FormControl component="fieldset">
           <RadioGroup
             row
@@ -53,6 +55,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
                   sx={{
                     fontWeight:
                       formik.values.paymentMethod === 'BANK' ? 700 : 500,
+                    fontSize: { xs: '14px', sm: '16px' },
                   }}
                 >
                   Bank Account (बैंक खाता)
@@ -67,19 +70,20 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
                   sx={{
                     fontWeight:
                       formik.values.paymentMethod === 'UPI' ? 700 : 500,
+                    fontSize: { xs: '14px', sm: '16px' },
                   }}
                 >
                   UPI ID (यूपीआई आईडी)
                 </Typography>
               }
-              sx={{ ml: 4 }}
+              sx={{ ml: { xs: 2, sm: 4 } }}
             />
           </RadioGroup>
         </FormControl>
       </Box>
 
       {formik.values.paymentMethod === 'UPI' ? (
-        <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} sx={{ justifyContent: 'center' }}>
           <Grid size={{ xs: 12, md: 8 }}>
             <TextField
               fullWidth
@@ -97,7 +101,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
           </Grid>
         </Grid>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, md: 3 }}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth

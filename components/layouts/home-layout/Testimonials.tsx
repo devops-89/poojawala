@@ -54,9 +54,17 @@ export default function Testimonials() {
       : [];
 
   return (
-    <Box sx={{ py: { xs: 5, md: 9 }, bgcolor: "#ffffff", overflow: "hidden" }}>
+    <Box
+      id="testimonials-section"
+      sx={{
+        py: { xs: 5, md: 9 },
+        bgcolor: "#ffffff",
+        overflow: "hidden",
+        scrollMarginTop: "90px",
+      }}
+    >
       <Container maxWidth="xl">
-        <Box sx={{ textAlign: "center", mb: "54px" }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
           <Typography
             variant="h2"
             sx={{

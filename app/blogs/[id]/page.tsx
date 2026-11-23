@@ -10,7 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   let blogTitle = "Blog Post | 1Pooja";
-  let blogDesc = "Read step-by-step Puja Vidhis, festival guides, and Vedic wisdom.";
+  let blogDesc = "Read step-by-step Pooja Vidhis, festival guides, and Vedic wisdom.";
   let imageUrl = "https://1pooja.com/images/logo.webp";
 
   const staticBlog = findStaticBlogByIdOrSlug(id);

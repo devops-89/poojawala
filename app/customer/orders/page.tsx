@@ -5,7 +5,7 @@ import { Box, CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "My Orders | 1Pooja",
-  description: "View and track your sacred purchases, puja samagri orders, and reorder with ease.",
+  description: "View and track your sacred purchases, pooja samagri orders, and reorder with ease.",
 };
 
 export default function CustomerOrdersPage() {

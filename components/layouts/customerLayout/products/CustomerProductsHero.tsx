@@ -81,7 +81,7 @@ export default function CustomerProductsHero() {
             }}
           >
             Pure, authentic pooja samagri — from diyas and dhoop to complete
-            puja kits. Sourced directly, priced fairly, delivered with devotion.
+            pooja kits. Sourced directly, priced fairly, delivered with devotion.
           </Typography>
 
           {/* Buttons Row */}
@@ -133,7 +133,7 @@ export default function CustomerProductsHero() {
             <Box
               component="img"
               src="/images/productsHero.webp"
-              alt="Sacred Puja Items"
+              alt="Sacred Pooja Items"
               sx={{
                 width: "100%",
                 height: "100%",

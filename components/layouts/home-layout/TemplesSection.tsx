@@ -4,6 +4,7 @@ import { getTemplesAPI } from "@/api/templeControllers";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
+import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import {
   Box,
   Button,
@@ -18,7 +19,7 @@ import { useEffect, useState } from "react";
 import { TempleItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml } from "@/utils/helpers";
+import { stripHtml, normalizePoojaText } from "@/utils/helpers";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -118,7 +119,9 @@ export default function TemplesSection() {
             src={imageUrl}
             alt={temple.name || "Temple"}
             fill
-            unoptimized={typeof imageUrl === "string" && imageUrl.startsWith("http")}
+            unoptimized={
+              typeof imageUrl === "string" && imageUrl.startsWith("http")
+            }
             sizes="(max-width: 600px) 380px, (max-width: 960px) 45vw, 360px"
             style={{ objectFit: "cover" }}
             loading="lazy"
@@ -186,13 +189,13 @@ export default function TemplesSection() {
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: "22px",
+              fontSize: { xs: "18px", sm: "20px", md: "22px" },
               color: "#FFFFFF",
               lineHeight: 1.3,
               textShadow: "0 2px 4px rgba(0, 0, 0, 0.4)",
             }}
           >
-            {temple.name}
+            {normalizePoojaText(temple.name)}
           </Typography>
 
           {temple.description && (
@@ -209,7 +212,7 @@ export default function TemplesSection() {
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {stripHtml(temple.description)}
+              {normalizePoojaText(stripHtml(temple.description))}
             </Typography>
           )}
 
@@ -292,7 +295,9 @@ export default function TemplesSection() {
               src={imageUrl}
               alt={temple.name || "Temple"}
               fill
-              unoptimized={typeof imageUrl === "string" && imageUrl.startsWith("http")}
+              unoptimized={
+                typeof imageUrl === "string" && imageUrl.startsWith("http")
+              }
               sizes="(max-width: 600px) 100vw, 400px"
               style={{ objectFit: "cover" }}
               loading="lazy"
@@ -466,7 +471,7 @@ export default function TemplesSection() {
     >
       <Container maxWidth="lg">
         {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 }, position: "relative" }}>
           <Box
             sx={{
               display: "inline-flex",
@@ -529,7 +534,7 @@ export default function TemplesSection() {
             }}
           >
             Experience the divine energy of renowned temples across India. Book
-            traditional pujas and sankalp rituals performed in sanctified
+            traditional poojas and sankalp rituals performed in sanctified
             shrines.
           </Typography>
 
@@ -546,7 +551,10 @@ export default function TemplesSection() {
                 endIcon={<ArrowForwardIcon fontSize="small" />}
                 onClick={() => {
                   if (typeof window !== "undefined") {
-                    sessionStorage.setItem("home_restore_section", "temples-section");
+                    sessionStorage.setItem(
+                      "home_restore_section",
+                      "temples-section",
+                    );
                   }
                   router.push("/temples");
                 }}
@@ -586,7 +594,8 @@ export default function TemplesSection() {
               borderRadius: "50%",
               display: "inline-block",
               willChange: "transform, opacity",
-              transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+              transition:
+                "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
             },
             "& .swiper-pagination-bullet-active": {
               bgcolor: COLORS.PRIMARY,
@@ -606,6 +615,14 @@ export default function TemplesSection() {
                 />
               ))}
             </Box>
+          ) : temples.length === 0 ? (
+            <EmptyStateCard
+              icon={<TempleHinduIcon sx={{ fontSize: 32 }} />}
+              title="No Sacred Temples Available"
+              description="Currently, there are no sacred temples listed. Check back soon or request a temple ceremony!"
+              actionText="Explore All Poojas"
+              actionHref="/services"
+            />
           ) : temples.length >= 3 ? (
             <Swiper
               modules={[Autoplay, Pagination]}
@@ -658,6 +675,46 @@ export default function TemplesSection() {
             </Box>
           )}
         </Box>
+
+        {/* Mobile View All Button: Centered Below Cards */}
+        {temples.length > 0 && (
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              justifyContent: "center",
+              mt: 4,
+            }}
+          >
+            <Button
+              endIcon={<ArrowForwardIcon fontSize="small" />}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("home_restore_section", "temples-section");
+                }
+                router.push("/temples");
+              }}
+              sx={{
+                color: "#D32F2F",
+                border: "1.5px solid rgba(211, 47, 47, 0.35)",
+                background: "rgba(255, 255, 255, 0.9)",
+                borderRadius: "31px",
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: "14px",
+                px: 3.5,
+                py: 0.8,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  background: COLORS.PRIMARY,
+                  borderColor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              View All Sacred Temples
+            </Button>
+          </Box>
+        )}
       </Container>
     </Box>
   );

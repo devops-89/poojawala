@@ -94,12 +94,14 @@ export default function Step4DocumentUpload({
   return (
     <Box>
       {!hideTitle && (
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: { xs: 2, md: 3 } }}>
           <Typography
             variant="h5"
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
+              fontSize: { xs: '18px', sm: '20px', md: '24px' },
+              lineHeight: 1.3,
             }}
           >
             Upload Verification Documents
@@ -108,7 +110,7 @@ export default function Step4DocumentUpload({
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
-              fontSize: '15px',
+              fontSize: { xs: '13px', md: '15px' },
               color: '#64748B',
               mt: 0.4,
             }}
@@ -126,7 +128,7 @@ export default function Step4DocumentUpload({
           </Typography>
         )}
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, md: 3 }}>
         {documentFields
           .filter((doc) => (isAstro ? doc.id !== 'templeAffiliationProof' : true))
           .map((doc) => {
@@ -180,8 +182,8 @@ export default function Step4DocumentUpload({
               <Grid size={{ xs: 12, sm: 6 }} key={doc.id}>
                 <Paper
                   sx={{
-                    p: 2.5,
-                    minHeight: '260px',
+                    p: { xs: 2, md: 2.5 },
+                    minHeight: { xs: '210px', sm: '240px', md: '260px' },
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
@@ -232,7 +234,7 @@ export default function Step4DocumentUpload({
                     <Box
                       sx={{
                         mb: 1.5,
-                        px: 3,
+                        px: { xs: 1, sm: 2, md: 3 },
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -351,7 +353,7 @@ export default function Step4DocumentUpload({
                       </Box>
                     </Box>
                   ) : (
-                    <Box sx={{ mb: 1.5, px: 3 }}>
+                    <Box sx={{ mb: 1.5, px: { xs: 1, sm: 2, md: 3 } }}>
                       <Typography
                         sx={{
                           fontFamily: FONTS.OUTFIT,

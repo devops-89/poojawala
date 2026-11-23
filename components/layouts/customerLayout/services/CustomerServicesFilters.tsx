@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CategoryOption, TempleOption } from "@/utils/types";
+import { normalizePoojaText } from "@/utils/helpers";
 export type { CategoryOption, TempleOption };
 
 interface CustomerServicesFiltersProps {
@@ -83,7 +84,7 @@ export default function CustomerServicesFilters({
           const activeOnly = list.filter((c: any) => c.isActive !== false);
           const formatted = activeOnly.map((c: any) => ({
             id: c.id || c._id,
-            name: c.name || c.title || "Category",
+            name: normalizePoojaText(c.name || c.title || "Category"),
           }));
           setInternalCategories(formatted);
         } catch (err) {
@@ -248,7 +249,7 @@ export default function CustomerServicesFilters({
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search pujas or services..."
+          placeholder="Search poojas or services..."
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
           slotProps={{
