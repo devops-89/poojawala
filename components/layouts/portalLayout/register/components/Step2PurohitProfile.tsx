@@ -219,7 +219,9 @@ export default function Step2PurohitProfile({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            mb: 3,
+            fontSize: { xs: '18px', sm: '20px', md: '24px' },
+            lineHeight: 1.3,
+            mb: { xs: 2, md: 3 },
           }}
         >
           {formik.values.role === USER_ROLE.ASTROLOGER
@@ -230,7 +232,7 @@ export default function Step2PurohitProfile({
         </Typography>
       )}
 
-      <Grid container spacing={2.5}>
+      <Grid container spacing={{ xs: 2, md: 2.5 }}>
         {/* State */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete

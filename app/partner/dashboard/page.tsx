@@ -7,5 +7,5 @@ export default function PortalDashboard() {
 
 export const metadata: Metadata = {
   title: 'Partner Dashboard | 1Pooja',
-  description: 'Overview of your upcoming pujas, daily earnings, and quick actions in the 1Pooja Purohit Partner Portal.',
+  description: 'Overview of your upcoming poojas, daily earnings, and quick actions in the 1Pooja Purohit Partner Portal.',
 };

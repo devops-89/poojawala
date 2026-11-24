@@ -56,7 +56,7 @@ export default function CustomerProfileContent() {
   const quickLinks = [
     {
       title: "My Bookings",
-      description: "View & manage your puja bookings",
+      description: "View & manage your pooja bookings",
       path: "/customer/bookings",
       icon: <EventNoteIcon sx={{ fontSize: 24 }} />,
       bgColor: "#FFF0E6",

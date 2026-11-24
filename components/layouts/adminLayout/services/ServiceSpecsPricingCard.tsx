@@ -25,9 +25,9 @@ const formatFeatureName = (key: string) => {
     prasad: "Prasad",
     havan: "Havan",
     aarti: "Aarti",
-    durgaPuja: "Durga Puja",
+    durgaPuja: "Durga Pooja",
     abhishekam: "Abhishekam",
-    pujaSamagri: "Puja Samagri",
+    pujaSamagri: "Pooja Samagri",
     durationMinutes: "Duration (Mins)",
     numberOfPurohits: "Number of Purohits",
   };

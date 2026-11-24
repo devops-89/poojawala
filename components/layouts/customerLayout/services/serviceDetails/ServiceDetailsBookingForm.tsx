@@ -74,9 +74,9 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         bgcolor: "#FAF4EE",
         border: "1px solid #EADCCF",
         borderRadius: "24px",
-        p: { xs: 3, sm: 4, md: 5 },
+        p: { xs: 2, sm: 3.5, md: 5 },
         mt: 4,
-        mb: 6,
+        mb: { xs: 4, md: 6 },
         scrollMarginTop: "100px",
       }}
     >
@@ -103,7 +103,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
           onOpenInquiryModal={() => setInquiryModalOpen(true)}
         />
       ) : (
-        <Grid container spacing={5} sx={{ alignItems: "flex-start" }}>
+        <Grid container spacing={{ xs: 3, md: 5 }} sx={{ alignItems: "flex-start" }}>
           {/* Left Column: Heading, Description & Inquiry Banner */}
           <ServiceDetailsBookingInfoSidebar
             onOpenInquiry={() => setInquiryModalOpen(true)}
@@ -140,10 +140,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       borderRadius: "10px",
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "10px",
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                       },
                       "& .MuiInputLabel-root": {
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         color: "#64534A",
                       },
                     }}
@@ -171,7 +171,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                       }}
                       sx={{
                         borderRadius: "10px",
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                       }}
                     >
                       {availableLanguages && availableLanguages.length > 0 ? (
@@ -180,7 +180,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                             key={lang}
                             value={lang}
                             sx={{
-                              fontFamily: FONTS.PRIMARY,
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "14px",
                             }}
                           >
@@ -191,7 +191,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                         <MenuItem
                           value="Hindi"
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "14px",
                           }}
                         >
@@ -240,10 +240,10 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   borderRadius: "10px",
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                   },
                   "& .MuiInputLabel-root": {
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     color: "#64534A",
                   },
                 }}
@@ -264,18 +264,19 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                   }
                   sx={{
                     width: { xs: "100%", sm: "auto" },
-                    bgcolor: COLORS.PRIMARY,
+                    background: "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
                     color: "white",
                     px: 4,
                     py: 1.5,
                     borderRadius: "10px",
                     fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "15px",
                     textTransform: "none",
-                    boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
+                    boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
                     "&:hover": {
-                      bgcolor: COLORS.PRIMARY,
-                      boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
+                      background: "linear-gradient(135deg, #E65500 0%, #CC3E00 100%)",
+                      boxShadow: "0 8px 25px rgba(255, 98, 0, 0.4)",
                     },
                   }}
                 >

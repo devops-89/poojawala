@@ -78,17 +78,24 @@ export default function Step1OtpVerification({
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          mb: 2,
+          fontSize: { xs: '18px', sm: '20px', md: '24px' },
+          lineHeight: 1.3,
+          mb: 1.5,
         }}
       >
         Verify your Identity (अपनी पहचान सत्यापित करें)
       </Typography>
       <Typography
-        sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT, mb: 4 }}
+        sx={{
+          fontFamily: FONTS.OUTFIT,
+          color: COLORS.MUTED_TEXT,
+          fontSize: { xs: '13px', md: '15px' },
+          mb: { xs: 3, md: 4 },
+        }}
       >
         We&apos;ve sent a 6-digit OTP to {formik.values.email}. (हमने आपके ईमेल पर 6 अंकों का ओटीपी भेजा है।)
       </Typography>
-      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 4 }}>
+      <Box sx={{ display: 'flex', gap: { xs: 1, sm: 1.5, md: 2 }, justifyContent: 'center', mb: { xs: 3, md: 4 } }}>
         {formik.values.otp.map((val: string, idx: number) => (
           <TextField
             key={idx}
@@ -102,8 +109,8 @@ export default function Step1OtpVerification({
             }}
             slotProps={{ htmlInput: { maxLength: 6 } }}
             sx={{
-              width: '50px',
-              '& input': { textAlign: 'center', fontSize: '20px', fontWeight: 700, p: 1.5 },
+              width: { xs: '42px', sm: '46px', md: '50px' },
+              '& input': { textAlign: 'center', fontSize: { xs: '17px', md: '20px' }, fontWeight: 700, p: { xs: 1, sm: 1.5 } },
               '& .MuiOutlinedInput-root': { borderRadius: '12px' },
             }}
           />

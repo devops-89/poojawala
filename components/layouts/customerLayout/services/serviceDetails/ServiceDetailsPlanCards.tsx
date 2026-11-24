@@ -221,7 +221,7 @@ export default function ServiceDetailsPlanCards({
                   />
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: "14px",
                       color: "#2C1810",
                       fontWeight: 600,
@@ -374,7 +374,7 @@ export default function ServiceDetailsPlanCards({
                     <Typography
                       variant="h6"
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 800,
                         color: "#2C1810",
                         fontSize: "20px",
@@ -417,7 +417,7 @@ export default function ServiceDetailsPlanCards({
                         />
                         <Typography
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "14px",
                             color: "#5C4A40",
                             fontWeight: 500,
@@ -435,7 +435,7 @@ export default function ServiceDetailsPlanCards({
                     <Box sx={{ mt: 2.5, pt: 2, borderTop: "1px dashed #EADCCF" }}>
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "12px",
                           fontWeight: 700,
                           color: "#8C7A6B",
@@ -491,7 +491,7 @@ export default function ServiceDetailsPlanCards({
                                 />
                                 <Typography
                                   sx={{
-                                    fontFamily: FONTS.PRIMARY,
+                                    fontFamily: FONTS.OUTFIT,
                                     fontSize: "13.5px",
                                     color: isChecked ? "#2C1810" : "#475569",
                                     fontWeight: isChecked ? 700 : 500,
@@ -541,6 +541,7 @@ export default function ServiceDetailsPlanCards({
                     borderRadius: "10px",
                     textTransform: "none",
                     fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
                     py: 1,
                     ...(isSelected
                       ? {

@@ -434,7 +434,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",
@@ -478,7 +478,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",
@@ -529,7 +529,7 @@ export default function PurohitProfileLayout({
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",
@@ -590,7 +590,7 @@ export default function PurohitProfileLayout({
                     ml: 7,
                   }}
                 >
-                  "Very knowledgeable and punctual. The puja was conducted very
+                  "Very knowledgeable and punctual. The pooja was conducted very
                   peacefully and properly."
                 </Typography>
               </Box>
@@ -670,11 +670,11 @@ export default function PurohitProfileLayout({
                   mb: 0.5,
                 }}
               >
-                Gallery of Past Pujas
+                Gallery of Past Poojas
               </Typography>
               <Box
                 component="img"
-                src="/images/home/poojaPackages/dhanush.webp"
+                src="/images/home/poojaPackages/dhanush.svg"
                 alt="Decoration"
                 sx={{
                   height: "12px",

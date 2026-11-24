@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ServiceCardProps } from '@/utils/types';
 import { FONTS } from '@/utils/fonts';
 import { COLORS } from '@/utils/enums';
-import { createSlug, stripHtml, isCustomerLoggedIn } from '@/utils/helpers';
+import { createSlug, stripHtml, isCustomerLoggedIn, normalizePoojaText } from '@/utils/helpers';
 
 export default function ServiceCard({
   id,
@@ -93,12 +93,12 @@ export default function ServiceCard({
       <Box
         sx={{
           bgcolor: '#FAF4E8',
-          p: 2.5,
+          p: { xs: 2, sm: 2.5 },
           borderBottom: '1px solid #EFE6D5',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '200px',
+          height: { xs: '180px', sm: '200px' },
           width: '100%',
           position: 'relative',
         }}
@@ -121,7 +121,7 @@ export default function ServiceCard({
       {/* Card Content Section */}
       <CardContent
         sx={{
-          p: { xs: 2.5, sm: 3 },
+          p: { xs: 2, sm: 2.5, md: 3 },
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -136,26 +136,36 @@ export default function ServiceCard({
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: { xs: '18px', sm: '20px' },
+              fontSize: { xs: '16.5px', sm: '18px' },
               color: '#2C1810',
               mb: 1,
               lineHeight: 1.3,
+              minHeight: { xs: 'auto', sm: '48px' },
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
             }}
           >
-            {title}
+            {normalizePoojaText(title)}
           </Typography>
 
           {/* Description */}
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              fontSize: '13.5px',
+              fontSize: { xs: '13px', sm: '13.5px' },
               color: '#5C4A40',
-              lineHeight: 1.65,
-              whiteSpace: 'pre-wrap',
+              lineHeight: 1.6,
+              height: '64px',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {stripHtml(description) || 'Traditional Vedic pooja performed by an experienced Purohit.'}
+            {normalizePoojaText(stripHtml(description)) || 'Traditional Vedic pooja performed by an experienced Purohit.'}
           </Typography>
         </Box>
 
@@ -165,6 +175,7 @@ export default function ServiceCard({
           <Box sx={{ mb: 2 }}>
             <Typography
               sx={{
+                fontFamily: FONTS.OUTFIT,
                 fontSize: '11px',
                 fontWeight: 700,
                 letterSpacing: '0.08em',

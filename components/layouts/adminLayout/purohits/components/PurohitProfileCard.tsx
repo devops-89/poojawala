@@ -482,7 +482,7 @@ export default function PurohitProfileCard({
                         </Avatar>
                         <Box sx={{ flex: 1 }}>
                           <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
-                            {ps.service?.name || "Puja Service"}
+                            {ps.service?.name || "Pooja Service"}
                           </Typography>
                           <Typography sx={{ fontSize: "0.825rem", color: "#64748b", mt: 0.2 }}>
                             Duration: <b>{duration} mins</b>

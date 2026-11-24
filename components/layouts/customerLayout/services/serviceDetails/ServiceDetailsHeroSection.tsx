@@ -1,5 +1,6 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import SparklesIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -36,9 +37,9 @@ export default function ServiceDetailsHeroSection({
       sx={{
         bgcolor: "#FAF4EE",
         borderRadius: "24px",
-        p: { xs: 3, sm: 4, md: 5 },
+        p: { xs: 2, sm: 3.5, md: 5 },
         border: "1px solid #EADCCF",
-        mb: 6,
+        mb: { xs: 4, md: 6 },
       }}
     >
       <Grid container spacing={4} sx={{ alignItems: "center" }}>
@@ -68,6 +69,7 @@ export default function ServiceDetailsHeroSection({
                     borderRadius: "20px",
                     color: "#B45309",
                     fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "13px",
                   }}
                 >
@@ -89,6 +91,7 @@ export default function ServiceDetailsHeroSection({
                     borderRadius: "20px",
                     color: "#0369A1",
                     fontWeight: 700,
+                    fontFamily: FONTS.OUTFIT,
                     fontSize: "13px",
                   }}
                 >
@@ -119,7 +122,7 @@ export default function ServiceDetailsHeroSection({
           {/* Service Description */}
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: "#5C4A40",
               fontSize: { xs: "14px", sm: "15px", md: "16px" },
               lineHeight: 1.65,
@@ -155,6 +158,7 @@ export default function ServiceDetailsHeroSection({
                   borderRadius: "8px",
                   fontSize: "13px",
                   fontWeight: 600,
+                  fontFamily: FONTS.OUTFIT,
                   color: "#5C4A40",
                 }}
               >
@@ -168,10 +172,11 @@ export default function ServiceDetailsHeroSection({
           <Box sx={{ mb: 4 }}>
             <Typography
               sx={{
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "12px",
                 fontWeight: 700,
                 letterSpacing: "1.2px",
-                color: "#A39288",
+                color: COLORS.GOLD_DARK,
                 textTransform: "uppercase",
                 mb: 0.5,
               }}
@@ -208,18 +213,19 @@ export default function ServiceDetailsHeroSection({
                       bgcolor: "#FFFBF7 !important",
                     }
                   : {
-                      bgcolor: "#C84B16 !important",
-                      color: "white !important",
-                      boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
+                      background: "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
+                      color: "#FFFFFF !important",
+                      boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
                       "&:hover": {
-                        bgcolor: "#FF6200 !important",
-                        boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
+                        background: "linear-gradient(135deg, #E65500 0%, #CC3E00 100%)",
+                        boxShadow: "0 8px 25px rgba(255, 98, 0, 0.4)",
                       },
                     }),
                 px: 4,
                 py: 1.6,
                 borderRadius: "10px",
                 fontWeight: 700,
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "15px",
                 textTransform: "none",
               }}

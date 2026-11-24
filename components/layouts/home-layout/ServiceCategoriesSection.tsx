@@ -2,6 +2,8 @@
 
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import {
   Box,
   Button,
@@ -17,7 +19,7 @@ import { useEffect, useState } from "react";
 import { CategoryItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml } from "@/utils/helpers";
+import { stripHtml, normalizePoojaText } from "@/utils/helpers";
 
 // SwiperImports
 import "swiper/css";
@@ -73,10 +75,6 @@ export default function ServiceCategoriesSection() {
     }
     router.push(`/services?categoryId=${cat.id}`);
   };
-
-  if (!loading && categories.length === 0) {
-    return null;
-  }
 
   const renderCategoryCard = (cat: CategoryItem) => {
     const imageUrl =
@@ -162,13 +160,13 @@ export default function ServiceCategoriesSection() {
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: "22px",
+              fontSize: { xs: "18px", sm: "20px", md: "22px" },
               color: "#FFFFFF",
               lineHeight: 1.3,
               textShadow: "0 2px 4px rgba(0, 0, 0, 0.4)",
             }}
           >
-            {cat.name}
+            {normalizePoojaText(cat.name)}
           </Typography>
 
           {cat.description && (
@@ -185,7 +183,7 @@ export default function ServiceCategoriesSection() {
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {stripHtml(cat.description)}
+              {normalizePoojaText(stripHtml(cat.description))}
             </Typography>
           )}
 
@@ -226,7 +224,7 @@ export default function ServiceCategoriesSection() {
       component="section"
       id="pooja-by-category"
       sx={{
-        py: { xs: 6, md: 9 },
+        py: { xs: 5, md: 9 },
         bgcolor: "#FFF",
         position: "relative",
         scrollMarginTop: "90px",
@@ -234,7 +232,7 @@ export default function ServiceCategoriesSection() {
     >
       <Container maxWidth="lg">
         {/* Header Section matching Popular Pooja Packages */}
-        <Box sx={{ textAlign: "center", mb: 6, position: "relative" }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 }, position: "relative" }}>
           <Typography
             variant="h3"
             component="h2"
@@ -252,7 +250,7 @@ export default function ServiceCategoriesSection() {
           {/* Decorative Arch Divider */}
           <Box sx={{ display: "flex", justifyContent: "center", pb: 1.5 }}>
             <Image
-              src="/images/home/poojaPackages/dhanush.webp"
+              src="/images/home/poojaPackages/dhanush.svg"
               alt="Decorative Arch"
               width={650}
               height={40}
@@ -276,7 +274,7 @@ export default function ServiceCategoriesSection() {
               mt: 0.5,
             }}
           >
-            Browse our wide range of traditional Vedic pooja's categorized for
+            Browse our wide range of traditional Vedic poojas categorized for
             every sacred occasion, festival, and family ritual.
           </Typography>
 
@@ -353,6 +351,14 @@ export default function ServiceCategoriesSection() {
                 />
               ))}
             </Box>
+          ) : categories.length === 0 ? (
+            <EmptyStateCard
+              icon={<CategoryOutlinedIcon sx={{ fontSize: 32 }} />}
+              title="No Pooja Categories Available"
+              description="Currently, there are no active pooja categories available. Check back soon or explore our full service list!"
+              actionText="Explore All Services"
+              actionHref="/services"
+            />
           ) : categories.length >= 3 ? (
             <Swiper
               modules={[Autoplay, Pagination]}
@@ -402,6 +408,46 @@ export default function ServiceCategoriesSection() {
             </Grid>
           )}
         </Box>
+
+        {/* Mobile View All Button: Centered Below Cards */}
+        {categories.length > 0 && (
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              justifyContent: "center",
+              mt: 4,
+            }}
+          >
+            <Button
+              endIcon={<ArrowForwardIcon fontSize="small" />}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("home_restore_section", "pooja-by-category");
+                }
+                router.push("/services");
+              }}
+              sx={{
+                color: "#D32F2F",
+                border: "1.5px solid rgba(211, 47, 47, 0.35)",
+                background: "rgba(255, 255, 255, 0.9)",
+                borderRadius: "31px",
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: "14px",
+                px: 3.5,
+                py: 0.8,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  background: COLORS.PRIMARY,
+                  borderColor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              View All Categories
+            </Button>
+          </Box>
+        )}
       </Container>
     </Box>
   );

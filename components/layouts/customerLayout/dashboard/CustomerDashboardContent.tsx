@@ -502,7 +502,7 @@ export default function CustomerDashboardContent() {
                       return (
                         <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>B-{row.id}</TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>{row.service?.name || 'Puja Service'}</TableCell>
+                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>{row.service?.name || 'Pooja Service'}</TableCell>
                           <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
                             {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                           </TableCell>
@@ -586,7 +586,7 @@ export default function CustomerDashboardContent() {
         ) : bookings.length === 0 ? (
           <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
             <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
-              No {bookingType === 'ASTROLOGY' ? 'astrology' : 'puja'} bookings found.
+              No {bookingType === 'ASTROLOGY' ? 'astrology' : 'pooja'} bookings found.
             </Typography>
           </Paper>
         ) : bookingType === 'ASTROLOGY' ? (
@@ -666,7 +666,7 @@ export default function CustomerDashboardContent() {
               <Card key={row.id} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: 'white', borderColor: '#e2e8f0' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                   <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
-                    {row.service?.name || 'Puja Service'}
+                    {row.service?.name || 'Pooja Service'}
                   </Typography>
                   {(() => {
                     const statusStyle = getStatusColor(row.status);

@@ -15,7 +15,7 @@ import {
 import React from "react";
 import { COLORS } from "@/utils/enums";
 import { FONTS } from "@/utils/fonts";
-import { stripHtml } from "@/utils/helpers";
+import { stripHtml, normalizePoojaText } from "@/utils/helpers";
 
 interface WebsiteTempleAboutSectionProps {
   temple: any;
@@ -51,7 +51,7 @@ const parseAartis = (aartisRaw: any): any[] => {
 export default function WebsiteTempleAboutSection({
   temple,
 }: WebsiteTempleAboutSectionProps) {
-  const cleanDescription = stripHtml(temple?.description);
+  const cleanDescription = normalizePoojaText(stripHtml(temple?.description));
   const sentences = cleanDescription ? cleanDescription.split(". ") : [];
   let para1 = cleanDescription;
   let para2 = "";
@@ -70,7 +70,7 @@ export default function WebsiteTempleAboutSection({
   const showTimingsCard = hasVisitingHours || hasAartis;
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 }, borderTop: "1px solid #F3E8DB" }}>
+    <Box sx={{ py: { xs: 5, md: 7 }, borderTop: "1px solid #F3E8DB" }}>
       {/* 1. Main About & Spiritual Heritage Section */}
       <Box sx={{ mb: showTimingsCard ? { xs: 4, md: 5 } : 0 }}>
         <Box
@@ -86,13 +86,14 @@ export default function WebsiteTempleAboutSection({
           <Typography
             variant="h2"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              fontSize: { xs: "24px", md: "32px" },
+              fontSize: { xs: "28px", sm: "36px", md: "42px" },
               color: "#2C1810",
+              lineHeight: 1.25,
             }}
           >
-            About {temple?.name}
+            About {normalizePoojaText(temple?.name || "")}
           </Typography>
 
           {temple?.primaryDeity && (
@@ -118,12 +119,11 @@ export default function WebsiteTempleAboutSection({
           variant="subtitle1"
           sx={{
             fontFamily: FONTS.OUTFIT,
-            fontSize: "13.5px",
-            color: "#8C7A6B",
-            mb: 2.5,
-            fontWeight: 600,
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
+            fontSize: { xs: "14px", md: "15px" },
+            color: "#64748B",
+            mb: 2,
+            fontWeight: 500,
+            lineHeight: 1.5,
           }}
         >
           Divine Legend & Spiritual Heritage
@@ -206,9 +206,9 @@ export default function WebsiteTempleAboutSection({
             <Box>
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
-                  fontSize: "20px",
+                  fontSize: { xs: "18px", sm: "20px" },
                   color: "#1E293B",
                 }}
               >
@@ -340,7 +340,9 @@ export default function WebsiteTempleAboutSection({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        p: 2,
+                        flexWrap: "wrap",
+                        gap: 1.5,
+                        p: { xs: 1.5, sm: 2 },
                         borderRadius: "14px",
                         bgcolor: "#F8FAFC",
                         border: "1px solid #E2E8F0",

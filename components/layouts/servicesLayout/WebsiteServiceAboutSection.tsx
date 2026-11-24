@@ -5,6 +5,7 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { normalizePoojaText } from "@/utils/helpers";
 
 interface WebsiteServiceAboutSectionProps {
   service: any;
@@ -31,12 +32,13 @@ export default function WebsiteServiceAboutSection({
 
   const benefitsList = rawBenefits;
 
-  const fullDesc =
+  const fullDesc = normalizePoojaText(
     service?.description ||
     service?.desc ||
     (service?.name
       ? `Experience divine blessings with authentic ${service.name} performed by experienced Vedic Acharyas and Purohits.`
-      : "");
+      : "")
+  );
 
   // Split description into paragraphs if long enough
   const sentences = fullDesc.split(". ");
@@ -57,12 +59,13 @@ export default function WebsiteServiceAboutSection({
       <Typography
         variant="h3"
         sx={{
-          fontFamily: FONTS.PRIMARY,
-          fontWeight: 800,
-          fontSize: { xs: "24px", sm: "32px", md: "36px" },
-          color: "#1A0B05",
+          fontFamily: FONTS.OUTFIT,
+          fontWeight: 700,
+          fontSize: { xs: "28px", sm: "36px", md: "44px" },
+          color: "#1A1A1A",
           lineHeight: 1.25,
           mb: 1.5,
+          wordBreak: "break-word",
         }}
       >
         Sacred Tradition & Scriptural Vidhi
@@ -82,8 +85,8 @@ export default function WebsiteServiceAboutSection({
       {/* Normal Text Description (No Card Container) */}
       <Typography
         sx={{
-          fontFamily: FONTS.PRIMARY,
-          fontSize: { xs: "15px", sm: "16px" },
+          fontFamily: FONTS.OUTFIT,
+          fontSize: { xs: "14.5px", sm: "15.5px" },
           color: "#4A3B32",
           lineHeight: 1.8,
           mb: para2 ? 2.5 : 4,
@@ -95,8 +98,8 @@ export default function WebsiteServiceAboutSection({
       {para2 && (
         <Typography
           sx={{
-            fontFamily: FONTS.PRIMARY,
-            fontSize: { xs: "15px", sm: "16px" },
+            fontFamily: FONTS.OUTFIT,
+            fontSize: { xs: "14.5px", sm: "15.5px" },
             color: "#4A3B32",
             lineHeight: 1.8,
             mb: 4,
@@ -112,10 +115,10 @@ export default function WebsiteServiceAboutSection({
           <Typography
             variant="h4"
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 800,
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
               fontSize: { xs: "20px", sm: "24px" },
-              color: "#1A0B05",
+              color: "#1A1A1A",
               mb: 3,
             }}
           >
@@ -125,8 +128,12 @@ export default function WebsiteServiceAboutSection({
           {/* Vertical Points List */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {benefitsList.map((benefit: any, index: number) => {
-              const bTitle = typeof benefit === "string" ? benefit : benefit.title || benefit.name;
-              const bDesc = typeof benefit === "object" ? benefit.description || benefit.desc : "";
+              const bTitle = normalizePoojaText(
+                typeof benefit === "string" ? benefit : benefit.title || benefit.name || ""
+              );
+              const bDesc = normalizePoojaText(
+                typeof benefit === "object" ? benefit.description || benefit.desc || "" : ""
+              );
 
               return (
                 <Box
@@ -156,9 +163,9 @@ export default function WebsiteServiceAboutSection({
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 700,
-                        fontSize: "16px",
+                        fontSize: { xs: "15px", sm: "16px" },
                         color: "#1A0B05",
                         mb: 0.4,
                       }}
@@ -169,8 +176,8 @@ export default function WebsiteServiceAboutSection({
                     {bDesc && (
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "14px",
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: { xs: "13.5px", sm: "14px" },
                           color: "#5C4A40",
                           lineHeight: 1.6,
                         }}

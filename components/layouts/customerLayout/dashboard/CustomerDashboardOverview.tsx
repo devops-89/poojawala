@@ -58,7 +58,7 @@ export default function CustomerDashboardOverview() {
       {/* Hero Section */}
       <CustomerDashboardHero />
 
-      {/* Sacred Puja Services (Max 3) */}
+      {/* Sacred Pooja Services (Max 3) */}
       <DashboardServicesSection
         services={services}
         loadingServices={loadingServices}

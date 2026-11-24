@@ -78,6 +78,7 @@ import {
   sanitizeLettersOnly,
   allowOnlyEmailCharsOnKeyDown,
   sanitizeEmailInput,
+  normalizePoojaText,
 } from "@/utils/helpers";
 import SignUpBrandingSide from "@/components/layouts/userPages/components/SignUpBrandingSide";
 import SignUpStepperHeader from "@/components/layouts/userPages/components/SignUpStepperHeader";
@@ -506,60 +507,65 @@ export interface IOfflinePoojaService {
 const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
   {
     id: "bhoomi-puja",
-    name: "Bhoomi Puja",
+    name: "Bhoomi Pooja",
     hindiName: "भूमि पूजा",
     category: "Vastu & Property",
     basicPrice: 5100,
     standardPrice: 11000,
-    description: "Blessings of Mother Earth before construction or property development with Vastu Purush Puja.",
+    description:
+      "Blessings of Mother Earth before construction or property development with Vastu Purush Pooja.",
     isAvailable: true,
     image: "/images/home/poojaPackages/bhoomi.webp",
     duration: "2 - 3 Hours",
   },
   {
     id: "griha-pravesh-puja",
-    name: "Griha Pravesh Puja",
+    name: "Griha Pravesh Pooja",
     hindiName: "गृह प्रवेश पूजा",
     category: "Vastu & Property",
     basicPrice: 5100,
     standardPrice: 11000,
-    description: "Sacred housewarming ritual with Vastu Shanti, Navgraha Puja, Kalash Sthapana & Havan.",
+    description:
+      "Sacred housewarming ritual with Vastu Shanti, Navgraha Pooja, Kalash Sthapana & Havan.",
     isAvailable: true,
     image: "/images/home/poojaPackages/grihaPravesh.webp",
     duration: "3 - 4 Hours",
   },
   {
     id: "rudrabhishek-puja",
-    name: "Rudrabhishek Puja",
+    name: "Rudrabhishek Pooja",
     hindiName: "रुद्राभिषेक पूजा",
-    category: "Shiva Puja & Havan",
+    category: "Shiva Pooja & Havan",
     basicPrice: 4800,
     standardPrice: 11000,
-    description: "Sacred Shiva Abhishek with Panchamrit, bilva patra, and Vedic Rudri Path recitation.",
+    description:
+      "Sacred Shiva Abhishek with Panchamrit, bilva patra, and Vedic Rudri Path recitation.",
     isAvailable: true,
     image: "/images/home/poojaPackages/rudrabhishek.webp",
     duration: "2 - 3 Hours",
   },
   {
     id: "satyanarayan-puja",
-    name: "Satyanarayan Katha & Puja",
+    name: "Satyanarayan Katha & Pooja",
     hindiName: "सत्यनारायण कथा व पूजा",
     category: "Katha & Family",
     basicPrice: 3100,
     standardPrice: 6100,
-    description: "Traditional Lord Vishnu Katha recitation for family peace, gratitude, and fulfillment of sankalp.",
+    description:
+      "Traditional Lord Vishnu Katha recitation for family peace, gratitude, and fulfillment of sankalp.",
     isAvailable: true,
     image: "/images/home/poojaPackages/satyanarayan.webp",
     duration: "2 - 2.5 Hours",
   },
   {
     id: "navgraha-shanti-puja",
-    name: "Navgraha Shanti Puja",
+    name: "Navgraha Shanti Pooja",
     hindiName: "नवग्रह शांति पूजा",
     category: "Dosha & Shanti",
     basicPrice: 5500,
     standardPrice: 12000,
-    description: "Pacify malefic planetary influences and attract health, wealth and cosmic balance.",
+    description:
+      "Pacify malefic planetary influences and attract health, wealth and cosmic balance.",
     isAvailable: true,
     image: "/images/home/poojaPackages/navgrah.webp",
     duration: "3 Hours",
@@ -571,19 +577,21 @@ const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
     category: "Sanskar Rituals",
     basicPrice: 3500,
     standardPrice: 6500,
-    description: "Baby's first rice feeding sacred ceremony with Vedic mantras and divine blessings.",
+    description:
+      "Baby's first rice feeding sacred ceremony with Vedic mantras and divine blessings.",
     isAvailable: true,
     image: "/images/home/poojaPackages/annaprashan.webp",
     duration: "1.5 - 2 Hours",
   },
   {
     id: "ganesh-puja",
-    name: "Ganesh Puja & Havan",
+    name: "Ganesh Pooja & Havan",
     hindiName: "गणेश पूजा व हवन",
     category: "Auspicious Beginnings",
     basicPrice: 2500,
     standardPrice: 5100,
-    description: "Removal of all obstacles, invocation of wisdom, and blessings for new ventures or milestones.",
+    description:
+      "Removal of all obstacles, invocation of wisdom, and blessings for new ventures or milestones.",
     isAvailable: true,
     image: "/images/home/poojaPackages/ganesh.webp",
     duration: "1.5 - 2 Hours",
@@ -592,22 +600,24 @@ const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
     id: "maha-mrityunjaya-jaap",
     name: "Maha Mrityunjaya Jaap & Havan",
     hindiName: "महा मृत्युंजय जाप व हवन",
-    category: "Shiva Puja & Havan",
+    category: "Shiva Pooja & Havan",
     basicPrice: 11000,
     standardPrice: 21000,
-    description: "Potent Vedic chanting with sacred Havan for health, rejuvenation, and longevity.",
+    description:
+      "Potent Vedic chanting with sacred Havan for health, rejuvenation, and longevity.",
     isAvailable: true,
     image: "/images/home/poojaPackages/rudrabhishek.webp",
     duration: "4 - 5 Hours",
   },
   {
     id: "vastu-shanti-puja",
-    name: "Vastu Shanti Puja",
+    name: "Vastu Shanti Pooja",
     hindiName: "वास्तु शांति पूजा",
     category: "Vastu & Property",
     basicPrice: 6500,
     standardPrice: 13500,
-    description: "Purification and directional dosha rectification for home, office or commercial establishments.",
+    description:
+      "Purification and directional dosha rectification for home, office or commercial establishments.",
     isAvailable: true,
     image: "/images/home/poojaPackages/grihaPravesh.webp",
     duration: "3 - 4 Hours",
@@ -619,7 +629,8 @@ const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
     category: "Sanskar Rituals",
     basicPrice: 3100,
     standardPrice: 5500,
-    description: "Sacred Vedic baby naming ceremony calculated according to birth nakshatra and astrological vidhi.",
+    description:
+      "Sacred Vedic baby naming ceremony calculated according to birth nakshatra and astrological vidhi.",
     isAvailable: true,
     image: "/images/home/poojaPackages/annaprashan.webp",
     duration: "1.5 - 2 Hours",
@@ -631,7 +642,8 @@ const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
     category: "Sanskar Rituals",
     basicPrice: 3500,
     standardPrice: 6500,
-    description: "Traditional first haircut ceremony for child's purification, intellect, and healthy growth.",
+    description:
+      "Traditional first haircut ceremony for child's purification, intellect, and healthy growth.",
     isAvailable: true,
     image: "/images/home/poojaPackages/annaprashan.webp",
     duration: "2 Hours",
@@ -640,10 +652,11 @@ const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
     id: "chandi-path",
     name: "Durga Chandi Path & Havan",
     hindiName: "दुर्गा चंडी पाठ व हवन",
-    category: "Devi Puja",
+    category: "Devi Pooja",
     basicPrice: 7100,
     standardPrice: 15000,
-    description: "Recitation of Durga Saptashati with Samput Path and Havan for victory, peace, and protection.",
+    description:
+      "Recitation of Durga Saptashati with Samput Path and Havan for victory, peace, and protection.",
     isAvailable: true,
     image: "/images/home/poojaPackages/satyanarayan.webp",
     duration: "3 - 4 Hours",
@@ -655,31 +668,34 @@ const STATIC_OFFLINE_SERVICES: IOfflinePoojaService[] = [
     category: "Sanskar Rituals",
     basicPrice: 15000,
     standardPrice: 31000,
-    description: "Complete traditional Vedic wedding ritual with Saptapadi, Kanyadaan, and sacred Agni vows.",
+    description:
+      "Complete traditional Vedic wedding ritual with Saptapadi, Kanyadaan, and sacred Agni vows.",
     isAvailable: false, // Marked unavailable / on-request as an example
     image: "/images/home/poojaPackages/satyanarayan.webp",
     duration: "5 - 6 Hours",
   },
   {
     id: "pitra-dosh-nivaran",
-    name: "Pitra Dosh Nivaran Puja",
+    name: "Pitra Dosh Nivaran Pooja",
     hindiName: "पितृ दोष निवारण पूजा",
     category: "Dosha & Shanti",
     basicPrice: 6500,
     standardPrice: 12500,
-    description: "Ancestral peace and tarpan rituals to eliminate pitra dosha and invite family blessings.",
+    description:
+      "Ancestral peace and tarpan rituals to eliminate pitra dosha and invite family blessings.",
     isAvailable: false, // Marked unavailable / on-request
     image: "/images/home/poojaPackages/navgrah.webp",
     duration: "3 Hours",
   },
   {
     id: "kalsarp-dosh-shanti",
-    name: "Kalsarp Dosh Shanti Puja",
+    name: "Kalsarp Dosh Shanti Pooja",
     hindiName: "कालसर्प दोष शांति पूजा",
     category: "Dosha & Shanti",
     basicPrice: 7500,
     standardPrice: 14500,
-    description: "Astrological planetary mitigation for Rahu & Ketu alignment to unlock career and health prosperity.",
+    description:
+      "Astrological planetary mitigation for Rahu & Ketu alignment to unlock career and health prosperity.",
     isAvailable: false, // Marked unavailable / on-request
     image: "/images/home/poojaPackages/navgrah.webp",
     duration: "3 Hours",
@@ -1066,7 +1082,10 @@ export default function OfflineServiceLocationModal({
   // Prefill user details if logged in
   useEffect(() => {
     if (profile) {
-      const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(" ") || profile.name || "";
+      const fullName =
+        [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
+        profile.name ||
+        "";
       if (fullName) setCustomerName(fullName);
       if (profile.email) setCustomerEmail(profile.email);
       if (profile.phone || profile.phoneNumber) {
@@ -1096,7 +1115,7 @@ export default function OfflineServiceLocationModal({
           (s) =>
             s.id === service.slug ||
             s.id === service.id ||
-            s.name.toLowerCase().includes((service.name || "").toLowerCase())
+            s.name.toLowerCase().includes((service.name || "").toLowerCase()),
         );
         if (found) {
           setSelectedService(found);
@@ -1107,12 +1126,23 @@ export default function OfflineServiceLocationModal({
             name: service.name || service.title || "Selected Pooja Service",
             hindiName: service.hindiName || "वैदिक पूजा",
             category: "Offline Services",
-            basicPrice: Number(service?.plans?.basic?.price || service?.minPrice || 5100),
-            standardPrice: Number(service?.plans?.standard?.price || service?.maxPrice || 11000),
-            description: service.description || "Authentic Vedic pooja ceremony performed by verified Purohits.",
+            basicPrice: Number(
+              service?.plans?.basic?.price || service?.minPrice || 5100,
+            ),
+            standardPrice: Number(
+              service?.plans?.standard?.price || service?.maxPrice || 11000,
+            ),
+            description:
+              service.description ||
+              "Authentic Vedic pooja ceremony performed by verified Purohits.",
             isAvailable: true,
-            image: service.iconDownloadurl || service.iconUrl || "/images/home/poojaPackages/bhoomi.webp",
-            duration: service.durationMinutes ? `${service.durationMinutes} mins` : "2 - 3 Hours",
+            image:
+              service.iconDownloadurl ||
+              service.iconUrl ||
+              "/images/home/poojaPackages/bhoomi.webp",
+            duration: service.durationMinutes
+              ? `${service.durationMinutes} mins`
+              : "2 - 3 Hours",
           });
         }
       }
@@ -1122,7 +1152,9 @@ export default function OfflineServiceLocationModal({
   // Indian States & Cities
   const indianStates = useMemo(() => State.getStatesOfCountry("IN") || [], []);
   const selectedStateObj = useMemo(() => {
-    return indianStates.find((s) => s.name.toLowerCase() === selectedState.toLowerCase());
+    return indianStates.find(
+      (s) => s.name.toLowerCase() === selectedState.toLowerCase(),
+    );
   }, [selectedState, indianStates]);
 
   const stateCities = useMemo(() => {
@@ -1130,8 +1162,14 @@ export default function OfflineServiceLocationModal({
     return City.getCitiesOfState("IN", selectedStateObj.isoCode) || [];
   }, [selectedStateObj]);
 
-  const stateOptions = useMemo(() => indianStates.map((s) => s.name), [indianStates]);
-  const cityOptions = useMemo(() => stateCities.map((c) => c.name), [stateCities]);
+  const stateOptions = useMemo(
+    () => indianStates.map((s) => s.name),
+    [indianStates],
+  );
+  const cityOptions = useMemo(
+    () => stateCities.map((c) => c.name),
+    [stateCities],
+  );
 
   const effectiveCity = selectedCity;
 
@@ -1146,7 +1184,7 @@ export default function OfflineServiceLocationModal({
         (s) =>
           s.id === service.slug ||
           s.id === service.id ||
-          s.name.toLowerCase() === (service.name || "").toLowerCase()
+          s.name.toLowerCase() === (service.name || "").toLowerCase(),
       )
     ) {
       const dynamicService: IOfflinePoojaService = {
@@ -1156,9 +1194,15 @@ export default function OfflineServiceLocationModal({
         category: "Selected Pooja",
         basicPrice: Number(service?.plans?.basic?.price || 5100),
         standardPrice: Number(service?.plans?.standard?.price || 11000),
-        description: service.shortDescription || service.description || "Authentic Vedic pooja ceremony.",
+        description:
+          service.shortDescription ||
+          service.description ||
+          "Authentic Vedic pooja ceremony.",
         isAvailable: true,
-        image: service.iconDownloadurl || service.iconUrl || "/images/home/poojaPackages/bhoomi.webp",
+        image:
+          service.iconDownloadurl ||
+          service.iconUrl ||
+          "/images/home/poojaPackages/bhoomi.webp",
         duration: "2 - 3 Hours",
       };
       list = [dynamicService, ...list];
@@ -1170,12 +1214,14 @@ export default function OfflineServiceLocationModal({
         (s) =>
           s.name.toLowerCase().includes(q) ||
           s.hindiName.includes(q) ||
-          s.category.toLowerCase().includes(q)
+          s.category.toLowerCase().includes(q),
       );
     }
 
     if (selectedCategory !== "ALL") {
-      list = list.filter((s) => s.category.toLowerCase().includes(selectedCategory.toLowerCase()));
+      list = list.filter((s) =>
+        s.category.toLowerCase().includes(selectedCategory.toLowerCase()),
+      );
     }
 
     return list;
@@ -1391,7 +1437,10 @@ export default function OfflineServiceLocationModal({
 
       setIsSuccessForUnavailable(false);
       setStep("SUCCESS");
-      showSnackbar("Booking request received! Redirecting to confirmation.", "success");
+      showSnackbar(
+        "Booking request received! Redirecting to confirmation.",
+        "success",
+      );
     } catch (err: any) {
       console.error("Booking error:", err);
       setIsSuccessForUnavailable(false);
@@ -1407,31 +1456,65 @@ export default function OfflineServiceLocationModal({
       onClose={submitting ? undefined : onClose}
       maxWidth="md"
       fullWidth
+      sx={{
+        "& .MuiDialog-container": {
+          alignItems: { xs: "flex-end", sm: "center" },
+          justifyContent: "center",
+        },
+      }}
       slotProps={{
         paper: {
           sx: {
-            borderRadius: "24px",
-            bgcolor: "#FFFFFF",
-            boxShadow: "0 24px 60px rgba(44, 24, 16, 0.22)",
+            width: "100%",
+            maxWidth: { xs: "100%", sm: "640px", md: "780px" },
+            m: { xs: 0, sm: 2 },
+            borderRadius: { xs: "24px 24px 0 0", sm: "24px" },
+            maxHeight: { xs: "90vh", sm: "92vh" },
             overflow: "hidden",
-            maxHeight: "92vh",
+            display: "flex",
+            flexDirection: "column",
+            bgcolor: "#FFFFFF",
+            boxShadow: "0 24px 60px rgba(44, 24, 16, 0.25)",
           },
         },
       }}
     >
+      {/* Mobile Bottom Sheet Drag Handle */}
+      <Box
+        sx={{
+          display: { xs: "block", sm: "none" },
+          width: 44,
+          height: 4,
+          bgcolor: "#E2E8F0",
+          borderRadius: 2,
+          mx: "auto",
+          mt: 1.2,
+          mb: 0.5,
+        }}
+      />
+
       {/* Header */}
       <DialogTitle
         sx={{
           bgcolor: "#FFFFFF",
           borderBottom: "1px solid #F1E5D8",
-          py: 2.2,
-          px: { xs: 2.5, sm: 3.5 },
+          py: { xs: 1.8, sm: 2.2 },
+          px: { xs: 2, sm: 3.5 },
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.8 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 1.2, sm: 1.8 },
+            flex: 1,
+            minWidth: 0,
+            pr: 1,
+          }}
+        >
           {step !== "LOCATION" && step !== "SUCCESS" && (
             <IconButton
               size="small"
@@ -1449,6 +1532,7 @@ export default function OfflineServiceLocationModal({
                 color: COLORS.PRIMARY,
                 bgcolor: "#FFF4EB",
                 mr: 0.5,
+                flexShrink: 0,
                 "&:hover": { bgcolor: "#FFE7D6" },
               }}
             >
@@ -1458,8 +1542,8 @@ export default function OfflineServiceLocationModal({
 
           <Box
             sx={{
-              width: 44,
-              height: 44,
+              width: { xs: 38, sm: 44 },
+              height: { xs: 38, sm: 44 },
               borderRadius: "14px",
               bgcolor: "#FFF4EB",
               border: "1.5px solid #FFE4D1",
@@ -1479,13 +1563,21 @@ export default function OfflineServiceLocationModal({
             )}
           </Box>
 
-          <Box>
+          <Box
+            sx={{
+              minWidth: 0,
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 800,
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
                 color: "#1A0B05",
-                fontSize: { xs: "18px", sm: "20px" },
+                fontSize: { xs: "16px", sm: "20px" },
                 lineHeight: 1.25,
               }}
             >
@@ -1531,6 +1623,7 @@ export default function OfflineServiceLocationModal({
             border: "1px solid #E2E8F0",
             width: 36,
             height: 36,
+            flexShrink: 0,
             "&:hover": { bgcolor: "#F1F5F9", color: "#1E293B" },
           }}
         >
@@ -1539,7 +1632,9 @@ export default function OfflineServiceLocationModal({
       </DialogTitle>
 
       {/* Main Body Content */}
-      <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 }, bgcolor: "#FFFFFF" }}>
+      <DialogContent
+        sx={{ p: { xs: 2, sm: 3.5 }, bgcolor: "#FFFFFF", overflowY: "auto" }}
+      >
         {/* ============================================================ */}
         {/* STEP 1: LOCATION SELECTION (STATE & CITY)                    */}
         {/* ============================================================ */}
@@ -1573,7 +1668,10 @@ export default function OfflineServiceLocationModal({
                           fontFamily: FONTS.PRIMARY,
                           "& fieldset": { borderColor: "#E2E8F0" },
                           "&:hover fieldset": { borderColor: COLORS.PRIMARY },
-                          "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY, borderWidth: "2px" },
+                          "&.Mui-focused fieldset": {
+                            borderColor: COLORS.PRIMARY,
+                            borderWidth: "2px",
+                          },
                         },
                       }}
                     />
@@ -1602,7 +1700,11 @@ export default function OfflineServiceLocationModal({
                     <TextField
                       {...params}
                       label="City / शहर *"
-                      placeholder={selectedState ? "Search or select City..." : "Select state first..."}
+                      placeholder={
+                        selectedState
+                          ? "Search or select City..."
+                          : "Select state first..."
+                      }
                       variant="outlined"
                       autoComplete="off"
                       sx={{
@@ -1612,7 +1714,10 @@ export default function OfflineServiceLocationModal({
                           fontFamily: FONTS.PRIMARY,
                           "& fieldset": { borderColor: "#E2E8F0" },
                           "&:hover fieldset": { borderColor: COLORS.PRIMARY },
-                          "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY, borderWidth: "2px" },
+                          "&.Mui-focused fieldset": {
+                            borderColor: COLORS.PRIMARY,
+                            borderWidth: "2px",
+                          },
                         },
                       }}
                     />
@@ -1622,25 +1727,49 @@ export default function OfflineServiceLocationModal({
             </Grid>
 
             {/* Proceed Button */}
-            <Box sx={{ mt: 3.5, display: "flex", justifyContent: "flex-end" }}>
+            <Box
+              sx={{
+                mt: 3,
+                display: "flex",
+                justifyContent: { xs: "stretch", sm: "flex-end" },
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={handleProceedToServices}
                 disabled={!effectiveCity.trim() || !selectedState.trim() || checkingAvailability}
                 sx={{
-                  background: "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
-                  color: "#FFFFFF",
-                  px: 4.5,
-                  py: 1.4,
+                  background:
+                    !effectiveCity.trim() || !selectedState.trim()
+                      ? "#E2E8F0 !important"
+                      : "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
+                  color:
+                    !effectiveCity.trim() || !selectedState.trim()
+                      ? "#94A3B8 !important"
+                      : "#FFFFFF !important",
+                  width: { xs: "100%", sm: "auto" },
+                  px: 4,
+                  py: { xs: 1.3, sm: 1.4 },
                   borderRadius: "14px",
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
-                  fontSize: "15px",
+                  fontSize: { xs: "14px", sm: "15px" },
                   textTransform: "none",
-                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.35)",
+                  boxShadow:
+                    !effectiveCity.trim() || !selectedState.trim()
+                      ? "none"
+                      : "0 8px 24px rgba(255, 98, 0, 0.35)",
                   transition: "all 0.25s ease",
+                  "&.Mui-disabled": {
+                    background: "#E2E8F0 !important",
+                    color: "#94A3B8 !important",
+                    "& .MuiButton-endIcon": {
+                      color: "#94A3B8 !important",
+                    },
+                  },
                   "&:hover": {
-                    background: "linear-gradient(135deg, #E65500 0%, #CC3E00 100%)",
+                    background:
+                      "linear-gradient(135deg, #E65500 0%, #CC3E00 100%)",
                     transform: "translateY(-1px)",
                     boxShadow: "0 10px 28px rgba(255, 98, 0, 0.45)",
                   },
@@ -1687,7 +1816,10 @@ export default function OfflineServiceLocationModal({
                     color: "#2C1810",
                   }}
                 >
-                  Location: <strong>{effectiveCity}, {selectedState}</strong>
+                  Location:{" "}
+                  <strong>
+                    {effectiveCity}, {selectedState}
+                  </strong>
                 </Typography>
               </Box>
 
@@ -1712,7 +1844,7 @@ export default function OfflineServiceLocationModal({
               <TextField
                 fullWidth
                 size="small"
-                placeholder="Search pooja by name (e.g. Griha Pravesh, Rudrabhishek, Bhoomi Puja)..."
+                placeholder="Search pooja by name (e.g. Griha Pravesh, Rudrabhishek, Bhoomi Pooja)..."
                 value={serviceSearch}
                 onChange={(e) => setServiceSearch(e.target.value)}
                 slotProps={{
@@ -1779,7 +1911,14 @@ export default function OfflineServiceLocationModal({
                       }}
                     >
                       <Box sx={{ flex: 1 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mb: 0.5,
+                          }}
+                        >
                           <Typography
                             sx={{
                               fontFamily: FONTS.PRIMARY,
@@ -1817,7 +1956,14 @@ export default function OfflineServiceLocationModal({
                         </Typography>
 
                         {/* Badges: Category & Availability */}
-                        <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
                           <Chip
                             size="small"
                             label={srv.category}
@@ -1833,7 +1979,14 @@ export default function OfflineServiceLocationModal({
                           {srv.isAvailable ? (
                             <Chip
                               size="small"
-                              icon={<CheckCircleIcon sx={{ fontSize: "14px !important", color: "#2E7D32" }} />}
+                              icon={
+                                <CheckCircleIcon
+                                  sx={{
+                                    fontSize: "14px !important",
+                                    color: "#2E7D32",
+                                  }}
+                                />
+                              }
                               label={`✓ Available in ${effectiveCity}`}
                               sx={{
                                 fontFamily: FONTS.PRIMARY,
@@ -1847,7 +2000,14 @@ export default function OfflineServiceLocationModal({
                           ) : (
                             <Chip
                               size="small"
-                              icon={<ErrorIcon sx={{ fontSize: "14px !important", color: "#C62828" }} />}
+                              icon={
+                                <ErrorIcon
+                                  sx={{
+                                    fontSize: "14px !important",
+                                    color: "#C62828",
+                                  }}
+                                />
+                              }
                               label={`⚡ On Request in ${effectiveCity}`}
                               sx={{
                                 fontFamily: FONTS.PRIMARY,
@@ -1909,15 +2069,23 @@ export default function OfflineServiceLocationModal({
                             borderRadius: "8px",
                             px: 1.8,
                             py: 0.6,
-                            bgcolor: srv.isAvailable ? COLORS.PRIMARY : "transparent",
+                            bgcolor: srv.isAvailable
+                              ? COLORS.PRIMARY
+                              : "transparent",
                             color: srv.isAvailable ? "#FFFFFF" : "#C62828",
-                            borderColor: srv.isAvailable ? COLORS.PRIMARY : "#C62828",
+                            borderColor: srv.isAvailable
+                              ? COLORS.PRIMARY
+                              : "#C62828",
                             "&:hover": {
-                              bgcolor: srv.isAvailable ? COLORS.PRIMARY_DARK : "#FFEBEE",
+                              bgcolor: srv.isAvailable
+                                ? COLORS.PRIMARY_DARK
+                                : "#FFEBEE",
                             },
                           }}
                         >
-                          {srv.isAvailable ? "Book This Pooja" : "Request in City"}
+                          {srv.isAvailable
+                            ? "Book This Pooja"
+                            : "Request in City"}
                         </Button>
                       </Box>
                     </Box>
@@ -1967,7 +2135,8 @@ export default function OfflineServiceLocationModal({
                     color: "#6E5B50",
                   }}
                 >
-                  Our senior Vedic Acharyas can arrange customized poojas and pandits for any ritual.
+                  Our senior Vedic Acharyas can arrange customized poojas and
+                  pandits for any ritual.
                 </Typography>
               </Box>
 
@@ -2533,16 +2702,21 @@ export default function OfflineServiceLocationModal({
                       color: "#1A0B05",
                     }}
                   >
-                    {selectedService.name} {selectedService.hindiName && `(${selectedService.hindiName})`}
+                    {normalizePoojaText(selectedService.name)}{" "}
+                    {selectedService.hindiName &&
+                      `(${selectedService.hindiName})`}
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: "12.5px",
                       color: "#6E5B50",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.4,
                     }}
                   >
-                    📍 Location: {effectiveCity}, {selectedState}
+                    <LocationOnIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} /> Location: {effectiveCity}, {selectedState}
                   </Typography>
                 </Box>
 
@@ -2585,7 +2759,8 @@ export default function OfflineServiceLocationModal({
                           selectedPlan === "basic"
                             ? `2px solid ${COLORS.PRIMARY}`
                             : "1px solid #D8C7B8",
-                        bgcolor: selectedPlan === "basic" ? "#FFF8F0" : "#FFFFFF",
+                        bgcolor:
+                          selectedPlan === "basic" ? "#FFF8F0" : "#FFFFFF",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
@@ -2621,7 +2796,10 @@ export default function OfflineServiceLocationModal({
                           color: COLORS.PRIMARY,
                         }}
                       >
-                        ₹{(selectedService.basicPrice || 5100).toLocaleString("en-IN")}
+                        ₹
+                        {(selectedService.basicPrice || 5100).toLocaleString(
+                          "en-IN",
+                        )}
                       </Typography>
                     </Box>
                   </Grid>
@@ -2636,7 +2814,8 @@ export default function OfflineServiceLocationModal({
                           selectedPlan === "standard"
                             ? `2px solid ${COLORS.PRIMARY}`
                             : "1px solid #D8C7B8",
-                        bgcolor: selectedPlan === "standard" ? "#FFF8F0" : "#FFFFFF",
+                        bgcolor:
+                          selectedPlan === "standard" ? "#FFF8F0" : "#FFFFFF",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
@@ -2672,7 +2851,10 @@ export default function OfflineServiceLocationModal({
                           color: COLORS.PRIMARY,
                         }}
                       >
-                        ₹{(selectedService.standardPrice || 11000).toLocaleString("en-IN")}
+                        ₹
+                        {(
+                          selectedService.standardPrice || 11000
+                        ).toLocaleString("en-IN")}
                       </Typography>
                     </Box>
                   </Grid>
@@ -2705,7 +2887,9 @@ export default function OfflineServiceLocationModal({
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <PersonIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
+                          <PersonIcon
+                            sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                          />
                         </InputAdornment>
                       ),
                     },
@@ -2721,12 +2905,23 @@ export default function OfflineServiceLocationModal({
                   label="Mobile Number / मोबाइल नंबर *"
                   placeholder="10-digit number"
                   value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  onChange={(e) =>
+                    setCustomerPhone(
+                      e.target.value.replace(/\D/g, "").slice(0, 10),
+                    )
+                  }
                   slotProps={{
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "14px", mr: 0.5 }}>
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontWeight: 700,
+                              fontSize: "14px",
+                              mr: 0.5,
+                            }}
+                          >
                             +91
                           </Typography>
                         </InputAdornment>
@@ -2749,7 +2944,9 @@ export default function OfflineServiceLocationModal({
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <EmailIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
+                          <EmailIcon
+                            sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                          />
                         </InputAdornment>
                       ),
                     },
@@ -2785,7 +2982,9 @@ export default function OfflineServiceLocationModal({
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <HomeIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
+                          <HomeIcon
+                            sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                          />
                         </InputAdornment>
                       ),
                     },
@@ -2823,14 +3022,34 @@ export default function OfflineServiceLocationModal({
                   >
                     <FormControlLabel
                       value="TOKEN"
-                      control={<Radio sx={{ color: COLORS.PRIMARY, "&.Mui-checked": { color: COLORS.PRIMARY } }} />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: COLORS.PRIMARY,
+                            "&.Mui-checked": { color: COLORS.PRIMARY },
+                          }}
+                        />
+                      }
                       label={
                         <Box>
-                          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "13.5px" }}>
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontWeight: 700,
+                              fontSize: "13.5px",
+                            }}
+                          >
                             Pay Advance Token Amount (₹1,000)
                           </Typography>
-                          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "11px", color: "#7A685D" }}>
-                            Pay ₹1,000 to block Pandit, pay remaining balance after puja completion.
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontSize: "11px",
+                              color: "#7A685D",
+                            }}
+                          >
+                            Pay ₹1,000 to block Pandit, pay remaining balance
+                            after pooja completion.
                           </Typography>
                         </Box>
                       }
@@ -2839,13 +3058,32 @@ export default function OfflineServiceLocationModal({
 
                     <FormControlLabel
                       value="FULL"
-                      control={<Radio sx={{ color: COLORS.PRIMARY, "&.Mui-checked": { color: COLORS.PRIMARY } }} />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: COLORS.PRIMARY,
+                            "&.Mui-checked": { color: COLORS.PRIMARY },
+                          }}
+                        />
+                      }
                       label={
                         <Box>
-                          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "13.5px" }}>
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontWeight: 700,
+                              fontSize: "13.5px",
+                            }}
+                          >
                             Full Payment (पूर्ण भुगतान)
                           </Typography>
-                          <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "11px", color: "#7A685D" }}>
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontSize: "11px",
+                              color: "#7A685D",
+                            }}
+                          >
                             Pay full package amount securely.
                           </Typography>
                         </Box>
@@ -2863,8 +3101,10 @@ export default function OfflineServiceLocationModal({
                 pt: 2.5,
                 borderTop: "1px solid #F1E5D8",
                 display: "flex",
+                flexDirection: { xs: "column-reverse", sm: "row" },
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: { xs: "stretch", sm: "center" },
+                gap: 2,
               }}
             >
               <Button
@@ -2876,6 +3116,7 @@ export default function OfflineServiceLocationModal({
                   borderRadius: "10px",
                   textTransform: "none",
                   fontFamily: FONTS.PRIMARY,
+                  width: { xs: "100%", sm: "auto" },
                 }}
               >
                 {service ? "← Back to Location" : "← Back to Services"}
@@ -2885,24 +3126,30 @@ export default function OfflineServiceLocationModal({
                 type="submit"
                 variant="contained"
                 disabled={submitting}
+                endIcon={
+                  !submitting ? (
+                    <ArrowForwardIcon sx={{ fontSize: "18px !important" }} />
+                  ) : undefined
+                }
                 sx={{
                   bgcolor: COLORS.PRIMARY,
                   color: "#FFFFFF",
                   px: 4,
                   py: 1.3,
                   borderRadius: "12px",
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "15px",
                   textTransform: "none",
                   boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
+                  width: { xs: "100%", sm: "auto" },
                   "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
                 }}
               >
                 {submitting ? (
                   <CircularProgress size={22} sx={{ color: "#FFFFFF" }} />
                 ) : (
-                  "Confirm Booking & Checkout →"
+                  "Confirm Booking & Checkout"
                 )}
               </Button>
             </Box>
@@ -3242,8 +3489,8 @@ export default function OfflineServiceLocationModal({
               }}
             >
               {isSuccessForUnavailable
-                ? `Thank you, ${customerName}! Our dedicated Vedic coordinator will call you within 2 hours to confirm Pandit availability and arrange the puja in ${effectiveCity}.`
-                : `Thank you, ${customerName}! Your booking request for ${selectedService?.name} in ${effectiveCity} has been successfully recorded.`}
+                ? `Thank you, ${customerName}! Our dedicated Vedic coordinator will call you within 2 hours to confirm Pandit availability and arrange the pooja in ${effectiveCity}.`
+                : `Thank you, ${customerName}! Your booking request for ${normalizePoojaText(selectedService?.name || "")} in ${effectiveCity} has been successfully recorded.`}
             </Typography>
 
             {/* Reference & Summary Box */}
@@ -3259,38 +3506,108 @@ export default function OfflineServiceLocationModal({
                 mb: 4,
               }}
             >
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#7A685D" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1.2,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontSize: "13px",
+                    color: "#7A685D",
+                  }}
+                >
                   Booking Reference ID:
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, fontSize: "14px", color: COLORS.PRIMARY }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 800,
+                    fontSize: "14px",
+                    color: COLORS.PRIMARY,
+                  }}
+                >
                   {bookingRefId}
                 </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#7A685D" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1.2,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontSize: "13px",
+                    color: "#7A685D",
+                  }}
+                >
                   Selected Service:
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, fontSize: "13px", color: "#2C1810" }}>
-                  {selectedService?.name}
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    color: "#2C1810",
+                  }}
+                >
+                  {normalizePoojaText(selectedService?.name || "")}
                 </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#7A685D" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1.2,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontSize: "13px",
+                    color: "#7A685D",
+                  }}
+                >
                   Location:
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: "13px", color: "#2C1810" }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 600,
+                    fontSize: "13px",
+                    color: "#2C1810",
+                  }}
+                >
                   {effectiveCity}, {selectedState}
                 </Typography>
               </Box>
 
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "13px", color: "#7A685D" }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontSize: "13px",
+                    color: "#7A685D",
+                  }}
+                >
                   Contact:
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, fontSize: "13px", color: "#2C1810" }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.PRIMARY,
+                    fontWeight: 600,
+                    fontSize: "13px",
+                    color: "#2C1810",
+                  }}
+                >
                   +91 {customerPhone}
                 </Typography>
               </Box>

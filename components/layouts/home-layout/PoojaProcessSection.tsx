@@ -32,7 +32,7 @@ const steps = [
     number: "3",
     title: "Verified Purohit at Your Doorstep",
     description:
-      "Our expert Purohit arrives on time to perform your ritual. Need samagri & puja items? Easily order complete kits separately on our app!",
+      "Our expert Purohit arrives on time to perform your ritual. Need samagri & pooja items? Easily order complete kits separately on our app!",
   },
   {
     number: "4",
@@ -53,7 +53,7 @@ const promises = [
     icon: <LocalMallOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,
     title: "Pure Samagri Delivery",
     description:
-      "Order 100% pure, organic, and certified puja samagri kits separately directly from our app whenever required.",
+      "Order 100% pure, organic, and certified pooja samagri kits separately directly from our app whenever required.",
   },
   {
     icon: <AccessTimeOutlinedIcon sx={{ color: COLORS.GOLD_DARK, fontSize: 24 }} />,
@@ -91,7 +91,7 @@ export default function PoojaProcessSection() {
   };
 
   return (
-    <Box id="pooja-process" sx={{ py: { xs: 7, md: 10 }, bgcolor: COLORS.WHITE, scrollMarginTop: "90px" }}>
+    <Box id="pooja-process" sx={{ py: { xs: 5, md: 9 }, bgcolor: COLORS.WHITE, scrollMarginTop: "90px" }}>
       <Container maxWidth="lg">
         <Grid
           container
@@ -120,11 +120,11 @@ export default function PoojaProcessSection() {
                 component="h2"
                 sx={{
                   fontFamily: FONTS.OUTFIT,
-                  fontWeight: 800,
-                  fontSize: { xs: "28px", sm: "36px", md: "40px" },
-                  color: COLORS.TEXT_DARK,
-                  lineHeight: 1.2,
-                  mb: 5,
+                  fontWeight: 700,
+                  fontSize: { xs: "28px", sm: "36px", md: "44px" },
+                  color: "#1A1A1A",
+                  lineHeight: 1.25,
+                  mb: { xs: 3.5, md: 5 },
                 }}
               >
                 From booking to blessings in four steps
@@ -186,7 +186,7 @@ export default function PoojaProcessSection() {
                       <Typography
                         component="h3"
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           fontSize: { xs: "18px", sm: "20px" },
                           color: COLORS.TEXT_DARK,
@@ -197,7 +197,7 @@ export default function PoojaProcessSection() {
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "14.5px",
                           color: COLORS.SLATE_MUTED,
                           lineHeight: 1.6,
@@ -260,7 +260,7 @@ export default function PoojaProcessSection() {
                     <Box>
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           fontSize: "16.5px",
                           color: COLORS.TEXT_DARK,
@@ -271,7 +271,7 @@ export default function PoojaProcessSection() {
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "14px",
                           color: COLORS.SLATE_MUTED,
                           lineHeight: 1.5,

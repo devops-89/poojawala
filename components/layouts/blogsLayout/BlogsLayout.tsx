@@ -128,7 +128,7 @@ export default function BlogsLayout() {
                 textShadow: "0 1px 4px rgba(0, 0, 0, 0.9)",
               }}
             >
-              Discover step-by-step Puja Vidhis, festival guides, mantra meanings, and sacred insights written by verified Vedic Pandits and Acharyas.
+              Discover step-by-step Pooja Vidhis, festival guides, mantra meanings, and sacred insights written by verified Vedic Pandits and Acharyas.
             </Typography>
           </Box>
         </Container>

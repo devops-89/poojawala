@@ -51,12 +51,14 @@ export default function Step0BasicDetails({
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          mb: 3,
+          fontSize: { xs: "18px", sm: "20px", md: "24px" },
+          lineHeight: 1.3,
+          mb: { xs: 2, md: 3 },
         }}
       >
         Basic & Login Details (बुनियादी और लॉगिन विवरण)
       </Typography>
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, md: 3 }}>
         <Grid size={{ xs: 12 }}>
           <TextField
             select

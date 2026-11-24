@@ -460,7 +460,7 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
                   color="warning"
                 />
               }
-              label="Online Puja Available"
+              label="Online Pooja Available"
             />
             <FormControlLabel
               control={
@@ -472,7 +472,7 @@ export const PurohitProfileSection: React.FC<PurohitProfileSectionProps> = ({
                   color="warning"
                 />
               }
-              label="Offline Puja Available"
+              label="Offline Pooja Available"
             />
           </Box>
         </Grid>

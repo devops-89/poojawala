@@ -5,7 +5,7 @@ import AdminProductsContent from '@/components/layouts/adminLayout/products/Admi
 
 export const metadata: Metadata = {
   title: 'Products Management | Admin Portal',
-  description: 'Manage all sacred puja products, inventory, and listings.',
+  description: 'Manage all sacred pooja products, inventory, and listings.',
 };
 
 export default function AdminProductsPage() {

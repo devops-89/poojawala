@@ -470,7 +470,7 @@ export function useBookings() {
             customer: booking.customer
               ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
               : "Customer",
-            ritual: booking.service?.name || "Puja Service",
+            ritual: booking.service?.name || "Pooja Service",
             date: formatScheduledDate(booking.scheduledAt),
             time: formatScheduledTime(booking.scheduledAt),
             location: booking.customerAddress?.fullAddress || "N/A",
@@ -506,7 +506,7 @@ export function useBookings() {
             customer: booking.customer
               ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
               : "Customer",
-            ritual: booking.service?.name || "Puja Service",
+            ritual: booking.service?.name || "Pooja Service",
             date: formatScheduledDate(booking.scheduledAt),
             time: formatScheduledTime(booking.scheduledAt),
             location: booking.customerAddress?.fullAddress || "N/A",

@@ -1,6 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange } from "@/utils/helpers";
+import { formatServicePriceRange, normalizePoojaText } from "@/utils/helpers";
 import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 import { getServiceByIdAPI, registerServiceSlugMapping } from "@/api/serviceControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
@@ -195,11 +195,13 @@ export default function CustomerServiceDetailsContent() {
     DEFAULT_BANNER;
 
 
+  const normalizedServiceName = normalizePoojaText(service.name || service.title || "");
+
   return (
     <Box sx={{ pb: 6 }}>
       {/* Top Breadcrumbs */}
       <ServiceDetailsBreadcrumbs
-        serviceName={service.name || service.title}
+        serviceName={normalizedServiceName}
         service={service}
       />
 
@@ -220,11 +222,11 @@ export default function CustomerServiceDetailsContent() {
       {/* Plans Section: Packages with Book Plan buttons opening Location & Booking Modal */}
       <WebsiteServicePlansSection service={service} />
 
-      {/* Puja Samagri Add-on Section */}
-      <ServiceDetailsPujaSamagri serviceName={service.name || service.title} />
+      {/* Pooja Samagri Add-on Section */}
+      <ServiceDetailsPujaSamagri serviceName={normalizedServiceName} />
 
       {/* FAQ / Before You Book Section (Moved to bottom) */}
-      <ServiceDetailsFaqSection serviceName={service.name || service.title} />
+      <ServiceDetailsFaqSection serviceName={normalizedServiceName} />
     </Box>
   );
 }

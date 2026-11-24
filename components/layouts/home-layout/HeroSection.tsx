@@ -18,12 +18,12 @@ export default function HeroSection() {
           src="/images/homeHero-mobile.webp"
           alt="Hero background"
           width={750}
-          height={422}
+          height={789}
           // @ts-ignore
           fetchPriority="high"
           loading="eager"
           decoding="sync"
-          className="absolute inset-0 w-full h-full object-cover object-right-top md:object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
       </picture>
 
@@ -35,7 +35,7 @@ export default function HeroSection() {
       <div className="relative z-[2] w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow flex flex-col justify-center">
         <div className="max-w-xl my-auto">
           <h1
-            style={{ fontFamily: FONTS.DM_SANS }}
+            style={{ fontFamily: FONTS.OUTFIT }}
             className="font-extrabold text-white text-[1.85rem] sm:text-4xl md:text-5xl leading-[1.2] tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)] mb-3 sm:mb-4"
           >
             Sacred Rituals,
@@ -46,10 +46,10 @@ export default function HeroSection() {
           </h1>
 
           <p
-            style={{ fontFamily: FONTS.DM_SANS }}
+            style={{ fontFamily: FONTS.OUTFIT }}
             className="text-[#F1F5F9] font-medium text-sm sm:text-[15px] md:text-base leading-relaxed max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] mb-6 sm:mb-8"
           >
-            Book verified Pandits for Puja, Astrology, and Vastu — at home, at a
+            Book verified Pandits for Pooja, Astrology, and Vastu — at home, at a
             temple, or online — in under 5 minutes.
           </p>
 

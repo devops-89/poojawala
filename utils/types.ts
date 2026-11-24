@@ -194,7 +194,7 @@ export interface CategoryOption {
 }
 
 // ==========================================
-// 4. SERVICE & PUJA INTERFACES
+// 4. SERVICE & POOJA INTERFACES
 // ==========================================
 
 export interface IServicePlan {

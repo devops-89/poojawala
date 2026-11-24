@@ -107,10 +107,10 @@ export default function CustomerDashboardHero() {
     <Box
       sx={{
         width: "100%",
-        py: { xs: 3, md: 4.5 },
-        px: { xs: 2.5, sm: 3.5, md: 5 },
-        mb: { xs: 3, md: 4.5 },
-        borderRadius: "28px",
+        py: { xs: 2.5, md: 4.5 },
+        px: { xs: 2, sm: 3.5, md: 5 },
+        mb: { xs: 3.5, md: 5 },
+        borderRadius: { xs: "22px", sm: "28px" },
         background:
           "linear-gradient(135deg, #FFF9F2 0%, #FFF3E6 50%, #FFEDE0 100%)",
         border: "1px solid #FFDFC7",
@@ -190,7 +190,7 @@ export default function CustomerDashboardHero() {
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#1E293B",
-                fontSize: { xs: "1.85rem", sm: "2.4rem", md: "3.1rem" },
+                fontSize: { xs: "1.7rem", sm: "2.4rem", md: "3.1rem" },
                 lineHeight: 1.16,
                 letterSpacing: "-0.025em",
                 mb: 2,
@@ -214,9 +214,9 @@ export default function CustomerDashboardHero() {
             {/* Subtitle */}
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 color: "#64748B",
-                fontSize: { xs: "14px", md: "16px" },
+                fontSize: { xs: "14px", md: "15px" },
                 lineHeight: 1.6,
                 fontWeight: 400,
                 maxWidth: "520px",
@@ -233,8 +233,8 @@ export default function CustomerDashboardHero() {
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 2.5, sm: 4 },
-              borderRadius: "24px",
+              p: { xs: 2, sm: 3.5, md: 4 },
+              borderRadius: { xs: "18px", sm: "24px" },
               bgcolor: "#FFFFFF",
               border: "1.5px solid #FFDFC7",
               boxShadow: "0 14px 38px rgba(255, 98, 0, 0.09)",
@@ -281,7 +281,7 @@ export default function CustomerDashboardHero() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     color: "#64748B",
                     fontSize: "13px",
                     mt: 0.3,
@@ -307,6 +307,7 @@ export default function CustomerDashboardHero() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography
                     sx={{
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: "12px",
                       fontWeight: 700,
                       color: "#475569",
@@ -356,7 +357,7 @@ export default function CustomerDashboardHero() {
                             bgcolor: "#FAFAFA",
                             "& .MuiOutlinedInput-root": {
                               borderRadius: "14px",
-                              fontFamily: FONTS.PRIMARY,
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "14px",
                               transition: "all 0.2s ease",
                               "& fieldset": { borderColor: "#E2E8F0" },
@@ -382,6 +383,7 @@ export default function CustomerDashboardHero() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography
                     sx={{
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: "12px",
                       fontWeight: 700,
                       color: "#475569",
@@ -430,7 +432,7 @@ export default function CustomerDashboardHero() {
                             bgcolor: "#FAFAFA",
                             "& .MuiOutlinedInput-root": {
                               borderRadius: "14px",
-                              fontFamily: FONTS.PRIMARY,
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "14px",
                               transition: "all 0.2s ease",
                               "& fieldset": { borderColor: "#E2E8F0" },
@@ -458,7 +460,7 @@ export default function CustomerDashboardHero() {
                   sx={{
                     color: "#d32f2f",
                     fontSize: "12.5px",
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 600,
                     mt: -1,
                   }}
@@ -481,7 +483,7 @@ export default function CustomerDashboardHero() {
                   background:
                     "linear-gradient(135deg, #FF6200 0%, #E65800 100%)",
                   color: "#FFFFFF",
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
                   fontSize: "15px",
                   letterSpacing: "0.3px",

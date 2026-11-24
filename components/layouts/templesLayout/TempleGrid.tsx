@@ -176,10 +176,10 @@ export default function TempleGrid({
         <Typography
           variant="h5"
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             color: "#1A1A1A",
-            fontSize: { xs: "20px", sm: "24px" },
+            fontSize: { xs: "22px", sm: "26px", md: "28px" },
           }}
         >
           {searchQuery ? "Search Results" : "Top Temples for You"}
@@ -325,7 +325,7 @@ export default function TempleGrid({
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 borderRadius: "8px",
                 "&.Mui-selected": {

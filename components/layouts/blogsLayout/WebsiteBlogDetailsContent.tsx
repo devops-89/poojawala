@@ -142,7 +142,7 @@ export default function WebsiteBlogDetailsContent({ blogId }: WebsiteBlogDetails
       ? blog.category
       : typeof blog.category === "object" && blog.category
       ? blog.category.name || blog.category.title
-      : blog.categoryName || "Puja & Rituals"
+      : blog.categoryName || "Pooja & Rituals"
   ).toUpperCase();
 
   const authorName =

@@ -54,7 +54,7 @@ export default function PurohitServiceDetailsAddForm({
   } else if (isServiceOnline && !isServiceOffline && !isOnlineAvailable) {
     isModeRestricted = true;
     modeRestrictionMessage =
-      "This ceremony is Online Only, but Online Puja is disabled in your profile.";
+      "This ceremony is Online Only, but Online Pooja is disabled in your profile.";
   } else if (isServiceOffline && !isServiceOnline && !isOfflineAvailable) {
     isModeRestricted = true;
     modeRestrictionMessage =

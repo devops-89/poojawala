@@ -102,14 +102,14 @@ const getPlanFeaturesList = (
     if (planKey.toLowerCase() === 'standard') {
       return [
         { label: 'Senior Certified Vedic Scholar / Purohit at Venue' },
-        { label: 'All Essential Puja Samagri & Havan Setup Included' },
+        { label: 'All Essential Pooja Samagri & Havan Setup Included' },
         { label: 'Complete Extended Rituals, Havan & Aarti Vidhi' },
         { label: 'Sacred Prasad & Divine Blessings for Family' },
       ];
     }
     return [
       { label: 'Certified Vedic Purohit Visit at Your Location' },
-      { label: 'Complete Sankalp & Sacred Puja Vidhi' },
+      { label: 'Complete Sankalp & Sacred Pooja Vidhi' },
       { label: 'Traditional Vedic Mantra Chanting & Aarti' },
       { label: 'Purohit Guides Samagri Arrangement' },
     ];

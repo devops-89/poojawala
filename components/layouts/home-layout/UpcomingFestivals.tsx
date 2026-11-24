@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { stripHtml, isCustomerLoggedIn } from "@/utils/helpers";
+import { stripHtml, isCustomerLoggedIn, normalizePoojaText } from "@/utils/helpers";
 
 export default function UpcomingFestivals() {
   const router = useRouter();
@@ -75,9 +75,9 @@ export default function UpcomingFestivals() {
               return {
                 id: item.id,
                 slug: item.slug,
-                title: item.name,
+                title: normalizePoojaText(item.name || ""),
                 date: dateString,
-                description: item.description || "",
+                description: normalizePoojaText(item.description || ""),
                 image:
                   item.iconDownloadurl ||
                   item.iconUrl ||
@@ -101,7 +101,7 @@ export default function UpcomingFestivals() {
   return (
     <Box
       id="upcoming-festivals"
-      sx={{ position: "relative", py: 8, bgcolor: "#fff", overflow: "hidden", scrollMarginTop: "90px" }}
+      sx={{ position: "relative", py: { xs: 5, md: 9 }, bgcolor: "#fff", overflow: "hidden", scrollMarginTop: "90px" }}
     >
       {/* Left Chakra Decoration */}
       <Box
@@ -140,24 +140,24 @@ export default function UpcomingFestivals() {
 
       <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1 }}>
         {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: 6 }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
           <Typography
             variant="h2"
             component="h2"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: { xs: "28px", sm: "36px", md: "48px" },
-              lineHeight: { xs: "36px", md: "62px" },
-              color: "#141414",
-              mb: "9px",
+              fontSize: { xs: "28px", sm: "36px", md: "44px" },
+              lineHeight: 1.25,
+              color: "#1A1A1A",
+              mb: 1.5,
             }}
           >
             Upcoming Festivals and Offers
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Image
-              src="/images/home/poojaPackages/dhanush.webp"
+              src="/images/home/poojaPackages/dhanush.svg"
               alt="Decorative Arch"
               width={750}
               height={47}
@@ -256,8 +256,8 @@ export default function UpcomingFestivals() {
                 <Box sx={{ position: "relative", zIndex: 2 }}>
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 600,
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 700,
                       fontSize: { xs: "24px", md: "32px" },
                       lineHeight: "130.6%",
                       color: "#fff",
@@ -268,9 +268,9 @@ export default function UpcomingFestivals() {
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 400,
-                      fontSize: "20px",
+                      fontSize: { xs: "15px", sm: "17px", md: "20px" },
                       lineHeight: "130.6%",
                       color: "rgba(255,255,255,0.8)",
                       fontStyle: "italic",
@@ -298,9 +298,9 @@ export default function UpcomingFestivals() {
                 >
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 400,
-                      fontSize: "18px",
+                      fontSize: { xs: "13.5px", sm: "15px", md: "18px" },
                       lineHeight: "140%",
                       color: "rgba(255,255,255,0.9)",
                       mb: "16px",

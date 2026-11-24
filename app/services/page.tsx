@@ -13,7 +13,7 @@ const DEFAULT_KEYWORDS = [
   'griha pravesh pooja booking',
   'pandit for griha pravesh pooja',
   'satyanarayan pooja pandit charges',
-  'satyanarayan puja at home',
+  'satyanarayan pooja at home',
   'rudrabhishek pandit booking',
   'book online pandit for rudrabhishek',
   'maha mrityunjaya pooja booking',
@@ -41,7 +41,7 @@ const DEFAULT_KEYWORDS = [
   'vehicle pooja pandit',
   'hanuman pooja pandit booking',
   'havan pandit booking',
-  'pandit for new home puja',
+  'pandit for new home pooja',
 ];
 
 const OFFLINE_KEYWORDS = [
@@ -50,8 +50,8 @@ const OFFLINE_KEYWORDS = [
   'book pandit at home',
   'pandit for pooja at home',
   'offline havan pandit booking',
-  'griha pravesh puja at home',
-  'satyanarayan puja offline pandit',
+  'griha pravesh pooja at home',
+  'satyanarayan pooja offline pandit',
   'vastu shanti pooja at home',
   'marriage vivah pooja pandit',
   'local pandit booking for pooja',

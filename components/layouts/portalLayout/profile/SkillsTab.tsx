@@ -353,7 +353,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                 label={
                   isAstrologer
                     ? "Astrology Specializations"
-                    : "Specialized Rituals & Pujas"
+                    : "Specialized Rituals & Poojas"
                 }
                 placeholder={specializations?.length ? "" : "Select or type specialization and press Enter"}
               />
@@ -383,7 +383,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                     color="warning"
                   />
                 }
-                label="Online Puja / Consultation"
+                label="Online Pooja / Consultation"
               />
               <FormControlLabel
                 control={

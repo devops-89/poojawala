@@ -14,7 +14,7 @@ export async function generateMetadata({
   const isOnline = resolvedParams?.isOnline === 'true';
 
   let title = 'Services | 1Pooja';
-  let description = 'Explore and book pujas and services on 1Pooja.';
+  let description = 'Explore and book poojas and services on 1Pooja.';
 
   if (isOffline) {
     title = 'Offline Services | Customer Portal | 1Pooja';

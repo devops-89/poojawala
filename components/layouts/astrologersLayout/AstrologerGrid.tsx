@@ -218,10 +218,10 @@ export default function AstrologerGrid() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 800,
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
               color: '#1e293b',
-              fontSize: { xs: '24px', md: '30px' },
+              fontSize: { xs: '22px', sm: '26px', md: '28px' },
               mb: 0.5,
             }}
           >
@@ -229,7 +229,7 @@ export default function AstrologerGrid() {
           </Typography>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: '#64748b',
               fontSize: '14px',
               fontWeight: 500,
@@ -368,7 +368,7 @@ export default function AstrologerGrid() {
                 }}
                 sx={{
                   '& .MuiPaginationItem-root': {
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 600,
                   },
                   '& .MuiPaginationItem-root.Mui-selected': {

@@ -14,31 +14,31 @@ const theme = createTheme({
   typography: {
     fontFamily: FONTS.THEME_DEFAULT,
     h1: {
-      fontFamily: FONTS.PRIMARY,
+      fontFamily: FONTS.OUTFIT,
       fontWeight: 700,
-      letterSpacing: '-0.04em',
+      letterSpacing: '-0.02em',
     },
     h2: {
-      fontFamily: FONTS.PRIMARY,
+      fontFamily: FONTS.OUTFIT,
       fontWeight: 700,
-      letterSpacing: '-0.04em',
+      letterSpacing: '-0.02em',
     },
     h3: {
-      fontFamily: FONTS.PRIMARY,
+      fontFamily: FONTS.OUTFIT,
       fontWeight: 700,
       letterSpacing: '-0.02em',
     },
     h4: {
-      fontFamily: FONTS.PRIMARY,
+      fontFamily: FONTS.OUTFIT,
       fontWeight: 700,
       letterSpacing: '-0.02em',
     },
     h5: {
-      fontFamily: FONTS.PRIMARY,
+      fontFamily: FONTS.OUTFIT,
       fontWeight: 700,
     },
     h6: {
-      fontFamily: FONTS.PRIMARY,
+      fontFamily: FONTS.OUTFIT,
       fontWeight: 700,
     },
     body1: {

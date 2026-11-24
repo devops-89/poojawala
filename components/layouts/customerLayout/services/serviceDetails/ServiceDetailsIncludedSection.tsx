@@ -24,12 +24,13 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
   ];
 
   return (
-    <Box sx={{ py: 3, mb: 4 }}>
-      <Grid container spacing={5} sx={{ alignItems: "flex-start" }}>
+    <Box sx={{ py: { xs: 2, md: 3 }, mb: { xs: 3, md: 4 } }}>
+      <Grid container spacing={{ xs: 3, md: 5 }} sx={{ alignItems: "flex-start" }}>
         {/* Left Header Column */}
         <Grid size={{ xs: 12, md: 5 }}>
           <Typography
             sx={{
+              fontFamily: FONTS.OUTFIT,
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
@@ -47,7 +48,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
-              fontSize: { xs: "28px", sm: "34px", md: "38px" },
+              fontSize: { xs: "24px", sm: "30px", md: "38px" },
               lineHeight: 1.2,
               mb: 2.5,
             }}
@@ -57,8 +58,8 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
 
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              color: "#64534A",
+              fontFamily: FONTS.OUTFIT,
+              color: "#5C4A40",
               fontSize: "15px",
               lineHeight: 1.7,
             }}
@@ -70,7 +71,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
 
         {/* Right Benefits Cards Grid */}
         <Grid size={{ xs: 12, md: 7 }}>
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             {benefitsList.map((item: any, idx: number) => {
               const title =
                 typeof item === "string"
@@ -93,7 +94,7 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
                       bgcolor: "#FAF4EE",
                       border: "1px solid #EADCCF",
                       borderRadius: "16px",
-                      p: 3,
+                      p: { xs: 2.5, sm: 3 },
                       height: "100%",
                       display: "flex",
                       flexDirection: "column",
@@ -133,8 +134,8 @@ export default function ServiceDetailsIncludedSection({ benefitsList }: Props) {
                     {desc && (
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
-                          color: "#64534A",
+                          fontFamily: FONTS.OUTFIT,
+                          color: "#5C4A40",
                           fontSize: "13px",
                           lineHeight: 1.6,
                         }}

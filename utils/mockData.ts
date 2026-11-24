@@ -2,9 +2,9 @@ export const MOCK_SERVICES = [
   {
     id: '1',
     name: 'Satyanarayan Katha',
-    category: 'Home Puja',
+    category: 'Home Pooja',
     image: '/images/home/poojaPackages/satyanarayan.webp',
-    description: 'A deeply spiritual home puja to bring prosperity and peace.',
+    description: 'A deeply spiritual home pooja to bring prosperity and peace.',
     duration: '2-3 Hours',
     price: 2500,
   },
@@ -54,13 +54,13 @@ export const MOCK_PUROHITS = [
     id: '102',
     name: 'Pandit Vivek Tiwari',
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    title: 'Specialist in Home Pujas',
+    title: 'Specialist in Home Poojas',
     experience: '8 Years',
     rating: 4.7,
     reviews: 89,
     languages: ['Hindi', 'Bhojpuri'],
     specialties: ['Satyanarayan Katha', 'Grah Pravesh'],
-    bio: 'Pandit Vivek brings immense devotion and clarity to his pujas, ensuring that every ritual is performed with the utmost sanctity and adherence to scriptures.',
+    bio: 'Pandit Vivek brings immense devotion and clarity to his poojas, ensuring that every ritual is performed with the utmost sanctity and adherence to scriptures.',
   }
 ];
 

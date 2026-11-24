@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Your Sacred Cart & Checkout | 1Pooja",
-  description: "Complete your order for sacred pooja samagri, brass diyas, and authentic puja kits.",
+  description: "Complete your order for sacred pooja samagri, brass diyas, and authentic pooja kits.",
 };
 
 export default function CustomerCartPage() {

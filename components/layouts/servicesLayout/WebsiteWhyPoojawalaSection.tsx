@@ -38,8 +38,8 @@ export default function WebsiteWhyPoojawalaSection() {
       sx={{
         bgcolor: "#1E0C06",
         borderRadius: "28px",
-        p: { xs: 4, sm: 5, md: 6 },
-        my: { xs: 6, md: 8 },
+        p: { xs: 2.5, sm: 4, md: 6 },
+        my: { xs: 4, md: 7 },
         color: "#FFFFFF",
         position: "relative",
         overflow: "hidden",
@@ -65,9 +65,9 @@ export default function WebsiteWhyPoojawalaSection() {
         <Grid size={{ xs: 12, md: 5 }}>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontSize: "12px",
-              fontWeight: 800,
+              fontWeight: 700,
               letterSpacing: "1.2px",
               color: COLORS.PRIMARY,
               textTransform: "uppercase",
@@ -80,9 +80,9 @@ export default function WebsiteWhyPoojawalaSection() {
           <Typography
             variant="h3"
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 800,
-              fontSize: { xs: "28px", sm: "34px", md: "40px" },
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: { xs: "28px", sm: "36px", md: "44px" },
               color: "#FFFFFF",
               lineHeight: 1.25,
               mb: 2.5,
@@ -93,8 +93,8 @@ export default function WebsiteWhyPoojawalaSection() {
 
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontSize: { xs: "14.5px", sm: "16px" },
+              fontFamily: FONTS.OUTFIT,
+              fontSize: { xs: "14px", md: "16px" },
               color: "rgba(255, 255, 255, 0.82)",
               lineHeight: 1.75,
             }}
@@ -113,7 +113,7 @@ export default function WebsiteWhyPoojawalaSection() {
                     bgcolor: "rgba(255, 255, 255, 0.04)",
                     border: "1px solid rgba(255, 255, 255, 0.08)",
                     borderRadius: "20px",
-                    p: 3,
+                    p: { xs: 2, sm: 2.5, md: 3 },
                     height: "100%",
                     display: "flex",
                     alignItems: "flex-start",
@@ -145,9 +145,9 @@ export default function WebsiteWhyPoojawalaSection() {
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 700,
-                        fontSize: "16px",
+                        fontSize: { xs: "15px", sm: "16px" },
                         color: "#FFFFFF",
                         mb: 0.5,
                       }}
@@ -156,8 +156,8 @@ export default function WebsiteWhyPoojawalaSection() {
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
-                        fontSize: "13.5px",
+                        fontFamily: FONTS.OUTFIT,
+                        fontSize: { xs: "13px", sm: "13.5px" },
                         color: "rgba(255, 255, 255, 0.7)",
                         lineHeight: 1.5,
                       }}

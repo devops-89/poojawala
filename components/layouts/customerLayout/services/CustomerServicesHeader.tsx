@@ -15,10 +15,10 @@ export default function CustomerServicesHeader({ isOffline, isOnline }: Props) {
     : "Explore Services";
 
   const subtitle = isOffline
-    ? "Browse and book verified purohits for in-person pujas at your home or venue."
+    ? "Browse and book verified purohits for in-person poojas at your home or venue."
     : isOnline
-    ? "Browse and book verified purohits for virtual pujas via live video consultation."
-    : "Browse and book verified purohits for your pujas.";
+    ? "Browse and book verified purohits for virtual poojas via live video consultation."
+    : "Browse and book verified purohits for your poojas.";
 
   return (
     <Box sx={{ mb: 4 }}>

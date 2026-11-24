@@ -27,7 +27,7 @@ export default function SignUpBrandingSide() {
         "@media (max-height: 660px)": {
           p: { xs: "14px 12px", md: "10px 16px" },
         },
-        display: "flex",
+        display: { xs: "none", md: "flex" },
         flexDirection: "column",
         justifyContent: "flex-start",
         position: "relative",

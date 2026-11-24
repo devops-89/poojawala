@@ -12,5 +12,5 @@ export default function CustomerDashboard() {
 
 export const metadata: Metadata = {
   title: 'My Bookings | 1Pooja',
-  description: 'Manage your upcoming pujas and view past bookings on the 1Pooja customer portal.',
+  description: 'Manage your upcoming poojas and view past bookings on the 1Pooja customer portal.',
 };
