@@ -8,7 +8,7 @@ import { useUserStore } from "@/stores/userStore";
 import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import ServiceDetailsBookingForm from "./serviceDetails/ServiceDetailsBookingForm";
+import WebsiteServicePlansSection from "@/components/layouts/servicesLayout/WebsiteServicePlansSection";
 import ServiceDetailsBreadcrumbs from "./serviceDetails/ServiceDetailsBreadcrumbs";
 import ServiceDetailsFaqSection from "./serviceDetails/ServiceDetailsFaqSection";
 import ServiceDetailsHeroSection from "./serviceDetails/ServiceDetailsHeroSection";
@@ -99,7 +99,7 @@ export default function CustomerServiceDetailsContent() {
   }, [identifier]);
 
   const handleScrollToBookingForm = () => {
-    const el = document.getElementById("booking-form-section");
+    const el = document.getElementById("puja-plans-section") || document.getElementById("booking-form-section");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }
@@ -217,11 +217,8 @@ export default function CustomerServiceDetailsContent() {
       {/* What's Included Section */}
       <ServiceDetailsIncludedSection benefitsList={benefitsList} />
 
-      {/* Inline Booking Form Section */}
-      <ServiceDetailsBookingForm
-        serviceId={Number(service.id)}
-        service={service}
-      />
+      {/* Plans Section: Packages with Book Plan buttons opening Location & Booking Modal */}
+      <WebsiteServicePlansSection service={service} />
 
       {/* Puja Samagri Add-on Section */}
       <ServiceDetailsPujaSamagri serviceName={service.name || service.title} />

@@ -450,3 +450,54 @@ export const deleteServiceCategoryAPI = async (id: string | number) => {
   }
 };
 
+export interface CheckAvailabilityPayload {
+  city: string;
+  state: string;
+}
+
+export interface CheckAvailabilityResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    serviceId: number | string;
+    isAvailable: boolean;
+    city: string;
+    state: string;
+  };
+}
+
+export const checkServiceAvailabilityAPI = async (
+  serviceId: string | number,
+  payload: CheckAvailabilityPayload
+) => {
+  try {
+    const numericId = resolveServiceId(serviceId);
+
+    // Send query params AND data in config so it works across standard GET query or body-based GET
+    const response = await userPublicApi.request({
+      method: "GET",
+      url: `/service/${numericId}/availability`,
+      params: {
+        city: payload.city,
+        state: payload.state,
+      },
+      data: {
+        city: payload.city,
+        state: payload.state,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    // If backend only accepts POST for /service/:id/availability
+    if (error?.response?.status === 405) {
+      try {
+        const postRes = await userPublicApi.post(`/service/${serviceId}/availability`, payload);
+        return postRes.data;
+      } catch (e) {}
+    }
+    throw error;
+  }
+};
+
+

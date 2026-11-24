@@ -310,6 +310,8 @@ export const registerPurohitAPI = async (formData: FormData) => {
   }
 };
 
+export const registerUserAPI = registerPurohitAPI;
+
 export const updateProfileAPI = async (formData: FormData) => {
   try {
     const response = await userSecuredApi.patch("/users/profile", formData, {

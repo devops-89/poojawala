@@ -34,11 +34,6 @@ export default function WebsiteServiceDetailsContent() {
 
     if (!identifier) return;
 
-    if (isCustomerLoggedIn()) {
-      router.replace(`/customer/services/${identifier}`);
-      return;
-    }
-
     const fetchService = async () => {
       setLoading(true);
       setErrorMessage(null);
