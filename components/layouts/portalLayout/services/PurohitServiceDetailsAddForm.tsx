@@ -302,7 +302,7 @@ export default function PurohitServiceDetailsAddForm({
                         mb: 1,
                       }}
                     >
-                      ⚠️ {modeRestrictionMessage}
+                      {modeRestrictionMessage}
                     </Typography>
                     <Button
                       variant="outlined"

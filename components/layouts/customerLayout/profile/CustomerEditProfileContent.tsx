@@ -364,7 +364,7 @@ function CustomerEditProfileContentInner() {
           <Typography
             variant="h4"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#0f172a",
             }}
@@ -372,7 +372,7 @@ function CustomerEditProfileContentInner() {
             Edit Profile
           </Typography>
           <Typography
-            sx={{ color: "#64748b", fontFamily: FONTS.PRIMARY }}
+            sx={{ color: "#64748b", fontFamily: FONTS.OUTFIT }}
           >
             Update your personal information and addresses
           </Typography>
@@ -416,7 +416,7 @@ function CustomerEditProfileContentInner() {
                 {tab.icon}
                 <Typography
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: activeTab === tab.id ? 700 : 500,
                   }}
                 >
@@ -443,7 +443,7 @@ function CustomerEditProfileContentInner() {
                 <Typography
                   variant="h6"
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
                     mb: 4,
                   }}
@@ -492,7 +492,7 @@ function CustomerEditProfileContentInner() {
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontWeight: 600,
                         color: "#1e293b",
                         mb: 0.5,
@@ -502,7 +502,7 @@ function CustomerEditProfileContentInner() {
                     </Typography>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontSize: "0.875rem",
                         color: "#64748b",
                       }}
@@ -583,7 +583,7 @@ function CustomerEditProfileContentInner() {
                       borderRadius: "8px",
                       border: "none",
                       cursor: isSavePersonalDisabled ? "not-allowed" : "pointer",
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       fontSize: "0.95rem",
                       transition: "background-color 0.2s",
@@ -616,7 +616,7 @@ function CustomerEditProfileContentInner() {
                   <Typography
                     variant="h6"
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                     }}
                   >
@@ -632,7 +632,7 @@ function CustomerEditProfileContentInner() {
                       cursor: "pointer",
                       px: 3,
                       py: 1,
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 600,
                       borderRadius: "8px",
                       transition: "background-color 0.2s",
@@ -660,7 +660,7 @@ function CustomerEditProfileContentInner() {
                         />
                         <Typography
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             color: "#64748b",
                           }}
                         >
@@ -698,7 +698,7 @@ function CustomerEditProfileContentInner() {
                               <Typography
                                 component="div"
                                 sx={{
-                                  fontFamily: FONTS.PRIMARY,
+                                  fontFamily: FONTS.OUTFIT,
                                   fontWeight: 700,
                                   color: "#1e293b",
                                   mb: 1,
@@ -717,7 +717,7 @@ function CustomerEditProfileContentInner() {
                                       bgcolor: "#e6f4ea",
                                       color: "#1e8e3e",
                                       fontWeight: 700,
-                                      fontFamily: FONTS.PRIMARY,
+                                      fontFamily: FONTS.OUTFIT,
                                       height: "22px",
                                       fontSize: "0.75rem",
                                     }}
@@ -726,7 +726,7 @@ function CustomerEditProfileContentInner() {
                               </Typography>
                               <Typography
                                 sx={{
-                                  fontFamily: FONTS.PRIMARY,
+                                  fontFamily: FONTS.OUTFIT,
                                   color: "#475569",
                                   mb: 1,
                                 }}
@@ -742,7 +742,7 @@ function CustomerEditProfileContentInner() {
                               >
                                 <Typography
                                   sx={{
-                                    fontFamily: FONTS.PRIMARY,
+                                    fontFamily: FONTS.OUTFIT,
                                     color: "#64748b",
                                     fontSize: "0.875rem",
                                   }}
@@ -760,7 +760,7 @@ function CustomerEditProfileContentInner() {
                                 {address.state && (
                                   <Typography
                                     sx={{
-                                      fontFamily: FONTS.PRIMARY,
+                                      fontFamily: FONTS.OUTFIT,
                                       color: "#64748b",
                                       fontSize: "0.875rem",
                                     }}
@@ -778,7 +778,7 @@ function CustomerEditProfileContentInner() {
                                 )}
                                 <Typography
                                   sx={{
-                                    fontFamily: FONTS.PRIMARY,
+                                    fontFamily: FONTS.OUTFIT,
                                     color: "#64748b",
                                     fontSize: "0.875rem",
                                   }}
@@ -859,7 +859,7 @@ function CustomerEditProfileContentInner() {
       >
         <DialogTitle
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             pb: 1,
             color: "#ef4444",
@@ -869,7 +869,7 @@ function CustomerEditProfileContentInner() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography
-            sx={{ fontFamily: FONTS.PRIMARY, color: "#475569" }}
+            sx={{ fontFamily: FONTS.OUTFIT, color: "#475569" }}
           >
             Are you sure you want to delete this address? This action cannot be
             undone.
@@ -880,7 +880,7 @@ function CustomerEditProfileContentInner() {
             onClick={() => setDeleteConfirmOpen(false)}
             sx={{
               color: "#64748b",
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
             }}
           >
@@ -892,7 +892,7 @@ function CustomerEditProfileContentInner() {
             sx={{
               bgcolor: "#ef4444 !important",
               color: "white !important",
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 600,
               border: "none",
               cursor: "pointer",

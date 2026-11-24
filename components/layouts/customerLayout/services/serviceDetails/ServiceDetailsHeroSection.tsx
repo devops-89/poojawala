@@ -4,6 +4,7 @@ import { COLORS } from "@/utils/enums";
 import SparklesIcon from "@mui/icons-material/AutoAwesome";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LanguageIcon from "@mui/icons-material/Language";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import WifiIcon from "@mui/icons-material/Wifi";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 
@@ -42,9 +43,9 @@ export default function ServiceDetailsHeroSection({
         mb: { xs: 4, md: 6 },
       }}
     >
-      <Grid container spacing={4} sx={{ alignItems: "center" }}>
-        {/* Hero Left Content */}
-        <Grid size={{ xs: 12, md: 7 }}>
+      <Grid container spacing={{ xs: 2.5, sm: 3.5, md: 4 }} sx={{ alignItems: "center" }}>
+        {/* Hero Left Content: On mobile appears below Image */}
+        <Grid size={{ xs: 12, md: 7 }} sx={{ order: { xs: 2, md: 1 } }}>
           {/* Top Badges Row */}
           {(service.isUpcomingFestival || service.isOnline || service.isOffline) && (
             <Box
@@ -53,7 +54,7 @@ export default function ServiceDetailsHeroSection({
                 flexWrap: "wrap",
                 alignItems: "center",
                 gap: 1.5,
-                mb: 2,
+                mb: { xs: 1.5, sm: 2 },
               }}
             >
               {service.isUpcomingFestival && (
@@ -113,7 +114,7 @@ export default function ServiceDetailsHeroSection({
               color: "#2C1810",
               fontSize: { xs: "24px", sm: "34px", md: "42px" },
               lineHeight: 1.2,
-              mb: 2,
+              mb: { xs: 1.2, sm: 1.8 },
             }}
           >
             {service.name || service.title}
@@ -126,7 +127,7 @@ export default function ServiceDetailsHeroSection({
               color: "#5C4A40",
               fontSize: { xs: "14px", sm: "15px", md: "16px" },
               lineHeight: 1.65,
-              mb: 3,
+              mb: { xs: 2, sm: 2.5 },
               maxWidth: 560,
             }}
           >
@@ -136,40 +137,64 @@ export default function ServiceDetailsHeroSection({
               "Traditional Vedic pooja performed by an experienced Purohit — complete with Sankalp, Path, Aarti and Prasad. Conducted at your home or venue."}
           </Typography>
 
-          {/* Pill Badges Row */}
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 1.5,
-              mb: 4,
-            }}
-          >
-            {formattedLanguages ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.75,
-                  px: 2,
-                  py: 0.85,
-                  bgcolor: "#FFFBF7",
-                  border: "1px solid #E4D5C7",
-                  borderRadius: "8px",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  fontFamily: FONTS.OUTFIT,
-                  color: "#5C4A40",
-                }}
-              >
-                <LanguageIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
-                <span>{formattedLanguages}</span>
-              </Box>
-            ) : null}
-          </Box>
+          {/* Pill Badges Row: Language & Duration */}
+          {(formattedLanguages || durationText) && (
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1.2,
+                mb: { xs: 2.5, sm: 3.5 },
+              }}
+            >
+              {formattedLanguages ? (
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 0.75,
+                    px: 1.8,
+                    py: 0.7,
+                    bgcolor: "#FFFBF7",
+                    border: "1px solid #E4D5C7",
+                    borderRadius: "20px",
+                    fontSize: { xs: "12.5px", sm: "13px" },
+                    fontWeight: 600,
+                    fontFamily: FONTS.OUTFIT,
+                    color: "#5C4A40",
+                  }}
+                >
+                  <LanguageIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
+                  <span>{formattedLanguages}</span>
+                </Box>
+              ) : null}
+
+              {durationText ? (
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 0.75,
+                    px: 1.8,
+                    py: 0.7,
+                    bgcolor: "#FFFBF7",
+                    border: "1px solid #E4D5C7",
+                    borderRadius: "20px",
+                    fontSize: { xs: "12.5px", sm: "13px" },
+                    fontWeight: 600,
+                    fontFamily: FONTS.OUTFIT,
+                    color: "#5C4A40",
+                  }}
+                >
+                  <AccessTimeIcon sx={{ fontSize: 16, color: "#7C6A60" }} />
+                  <span>{durationText}</span>
+                </Box>
+              ) : null}
+            </Box>
+          )}
 
           {/* Price Section */}
-          <Box sx={{ mb: 4 }}>
+          <Box sx={{ mb: { xs: 2.5, sm: 3.5 } }}>
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
@@ -222,8 +247,8 @@ export default function ServiceDetailsHeroSection({
                       },
                     }),
                 px: 4,
-                py: 1.6,
-                borderRadius: "10px",
+                py: { xs: 1.4, sm: 1.6 },
+                borderRadius: "12px",
                 fontWeight: 700,
                 fontFamily: FONTS.OUTFIT,
                 fontSize: "15px",
@@ -235,17 +260,18 @@ export default function ServiceDetailsHeroSection({
           </Box>
         </Grid>
 
-        {/* Hero Right Image Card */}
-        <Grid size={{ xs: 12, md: 5 }}>
+        {/* Hero Right Image Card: On mobile appears at Top */}
+        <Grid size={{ xs: 12, md: 5 }} sx={{ order: { xs: 1, md: 2 } }}>
           <Box
             sx={{
               position: "relative",
               width: "100%",
-              height: { xs: 280, sm: 360, md: 400 },
-              borderRadius: "20px",
+              height: { xs: 200, sm: 280, md: 400 },
+              borderRadius: { xs: "18px", md: "20px" },
               overflow: "hidden",
               boxShadow: "0 12px 36px rgba(44, 24, 16, 0.12)",
               border: "1px solid #E4D5C7",
+              bgcolor: "#FFFBF7",
             }}
           >
             <Box

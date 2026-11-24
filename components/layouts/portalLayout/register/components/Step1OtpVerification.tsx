@@ -78,12 +78,24 @@ export default function Step1OtpVerification({
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          fontSize: { xs: '18px', sm: '20px', md: '24px' },
-          lineHeight: 1.3,
+          fontSize: { xs: '17px', sm: '20px', md: '22px' },
+          lineHeight: 1.35,
           mb: 1.5,
         }}
       >
-        Verify your Identity (अपनी पहचान सत्यापित करें)
+        Verify your Identity{" "}
+        <Box
+          component="span"
+          sx={{
+            fontSize: { xs: "13.5px", sm: "15px" },
+            fontWeight: 500,
+            color: "#64748B",
+            display: { xs: "block", sm: "inline" },
+            mt: { xs: 0.3, sm: 0 },
+          }}
+        >
+          (अपनी पहचान सत्यापित करें)
+        </Box>
       </Typography>
       <Typography
         sx={{

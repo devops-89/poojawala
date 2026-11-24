@@ -62,80 +62,95 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
     para2 = sentences.slice(midIndex).join(". ");
   }
 
+  const deityName = temple?.primaryDeity || temple?.deity;
   const aartiList = parseAartis(temple?.aartis);
   const hasVisitingHours = Boolean(temple?.openingTime || temple?.closingTime);
   const hasAartis = aartiList.length > 0;
   const showTimingsCard = hasVisitingHours || hasAartis;
 
   return (
-    <Box sx={{ py: { xs: 4, md: 5.5 }, borderTop: "1px solid #F3E8DB" }}>
-      {/* 1. Main About & Spiritual Heritage Section */}
-      <Box sx={{ mb: showTimingsCard ? { xs: 4, md: 5 } : 0 }}>
+    <Box sx={{ mb: { xs: 2.5, md: 3 } }}>
+      {/* 1. Main About & Spiritual Heritage Card */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2.2, sm: 3 },
+          borderRadius: "20px",
+          border: "1.5px solid #EFE6D5",
+          bgcolor: "#FFFFFF",
+          boxShadow: "0 2px 10px rgba(44, 24, 16, 0.03)",
+          mb: showTimingsCard ? 2 : 0,
+        }}
+      >
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            gap: 2,
-            mb: 1,
+            gap: 1.5,
+            mb: 1.5,
+            pb: 1.5,
+            borderBottom: "1px solid #F5ECE0",
           }}
         >
-          <Typography
-            variant="h2"
-            sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 800,
-              fontSize: { xs: "24px", md: "30px" },
-              color: "#2C1810",
-            }}
-          >
-            About {temple?.name}
-          </Typography>
+          <Box>
+            <Typography
+              variant="h2"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: { xs: "17px", md: "19px" },
+                color: "#2C1810",
+                lineHeight: 1.25,
+              }}
+            >
+              About {temple?.name}
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "11px",
+                color: "#8C7A6B",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.6px",
+                mt: 0.3,
+              }}
+            >
+              Spiritual Heritage & Legend
+            </Typography>
+          </Box>
 
-          {temple?.primaryDeity && (
+          {deityName && (
             <Chip
-              icon={<TempleHinduIcon sx={{ fontSize: 16, color: "#C2410C !important" }} />}
-              label={`Presiding Deity: ${temple.primaryDeity}`}
+              icon={<TempleHinduIcon sx={{ fontSize: 14, color: "#C2410C !important" }} />}
+              label={`Presiding Deity: ${deityName}`}
+              size="small"
               sx={{
                 bgcolor: "#FFF7ED",
                 color: "#C2410C",
-                fontWeight: 700,
+                fontWeight: 600,
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "13px",
+                fontSize: "11.5px",
                 border: "1px solid #FFEDD5",
-                py: 2,
-                px: 1,
                 borderRadius: "20px",
+                px: 0.6,
+                py: 1.5,
               }}
             />
           )}
         </Box>
-
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontFamily: FONTS.OUTFIT,
-            fontSize: "13.5px",
-            color: "#8C7A6B",
-            mb: 2.5,
-            fontWeight: 600,
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-          }}
-        >
-          Divine Legend & Spiritual Heritage
-        </Typography>
 
         {cleanDescription ? (
           <Box>
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: { xs: "14.5px", md: "15.5px" },
-                color: "#475569",
-                lineHeight: 1.85,
-                mb: para2 ? 2 : 0,
+                fontSize: { xs: "13.5px", md: "14px" },
+                color: "#4A3B32",
+                lineHeight: 1.65,
+                mb: para2 ? 1.5 : 0,
               }}
             >
               {para1}
@@ -144,9 +159,9 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
               <Typography
                 sx={{
                   fontFamily: FONTS.OUTFIT,
-                  fontSize: { xs: "14.5px", md: "15.5px" },
-                  color: "#475569",
-                  lineHeight: 1.85,
+                  fontSize: { xs: "13.5px", md: "14px" },
+                  color: "#4A3B32",
+                  lineHeight: 1.65,
                 }}
               >
                 {para2}
@@ -157,9 +172,9 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              fontSize: "15px",
+              fontSize: { xs: "13.5px", md: "14px" },
               color: "#64748b",
-              lineHeight: 1.8,
+              lineHeight: 1.65,
             }}
           >
             {temple?.name} is a sacred spiritual pilgrimage destination situated in{" "}
@@ -168,21 +183,21 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
             aartis, and experience peace and spiritual grace.
           </Typography>
         )}
-      </Box>
+      </Paper>
 
       {/* 2. Visiting Hours & Daily Aartis Card */}
       {showTimingsCard && (
         <Paper
           elevation={0}
           sx={{
-            p: { xs: 2.5, sm: 4 },
-            borderRadius: "24px",
-            border: "1.5px solid #FFEDD5",
+            p: { xs: 2.2, sm: 3 },
+            borderRadius: "20px",
+            border: "1.5px solid #EFE6D5",
             bgcolor: "#FFFFFF",
-            boxShadow: "0 4px 24px rgba(255, 98, 0, 0.06)",
+            boxShadow: "0 2px 10px rgba(44, 24, 16, 0.03)",
             display: "flex",
             flexDirection: "column",
-            gap: 3,
+            gap: 2.5,
           }}
         >
           {/* Card Header */}
@@ -193,6 +208,7 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
                 height: 48,
                 borderRadius: "14px",
                 bgcolor: "#FFF7ED",
+                border: "1px solid #FFEDD5",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -204,10 +220,10 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
             <Box>
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
-                  fontWeight: 700,
-                  fontSize: "20px",
-                  color: "#1E293B",
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  fontSize: { xs: "18px", sm: "20px" },
+                  color: "#2C1810",
                 }}
               >
                 Visiting Hours & Daily Aartis
@@ -233,8 +249,8 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
                     sx={{
                       p: 2.2,
                       borderRadius: "16px",
-                      bgcolor: "#FFFDF9",
-                      border: "1.5px solid #FED7AA",
+                      bgcolor: "#FAF7F4",
+                      border: "1.5px solid #EFE6D5",
                       display: "flex",
                       alignItems: "center",
                       gap: 2,
@@ -275,8 +291,8 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
                     sx={{
                       p: 2.2,
                       borderRadius: "16px",
-                      bgcolor: "#FFFDF9",
-                      border: "1.5px solid #FED7AA",
+                      bgcolor: "#FAF7F4",
+                      border: "1.5px solid #EFE6D5",
                       display: "flex",
                       alignItems: "center",
                       gap: 2,
@@ -340,12 +356,12 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
                         justifyContent: "space-between",
                         p: 2,
                         borderRadius: "14px",
-                        bgcolor: "#F8FAFC",
-                        border: "1px solid #E2E8F0",
+                        bgcolor: "#FAF7F4",
+                        border: "1.5px solid #EFE6D5",
                         transition: "all 0.2s ease",
                         "&:hover": {
                           bgcolor: "#FFF7ED",
-                          borderColor: "#FED7AA",
+                          borderColor: "#FFD4BC",
                         },
                       }}
                     >
@@ -356,9 +372,9 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
                         <Typography
                           sx={{
                             fontFamily: FONTS.OUTFIT,
-                            fontSize: "15px",
+                            fontSize: "14.5px",
                             fontWeight: 600,
-                            color: "#1E293B",
+                            color: "#2C1810",
                           }}
                         >
                           {aarti.name || "Daily Aarti"}
@@ -371,10 +387,10 @@ export default function CustomerTempleAbout({ temple }: CustomerTempleAboutProps
                         sx={{
                           fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
-                          fontSize: "13.5px",
+                          fontSize: "13px",
                           bgcolor: "#FFFFFF",
                           color: "#EA580C",
-                          border: "1px solid #FDBA74",
+                          border: "1px solid #FFD4BC",
                           borderRadius: "10px",
                           px: 1,
                         }}

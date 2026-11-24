@@ -689,12 +689,23 @@ export default function PortalRegisterContent() {
     >
       <RegisterHeader />
 
-      <Container maxWidth="md" sx={{ py: { xs: 2.5, md: 6 }, px: { xs: 1.5, sm: 3 }, flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Container
+        maxWidth="md"
+        sx={{
+          pt: { xs: 1.5, sm: 2.5, md: 4 },
+          pb: { xs: 6, sm: 6, md: 8 },
+          px: { xs: 1.5, sm: 3 },
+          flexGrow: 1,
+          display: "flex",
+          alignItems: { xs: "flex-start", md: "center" },
+          justifyContent: "center",
+        }}
+      >
         <Paper
           sx={{
             width: "100%",
-            p: { xs: 2, sm: 3.5, md: 5 },
-            borderRadius: { xs: "18px", md: "24px" },
+            p: { xs: "20px 16px 26px", sm: 3.5, md: 5 },
+            borderRadius: { xs: "20px", md: "24px" },
             background:
               "linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 250, 245, 0.22) 100%)",
             backdropFilter: "blur(14px) saturate(140%)",
@@ -746,12 +757,12 @@ export default function PortalRegisterContent() {
             sx={{
               display: { xs: "flex", md: "none" },
               flexDirection: "column",
-              gap: 1.5,
-              mb: 3,
-              bgcolor: "rgba(255, 246, 237, 0.7)",
+              gap: 1.2,
+              mb: { xs: 2.5, sm: 3 },
+              bgcolor: "rgba(255, 246, 237, 0.75)",
               border: "1px solid rgba(255, 98, 0, 0.2)",
-              borderRadius: "16px",
-              p: 2,
+              borderRadius: "14px",
+              p: { xs: 1.5, sm: 2 },
             }}
           >
             {/* Step Counter & Label */}
@@ -913,12 +924,15 @@ export default function PortalRegisterContent() {
             <Box
               sx={{
                 display: "flex",
+                flexDirection: { xs: safeActiveStep > 0 ? "row" : "column", sm: "row" },
                 justifyContent:
-                  currentStep.id === "basic" ? "flex-end" : "space-between",
+                  currentStep.id === "basic"
+                    ? { xs: "stretch", sm: "flex-end" }
+                    : "space-between",
                 alignItems: "center",
                 width: "100%",
-                mt: { xs: 4, md: 6 },
-                gap: 2,
+                mt: { xs: 3.5, md: 5 },
+                gap: { xs: 1.5, sm: 2 },
               }}
             >
               {safeActiveStep > 0 && (
@@ -927,22 +941,30 @@ export default function PortalRegisterContent() {
                   onClick={handleBack}
                   type="button"
                   sx={{
-                    background: COLORS.PRIMARY,
-                    color: "white",
+                    flex: { xs: 1, sm: "initial" },
+                    width: { xs: "100%", sm: "auto" },
+                    minWidth: { sm: 130 },
+                    minHeight: "44px",
+                    background: "#FAF7F4",
+                    color: COLORS.PRIMARY,
+                    border: "1px solid #FFD4BC",
                     textTransform: "none",
                     fontWeight: 600,
                     borderRadius: "30px",
-                    px: { xs: 3, md: 4 },
-                    py: { xs: 0.9, md: 1 },
-                    fontSize: { xs: "13.5px", md: "15px" },
+                    px: { xs: 2.5, md: 4 },
+                    py: { xs: 1, md: 1 },
+                    fontSize: { xs: "14px", md: "15px" },
+                    fontFamily: FONTS.OUTFIT,
                     boxShadow: "none",
+                    transition: "all 0.2s ease",
                     "&:hover": {
-                      background: COLORS.PRIMARY_DARK,
-                      boxShadow: "none",
+                      background: "#FFF0E6",
+                      borderColor: COLORS.PRIMARY,
                     },
                     "&.Mui-disabled": {
-                      background: "#FFE0D0",
-                      color: "#FFA07A",
+                      background: "#F1E9DF",
+                      color: "#A89F91",
+                      borderColor: "transparent",
                     },
                   }}
                 >
@@ -953,22 +975,29 @@ export default function PortalRegisterContent() {
                 type="submit"
                 disabled={isSendingOtp || isVerifyingOtp || isSubmittingForm}
                 sx={{
-                  background: COLORS.PRIMARY,
+                  flex: { xs: safeActiveStep > 0 ? 1 : "initial", sm: "initial" },
+                  width: { xs: "100%", sm: "auto" },
+                  minWidth: { sm: 150 },
+                  minHeight: "44px",
+                  background: "linear-gradient(135deg, #FF6200 0%, #E55800 100%)",
                   color: "white",
                   textTransform: "none",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   borderRadius: "30px",
-                  px: { xs: 3, md: 4 },
-                  py: { xs: 0.9, md: 1 },
-                  fontSize: { xs: "13.5px", md: "15px" },
-                  boxShadow: "none",
+                  px: { xs: 3, md: 4.5 },
+                  py: { xs: 1.1, md: 1.1 },
+                  fontSize: { xs: "14px", md: "15px" },
+                  fontFamily: FONTS.OUTFIT,
+                  boxShadow: "0 6px 18px rgba(255, 98, 0, 0.28)",
+                  transition: "all 0.2s ease",
                   "&:hover": {
                     background: COLORS.PRIMARY_DARK,
-                    boxShadow: "none",
+                    boxShadow: "0 8px 22px rgba(255, 98, 0, 0.36)",
                   },
                   "&.Mui-disabled": {
                     background: "#FFE0D0",
                     color: "#FFA07A",
+                    boxShadow: "none",
                   },
                 }}
               >

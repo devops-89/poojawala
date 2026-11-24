@@ -2,7 +2,7 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import React, { useMemo } from 'react';
 import moment from 'moment';
-import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
+import { Box, Button, Chip, Grid, Paper, Typography } from '@mui/material';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
@@ -44,6 +44,48 @@ export default function BookingDetailHero({
 }: Props) {
   const isAstrology = booking?.bookingType === 'ASTROLOGY' || Boolean(booking?.astrologer);
   const payDetails = getBookingPaymentDetails(booking);
+  const isCancelled = statusStr === 'CANCELLED';
+
+  const serviceHeading = useMemo(() => {
+    if (isAstrology) {
+      return (
+        booking?.service?.name ||
+        booking?.serviceName ||
+        booking?.service?.title ||
+        (booking?.astrologer
+          ? `Astrology Consultation with ${booking.astrologer.firstName || ''} ${booking.astrologer.lastName || ''}`.trim()
+          : 'Astrology Consultation')
+      );
+    }
+    return (
+      booking?.service?.name ||
+      booking?.serviceName ||
+      booking?.service?.title ||
+      booking?.serviceTitle ||
+      booking?.poojaName ||
+      booking?.pooja?.name ||
+      booking?.title ||
+      'Pooja Service'
+    );
+  }, [booking, isAstrology]);
+
+  const statusBg =
+    statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED'
+      ? '#E8F5E9'
+      : statusStr === 'COMPLETED'
+      ? '#E3F2FD'
+      : statusStr === 'CANCELLED'
+      ? '#FFEBEE'
+      : '#FFF5F0';
+
+  const statusColor =
+    statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED'
+      ? '#2E7D32'
+      : statusStr === 'COMPLETED'
+      ? '#1565C0'
+      : statusStr === 'CANCELLED'
+      ? '#C62828'
+      : COLORS.PRIMARY;
 
   // If token is paid, customer pays remaining amount.
   // If token is not paid, customer directly pays full amount via API.
@@ -56,11 +98,7 @@ export default function BookingDetailHero({
     payButtonLabel = `Pay Full Amount (₹${formatInr(payDetails.finalAmount)})`;
   }
 
-  const showPayButton = payDetails.canMakePayment;
-
-  const serviceHeading = isAstrology
-    ? (booking?.service?.name || (booking?.astrologer ? `Astrology Consultation with ${booking.astrologer.firstName || ''} ${booking.astrologer.lastName || ''}`.trim() : 'Astrology Consultation'))
-    : (booking?.service?.name ?? 'Service');
+  const showPayButton = payDetails.canMakePayment && !isCancelled;
 
   const displayDate = booking?.scheduledAt
     ? formatScheduledDateTime(booking.scheduledAt)
@@ -81,46 +119,82 @@ export default function BookingDetailHero({
 
   return (
     <Paper
+      elevation={0}
       sx={{
-        p: 4,
-        borderRadius: '24px',
-        border: '1px solid #e2e8f0',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        p: { xs: 2.5, sm: 3.5, md: 4 },
+        borderRadius: { xs: '18px', md: '24px' },
+        border: '1.5px solid #EFE6D5',
+        boxShadow: '0 4px 16px rgba(44, 24, 16, 0.04)',
+        bgcolor: '#FFFFFF',
       }}
     >
-      <Grid container spacing={3} sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <Grid size={{ xs: 12, md: 6 }}>
+      {/* 1. Card Top Header: Eyebrow + Status Badge */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: { xs: 2, md: 2.5 },
+          pb: { xs: 1.5, md: 0 },
+          borderBottom: { xs: '1px solid #F5ECE3', md: 'none' },
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontSize: '11.5px',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            color: '#D94E00',
+          }}
+        >
+          {isAstrology ? 'Astrology Consultation Details' : 'Booking Details'}
+        </Typography>
+
+        <Chip
+          label={statusLabel}
+          sx={{
+            fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
+            bgcolor: statusBg,
+            color: statusColor,
+            border: '1px solid rgba(0,0,0,0.06)',
+            borderRadius: '20px',
+            height: '28px',
+            fontSize: '12.5px',
+            px: 0.5,
+          }}
+        />
+      </Box>
+
+      {/* 2. Main Content Grid */}
+      <Grid container spacing={{ xs: 2.5, md: 4 }} sx={{ alignItems: 'flex-start' }}>
+        {/* Left Column: Service Information */}
+        <Grid size={{ xs: 12, md: 7 }}>
           <Typography
+            variant="h5"
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.2em',
-              color: COLORS.PRIMARY,
-              mb: 1,
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 800,
+              color: '#2C1810',
+              fontSize: { xs: '20px', sm: '24px', md: '28px' },
+              mb: 0.8,
+              lineHeight: 1.25,
             }}
           >
-            {isAstrology ? 'Astrology Consultation Details' : 'Booking Details'}
-          </Typography>
-          <Typography variant="h5" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 1 }}>
             {serviceHeading}
           </Typography>
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
-            Scheduled on {displayDate}
-          </Typography>
 
-          {/* Cancellation reason if cancelled */}
-          {statusStr === 'CANCELLED' && booking?.cancellationReason && (
-            <Box sx={{ mt: 1, mb: 2, p: 1.5, bgcolor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px' }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '13px', color: '#b91c1c', fontWeight: 600 }}>
-                Cancellation Reason: {booking.cancellationReason} {booking.cancelledBy ? `(by ${booking.cancelledBy})` : ''}
-              </Typography>
-            </Box>
-          )}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1.8, color: '#7C6A60' }}>
+            <AccessTimeIcon sx={{ fontSize: 16, color: '#D94E00' }} />
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: { xs: '13px', sm: '14px' } }}>
+              Scheduled on <strong>{displayDate}</strong>
+            </Typography>
+          </Box>
 
           {/* Booking Mode & Plan Badges */}
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', mb: 3 }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', mb: isCancelled ? 2 : 2.5 }}>
             {booking?.bookingMode && (
               <Chip
                 label={
@@ -132,12 +206,12 @@ export default function BookingDetailHero({
                 }
                 size="small"
                 sx={{
-                  fontWeight: 600,
-                  fontFamily: FONTS.PRIMARY,
+                  fontWeight: 700,
+                  fontFamily: FONTS.OUTFIT,
                   bgcolor: '#F0F9FF',
                   color: '#0284C7',
                   border: '1px solid #BAE6FD',
-                  borderRadius: '8px',
+                  borderRadius: '20px',
                   fontSize: '12px',
                   height: '28px',
                 }}
@@ -148,12 +222,12 @@ export default function BookingDetailHero({
                 label={`${booking.plan.charAt(0).toUpperCase() + booking.plan.slice(1).toLowerCase()} Plan`}
                 size="small"
                 sx={{
-                  fontWeight: 600,
-                  fontFamily: FONTS.PRIMARY,
+                  fontWeight: 700,
+                  fontFamily: FONTS.OUTFIT,
                   bgcolor: '#FFF7ED',
                   color: '#C2410C',
                   border: '1px solid #FED7AA',
-                  borderRadius: '8px',
+                  borderRadius: '20px',
                   fontSize: '12px',
                   height: '28px',
                 }}
@@ -161,228 +235,207 @@ export default function BookingDetailHero({
             )}
           </Box>
 
-          {!isAstrology && (statusStr === 'PENDING' || statusStr === 'ACCEPTED') && (
+          {/* Cancellation Alert Banner */}
+          {isCancelled && (
             <Box
-              component="button"
-              onClick={onRescheduleClick}
               sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                padding: '6px 16px',
-                fontSize: '0.8125rem',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                backgroundColor: '#3b82f6',
-                color: '#ffffff',
-                borderRadius: '12px',
-                fontFamily: FONTS.PRIMARY,
-                textTransform: 'none',
-                fontWeight: 600,
-                '&:hover': { backgroundColor: '#2563eb' },
+                p: 2,
+                bgcolor: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                borderRadius: '14px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1.5,
+                mb: 2,
               }}
             >
-              <EditCalendarIcon sx={{ fontSize: 18 }} />
-              Reschedule
+              <CancelIcon sx={{ color: '#dc2626', fontSize: 20, mt: 0.2, flexShrink: 0 }} />
+              <Box>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13.5px', color: '#991b1b', fontWeight: 700 }}>
+                  Booking Cancelled
+                </Typography>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12.5px', color: '#b91c1c', mt: 0.3, lineHeight: 1.5 }}>
+                  {booking?.cancellationReason
+                    ? `Reason: ${booking.cancellationReason}${booking.cancelledBy ? ` (by ${booking.cancelledBy})` : ''}`
+                    : 'This booking has been cancelled. No further payment is required.'}
+                </Typography>
+              </Box>
             </Box>
+          )}
+
+          {!isAstrology && (statusStr === 'PENDING' || statusStr === 'ACCEPTED') && (
+            <Button
+              onClick={onRescheduleClick}
+              startIcon={<EditCalendarIcon sx={{ fontSize: 17 }} />}
+              sx={{
+                bgcolor: '#EFF6FF',
+                color: '#2563EB',
+                border: '1px solid #BFDBFE',
+                borderRadius: '12px',
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: '13px',
+                textTransform: 'none',
+                px: 2,
+                py: 0.7,
+                boxShadow: 'none',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: '#DBEAFE',
+                },
+              }}
+            >
+              Reschedule
+            </Button>
           )}
         </Grid>
 
-        <Grid
-          size={{ xs: 12, md: 6 }}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: { xs: 'flex-start', md: 'flex-end' },
-            gap: 1.5,
-          }}
-        >
-          {/* Status chips row */}
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-            <Chip
-              label={statusLabel}
-              sx={{
-                fontWeight: 700,
-                fontFamily: FONTS.PRIMARY,
-                bgcolor:
-                  statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED'
-                    ? '#E8F5E9'
-                    : statusStr === 'COMPLETED'
-                    ? '#E3F2FD'
-                    : statusStr === 'CANCELLED'
-                    ? '#FFEBEE'
-                    : '#FFF5F0',
-                color:
-                  statusStr === 'ONGOING' || statusStr === 'ENROUTE' || statusStr === 'ARRIVED'
-                    ? '#2E7D32'
-                    : statusStr === 'COMPLETED'
-                    ? '#1565C0'
-                    : statusStr === 'CANCELLED'
-                    ? '#C62828'
-                    : COLORS.PRIMARY,
-              }}
-            />
+        {/* Right Column: Clean Payment Summary Box & Actions */}
+        <Grid size={{ xs: 12, md: 5 }}>
+          {/* Payment Summary Box */}
+          <Box
+            sx={{
+              bgcolor: '#FAF7F4',
+              border: '1.5px solid #EFE6D5',
+              borderRadius: '16px',
+              p: { xs: 2, sm: 2.5 },
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: '#7C6A60',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                }}
+              >
+                {isAstrology ? 'Consultation Fee' : 'Total Booking Amount'}
+              </Typography>
 
-            {/* Payment badge chip */}
-            {isAstrology ? (
-              booking.paymentStatus === 'PAID' ? (
+              {isCancelled ? (
                 <Chip
-                  icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#16a34a' }} />}
-                  label="Fully Paid"
                   size="small"
+                  label="No Due"
                   sx={{
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
-                    fontFamily: FONTS.PRIMARY,
+                    fontSize: '11px',
+                    bgcolor: '#f3f4f6',
+                    color: '#6b7280',
+                    border: '1px solid #e5e7eb',
+                    height: '22px',
+                  }}
+                />
+              ) : payDetails.isFullyPaid ? (
+                <Chip
+                  icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#16a34a' }} />}
+                  size="small"
+                  label="Fully Paid"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: '11px',
                     bgcolor: '#ecfdf5',
                     color: '#166534',
                     border: '1px solid #bbf7d0',
-                    height: '32px',
+                    height: '22px',
                   }}
                 />
-              ) : statusStr !== 'CANCELLED' ? (
+              ) : payDetails.isTokenPaid ? (
                 <Chip
-                  icon={<AccessTimeIcon sx={{ fontSize: '15px !important', color: '#dc2626' }} />}
-                  label="Payment Pending"
+                  icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#059669' }} />}
                   size="small"
+                  label="Partially Paid"
                   sx={{
+                    fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
-                    fontFamily: FONTS.PRIMARY,
+                    fontSize: '11px',
+                    bgcolor: '#f0fdf4',
+                    color: '#047857',
+                    border: '1px solid #bbf7d0',
+                    height: '22px',
+                  }}
+                />
+              ) : (
+                <Chip
+                  icon={<AccessTimeIcon sx={{ fontSize: '13px !important', color: '#dc2626' }} />}
+                  size="small"
+                  label="Pending"
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: '11px',
                     bgcolor: '#fef2f2',
                     color: '#b91c1c',
                     border: '1px solid #fecaca',
-                    height: '32px',
+                    height: '22px',
                   }}
                 />
-              ) : null
-            ) : payDetails.isFullyPaid ? (
-              <Chip
-                icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#16a34a' }} />}
-                label="Fully Paid"
-                size="small"
-                sx={{
-                  fontWeight: 700,
-                  fontFamily: FONTS.PRIMARY,
-                  bgcolor: '#ecfdf5',
-                  color: '#166534',
-                  border: '1px solid #bbf7d0',
-                  height: '32px',
-                }}
-              />
-            ) : payDetails.isTokenPaid ? (
-              <Chip
-                icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#059669' }} />}
-                label={`Token Paid: ₹${formatInr(payDetails.paidAmount)}`}
-                size="small"
-                sx={{
-                  fontWeight: 700,
-                  fontFamily: FONTS.PRIMARY,
-                  bgcolor: '#f0fdf4',
-                  color: '#047857',
-                  border: '1px solid #bbf7d0',
-                  height: '32px',
-                }}
-              />
-            ) : statusStr !== 'CANCELLED' ? (
-              <Chip
-                icon={<AccessTimeIcon sx={{ fontSize: '15px !important', color: '#dc2626' }} />}
-                label="Payment Pending"
-                size="small"
-                sx={{
-                  fontWeight: 700,
-                  fontFamily: FONTS.PRIMARY,
-                  bgcolor: '#fef2f2',
-                  color: '#b91c1c',
-                  border: '1px solid #fecaca',
-                  height: '32px',
-                }}
-              />
-            ) : null}
-          </Box>
+              )}
+            </Box>
 
-          {/* Amount & breakdown */}
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: { xs: 'flex-start', md: 'flex-end' },
-              gap: 0.5,
-            }}
-          >
-            {isAstrology ? (
-              <>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>
-                  Consultation Fee
-                </Typography>
-                <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
-                  ₹{formatInr(payDetails.finalAmount)}
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a' }}>
-                  ₹{formatInr(payDetails.finalAmount)}
-                </Typography>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: isCancelled ? '#5C4A40' : '#2C1810',
+                fontSize: { xs: '24px', sm: '28px', md: '30px' },
+              }}
+            >
+              ₹{formatInr(payDetails.finalAmount)}
+            </Typography>
 
-                {payDetails.isTokenPaid && (
-                  <Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 1.5,
-                      flexWrap: 'wrap',
-                      justifyContent: { xs: 'flex-start', md: 'flex-end' },
-                      bgcolor: '#f8fafc',
-                      px: 1.5,
-                      py: 0.6,
-                      borderRadius: '10px',
-                      border: '1px solid #e2e8f0',
-                      mt: 0.25,
-                    }}
-                  >
-                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-                      <CheckCircleIcon sx={{ fontSize: 14, color: '#10b981' }} />
-                      <Typography
-                        sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#047857' }}
-                      >
-                        Token Paid: ₹{formatInr(payDetails.paidAmount)}
-                      </Typography>
-                    </Box>
-                    <Typography sx={{ color: '#cbd5e1', fontSize: '12px' }}>|</Typography>
-                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography
-                        sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 700, color: '#ea580c' }}
-                      >
-                        Remaining Due: ₹{formatInr(payDetails.remainingAmount)}
-                      </Typography>
-                    </Box>
-                  </Box>
+            {/* Token payment breakdown if token was paid */}
+            {payDetails.isTokenPaid && (
+              <Box
+                sx={{
+                  pt: 1.2,
+                  borderTop: '1px solid #EFE6D5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 1,
+                }}
+              >
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
+                  <CheckCircleIcon sx={{ fontSize: 14, color: '#10b981' }} />
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12.5px', fontWeight: 600, color: '#047857' }}>
+                    Token Paid: <strong>₹{formatInr(payDetails.paidAmount)}</strong>
+                  </Typography>
+                </Box>
+
+                {!isCancelled && (
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12.5px', fontWeight: 700, color: '#c2410c' }}>
+                    Remaining Due: ₹{formatInr(payDetails.remainingAmount)}
+                  </Typography>
                 )}
+              </Box>
+            )}
 
-                {!payDetails.isTokenPaid && !payDetails.isFullyPaid && statusStr !== 'CANCELLED' && (
-                  <Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      bgcolor: '#fff7ed',
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: '8px',
-                      border: '1px solid #ffedd5',
-                      mt: 0.25,
-                    }}
-                  >
-                    <AccessTimeIcon sx={{ fontSize: 14, color: '#ea580c' }} />
-                    <Typography
-                      sx={{ fontFamily: FONTS.PRIMARY, fontSize: '12px', fontWeight: 600, color: '#c2410c' }}
-                    >
-                      Full Payment Due: ₹{formatInr(payDetails.finalAmount)}
-                    </Typography>
-                  </Box>
-                )}
-              </>
+            {/* If Active & Unpaid */}
+            {!payDetails.isTokenPaid && !payDetails.isFullyPaid && !isCancelled && (
+              <Box
+                sx={{
+                  pt: 1.2,
+                  borderTop: '1px solid #EFE6D5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.6,
+                }}
+              >
+                <AccessTimeIcon sx={{ fontSize: 14, color: '#ea580c' }} />
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', fontWeight: 700, color: '#c2410c' }}>
+                  Full Payment Due: ₹{formatInr(payDetails.finalAmount)}
+                </Typography>
+              </Box>
             )}
           </Box>
 
@@ -390,98 +443,86 @@ export default function BookingDetailHero({
           <Box
             sx={{
               display: 'flex',
-              gap: 1.5,
+              gap: 1.2,
               flexWrap: 'wrap',
-              mt: 1,
-              justifyContent: { xs: 'flex-start', md: 'flex-end' },
+              mt: 2,
+              justifyContent: { xs: 'stretch', md: 'flex-end' },
+              '& > button': {
+                flex: { xs: 1, sm: 'initial' },
+              },
             }}
           >
             {showPayButton && (
-              <Box
-                component="button"
+              <Button
                 onClick={onCompletePaymentClick}
                 disabled={isRedirectingPayment}
+                startIcon={<AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
                 sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  padding: '7px 18px',
-                  fontSize: '0.8125rem',
-                  border: 'none',
-                  cursor: isRedirectingPayment ? 'not-allowed' : 'pointer',
-                  transition: 'all 200ms ease',
-                  backgroundColor: '#10b981',
+                  bgcolor: '#059669',
                   color: '#ffffff',
-                  borderRadius: '12px',
-                  fontFamily: FONTS.PRIMARY,
-                  textTransform: 'none',
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
-                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
-                  opacity: isRedirectingPayment ? 0.7 : 1,
+                  fontSize: '13px',
+                  textTransform: 'none',
+                  borderRadius: '12px',
+                  px: 2.2,
+                  py: 0.85,
+                  boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
                   '&:hover': {
-                    backgroundColor: isRedirectingPayment ? '#10b981' : '#059669',
-                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                    bgcolor: '#047857',
                   },
                 }}
               >
-                <AccountBalanceWalletIcon sx={{ fontSize: 18 }} />
                 {payButtonLabel}
-              </Box>
+              </Button>
             )}
 
-            <Box
-              component="button"
+            <Button
               onClick={onRaiseTicketClick}
+              startIcon={<SupportAgentIcon sx={{ fontSize: 18 }} />}
               sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                padding: '6px 16px',
-                fontSize: '0.8125rem',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                backgroundColor: '#f59e0b',
-                color: '#ffffff',
-                borderRadius: '12px',
-                fontFamily: FONTS.PRIMARY,
+                bgcolor: '#FFF0E6',
+                border: '1px solid #FFD4BC',
+                color: COLORS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: '13px',
                 textTransform: 'none',
-                fontWeight: 600,
-                '&:hover': { backgroundColor: '#d97706' },
+                borderRadius: '12px',
+                px: 2.2,
+                py: 0.85,
+                '&:hover': {
+                  bgcolor: '#FFE4D4',
+                  borderColor: COLORS.PRIMARY,
+                },
               }}
             >
-              <SupportAgentIcon sx={{ fontSize: 18 }} />
               Raise Ticket
-            </Box>
+            </Button>
 
-            {isActive && (
-              <Box
-                component="button"
+            {isActive && !isCancelled && (
+              <Button
                 onClick={onCancelClick}
+                startIcon={<CancelIcon sx={{ fontSize: 18 }} />}
                 sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  padding: '6px 16px',
-                  fontSize: '0.8125rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                  backgroundColor: '#ef4444',
-                  color: '#ffffff',
-                  borderRadius: '12px',
-                  fontFamily: FONTS.PRIMARY,
+                  bgcolor: '#FEF2F2',
+                  border: '1px solid #FECACA',
+                  color: '#DC2626',
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: '13px',
                   textTransform: 'none',
-                  fontWeight: 600,
-                  '&:hover': { backgroundColor: '#dc2626' },
+                  borderRadius: '12px',
+                  px: 2,
+                  py: 0.85,
+                  '&:hover': {
+                    bgcolor: '#FEE2E2',
+                    borderColor: '#DC2626',
+                  },
                 }}
               >
-                <CancelIcon sx={{ fontSize: 18 }} />
                 Cancel Booking
-              </Box>
+              </Button>
             )}
           </Box>
         </Grid>
@@ -494,8 +535,8 @@ export default function BookingDetailHero({
             mt: 3,
             p: 2.5,
             bgcolor: booking.paymentStatus === 'PAID' ? '#f0fdf4' : '#fff7ed',
-            borderRadius: '14px',
-            border: `1px solid ${booking.paymentStatus === 'PAID' ? '#bbf7d0' : '#fed7aa'}`,
+            borderRadius: '16px',
+            border: `1.5px solid ${booking.paymentStatus === 'PAID' ? '#bbf7d0' : '#fed7aa'}`,
             display: 'flex',
             alignItems: 'flex-start',
             gap: 1.5,
@@ -512,7 +553,7 @@ export default function BookingDetailHero({
           <Box>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontSize: '14px',
                 fontWeight: 700,
                 color: booking.paymentStatus === 'PAID' ? '#166534' : '#9a3412',
@@ -522,7 +563,7 @@ export default function BookingDetailHero({
             </Typography>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontSize: '13px',
                 color: booking.paymentStatus === 'PAID' ? '#15803d' : '#c2410c',
                 mt: 0.5,

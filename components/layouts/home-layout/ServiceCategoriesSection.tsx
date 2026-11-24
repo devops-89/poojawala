@@ -15,13 +15,10 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
 import { CategoryItem } from "@/utils/types";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import { stripHtml, normalizePoojaText } from "@/utils/helpers";
-
-// SwiperImports
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -122,7 +119,9 @@ export default function ServiceCategoriesSection() {
             src={imageUrl}
             alt={cat.name || "Category"}
             fill
-            unoptimized={typeof imageUrl === "string" && imageUrl.startsWith("http")}
+            unoptimized={
+              typeof imageUrl === "string" && imageUrl.startsWith("http")
+            }
             sizes="(max-width: 600px) 380px, (max-width: 960px) 45vw, 340px"
             style={{ objectFit: "cover" }}
             loading="lazy"
@@ -232,7 +231,13 @@ export default function ServiceCategoriesSection() {
     >
       <Container maxWidth="lg">
         {/* Header Section matching Popular Pooja Packages */}
-        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 }, position: "relative" }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            mb: { xs: 4, md: 6 },
+            position: "relative",
+          }}
+        >
           <Typography
             variant="h3"
             component="h2"
@@ -291,7 +296,10 @@ export default function ServiceCategoriesSection() {
                 endIcon={<ArrowForwardIcon fontSize="small" />}
                 onClick={() => {
                   if (typeof window !== "undefined") {
-                    sessionStorage.setItem("home_restore_section", "pooja-by-category");
+                    sessionStorage.setItem(
+                      "home_restore_section",
+                      "pooja-by-category",
+                    );
                   }
                   router.push("/services");
                 }}
@@ -331,7 +339,8 @@ export default function ServiceCategoriesSection() {
               borderRadius: "50%",
               display: "inline-block",
               willChange: "transform, opacity",
-              transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+              transition:
+                "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
             },
             "& .swiper-pagination-bullet-active": {
               bgcolor: COLORS.PRIMARY,
@@ -422,7 +431,10 @@ export default function ServiceCategoriesSection() {
               endIcon={<ArrowForwardIcon fontSize="small" />}
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  sessionStorage.setItem("home_restore_section", "pooja-by-category");
+                  sessionStorage.setItem(
+                    "home_restore_section",
+                    "pooja-by-category",
+                  );
                 }
                 router.push("/services");
               }}

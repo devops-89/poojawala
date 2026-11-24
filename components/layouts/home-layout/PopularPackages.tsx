@@ -4,20 +4,18 @@ import { getAllServicesAPI } from "@/api/serviceControllers";
 import EmptyStateCard from "@/components/widgets/EmptyStateCard";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
-import {
-  Box,
-  Button,
-  Card,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, Container, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
-import { formatServicePriceRange, stripHtml, isCustomerLoggedIn, normalizePoojaText } from "@/utils/helpers";
+import {
+  formatServicePriceRange,
+  stripHtml,
+  isCustomerLoggedIn,
+  normalizePoojaText,
+} from "@/utils/helpers";
 
 interface PackageItem {
   id: string | number;
@@ -51,7 +49,8 @@ const DEFAULT_PACKAGES: PackageItem[] = [
     id: "annaprashan-puja",
     slug: "annaprashan-puja",
     title: "Annaprashan Pooja",
-    description: "Celebrate your baby's first rice-feeding ceremony with authentic rituals. Book online Annaprashan Pooja with Vedic blessings.",
+    description:
+      "Celebrate your baby's first rice-feeding ceremony with authentic rituals. Book online Annaprashan Pooja with Vedic blessings.",
     duration: "2-3 hrs",
     price: "₹3,500 - ₹6,500",
     unit: "/ ceremony",
@@ -63,7 +62,8 @@ const DEFAULT_PACKAGES: PackageItem[] = [
     id: "rudrabhishek-puja",
     slug: "online-rudrabhishek-puja",
     title: "Rudrabhishek Pooja",
-    description: "Invoke Lord Shiva's supreme power for health, peace, and sin destruction. Book authentic Rudrabhishek Pooja featuring sacred rituals.",
+    description:
+      "Invoke Lord Shiva's supreme power for health, peace, and sin destruction. Book authentic Rudrabhishek Pooja featuring sacred rituals.",
     duration: "2-3 hrs",
     price: "₹4,800 - ₹33,800",
     unit: "/ ceremony",
@@ -75,7 +75,8 @@ const DEFAULT_PACKAGES: PackageItem[] = [
     id: "bhoomi-puja",
     slug: "bhoomi-puja",
     title: "Bhoomi Pooja",
-    description: "Invoke Mother Earth's divine blessings before construction or land development. Book authentic Bhoomi Pooja with Vedic rituals.",
+    description:
+      "Invoke Mother Earth's divine blessings before construction or land development. Book authentic Bhoomi Pooja with Vedic rituals.",
     duration: "2-3 hrs",
     price: "₹5,100 - ₹11,000",
     unit: "/ ceremony",
@@ -87,7 +88,8 @@ const DEFAULT_PACKAGES: PackageItem[] = [
     id: "durga-puja",
     slug: "durga-puja",
     title: "Durga Pooja & Chandi Havan",
-    description: "Invoke Goddess Durga's fierce divine energy to defeat negativity and ward off evil. Book authentic Durga Pooja ceremony.",
+    description:
+      "Invoke Goddess Durga's fierce divine energy to defeat negativity and ward off evil. Book authentic Durga Pooja ceremony.",
     duration: "3-4 hrs",
     price: "₹4,800 - ₹12,500",
     unit: "/ ceremony",
@@ -127,7 +129,9 @@ export default function PopularPackages() {
               : Array.isArray(response)
                 ? response
                 : [];
-        const activeOnly = items.filter((item: RawServiceItem) => item.isActive !== false);
+        const activeOnly = items.filter(
+          (item: RawServiceItem) => item.isActive !== false,
+        );
 
         if (!isMounted) return;
 
@@ -147,8 +151,8 @@ export default function PopularPackages() {
               title: normalizePoojaText(item.name || ""),
               description: normalizePoojaText(
                 item.description ||
-                item.shortDescription ||
-                "Traditional Vedic pooja performed by an experienced Purohit."
+                  item.shortDescription ||
+                  "Traditional Vedic pooja performed by an experienced Purohit.",
               ),
               duration: "",
               price: priceStr,
@@ -185,10 +189,19 @@ export default function PopularPackages() {
   }, []);
 
   return (
-    <Box id="popular-packages" sx={{ py: { xs: 5, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}>
+    <Box
+      id="popular-packages"
+      sx={{ py: { xs: 5, md: 9 }, bgcolor: "#FFF", scrollMarginTop: "90px" }}
+    >
       <Container maxWidth="lg">
         {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 }, position: "relative" }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            mb: { xs: 4, md: 6 },
+            position: "relative",
+          }}
+        >
           <Typography
             variant="h3"
             component="h2"
@@ -230,7 +243,10 @@ export default function PopularPackages() {
                 endIcon={<ArrowForwardIcon fontSize="small" />}
                 onClick={() => {
                   if (typeof window !== "undefined") {
-                    sessionStorage.setItem("home_restore_section", "popular-packages");
+                    sessionStorage.setItem(
+                      "home_restore_section",
+                      "popular-packages",
+                    );
                   }
                   router.push("/services");
                 }}
@@ -256,13 +272,51 @@ export default function PopularPackages() {
 
         {/* Packages Grid / Loading / Empty Notification State */}
         {loading && packages.length === 0 ? (
-          <Grid container spacing={{ xs: 3, sm: 3, md: 3.5 }} sx={{ justifyContent: "center" }}>
+          <Grid
+            container
+            spacing={{ xs: 3, sm: 3, md: 3.5 }}
+            sx={{ justifyContent: "center" }}
+          >
             {Array.from({ length: 4 }).map((_, i) => (
               <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
-                <Box sx={{ bgcolor: "#FFFFFF", borderRadius: "24px", border: "1.5px solid #EFE6D5", p: 2, height: "320px", display: "flex", flexDirection: "column", gap: 1.5 }}>
-                  <Box sx={{ bgcolor: "#FAF4EE", borderRadius: "14px", height: "160px" }} />
-                  <Box sx={{ bgcolor: "#F5EFE6", borderRadius: "4px", height: "20px", width: "70%", mx: "auto" }} />
-                  <Box sx={{ bgcolor: "#FAF4EE", borderRadius: "4px", height: "14px", width: "50%", mx: "auto", mt: "auto" }} />
+                <Box
+                  sx={{
+                    bgcolor: "#FFFFFF",
+                    borderRadius: "24px",
+                    border: "1.5px solid #EFE6D5",
+                    p: 2,
+                    height: "320px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: "#FAF4EE",
+                      borderRadius: "14px",
+                      height: "160px",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      bgcolor: "#F5EFE6",
+                      borderRadius: "4px",
+                      height: "20px",
+                      width: "70%",
+                      mx: "auto",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      bgcolor: "#FAF4EE",
+                      borderRadius: "4px",
+                      height: "14px",
+                      width: "50%",
+                      mx: "auto",
+                      mt: "auto",
+                    }}
+                  />
                 </Box>
               </Grid>
             ))}
@@ -291,18 +345,29 @@ export default function PopularPackages() {
                   elevation={0}
                   onClick={() => {
                     if (typeof window !== "undefined") {
-                      sessionStorage.setItem("home_restore_section", "popular-packages");
+                      sessionStorage.setItem(
+                        "home_restore_section",
+                        "popular-packages",
+                      );
                     }
                     const isCustomer = isCustomerLoggedIn();
                     const targetSlug = pkg.slug || pkg.id;
                     if (pkg.id && typeof window !== "undefined") {
                       const lower = String(targetSlug).toLowerCase();
-                      localStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
-                      sessionStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
+                      localStorage.setItem(
+                        `slug_to_id_${lower}`,
+                        String(pkg.id),
+                      );
+                      sessionStorage.setItem(
+                        `slug_to_id_${lower}`,
+                        String(pkg.id),
+                      );
                       localStorage.setItem("last_service_id", String(pkg.id));
                       sessionStorage.setItem("last_service_id", String(pkg.id));
                     }
-                    const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+                    const targetUrl = isCustomer
+                      ? `/customer/services/${targetSlug}`
+                      : `/services/${targetSlug}`;
                     router.push(targetUrl);
                   }}
                   sx={{
@@ -350,7 +415,10 @@ export default function PopularPackages() {
                         src={pkg.image}
                         alt={pkg.title}
                         fill
-                        unoptimized={typeof pkg.image === "string" && pkg.image.startsWith("http")}
+                        unoptimized={
+                          typeof pkg.image === "string" &&
+                          pkg.image.startsWith("http")
+                        }
                         sizes="(max-width: 600px) 380px, (max-width: 960px) 45vw, 280px"
                         style={{ objectFit: "cover" }}
                       />
@@ -476,18 +544,35 @@ export default function PopularPackages() {
                       onClick={(e) => {
                         e.stopPropagation();
                         if (typeof window !== "undefined") {
-                          sessionStorage.setItem("home_restore_section", "popular-packages");
+                          sessionStorage.setItem(
+                            "home_restore_section",
+                            "popular-packages",
+                          );
                         }
                         const isCustomer = isCustomerLoggedIn();
                         const targetSlug = pkg.slug || pkg.id;
                         if (pkg.id && typeof window !== "undefined") {
                           const lower = String(targetSlug).toLowerCase();
-                          localStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
-                          sessionStorage.setItem(`slug_to_id_${lower}`, String(pkg.id));
-                          localStorage.setItem("last_service_id", String(pkg.id));
-                          sessionStorage.setItem("last_service_id", String(pkg.id));
+                          localStorage.setItem(
+                            `slug_to_id_${lower}`,
+                            String(pkg.id),
+                          );
+                          sessionStorage.setItem(
+                            `slug_to_id_${lower}`,
+                            String(pkg.id),
+                          );
+                          localStorage.setItem(
+                            "last_service_id",
+                            String(pkg.id),
+                          );
+                          sessionStorage.setItem(
+                            "last_service_id",
+                            String(pkg.id),
+                          );
                         }
-                        const targetUrl = isCustomer ? `/customer/services/${targetSlug}` : `/services/${targetSlug}`;
+                        const targetUrl = isCustomer
+                          ? `/customer/services/${targetSlug}`
+                          : `/services/${targetSlug}`;
                         router.push(targetUrl);
                       }}
                       sx={{
@@ -533,7 +618,10 @@ export default function PopularPackages() {
               endIcon={<ArrowForwardIcon fontSize="small" />}
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  sessionStorage.setItem("home_restore_section", "popular-packages");
+                  sessionStorage.setItem(
+                    "home_restore_section",
+                    "popular-packages",
+                  );
                 }
                 router.push("/services");
               }}

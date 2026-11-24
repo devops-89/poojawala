@@ -114,11 +114,25 @@ export const getTempleByIdAPI = async (id: string | number) => {
           }
         });
 
-        const match = list.find((t: any) =>
+        let match = list.find((t: any) =>
           String(t.slug || '').trim().toLowerCase() === targetSlug ||
           createSlug(t.name || '').trim().toLowerCase() === targetSlug ||
           String(t.id) === targetSlug
         );
+
+        if (!match) {
+          // Check if slug ends with -<id> (e.g. shri-hanuman-mandir-3 -> id = 3)
+          const lastDashIndex = targetSlug.lastIndexOf("-");
+          if (lastDashIndex !== -1) {
+            const possibleId = targetSlug.slice(lastDashIndex + 1);
+            if (/^\d+$/.test(possibleId)) {
+              match = list.find((t: any) => String(t.id) === possibleId);
+              if (!match) {
+                numericId = possibleId;
+              }
+            }
+          }
+        }
 
         if (match?.id) {
           numericId = match.id;

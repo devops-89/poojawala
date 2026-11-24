@@ -59,7 +59,10 @@ export function parseCartApiResponse(res: any) {
         item.imageUrl ||
         item.imageDownloadurl ||
         item.image ||
-        "/images/productsHero.webp",
+        item.product?.imageUrl ||
+        item.product?.imageDownloadurl ||
+        item.product?.image ||
+        "",
       quantity: Number(item.quantity || 1),
       unitString: pUnit,
       pricingUnit: pUnit,

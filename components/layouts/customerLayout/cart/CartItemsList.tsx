@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { getProductInitials } from "@/utils/helpers";
 import React from "react";
 import { Box, Typography, Button, Paper, IconButton } from "@mui/material";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -14,6 +15,52 @@ interface CartItemsListProps {
   onQuantityChange: (itemId: string | number, newQty: number) => void;
   onRemoveItem: (itemId: string | number, title?: string) => void;
   onPromptClearCart: () => void;
+}
+
+function CartItemMedia({ src, title }: { src?: string; title?: string }) {
+  const [imgError, setImgError] = React.useState(false);
+  const initials = getProductInitials(title || "");
+  const isLogo = !src || src.includes("1Poojalogo") || src.includes("logo");
+
+  if (isLogo || imgError) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(135deg, #FFF0E6 0%, #FFE2D1 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          userSelect: "none",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            fontSize: "16px",
+            color: COLORS.PRIMARY,
+          }}
+        >
+          {initials}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={title}
+      onError={() => setImgError(true)}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
+  );
 }
 
 export default function CartItemsList({
@@ -35,7 +82,7 @@ export default function CartItemsList({
       >
         <Typography
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             fontSize: "13px",
             letterSpacing: "1.2px",
@@ -53,7 +100,7 @@ export default function CartItemsList({
           sx={{
             color: "#8C7A70",
             fontSize: "13px",
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             textTransform: "none",
             "&:hover": { color: "#d32f2f", bgcolor: "transparent" },
           }}
@@ -99,15 +146,7 @@ export default function CartItemsList({
                   border: "1px solid #F0E2D6",
                 }}
               >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
+                <CartItemMedia src={item.image} title={item.title} />
               </Box>
 
               {/* Product Content Details */}
@@ -128,7 +167,7 @@ export default function CartItemsList({
 
                 <Typography
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     color: "#64534A",
                     fontSize: "13px",
                     mb: 2,
@@ -182,7 +221,7 @@ export default function CartItemsList({
                         fontWeight: 800,
                         fontSize: "14px",
                         color: "#2C1810",
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         minWidth: 24,
                         textAlign: "center",
                       }}
@@ -252,7 +291,7 @@ export default function CartItemsList({
 
                 <Typography
                   sx={{
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     color: "#8C7A70",
                     fontSize: "12px",
                     mt: 0.5,

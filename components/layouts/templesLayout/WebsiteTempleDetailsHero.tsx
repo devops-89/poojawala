@@ -300,7 +300,7 @@ export default function WebsiteTempleDetailsHero({
                   boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                 }}
               >
-                <span>🕉️</span>
+                <TempleHinduIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} />
                 <span>Deity: {temple.primaryDeity}</span>
               </Box>
             )}

@@ -116,12 +116,13 @@ export default function WelcomeLocationModal() {
       slotProps={{
         paper: {
           sx: {
-            borderRadius: "20px",
-            maxWidth: 440,
-            width: "92%",
+            borderRadius: { xs: "20px", sm: "24px" },
+            maxWidth: { xs: "92vw", sm: 440 },
+            width: "100%",
+            m: { xs: 2, sm: 3 },
             p: 0,
             overflow: "hidden",
-            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.2)",
+            boxShadow: "0 24px 64px rgba(44, 24, 16, 0.18)",
             border: "1px solid #FFE4D6",
           },
         },
@@ -130,36 +131,54 @@ export default function WelcomeLocationModal() {
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 2.5, sm: 3.5 },
+          p: { xs: "24px 18px 22px", sm: "32px 28px 28px" },
           bgcolor: "#FFFDFB",
           position: "relative",
-          background: "linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%)",
+          background: "linear-gradient(180deg, #FFFDF9 0%, #FFF8F2 100%)",
         }}
       >
         {/* Close Button */}
         <IconButton
           onClick={handleClose}
+          size="small"
+          aria-label="Close welcome modal"
           sx={{
             position: "absolute",
-            top: 14,
-            right: 14,
-            color: "#64748b",
-            bgcolor: "white",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            "&:hover": { bgcolor: "#f1f5f9", color: COLORS.PRIMARY },
+            top: { xs: 12, sm: 14 },
+            right: { xs: 12, sm: 14 },
+            width: 32,
+            height: 32,
+            color: "#64748B",
+            bgcolor: "#FFFFFF",
+            border: "1px solid #EFE6D5",
+            boxShadow: "0 2px 6px rgba(44, 24, 16, 0.05)",
+            transition: "all 0.2s ease",
+            "&:hover": {
+              bgcolor: "#FFF8F2",
+              color: COLORS.PRIMARY,
+              borderColor: "#FFD4BC",
+              transform: "scale(1.05)",
+            },
           }}
         >
-          <CloseIcon fontSize="small" />
+          <CloseIcon sx={{ fontSize: 18 }} />
         </IconButton>
 
         {/* Branding & Logo */}
-        <Box sx={{ textCenter: "center", textAlign: "center", mb: 2 }}>
+        <Box sx={{ textAlign: "center", mb: { xs: 2, sm: 2.5 } }}>
           <Image
             src="/images/1Poojalogo.webp"
             alt="1Pooja"
             width={116}
             height={47}
-            style={{ height: "38px", width: "auto", objectFit: "contain", margin: "0 auto 12px auto", display: "block" }}
+            priority
+            style={{
+              height: "36px",
+              width: "auto",
+              objectFit: "contain",
+              margin: "0 auto 10px auto",
+              display: "block",
+            }}
           />
           <Typography
             variant="h5"
@@ -167,19 +186,20 @@ export default function WelcomeLocationModal() {
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#1E293B",
-              fontSize: { xs: "20px", sm: "22px" },
+              fontSize: { xs: "19px", sm: "22px" },
+              letterSpacing: "-0.3px",
               mb: 0.8,
             }}
           >
-            Welcome to 1Pooja 🙏
+            Welcome to 1Pooja
           </Typography>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: "#64748B",
-              fontSize: "13.5px",
+              fontSize: { xs: "12.5px", sm: "13.5px" },
               lineHeight: 1.5,
-              maxWidth: 380,
+              maxWidth: 360,
               mx: "auto",
             }}
           >
@@ -189,16 +209,17 @@ export default function WelcomeLocationModal() {
         </Box>
 
         {/* Location Form */}
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: { xs: 2, sm: 2.5 } }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* State Input */}
             <Box>
               <Typography
                 sx={{
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "11px",
                   fontWeight: 700,
-                  color: "#475569",
-                  letterSpacing: "0.5px",
+                  color: "#64748B",
+                  letterSpacing: "0.6px",
                   textTransform: "uppercase",
                   mb: 0.6,
                 }}
@@ -218,7 +239,29 @@ export default function WelcomeLocationModal() {
                   }}
                   slotProps={{
                     popper: {
-                      sx: { zIndex: 1400 },
+                      sx: {
+                        zIndex: 1400,
+                        "& .MuiPaper-root": {
+                          borderRadius: "14px",
+                          border: "1px solid #EFE6D5",
+                          boxShadow: "0 10px 30px rgba(44, 24, 16, 0.12)",
+                          fontFamily: FONTS.OUTFIT,
+                          mt: 0.5,
+                          "& .MuiAutocomplete-option": {
+                            fontFamily: FONTS.OUTFIT,
+                            fontSize: "13.5px",
+                            py: 1,
+                            "&[aria-selected='true']": {
+                              bgcolor: "#FFF3EB",
+                              color: COLORS.PRIMARY,
+                              fontWeight: 600,
+                            },
+                            "&:hover": {
+                              bgcolor: "#FAF4EE",
+                            },
+                          },
+                        },
+                      },
                     },
                   }}
                   renderInput={(params: any) => (
@@ -243,14 +286,15 @@ export default function WelcomeLocationModal() {
                       sx={{
                         bgcolor: COLORS.WHITE,
                         "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: FONTS.PRIMARY,
+                          borderRadius: "12px",
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "13.5px",
-                          minHeight: "42px",
-                          "& fieldset": { borderColor: "#E2E8F0" },
-                          "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
+                          minHeight: "44px",
+                          "& fieldset": { borderColor: "#EFE6D5" },
+                          "&:hover fieldset": { borderColor: "#FFD4BC" },
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.BRAND_ORANGE,
+                            borderColor: COLORS.PRIMARY,
+                            boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.1)",
                           },
                         },
                       }}
@@ -264,10 +308,11 @@ export default function WelcomeLocationModal() {
             <Box>
               <Typography
                 sx={{
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "11px",
                   fontWeight: 700,
-                  color: "#475569",
-                  letterSpacing: "0.5px",
+                  color: "#64748B",
+                  letterSpacing: "0.6px",
                   textTransform: "uppercase",
                   mb: 0.6,
                 }}
@@ -285,7 +330,29 @@ export default function WelcomeLocationModal() {
                   onChange={(_, newValue) => setSelectedCity(newValue)}
                   slotProps={{
                     popper: {
-                      sx: { zIndex: 1400 },
+                      sx: {
+                        zIndex: 1400,
+                        "& .MuiPaper-root": {
+                          borderRadius: "14px",
+                          border: "1px solid #EFE6D5",
+                          boxShadow: "0 10px 30px rgba(44, 24, 16, 0.12)",
+                          fontFamily: FONTS.OUTFIT,
+                          mt: 0.5,
+                          "& .MuiAutocomplete-option": {
+                            fontFamily: FONTS.OUTFIT,
+                            fontSize: "13.5px",
+                            py: 1,
+                            "&[aria-selected='true']": {
+                              bgcolor: "#FFF3EB",
+                              color: COLORS.PRIMARY,
+                              fontWeight: 600,
+                            },
+                            "&:hover": {
+                              bgcolor: "#FAF4EE",
+                            },
+                          },
+                        },
+                      },
                     },
                   }}
                   renderInput={(params: any) => (
@@ -313,16 +380,17 @@ export default function WelcomeLocationModal() {
                         ),
                       }}
                       sx={{
-                        bgcolor: selectedState ? COLORS.WHITE : "#F8FAFC",
+                        bgcolor: selectedState ? COLORS.WHITE : "#FAF7F4",
                         "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: FONTS.PRIMARY,
+                          borderRadius: "12px",
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "13.5px",
-                          minHeight: "42px",
-                          "& fieldset": { borderColor: "#E2E8F0" },
-                          "&:hover fieldset": { borderColor: COLORS.BRAND_ORANGE },
+                          minHeight: "44px",
+                          "& fieldset": { borderColor: "#EFE6D5" },
+                          "&:hover fieldset": { borderColor: selectedState ? "#FFD4BC" : "#EFE6D5" },
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.BRAND_ORANGE,
+                            borderColor: COLORS.PRIMARY,
+                            boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.1)",
                           },
                         },
                       }}
@@ -338,19 +406,24 @@ export default function WelcomeLocationModal() {
               variant="contained"
               startIcon={<SearchIcon sx={{ fontSize: 18 }} />}
               sx={{
-                mt: 0.5,
-                py: 1.15,
-                borderRadius: "10px",
-                bgcolor: COLORS.BRAND_ORANGE,
+                mt: 0.8,
+                py: { xs: 1.25, sm: 1.3 },
+                borderRadius: "30px",
+                bgcolor: COLORS.PRIMARY,
                 color: COLORS.WHITE,
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
-                fontSize: "14.5px",
+                fontSize: { xs: "14px", sm: "14.5px" },
                 textTransform: "none",
-                boxShadow: `0 6px 16px ${COLORS.PRIMARY_SHADOW}`,
+                boxShadow: "0 6px 20px rgba(255, 98, 0, 0.28)",
+                transition: "all 0.2s ease",
                 "&:hover": {
                   bgcolor: "#E55800",
-                  boxShadow: `0 8px 20px ${COLORS.PRIMARY_SHADOW}`,
+                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.36)",
+                  transform: "translateY(-1px)",
+                },
+                "&:active": {
+                  transform: "translateY(0px)",
                 },
               }}
             >

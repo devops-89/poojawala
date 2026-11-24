@@ -11,10 +11,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {
   Box,
   Button,
-  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
@@ -29,6 +29,62 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { getProductInitials } from "@/utils/helpers";
+
+function CartDrawerItemMedia({
+  src,
+  title,
+}: {
+  src?: string;
+  title?: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+  const initials = getProductInitials(title || "");
+  const isLogo = !src || src.includes("1Poojalogo") || src.includes("logo");
+
+  if (isLogo || imgError) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(135deg, #FFF0E6 0%, #FFE2D1 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          userSelect: "none",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            fontSize: "15px",
+            color: COLORS.PRIMARY,
+            letterSpacing: "0.5px",
+          }}
+        >
+          {initials}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      component="img"
+      src={src}
+      alt={title}
+      onError={() => setImgError(true)}
+      sx={{
+        width: "100%",
+        height: "100%",
+        objectFit: "contain",
+        p: 0.5,
+      }}
+    />
+  );
+}
 
 export default function CustomerCartDrawer() {
   const router = useRouter();
@@ -146,7 +202,8 @@ export default function CustomerCartDrawer() {
         paper: {
           sx: {
             width: { xs: "100%", sm: 420 },
-            bgcolor: "#FFFBF7",
+            maxWidth: "100vw",
+            bgcolor: "#FAF7F4",
             display: "flex",
             flexDirection: "column",
             boxShadow: "-8px 0 30px rgba(44, 24, 16, 0.15)",
@@ -157,13 +214,13 @@ export default function CustomerCartDrawer() {
       {/* Drawer Header */}
       <Box
         sx={{
-          p: 2.5,
-          px: 3,
+          p: { xs: 2, sm: 2.5 },
+          px: { xs: 2.25, sm: 3 },
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderBottom: "1px solid #EADCCF",
-          bgcolor: "white",
+          borderBottom: "1px solid #EFE6D5",
+          bgcolor: "#FFFFFF",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -171,35 +228,36 @@ export default function CustomerCartDrawer() {
             sx={{
               width: 38,
               height: 38,
-              borderRadius: "10px",
-              bgcolor: "#F5E6D8",
+              borderRadius: "12px",
+              bgcolor: "#FFF0E6",
+              border: "1px solid #FFD4BC",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: COLORS.PRIMARY,
             }}
           >
-            <ShoppingBagOutlinedIcon />
+            <ShoppingBagOutlinedIcon sx={{ fontSize: 20 }} />
           </Box>
           <Box>
             <Typography
               variant="h6"
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: "#2C1810",
-                fontSize: "18px",
+                fontSize: { xs: "17px", sm: "18px" },
                 lineHeight: 1.2,
               }}
             >
               Your Pooja Cart
             </Typography>
             <Typography
-              variant="caption"
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                color: "#64534A",
+                fontFamily: FONTS.OUTFIT,
+                color: "#7C6A60",
                 fontSize: "12px",
+                fontWeight: 500,
               }}
             >
               {totalItems} {totalItems === 1 ? "item" : "items"} selected
@@ -211,10 +269,11 @@ export default function CustomerCartDrawer() {
           onClick={closeCart}
           sx={{
             color: "#64534A",
-            "&:hover": { bgcolor: "#FAF4EE", color: COLORS.PRIMARY },
+            borderRadius: "10px",
+            "&:hover": { bgcolor: "#FAF7F4", color: COLORS.PRIMARY },
           }}
         >
-          <CloseIcon />
+          <CloseIcon sx={{ fontSize: 22 }} />
         </IconButton>
       </Box>
 
@@ -223,7 +282,7 @@ export default function CustomerCartDrawer() {
         sx={{
           flexGrow: 1,
           overflowY: "auto",
-          p: 3,
+          p: { xs: 2, sm: 2.5 },
           display: "flex",
           flexDirection: "column",
         }}
@@ -243,26 +302,27 @@ export default function CustomerCartDrawer() {
           >
             <Box
               sx={{
-                width: 90,
-                height: 90,
+                width: 80,
+                height: 80,
                 borderRadius: "50%",
-                bgcolor: "#FAF4EE",
-                border: "1px dashed #C84B16",
+                bgcolor: "#FFF0E6",
+                border: "1.5px dashed #FF6200",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: COLORS.PRIMARY,
-                mb: 2.5,
+                mb: 2,
               }}
             >
-              <ShoppingBagOutlinedIcon sx={{ fontSize: 44 }} />
+              <ShoppingBagOutlinedIcon sx={{ fontSize: 38 }} />
             </Box>
             <Typography
               variant="h6"
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 700,
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
                 color: "#2C1810",
+                fontSize: "18px",
                 mb: 1,
               }}
             >
@@ -270,15 +330,15 @@ export default function CustomerCartDrawer() {
             </Typography>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                color: "#64534A",
-                fontSize: "14px",
+                fontFamily: FONTS.OUTFIT,
+                color: "#7C6A60",
+                fontSize: "13.5px",
                 maxWidth: 260,
                 mb: 3,
+                lineHeight: 1.5,
               }}
             >
-              Explore our pooja samagri and ritual items to add them to your
-              ceremony booking.
+              Explore our pooja samagri and sacred ritual items to add them to your ceremony.
             </Typography>
             <Button
               onClick={handleProceedToBooking}
@@ -288,11 +348,13 @@ export default function CustomerCartDrawer() {
                 color: "white",
                 borderRadius: "30px",
                 px: 3.5,
-                py: 1.2,
+                py: 1.1,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
-                fontSize: "14px",
+                fontSize: "13.5px",
                 textTransform: "none",
-                "&:hover": { bgcolor: COLORS.PRIMARY },
+                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
               }}
             >
               Browse Pooja Samagri
@@ -300,109 +362,160 @@ export default function CustomerCartDrawer() {
           </Box>
         ) : (
           /* Cart Items List */
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.75 }}>
             {items.map((item) => (
               <Paper
                 key={item.id}
                 elevation={0}
                 sx={{
-                  p: 2,
-                  bgcolor: "#FAF4EE",
-                  border: "1px solid #EADCCF",
-                  borderRadius: "14px",
+                  p: { xs: 1.75, sm: 2 },
+                  bgcolor: "#FFFFFF",
+                  border: "1.5px solid #EFE6D5",
+                  borderRadius: "16px",
                   display: "flex",
-                  gap: 2,
-                  alignItems: "center",
-                  position: "relative",
+                  flexDirection: "column",
+                  gap: 1.5,
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    borderColor: "#FFD4BC",
+                    boxShadow: "0 4px 16px rgba(44, 24, 16, 0.06)",
+                  },
                 }}
               >
-                {/* Product Thumbnail */}
-                <CardMedia
-                  component="img"
-                  image={item.image}
-                  alt={item.title}
-                  sx={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: "10px",
-                    objectFit: "cover",
-                    flexShrink: 0,
-                  }}
-                />
-
-                {/* Item Details */}
-                <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                  <Typography
-                    variant="subtitle2"
+                {/* Top Section: Thumbnail + Title & Unit Price + Delete Button */}
+                <Box sx={{ display: "flex", gap: 1.75, alignItems: "flex-start" }}>
+                  {/* Product Thumbnail */}
+                  <Box
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 700,
-                      color: "#2C1810",
-                      fontSize: "15px",
-                      lineHeight: 1.25,
-                      mb: 0.5,
-                      whiteSpace: "nowrap",
+                      width: { xs: 64, sm: 70 },
+                      height: { xs: 64, sm: 70 },
+                      borderRadius: "12px",
+                      bgcolor: "#FAF7F4",
+                      border: "1px solid #EFE6D5",
                       overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      flexShrink: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    {item.title}
-                  </Typography>
+                    <CartDrawerItemMedia src={item.image} title={item.title} />
+                  </Box>
 
-                  <Typography
-                    sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 700,
-                      color: COLORS.PRIMARY,
-                      fontSize: "14px",
-                      mb: 1,
-                    }}
-                  >
-                    ₹{item.price}{" "}
+                  {/* Title & Unit Price */}
+                  <Box sx={{ flexGrow: 1, minWidth: 0, pr: 0.5 }}>
                     <Typography
-                      component="span"
+                      variant="subtitle2"
                       sx={{
-                        fontSize: "12px",
-                        color: "#64534A",
-                        fontWeight: 500,
-                        ml: 0.5,
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 700,
+                        color: "#2C1810",
+                        fontSize: { xs: "14px", sm: "14.5px" },
+                        lineHeight: 1.35,
+                        mb: 0.5,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                      title={item.title}
+                    >
+                      {item.title}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 600,
+                        color: COLORS.PRIMARY,
+                        fontSize: "13px",
+                        display: "flex",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        gap: 0.5,
                       }}
                     >
-                      {(() => {
-                        const pUnit = (
-                          item.pricingUnit ||
-                          item.unitString ||
-                          ""
-                        ).trim();
-                        let qtyVal = item.unitQuantity || item.packQuantity;
-                        if (!qtyVal) {
-                          const upperUnit = pUnit.toUpperCase();
-                          if (
-                            upperUnit === "GRAM" ||
-                            upperUnit === "GM" ||
-                            upperUnit === "G"
-                          ) {
-                            qtyVal = 500;
-                          } else {
-                            qtyVal = 1;
+                      ₹{item.price}
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: "11.5px",
+                          color: "#8A7A70",
+                          fontWeight: 500,
+                        }}
+                      >
+                        • {(() => {
+                          const pUnit = (
+                            item.pricingUnit ||
+                            item.unitString ||
+                            ""
+                          ).trim();
+                          let qtyVal = item.unitQuantity || item.packQuantity;
+                          if (!qtyVal) {
+                            const upperUnit = pUnit.toUpperCase();
+                            if (
+                              upperUnit === "GRAM" ||
+                              upperUnit === "GM" ||
+                              upperUnit === "G"
+                            ) {
+                              qtyVal = 500;
+                            } else {
+                              qtyVal = 1;
+                            }
                           }
-                        }
-                        const cleanUnit = pUnit ? pUnit.toUpperCase() : "PIECE";
-                        return `per ${qtyVal} ${cleanUnit}`;
-                      })()}
+                          const cleanUnit = pUnit ? pUnit.toUpperCase() : "PIECE";
+                          return `per ${qtyVal} ${cleanUnit}`;
+                        })()}
+                      </Typography>
                     </Typography>
-                  </Typography>
+                  </Box>
 
-                  {/* Quantity Controls */}
+                  {/* Delete button */}
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      promptRemoveItem(
+                        item.id,
+                        item.title || item.name || "this item",
+                      )
+                    }
+                    sx={{
+                      color: "#B4A59D",
+                      p: 0.75,
+                      borderRadius: "8px",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        color: "#E11D48",
+                        bgcolor: "#FFF1F2",
+                      },
+                    }}
+                    title="Remove Item"
+                  >
+                    <DeleteOutlinedIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Box>
+
+                {/* Bottom Row: Stepper (Left) & Total Price (Right) */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    pt: 1.25,
+                    borderTop: "1px dashed #EFE6D5",
+                  }}
+                >
+                  {/* Quantity Stepper */}
                   <Box
                     sx={{
                       display: "inline-flex",
                       alignItems: "center",
-                      bgcolor: "white",
+                      bgcolor: "#FAF7F4",
                       border: "1px solid #EADCCF",
-                      borderRadius: "8px",
+                      borderRadius: "20px",
                       px: 0.5,
-                      py: 0.2,
+                      py: 0.25,
                     }}
                   >
                     <IconButton
@@ -410,17 +523,24 @@ export default function CustomerCartDrawer() {
                       onClick={() =>
                         handleQuantityChange(item.id, item.quantity - 1)
                       }
-                      sx={{ p: 0.5, color: "#64534A" }}
+                      sx={{
+                        p: 0.5,
+                        color: "#64534A",
+                        borderRadius: "50%",
+                        "&:hover": { bgcolor: "#EFE6D5" },
+                      }}
                     >
-                      <RemoveIcon sx={{ fontSize: 16 }} />
+                      <RemoveIcon sx={{ fontSize: 15 }} />
                     </IconButton>
                     <Typography
                       sx={{
-                        px: 1.5,
-                        fontWeight: 700,
+                        px: 1.25,
+                        fontWeight: 800,
                         fontSize: "13px",
                         color: "#2C1810",
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
+                        minWidth: 20,
+                        textAlign: "center",
                       }}
                     >
                       {item.quantity}
@@ -430,61 +550,69 @@ export default function CustomerCartDrawer() {
                       onClick={() =>
                         handleQuantityChange(item.id, item.quantity + 1)
                       }
-                      sx={{ p: 0.5, color: COLORS.PRIMARY }}
+                      sx={{
+                        p: 0.5,
+                        color: COLORS.PRIMARY,
+                        borderRadius: "50%",
+                        "&:hover": { bgcolor: "#FFE2D1" },
+                      }}
                     >
-                      <AddIcon sx={{ fontSize: 16 }} />
+                      <AddIcon sx={{ fontSize: 15 }} />
                     </IconButton>
                   </Box>
-                </Box>
 
-                {/* Right side: Item total & Remove button */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end",
-                    justifyContent: "space-between",
-                    height: 70,
-                  }}
-                >
-                  <IconButton
-                    size="small"
-                    onClick={() =>
-                      promptRemoveItem(
-                        item.id,
-                        item.title || item.name || "this item",
-                      )
-                    }
-                    sx={{ color: "#A8968D", "&:hover": { color: "#d32f2f" } }}
-                  >
-                    <DeleteOutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-
-                  <Typography
-                    sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 800,
-                      color: "#2C1810",
-                      fontSize: "16px",
-                    }}
-                  >
-                    ₹{item.price * item.quantity}
-                  </Typography>
+                  {/* Item Total Price */}
+                  <Box sx={{ textAlign: "right" }}>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 800,
+                        color: "#2C1810",
+                        fontSize: { xs: "15px", sm: "16px" },
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                    </Typography>
+                  </Box>
                 </Box>
               </Paper>
             ))}
 
             {/* Clear Cart Button */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                pt: 1,
+                px: 0.5,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "12px",
+                  color: "#8A7A70",
+                  fontWeight: 500,
+                }}
+              >
+                {items.length} {items.length === 1 ? "product" : "products"} in cart
+              </Typography>
               <Button
                 size="small"
                 onClick={promptClearCart}
-                startIcon={<DeleteOutlinedIcon fontSize="small" />}
+                startIcon={<DeleteOutlinedIcon sx={{ fontSize: "14px !important" }} />}
                 sx={{
-                  color: "#9E897D",
+                  color: "#A8968D",
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "12px",
+                  fontWeight: 600,
                   textTransform: "none",
-                  "&:hover": { color: "#d32f2f" },
+                  py: 0.4,
+                  px: 1,
+                  borderRadius: "8px",
+                  "&:hover": { color: "#E11D48", bgcolor: "#FFF1F2" },
                 }}
               >
                 Clear Cart
@@ -498,9 +626,9 @@ export default function CustomerCartDrawer() {
       {items.length > 0 && (
         <Box
           sx={{
-            p: 3,
-            borderTop: "1px solid #EADCCF",
-            bgcolor: "white",
+            p: { xs: 2.25, sm: 2.75 },
+            borderTop: "1px solid #EFE6D5",
+            bgcolor: "#FFFFFF",
           }}
         >
           <Box
@@ -508,30 +636,43 @@ export default function CustomerCartDrawer() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "baseline",
-              mb: 2.5,
+              mb: 1.75,
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 800,
-                color: "#2C1810",
-                fontSize: "18px",
-              }}
-            >
-              Subtotal
-            </Typography>
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  color: "#2C1810",
+                  fontSize: "16px",
+                  lineHeight: 1.2,
+                }}
+              >
+                Subtotal
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "11.5px",
+                  color: "#8A7A70",
+                  mt: 0.25,
+                }}
+              >
+                Taxes & discounts calculated at checkout
+              </Typography>
+            </Box>
             <Typography
               variant="h5"
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: COLORS.PRIMARY,
-                fontSize: "24px",
+                fontSize: { xs: "22px", sm: "24px" },
               }}
             >
-              ₹{totalPrice}
+              ₹{totalPrice.toLocaleString("en-IN")}
             </Typography>
           </Box>
 
@@ -539,18 +680,20 @@ export default function CustomerCartDrawer() {
             fullWidth
             onClick={handleProceedToBooking}
             variant="contained"
+            endIcon={<ArrowForwardIcon sx={{ fontSize: "18px !important" }} />}
             sx={{
               bgcolor: COLORS.PRIMARY,
               color: "white",
-              py: 1.5,
-              borderRadius: "12px",
+              py: 1.3,
+              borderRadius: "30px",
               fontWeight: 700,
               fontSize: "15px",
+              fontFamily: FONTS.OUTFIT,
               textTransform: "none",
-              boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
+              boxShadow: "0 6px 20px rgba(255, 98, 0, 0.28)",
               "&:hover": {
-                bgcolor: COLORS.PRIMARY,
-                boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
+                bgcolor: COLORS.PRIMARY_DARK,
+                boxShadow: "0 8px 24px rgba(255, 98, 0, 0.35)",
               },
             }}
           >
@@ -566,20 +709,22 @@ export default function CustomerCartDrawer() {
         slotProps={{
           paper: {
             sx: {
-              borderRadius: "16px",
-              p: 1,
+              borderRadius: "20px",
+              p: 1.5,
               maxWidth: 400,
-              width: "90%",
+              width: "92%",
+              border: "1.5px solid #EFE6D5",
             },
           },
         }}
       >
         <DialogTitle
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: "#2C1810",
-            fontSize: "20px",
+            fontSize: "19px",
+            pb: 1,
           }}
         >
           {confirmModal.type === "clear"
@@ -591,9 +736,10 @@ export default function CustomerCartDrawer() {
           <DialogContentText
             component="div"
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: "#64534A",
               fontSize: "14px",
+              lineHeight: 1.5,
             }}
           >
             {confirmModal.type === "clear"
@@ -607,9 +753,13 @@ export default function CustomerCartDrawer() {
             onClick={() => setConfirmModal({ ...confirmModal, open: false })}
             sx={{
               color: "#64534A",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
+              fontSize: "13.5px",
               textTransform: "none",
-              borderRadius: "8px",
+              borderRadius: "20px",
+              px: 2.5,
+              "&:hover": { bgcolor: "#FAF7F4" },
             }}
           >
             Cancel
@@ -618,13 +768,16 @@ export default function CustomerCartDrawer() {
             onClick={handleConfirmAction}
             variant="contained"
             sx={{
-              bgcolor: "#d32f2f",
+              bgcolor: "#E11D48",
               color: "white",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
+              fontSize: "13.5px",
               textTransform: "none",
-              borderRadius: "8px",
-              px: 2.5,
-              "&:hover": { bgcolor: "#b71c1c" },
+              borderRadius: "20px",
+              px: 2.75,
+              boxShadow: "0 4px 14px rgba(225, 29, 72, 0.25)",
+              "&:hover": { bgcolor: "#BE123C" },
             }}
           >
             {confirmModal.type === "clear" ? "Clear Cart" : "Remove"}

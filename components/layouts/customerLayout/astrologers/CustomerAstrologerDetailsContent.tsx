@@ -14,6 +14,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Skeleton,
   TextField,
   Tooltip,
   Typography,
@@ -83,6 +84,7 @@ export default function CustomerAstrologerDetailsContent() {
   const [astrologer, setAstrologer] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [imgError, setImgError] = useState<boolean>(false);
 
   // Booking Form State - only scheduledAt
   const todayStr = useMemo(() => getTodayStr(), []);
@@ -158,11 +160,22 @@ export default function CustomerAstrologerDetailsContent() {
   const hasRating = !isNaN(numRating) && numRating > 0;
   const rating = hasRating ? numRating.toFixed(1) : null;
 
-  const imageSrc =
+  const rawImage =
     astrologer?.profileImage ||
     astrologer?.image ||
     profile?.profileImage ||
+    profile?.avatar ||
     "";
+  const isLogo = !rawImage || rawImage.includes("1Poojalogo") || rawImage.includes("logo");
+  const imageSrc = isLogo ? "" : rawImage;
+
+  const initials =
+    fullName
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w: string) => w[0]?.toUpperCase())
+      .join("") || "A";
 
   // Calculate available time slots (9:00 AM to 10:00 PM)
   const availableSlots = useMemo(() => {
@@ -305,8 +318,56 @@ export default function CustomerAstrologerDetailsContent() {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 14 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
+      <Box sx={{ maxWidth: 1000, mx: "auto", pb: 6 }}>
+        <Box sx={{ mb: 3 }}>
+          <Skeleton variant="rectangular" width={140} height={36} sx={{ borderRadius: "10px" }} />
+        </Box>
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 2.5, sm: 4 },
+            borderRadius: "24px",
+            border: "1.5px solid #EFE6D5",
+            bgcolor: "#ffffff",
+            mb: 4,
+          }}
+        >
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 12, sm: 4, md: 3 }} sx={{ display: "flex", justifyContent: "center" }}>
+              <Skeleton variant="rectangular" sx={{ width: { xs: 140, sm: 170 }, height: { xs: 140, sm: 170 }, borderRadius: "24px" }} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 8, md: 9 }}>
+              <Skeleton variant="text" height={36} width="60%" />
+              <Skeleton variant="text" height={22} width="40%" />
+              <Box sx={{ display: "flex", gap: 1, my: 1.5 }}>
+                <Skeleton variant="rectangular" width={90} height={26} sx={{ borderRadius: "8px" }} />
+                <Skeleton variant="rectangular" width={90} height={26} sx={{ borderRadius: "8px" }} />
+              </Box>
+              <Skeleton variant="text" height={20} width="90%" />
+              <Skeleton variant="text" height={20} width="80%" />
+            </Grid>
+          </Grid>
+        </Paper>
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 2.5, sm: 4 },
+            borderRadius: "24px",
+            border: "1.5px solid #EFE6D5",
+            bgcolor: "#ffffff",
+          }}
+        >
+          <Skeleton variant="text" height={30} width="40%" />
+          <Skeleton variant="text" height={20} width="65%" sx={{ mb: 2 }} />
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Skeleton variant="rectangular" height={54} sx={{ borderRadius: "14px" }} />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Skeleton variant="rectangular" height={54} sx={{ borderRadius: "14px" }} />
+            </Grid>
+          </Grid>
+        </Paper>
       </Box>
     );
   }
@@ -354,9 +415,9 @@ export default function CustomerAstrologerDetailsContent() {
   }
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: "auto", pb: 24 }}>
+    <Box sx={{ maxWidth: 1000, mx: "auto", pb: { xs: 6, sm: 10 } }}>
       {/* Back Button */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: { xs: 2, sm: 3 } }}>
         <Button
           variant="text"
           component={NextLink}
@@ -366,7 +427,11 @@ export default function CustomerAstrologerDetailsContent() {
             color: "#64748b",
             fontFamily: FONTS.OUTFIT,
             fontWeight: 600,
+            fontSize: "14px",
             textTransform: "none",
+            borderRadius: "10px",
+            px: 1.5,
+            py: 0.6,
             "&:hover": { color: COLORS.PRIMARY, bgcolor: "#fff7ed" },
           }}
         >
@@ -378,25 +443,32 @@ export default function CustomerAstrologerDetailsContent() {
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 2.5, sm: 4 },
+          p: { xs: 2.25, sm: 3.5, md: 4 },
           borderRadius: "24px",
-          border: "1px solid #e2e8f0",
+          border: "1.5px solid #EFE6D5",
           bgcolor: "#ffffff",
-          mb: 4,
-          boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)",
+          mb: { xs: 2.5, sm: 4 },
+          boxShadow: "0 4px 20px -4px rgba(44, 24, 16, 0.05)",
         }}
       >
-        <Grid container spacing={4} sx={{ alignItems: "flex-start" }}>
+        <Grid container spacing={{ xs: 2.5, sm: 4 }} sx={{ alignItems: "flex-start" }}>
           {/* Avatar / Photo */}
-          <Grid size={{ xs: 12, sm: 4, md: 3 }} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Grid
+            size={{ xs: 12, sm: 4, md: 3 }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <Box
               sx={{
-                width: { xs: 140, sm: 170 },
-                height: { xs: 140, sm: 170 },
-                borderRadius: "24px",
+                width: { xs: 130, sm: 165 },
+                height: { xs: 130, sm: 165 },
+                borderRadius: { xs: "20px", sm: "24px" },
                 overflow: "hidden",
-                bgcolor: "#FFF8F2",
-                border: "2px solid #fed7aa",
+                bgcolor: "#FAF7F4",
+                border: "2px solid #FFD4BC",
                 position: "relative",
                 display: "flex",
                 alignItems: "center",
@@ -404,26 +476,32 @@ export default function CustomerAstrologerDetailsContent() {
                 boxShadow: "0 8px 24px -4px rgba(255, 98, 0, 0.15)",
               }}
             >
-              {imageSrc ? (
+              {imageSrc && !imgError ? (
                 <Box
                   component="img"
                   src={imageSrc}
                   alt={fullName}
+                  onError={() => setImgError(true)}
                   sx={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (
-                <Avatar
+                <Box
                   sx={{
                     width: "100%",
                     height: "100%",
-                    bgcolor: "#ea580c",
-                    fontSize: "3.5rem",
-                    fontWeight: 700,
+                    background: "linear-gradient(135deg, #FFF0E6 0%, #FFE2D1 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: { xs: "2.2rem", sm: "3.2rem" },
+                    fontWeight: 800,
                     fontFamily: FONTS.OUTFIT,
+                    color: COLORS.PRIMARY,
+                    userSelect: "none",
                   }}
                 >
-                  {fullName.charAt(0).toUpperCase()}
-                </Avatar>
+                  {initials}
+                </Box>
               )}
 
               {/* Rating badge - only shown if > 0 */}
@@ -455,35 +533,62 @@ export default function CustomerAstrologerDetailsContent() {
           {/* Details */}
           <Grid size={{ xs: 12, sm: 8, md: 9 }}>
             {/* Name + Verified */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 0.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                flexWrap: "wrap",
+                mb: 0.5,
+                justifyContent: { xs: "center", sm: "flex-start" },
+                textAlign: { xs: "center", sm: "left" },
+              }}
+            >
               <Typography
                 variant="h4"
                 sx={{
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
-                  color: "#1e293b",
-                  fontSize: { xs: "1.5rem", sm: "1.9rem" },
+                  color: "#2C1810",
+                  fontSize: { xs: "1.45rem", sm: "1.9rem" },
                 }}
               >
                 {fullName}
               </Typography>
               <Tooltip title="Verified Vedic Astrologer">
-                <VerifiedIcon sx={{ fontSize: 24, color: "#0284c7" }} />
+                <VerifiedIcon sx={{ fontSize: 22, color: "#0284c7" }} />
               </Tooltip>
             </Box>
 
             {/* Specification Subtitle */}
             {specification && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.7, mb: 1.5 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.7,
+                  mb: 1.5,
+                  justifyContent: { xs: "center", sm: "flex-start" },
+                }}
+              >
                 <AutoAwesomeIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
-                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "1rem", color: COLORS.PRIMARY }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "0.95rem", color: COLORS.PRIMARY }}>
                   {specification}
                 </Typography>
               </Box>
             )}
 
             {/* Meta Tags: Experience, Qualification, Location */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, flexWrap: "wrap", mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.2,
+                flexWrap: "wrap",
+                mb: 2,
+                justifyContent: { xs: "center", sm: "flex-start" },
+              }}
+            >
               <Chip
                 icon={<SchoolIcon sx={{ fontSize: "15px !important", color: "#c2410c" }} />}
                 label={experience}
@@ -524,13 +629,13 @@ export default function CustomerAstrologerDetailsContent() {
               )}
             </Box>
 
-            {/* Bio - Clean flat layout */}
+            {/* Bio */}
             {bio && (
-              <Box sx={{ mb: 2 }}>
-                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "13px", color: "#334155", mb: 0.5 }}>
+              <Box sx={{ mb: 2, textAlign: { xs: "center", sm: "left" } }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "13px", color: "#2C1810", mb: 0.5 }}>
                   About Astrologer
                 </Typography>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b", fontSize: "14px", lineHeight: 1.65 }}>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "13.5px", lineHeight: 1.65 }}>
                   {bio}
                 </Typography>
               </Box>
@@ -538,10 +643,20 @@ export default function CustomerAstrologerDetailsContent() {
 
             {/* Specializations */}
             <Box sx={{ mb: 2 }}>
-              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "12px", color: "#94a3b8", mb: 0.8, textTransform: "uppercase" }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: "11.5px",
+                  color: "#94a3b8",
+                  mb: 0.8,
+                  textTransform: "uppercase",
+                  textAlign: { xs: "center", sm: "left" },
+                }}
+              >
                 Specializations & Expertise
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8 }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8, justifyContent: { xs: "center", sm: "flex-start" } }}>
                 {specializations.length > 0 ? (
                   specializations.map((spec, i) => (
                     <Chip
@@ -566,7 +681,7 @@ export default function CustomerAstrologerDetailsContent() {
 
             {/* Languages */}
             {languages.length > 0 && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, justifyContent: { xs: "center", sm: "flex-start" } }}>
                 <TranslateIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
                 <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "13px", color: "#475569", fontWeight: 500 }}>
                   Languages Spoken: <strong>{languages.join(", ")}</strong>
@@ -581,35 +696,40 @@ export default function CustomerAstrologerDetailsContent() {
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 2.5, sm: 4 },
+          p: { xs: 2.25, sm: 3.5, md: 4 },
           borderRadius: "24px",
-          border: "1px solid #fed7aa",
+          border: "1.5px solid #FFD4BC",
           bgcolor: "#ffffff",
           boxShadow: "0 6px 24px -4px rgba(255, 98, 0, 0.08)",
         }}
       >
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: { xs: 2, sm: 3 } }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <EventAvailableIcon sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />
+            <EventAvailableIcon sx={{ color: COLORS.PRIMARY, fontSize: 26 }} />
             <Typography
               variant="h5"
-              sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: "#1e293b" }}
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: "#2C1810",
+                fontSize: { xs: "1.2rem", sm: "1.45rem" },
+              }}
             >
               Book Astrology Consultation
             </Typography>
           </Box>
-          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: "0.95rem" }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748b", fontSize: { xs: "13px", sm: "14px" } }}>
             Select your preferred consultation date and time slot (09:00 AM – 10:00 PM).
           </Typography>
         </Box>
 
-        <Divider sx={{ mb: 3 }} />
+        <Divider sx={{ mb: 3, borderColor: "#EFE6D5" }} />
 
-        <Box component="form" onSubmit={handleInitiateBooking} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box component="form" onSubmit={handleInitiateBooking} sx={{ display: "flex", flexDirection: "column", gap: { xs: 2, sm: 2.5 } }}>
           {/* Scheduled Date and Time Fields */}
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 2.5 }}>
             {/* Consultation Date */}
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
                   label="Consultation Date"
@@ -636,6 +756,10 @@ export default function CustomerAstrologerDetailsContent() {
                         "& .MuiOutlinedInput-root": {
                           borderRadius: "14px",
                           fontFamily: FONTS.OUTFIT,
+                          bgcolor: "#FAFAFA",
+                          "& fieldset": { borderColor: "#E2E8F0" },
+                          "&:hover fieldset": { borderColor: COLORS.PRIMARY },
+                          "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
                         },
                       },
                     },
@@ -645,9 +769,9 @@ export default function CustomerAstrologerDetailsContent() {
             </Grid>
 
             {/* Consultation Time Slot */}
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth required>
-                <InputLabel shrink>Consultation Time Slot</InputLabel>
+                <InputLabel shrink sx={{ fontFamily: FONTS.OUTFIT }}>Consultation Time Slot</InputLabel>
                 <Select
                   value={scheduledTime}
                   label="Consultation Time Slot"
@@ -656,20 +780,12 @@ export default function CustomerAstrologerDetailsContent() {
                   onChange={(e) => setScheduledTime(e.target.value)}
                   startAdornment={
                     <InputAdornment position="start">
-                      <AccessTimeIcon sx={{ color: COLORS.PRIMARY, fontSize: 22, ml: 1 }} />
+                      <AccessTimeIcon sx={{ color: COLORS.PRIMARY, fontSize: 20, ml: 0.5 }} />
                     </InputAdornment>
                   }
                   MenuProps={{
                     disableScrollLock: true,
                     autoFocus: false,
-                    anchorOrigin: {
-                      vertical: "bottom",
-                      horizontal: "left",
-                    },
-                    transformOrigin: {
-                      vertical: "top",
-                      horizontal: "left",
-                    },
                     slotProps: {
                       paper: {
                         sx: {
@@ -684,6 +800,10 @@ export default function CustomerAstrologerDetailsContent() {
                   sx={{
                     borderRadius: "14px",
                     fontFamily: FONTS.OUTFIT,
+                    bgcolor: "#FAFAFA",
+                    "& fieldset": { borderColor: "#E2E8F0" },
+                    "&:hover fieldset": { borderColor: COLORS.PRIMARY },
+                    "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
                   }}
                 >
                   {availableSlots.length === 0 ? (
@@ -741,21 +861,23 @@ export default function CustomerAstrologerDetailsContent() {
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "stretch", sm: "center" },
               gap: 2,
-              p: 2.2,
-              bgcolor: "#fff7ed",
-              borderRadius: "16px",
-              border: "1px solid #fed7aa",
+              p: { xs: 2, sm: 2.25 },
+              bgcolor: "#FFF8F2",
+              borderRadius: "18px",
+              border: "1.5px solid #FFD4BC",
             }}
           >
-            <Box>
-              <Typography sx={{ fontSize: "11px", fontWeight: 700, color: "#9a3412", letterSpacing: "0.5px" }}>
-                ASTROLOGY PRICE
-              </Typography>
-              <Typography sx={{ fontSize: "19px", fontWeight: 800, color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT }}>
-                {astrologyPriceDisplay}
-              </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 1 }}>
+              <Box>
+                <Typography sx={{ fontSize: "10.5px", fontWeight: 700, color: "#8A7A70", letterSpacing: "0.5px", textTransform: "uppercase", fontFamily: FONTS.OUTFIT }}>
+                  ASTROLOGY FEE
+                </Typography>
+                <Typography sx={{ fontSize: { xs: "20px", sm: "22px" }, fontWeight: 800, color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT, lineHeight: 1.2 }}>
+                  {astrologyPriceDisplay}
+                </Typography>
+              </Box>
             </Box>
 
             <Button
@@ -772,17 +894,18 @@ export default function CustomerAstrologerDetailsContent() {
               sx={{
                 background: COLORS.PRIMARY,
                 color: "white",
-                px: 5,
-                py: 1.4,
-                borderRadius: "12px",
+                px: { xs: 3, sm: 4.5 },
+                py: { xs: 1.2, sm: 1.3 },
+                borderRadius: "30px",
                 fontWeight: 700,
-                fontSize: "15px",
+                fontSize: "14.5px",
                 fontFamily: FONTS.OUTFIT,
                 textTransform: "none",
-                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                width: { xs: "100%", sm: "auto" },
+                boxShadow: "0 6px 20px rgba(255, 98, 0, 0.28)",
                 "&:hover": {
                   background: COLORS.PRIMARY_DARK,
-                  boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
+                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.35)",
                 },
               }}
             >

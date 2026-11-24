@@ -4,6 +4,7 @@ import { COLORS } from "@/utils/enums";
 import React, { useEffect, useState } from 'react';
 import { 
   Box, 
+  Button,
   Typography, 
   CircularProgress,
   Paper, 
@@ -20,14 +21,15 @@ import {
   Tab, 
   IconButton, 
   Tooltip, 
-  TablePagination, 
   Pagination 
 } from '@mui/material';
+import AppTablePagination from '@/components/widgets/AppTablePagination';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EventIcon from '@mui/icons-material/Event';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { getCustomerBookingsAPI } from '@/api/bookingControllers';
 import { useLoaderStore } from '@/stores/loaderStore';
@@ -41,14 +43,14 @@ import { formatScheduledDateTime } from '@/utils/helpers';
 
 const getStatusColor = (status: string) => {
   switch (status?.toUpperCase()) {
-    case 'COMPLETED': return { bg: '#d1fae5', text: '#059669' };
-    case 'ACCEPTED': return { bg: '#dbeafe', text: '#2563eb' };
-    case 'PENDING': return { bg: '#fef3c7', text: '#d97706' };
-    case 'CANCELLED': return { bg: '#fee2e2', text: '#ef4444' };
-    case 'ENROUTE': return { bg: '#e0e7ff', text: '#4f46e5' };
-    case 'ARRIVED': return { bg: '#fce7f3', text: '#db2777' };
-    case 'ONGOING': return { bg: '#e0f2fe', text: '#0284c7' };
-    default: return { bg: '#f1f5f9', text: '#64748b' };
+    case 'COMPLETED': return { bg: '#ECFDF5', text: '#059669', border: '#A7F3D0' };
+    case 'ACCEPTED': return { bg: '#EFF6FF', text: '#2563EB', border: '#BFDBFE' };
+    case 'PENDING': return { bg: '#FFFBEB', text: '#D97706', border: '#FDE68A' };
+    case 'CANCELLED': return { bg: '#FEF2F2', text: '#EF4444', border: '#FECACA' };
+    case 'ENROUTE': return { bg: '#EEF2FF', text: '#4F46E5', border: '#C7D2FE' };
+    case 'ARRIVED': return { bg: '#FDF2F8', text: '#DB2777', border: '#FBCFE8' };
+    case 'ONGOING': return { bg: '#F0F9FF', text: '#0284C7', border: '#BAE6FD' };
+    default: return { bg: '#F8FAFC', text: '#64748B', border: '#E2E8F0' };
   }
 };
 
@@ -285,7 +287,7 @@ export default function CustomerDashboardContent() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (event: any) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -298,36 +300,42 @@ export default function CustomerDashboardContent() {
   };
 
   return (
-    <Box>
-      <Typography variant="h4" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1e293b', mb: 0.5 }}>
+    <Box sx={{ pb: { xs: 4, md: 6 } }}>
+      <Typography
+        variant="h4"
+        sx={{
+          fontFamily: FONTS.OUTFIT,
+          fontWeight: 800,
+          color: '#2C1810',
+          fontSize: { xs: '24px', sm: '28px', md: '32px' },
+          mb: { xs: 2, md: 2.5 },
+        }}
+      >
         My Bookings
-      </Typography>
-      <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', mb: 3 }}>
-        Manage all your service bookings.
       </Typography>
 
       {/* Booking Type Navigation Tabs */}
-      <Box sx={{ borderBottom: '1px solid #e2e8f0', mb: 3 }}>
+      <Box sx={{ borderBottom: '1px solid #EFE6D5', mb: { xs: 2.5, md: 3 } }}>
         <Tabs 
           value={bookingType} 
           onChange={handleBookingTypeChange}
           sx={{ 
             minHeight: '48px',
             '& .MuiTab-root': { 
-              fontFamily: FONTS.PRIMARY, 
+              fontFamily: FONTS.OUTFIT, 
               fontWeight: 700, 
               textTransform: 'none', 
-              fontSize: '15px', 
-              color: '#64748b',
+              fontSize: { xs: '14px', sm: '15px' }, 
+              color: '#7C6A60',
               minWidth: 'auto',
               px: { xs: 2, sm: 3 },
               py: 1.5,
               mr: { xs: 1, sm: 2 },
-              borderRadius: '8px 8px 0 0',
+              borderRadius: '10px 10px 0 0',
               transition: 'all 0.2s ease',
               '&:hover': { 
                 color: '#FF6200',
-                bgcolor: 'rgba(255, 98, 0, 0.04)',
+                bgcolor: 'rgba(255, 98, 0, 0.05)',
               },
             }, 
             '& .Mui-selected': { 
@@ -355,28 +363,43 @@ export default function CustomerDashboardContent() {
         </Tabs>
       </Box>
 
-      <Paper sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+      <Paper
+        elevation={0}
+        sx={{
+          borderRadius: '20px',
+          border: '1.5px solid #EFE6D5',
+          boxShadow: '0 4px 16px rgba(44, 24, 16, 0.04)',
+          overflow: 'hidden',
+          bgcolor: '#FFFFFF',
+        }}
+      >
         {/* Status Tabs Section */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: '#fff' }}>
+        <Box sx={{ borderBottom: '1px solid #EFE6D5', bgcolor: '#FFFBF7' }}>
           <Tabs 
             value={tabValue} 
             onChange={handleTabChange}
             variant="scrollable"
             scrollButtons="auto"
             sx={{ 
-              px: 2, 
+              px: { xs: 1, sm: 2 }, 
               '& .MuiTab-root': { 
-                fontFamily: FONTS.PRIMARY, 
+                fontFamily: FONTS.OUTFIT, 
                 fontWeight: 600, 
                 textTransform: 'none', 
-                fontSize: '14px', 
-                color: '#64748b',
+                fontSize: { xs: '13px', sm: '14px' }, 
+                color: '#7C6A60',
                 minWidth: 'auto',
-                px: 3,
-                py: 2.5
+                px: { xs: 2, sm: 2.5 },
+                py: { xs: 1.8, sm: 2.2 }
               }, 
-              '& .Mui-selected': { color: '#FF6200 !important' }, 
-              '& .MuiTabs-indicator': { backgroundColor: COLORS.PRIMARY } 
+              '& .Mui-selected': { 
+                color: '#FF6200 !important',
+                fontWeight: 700,
+              }, 
+              '& .MuiTabs-indicator': { 
+                backgroundColor: COLORS.PRIMARY,
+                height: '3px',
+              } 
             }}
           >
             {currentTabsList.map((label, index) => (
@@ -391,14 +414,14 @@ export default function CustomerDashboardContent() {
             {bookingType === 'ASTROLOGY' ? (
               /* ASTROLOGY BOOKINGS TABLE */
               <Table sx={{ minWidth: 800 }}>
-                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                <TableHead sx={{ bgcolor: '#FAF4EE' }}>
                   <TableRow>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking ID</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Astrologer</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking Date</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Status</TableCell>
-                    <TableCell align="center" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Actions</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Booking ID</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Astrologer</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Booking Date</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Amount</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Status</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -406,14 +429,14 @@ export default function CustomerDashboardContent() {
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
                         <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
-                        <Typography sx={{ mt: 1.5, fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+                        <Typography sx={{ mt: 1.5, fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '14px' }}>
                           Loading bookings...
                         </Typography>
                       </TableCell>
                     </TableRow>
                   ) : bookings.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.PRIMARY, color: '#64748b' }}>
+                      <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '14px' }}>
                         No astrology bookings found.
                       </TableCell>
                     </TableRow>
@@ -424,37 +447,56 @@ export default function CustomerDashboardContent() {
                       const astro = row.astrologer;
                       const astroName = astro ? `${astro.firstName || ''} ${astro.lastName || ''}`.trim() : 'Astrologer';
                       const statusStyle = getStatusColor(row.status);
+                      const statusLabel = row.status ? row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase() : 'Pending';
 
                       return (
                         <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', borderBottom: '1px solid #F5ECE3' }}>
                             B-{row.id}
                           </TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: '#2C1810', borderBottom: '1px solid #F5ECE3' }}>
                             {astroName}
                           </TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, color: '#5C4A40', borderBottom: '1px solid #F5ECE3' }}>
                             {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                           </TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', borderBottom: '1px solid #F5ECE3' }}>
                             {displayAmt}
                           </TableCell>
-                          <TableCell>
+                          <TableCell sx={{ borderBottom: '1px solid #F5ECE3' }}>
                             <Chip 
-                              label={row.status ? row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase() : 'Pending'} 
+                              label={statusLabel} 
                               size="small" 
                               sx={{ 
-                                fontWeight: 600, 
-                                fontFamily: FONTS.PRIMARY,
+                                fontWeight: 700, 
+                                fontFamily: FONTS.OUTFIT,
                                 fontSize: '12px',
                                 bgcolor: statusStyle.bg,
-                                color: statusStyle.text
+                                color: statusStyle.text,
+                                border: `1px solid ${statusStyle.border || statusStyle.text}25`,
+                                borderRadius: '20px',
+                                px: 0.5,
                               }} 
                             />
                           </TableCell>
-                          <TableCell align="center">
+                          <TableCell align="center" sx={{ borderBottom: '1px solid #F5ECE3' }}>
                             <Tooltip title="View Details">
-                              <IconButton onClick={() => handleViewDetails(row.id)} size="small" sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                              <IconButton
+                                onClick={() => handleViewDetails(row.id)}
+                                size="small"
+                                sx={{
+                                  color: COLORS.PRIMARY,
+                                  bgcolor: '#FFF0E6',
+                                  border: '1px solid #FFD4BC',
+                                  borderRadius: '10px',
+                                  transition: 'all 0.2s ease',
+                                  '&:hover': {
+                                    bgcolor: '#FFE4D4',
+                                    borderColor: COLORS.PRIMARY,
+                                    transform: 'translateY(-1px)',
+                                  },
+                                }}
+                              >
                                 <VisibilityIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
@@ -466,16 +508,16 @@ export default function CustomerDashboardContent() {
                 </TableBody>
               </Table>
             ) : (
-              /* POOJA BOOKINGS TABLE (UNCHANGED) */
+              /* POOJA BOOKINGS TABLE */
               <Table sx={{ minWidth: 800 }}>
-                <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                <TableHead sx={{ bgcolor: '#FAF4EE' }}>
                   <TableRow>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking ID</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Service</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Booking Date</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Amount</TableCell>
-                    <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Status</TableCell>
-                    <TableCell align="center" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#64748b', fontSize: '12px', textTransform: 'uppercase' }}>Actions</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Booking ID</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Service</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Booking Date</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Amount</TableCell>
+                    <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Status</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#64534A', fontSize: '12px', textTransform: 'uppercase', py: 2 }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -483,14 +525,14 @@ export default function CustomerDashboardContent() {
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
                         <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
-                        <Typography sx={{ mt: 1.5, fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+                        <Typography sx={{ mt: 1.5, fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '14px' }}>
                           Loading bookings...
                         </Typography>
                       </TableCell>
                     </TableRow>
                   ) : bookings.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.PRIMARY, color: '#64748b' }}>
+                      <TableCell colSpan={6} align="center" sx={{ py: 8, fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '14px' }}>
                         No bookings found.
                       </TableCell>
                     </TableRow>
@@ -498,36 +540,66 @@ export default function CustomerDashboardContent() {
                     bookings.map((row) => {
                       const amt = row.finalAmount ?? row.finalamount;
                       const displayAmt = (amt && Number(amt) > 0) ? `₹${amt}` : '-';
+                      const statusStyle = getStatusColor(row.status);
+                      const statusLabel = row.status ? row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase() : 'Pending';
+                      const serviceTitle =
+                        row.service?.name ||
+                        row.serviceName ||
+                        row.service?.title ||
+                        row.serviceTitle ||
+                        row.poojaName ||
+                        row.pooja?.name ||
+                        row.title ||
+                        'Pooja Service';
                       
                       return (
                         <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>B-{row.id}</TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#334155' }}>{row.service?.name || 'Pooja Service'}</TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, color: '#475569' }}>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', borderBottom: '1px solid #F5ECE3' }}>
+                            B-{row.id}
+                          </TableCell>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, color: '#2C1810', borderBottom: '1px solid #F5ECE3' }}>
+                            {serviceTitle}
+                          </TableCell>
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, color: '#5C4A40', borderBottom: '1px solid #F5ECE3' }}>
                             {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                           </TableCell>
-                          <TableCell sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: '#1e293b' }}>{displayAmt}</TableCell>
-                          <TableCell>
-                            {(() => {
-                              const statusStyle = getStatusColor(row.status);
-                              return (
-                                <Chip 
-                                  label={row.status ? row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase() : 'Pending'} 
-                                  size="small" 
-                                  sx={{ 
-                                    fontWeight: 600, 
-                                    fontFamily: FONTS.PRIMARY,
-                                    fontSize: '12px',
-                                    bgcolor: statusStyle.bg,
-                                    color: statusStyle.text
-                                  }} 
-                                />
-                              );
-                            })()}
+                          <TableCell sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', borderBottom: '1px solid #F5ECE3' }}>
+                            {displayAmt}
                           </TableCell>
-                          <TableCell align="center">
+                          <TableCell sx={{ borderBottom: '1px solid #F5ECE3' }}>
+                            <Chip 
+                              label={statusLabel} 
+                              size="small" 
+                              sx={{ 
+                                fontWeight: 700, 
+                                fontFamily: FONTS.OUTFIT,
+                                fontSize: '12px',
+                                bgcolor: statusStyle.bg,
+                                color: statusStyle.text,
+                                border: `1px solid ${statusStyle.border || statusStyle.text}25`,
+                                borderRadius: '20px',
+                                px: 0.5,
+                              }} 
+                            />
+                          </TableCell>
+                          <TableCell align="center" sx={{ borderBottom: '1px solid #F5ECE3' }}>
                             <Tooltip title="View Details">
-                              <IconButton onClick={() => handleViewDetails(row.id)} size="small" sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
+                              <IconButton
+                                onClick={() => handleViewDetails(row.id)}
+                                size="small"
+                                sx={{
+                                  color: COLORS.PRIMARY,
+                                  bgcolor: '#FFF0E6',
+                                  border: '1px solid #FFD4BC',
+                                  borderRadius: '10px',
+                                  transition: 'all 0.2s ease',
+                                  '&:hover': {
+                                    bgcolor: '#FFE4D4',
+                                    borderColor: COLORS.PRIMARY,
+                                    transform: 'translateY(-1px)',
+                                  },
+                                }}
+                              >
                                 <VisibilityIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
@@ -541,34 +613,16 @@ export default function CustomerDashboardContent() {
             )}
           </TableContainer>
           {totalBookings > 0 && (
-            <TablePagination
-              component="div"
+            <AppTablePagination
               count={totalBookings}
               page={page}
-              onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              slotProps={{
-                select: {
-                  MenuProps: {
-                    variant: "menu",
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "left",
-                    },
-                    transformOrigin: {
-                      vertical: "bottom",
-                      horizontal: "left",
-                    },
-                    disableScrollLock: true,
-                  },
-                },
+              onPageChange={(newPage) => setPage(newPage)}
+              onRowsPerPageChange={(newLimit) => {
+                setRowsPerPage(newLimit);
+                setPage(0);
               }}
-              sx={{
-                borderTop: '1px solid #e2e8f0',
-                '& .MuiTablePagination-toolbar': { minHeight: '60px' },
-                fontFamily: FONTS.PRIMARY,
-              }}
+              itemName={bookingType === 'ASTROLOGY' ? 'consultations' : 'bookings'}
             />
           )}
         </Box>
@@ -577,15 +631,15 @@ export default function CustomerDashboardContent() {
       {/* Mobile View (Cards) */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mt: 3 }}>
         {loading ? (
-          <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF' }}>
+          <Paper sx={{ p: 4, borderRadius: '20px', textAlign: 'center', bgcolor: '#FFFBF7', border: '1.5px solid #EFE6D5' }}>
             <CircularProgress size={32} sx={{ color: COLORS.PRIMARY }} />
-            <Typography sx={{ mt: 1.5, fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px' }}>
+            <Typography sx={{ mt: 1.5, fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '14px' }}>
               Loading bookings...
             </Typography>
           </Paper>
         ) : bookings.length === 0 ? (
-          <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
-            <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
+          <Paper sx={{ p: 4, borderRadius: '20px', textAlign: 'center', bgcolor: '#FFFBF7', border: '1.5px dashed #FFD4BC' }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '15px', fontWeight: 600 }}>
               No {bookingType === 'ASTROLOGY' ? 'astrology' : 'pooja'} bookings found.
             </Typography>
           </Paper>
@@ -600,125 +654,203 @@ export default function CustomerDashboardContent() {
             const statusStyle = getStatusColor(row.status);
 
             return (
-              <Card key={row.id} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: 'white', borderColor: '#e2e8f0' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
-                    {astroName}
-                  </Typography>
+              <Card
+                key={row.id}
+                variant="outlined"
+                sx={{
+                  borderRadius: '20px',
+                  p: { xs: 2, sm: 2.5 },
+                  bgcolor: '#FFFFFF',
+                  borderColor: '#EFE6D5',
+                  borderWidth: '1.5px',
+                  boxShadow: '0 4px 14px rgba(44, 24, 16, 0.04)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    borderColor: '#FFD4BC',
+                    boxShadow: '0 6px 20px rgba(44, 24, 16, 0.08)',
+                  },
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1 }}>
+                  <Box>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', fontSize: '1.05rem', lineHeight: 1.3 }}>
+                      {astroName}
+                    </Typography>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '13px', mt: 0.3 }}>
+                      Booking ID: <span style={{ fontWeight: 700, color: '#2C1810' }}>B-{row.id}</span>
+                    </Typography>
+                  </Box>
                   <Chip 
                     label={statusLabel} 
                     size="small" 
                     sx={{ 
                       fontWeight: 700, 
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: '11px',
-                      height: '22px',
+                      height: '24px',
                       bgcolor: statusStyle.bg,
-                      color: statusStyle.text
+                      color: statusStyle.text,
+                      border: `1px solid ${statusStyle.border || statusStyle.text}25`,
+                      borderRadius: '20px',
+                      flexShrink: 0,
                     }} 
                   />
                 </Box>
 
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
-                  Booking ID: <span style={{ fontWeight: 600, color: '#1e293b' }}>B-{row.id}</span>
-                </Typography>
-                
-                <Divider sx={{ mb: 1.5, borderColor: '#f1f5f9' }} />
+                <Divider sx={{ my: 1.5, borderColor: '#F5ECE3' }} />
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <EventIcon sx={{ color: '#2E7D32', fontSize: 16 }} />
-                    <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Booking Date:</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                    <EventIcon sx={{ color: '#FF6200', fontSize: 16 }} />
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#7C6A60', fontWeight: 600 }}>Booking Date:</Typography>
                   </Box>
-                  <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', fontWeight: 600, color: '#2C1810' }}>
                     {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                   </Typography>
                 </Box>
                 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccountBalanceWalletIcon sx={{ color: '#2E7D32', fontSize: 16 }} />
-                    <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Amount:</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                    <AccountBalanceWalletIcon sx={{ color: '#FF6200', fontSize: 16 }} />
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#7C6A60', fontWeight: 600 }}>Amount:</Typography>
                   </Box>
-                  <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 800, color: '#2C1810' }}>
                     {displayAmt}
                   </Typography>
                 </Box>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
-                  <Tooltip title="View Details">
-                    <IconButton onClick={() => handleViewDetails(row.id)} size="small" sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
-                      <VisibilityIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+
+                <Button
+                  fullWidth
+                  onClick={() => handleViewDetails(row.id)}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: '16px' }} />}
+                  sx={{
+                    color: COLORS.PRIMARY,
+                    bgcolor: '#FFF0E6',
+                    border: '1px solid #FFD4BC',
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    textTransform: 'none',
+                    py: 0.85,
+                    borderRadius: '12px',
+                    mt: 1.5,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      bgcolor: '#FFE4D4',
+                      borderColor: COLORS.PRIMARY,
+                    },
+                  }}
+                >
+                  View Booking Details
+                </Button>
               </Card>
             );
           })
         ) : (
-          /* POOJA MOBILE CARDS (UNCHANGED) */
+          /* POOJA MOBILE CARDS */
           bookings.map((row) => {
             const statusLabel = row.status ? row.status.charAt(0).toUpperCase() + row.status.slice(1).toLowerCase() : 'Pending';
             const amt = row.finalAmount ?? row.finalamount;
             const displayAmt = (amt && Number(amt) > 0) ? `₹${amt}` : '-';
+            const statusStyle = getStatusColor(row.status);
             
             return (
-              <Card key={row.id} variant="outlined" sx={{ borderRadius: '16px', p: 2, bgcolor: 'white', borderColor: '#e2e8f0' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                  <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#1e293b', fontSize: '1.1rem' }}>
-                    {row.service?.name || 'Pooja Service'}
-                  </Typography>
-                  {(() => {
-                    const statusStyle = getStatusColor(row.status);
-                    return (
-                      <Chip 
-                        label={statusLabel} 
-                        size="small" 
-                        sx={{ 
-                          fontWeight: 700, 
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: '11px',
-                          height: '22px',
-                          bgcolor: statusStyle.bg,
-                          color: statusStyle.text
-                        }} 
-                      />
-                    );
-                  })()}
-                </Box>
-                <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 1.5 }}>
-                  Booking ID: <span style={{ fontWeight: 600, color: '#1e293b' }}>B-{row.id}</span>
-                </Typography>
-                
-                <Divider sx={{ mb: 1.5, borderColor: '#f1f5f9' }} />
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <EventIcon sx={{ color: '#2E7D32', fontSize: 16 }} />
-                    <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Booking Date:</Typography>
+              <Card
+                key={row.id}
+                variant="outlined"
+                sx={{
+                  borderRadius: '20px',
+                  p: { xs: 2, sm: 2.5 },
+                  bgcolor: '#FFFFFF',
+                  borderColor: '#EFE6D5',
+                  borderWidth: '1.5px',
+                  boxShadow: '0 4px 14px rgba(44, 24, 16, 0.04)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    borderColor: '#FFD4BC',
+                    boxShadow: '0 6px 20px rgba(44, 24, 16, 0.08)',
+                  },
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1 }}>
+                  <Box>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', fontSize: '1.05rem', lineHeight: 1.3 }}>
+                      {row.service?.name ||
+                       row.serviceName ||
+                       row.service?.title ||
+                       row.serviceTitle ||
+                       row.poojaName ||
+                       row.pooja?.name ||
+                       row.title ||
+                       'Pooja Service'}
+                    </Typography>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '13px', mt: 0.3 }}>
+                      Booking ID: <span style={{ fontWeight: 700, color: '#2C1810' }}>B-{row.id}</span>
+                    </Typography>
                   </Box>
-                  <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>
+                  <Chip 
+                    label={statusLabel} 
+                    size="small" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: '11px',
+                      height: '24px',
+                      bgcolor: statusStyle.bg,
+                      color: statusStyle.text,
+                      border: `1px solid ${statusStyle.border || statusStyle.text}25`,
+                      borderRadius: '20px',
+                      flexShrink: 0,
+                    }} 
+                  />
+                </Box>
+
+                <Divider sx={{ my: 1.5, borderColor: '#F5ECE3' }} />
+                
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                    <EventIcon sx={{ color: '#FF6200', fontSize: 16 }} />
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#7C6A60', fontWeight: 600 }}>Booking Date:</Typography>
+                  </Box>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', fontWeight: 600, color: '#2C1810' }}>
                     {row.scheduledAt ? formatScheduledDateTime(row.scheduledAt) : 'N/A'}
                   </Typography>
                 </Box>
                 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccountBalanceWalletIcon sx={{ color: '#2E7D32', fontSize: 16 }} />
-                    <Typography sx={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Amount:</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                    <AccountBalanceWalletIcon sx={{ color: '#FF6200', fontSize: 16 }} />
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', color: '#7C6A60', fontWeight: 600 }}>Amount:</Typography>
                   </Box>
-                  <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 800, color: '#2C1810' }}>
                     {displayAmt}
                   </Typography>
                 </Box>
                 
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
-                  <Tooltip title="View Details">
-                    <IconButton onClick={() => handleViewDetails(row.id)} size="small" sx={{ color: COLORS.PRIMARY, bgcolor: '#FFF5F0', '&:hover': { bgcolor: '#FFE0D0' } }}>
-                      <VisibilityIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+                <Button
+                  fullWidth
+                  onClick={() => handleViewDetails(row.id)}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: '16px' }} />}
+                  sx={{
+                    color: COLORS.PRIMARY,
+                    bgcolor: '#FFF0E6',
+                    border: '1px solid #FFD4BC',
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    textTransform: 'none',
+                    py: 0.85,
+                    borderRadius: '12px',
+                    mt: 1.5,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      bgcolor: '#FFE4D4',
+                      borderColor: COLORS.PRIMARY,
+                    },
+                  }}
+                >
+                  View Booking Details
+                </Button>
               </Card>
             );
           })
@@ -734,7 +866,7 @@ export default function CustomerDashboardContent() {
               color="primary"
               size="medium"
               sx={{ 
-                '& .MuiPaginationItem-root': { fontFamily: FONTS.PRIMARY, fontWeight: 600 },
+                '& .MuiPaginationItem-root': { fontFamily: FONTS.OUTFIT, fontWeight: 600 },
                 '& .Mui-selected': { bgcolor: '#FF6200 !important', color: 'white', '&:hover': { bgcolor: '#E65800 !important' } }
               }}
             />

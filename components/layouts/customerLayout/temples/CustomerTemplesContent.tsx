@@ -3,18 +3,19 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  CircularProgress,
   Grid,
   IconButton,
   InputBase,
   Pagination,
   Paper,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { getTemplesAPI } from "@/api/templeControllers";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -114,38 +115,79 @@ export default function CustomerTemplesContent() {
   const hasSearchFilter = Boolean(searchTerm.trim());
 
   return (
-    <Box sx={{ pb: 6 }}>
+    <Box sx={{ pb: { xs: 4, sm: 6 } }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: { xs: 2.5, sm: 3.5 } }}>
+        <Box
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 0.75,
+            bgcolor: "#FFF0E6",
+            border: "1px solid #FFD4BC",
+            borderRadius: "20px",
+            px: 1.5,
+            py: 0.4,
+            mb: 1.25,
+          }}
+        >
+          <TempleHinduIcon sx={{ fontSize: 13, color: COLORS.PRIMARY }} />
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontSize: "11px",
+              fontWeight: 800,
+              color: COLORS.PRIMARY,
+              textTransform: "uppercase",
+              letterSpacing: "0.8px",
+            }}
+          >
+            SACRED PILGRIMAGE DESTINATIONS
+          </Typography>
+        </Box>
+
         <Typography
           variant="h4"
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
-            color: "#1A1A1A",
-            mb: 1,
+            color: "#2C1810",
+            fontSize: { xs: "1.65rem", sm: "2.1rem", md: "2.4rem" },
+            lineHeight: 1.2,
+            mb: 0.75,
           }}
         >
           Explore Sacred Temples
         </Typography>
-        <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#666" }}>
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            color: "#7C6A60",
+            fontSize: { xs: "13.5px", sm: "15px" },
+            lineHeight: 1.5,
+            maxWidth: 620,
+          }}
+        >
           Discover holy shrines, sacred pilgrimage destinations, and book authentic temple rituals.
         </Typography>
       </Box>
 
       {/* Search Bar with Debouncing */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: { xs: 2.5, sm: 3.5 } }}>
         <Paper
           elevation={0}
           sx={{
-            p: "6px 12px",
+            p: { xs: "4px 10px", sm: "6px 14px" },
             display: "flex",
             alignItems: "center",
             borderRadius: "14px",
-            border: "1.5px solid #e2e8f0",
-            bgcolor: "#ffffff",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
+            border: "1.5px solid #EFE6D5",
+            bgcolor: "#FFFFFF",
+            boxShadow: "0 2px 6px rgba(44, 24, 16, 0.02)",
             transition: "all 0.2s ease",
+            "&:hover": {
+              borderColor: "#FFD4BC",
+            },
             "&:focus-within": {
               borderColor: COLORS.PRIMARY,
               boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.12)",
@@ -153,15 +195,15 @@ export default function CustomerTemplesContent() {
           }}
         >
           <IconButton sx={{ p: "8px", color: COLORS.PRIMARY }} aria-label="search">
-            <SearchIcon />
+            <SearchIcon sx={{ fontSize: { xs: 20, sm: 22 } }} />
           </IconButton>
           <InputBase
             sx={{
               ml: 1,
               flex: 1,
-              fontFamily: FONTS.PRIMARY,
-              fontSize: "15px",
-              color: "#1e293b",
+              fontFamily: FONTS.OUTFIT,
+              fontSize: { xs: "13.5px", sm: "14.5px" },
+              color: "#2C1810",
             }}
             placeholder="Search temples by name, deity, or location..."
             value={searchTerm}
@@ -185,19 +227,20 @@ export default function CustomerTemplesContent() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              mt: 1.5,
+              mt: 1.25,
               px: 0.5,
             }}
           >
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontSize: "13px",
-                color: "#64748b",
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "12.5px",
+                color: "#7C6A60",
+                fontWeight: 500,
               }}
             >
               {loading
-                ? "Searching temples..."
+                ? "Searching sacred temples..."
                 : `Found ${totalCount} temple${totalCount === 1 ? "" : "s"} for "${searchTerm}"`}
             </Typography>
             <Button
@@ -205,10 +248,10 @@ export default function CustomerTemplesContent() {
               onClick={handleResetSearch}
               startIcon={<RestartAltIcon fontSize="small" />}
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 textTransform: "none",
                 color: COLORS.PRIMARY,
-                fontSize: "13px",
+                fontSize: "12.5px",
                 fontWeight: 600,
                 "&:hover": { bgcolor: "rgba(255, 98, 0, 0.05)" },
               }}
@@ -221,77 +264,137 @@ export default function CustomerTemplesContent() {
 
       {/* Main Content Area */}
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
-          <CircularProgress sx={{ color: COLORS.PRIMARY }} />
-        </Box>
+        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
+          {[1, 2, 3, 4].map((n) => (
+            <Grid size={{ xs: 12, lg: 6 }} key={n}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 2, sm: 2.25 },
+                  borderRadius: "20px",
+                  border: "1.5px solid #EFE6D5",
+                  bgcolor: "#FFFFFF",
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 2, sm: 2.25 },
+                }}
+              >
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    width: { xs: "100%", sm: 170, md: 190 },
+                    height: { xs: 180, sm: 165 },
+                    borderRadius: "14px",
+                  }}
+                  animation="wave"
+                />
+                <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <Box>
+                    <Skeleton variant="text" height={26} width="65%" animation="wave" />
+                    <Skeleton variant="text" height={18} width="45%" animation="wave" />
+                    <Skeleton variant="text" height={16} width="95%" animation="wave" sx={{ mt: 1 }} />
+                    <Skeleton variant="text" height={16} width="80%" animation="wave" />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
+                    <Skeleton variant="rectangular" width={110} height={34} sx={{ borderRadius: "20px" }} />
+                    <Skeleton variant="rectangular" width={110} height={34} sx={{ borderRadius: "20px" }} />
+                  </Box>
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
       ) : temples.length === 0 ? (
         <Paper
           elevation={0}
           sx={{
-            p: 6,
+            p: { xs: 4, sm: 6 },
             textAlign: "center",
             borderRadius: "20px",
-            border: "1.5px dashed #e2e8f0",
-            bgcolor: "#ffffff",
+            border: "1.5px dashed #FFD4BC",
+            bgcolor: "#FAF7F4",
+            maxWidth: 540,
+            mx: "auto",
+            my: 2,
           }}
         >
-          <TempleHinduIcon
-            sx={{ fontSize: 56, color: COLORS.PRIMARY, mb: 1.5, opacity: 0.8 }}
-          />
+          <Box
+            sx={{
+              width: 60,
+              height: 60,
+              borderRadius: "50%",
+              bgcolor: "#FFF0E6",
+              border: "1px solid #FFD4BC",
+              color: COLORS.PRIMARY,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 2,
+            }}
+          >
+            <TempleHinduIcon sx={{ fontSize: 30 }} />
+          </Box>
           <Typography
             variant="h6"
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 700,
-              color: "#1e293b",
-              mb: 0.5,
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 800,
+              color: "#2C1810",
+              fontSize: { xs: "1.1rem", sm: "1.25rem" },
+              mb: 1,
             }}
           >
             No Temples Found
           </Typography>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              color: "#64748b",
-              fontSize: "14px",
-              mb: 3,
+              fontFamily: FONTS.OUTFIT,
+              color: "#7C6A60",
+              fontSize: "13.5px",
+              lineHeight: 1.6,
+              maxWidth: 440,
+              mx: "auto",
+              mb: 2.5,
             }}
           >
             {hasSearchFilter
-              ? `We couldn't find any temples matching "${searchTerm}". Try checking for spelling or searching with a different term.`
-              : "No sacred temples are currently available. Please check back later."}
+              ? `We couldn't find any temples matching "${searchTerm}". Try checking your spelling or searching another location.`
+              : "No sacred temples are currently available in this category. Please check back later."}
           </Typography>
           {hasSearchFilter && (
             <Button
-              variant="outlined"
+              variant="contained"
               onClick={handleResetSearch}
               sx={{
-                color: COLORS.PRIMARY,
-                borderColor: COLORS.PRIMARY,
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 600,
-                borderRadius: "10px",
+                bgcolor: COLORS.PRIMARY,
+                color: "#ffffff",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: "13px",
+                borderRadius: "20px",
                 textTransform: "none",
+                px: 3,
+                py: 0.8,
+                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
                 "&:hover": {
-                  borderColor: "#e65800",
-                  bgcolor: "rgba(255, 98, 0, 0.04)",
+                  bgcolor: COLORS.PRIMARY_DARK,
                 },
               }}
             >
-              Clear Search
+              Reset Search
             </Button>
           )}
         </Paper>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
           {temples.map((temple) => (
             <CustomerTempleCard key={temple.id} temple={temple} />
           ))}
         </Grid>
       )}
 
-      {!loading && temples.length > 0 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+      {!loading && temples.length > 0 && totalPages > 1 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 4, sm: 6 } }}>
           <Pagination
             count={totalPages || 1}
             page={page}

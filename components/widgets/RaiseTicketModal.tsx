@@ -231,27 +231,59 @@ export default function RaiseTicketModal() {
       onClose={handleModalClose} 
       fullWidth 
       maxWidth="sm" 
-      sx={{ '& .MuiDialog-paper': { borderRadius: '16px', p: 1 } }}
+      sx={{
+        '& .MuiDialog-paper': {
+          borderRadius: { xs: '18px', sm: '22px' },
+          border: '1.5px solid #EFE6D5',
+          p: { xs: 0.5, sm: 1 },
+          m: { xs: 1.5, sm: 3 },
+          maxHeight: 'calc(100% - 32px)',
+          bgcolor: '#FFFFFF',
+        },
+      }}
     >
-      <DialogTitle sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: COLORS.SLATE_DARK, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <DialogTitle
+        sx={{
+          fontFamily: FONTS.OUTFIT,
+          fontWeight: 800,
+          color: '#2C1810',
+          fontSize: { xs: '17px', sm: '19px' },
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          py: { xs: 1, sm: 1.2 },
+          px: { xs: 1.8, sm: 2.5 },
+          borderBottom: '1px solid #F5ECE3',
+        }}
+      >
         Raise a Ticket
-        <IconButton onClick={handleModalClose} size="small">
-          <CloseIcon />
+        <IconButton
+          onClick={handleModalClose}
+          size="small"
+          sx={{
+            color: '#7C6A60',
+            bgcolor: '#FAF4EE',
+            p: 0.6,
+            '&:hover': { bgcolor: '#F5ECE3', color: '#2C1810' },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 17 }} />
         </IconButton>
       </DialogTitle>
       
-      <DialogContent sx={{ mt: 1 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, py: 1 }}>
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: COLORS.SLATE_MUTED, fontSize: '14px' }}>
-            Please provide accurate details about your issue. We will review and get back to you shortly.
+      <DialogContent sx={{ px: { xs: 1.8, sm: 2.5 }, py: { xs: 1, sm: 1.5 } }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 1.8 }, pt: 0.5 }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: { xs: '12px', sm: '13px' }, lineHeight: 1.4 }}>
+            Tell us what went wrong and our team will resolve it promptly.
           </Typography>
 
           {/* Category */}
-          <FormControl fullWidth variant="outlined" error={Boolean(touched.category && errors.category)}>
-            <InputLabel id="category-label" sx={{ fontFamily: FONTS.PRIMARY }}>Category *</InputLabel>
+          <FormControl fullWidth size="small" variant="outlined" error={Boolean(touched.category && errors.category)}>
+            <InputLabel id="category-label" sx={{ fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '13px' }}>Category *</InputLabel>
             <Select
               labelId="category-label"
               value={category}
+              size="small"
               onChange={(e) => {
                 setCategory(e.target.value);
                 if (touched.category) {
@@ -264,23 +296,29 @@ export default function RaiseTicketModal() {
               }}
               label="Category *"
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
+                fontSize: '13.5px',
+                borderRadius: '12px',
+                bgcolor: '#FFFBF7',
+                '& .MuiSelect-select': {
+                  py: 1,
+                },
                 '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: touched.category && errors.category ? '#ef4444' : '#e2e8f0',
+                  borderColor: touched.category && errors.category ? '#ef4444' : '#EFE6D5',
                 },
                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: touched.category && errors.category ? '#ef4444 !important' : `${COLORS.BRAND_ORANGE} !important`,
+                  borderColor: touched.category && errors.category ? '#ef4444 !important' : `${COLORS.PRIMARY} !important`,
                 },
               }}
             >
               {CATEGORIES.map((c) => (
-                <MenuItem key={c.value} value={c.value} sx={{ fontFamily: FONTS.PRIMARY }}>
+                <MenuItem key={c.value} value={c.value} sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px' }}>
                   {c.label}
                 </MenuItem>
               ))}
             </Select>
             {touched.category && errors.category && (
-              <FormHelperText sx={{ color: '#ef4444', fontFamily: FONTS.PRIMARY }}>
+              <FormHelperText sx={{ color: '#ef4444', fontFamily: FONTS.OUTFIT, fontSize: '11px', mt: 0.3 }}>
                 {errors.category}
               </FormHelperText>
             )}
@@ -289,8 +327,9 @@ export default function RaiseTicketModal() {
           {/* Subject */}
           <TextField
             fullWidth
+            size="small"
             label="Subject *"
-            placeholder="Briefly state your issue (e.g. Timing delay for morning pooja)"
+            placeholder="Briefly state your issue (min 5 chars)"
             variant="outlined"
             value={subject}
             onChange={(e) => {
@@ -307,19 +346,29 @@ export default function RaiseTicketModal() {
             helperText={
               touched.subject && errors.subject
                 ? errors.subject
-                : `${subject.length}/100 characters (min 5)`
+                : `${subject.length}/100 characters`
             }
             slotProps={{
               htmlInput: { maxLength: 100 }
             }}
             sx={{
-              '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
-              '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY },
+              '& .MuiOutlinedInput-root': {
+                fontFamily: FONTS.OUTFIT,
+                fontSize: '13.5px',
+                borderRadius: '12px',
+                bgcolor: '#FFFBF7',
+                '& input': { py: 1 },
+                '& fieldset': {
+                  borderColor: touched.subject && errors.subject ? '#ef4444' : '#EFE6D5',
+                },
+              },
+              '& .MuiInputLabel-root': { fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '13px' },
+              '& .MuiFormHelperText-root': { fontFamily: FONTS.OUTFIT, fontSize: '11px', mt: 0.3 },
               '& .Mui-focused fieldset': {
-                borderColor: touched.subject && errors.subject ? '#ef4444 !important' : `${COLORS.BRAND_ORANGE} !important`,
+                borderColor: touched.subject && errors.subject ? '#ef4444 !important' : `${COLORS.PRIMARY} !important`,
               },
               '& label.Mui-focused': {
-                color: touched.subject && errors.subject ? '#ef4444' : COLORS.BRAND_ORANGE,
+                color: touched.subject && errors.subject ? '#ef4444' : COLORS.PRIMARY,
               },
             }}
           />
@@ -327,10 +376,11 @@ export default function RaiseTicketModal() {
           {/* Description */}
           <TextField
             fullWidth
+            size="small"
             multiline
-            rows={4}
+            rows={2.5}
             label="Description *"
-            placeholder="Describe the issue clearly in meaningful words (minimum 15 characters)..."
+            placeholder="Describe the issue clearly (minimum 15 characters)..."
             variant="outlined"
             value={description}
             onChange={(e) => {
@@ -347,79 +397,116 @@ export default function RaiseTicketModal() {
             helperText={
               touched.description && errors.description
                 ? errors.description
-                : `${description.length}/1000 characters (min 15)`
+                : `${description.length}/1000 characters`
             }
             slotProps={{
               htmlInput: { maxLength: 1000 }
             }}
             sx={{
-              '& .MuiOutlinedInput-root': { fontFamily: FONTS.PRIMARY },
-              '& .MuiInputLabel-root': { fontFamily: FONTS.PRIMARY },
+              '& .MuiOutlinedInput-root': {
+                fontFamily: FONTS.OUTFIT,
+                fontSize: '13.5px',
+                borderRadius: '12px',
+                bgcolor: '#FFFBF7',
+                '& fieldset': {
+                  borderColor: touched.description && errors.description ? '#ef4444' : '#EFE6D5',
+                },
+              },
+              '& .MuiInputLabel-root': { fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '13px' },
+              '& .MuiFormHelperText-root': { fontFamily: FONTS.OUTFIT, fontSize: '11px', mt: 0.3 },
               '& .Mui-focused fieldset': {
-                borderColor: touched.description && errors.description ? '#ef4444 !important' : `${COLORS.BRAND_ORANGE} !important`,
+                borderColor: touched.description && errors.description ? '#ef4444 !important' : `${COLORS.PRIMARY} !important`,
               },
               '& label.Mui-focused': {
-                color: touched.description && errors.description ? '#ef4444' : COLORS.BRAND_ORANGE,
+                color: touched.description && errors.description ? '#ef4444' : COLORS.PRIMARY,
               },
             }}
           />
 
-          {/* Evidence Attachments */}
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-              <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 600, color: COLORS.SLATE_DARK, fontSize: '14px' }}>
-                Evidence / Screenshots (Optional)
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#64748b' }}>
-                Max 3 images (JPG, PNG, WebP up to 5MB each)
-              </Typography>
-            </Box>
-
-            <Button
-              component="label"
-              variant="outlined"
-              startIcon={<CloudUploadIcon />}
-              disabled={evidence.length >= MAX_FILES}
+          {/* Evidence Attachments - Compact Row */}
+          <Box
+            sx={{
+              bgcolor: '#FAF7F4',
+              px: 1.5,
+              py: 1.2,
+              borderRadius: '12px',
+              border: '1px solid #EFE6D5',
+            }}
+          >
+            <Box
               sx={{
-                textTransform: 'none',
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 600,
-                color: evidence.length >= MAX_FILES ? '#94a3b8' : COLORS.SLATE_MUTED,
-                borderColor: '#e2e8f0',
-                borderRadius: '8px',
-                '&:hover': { borderColor: '#cbd5e1', bgcolor: '#f8fafc' },
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 1,
               }}
             >
-              {evidence.length >= MAX_FILES ? 'Maximum 3 files reached' : 'Upload Images'}
-              <input
-                type="file"
-                hidden
-                multiple
-                accept="image/jpeg,image/png,image/webp,image/jpg"
-                onChange={handleFileChange}
-              />
-            </Button>
+              <Box>
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', fontSize: '12.5px' }}>
+                  Evidence / Screenshots
+                </Typography>
+                <Typography variant="caption" sx={{ fontFamily: FONTS.OUTFIT, color: '#7C6A60', fontSize: '11px', display: 'block' }}>
+                  Optional • Max 3 images (up to 5MB)
+                </Typography>
+              </Box>
+
+              <Button
+                component="label"
+                variant="outlined"
+                size="small"
+                startIcon={<CloudUploadIcon sx={{ color: COLORS.PRIMARY, fontSize: 16 }} />}
+                disabled={evidence.length >= MAX_FILES}
+                sx={{
+                  flexShrink: 0,
+                  textTransform: 'none',
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  color: evidence.length >= MAX_FILES ? '#94a3b8' : COLORS.PRIMARY,
+                  bgcolor: '#FFF0E6',
+                  border: '1px solid #FFD4BC',
+                  borderRadius: '16px',
+                  px: 1.8,
+                  py: 0.45,
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.2s ease',
+                  '&:hover': { borderColor: COLORS.PRIMARY, bgcolor: '#FFE4D4' },
+                }}
+              >
+                {evidence.length >= MAX_FILES ? 'Max 3' : 'Upload'}
+                <input
+                  type="file"
+                  hidden
+                  multiple
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleFileChange}
+                />
+              </Button>
+            </Box>
 
             {fileError && (
-              <Typography sx={{ color: '#ef4444', fontSize: '12px', mt: 1, fontFamily: FONTS.PRIMARY }}>
+              <Typography sx={{ color: '#ef4444', fontSize: '11px', mt: 0.5, fontFamily: FONTS.OUTFIT }}>
                 {fileError}
               </Typography>
             )}
 
             {evidence.length > 0 && (
-              <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 0.8 }}>
                 {evidence.map((file, idx) => (
                   <Chip
                     key={idx}
-                    label={`${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`}
+                    label={`${file.name.slice(0, 15)}${file.name.length > 15 ? '...' : ''} (${(file.size / (1024 * 1024)).toFixed(1)}MB)`}
                     onDelete={() => handleRemoveFile(idx)}
                     size="small"
                     sx={{
-                      bgcolor: '#f1f5f9',
-                      color: '#334155',
-                      fontSize: '12px',
-                      fontFamily: FONTS.PRIMARY,
-                      borderRadius: '6px',
+                      bgcolor: '#FFFFFF',
+                      border: '1px solid #EFE6D5',
+                      color: '#2C1810',
+                      fontSize: '11px',
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 600,
+                      borderRadius: '12px',
+                      height: '24px',
                     }}
                   />
                 ))}
@@ -429,39 +516,61 @@ export default function RaiseTicketModal() {
         </Box>
       </DialogContent>
       
-      <DialogActions sx={{ p: 2, pt: 0 }}>
+      <DialogActions
+        sx={{
+          px: { xs: 1.8, sm: 2.5 },
+          py: { xs: 1.2, sm: 1.5 },
+          gap: 1.2,
+          borderTop: '1px solid #F5ECE3',
+          justifyContent: { xs: 'stretch', sm: 'flex-end' },
+          '& > button': {
+            flex: { xs: 1, sm: 'initial' },
+          },
+        }}
+      >
         <Button 
           onClick={handleModalClose} 
           disabled={isSubmitting}
-          sx={{ color: COLORS.SLATE_MUTED, textTransform: 'none', fontWeight: 600, fontFamily: FONTS.PRIMARY }}
+          sx={{
+            color: COLORS.PRIMARY,
+            bgcolor: '#FFF0E6',
+            border: '1px solid #FFD4BC',
+            textTransform: 'none',
+            fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
+            fontSize: '12.5px',
+            borderRadius: '20px',
+            px: 2.5,
+            py: 0.75,
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              bgcolor: '#FFE4D4',
+              borderColor: COLORS.PRIMARY,
+            },
+          }}
         >
           Cancel
         </Button>
-        <Box 
-          component="button"
+        <Button
           onClick={handleSubmit} 
-          disabled={isSubmitting} 
-          sx={{ 
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            padding: '8px 20px',
-            fontSize: '0.875rem',
-            border: 'none',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            backgroundColor: isSubmitting ? '#e2e8f0' : COLORS.BRAND_ORANGE,
-            color: isSubmitting ? '#94a3b8' : COLORS.WHITE,
-            borderRadius: '8px',
-            fontFamily: FONTS.PRIMARY,
+          disabled={isSubmitting}
+          variant="contained"
+          sx={{
+            borderRadius: '20px',
+            fontFamily: FONTS.OUTFIT,
             textTransform: 'none',
             fontWeight: 700,
-            '&:hover': { backgroundColor: isSubmitting ? '#e2e8f0' : COLORS.PRIMARY_DARK },
+            fontSize: '12.5px',
+            px: 3,
+            py: 0.75,
+            boxShadow: 'none',
+            bgcolor: isSubmitting ? '#e2e8f0 !important' : `${COLORS.PRIMARY} !important`,
+            color: isSubmitting ? '#94a3b8 !important' : '#ffffff !important',
+            '&:hover': { bgcolor: '#ea580c !important' },
           }}
         >
           {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
-        </Box>
+        </Button>
       </DialogActions>
     </Dialog>
   );

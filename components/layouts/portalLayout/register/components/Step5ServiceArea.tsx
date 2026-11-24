@@ -22,6 +22,32 @@ interface Step5ServiceAreaProps {
   isAdmin?: boolean;
 }
 
+const fieldSx = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "12px",
+    fontFamily: FONTS.OUTFIT,
+    fontSize: { xs: "12.5px", sm: "13.5px" },
+    bgcolor: "#FFFFFF",
+    minHeight: { xs: "42px", sm: "44px" },
+    "& fieldset": { borderColor: "#EFE6D5" },
+    "&:hover fieldset": { borderColor: "#FFD4BC" },
+    "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY },
+  },
+  "& .MuiInputBase-input, & .MuiOutlinedInput-input": {
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: "12.5px", sm: "13.5px" },
+    py: { xs: "8px", sm: "10px" },
+  },
+  "& .MuiInputLabel-root": {
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: "12.5px", sm: "13.5px" },
+    "&.Mui-focused": { color: COLORS.PRIMARY },
+    "&.MuiInputLabel-shrink": {
+      fontSize: { xs: "11px", sm: "12px" },
+    },
+  },
+};
+
 export default function Step5ServiceArea({
   formik,
   hideTitle = false,
@@ -162,7 +188,7 @@ export default function Step5ServiceArea({
                 (serviceAreaErrors.pincode as string)) ||
               undefined
             }
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+            sx={fieldSx}
           />
         </Grid>
 
@@ -179,7 +205,7 @@ export default function Step5ServiceArea({
               }))
             }
             variant="outlined"
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+            sx={fieldSx}
           />
         </Grid>
 
@@ -205,7 +231,7 @@ export default function Step5ServiceArea({
               Boolean(serviceAreaTouched.fullAddress) &&
               (serviceAreaErrors.fullAddress as string)
             }
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+            sx={fieldSx}
           />
           <Typography
             variant="caption"
@@ -229,7 +255,7 @@ export default function Step5ServiceArea({
               })
             }
             variant="outlined"
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+            sx={fieldSx}
           />
         </Grid>
 
@@ -254,7 +280,7 @@ export default function Step5ServiceArea({
               Boolean(serviceAreaTouched.city) &&
               (serviceAreaErrors.city as string)
             }
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+            sx={fieldSx}
           />
         </Grid>
 
@@ -278,7 +304,7 @@ export default function Step5ServiceArea({
               Boolean(serviceAreaTouched.state) &&
               (serviceAreaErrors.state as string)
             }
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+            sx={fieldSx}
           />
         </Grid>
 

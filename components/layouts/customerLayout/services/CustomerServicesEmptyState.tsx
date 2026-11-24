@@ -2,6 +2,7 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import LocationOffIcon from "@mui/icons-material/LocationOff";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
 interface CustomerServicesEmptyStateProps {
@@ -15,8 +16,10 @@ export default function CustomerServicesEmptyState({
   selectedState,
   onReset,
 }: CustomerServicesEmptyStateProps) {
-  const isCityActive = selectedCity && selectedCity !== "All" && selectedCity !== "All Cities";
-  const isStateActive = selectedState && selectedState !== "All" && selectedState !== "All States";
+  const isCityActive =
+    selectedCity && selectedCity !== "All" && selectedCity !== "All Cities";
+  const isStateActive =
+    selectedState && selectedState !== "All" && selectedState !== "All States";
 
   const locationText = isCityActive
     ? selectedCity
@@ -35,22 +38,23 @@ export default function CustomerServicesEmptyState({
       elevation={0}
       sx={{
         textAlign: "center",
-        py: 8,
-        px: 3,
-        bgcolor: "#FFF8F5",
-        borderRadius: "16px",
-        border: "1px dashed #FF6200",
-        maxWidth: 600,
+        py: { xs: 5, sm: 7 },
+        px: { xs: 2.5, sm: 4 },
+        bgcolor: "#FAF7F4",
+        borderRadius: "20px",
+        border: "1.5px dashed #FFD4BC",
+        maxWidth: 580,
         mx: "auto",
-        my: 4,
+        my: { xs: 3, md: 5 },
       }}
     >
       <Box
         sx={{
-          width: 70,
-          height: 70,
+          width: 64,
+          height: 64,
           borderRadius: "50%",
           bgcolor: "#FFF0E6",
+          border: "1px solid #FFD4BC",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -58,14 +62,19 @@ export default function CustomerServicesEmptyState({
           mb: 2,
         }}
       >
-        <LocationOffIcon sx={{ fontSize: 36, color: COLORS.PRIMARY }} />
+        {isCityActive || isStateActive ? (
+          <LocationOffIcon sx={{ fontSize: 32, color: COLORS.PRIMARY }} />
+        ) : (
+          <SearchOffIcon sx={{ fontSize: 32, color: COLORS.PRIMARY }} />
+        )}
       </Box>
       <Typography
         variant="h6"
         sx={{
-          fontFamily: FONTS.PRIMARY,
+          fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
-          color: "#1A1A1A",
+          color: "#2C1810",
+          fontSize: { xs: "1.1rem", sm: "1.25rem" },
           mb: 1,
         }}
       >
@@ -75,40 +84,48 @@ export default function CustomerServicesEmptyState({
       </Typography>
       <Typography
         sx={{
-          fontFamily: FONTS.PRIMARY,
-          color: "#666",
-          fontSize: "14px",
+          fontFamily: FONTS.OUTFIT,
+          color: "#7C6A60",
+          fontSize: { xs: "13.5px", sm: "14px" },
           lineHeight: 1.6,
           mb: 3,
+          maxWidth: 480,
+          mx: "auto",
         }}
       >
         {isCityActive || isStateActive ? (
           <>
-            We currently do not offer services in <strong>{regionText}</strong>, but we
-            are expanding rapidly! We will start serving here very soon. In the
-            meantime, please check services in another city or state.
+            We currently do not offer services in <strong>{regionText}</strong>,
+            but we are expanding rapidly! We will start serving here very soon.
+            In the meantime, please check services in another city or state.
           </>
         ) : (
           "No pooja services found matching your selected search or category filters. Please try resetting your filters or searching for something else."
         )}
       </Typography>
       <Button
-        variant="outlined"
+        variant="contained"
         onClick={onReset}
         sx={{
-          borderColor: COLORS.PRIMARY,
-          color: COLORS.PRIMARY,
-          borderRadius: "30px",
+          bgcolor: COLORS.PRIMARY,
+          color: "#FFFFFF",
+          fontFamily: FONTS.OUTFIT,
+          borderRadius: "20px",
           textTransform: "none",
           fontWeight: 700,
-          px: 3,
+          fontSize: "14px",
+          px: 3.5,
+          py: 1,
+          boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
           "&:hover": {
-            borderColor: COLORS.PRIMARY_DARK,
-            bgcolor: "#FFF0E6",
+            bgcolor: COLORS.PRIMARY_DARK,
+            boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
           },
         }}
       >
-        {isCityActive || isStateActive ? "View All Available Locations" : "Clear Filters"}
+        {isCityActive || isStateActive
+          ? "View All Available Locations"
+          : "Clear Filters"}
       </Button>
     </Paper>
   );

@@ -1,8 +1,10 @@
 "use client";
+
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import SparklesIcon from "@mui/icons-material/AutoAwesome";
+import { Box, Button, Chip, Grid, Paper, Typography } from "@mui/material";
 
 export default function CustomerProductsHero() {
   const handleScrollToProducts = () => {
@@ -18,29 +20,40 @@ export default function CustomerProductsHero() {
       sx={{
         bgcolor: "#23150D",
         color: "white",
-        borderRadius: "24px",
-        p: { xs: 2.5, sm: 4, md: 6 },
-        mb: { xs: 3, md: 6 },
+        borderRadius: { xs: "20px", sm: "24px" },
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        p: { xs: 2.5, sm: 4, md: 5 },
+        mb: { xs: 3, md: 5 },
         overflow: "hidden",
         position: "relative",
       }}
     >
-      <Grid container spacing={{ xs: 2, md: 5 }} sx={{ alignItems: "center" }}>
+      <Grid container spacing={{ xs: 2.5, md: 4 }} sx={{ alignItems: "center" }}>
         {/* Left Content Area */}
         <Grid size={{ xs: 12, md: 6 }}>
-          {/* Subtitle / Tag */}
-          <Typography
-            sx={{
-              fontSize: "12px",
-              fontWeight: 700,
-              letterSpacing: "1.5px",
-              color: "#D9531E",
-              textTransform: "uppercase",
-              mb: 1,
-            }}
-          >
-            POOJAS FOR EVERY OCCASION
-          </Typography>
+          {/* Tag Badge */}
+          <Box sx={{ mb: 1.5 }}>
+            <Chip
+              icon={
+                <SparklesIcon
+                  sx={{ fontSize: "14px !important", color: "#FF7A30 !important" }}
+                />
+              }
+              label="SACRED POOJA SAMAGRI"
+              size="small"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: "11px",
+                letterSpacing: "0.08em",
+                bgcolor: "rgba(255, 98, 0, 0.15)",
+                color: "#FF9254",
+                border: "1px solid rgba(255, 98, 0, 0.3)",
+                borderRadius: "20px",
+                height: 26,
+              }}
+            />
+          </Box>
 
           {/* Main Title */}
           <Typography
@@ -48,8 +61,8 @@ export default function CustomerProductsHero() {
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              fontSize: { xs: "24px", sm: "36px", md: "52px" },
-              lineHeight: 1.15,
+              fontSize: { xs: "26px", sm: "36px", md: "46px" },
+              lineHeight: 1.18,
               color: "#FFFFFF",
               mb: 1.5,
             }}
@@ -61,7 +74,7 @@ export default function CustomerProductsHero() {
                 fontFamily: FONTS.OUTFIT,
                 fontStyle: "italic",
                 fontWeight: 800,
-                color: "#D9531E",
+                color: "#FF6200",
                 fontSize: "inherit",
               }}
             >
@@ -72,48 +85,43 @@ export default function CustomerProductsHero() {
           {/* Description */}
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: "#C5B7AE",
-              fontSize: { xs: "13px", md: "15px" },
-              lineHeight: 1.5,
+              fontSize: { xs: "13.5px", sm: "14.5px" },
+              lineHeight: 1.6,
               maxWidth: 480,
-              mb: { xs: 2.5, md: 4 },
+              mb: { xs: 2.5, md: 3.5 },
             }}
           >
-            Pure, authentic pooja samagri — from diyas and dhoop to complete
-            pooja kits. Sourced directly, priced fairly, delivered with devotion.
+            Pure, authentic pooja samagri — from natural dhoop and pure ghee
+            diyas to complete ritual kits. Sourced directly, tested for purity,
+            and delivered with reverence.
           </Typography>
 
-          {/* Buttons Row */}
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 2,
-              mb: { xs: 2, md: 5 },
-            }}
-          >
+          {/* Action Button */}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
             <Button
               onClick={handleScrollToProducts}
               variant="contained"
-              startIcon={<ShoppingBagOutlinedIcon />}
+              startIcon={<ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />}
               sx={{
                 bgcolor: COLORS.PRIMARY,
                 color: "white",
-                px: 3,
-                py: 1,
-                borderRadius: "8px",
+                px: { xs: 2.75, sm: 3.5 },
+                py: 1.1,
+                borderRadius: "20px",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
-                fontSize: "13px",
+                fontSize: "13.5px",
                 textTransform: "none",
-                boxShadow: "0 6px 20px rgba(200, 75, 22, 0.3)",
+                boxShadow: "0 6px 20px rgba(255, 98, 0, 0.35)",
                 "&:hover": {
-                  bgcolor: COLORS.PRIMARY,
-                  boxShadow: "0 8px 25px rgba(200, 75, 22, 0.4)",
+                  bgcolor: COLORS.PRIMARY_DARK,
+                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.45)",
                 },
               }}
             >
-              Shop Samagri
+              Explore Products
             </Button>
           </Box>
         </Grid>
@@ -124,10 +132,11 @@ export default function CustomerProductsHero() {
             sx={{
               position: "relative",
               width: "100%",
-              height: { xs: 180, sm: 280, md: 380 },
-              borderRadius: "20px",
+              height: { xs: 200, sm: 260, md: 320 },
+              borderRadius: "18px",
               overflow: "hidden",
-              boxShadow: "0 15px 35px rgba(0, 0, 0, 0.4)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              boxShadow: "0 15px 35px rgba(0, 0, 0, 0.35)",
             }}
           >
             <Box
@@ -139,6 +148,8 @@ export default function CustomerProductsHero() {
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: "center",
+                transition: "transform 0.4s ease",
+                "&:hover": { transform: "scale(1.03)" },
               }}
             />
           </Box>

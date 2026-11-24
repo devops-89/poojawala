@@ -21,6 +21,32 @@ interface Step3Props {
   hideTitle?: boolean;
 }
 
+const fieldSx = {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '12px',
+    fontFamily: FONTS.OUTFIT,
+    fontSize: { xs: '12.5px', sm: '13.5px' },
+    bgcolor: '#FFFFFF',
+    minHeight: { xs: '42px', sm: '44px' },
+    '& fieldset': { borderColor: '#EFE6D5' },
+    '&:hover fieldset': { borderColor: '#FFD4BC' },
+    '&.Mui-focused fieldset': { borderColor: COLORS.PRIMARY },
+  },
+  '& .MuiInputBase-input, & .MuiOutlinedInput-input': {
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: '12.5px', sm: '13.5px' },
+    py: { xs: '8px', sm: '10px' },
+  },
+  '& .MuiInputLabel-root': {
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: '12.5px', sm: '13.5px' },
+    '&.Mui-focused': { color: COLORS.PRIMARY },
+    '&.MuiInputLabel-shrink': {
+      fontSize: { xs: '11px', sm: '12px' },
+    },
+  },
+};
+
 export default function Step3BankDetails({ formik, hideTitle = false }: Step3Props) {
   return (
     <Box>
@@ -30,12 +56,24 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 700,
-          fontSize: { xs: '18px', sm: '20px', md: '24px' },
-          lineHeight: 1.3,
+          fontSize: { xs: '17px', sm: '20px', md: '22px' },
+          lineHeight: 1.35,
           mb: { xs: 2, md: 3 },
         }}
       >
-        Bank or UPI Details (बैंक या यूपीआई विवरण)
+        Bank or UPI Details{" "}
+        <Box
+          component="span"
+          sx={{
+            fontSize: { xs: "13.5px", sm: "15px" },
+            fontWeight: 500,
+            color: "#64748B",
+            display: { xs: "block", sm: "inline" },
+            mt: { xs: 0.3, sm: 0 },
+          }}
+        >
+          (बैंक या यूपीआई विवरण)
+        </Box>
       </Typography>
       )}
 
@@ -96,7 +134,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
               }}
               error={formik.touched.upiId && Boolean(formik.errors.upiId)}
               helperText={formik.touched.upiId && (formik.errors.upiId as string)}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              sx={fieldSx}
             />
           </Grid>
         </Grid>
@@ -121,7 +159,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
                 formik.touched.accountName &&
                 (formik.errors.accountName as string)
               }
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              sx={fieldSx}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -139,7 +177,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
               helperText={
                 formik.touched.bankName && (formik.errors.bankName as string)
               }
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              sx={fieldSx}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -171,7 +209,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
                 formik.touched.accountNumber &&
                 (formik.errors.accountNumber as string)
               }
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              sx={fieldSx}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -189,7 +227,7 @@ export default function Step3BankDetails({ formik, hideTitle = false }: Step3Pro
               helperText={
                 formik.touched.ifscCode && (formik.errors.ifscCode as string)
               }
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              sx={fieldSx}
             />
           </Grid>
         </Grid>

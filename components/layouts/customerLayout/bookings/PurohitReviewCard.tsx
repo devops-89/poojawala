@@ -15,8 +15,18 @@ export default function PurohitReviewCard({ booking }: Props) {
   }
 
   return (
-    <Paper sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', height: '100%' }}>
-      <Typography variant="h6" sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 700, color: '#0f172a', mb: 2 }}>
+    <Paper
+      elevation={0}
+      sx={{
+        p: { xs: 2.5, sm: 3.5, md: 4 },
+        borderRadius: { xs: '18px', md: '24px' },
+        border: '1.5px solid #EFE6D5',
+        boxShadow: '0 4px 16px rgba(44, 24, 16, 0.04)',
+        bgcolor: '#FFFFFF',
+        height: '100%',
+      }}
+    >
+      <Typography variant="h6" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#2C1810', fontSize: '18px', mb: 2 }}>
         Purohit Review
       </Typography>
 
@@ -25,7 +35,7 @@ export default function PurohitReviewCard({ booking }: Props) {
           <Rating value={Number(booking.purohitRating) || 5} readOnly size="small" emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />} />
         </Box>
         {booking.purohitReview && (
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#5C4A40', fontSize: '14px', fontStyle: 'italic', bgcolor: '#FAF4EE', p: 2, borderRadius: '14px', border: '1px solid #EFE6D5' }}>
             "{booking.purohitReview}"
           </Typography>
         )}

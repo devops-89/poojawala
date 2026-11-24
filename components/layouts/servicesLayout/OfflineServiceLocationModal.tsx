@@ -1155,7 +1155,7 @@ export default function OfflineServiceLocationModal({
                                   }}
                                 />
                               }
-                              label={`✓ Available in ${effectiveCity}`}
+                              label={`Available in ${effectiveCity}`}
                               sx={{
                                 fontFamily: FONTS.PRIMARY,
                                 fontSize: "11.5px",
@@ -1176,7 +1176,7 @@ export default function OfflineServiceLocationModal({
                                   }}
                                 />
                               }
-                              label={`⚡ On Request in ${effectiveCity}`}
+                              label={`On Request in ${effectiveCity}`}
                               sx={{
                                 fontFamily: FONTS.PRIMARY,
                                 fontSize: "11.5px",
@@ -1196,7 +1196,7 @@ export default function OfflineServiceLocationModal({
                               ml: 0.5,
                             }}
                           >
-                            ⏱ {srv.duration}
+                            {srv.duration}
                           </Typography>
                         </Box>
                       </Box>
@@ -1386,7 +1386,10 @@ export default function OfflineServiceLocationModal({
                       gap: 0.4,
                     }}
                   >
-                    <LocationOnIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} /> Location: {effectiveCity}, {selectedState}
+                    <LocationOnIcon
+                      sx={{ fontSize: 14, color: COLORS.PRIMARY }}
+                    />{" "}
+                    Location: {effectiveCity}, {selectedState}
                   </Typography>
                 </Box>
 
@@ -1780,16 +1783,23 @@ export default function OfflineServiceLocationModal({
               <Button
                 variant="outlined"
                 onClick={() => setStep("SERVICES")}
+                startIcon={<ArrowBackIcon sx={{ fontSize: "18px !important" }} />}
                 sx={{
                   borderColor: "#D8C7B8",
                   color: "#5C4A40",
                   borderRadius: "10px",
                   textTransform: "none",
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 600,
                   width: { xs: "100%", sm: "auto" },
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY,
+                    color: COLORS.PRIMARY,
+                    bgcolor: "#FFF8F2",
+                  },
                 }}
               >
-                ← Back to Services
+                Back to Services
               </Button>
 
               <Button
@@ -1886,7 +1896,8 @@ export default function OfflineServiceLocationModal({
                   gap: 0.4,
                 }}
               >
-                <LocationOnIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} /> Requested Location:{" "}
+                <LocationOnIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} />{" "}
+                Requested Location:{" "}
                 <strong>
                   {effectiveCity}, {selectedState}
                 </strong>
@@ -2031,16 +2042,23 @@ export default function OfflineServiceLocationModal({
               <Button
                 variant="outlined"
                 onClick={() => setStep("SERVICES")}
+                startIcon={<ArrowBackIcon sx={{ fontSize: "18px !important" }} />}
                 sx={{
                   borderColor: "#D8C7B8",
                   color: "#5C4A40",
                   borderRadius: "10px",
                   textTransform: "none",
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 600,
                   width: { xs: "100%", sm: "auto" },
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY,
+                    color: COLORS.PRIMARY,
+                    bgcolor: "#FFF8F2",
+                  },
                 }}
               >
-                ← Back to Services
+                Back to Services
               </Button>
 
               <Button

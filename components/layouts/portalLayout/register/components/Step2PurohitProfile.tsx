@@ -39,31 +39,85 @@ const filter = createFilterOptions<string>();
 
 const fieldSx = {
   '& .MuiOutlinedInput-root': {
-    borderRadius: '10px',
-    fontFamily: FONTS.PRIMARY,
-    fontSize: '14px',
+    borderRadius: '12px',
+    fontFamily: FONTS.OUTFIT,
+    fontSize: { xs: '12.5px', sm: '13.5px' },
     bgcolor: '#FFFFFF',
+    minHeight: { xs: '42px', sm: '44px' },
     '& fieldset': {
-      borderColor: '#D1D5DB',
+      borderColor: '#EFE6D5',
     },
     '&:hover fieldset': {
-      borderColor: COLORS.PRIMARY,
+      borderColor: '#FFD4BC',
     },
     '&.Mui-focused fieldset': {
       borderColor: COLORS.PRIMARY,
     },
   },
+  '& .MuiInputBase-input, & .MuiOutlinedInput-input, & .MuiAutocomplete-input': {
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: '12.5px', sm: '13.5px' } as any,
+    py: { xs: '8px', sm: '10px' },
+  },
+  '& .MuiInputBase-input::placeholder, & .MuiAutocomplete-input::placeholder': {
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: '12px', sm: '13px' } as any,
+    opacity: 0.65,
+  },
   '& .MuiInputLabel-root': {
-    fontFamily: FONTS.PRIMARY,
-    fontSize: '14px',
+    fontFamily: `${FONTS.OUTFIT} !important`,
+    fontSize: { xs: '12.5px', sm: '13.5px' } as any,
     '&.Mui-focused': {
       color: COLORS.PRIMARY,
     },
+    '&.MuiInputLabel-shrink': {
+      fontSize: { xs: '11px', sm: '12px' } as any,
+    },
   },
   '& .MuiFormHelperText-root': {
-    fontFamily: FONTS.PRIMARY,
-    fontSize: '12px',
-    mt: 0.5,
+    fontFamily: FONTS.OUTFIT,
+    fontSize: '11px',
+  },
+};
+
+const popperSlotProps = {
+  popper: {
+    sx: {
+      zIndex: 1400,
+      '& .MuiPaper-root': {
+        borderRadius: '14px',
+        border: '1px solid #EFE6D5',
+        boxShadow: '0 8px 24px rgba(44, 24, 16, 0.12)',
+        mt: 0.5,
+        '& .MuiAutocomplete-listbox': {
+          py: 0.5,
+          '& .MuiAutocomplete-option': {
+            fontFamily: FONTS.OUTFIT,
+            fontSize: { xs: '12.5px', sm: '13px' },
+            py: { xs: 0.8, sm: 0.9 },
+            px: 1.5,
+            minHeight: { xs: '36px', sm: '38px' },
+            color: '#2C1810',
+            borderRadius: '8px',
+            mx: 0.5,
+            my: 0.2,
+            transition: 'all 0.15s ease',
+            '&:hover': {
+              bgcolor: '#FAF4EE',
+              color: COLORS.PRIMARY,
+            },
+            '&[aria-selected="true"]': {
+              bgcolor: '#FFF0E6',
+              color: COLORS.PRIMARY,
+              fontWeight: 600,
+              '&:hover': {
+                bgcolor: '#FFE8D9',
+              },
+            },
+          },
+        },
+      },
+    },
   },
 };
 
@@ -219,20 +273,65 @@ export default function Step2PurohitProfile({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            fontSize: { xs: '18px', sm: '20px', md: '24px' },
-            lineHeight: 1.3,
-            mb: { xs: 2, md: 3 },
+            fontSize: { xs: '17px', sm: '20px', md: '22px' },
+            color: '#1E293B',
+            lineHeight: 1.35,
+            mb: { xs: 2, md: 2.5 },
           }}
         >
-          {formik.values.role === USER_ROLE.ASTROLOGER
-            ? 'Astrologer Profile (ज्योतिषी प्रोफ़ाइल)'
-            : formik.values.role === USER_ROLE.PUROHIT
-            ? 'Purohit Profile (पुरोहित प्रोफ़ाइल)'
-            : 'Professional Profile (पेशेवर प्रोफ़ाइल)'}
+          {formik.values.role === USER_ROLE.ASTROLOGER ? (
+            <>
+              Astrologer Profile{' '}
+              <Box
+                component="span"
+                sx={{
+                  fontSize: { xs: '13.5px', sm: '15px' },
+                  fontWeight: 500,
+                  color: '#64748B',
+                  display: { xs: 'block', sm: 'inline' },
+                  mt: { xs: 0.3, sm: 0 },
+                }}
+              >
+                (ज्योतिषी प्रोफ़ाइल)
+              </Box>
+            </>
+          ) : formik.values.role === USER_ROLE.PUROHIT ? (
+            <>
+              Purohit Profile{' '}
+              <Box
+                component="span"
+                sx={{
+                  fontSize: { xs: '13.5px', sm: '15px' },
+                  fontWeight: 500,
+                  color: '#64748B',
+                  display: { xs: 'block', sm: 'inline' },
+                  mt: { xs: 0.3, sm: 0 },
+                }}
+              >
+                (पुरोहित प्रोफ़ाइल)
+              </Box>
+            </>
+          ) : (
+            <>
+              Professional Profile{' '}
+              <Box
+                component="span"
+                sx={{
+                  fontSize: { xs: '13.5px', sm: '15px' },
+                  fontWeight: 500,
+                  color: '#64748B',
+                  display: { xs: 'block', sm: 'inline' },
+                  mt: { xs: 0.3, sm: 0 },
+                }}
+              >
+                (पेशेवर प्रोफ़ाइल)
+              </Box>
+            </>
+          )}
         </Typography>
       )}
 
-      <Grid container spacing={{ xs: 2, md: 2.5 }}>
+      <Grid container spacing={{ xs: 1.8, md: 2.5 }}>
         {/* State */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
@@ -240,6 +339,7 @@ export default function Step2PurohitProfile({
             autoHighlight
             forcePopupIcon
             size="small"
+            slotProps={popperSlotProps}
             options={stateOptions}
             value={formik.values.state || null}
             onChange={(_, newValue) => {
@@ -275,6 +375,7 @@ export default function Step2PurohitProfile({
             autoHighlight
             forcePopupIcon
             size="small"
+            slotProps={popperSlotProps}
             disabled={!formik.values.state}
             options={cityOptions}
             value={formik.values.city || null}
@@ -354,6 +455,7 @@ export default function Step2PurohitProfile({
             autoHighlight
             forcePopupIcon
             size="small"
+            slotProps={popperSlotProps}
             options={QUALIFICATIONS}
             value={formik.values.qualification || ''}
             filterOptions={(options, params) => {
@@ -446,6 +548,7 @@ export default function Step2PurohitProfile({
             openOnFocus
             forcePopupIcon
             size="small"
+            slotProps={popperSlotProps}
             options={LANGUAGES}
             value={formik.values.languages || []}
             filterOptions={(options, params) => {
@@ -490,9 +593,9 @@ export default function Step2PurohitProfile({
                     size="small"
                     sx={{
                       borderRadius: '6px',
-                      fontFamily: FONTS.PRIMARY,
-                      fontSize: '12px',
-                      height: '24px',
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: { xs: '11px', sm: '12px' },
+                      height: { xs: '22px', sm: '24px' },
                       bgcolor: '#FFF7ED',
                       borderColor: '#FFDBBD',
                       color: COLORS.PRIMARY,
@@ -533,6 +636,7 @@ export default function Step2PurohitProfile({
             openOnFocus
             forcePopupIcon
             size="small"
+            slotProps={popperSlotProps}
             options={formik.values.role === USER_ROLE.ASTROLOGER ? ASTROLOGY_SPECIALIZATIONS : SPECIALIZATIONS}
             value={formik.values.specializations || []}
             filterOptions={(options, params) => {
@@ -577,9 +681,9 @@ export default function Step2PurohitProfile({
                     size="small"
                     sx={{
                       borderRadius: '6px',
-                      fontFamily: FONTS.PRIMARY,
-                      fontSize: '12px',
-                      height: '24px',
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: { xs: '11px', sm: '12px' },
+                      height: { xs: '22px', sm: '24px' },
                       bgcolor: '#FFF7ED',
                       borderColor: '#FFDBBD',
                       color: COLORS.PRIMARY,
