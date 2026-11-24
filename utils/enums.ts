@@ -86,6 +86,11 @@ export enum CANCELLED_BY {
   PUROHIT = 'PUROHIT',
   ADMIN = 'ADMIN',
 }
+export enum ROLES {
+  CUSTOMER = 'CUSTOMER',
+  PUROHIT = 'PUROHIT',
+  ADMIN = 'ADMIN',
+}
 export enum CMS_CONTENT_TYPE {
   BANNER = 'BANNER',
   FAQ = 'FAQ',

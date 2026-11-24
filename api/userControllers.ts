@@ -6,7 +6,7 @@ export const getAllUsersAPI = async (
   page: number = 1,
   limit: number = 100,
   status?: string,
-  verificationStatus?: string
+  verificationStatus?: string,
 ) => {
   try {
     const params = new URLSearchParams({
@@ -14,10 +14,13 @@ export const getAllUsersAPI = async (
       page: page.toString(),
       limit: limit.toString(),
     });
-    if (status) params.append('status', status);
-    if (verificationStatus) params.append('verificationStatus', verificationStatus);
+    if (status) params.append("status", status);
+    if (verificationStatus)
+      params.append("verificationStatus", verificationStatus);
 
-    const response = await userSecuredApi.get(`/users/get?${params.toString()}`);
+    const response = await userSecuredApi.get(
+      `/users/get?${params.toString()}`,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -35,7 +38,8 @@ export const submitContactFormAPI = async (data: any) => {
 
 export const addPurohitByAdminAPI = async (data: any) => {
   try {
-    const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+    const isFormData =
+      typeof FormData !== "undefined" && data instanceof FormData;
     const response = await userSecuredApi.post(
       "/users/admin/add-purohit",
       data,
@@ -45,7 +49,7 @@ export const addPurohitByAdminAPI = async (data: any) => {
               "Content-Type": "multipart/form-data",
             },
           }
-        : undefined
+        : undefined,
     );
     return response.data;
   } catch (error) {
@@ -55,7 +59,8 @@ export const addPurohitByAdminAPI = async (data: any) => {
 
 export const addAstrologerByAdminAPI = async (data: any) => {
   try {
-    const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+    const isFormData =
+      typeof FormData !== "undefined" && data instanceof FormData;
     const response = await userSecuredApi.post(
       "/users/admin/add-astrologer",
       data,
@@ -65,7 +70,7 @@ export const addAstrologerByAdminAPI = async (data: any) => {
               "Content-Type": "multipart/form-data",
             },
           }
-        : undefined
+        : undefined,
     );
     return response.data;
   } catch (error) {
@@ -75,7 +80,10 @@ export const addAstrologerByAdminAPI = async (data: any) => {
 
 export const createCustomerByAdminAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post("/users/admin/create-customer", data);
+    const response = await userSecuredApi.post(
+      "/users/admin/create-customer",
+      data,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -91,27 +99,33 @@ export const getPurohitsAPI = async (
   city?: string,
   serviceId?: number | string,
   isOnlineAvailable?: boolean,
-  isOfflineAvailable?: boolean
+  isOfflineAvailable?: boolean,
 ) => {
   try {
     const params = new URLSearchParams({
-      role: 'PUROHIT',
+      role: "PUROHIT",
       page: page.toString(),
       limit: limit.toString(),
     });
-    if (search) params.append('search', sanitizeAdminSearchTerm(search));
-    if (verificationStatus) params.append('verificationStatus', verificationStatus);
-    if (status) params.append('status', status);
-    if (city) params.append('city', city);
-    if (serviceId) params.append('serviceId', serviceId.toString());
+    if (search) params.append("search", sanitizeAdminSearchTerm(search));
+    if (verificationStatus)
+      params.append("verificationStatus", verificationStatus);
+    if (status) params.append("status", status);
+    if (city) params.append("city", city);
+    if (serviceId) params.append("serviceId", serviceId.toString());
     if (isOnlineAvailable !== undefined) {
-      params.append('isOnlineAvailable', isOnlineAvailable ? 'true' : 'false');
+      params.append("isOnlineAvailable", isOnlineAvailable ? "true" : "false");
     }
     if (isOfflineAvailable !== undefined) {
-      params.append('isOfflineAvailable', isOfflineAvailable ? 'true' : 'false');
+      params.append(
+        "isOfflineAvailable",
+        isOfflineAvailable ? "true" : "false",
+      );
     }
 
-    const response = await userSecuredApi.get(`/users/get?${params.toString()}`);
+    const response = await userSecuredApi.get(
+      `/users/get?${params.toString()}`,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -124,20 +138,23 @@ export const getAstrologersAPI = async (
   search?: string,
   verificationStatus?: string,
   status?: string,
-  city?: string
+  city?: string,
 ) => {
   try {
     const params = new URLSearchParams({
-      role: 'ASTROLOGER',
+      role: "ASTROLOGER",
       page: page.toString(),
       limit: limit.toString(),
     });
-    if (search) params.append('search', sanitizeAdminSearchTerm(search));
-    if (verificationStatus) params.append('verificationStatus', verificationStatus);
-    if (status) params.append('status', status);
-    if (city) params.append('city', city);
+    if (search) params.append("search", sanitizeAdminSearchTerm(search));
+    if (verificationStatus)
+      params.append("verificationStatus", verificationStatus);
+    if (status) params.append("status", status);
+    if (city) params.append("city", city);
 
-    const response = await userSecuredApi.get(`/users/get?${params.toString()}`);
+    const response = await userSecuredApi.get(
+      `/users/get?${params.toString()}`,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -165,14 +182,14 @@ export const getAstrologerByIdAPI = async (id: string | number) => {
 export const getPublicPurohitsListAPI = async (
   page: number = 1,
   limit: number = 10,
-  search: string = ""
+  search: string = "",
 ) => {
   try {
     const params = new URLSearchParams();
-    params.append('page', String(page));
-    params.append('limit', String(limit));
+    params.append("page", String(page));
+    params.append("limit", String(limit));
     if (search) {
-      params.append('search', sanitizeAdminSearchTerm(search));
+      params.append("search", sanitizeAdminSearchTerm(search));
     }
     const response = await userPublicApi.get(`/users/purohits`, { params });
     return response.data;
@@ -184,15 +201,14 @@ export const getPublicPurohitsListAPI = async (
 export const getPublicAstrologersListAPI = async (
   page: number = 1,
   limit: number = 10,
-  search: string = ""
+  search: string = "",
 ) => {
-
   const params = new URLSearchParams({
-    role: 'ASTROLOGER',
+    role: "ASTROLOGER",
     page: String(page),
     limit: String(limit),
   });
-  if (search) params.append('search', sanitizeAdminSearchTerm(search));
+  if (search) params.append("search", sanitizeAdminSearchTerm(search));
   const res2 = await userPublicApi.get(`/users/get?${params.toString()}`);
   if (res2?.data?.success || res2?.data?.data) {
     return res2.data;
@@ -203,18 +219,18 @@ export const getCustomersListAPI = async (
   page: number = 1,
   limit: number = 10,
   search: string = "",
-  status?: string
+  status?: string,
 ) => {
   try {
     const params = new URLSearchParams();
-    params.append('role', 'CUSTOMER');
-    params.append('page', String(page));
-    params.append('limit', String(limit));
+    params.append("role", "CUSTOMER");
+    params.append("page", String(page));
+    params.append("limit", String(limit));
     if (search) {
-      params.append('search', sanitizeAdminSearchTerm(search));
+      params.append("search", sanitizeAdminSearchTerm(search));
     }
     if (status) {
-      params.append('status', status);
+      params.append("status", status);
     }
     const response = await userPublicApi.get(`/users/get`, { params });
     return response.data;
@@ -223,24 +239,29 @@ export const getCustomersListAPI = async (
   }
 };
 
-export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMode: string, search?: string, serviceId?: string | number) => {
+export const getAvailablePurohitsForBookingAPI = async (
+  city: string,
+  bookingMode: string,
+  search?: string,
+  serviceId?: string | number,
+) => {
   try {
     const params = new URLSearchParams();
-    params.append('role', 'PUROHIT');
-    params.append('verificationStatus', 'APPROVED');
-    params.append('page', '1');
-    params.append('limit', '100');
+    params.append("role", "PUROHIT");
+    params.append("verificationStatus", "APPROVED");
+    params.append("page", "1");
+    params.append("limit", "100");
 
-    if (search) params.append('search', sanitizeAdminSearchTerm(search));
+    if (search) params.append("search", sanitizeAdminSearchTerm(search));
     if (serviceId && !isNaN(Number(serviceId))) {
-      params.append('serviceId', String(Number(serviceId)));
+      params.append("serviceId", String(Number(serviceId)));
     }
 
-    if (bookingMode === 'ONLINE') {
-      params.append('isOnlineAvailable', 'true');
-    } else if (bookingMode === 'OFFLINE') {
-      params.append('isOfflineAvailable', 'true');
-      if (city) params.append('city', city);
+    if (bookingMode === "ONLINE") {
+      params.append("isOnlineAvailable", "true");
+    } else if (bookingMode === "OFFLINE") {
+      params.append("isOfflineAvailable", "true");
+      if (city) params.append("city", city);
     }
 
     const response = await userPublicApi.get(`/users/get`, { params });
@@ -252,10 +273,12 @@ export const getAvailablePurohitsForBookingAPI = async (city: string, bookingMod
 
 export const updateUserStatusAPI = async (
   id: string | number,
-  status: string
+  status: string,
 ) => {
   try {
-    const response = await userSecuredApi.patch(`/users/admin/status/${id}`, { status });
+    const response = await userSecuredApi.patch(`/users/admin/status/${id}`, {
+      status,
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -264,22 +287,30 @@ export const updateUserStatusAPI = async (
 
 export const updatePurohitVerificationAPI = async (
   id: string | number,
-  status: 'APPROVED' | 'REJECTED' | 'PENDING',
-  rejectionReason?: string
+  status: "APPROVED" | "REJECTED" | "PENDING",
+  rejectionReason?: string,
 ) => {
   try {
     const payload: any = { status: status };
-    if (status === 'REJECTED' && rejectionReason) {
+    if (status === "REJECTED" && rejectionReason) {
       payload.rejectionReason = rejectionReason;
     }
-    const response = await userSecuredApi.patch(`/users/purohits/${id}/verification`, payload);
+    const response = await userSecuredApi.patch(
+      `/users/purohits/${id}/verification`,
+      payload,
+    );
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const sendOtpAPI = async (payload: { phone?: string, email?: string, role: string, countryCode?: string }) => {
+export const sendOtpAPI = async (payload: {
+  phone?: string;
+  email?: string;
+  role: string;
+  countryCode?: string;
+}) => {
   try {
     const response = await userPublicApi.post("/users/generate-otp", payload);
     return response.data;
@@ -288,7 +319,13 @@ export const sendOtpAPI = async (payload: { phone?: string, email?: string, role
   }
 };
 
-export const verifyOtpAPI = async (payload: { phone?: string, email?: string, otp: string, role: string, countryCode?: string }) => {
+export const verifyOtpAPI = async (payload: {
+  phone?: string;
+  email?: string;
+  otp: string;
+  role: string;
+  countryCode?: string;
+}) => {
   try {
     const response = await userPublicApi.post("/users/verify-otp", payload);
     return response.data;
@@ -327,7 +364,10 @@ export const updateProfileAPI = async (formData: FormData) => {
 
 export const addServiceAreaAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post("/users/purohit/service-area", data);
+    const response = await userSecuredApi.post(
+      "/users/purohit/service-area",
+      data,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -336,7 +376,10 @@ export const addServiceAreaAPI = async (data: any) => {
 
 export const updateServiceAreaAPI = async (id: number | string, data: any) => {
   try {
-    const response = await userSecuredApi.patch(`/users/purohit/service-area/${id}`, data);
+    const response = await userSecuredApi.patch(
+      `/users/purohit/service-area/${id}`,
+      data,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -345,7 +388,9 @@ export const updateServiceAreaAPI = async (id: number | string, data: any) => {
 
 export const deleteServiceAreaAPI = async (id: number | string) => {
   try {
-    const response = await userSecuredApi.delete(`/users/purohit/service-area/${id}`);
+    const response = await userSecuredApi.delete(
+      `/users/purohit/service-area/${id}`,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -354,7 +399,10 @@ export const deleteServiceAreaAPI = async (id: number | string) => {
 
 export const addBankAccountAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post("/users/purohit/bank-account", data);
+    const response = await userSecuredApi.post(
+      "/users/purohit/bank-account",
+      data,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -363,7 +411,10 @@ export const addBankAccountAPI = async (data: any) => {
 
 export const updateBankAccountAPI = async (id: number | string, data: any) => {
   try {
-    const response = await userSecuredApi.patch(`/users/purohit/bank-account/${id}`, data);
+    const response = await userSecuredApi.patch(
+      `/users/purohit/bank-account/${id}`,
+      data,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -372,7 +423,9 @@ export const updateBankAccountAPI = async (id: number | string, data: any) => {
 
 export const deleteBankAccountAPI = async (id: number | string) => {
   try {
-    const response = await userSecuredApi.delete(`/users/purohit/bank-account/${id}`);
+    const response = await userSecuredApi.delete(
+      `/users/purohit/bank-account/${id}`,
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -381,7 +434,7 @@ export const deleteBankAccountAPI = async (id: number | string) => {
 
 export const getCustomerAddressesAPI = async () => {
   try {
-    const response = await userSecuredApi.get('/users/addresses');
+    const response = await userSecuredApi.get("/users/addresses");
     return response.data;
   } catch (error) {
     throw error;
@@ -390,14 +443,17 @@ export const getCustomerAddressesAPI = async () => {
 
 export const addCustomerAddressAPI = async (data: any) => {
   try {
-    const response = await userSecuredApi.post('/users/addresses', data);
+    const response = await userSecuredApi.post("/users/addresses", data);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const updateCustomerAddressAPI = async (id: number | string, data: any) => {
+export const updateCustomerAddressAPI = async (
+  id: number | string,
+  data: any,
+) => {
   try {
     const response = await userSecuredApi.patch(`/users/addresses/${id}`, data);
     return response.data;
@@ -415,24 +471,28 @@ export const deleteCustomerAddressAPI = async (id: number | string) => {
   }
 };
 
-
 export const getCustomerDashboardStatsAPI = async () => {
   try {
-    const response = await userSecuredApi.get('/users/customer/dashboard-stats');
+    const response = await userSecuredApi.get(
+      "/users/customer/dashboard-stats",
+    );
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getAllReviewsAPI = async (status?: string, bookingType?: string) => {
+export const getAllReviewsAPI = async (
+  status?: string,
+  bookingType?: string,
+) => {
   try {
     const params = new URLSearchParams();
-    if (status && status !== 'All') {
-      params.append('status', status.toUpperCase());
+    if (status && status !== "All") {
+      params.append("status", status.toUpperCase());
     }
     if (bookingType) {
-      params.append('bookingType', bookingType.toUpperCase());
+      params.append("bookingType", bookingType.toUpperCase());
     }
     const response = await userSecuredApi.get(`/review?${params.toString()}`);
     return response.data;
@@ -450,9 +510,14 @@ export const getReviewByBookingIdAPI = async (bookingId: string | number) => {
   }
 };
 
-export const updateReviewStatusAPI = async (bookingId: string | number, status: string) => {
+export const updateReviewStatusAPI = async (
+  bookingId: string | number,
+  status: string,
+) => {
   try {
-    const response = await userSecuredApi.patch(`/review/${bookingId}/status`, { status });
+    const response = await userSecuredApi.patch(`/review/${bookingId}/status`, {
+      status,
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -468,10 +533,9 @@ export const deleteReviewAPI = async (bookingId: string | number) => {
   }
 };
 
-
 export const getAdminDashboardStatsAPI = async () => {
   try {
-    const response = await userSecuredApi.get('/users/admin/dashboard-stats');
+    const response = await userSecuredApi.get("/users/admin/dashboard-stats");
     return response.data;
   } catch (error) {
     throw error;
@@ -479,17 +543,18 @@ export const getAdminDashboardStatsAPI = async () => {
 };
 
 export const updateUserByAdminAPI = async (id: string | number, data: any) => {
-  const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+  const isFormData =
+    typeof FormData !== "undefined" && data instanceof FormData;
   const response = await userSecuredApi.patch(
     `/users/admin/update/${id}`,
     data,
     isFormData
       ? {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-      : undefined
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      : undefined,
   );
   return response.data;
 };
@@ -515,5 +580,3 @@ export const upsertPlatformSettingAPI = async (data: {
     throw error;
   }
 };
-
-
