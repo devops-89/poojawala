@@ -150,13 +150,6 @@ export default function AdminBookingsContent() {
 
     const isOffline = !isOnline;
 
-    const city = isOffline
-      ? targetBooking?.addressSnapshot?.city ||
-        targetBooking?.customerAddress?.city ||
-        targetBooking?.city ||
-        undefined
-      : undefined;
-
     const serviceId =
       targetBooking?.serviceId ||
       targetBooking?.service?.id ||
@@ -169,7 +162,7 @@ export default function AdminBookingsContent() {
         undefined,
         "APPROVED",
         undefined,
-        city,
+        undefined,
         serviceId,
         isOnline ? true : undefined,
         isOffline ? true : undefined
@@ -738,17 +731,7 @@ export default function AdminBookingsContent() {
               No approved purohits are currently registered or available for{" "}
               {assignTargetBooking?.bookingMode === "ONLINE" || bookingMode === "ONLINE"
                 ? "online bookings"
-                : `offline bookings${
-                    assignTargetBooking?.addressSnapshot?.city ||
-                    assignTargetBooking?.customerAddress?.city ||
-                    assignTargetBooking?.city
-                      ? ` in ${
-                          assignTargetBooking?.addressSnapshot?.city ||
-                          assignTargetBooking?.customerAddress?.city ||
-                          assignTargetBooking?.city
-                        }`
-                      : ""
-                  }`}
+                : "offline bookings"}
               .
             </Alert>
           )}

@@ -61,17 +61,21 @@ export function useAddressGeocoding(open: boolean, initialData?: any | null) {
 
     if (initialData) {
       const isEdit = Boolean(initialData.id);
+      const hasSpecificStreet = Boolean(initialData.streetName || initialData.addressLine2);
       const constructedAddress =
         initialData.fullAddress ||
         initialData.addressLine1 ||
-        [
-          initialData.streetName,
-          initialData.city,
-          initialData.state,
-          initialData.pincode,
-        ]
-          .filter(Boolean)
-          .join(", ");
+        (hasSpecificStreet
+          ? [
+              initialData.streetName,
+              initialData.addressLine2,
+              initialData.city,
+              initialData.state,
+              initialData.pincode,
+            ]
+              .filter(Boolean)
+              .join(", ")
+          : "");
 
       setAddressData({
         id: initialData.id,

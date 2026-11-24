@@ -50,10 +50,13 @@ import {
   sendOtpAPI,
   verifyOtpAPI,
   registerUserAPI,
+  getCustomerAddressesAPI,
 } from "@/api/userControllers";
 import { loginAPI, getMeAPI } from "@/api/authControllers";
 import { extractRoleCsrfToken, saveRoleCsrfToken } from "@/api/config";
 import { checkServiceAvailabilityAPI, resolveServiceId } from "@/api/serviceControllers";
+import { customerCreateBookingAPI } from "@/api/bookingControllers";
+import { getPaymentLinkAPI } from "@/api/paymentControllers";
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "next/navigation";
@@ -790,6 +793,8 @@ export default function OfflineServiceLocationModal({
   const [checkingAvailability, setCheckingAvailability] = useState<boolean>(false);
   const [bookingRefId, setBookingRefId] = useState<string>("");
   const [isSuccessForUnavailable, setIsSuccessForUnavailable] = useState<boolean>(false);
+  const [confirmedServiceId, setConfirmedServiceId] = useState<number | string | null>(null);
+  const [registeredAddressId, setRegisteredAddressId] = useState<number | null>(null);
 
   const fifteenYearsAgo = useMemo(() => {
     const d = new Date();
@@ -846,15 +851,15 @@ export default function OfflineServiceLocationModal({
     if (resendTimer > 0) return;
     const phone = savedSignupValues?.phone || regData.phone;
     const email = savedSignupValues?.email || regData.email;
-    if (!phone) {
-      showSnackbar("Phone number not found to resend OTP", "error");
+    if (!email && !phone) {
+      showSnackbar("Email not found to resend OTP", "error");
       return;
     }
     try {
       setIsSendingOtp(true);
       const res = await sendOtpAPI({ phone, email, role: "CUSTOMER" });
       if (res.success || res.statusCode === 200) {
-        showSnackbar("OTP resent successfully!", "success");
+        showSnackbar(res?.message || "OTP resent successfully to your email!", "success");
         setResendTimer(60);
       } else {
         showSnackbar(res.message || "Failed to resend OTP", "error");
@@ -961,7 +966,11 @@ export default function OfflineServiceLocationModal({
           }
 
           const role = userObj?.role || registerRes.user?.role || registerRes.role || "CUSTOMER";
-          const csrf = extractRoleCsrfToken(registerRes, role) || extractRoleCsrfToken(registerRes.data, role);
+          const csrf =
+            registerRes.poojawalaCustomerCsrfToken ||
+            registerRes.data?.poojawalaCustomerCsrfToken ||
+            extractRoleCsrfToken(registerRes, role) ||
+            extractRoleCsrfToken(registerRes.data, role);
           if (csrf) {
             saveRoleCsrfToken(csrf, role);
           }
@@ -982,15 +991,150 @@ export default function OfflineServiceLocationModal({
             useUserStore.getState().setProfile(userObj);
           }
 
-          // Prefill checkout details
+          // Address ID from registration response (address.id or addressId)
+          const newAddressId =
+            registerRes.address?.id ||
+            registerRes.data?.address?.id ||
+            registerRes.addressId;
+          if (newAddressId) {
+            setRegisteredAddressId(Number(newAddressId));
+          }
+
+          // Auto-login fallback if token wasn't in registration response
+          let authToken = token;
+          if (!authToken && signupPayload.email && signupPayload.password) {
+            try {
+              const loginRes = await loginAPI({
+                email: signupPayload.email,
+                password: signupPayload.password,
+                role: "CUSTOMER",
+              });
+              if (loginRes.success || loginRes.statusCode === 200) {
+                authToken =
+                  loginRes.tokens?.access?.token ||
+                  loginRes.accessToken ||
+                  loginRes.token ||
+                  loginRes.data?.accessToken;
+                if (authToken && typeof window !== "undefined") {
+                  sessionStorage.setItem("accessToken", authToken);
+                  localStorage.setItem("accessToken", authToken);
+                }
+                const loginCsrf = extractRoleCsrfToken(loginRes, "CUSTOMER");
+                if (loginCsrf) saveRoleCsrfToken(loginCsrf, "CUSTOMER");
+              }
+            } catch (loginErr) {
+              console.error("Auto login error after registration:", loginErr);
+            }
+          }
+
+          // Prefill checkout details for fallback
           const fullName = [signupPayload.firstName, signupPayload.lastName].filter(Boolean).join(" ");
           setCustomerName(fullName);
           setCustomerPhone(signupPayload.phone);
           setCustomerEmail(signupPayload.email);
           setAddressDetails(signupPayload.fullAddress || `${effectiveCity}, ${selectedState}`);
 
-          showSnackbar("Account created successfully! Please confirm your pooja booking.", "success");
-          setStep("AVAILABLE_CHECKOUT");
+          // Directly invoke Customer Create Booking API (POST /bookings/add) as requested
+          try {
+            const numServiceId =
+              Number(confirmedServiceId) ||
+              Number(resolveServiceId(selectedService?.id || service?.id || service)) ||
+              Number(selectedService?.id) ||
+              Number(service?.id) ||
+              4;
+
+            const defaultDate = new Date();
+            defaultDate.setDate(defaultDate.getDate() + 3);
+            defaultDate.setHours(10, 0, 0, 0);
+            const bookingSchedule = poojaDate
+              ? new Date(poojaDate).toISOString()
+              : defaultDate.toISOString();
+
+            const bookingPayload: any = {
+              serviceId: numServiceId,
+              scheduledAt: bookingSchedule,
+              customerAddressId: newAddressId ? Number(newAddressId) : (registeredAddressId ? Number(registeredAddressId) : undefined),
+              specialInstructions: specialInstructions || "Bring all puja materials",
+              plan: (selectedPlan || "BASIC").toUpperCase(),
+              paymentOption: paymentOption || "TOKEN",
+              bookingMode: "OFFLINE",
+              customFields: {
+                language: "Hindi",
+              },
+            };
+
+            const bookingRes = await customerCreateBookingAPI(bookingPayload, csrf, authToken);
+            if (bookingRes.success || bookingRes.statusCode === 201 || bookingRes.statusCode === 200) {
+              const resData = bookingRes.data?.data || bookingRes.data || bookingRes;
+              let paymentUrl =
+                resData?.payment?.paymentUrl ||
+                resData?.payment?.short_url ||
+                resData?.payment?.payment_link ||
+                resData?.paymentUrl ||
+                resData?.paymentLink ||
+                resData?.payment_link ||
+                resData?.redirectUrl ||
+                resData?.paymentRedirectUrl ||
+                resData?.razorpayPaymentLinkId ||
+                resData?.razorpayPaymentLink ||
+                resData?.short_url ||
+                resData?.url ||
+                bookingRes?.paymentUrl ||
+                bookingRes?.data?.paymentUrl ||
+                bookingRes?.data?.payment?.paymentUrl ||
+                bookingRes?.payment?.paymentUrl;
+
+              const bookingIdToUse = resData?.bookingId || resData?.id;
+
+              // Fallback: If no payment link returned directly, fetch via getPaymentLinkAPI
+              if (!paymentUrl && bookingIdToUse) {
+                try {
+                  const callbackUrl =
+                    typeof window !== "undefined"
+                      ? `${window.location.origin}/customer/bookings/${bookingIdToUse}`
+                      : "https://1pooja.com/customer/bookings";
+                  const payRes = await getPaymentLinkAPI(bookingIdToUse, callbackUrl);
+                  const payData = payRes?.data?.data || payRes?.data || payRes;
+                  paymentUrl =
+                    payData?.paymentUrl ||
+                    payData?.short_url ||
+                    payData?.paymentLink ||
+                    payData?.razorpayPaymentLinkId ||
+                    payData?.url ||
+                    (typeof payRes === "string" ? payRes : null);
+                } catch (e) {
+                  console.error("Failed to fetch payment link fallback:", e);
+                }
+              }
+
+              const refNum = resData?.bookingNumber || resData?.bookingId || `BK-${Date.now().toString().slice(-6)}`;
+              setBookingRefId(refNum);
+              setIsSuccessForUnavailable(false);
+
+              if (
+                paymentUrl &&
+                typeof paymentUrl === "string" &&
+                (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://") || paymentUrl.startsWith("/"))
+              ) {
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("booking_payment_pending", "true");
+                }
+                showSnackbar("Booking created successfully! Redirecting to payment...", "success");
+                window.location.href = paymentUrl;
+                return;
+              }
+
+              setStep("SUCCESS");
+              showSnackbar("Booking created successfully!", "success");
+              return;
+            }
+          } catch (bookingErr: any) {
+            console.error("Auto booking creation error after register:", bookingErr);
+            // If booking API encounters error, smooth fallback to AVAILABLE_CHECKOUT so user can confirm
+            setStep("AVAILABLE_CHECKOUT");
+            showSnackbar("Account registered! Please review your details and confirm booking.", "info");
+            return;
+          }
         } else {
           showSnackbar(registerRes.message || "Failed to create account", "error");
         }
@@ -1259,6 +1403,15 @@ export default function OfflineServiceLocationModal({
         const isAvail = Boolean(res?.data?.isAvailable ?? res?.isAvailable);
 
         if (isAvail) {
+          const resServiceId =
+            res?.data?.serviceId ||
+            res?.serviceId ||
+            res?.data?.id ||
+            res?.id ||
+            (Number(targetServiceId) || resolveServiceId(targetServiceId));
+          if (resServiceId) {
+            setConfirmedServiceId(resServiceId);
+          }
           showSnackbar(res?.message || `Service is available in ${effectiveCity}!`, "success");
           setSelectedService((prev: any) => ({
             ...(prev || service || {}),
@@ -1403,48 +1556,113 @@ export default function OfflineServiceLocationModal({
 
     try {
       setSubmitting(true);
-      const ref = `BK-${Date.now().toString().slice(-6)}`;
-      setBookingRefId(ref);
+      let targetAddressId = registeredAddressId;
+      if (!targetAddressId) {
+        try {
+          const addrRes = await getCustomerAddressesAPI();
+          const addrList = addrRes?.data?.data || addrRes?.data || addrRes || [];
+          if (Array.isArray(addrList) && addrList.length > 0) {
+            targetAddressId = addrList[0]?.id;
+          }
+        } catch (e) {}
+      }
 
-      const planPrice =
-        selectedPlan === "basic"
-          ? selectedService?.basicPrice || 5100
-          : selectedService?.standardPrice || 11000;
+      const numServiceId =
+        Number(confirmedServiceId) ||
+        Number(resolveServiceId(selectedService?.id || service?.id || service)) ||
+        Number(selectedService?.id) ||
+        Number(service?.id) ||
+        4;
 
-      const messagePayload = [
-        `Offline Pooja Confirmed Booking Details:`,
-        `Service: ${selectedService?.name} (${selectedService?.hindiName || ""})`,
-        `Plan: ${selectedPlan.toUpperCase()} (₹${planPrice.toLocaleString("en-IN")})`,
-        `Location: ${addressDetails}, ${effectiveCity}, ${selectedState}`,
-        `Date: ${poojaDate || "Flexible / Muhurat on call"}`,
-        `Time: ${poojaTime}`,
-        `Payment Mode: ${paymentOption === "TOKEN" ? "Token Amount (₹1,000 Advance)" : "Full Payment"}`,
-        `Client Name: ${customerName}`,
-        `Mobile: ${customerPhone}`,
-        `Email: ${customerEmail}`,
-        specialInstructions ? `Notes / Gotra: ${specialInstructions}` : "",
-        `Booking Ref ID: ${ref}`,
-      ]
-        .filter(Boolean)
-        .join("\n");
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 3);
+      defaultDate.setHours(10, 0, 0, 0);
+      const bookingSchedule = poojaDate
+        ? new Date(poojaDate).toISOString()
+        : defaultDate.toISOString();
 
-      await submitContactFormAPI({
-        name: customerName,
-        email: customerEmail,
-        subject: `Offline Pooja Booking: ${selectedService?.name} in ${effectiveCity} [${ref}]`,
-        message: messagePayload,
-      });
+      const bookingPayload: any = {
+        serviceId: numServiceId,
+        scheduledAt: bookingSchedule,
+        customerAddressId: targetAddressId ? Number(targetAddressId) : undefined,
+        specialInstructions: specialInstructions || "Bring all puja materials",
+        plan: (selectedPlan || "BASIC").toUpperCase(),
+        paymentOption: paymentOption || "TOKEN",
+        bookingMode: "OFFLINE",
+        customFields: {
+          language: "Hindi",
+        },
+      };
 
-      setIsSuccessForUnavailable(false);
-      setStep("SUCCESS");
-      showSnackbar(
-        "Booking request received! Redirecting to confirmation.",
-        "success",
-      );
+      const bookingRes = await customerCreateBookingAPI(bookingPayload);
+      if (bookingRes.success || bookingRes.statusCode === 201 || bookingRes.statusCode === 200) {
+        const resData = bookingRes.data?.data || bookingRes.data || bookingRes;
+        let paymentUrl =
+          resData?.payment?.paymentUrl ||
+          resData?.payment?.short_url ||
+          resData?.payment?.payment_link ||
+          resData?.paymentUrl ||
+          resData?.paymentLink ||
+          resData?.payment_link ||
+          resData?.redirectUrl ||
+          resData?.paymentRedirectUrl ||
+          resData?.razorpayPaymentLinkId ||
+          resData?.razorpayPaymentLink ||
+          resData?.short_url ||
+          resData?.url ||
+          bookingRes?.paymentUrl ||
+          bookingRes?.data?.paymentUrl ||
+          bookingRes?.data?.payment?.paymentUrl ||
+          bookingRes?.payment?.paymentUrl;
+
+        const bookingIdToUse = resData?.bookingId || resData?.id;
+
+        // Fallback: If no payment link returned directly, fetch via getPaymentLinkAPI
+        if (!paymentUrl && bookingIdToUse) {
+          try {
+            const callbackUrl =
+              typeof window !== "undefined"
+                ? `${window.location.origin}/customer/bookings/${bookingIdToUse}`
+                : "https://1pooja.com/customer/bookings";
+            const payRes = await getPaymentLinkAPI(bookingIdToUse, callbackUrl);
+            const payData = payRes?.data?.data || payRes?.data || payRes;
+            paymentUrl =
+              payData?.paymentUrl ||
+              payData?.short_url ||
+              payData?.paymentLink ||
+              payData?.razorpayPaymentLinkId ||
+              payData?.url ||
+              (typeof payRes === "string" ? payRes : null);
+          } catch (e) {
+            console.error("Failed to fetch payment link fallback:", e);
+          }
+        }
+
+        const refNum = resData?.bookingNumber || resData?.bookingId || `BK-${Date.now().toString().slice(-6)}`;
+        setBookingRefId(refNum);
+        setIsSuccessForUnavailable(false);
+
+        if (
+          paymentUrl &&
+          typeof paymentUrl === "string" &&
+          (paymentUrl.startsWith("http://") || paymentUrl.startsWith("https://") || paymentUrl.startsWith("/"))
+        ) {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("booking_payment_pending", "true");
+          }
+          showSnackbar("Booking created successfully! Redirecting to payment...", "success");
+          window.location.href = paymentUrl;
+          return;
+        }
+
+        setStep("SUCCESS");
+        showSnackbar("Booking created successfully!", "success");
+        return;
+      } else {
+        showSnackbar(bookingRes.message || "Failed to create booking", "error");
+      }
     } catch (err: any) {
-      console.error("Booking error:", err);
-      setIsSuccessForUnavailable(false);
-      setStep("SUCCESS");
+      showSnackbar(extractBackendErrorMessage(err, "Failed to create booking"), "error");
     } finally {
       setSubmitting(false);
     }
@@ -1457,12 +1675,24 @@ export default function OfflineServiceLocationModal({
       maxWidth="md"
       fullWidth
       sx={{
+        "& .MuiBackdrop-root": {
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          bgcolor: "rgba(15, 23, 42, 0.45)",
+        },
         "& .MuiDialog-container": {
           alignItems: { xs: "flex-end", sm: "center" },
           justifyContent: "center",
         },
       }}
       slotProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            bgcolor: "rgba(15, 23, 42, 0.45)",
+          },
+        },
         paper: {
           sx: {
             width: "100%",
@@ -1604,7 +1834,7 @@ export default function OfflineServiceLocationModal({
               {step === "SERVICES" && "Browse authentic pooja packages and check pandit availability"}
               {step === "REGISTER_PERSONAL" && "Step 1 of 2: Personal & Account Details"}
               {step === "REGISTER_ADDRESS" && "Step 2 of 2: Enter Delivery & Venue Details"}
-              {step === "REGISTER_OTP" && "Enter the 6-digit verification code to complete registration"}
+              {step === "REGISTER_OTP" && "Enter the 6-digit verification code sent to your email to complete registration"}
               {step === "SIGN_IN" && "Sign in with your registered mobile or email to book"}
               {step === "AVAILABLE_CHECKOUT" && "Fill in your address and preferred muhurat date"}
               {step === "UNAVAILABLE_FORM" && "Fill out the form below and we will get back to you as soon as possible."}
@@ -2225,7 +2455,7 @@ export default function OfflineServiceLocationModal({
                       role: "CUSTOMER",
                     });
                     if (res.success || res.statusCode === 200) {
-                      showSnackbar(res?.message || "OTP sent successfully to your mobile & email!", "success");
+                      showSnackbar(res?.message || "OTP sent successfully to your email!", "success");
                       setStep("REGISTER_OTP");
                       setResendTimer(60);
                       setOtp(["", "", "", "", "", ""]);
@@ -2363,7 +2593,7 @@ export default function OfflineServiceLocationModal({
                   mb: 0.5,
                 }}
               >
-                Verify Mobile & Email
+                Verify Email
               </Typography>
 
               <Typography
@@ -2378,7 +2608,7 @@ export default function OfflineServiceLocationModal({
               >
                 Enter the 6-digit verification code sent to{" "}
                 <strong style={{ color: "#1A0B05" }}>
-                  +91 {savedSignupValues?.phone || regData.phone}
+                  {savedSignupValues?.email || regData.email}
                 </strong>
               </Typography>
 

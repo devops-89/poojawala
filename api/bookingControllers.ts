@@ -27,10 +27,26 @@ export const createAstrologyBookingByAdminAPI = async (data: {
   }
 };
 
-export const customerCreateBookingAPI = async (data: any) => {
+export const customerCreateBookingAPI = async (
+  data: any,
+  customCsrfToken?: string,
+  customAuthToken?: string
+) => {
   try {
     const headers: Record<string, string> = {};
-    attachCsrfHeaders(headers, undefined, "CUSTOMER");
+    attachCsrfHeaders(headers, customCsrfToken, "CUSTOMER");
+    if (customCsrfToken) {
+      headers["x-csrf-token"] = customCsrfToken;
+      headers["X-CSRF-Token"] = customCsrfToken;
+    }
+    const token =
+      customAuthToken ||
+      (typeof window !== "undefined" &&
+        (sessionStorage.getItem("accessToken") || localStorage.getItem("accessToken"))) ||
+      "";
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await userSecuredApi.post('/bookings/add', data, { headers });
     return response.data;
   } catch (error) {
