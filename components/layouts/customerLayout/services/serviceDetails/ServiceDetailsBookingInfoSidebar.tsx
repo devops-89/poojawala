@@ -35,7 +35,7 @@ export default function ServiceDetailsBookingInfoSidebar({
           fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#2C1810",
-          fontSize: { xs: "28px", sm: "36px", md: "40px" },
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
           lineHeight: 1.2,
           mb: 2.5,
         }}
@@ -45,7 +45,7 @@ export default function ServiceDetailsBookingInfoSidebar({
 
       <Typography
         sx={{
-          fontFamily: FONTS.PRIMARY,
+          fontFamily: FONTS.OUTFIT,
           color: "#64534A",
           fontSize: "15px",
           lineHeight: 1.7,
@@ -89,7 +89,7 @@ export default function ServiceDetailsBookingInfoSidebar({
           <Box>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 fontSize: "15px",
                 color: "#2C1810",
@@ -99,7 +99,7 @@ export default function ServiceDetailsBookingInfoSidebar({
             </Typography>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "13px",
                 color: "#786558",
                 mt: 0.5,
@@ -120,7 +120,7 @@ export default function ServiceDetailsBookingInfoSidebar({
             color: COLORS.PRIMARY,
             borderColor: COLORS.PRIMARY,
             bgcolor: "#FFFFFF",
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
             fontSize: "14px",
             borderRadius: "10px",

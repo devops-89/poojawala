@@ -37,24 +37,47 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
   const router = useRouter();
 
   return (
-    <Box sx={{ mb: 5 }}>
+    <Box sx={{ mb: { xs: 3.5, md: 5 } }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1e293b' }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            fontSize: { xs: "19px", sm: "24px", md: "26px" },
+            color: '#1e293b',
+          }}
+        >
           Recent Bookings
         </Typography>
         <Button
           component={NextLink}
           href="/customer/bookings"
-          endIcon={<ArrowForwardIcon />}
-          sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700 }}
+          endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />}
+          sx={{
+            color: COLORS.PRIMARY,
+            textTransform: 'none',
+            fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
+            fontSize: { xs: "13px", sm: "14px" },
+            whiteSpace: "nowrap",
+            minWidth: "auto",
+            p: { xs: "4px 8px", sm: "6px 12px" },
+            "&:hover": { bgcolor: "transparent", textDecoration: "underline" },
+          }}
         >
-          View All Bookings
+          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+            View All Bookings
+          </Box>
+          <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+            View All
+          </Box>
         </Button>
       </Box>
 
       {recentBookings.length === 0 ? (
-        <Paper sx={{ p: 4, borderRadius: '12px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #ccc' }}>
-          <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#666', fontSize: '16px', fontWeight: 600 }}>
+        <Paper sx={{ p: 4, borderRadius: '16px', textAlign: 'center', bgcolor: '#FFF', border: '1px dashed #EADCCF' }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: '15px', fontWeight: 600 }}>
             No recent bookings found.
           </Typography>
         </Paper>
@@ -70,19 +93,31 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
             return (
               <Grid size={{ xs: 12, md: 6 }} key={row.id}>
                 <Card
-                  variant="outlined"
+                  elevation={0}
                   sx={{
-                    borderRadius: '16px',
-                    p: 3,
+                    borderRadius: '20px',
+                    p: { xs: 2, sm: 2.5, md: 3 },
                     bgcolor: 'white',
-                    borderColor: '#e2e8f0',
+                    border: '1.5px solid #EFE6D5',
                     boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-                    transition: 'transform 0.2s',
-                    '&:hover': { transform: 'translateY(-2px)' },
+                    transition:
+                      'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 12px 32px rgba(184, 134, 11, 0.12)',
+                      borderColor: '#D4B076',
+                    },
                   }}
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography sx={{ fontFamily: FONTS.PRIMARY, fontWeight: 800, color: '#1e293b', fontSize: '1.2rem' }}>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 700,
+                        color: '#1e293b',
+                        fontSize: { xs: '16.5px', sm: '18px' },
+                      }}
+                    >
                       {row.service?.name || 'Pooja Service'}
                     </Typography>
                     {(() => {
@@ -93,7 +128,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                           size="small"
                           sx={{
                             fontWeight: 700,
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: '11px',
                             height: '24px',
                             bgcolor: statusStyle.bg,
@@ -103,7 +138,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                       );
                     })()}
                   </Box>
-                  <Typography sx={{ fontFamily: FONTS.PRIMARY, color: '#64748b', fontSize: '14px', mb: 2 }}>
+                  <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#64748b', fontSize: '13.5px', mb: 2 }}>
                     Booking ID: <span style={{ fontWeight: 700, color: '#1e293b' }}>B-{row.id}</span>
                   </Typography>
 
@@ -112,9 +147,9 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <EventIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
-                      <Typography sx={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Date:</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13.5px', color: '#64748b', fontWeight: 600 }}>Date:</Typography>
                     </Box>
-                    <Typography sx={{ fontSize: '14px', fontWeight: 700, color: '#333' }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13.5px', fontWeight: 700, color: '#333' }}>
                       {row.scheduledAt
                         ? new Date(row.scheduledAt).toLocaleDateString('en-IN', {
                             month: 'short',
@@ -128,9 +163,9 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <AccountBalanceWalletIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
-                      <Typography sx={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Amount:</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13.5px', color: '#64748b', fontWeight: 600 }}>Amount:</Typography>
                     </Box>
-                    <Typography sx={{ fontSize: '14px', fontWeight: 800, color: '#333' }}>
+                    <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 800, color: '#333' }}>
                       {displayAmt}
                     </Typography>
                   </Box>
@@ -145,6 +180,7 @@ export default function DashboardRecentBookings({ recentBookings }: DashboardRec
                         borderColor: COLORS.PRIMARY,
                         textTransform: 'none',
                         fontWeight: 700,
+                        fontFamily: FONTS.OUTFIT,
                         borderRadius: '8px',
                         '&:hover': { bgcolor: '#FFF5F0', borderColor: COLORS.PRIMARY },
                       }}

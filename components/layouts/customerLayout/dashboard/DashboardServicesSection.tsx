@@ -40,7 +40,7 @@ export default function DashboardServicesSection({
   const count = displayServices.length;
 
   return (
-    <Box sx={{ mb: 5 }}>
+    <Box sx={{ mb: { xs: 3.5, md: 5 } }}>
       <Box
         sx={{
           display: "flex",
@@ -54,6 +54,7 @@ export default function DashboardServicesSection({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
+            fontSize: { xs: "19px", sm: "24px", md: "26px" },
             color: "#1e293b",
           }}
         >
@@ -63,10 +64,25 @@ export default function DashboardServicesSection({
         <Button
           component={NextLink}
           href="/customer/services?isOffline=true"
-          endIcon={<ArrowForwardIcon />}
-          sx={{ color: COLORS.PRIMARY, textTransform: "none", fontWeight: 700 }}
+          endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />}
+          sx={{
+            color: COLORS.PRIMARY,
+            textTransform: "none",
+            fontWeight: 700,
+            fontFamily: FONTS.OUTFIT,
+            fontSize: { xs: "13px", sm: "14px" },
+            whiteSpace: "nowrap",
+            minWidth: "auto",
+            p: { xs: "4px 8px", sm: "6px 12px" },
+            "&:hover": { bgcolor: "transparent", textDecoration: "underline" },
+          }}
         >
-          View All Services
+          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+            View All Services
+          </Box>
+          <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+            View All
+          </Box>
         </Button>
       </Box>
 
@@ -150,7 +166,7 @@ export default function DashboardServicesSection({
               </Box>
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   color: "#64748b",
                   fontSize: "14px",
                   lineHeight: 1.6,
@@ -171,6 +187,7 @@ export default function DashboardServicesSection({
               borderRadius: "12px",
               textTransform: "none",
               fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
               fontSize: "14px",
               px: 3,
               py: 1.2,
@@ -218,13 +235,12 @@ export default function DashboardServicesSection({
                   onClick={() =>
                     router.push(`/customer/services/${item.id}`)
                   }
-                  variant="outlined"
+                  elevation={0}
                   sx={{
-                    borderRadius: "16px",
+                    borderRadius: "20px",
                     overflow: "hidden",
                     bgcolor: "white",
-                    borderColor: "#e2e8f0",
-                    boxShadow: "0 4px 15px rgba(0,0,0,0.02)",
+                    border: "1.5px solid #EFE6D5",
                     display: "flex",
                     flexDirection: isSingle
                       ? { xs: "column", md: "row" }
@@ -232,10 +248,12 @@ export default function DashboardServicesSection({
                     height: "100%",
                     position: "relative",
                     cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
+                    transition:
+                      "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
                     "&:hover": {
                       transform: "translateY(-4px)",
-                      boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+                      boxShadow: "0 12px 32px rgba(184, 134, 11, 0.12)",
+                      borderColor: "#D4B076",
                     },
                   }}
                 >
@@ -244,14 +262,14 @@ export default function DashboardServicesSection({
                       position: "relative",
                       width: isSingle ? { xs: "100%", md: "360px" } : "100%",
                       minWidth: isSingle ? { md: "360px" } : undefined,
-                      height: isSingle ? { xs: 300, md: "100%" } : { xs: 260, sm: 290, md: 320 },
-                      minHeight: isSingle ? { md: 300 } : { xs: 260, sm: 290, md: 320 },
+                      height: isSingle ? { xs: 220, md: "100%" } : { xs: "180px", sm: "200px" },
+                      minHeight: isSingle ? { md: 220 } : { xs: "180px", sm: "200px" },
                       bgcolor: "#FAF4EE",
                       borderBottom: "1px solid #EFE6D5",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      p: 1,
+                      p: 1.5,
                       overflow: "hidden",
                       flexShrink: 0,
                     }}
@@ -293,6 +311,7 @@ export default function DashboardServicesSection({
                           bgcolor: "rgba(234, 88, 12, 0.95)",
                           color: "white",
                           fontWeight: 700,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "11px",
                           backdropFilter: "blur(4px)",
                         }}
@@ -302,7 +321,7 @@ export default function DashboardServicesSection({
 
                   <CardContent
                     sx={{
-                      p: 3,
+                      p: { xs: 2, sm: 2.5, md: 3 },
                       flexGrow: 1,
                       display: "flex",
                       flexDirection: "column",
@@ -313,11 +332,11 @@ export default function DashboardServicesSection({
                       <Typography
                         sx={{
                           fontFamily: FONTS.OUTFIT,
-                          fontWeight: 800,
-                          color: "#1e293b",
+                          fontWeight: 700,
+                          color: "#2C1810",
                           fontSize: isSingle
                             ? { xs: "1.2rem", md: "1.35rem" }
-                            : "1.1rem",
+                            : { xs: "16.5px", sm: "18px" },
                           mb: 1,
                           lineHeight: 1.3,
                         }}
@@ -327,10 +346,10 @@ export default function DashboardServicesSection({
 
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
-                          color: "#64748b",
-                          fontSize: "14px",
-                          lineHeight: 1.6,
+                          fontFamily: FONTS.OUTFIT,
+                          color: "#5C4A40",
+                          fontSize: "13.5px",
+                          lineHeight: 1.55,
                           mb: 2,
                           display: "-webkit-box",
                           WebkitLineClamp: isSingle ? 3 : 2,
@@ -362,6 +381,7 @@ export default function DashboardServicesSection({
                             sx={{
                               fontSize: "11px",
                               fontWeight: 600,
+                              fontFamily: FONTS.OUTFIT,
                               bgcolor: "#f1f5f9",
                               color: "#334155",
                             }}
@@ -382,12 +402,12 @@ export default function DashboardServicesSection({
                       <Box>
                         <Typography
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "11px",
-                            color: "#94a3b8",
+                            color: COLORS.GOLD_DARK,
                             fontWeight: 700,
                             textTransform: "uppercase",
-                            letterSpacing: "0.5px",
+                            letterSpacing: "0.08em",
                           }}
                         >
                           PRICE
@@ -417,6 +437,7 @@ export default function DashboardServicesSection({
                           borderRadius: "10px",
                           textTransform: "none",
                           fontWeight: 700,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "14px",
                           px: isSingle ? 3 : 2,
                           py: 1,

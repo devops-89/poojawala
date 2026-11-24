@@ -19,6 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import NextLink from "next/link";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -180,88 +181,147 @@ export default function ServiceDetailsPujaSamagri({
     .filter((item) => selectedItems.includes(item.id))
     .reduce((sum, item) => sum + item.price, 0);
 
-  const displayServiceName = serviceName || "Hanuman Jayanti";
+  const cleanServiceName = (serviceName || "").trim();
+  const lowerName = cleanServiceName.toLowerCase();
+  const poojaSuffix =
+    lowerName.endsWith("pooja") || lowerName.endsWith("puja") ? "" : " pooja";
+  const displayServiceText = cleanServiceName
+    ? `${cleanServiceName}${poojaSuffix}`
+    : "Vedic pooja";
+
+  const resolvedSubtitle =
+    subtitle ||
+    `These items are commonly needed for ${displayServiceText} rituals. Add what you need — we'll arrange delivery before the ceremony.`;
 
   return (
-    <Box id="puja-samagri-section" sx={{ py: 4, mb: 6 }}>
+    <Box id="puja-samagri-section" sx={{ mb: { xs: 3.5, md: 5 } }}>
       {/* Header Section */}
-      <Box
-        sx={{
-          mb: 4,
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          justifyContent: "space-between",
-          alignItems: { xs: "flex-start", sm: "flex-end" },
-          gap: 2,
-        }}
-      >
-        <Box>
+      {!showSummaryBar ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography
-            sx={{
-              fontSize: "12px",
-              fontWeight: 700,
-              letterSpacing: "1.2px",
-              color: COLORS.PRIMARY,
-              textTransform: "uppercase",
-              mb: 1,
-            }}
-          >
-            POOJA SAMAGRI
-          </Typography>
-
-          <Typography
-            variant="h3"
+            variant="h5"
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              color: "#2C1810",
-              fontSize: { xs: "28px", sm: "34px", md: "38px" },
-              lineHeight: 1.25,
-              mb: 1.5,
+              fontSize: { xs: "19px", sm: "24px", md: "26px" },
+              color: "#1e293b",
             }}
           >
-            {title || "Essential Pooja Samagri for Your Ritual"}
+            {title || "Essential Pooja Products & Samagri"}
           </Typography>
 
-          <Typography
+          <Button
+            component={NextLink}
+            href="/customer/products"
+            endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />}
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              color: "#64534A",
-              fontSize: "15px",
-              lineHeight: 1.7,
-              maxWidth: 680,
+              color: COLORS.PRIMARY,
+              textTransform: "none",
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
+              fontSize: { xs: "13px", sm: "14px" },
+              whiteSpace: "nowrap",
+              minWidth: "auto",
+              p: { xs: "4px 8px", sm: "6px 12px" },
+              "&:hover": { bgcolor: "transparent", textDecoration: "underline" },
             }}
           >
-            {subtitle ||
-              `These items are commonly needed for ${displayServiceName} pooja. Add what you need — we'll arrange delivery before the ceremony.`}
-          </Typography>
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              View All Products
+            </Box>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+              View All
+            </Box>
+          </Button>
         </Box>
-
-        <Button
-          onClick={() => router.push("/customer/products")}
-          variant="outlined"
-          endIcon={<ArrowForwardIcon />}
+      ) : (
+        <Box
           sx={{
-            borderColor: COLORS.PRIMARY,
-            color: COLORS.PRIMARY,
-            fontWeight: 700,
-            fontSize: "14px",
-            borderRadius: "10px",
-            px: 2.5,
-            py: 1,
-            textTransform: "none",
-            whiteSpace: "nowrap",
-            flexShrink: 0,
-            "&:hover": {
-              borderColor: COLORS.PRIMARY,
-              bgcolor: "#FFF0E6",
-              color: COLORS.PRIMARY,
-            },
+            mb: 4,
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", sm: "flex-end" },
+            gap: 2,
           }}
         >
-          View All Products
-        </Button>
-      </Box>
+          <Box>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "1.2px",
+                color: COLORS.PRIMARY,
+                textTransform: "uppercase",
+                mb: 1,
+              }}
+            >
+              POOJA SAMAGRI
+            </Typography>
+
+            <Typography
+              variant="h3"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: "#2C1810",
+                fontSize: { xs: "28px", sm: "34px", md: "38px" },
+                lineHeight: 1.25,
+                mb: 1.5,
+              }}
+            >
+              {title || "Essential Pooja Samagri for Your Ritual"}
+            </Typography>
+
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: "#64534A",
+                fontSize: "15px",
+                lineHeight: 1.7,
+                maxWidth: 680,
+              }}
+            >
+              {resolvedSubtitle}
+            </Typography>
+          </Box>
+
+          <Button
+            onClick={() => router.push("/customer/products")}
+            variant="outlined"
+            endIcon={<ArrowForwardIcon />}
+            sx={{
+              display: { xs: "none", sm: "inline-flex" },
+              borderColor: COLORS.PRIMARY,
+              color: COLORS.PRIMARY,
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
+              fontSize: "14px",
+              borderRadius: "10px",
+              px: 2.5,
+              py: 1,
+              textTransform: "none",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              "&:hover": {
+                borderColor: COLORS.PRIMARY,
+                bgcolor: "#FFF0E6",
+                color: COLORS.PRIMARY,
+              },
+            }}
+          >
+            View All Products
+          </Button>
+        </Box>
+      )}
 
       {/* Loading State Skeleton Grid */}
       {loading ? (
@@ -354,7 +414,7 @@ export default function ServiceDetailsPujaSamagri({
           <Typography
             variant="h6"
             sx={{
-              fontFamily: '"Georgia", serif',
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               color: "#2C1810",
               mb: 1,
@@ -364,7 +424,7 @@ export default function ServiceDetailsPujaSamagri({
           </Typography>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: "#64534A",
               fontSize: "14px",
               maxWidth: 450,
@@ -392,22 +452,24 @@ export default function ServiceDetailsPujaSamagri({
                 <Paper
                   elevation={0}
                   sx={{
-                    bgcolor: "#FAF4EE",
+                    bgcolor: "#FFFFFF",
                     border: isAdded
                       ? "1.5px solid #C84B16"
-                      : "1px solid #EADCCF",
-                    borderRadius: "18px",
+                      : "1.5px solid #EFE6D5",
+                    borderRadius: "20px",
                     overflow: "hidden",
                     height: "100%",
                     display: "flex",
                     flexDirection: isSingle ? { xs: "column", md: "row" } : "column",
-                    transition: "all 0.25s ease-in-out",
+                    transition:
+                      "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
                     boxShadow: isAdded
                       ? "0 8px 24px rgba(200, 75, 22, 0.12)"
                       : "none",
                     "&:hover": {
                       transform: "translateY(-4px)",
-                      boxShadow: "0 10px 28px rgba(44, 24, 16, 0.08)",
+                      boxShadow: "0 12px 32px rgba(184, 134, 11, 0.12)",
+                      borderColor: isAdded ? "#C84B16" : "#D4B076",
                     },
                   }}
                 >
@@ -416,8 +478,14 @@ export default function ServiceDetailsPujaSamagri({
                     sx={{
                       position: "relative",
                       width: isSingle ? { xs: "100%", md: "340px" } : "100%",
-                      height: isSingle ? { xs: 320, md: "auto" } : { xs: 280, sm: 310, md: 340 },
-                      minHeight: isSingle ? { md: 320 } : { xs: 280, sm: 310, md: 340 },
+                      height: isSingle ? { xs: 220, md: "100%" } : { xs: "180px", sm: "200px" },
+                      minHeight: isSingle ? { md: 220 } : { xs: "180px", sm: "200px" },
+                      bgcolor: "#FAF4EE",
+                      borderBottom: "1px solid #EFE6D5",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      p: 1.5,
                       flexShrink: 0,
                       overflow: "hidden",
                     }}
@@ -427,10 +495,13 @@ export default function ServiceDetailsPujaSamagri({
                       image={item.image}
                       alt={item.title}
                       sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        objectPosition: "center top",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        width: "auto",
+                        height: "auto",
+                        objectFit: "contain",
+                        objectPosition: "center",
+                        borderRadius: "8px",
                         transition: "transform 0.35s ease",
                         "&:hover": {
                           transform: "scale(1.05)",
@@ -450,6 +521,7 @@ export default function ServiceDetailsPujaSamagri({
                           py: 0.5,
                           fontSize: "12px",
                           fontWeight: 700,
+                          fontFamily: FONTS.OUTFIT,
                           display: "flex",
                           alignItems: "center",
                           gap: 0.5,
@@ -465,7 +537,7 @@ export default function ServiceDetailsPujaSamagri({
                   {/* Card Content */}
                   <Box
                     sx={{
-                      p: 3,
+                      p: { xs: 2, sm: 2.5, md: 3 },
                       display: "flex",
                       flexDirection: "column",
                       flexGrow: 1,
@@ -479,7 +551,7 @@ export default function ServiceDetailsPujaSamagri({
                           fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           color: "#2C1810",
-                          fontSize: "19px",
+                          fontSize: { xs: "16.5px", sm: "18px" },
                           lineHeight: 1.3,
                           mb: 1,
                         }}
@@ -489,11 +561,15 @@ export default function ServiceDetailsPujaSamagri({
 
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
-                          color: "#64534A",
+                          fontFamily: FONTS.OUTFIT,
+                          color: "#5C4A40",
                           fontSize: "13.5px",
-                          lineHeight: 1.6,
+                          lineHeight: 1.55,
                           mb: 2.5,
+                          display: "-webkit-box",
+                          WebkitLineClamp: isSingle ? 3 : 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
                         }}
                       >
                         {item.description}
@@ -513,7 +589,7 @@ export default function ServiceDetailsPujaSamagri({
                         sx={{
                           fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
-                          fontSize: "21px",
+                          fontSize: "20px",
                           color: "#2C1810",
                         }}
                       >
@@ -522,7 +598,7 @@ export default function ServiceDetailsPujaSamagri({
                           <Typography
                             component="span"
                             sx={{
-                              fontFamily: FONTS.PRIMARY,
+                              fontFamily: FONTS.OUTFIT,
                               fontSize: "12px",
                               fontWeight: 600,
                               color: "#8C786D",
@@ -547,6 +623,7 @@ export default function ServiceDetailsPujaSamagri({
                           px: 2.5,
                           py: 0.8,
                           fontWeight: 700,
+                          fontFamily: FONTS.OUTFIT,
                           fontSize: "14px",
                           textTransform: "none",
                           boxShadow: "none",
@@ -565,6 +642,41 @@ export default function ServiceDetailsPujaSamagri({
             );
           })}
         </Grid>
+      )}
+
+      {/* Mobile-only Bottom Action Button */}
+      {showSummaryBar && displayItems.length > 0 && (
+        <Box
+          sx={{
+            display: { xs: "flex", sm: "none" },
+            justifyContent: "center",
+            mt: 3,
+          }}
+        >
+          <Button
+            onClick={() => router.push("/customer/products")}
+            variant="outlined"
+            endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
+            sx={{
+              borderColor: COLORS.PRIMARY,
+              color: COLORS.PRIMARY,
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
+              fontSize: "14px",
+              borderRadius: "24px",
+              px: 3.5,
+              py: 1,
+              textTransform: "none",
+              "&:hover": {
+                borderColor: COLORS.PRIMARY,
+                bgcolor: "#FFF0E6",
+                color: COLORS.PRIMARY,
+              },
+            }}
+          >
+            View All Products
+          </Button>
+        </Box>
       )}
 
       {/* Floating/Bottom Summary Bar when items are selected */}

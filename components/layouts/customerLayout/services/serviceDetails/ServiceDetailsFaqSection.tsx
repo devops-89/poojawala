@@ -54,12 +54,13 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
   const faqList = customFaqItems || defaultFaqItems;
 
   return (
-    <Box sx={{ py: 3, mb: 4 }}>
-      <Grid container spacing={5} sx={{ alignItems: "flex-start" }}>
+    <Box sx={{ py: { xs: 2, md: 3 }, mb: { xs: 3, md: 4 } }}>
+      <Grid container spacing={{ xs: 3, md: 5 }} sx={{ alignItems: "flex-start" }}>
         {/* Left Column: Questions Header */}
         <Grid size={{ xs: 12, md: 5 }}>
           <Typography
             sx={{
+              fontFamily: FONTS.OUTFIT,
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "1.2px",
@@ -77,7 +78,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
               color: "#2C1810",
-              fontSize: { xs: "28px", sm: "36px", md: "40px" },
+              fontSize: { xs: "24px", sm: "32px", md: "40px" },
               lineHeight: 1.2,
               mb: 2.5,
             }}
@@ -87,8 +88,8 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
 
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
-              color: "#64534A",
+              fontFamily: FONTS.OUTFIT,
+              color: "#5C4A40",
               fontSize: "15px",
               lineHeight: 1.7,
               maxWidth: 420,
@@ -130,7 +131,7 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
                 >
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontWeight: 700,
                       color: "#2C1810",
                       fontSize: { xs: "15px", sm: "16px" },
@@ -143,8 +144,8 @@ export default function ServiceDetailsFaqSection({ serviceName, faqItems: custom
                 <AccordionDetails sx={{ px: 3, pb: 3, pt: 0 }}>
                   <Typography
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      color: "#64534A",
+                      fontFamily: FONTS.OUTFIT,
+                      color: "#5C4A40",
                       fontSize: "14px",
                       lineHeight: 1.65,
                     }}
