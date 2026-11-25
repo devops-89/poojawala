@@ -1,10 +1,15 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 // ==========================================
 // 1. COMMON & UTILITY TYPES
 // ==========================================
 
-export type ServiceCategoryType = 'PUJA' | 'ASTROLOGY' | 'RITUAL' | 'OTHER' | string;
+export type ServiceCategoryType =
+  | "PUJA"
+  | "ASTROLOGY"
+  | "RITUAL"
+  | "OTHER"
+  | string;
 
 export interface BreadcrumbItem {
   label: string;
@@ -38,7 +43,7 @@ export interface Column<T = any> {
   label: string;
   minWidth?: number | string;
   width?: number | string;
-  align?: 'right' | 'left' | 'center';
+  align?: "right" | "left" | "center";
   format?: (value: any, row: T) => React.ReactNode;
   render?: (item: T, index: number) => React.ReactNode;
   sortable?: boolean;
@@ -66,7 +71,11 @@ export interface AdminDataTableProps<T = any> {
   minWidth?: number | string;
   emptyMessage?: string;
   keyExtractor?: (item: T, index?: number) => string | number;
-  onRowClick?: (item: T, index: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
+  onRowClick?: (
+    item: T,
+    index: number,
+    event: React.MouseEvent<HTMLTableRowElement>,
+  ) => void;
   getRowHref?: (item: T, index: number) => string | undefined;
   [key: string]: any;
 }
@@ -116,7 +125,15 @@ export interface ITemple {
   openingTime?: string;
   closingTime?: string;
   trustRegNo?: string;
-  aartis?: Array<{ id?: number | string; name: string; time: string; description?: string; isDeleted?: boolean }> | string;
+  aartis?:
+    | Array<{
+        id?: number | string;
+        name: string;
+        time: string;
+        description?: string;
+        isDeleted?: boolean;
+      }>
+    | string;
   trustDocUrl?: string;
   trustDocDownloadUrl?: string;
   deityPhotoUrl?: string;
@@ -299,7 +316,11 @@ export interface ServiceBasicFieldsProps {
   handleChange: any;
   handleBlur: any;
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
-  setFieldTouched?: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void;
+  setFieldTouched?: (
+    field: string,
+    isTouched?: boolean,
+    shouldValidate?: boolean,
+  ) => void;
 }
 
 // ==========================================
@@ -408,7 +429,7 @@ export interface AddressFormData {
   city: string;
   state: string;
   pincode: string;
-  addressType?: 'HOME' | 'OFFICE' | 'OTHER' | string;
+  addressType?: "HOME" | "OFFICE" | "OTHER" | string;
   isDefault?: boolean;
   latitude?: string | number;
   longitude?: string | number;
@@ -484,4 +505,26 @@ export interface NotificationItem {
   createdAt?: string;
   type?: string;
   [key: string]: any;
+}
+
+export interface AUTHENTICATION_WRAPPER_PROPS {
+  bg: string;
+  heading: string;
+  description: string;
+  list?: {
+    icon: React.ElementType;
+    label: string;
+  }[];
+  children: ReactNode;
+}
+
+export interface SIGNUP_DETAILS_PROPS {
+  firstName: string;
+  lastName: string;
+  phoneNumber:string;
+  countryCode:string;
+  email:string;
+  dob:string;
+  password:string
+  
 }
