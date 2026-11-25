@@ -128,11 +128,11 @@ export default function Step0BasicDetails({
                         boxShadow: "0 8px 24px rgba(44, 24, 16, 0.12)",
                         mt: 0.5,
                         "& .MuiMenuItem-root": {
-                          fontFamily: FONTS.OUTFIT,
-                          fontSize: { xs: "12.5px", sm: "13px" },
-                          py: { xs: 0.8, sm: 0.9 },
-                          px: 1.6,
-                          minHeight: { xs: "36px", sm: "38px" },
+                          fontFamily: `${FONTS.OUTFIT} !important`,
+                          fontSize: { xs: "12.5px !important", sm: "13px !important" },
+                          py: { xs: "8px !important", sm: "10px !important" },
+                          px: "16px !important",
+                          minHeight: { xs: "36px !important", sm: "38px !important" },
                           color: "#2C1810",
                           borderRadius: "8px",
                           mx: 0.5,
@@ -158,8 +158,28 @@ export default function Step0BasicDetails({
               },
             }}
           >
-            <MenuItem value={USER_ROLE.PUROHIT}>Purohit (पुरोहित)</MenuItem>
-            <MenuItem value={USER_ROLE.ASTROLOGER}>Astrologer (ज्योतिषी)</MenuItem>
+            <MenuItem
+              value={USER_ROLE.PUROHIT}
+              sx={{
+                fontFamily: `${FONTS.OUTFIT} !important`,
+                fontSize: { xs: "12.5px !important", sm: "13px !important" },
+                minHeight: { xs: "36px !important", sm: "38px !important" },
+                py: { xs: "8px !important", sm: "10px !important" },
+              }}
+            >
+              Purohit (पुरोहित)
+            </MenuItem>
+            <MenuItem
+              value={USER_ROLE.ASTROLOGER}
+              sx={{
+                fontFamily: `${FONTS.OUTFIT} !important`,
+                fontSize: { xs: "12.5px !important", sm: "13px !important" },
+                minHeight: { xs: "36px !important", sm: "38px !important" },
+                py: { xs: "8px !important", sm: "10px !important" },
+              }}
+            >
+              Astrologer (ज्योतिषी)
+            </MenuItem>
           </TextField>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>

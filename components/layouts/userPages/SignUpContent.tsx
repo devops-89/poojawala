@@ -100,7 +100,6 @@ const fullValidationSchema = step1ValidationSchema.concat(
   }),
 );
 
-
 function FormikValuesPersist({ currentStep }: { currentStep: number }) {
   const { values } = useFormikContext<any>();
   useEffect(() => {
@@ -190,7 +189,7 @@ export default function SignUpContent() {
     }
   }, [searchParams, showSnackbar]);
 
-// Permitting access to /sign-up even if already logged in
+  // Permitting access to /sign-up even if already logged in
 
   const handleFetchCurrentLocation = (setFieldValue: any) => {
     if (!navigator.geolocation) {

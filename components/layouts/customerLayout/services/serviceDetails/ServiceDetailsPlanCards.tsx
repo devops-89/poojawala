@@ -244,27 +244,46 @@ export default function ServiceDetailsPlanCards({
   }
 
   return (
-    <Box sx={{ mb: 5 }}>
-      <Typography
-        sx={{
-          fontSize: "12px",
-          fontWeight: 700,
-          letterSpacing: "1.2px",
-          color: COLORS.PRIMARY,
-          textTransform: "uppercase",
-          mb: 1,
-        }}
-      >
-        SELECT YOUR PLAN
-      </Typography>
+    <Box sx={{ mb: { xs: 3.5, sm: 5 } }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+        <Box
+          sx={{
+            width: 26,
+            height: 26,
+            borderRadius: "50%",
+            bgcolor: COLORS.PRIMARY,
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "12px",
+            fontWeight: 800,
+            fontFamily: FONTS.OUTFIT,
+          }}
+        >
+          1
+        </Box>
+        <Typography
+          sx={{
+            fontSize: "12px",
+            fontWeight: 700,
+            letterSpacing: "1.2px",
+            color: COLORS.PRIMARY,
+            textTransform: "uppercase",
+            fontFamily: FONTS.OUTFIT,
+          }}
+        >
+          SELECT YOUR PLAN
+        </Typography>
+      </Box>
       <Typography
         variant="h4"
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
           color: "#2C1810",
-          fontSize: { xs: "22px", sm: "28px" },
-          mb: 3,
+          fontSize: { xs: "20px", sm: "28px" },
+          mb: { xs: 2, sm: 3 },
         }}
       >
         Choose the package that suits your ritual requirements
@@ -369,32 +388,75 @@ export default function ServiceDetailsPlanCards({
                       justifyContent: "space-between",
                       alignItems: "center",
                       mb: 1.5,
+                      flexWrap: "wrap",
+                      gap: 1,
                     }}
                   >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                      <Box
+                        sx={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: "50%",
+                          border: isSelected
+                            ? `2px solid ${COLORS.PRIMARY}`
+                            : "2px solid #D8C7B8",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {isSelected && (
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: "50%",
+                              bgcolor: COLORS.PRIMARY,
+                            }}
+                          />
+                        )}
+                      </Box>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 800,
+                          color: "#2C1810",
+                          fontSize: { xs: "17px", sm: "20px" },
+                        }}
+                      >
+                        {planTitle}
+                      </Typography>
+                      {planKey === "standard" && (
+                        <Chip
+                          label="Most Popular"
+                          size="small"
+                          sx={{
+                            bgcolor: COLORS.PRIMARY,
+                            color: "white",
+                            fontWeight: 700,
+                            fontSize: "10px",
+                            height: "20px",
+                            borderRadius: "10px",
+                          }}
+                        />
+                      )}
+                    </Box>
+
                     <Typography
-                      variant="h6"
+                      variant="h4"
                       sx={{
                         fontFamily: FONTS.OUTFIT,
                         fontWeight: 800,
-                        color: "#2C1810",
-                        fontSize: "20px",
+                        color: isSelected ? COLORS.PRIMARY : "#2C1810",
+                        fontSize: { xs: "22px", sm: "26px" },
                       }}
                     >
-                      {planTitle}
+                      ₹{totalCardPrice.toLocaleString("en-IN")}
                     </Typography>
                   </Box>
-
-                  <Typography
-                    variant="h4"
-                    sx={{
-                      fontFamily: FONTS.OUTFIT,
-                      fontWeight: 800,
-                      color: COLORS.PRIMARY,
-                      mb: 2.5,
-                    }}
-                  >
-                    ₹{totalCardPrice.toLocaleString("en-IN")}
-                  </Typography>
 
                   {/* Normal Features */}
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>

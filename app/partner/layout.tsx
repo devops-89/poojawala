@@ -167,7 +167,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           sx={{
             flexGrow: 1,
             p: { xs: 2, md: 4 },
-            mt: { xs: 11, md: 11 },
+            mt: isAstrologer ? { xs: '62px', md: '72px' } : { xs: 11, md: 11 },
             width: isAstrologer ? '100%' : { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
             maxWidth: '100vw',
             overflowX: 'hidden',

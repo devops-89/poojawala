@@ -14,8 +14,8 @@ import {
   Menu,
   MenuItem,
   Pagination,
-  CircularProgress,
   Avatar,
+  Skeleton,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -28,6 +28,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import SensorsIcon from '@mui/icons-material/Sensors';
 import {
   getAstrologyBookingsAPI,
   updateBookingStatusAPI,
@@ -260,7 +264,7 @@ export default function AstrologyBookingsContent() {
           customer: booking.customer
             ? `${booking.customer.firstName || ''} ${booking.customer.lastName || ''}`.trim()
             : 'Devotee',
-          ritual: 'Astrology Consultation',
+          ritual: booking.plan?.name || (booking.bookingType === 'ASTROLOGY' ? 'Astrology Consultation' : 'Astrology Consultation'),
           date: schedule.date,
           time: schedule.time,
           scheduleFull: schedule.full,
@@ -435,40 +439,34 @@ export default function AstrologyBookingsContent() {
   };
 
   return (
-    <Box sx={{ maxWidth: '1400px', mx: 'auto' }}>
+    <Box sx={{ maxWidth: '1400px', mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, pt: { xs: 1.5, sm: 2, md: 2.5 }, pb: { xs: 3, sm: 4 } }}>
+      {/* Top Header */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          mb: 4,
+          mb: { xs: 2.5, sm: 3.5, md: 4 },
           flexWrap: 'wrap',
           gap: 2,
         }}
       >
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <AutoAwesomeIcon sx={{ color: COLORS.PRIMARY, fontSize: 32 }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+            <AutoAwesomeIcon sx={{ color: COLORS.PRIMARY, fontSize: { xs: 26, sm: 30, md: 34 } }} />
             <Typography
               variant="h4"
               sx={{
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: COLORS.DARK,
-                mb: 0.5,
+                fontSize: { xs: '22px', sm: '26px', md: '30px' },
+                lineHeight: 1.2,
               }}
             >
               Astrology Bookings
             </Typography>
           </Box>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              color: COLORS.MUTED_TEXT,
-            }}
-          >
-            Manage your client astrology sessions and active consultations.
-          </Typography>
         </Box>
       </Box>
 
@@ -477,37 +475,37 @@ export default function AstrologyBookingsContent() {
         <Paper
           elevation={0}
           sx={{
-            p: 3,
+            p: { xs: 2, sm: 3 },
             mb: 4,
-            borderRadius: "20px",
-            bgcolor: "#FFF0F0",
-            border: "2px solid #FFD6D6",
-            boxShadow: "0 6px 24px rgba(211, 47, 47, 0.08)",
+            borderRadius: { xs: '16px', sm: '20px' },
+            bgcolor: '#FFF0F0',
+            border: '2px solid #FFD6D6',
+            boxShadow: '0 6px 24px rgba(211, 47, 47, 0.08)',
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2.5, flexWrap: "wrap" }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, flexWrap: 'wrap' }}>
             <Box
               sx={{
-                bgcolor: "#FFE0E0",
-                color: "#D32F2F",
-                p: 1.5,
-                borderRadius: "14px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                bgcolor: '#FFE0E0',
+                color: '#D32F2F',
+                p: 1.2,
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <ErrorIcon sx={{ fontSize: 32 }} />
+              <ErrorIcon sx={{ fontSize: 28 }} />
             </Box>
 
-            <Box sx={{ flex: 1, minWidth: 260 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
+            <Box sx={{ flex: 1, minWidth: 240 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.8, flexWrap: 'wrap' }}>
                 <Typography
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
-                    fontSize: "18px",
-                    color: "#D32F2F",
+                    fontSize: { xs: '16px', sm: '18px' },
+                    color: '#D32F2F',
                   }}
                 >
                   Verification Status: REJECTED
@@ -516,7 +514,7 @@ export default function AstrologyBookingsContent() {
                   label="Action Required"
                   color="error"
                   size="small"
-                  sx={{ fontWeight: 700, borderRadius: "20px" }}
+                  sx={{ fontWeight: 700, borderRadius: '20px', height: '22px' }}
                 />
               </Box>
 
@@ -525,8 +523,8 @@ export default function AstrologyBookingsContent() {
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
-                    fontSize: "14px",
-                    color: "#991B1B",
+                    fontSize: '13.5px',
+                    color: '#991B1B',
                     mb: 1,
                   }}
                 >
@@ -537,9 +535,9 @@ export default function AstrologyBookingsContent() {
               <Typography
                 sx={{
                   fontFamily: FONTS.OUTFIT,
-                  fontSize: "14px",
-                  color: "#4B5563",
-                  lineHeight: 1.6,
+                  fontSize: { xs: '13px', sm: '14px' },
+                  color: '#4B5563',
+                  lineHeight: 1.5,
                   mb: 2,
                 }}
               >
@@ -550,19 +548,21 @@ export default function AstrologyBookingsContent() {
                 variant="contained"
                 color="error"
                 onClick={() => {
-                  sessionStorage.setItem("profileActiveTab", "documents");
-                  router.push("/partner/profile/edit");
+                  sessionStorage.setItem('profileActiveTab', 'documents');
+                  router.push('/partner/profile/edit');
                 }}
                 startIcon={<EditIcon />}
                 sx={{
-                  borderRadius: "10px",
+                  borderRadius: '10px',
                   fontWeight: 700,
-                  textTransform: "none",
-                  px: 3,
-                  py: 1,
-                  boxShadow: "0 4px 14px rgba(211, 47, 47, 0.25)",
-                  "&:hover": {
-                    bgcolor: "#B91C1C",
+                  textTransform: 'none',
+                  fontFamily: FONTS.OUTFIT,
+                  px: 2.5,
+                  py: 0.9,
+                  minHeight: '40px',
+                  boxShadow: '0 4px 14px rgba(211, 47, 47, 0.25)',
+                  '&:hover': {
+                    bgcolor: '#B91C1C',
                   },
                 }}
               >
@@ -578,37 +578,37 @@ export default function AstrologyBookingsContent() {
         <Paper
           elevation={0}
           sx={{
-            p: 3,
+            p: { xs: 2, sm: 3 },
             mb: 4,
-            borderRadius: "20px",
-            bgcolor: "#FFF8E1",
-            border: "2px solid #FFE082",
-            boxShadow: "0 6px 24px rgba(255, 143, 0, 0.08)",
+            borderRadius: { xs: '16px', sm: '20px' },
+            bgcolor: '#FFF8E1',
+            border: '2px solid #FFE082',
+            boxShadow: '0 6px 24px rgba(255, 143, 0, 0.08)',
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2.5, flexWrap: "wrap" }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, flexWrap: 'wrap' }}>
             <Box
               sx={{
-                bgcolor: "#FFE8B6",
-                color: "#E65100",
-                p: 1.5,
-                borderRadius: "14px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                bgcolor: '#FFE8B6',
+                color: '#E65100',
+                p: 1.2,
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <PendingActionsIcon sx={{ fontSize: 32 }} />
+              <PendingActionsIcon sx={{ fontSize: 28 }} />
             </Box>
 
-            <Box sx={{ flex: 1, minWidth: 260 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1, flexWrap: "wrap" }}>
+            <Box sx={{ flex: 1, minWidth: 240 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.8, flexWrap: 'wrap' }}>
                 <Typography
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
-                    fontSize: "18px",
-                    color: "#E65100",
+                    fontSize: { xs: '16px', sm: '18px' },
+                    color: '#E65100',
                   }}
                 >
                   Action Required: Complete Your Profile
@@ -617,16 +617,16 @@ export default function AstrologyBookingsContent() {
                   label="Verification Pending"
                   color="warning"
                   size="small"
-                  sx={{ fontWeight: 700, borderRadius: "20px", bgcolor: "#FF9800", color: "#FFF" }}
+                  sx={{ fontWeight: 700, borderRadius: '20px', bgcolor: '#FF9800', color: '#FFF', height: '22px' }}
                 />
               </Box>
 
               <Typography
                 sx={{
                   fontFamily: FONTS.OUTFIT,
-                  fontSize: "14px",
-                  color: "#4B5563",
-                  lineHeight: 1.6,
+                  fontSize: { xs: '13px', sm: '14px' },
+                  color: '#4B5563',
+                  lineHeight: 1.5,
                   mb: 2,
                 }}
               >
@@ -636,21 +636,22 @@ export default function AstrologyBookingsContent() {
               <Button
                 variant="contained"
                 onClick={() => {
-                  router.push("/partner/profile/edit");
+                  router.push('/partner/profile/edit');
                 }}
                 startIcon={<EditIcon />}
                 sx={{
-                  bgcolor: "#FF6200",
-                  color: "white",
+                  bgcolor: '#FF6200',
+                  color: 'white',
                   fontWeight: 700,
                   fontFamily: FONTS.OUTFIT,
-                  borderRadius: "10px",
-                  textTransform: "none",
-                  px: 3,
-                  py: 1,
-                  boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
-                  "&:hover": {
-                    bgcolor: "#E05500",
+                  borderRadius: '10px',
+                  textTransform: 'none',
+                  px: 2.5,
+                  py: 0.9,
+                  minHeight: '40px',
+                  boxShadow: '0 4px 14px rgba(255, 98, 0, 0.25)',
+                  '&:hover': {
+                    bgcolor: '#E05500',
                   },
                 }}
               >
@@ -664,16 +665,27 @@ export default function AstrologyBookingsContent() {
       {/* Main Container - Active Bookings View Only */}
       <Paper
         sx={{
-          borderRadius: '16px',
-          border: `1px solid ${COLORS.BORDER_LIGHT}`,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+          borderRadius: { xs: '16px', md: '20px' },
+          border: '1px solid #EFE6D5',
+          boxShadow: '0 4px 20px rgba(44, 24, 16, 0.04)',
           overflow: 'hidden',
-          p: { xs: 2.5, md: 4 },
-          bgcolor: COLORS.WHITE,
+          p: { xs: 2, sm: 2.5, md: 3.5 },
+          bgcolor: '#FFFFFF',
         }}
       >
         {/* Status Filter Chips: Accepted, Completed, Cancelled */}
-        <Box sx={{ display: 'flex', gap: 1.5, mb: 3.5, flexWrap: 'wrap', alignItems: 'center' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1.2,
+            mb: { xs: 2.5, md: 3.5 },
+            overflowX: 'auto',
+            pb: { xs: 0.5, md: 0 },
+            scrollbarWidth: 'none',
+            '&::-webkit-scrollbar': { display: 'none' },
+            alignItems: 'center',
+          }}
+        >
           {ASTROLOGER_STATUSES.map((status) => {
             const isSelected = activeStatus.toUpperCase() === status.toUpperCase();
             return (
@@ -688,16 +700,18 @@ export default function AstrologyBookingsContent() {
                 sx={{
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
-                  fontSize: '13px',
-                  height: '34px',
-                  px: 1,
-                  bgcolor: isSelected ? COLORS.PRIMARY : COLORS.WHITE,
-                  color: isSelected ? COLORS.WHITE : COLORS.MUTED_TEXT,
-                  border: isSelected
-                    ? `1px solid ${COLORS.PRIMARY}`
-                    : '1px solid #ddd',
+                  fontSize: { xs: '13px', sm: '13.5px' },
+                  height: { xs: '34px', sm: '36px' },
+                  px: 1.2,
+                  borderRadius: '20px',
+                  whiteSpace: 'nowrap',
+                  bgcolor: isSelected ? COLORS.PRIMARY : '#FFFDFB',
+                  color: isSelected ? '#FFFFFF' : COLORS.MUTED_TEXT,
+                  border: isSelected ? `1px solid ${COLORS.PRIMARY}` : '1px solid #E5E7EB',
+                  boxShadow: isSelected ? '0 2px 8px rgba(255, 98, 0, 0.25)' : 'none',
+                  transition: 'all 0.2s ease',
                   '&:hover': {
-                    bgcolor: isSelected ? COLORS.PRIMARY_DARK : '#f5f5f5',
+                    bgcolor: isSelected ? COLORS.PRIMARY_DARK : '#F9FAFB',
                   },
                 }}
               />
@@ -705,53 +719,87 @@ export default function AstrologyBookingsContent() {
           })}
         </Box>
 
-        {/* Loading State */}
+        {/* Loading State Skeleton */}
         {isFetchingBookings ? (
-          <Paper
-            sx={{
-              p: 6,
-              borderRadius: '12px',
-              textAlign: 'center',
-              bgcolor: COLORS.WHITE,
-              border: `1px solid ${COLORS.BORDER_LIGHT}`,
-            }}
-          >
-            <CircularProgress sx={{ color: COLORS.PRIMARY, mb: 2 }} />
-            <Typography
-              sx={{
-                fontFamily: FONTS.OUTFIT,
-                color: COLORS.MUTED_TEXT,
-                fontSize: '16px',
-                fontWeight: 600,
-              }}
-            >
-              Loading consultations...
-            </Typography>
-          </Paper>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            {[1, 2].map((k) => (
+              <Paper
+                key={k}
+                sx={{
+                  p: { xs: 2, sm: 2.5, md: 3 },
+                  borderRadius: '16px',
+                  border: '1px solid #EFE6D5',
+                  bgcolor: '#FFFFFF',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Skeleton variant="circular" width={50} height={50} sx={{ bgcolor: '#FFF0E6' }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Skeleton variant="text" width="45%" height={26} />
+                    <Skeleton variant="text" width="65%" height={20} />
+                  </Box>
+                </Box>
+                <Skeleton variant="rounded" height={74} sx={{ borderRadius: '12px', mb: 2, bgcolor: '#FAF7F2' }} />
+                <Skeleton variant="rounded" height={36} sx={{ borderRadius: '8px', bgcolor: '#F5EFE6' }} />
+              </Paper>
+            ))}
+          </Box>
         ) : activeBookings.length === 0 ? (
           /* Empty State */
           <Paper
             sx={{
-              p: 6,
-              borderRadius: '12px',
+              p: { xs: 4, md: 6 },
+              borderRadius: '16px',
               textAlign: 'center',
-              bgcolor: COLORS.WHITE,
-              border: '1px dashed #ccc',
+              bgcolor: '#FFFDFB',
+              border: '1.5px dashed #EFE6D5',
             }}
           >
+            <Box
+              sx={{
+                width: 64,
+                height: 64,
+                borderRadius: '50%',
+                bgcolor: '#FFF3EB',
+                color: COLORS.PRIMARY,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mx: 'auto',
+                mb: 2,
+              }}
+            >
+              <AutoAwesomeIcon sx={{ fontSize: 32 }} />
+            </Box>
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                color: COLORS.MUTED_TEXT,
-                fontSize: '16px',
-                fontWeight: 600,
+                color: '#2C1810',
+                fontSize: { xs: '17px', sm: '19px' },
+                fontWeight: 800,
+                mb: 0.5,
               }}
             >
-              No {activeStatus.toLowerCase()} bookings found.
+              No {activeStatus} Bookings
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: '#7A6B63',
+                fontSize: { xs: '13px', sm: '14px' },
+                maxWidth: 420,
+                mx: 'auto',
+              }}
+            >
+              {activeStatus === 'Accepted'
+                ? 'You currently have no active accepted consultations. New bookings confirmed by devotees will show up here.'
+                : activeStatus === 'Completed'
+                ? 'No completed consultation history found yet.'
+                : 'No cancelled bookings in this category.'}
             </Typography>
           </Paper>
         ) : (
-          /* Bookings Cards (Exact Purohit Active Booking Card Format) */
+          /* Bookings Cards */
           activeBookings.map((job: any) => {
             const rawData = job.originalData || job;
             const jobId = rawData.id || job.id;
@@ -761,151 +809,156 @@ export default function AstrologyBookingsContent() {
             const isCancelled = statusUpper === 'CANCELLED';
 
             const bookingMode = (job.bookingMode || rawData.bookingMode || 'ONLINE').toUpperCase();
-            const clientNotes = rawData.notes || rawData.kundaliDetails || rawData.userNotes;
+            const clientNotes =
+              rawData.notes ||
+              rawData.kundaliDetails ||
+              rawData.userNotes ||
+              rawData.customFields?.kundaliDetails ||
+              rawData.customFields?.userNotes ||
+              rawData.description;
+
+            const clientPhone = rawData.customer?.phone || rawData.customerPhone || rawData.phone;
+            const clientEmail = rawData.customer?.email || rawData.customerEmail || rawData.email;
 
             return (
               <Paper
                 key={job.id}
                 sx={{
-                  p: { xs: 2.5, md: 3 },
-                  borderRadius: '14px',
-                  border: '1px solid #eee',
-                  bgcolor: '#FFF',
-                  mb: 3,
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.03)',
-                  transition: 'all 0.2s',
+                  p: { xs: 2, sm: 2.5, md: 3 },
+                  borderRadius: { xs: '14px', md: '16px' },
+                  border: '1px solid #EFE6D5',
+                  bgcolor: '#FFFFFF',
+                  mb: { xs: 2, md: 2.5 },
+                  boxShadow: '0 2px 10px rgba(44, 24, 16, 0.03)',
+                  transition: 'all 0.2s ease',
                   '&:hover': {
-                    boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+                    boxShadow: '0 6px 20px rgba(44, 24, 16, 0.06)',
+                    borderColor: '#E3D3BE',
                   },
                 }}
               >
-                {/* Header row */}
+                {/* Header row: Left devotee details & Right actions */}
                 <Box
                   sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     justifyContent: 'space-between',
-                    alignItems: { xs: 'flex-start', md: 'center' },
-                    gap: 2,
-                    mb: 2.5,
+                    alignItems: { xs: 'stretch', md: 'flex-start' },
+                    gap: 1.5,
+                    mb: 1.5,
                   }}
                 >
-                  {/* Left: Customer Avatar + Details */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  {/* Left: Customer Avatar + Title & Client info */}
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, flex: 1, minWidth: 0 }}>
                     <Avatar
                       src={rawData.customer?.profileImage || undefined}
                       alt={job.customer}
                       sx={{
-                        width: 54,
-                        height: 54,
+                        width: { xs: 40, sm: 46 },
+                        height: { xs: 40, sm: 46 },
                         bgcolor: '#FFF0E6',
                         color: COLORS.PRIMARY,
-                        border: '2px solid #FFD8BE',
-                        fontWeight: 700,
-                        fontSize: '20px',
+                        border: '1.5px solid #FFD8BE',
+                        fontWeight: 800,
+                        fontSize: { xs: '16px', sm: '18px' },
+                        fontFamily: FONTS.OUTFIT,
                         flexShrink: 0,
+                        mt: 0.2,
                       }}
                     >
-                      {(rawData.customer?.firstName?.[0] || 'C').toUpperCase()}
+                      {(rawData.customer?.firstName?.[0] || job.customer?.[0] || 'D').toUpperCase()}
                     </Avatar>
 
-                    <Box>
-                      {/* Title & Badges */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.5, flexWrap: 'wrap' }}>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 800,
+                          fontSize: { xs: '16px', sm: '18px' },
+                          color: '#1E293B',
+                          lineHeight: 1.25,
+                        }}
+                      >
+                        {job.ritual}
+                      </Typography>
+
+                      {/* Customer Details Row */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: { xs: 1.2, sm: 2 },
+                          flexWrap: 'wrap',
+                          mt: 0.5,
+                        }}
+                      >
                         <Typography
                           sx={{
                             fontFamily: FONTS.OUTFIT,
-                            fontWeight: 800,
-                            fontSize: '19px',
-                            color: '#1A1A1A',
+                            color: '#475569',
+                            fontSize: { xs: '12.5px', sm: '13.5px' },
+                            fontWeight: 600,
                           }}
                         >
-                          {job.ritual}
+                          Client:{' '}
+                          <span style={{ color: '#0F172A', fontWeight: 700 }}>
+                            {job.customer}
+                          </span>
                         </Typography>
 
-                        {/* Status Chip (Clickable dropdown if Accepted) */}
-                        <Chip
-                          label={
-                            job.status
-                              ? job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase()
-                              : 'Status'
-                          }
-                          size="small"
-                          deleteIcon={isAccepted ? <KeyboardArrowDownIcon /> : undefined}
-                          onDelete={isAccepted ? (e) => handleUpdateStatusClick(e as any, jobId) : undefined}
-                          onClick={isAccepted ? (e) => handleUpdateStatusClick(e, jobId) : undefined}
-                          sx={{
-                            bgcolor: isCancelled ? '#FEE2E2' : isCompleted ? '#DCFCE7' : '#E8F5E9',
-                            color: isCancelled ? '#DC2626' : isCompleted ? '#16A34A' : '#2E7D32',
-                            fontWeight: 700,
-                            fontSize: '11px',
-                            height: '24px',
-                            cursor: isAccepted ? 'pointer' : 'default',
-                            '& .MuiChip-deleteIcon': {
-                              color: '#2E7D32',
-                              fontSize: '16px',
-                            },
-                          }}
-                        />
-                      </Box>
-
-                      {/* Customer Details Row */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#334155', fontSize: '14px', fontWeight: 600 }}>
-                          Client: <span style={{ color: '#0F172A', fontWeight: 700 }}>{job.customer}</span>
-                        </Typography>
-
-                        {rawData.customer?.phone && (
+                        {clientPhone && (
                           <Box
                             component="a"
-                            href={`tel:${rawData.customer.phone}`}
+                            href={`tel:${clientPhone}`}
                             sx={{
-                              display: 'flex',
+                              display: 'inline-flex',
                               alignItems: 'center',
-                              gap: 0.5,
+                              gap: 0.4,
                               color: COLORS.PRIMARY,
                               textDecoration: 'none',
                               fontFamily: FONTS.OUTFIT,
-                              fontSize: '13px',
+                              fontSize: { xs: '12px', sm: '13px' },
                               fontWeight: 600,
                               '&:hover': { textDecoration: 'underline' },
                             }}
                           >
-                            <PhoneIcon sx={{ fontSize: 15 }} />
-                            +91 {rawData.customer.phone}
+                            <PhoneIcon sx={{ fontSize: 13 }} />
+                            +91 {clientPhone}
                           </Box>
                         )}
 
-                        {rawData.customer?.email && (
+                        {clientEmail && (
                           <Box
                             component="a"
-                            href={`mailto:${rawData.customer.email}`}
+                            href={`mailto:${clientEmail}`}
                             sx={{
-                              display: 'flex',
+                              display: 'inline-flex',
                               alignItems: 'center',
-                              gap: 0.5,
+                              gap: 0.4,
                               color: '#64748B',
                               textDecoration: 'none',
                               fontFamily: FONTS.OUTFIT,
-                              fontSize: '13px',
+                              fontSize: { xs: '12px', sm: '13px' },
                               fontWeight: 500,
+                              '&:hover': { textDecoration: 'underline' },
                             }}
                           >
-                            <EmailIcon sx={{ fontSize: 15 }} />
-                            {rawData.customer.email}
+                            <EmailIcon sx={{ fontSize: 13 }} />
+                            {clientEmail}
                           </Box>
                         )}
                       </Box>
                     </Box>
                   </Box>
 
-                  {/* Top-Right Action Buttons */}
+                  {/* Action Buttons: Responsive for Mobile and Desktop */}
                   <Box
                     sx={{
                       display: 'flex',
                       flexWrap: 'wrap',
                       gap: 1,
-                      mt: { xs: 1, md: 0 },
+                      alignItems: 'center',
+                      mt: { xs: 0.5, md: 0 },
                     }}
                   >
                     {isAccepted && (
@@ -914,18 +967,22 @@ export default function AstrologyBookingsContent() {
                           variant="contained"
                           size="small"
                           onClick={() => handleStatusChange('COMPLETED', jobId)}
-                          startIcon={<CheckCircleIcon />}
+                          startIcon={<CheckCircleIcon sx={{ fontSize: '16px !important' }} />}
                           sx={{
-                            background: '#16A34A',
+                            flex: { xs: '1 1 auto', sm: 'none' },
+                            bgcolor: '#16A34A',
                             color: 'white',
                             textTransform: 'none',
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 700,
                             borderRadius: '8px',
-                            px: 2,
-                            py: 0.8,
+                            px: 1.8,
+                            py: 0.6,
+                            height: '34px',
+                            fontSize: '12.5px',
                             boxShadow: 'none',
                             '&:hover': {
-                              background: '#15803D',
+                              bgcolor: '#15803D',
                               boxShadow: 'none',
                             },
                           }}
@@ -940,13 +997,20 @@ export default function AstrologyBookingsContent() {
                             setUpdatingJobId(jobId);
                             setCancelModalOpen(true);
                           }}
-                          startIcon={<CancelIcon />}
+                          startIcon={<CancelIcon sx={{ fontSize: '16px !important' }} />}
                           sx={{
+                            flex: { xs: '1 1 auto', sm: 'none' },
                             textTransform: 'none',
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 600,
                             borderRadius: '8px',
-                            px: 2,
-                            py: 0.8,
+                            px: 1.5,
+                            py: 0.6,
+                            height: '34px',
+                            fontSize: '12.5px',
+                            '&:hover': {
+                              bgcolor: '#FEE2E2',
+                            },
                           }}
                         >
                           Cancel
@@ -960,15 +1024,21 @@ export default function AstrologyBookingsContent() {
                           variant="contained"
                           size="small"
                           onClick={() => handleOpenReviewModal(jobId)}
-                          startIcon={<RateReviewIcon />}
+                          startIcon={<RateReviewIcon sx={{ fontSize: '16px !important' }} />}
                           sx={{
-                            background: '#2196F3',
+                            flex: { xs: '1 1 auto', sm: 'none' },
+                            bgcolor: '#0284C7',
                             color: 'white',
                             textTransform: 'none',
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 600,
                             borderRadius: '8px',
+                            px: 1.5,
+                            py: 0.6,
+                            height: '34px',
+                            fontSize: '12.5px',
                             boxShadow: 'none',
-                            '&:hover': { background: '#1976D2', boxShadow: 'none' },
+                            '&:hover': { bgcolor: '#0369A1', boxShadow: 'none' },
                           }}
                         >
                           Add Review
@@ -977,15 +1047,21 @@ export default function AstrologyBookingsContent() {
                           variant="contained"
                           size="small"
                           onClick={() => handleOpenComplaintModal(jobId)}
-                          startIcon={<ReportProblemIcon />}
+                          startIcon={<ReportProblemIcon sx={{ fontSize: '16px !important' }} />}
                           sx={{
-                            background: '#F44336',
+                            flex: { xs: '1 1 auto', sm: 'none' },
+                            bgcolor: '#DC2626',
                             color: 'white',
                             textTransform: 'none',
+                            fontFamily: FONTS.OUTFIT,
                             fontWeight: 600,
                             borderRadius: '8px',
+                            px: 1.5,
+                            py: 0.6,
+                            height: '34px',
+                            fontSize: '12.5px',
                             boxShadow: 'none',
-                            '&:hover': { background: '#D32F2F', boxShadow: 'none' },
+                            '&:hover': { bgcolor: '#B91C1C', boxShadow: 'none' },
                           }}
                         >
                           Write Complaint
@@ -993,173 +1069,286 @@ export default function AstrologyBookingsContent() {
                       </>
                     )}
 
-                    {rawData?.customer?.phone && (
+                    {clientPhone && (
                       <Button
                         variant="outlined"
                         size="small"
-                        href={`tel:${rawData.customer.phone}`}
-                        startIcon={<PhoneIcon sx={{ fontSize: 16 }} />}
+                        href={`tel:${clientPhone}`}
+                        startIcon={<PhoneIcon sx={{ fontSize: 14 }} />}
                         sx={{
-                          color: '#1E293B',
+                          flex: { xs: '1 1 auto', sm: 'none' },
+                          color: '#334155',
                           borderColor: '#CBD5E1',
                           textTransform: 'none',
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 600,
                           borderRadius: '8px',
-                          px: 2,
-                          py: 0.8,
+                          px: 1.5,
+                          py: 0.6,
+                          height: '34px',
+                          fontSize: '12px',
+                          whiteSpace: 'nowrap',
                           '&:hover': { bgcolor: '#F8FAFC', borderColor: '#94A3B8' },
                         }}
                       >
-                        Contact Client - {rawData.customer.phone}
+                        Contact Client
                       </Button>
                     )}
                   </Box>
                 </Box>
 
-                <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 1.5, borderColor: '#F2E8DC' }} />
 
-                {/* 3-Column Info Grid */}
+                {/* 3-Column Info Strip */}
                 <Box
                   sx={{
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' },
-                    gap: 2,
-                    p: 2,
-                    bgcolor: '#F8FAFC',
-                    borderRadius: '12px',
-                    border: '1px solid #E2E8F0',
-                    mb: 2,
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    p: { xs: 2, sm: 2.2 },
+                    bgcolor: '#FFFDF9',
+                    borderRadius: '14px',
+                    border: '1px solid #EFE6D5',
+                    mb: clientNotes ? 2 : 0,
                   }}
                 >
                   {/* 1. Schedule Date & Time */}
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#FFF0E6', borderRadius: '8px', color: COLORS.PRIMARY, display: 'flex' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      py: { xs: 1, md: 0 },
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        bgcolor: '#FFF0E6',
+                        borderRadius: '10px',
+                        color: COLORS.PRIMARY,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 36,
+                        height: 36,
+                        flexShrink: 0,
+                      }}
+                    >
                       <EventIcon sx={{ fontSize: 20 }} />
                     </Box>
-                    <Box>
-                      <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: '11px',
+                          color: '#7A4B3A',
+                          textTransform: 'uppercase',
+                          fontWeight: 800,
+                          letterSpacing: '0.5px',
+                          fontFamily: FONTS.OUTFIT,
+                          lineHeight: 1.2,
+                        }}
+                      >
                         Schedule Date & Time
                       </Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 700, color: '#1E293B' }}>
-                        {job.date}
-                      </Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '13px', fontWeight: 600, color: COLORS.PRIMARY }}>
-                        {job.time} (IST)
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: { xs: '13.5px', sm: '14px' },
+                          fontWeight: 700,
+                          color: '#1E293B',
+                          lineHeight: 1.3,
+                          mt: 0.3,
+                        }}
+                      >
+                        {job.date}{' '}
+                        <span style={{ color: COLORS.PRIMARY, fontWeight: 700, marginLeft: 6 }}>
+                          {job.time} (IST)
+                        </span>
                       </Typography>
                     </Box>
                   </Box>
+
+                  <Divider sx={{ display: { xs: 'block', md: 'none' }, my: 1.2, borderColor: '#F2E8DC' }} />
+                  <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' }, mx: 2, borderColor: '#F2E8DC' }} />
 
                   {/* 2. Astrologer Payout */}
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#ECFDF5', borderRadius: '8px', color: '#059669', display: 'flex' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      py: { xs: 1, md: 0 },
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        bgcolor: '#ECFDF5',
+                        borderRadius: '10px',
+                        color: '#059669',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 36,
+                        height: 36,
+                        flexShrink: 0,
+                      }}
+                    >
                       <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />
                     </Box>
-                    <Box>
-                      <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: '11px',
+                          color: '#065F46',
+                          textTransform: 'uppercase',
+                          fontWeight: 800,
+                          letterSpacing: '0.5px',
+                          fontFamily: FONTS.OUTFIT,
+                          lineHeight: 1.2,
+                        }}
+                      >
                         Astrologer Payout
                       </Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '15px', fontWeight: 800, color: '#059669' }}>
-                        ₹{job.astrologerPayout ?? (job.originalData?.priceBreakDown?.astrologerPayout ?? 0)}
-                      </Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
-                        {job.payoutStatus ? `Payout: ${job.payoutStatus}` : 'Consultation Payout'}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.3 }}>
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontSize: { xs: '15px', sm: '16px' },
+                            fontWeight: 800,
+                            color: '#059669',
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          ₹{job.astrologerPayout ?? (job.originalData?.priceBreakDown?.astrologerPayout ?? 0)}
+                        </Typography>
+                        <Chip
+                          label={
+                            job.payoutStatus?.toUpperCase() === 'PAID'
+                              ? 'Paid'
+                              : job.payoutStatus || 'Pending'
+                          }
+                          size="small"
+                          sx={{
+                            height: '20px',
+                            fontSize: '10.5px',
+                            fontWeight: 700,
+                            fontFamily: FONTS.OUTFIT,
+                            bgcolor: job.payoutStatus?.toUpperCase() === 'PAID' ? '#DCFCE7' : '#FEF3C7',
+                            color: job.payoutStatus?.toUpperCase() === 'PAID' ? '#16A34A' : '#D97706',
+                            borderRadius: '4px',
+                          }}
+                        />
+                      </Box>
                     </Box>
                   </Box>
 
+                  <Divider sx={{ display: { xs: 'block', md: 'none' }, my: 1.2, borderColor: '#F2E8DC' }} />
+                  <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' }, mx: 2, borderColor: '#F2E8DC' }} />
+
                   {/* 3. Session Mode */}
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                    <Box sx={{ p: 1, bgcolor: '#FEF3C7', borderRadius: '8px', color: '#D97706', display: 'flex' }}>
-                      <LocationOnIcon sx={{ fontSize: 20 }} />
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      py: { xs: 1, md: 0 },
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        bgcolor: bookingMode === 'OFFLINE' ? '#FEF3C7' : '#EFF6FF',
+                        borderRadius: '10px',
+                        color: bookingMode === 'OFFLINE' ? '#D97706' : '#2563EB',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 36,
+                        height: 36,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {bookingMode === 'OFFLINE' ? (
+                        <LocationOnIcon sx={{ fontSize: 20 }} />
+                      ) : (
+                        <VideoCameraFrontIcon sx={{ fontSize: 20 }} />
+                      )}
                     </Box>
-                    <Box>
-                      <Typography sx={{ fontSize: '11px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: '11px',
+                          color: bookingMode === 'OFFLINE' ? '#92400E' : '#1E40AF',
+                          textTransform: 'uppercase',
+                          fontWeight: 800,
+                          letterSpacing: '0.5px',
+                          fontFamily: FONTS.OUTFIT,
+                          lineHeight: 1.2,
+                        }}
+                      >
                         Session Mode
                       </Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 700, color: '#1E293B' }}>
-                        {bookingMode}
-                      </Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
-                        Call / Audio / Video
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: { xs: '13.5px', sm: '14px' },
+                          fontWeight: 700,
+                          color: '#1E293B',
+                          lineHeight: 1.3,
+                          mt: 0.3,
+                        }}
+                      >
+                        {bookingMode}{' '}
+                        <span style={{ color: '#64748B', fontWeight: 500, fontSize: '12px', marginLeft: 6 }}>
+                          ({bookingMode === 'OFFLINE' ? 'In-Person' : 'Audio / Video'})
+                        </span>
                       </Typography>
                     </Box>
                   </Box>
                 </Box>
 
-
                 {/* Client Notes / Kundali Details Box */}
                 {clientNotes && (
                   <Box
                     sx={{
-                      mb: 3,
-                      p: 2,
+                      mb: 0,
+                      p: { xs: 1.8, sm: 2 },
                       bgcolor: '#FFFDF5',
-                      borderRadius: '10px',
+                      borderRadius: '12px',
                       border: '1px dashed #FCD34D',
                     }}
                   >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <MenuBookIcon sx={{ fontSize: 16, color: '#B45309' }} />
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: '12px',
+                          fontWeight: 800,
+                          color: '#92400E',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}
+                      >
+                        Client Questions / Kundali Details:
+                      </Typography>
+                    </Box>
                     <Typography
                       sx={{
                         fontFamily: FONTS.OUTFIT,
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        color: '#92400E',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        mb: 0.5,
-                      }}
-                    >
-                      Client Questions / Kundali Details:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontSize: '13px',
+                        fontSize: { xs: '12.5px', sm: '13.5px' },
                         color: '#78350F',
+                        lineHeight: 1.6,
                       }}
                     >
                       {clientNotes}
                     </Typography>
                   </Box>
                 )}
-
-                <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
-
-                {/* Progress Stepper */}
-                <Box sx={{ mb: 2 }}>
-                  {isCancelled ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#DC2626' }}>
-                      <CancelIcon fontSize="small" />
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: '13px' }}>
-                        This consultation session was cancelled.
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Stepper
-                      activeStep={isCompleted ? 1 : 0}
-                      alternativeLabel
-                      sx={{
-                        '& .MuiStepIcon-root.Mui-active': { color: COLORS.PRIMARY },
-                        '& .MuiStepIcon-root.Mui-completed': { color: '#16A34A' },
-                      }}
-                    >
-                      <Step key="Accepted">
-                        <StepLabel>
-                          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, fontSize: '12px' }}>
-                            Accepted
-                          </Typography>
-                        </StepLabel>
-                      </Step>
-                      <Step key="Completed">
-                        <StepLabel>
-                          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 600, fontSize: '12px' }}>
-                            Completed
-                          </Typography>
-                        </StepLabel>
-                      </Step>
-                    </Stepper>
-                  )}
-                </Box>
               </Paper>
             );
           })
@@ -1167,14 +1356,24 @@ export default function AstrologyBookingsContent() {
 
         {/* Pagination */}
         {activeTotalPages > 1 && (
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', justifyContent: 'center' }}>
             <Pagination
               count={activeTotalPages}
               page={activePage}
               onChange={(_, v) => setActivePage(v)}
               color="primary"
               sx={{
-                '& .Mui-selected': { bgcolor: `${COLORS.PRIMARY} !important`, color: 'white' },
+                '& .MuiPaginationItem-root': {
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 600,
+                  fontSize: { xs: '12px', sm: '14px' },
+                  borderRadius: '8px',
+                },
+                '& .Mui-selected': {
+                  bgcolor: `${COLORS.PRIMARY} !important`,
+                  color: 'white !important',
+                  boxShadow: '0 2px 8px rgba(255, 98, 0, 0.3)',
+                },
               }}
             />
           </Box>
@@ -1189,23 +1388,43 @@ export default function AstrologyBookingsContent() {
         slotProps={{
           paper: {
             sx: {
-              borderRadius: '10px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              minWidth: 150,
+              borderRadius: '12px',
+              border: '1px solid #EFE6D5',
+              boxShadow: '0 8px 24px rgba(44, 24, 16, 0.12)',
+              minWidth: 170,
+              p: 0.5,
             },
           },
         }}
       >
         <MenuItem
           onClick={() => handleStatusChange('COMPLETED')}
-          sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 600, color: '#16A34A' }}
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontSize: '13.5px',
+            fontWeight: 700,
+            color: '#16A34A',
+            borderRadius: '8px',
+            py: 1,
+            '&:hover': { bgcolor: '#DCFCE7' },
+          }}
         >
+          <CheckCircleIcon sx={{ fontSize: 18, mr: 1 }} />
           Mark Completed
         </MenuItem>
         <MenuItem
           onClick={() => handleStatusChange('CANCELLED')}
-          sx={{ fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 600, color: '#DC2626' }}
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontSize: '13.5px',
+            fontWeight: 700,
+            color: '#DC2626',
+            borderRadius: '8px',
+            py: 1,
+            '&:hover': { bgcolor: '#FEE2E2' },
+          }}
         >
+          <CancelIcon sx={{ fontSize: 18, mr: 1 }} />
           Cancel Booking
         </MenuItem>
       </Menu>

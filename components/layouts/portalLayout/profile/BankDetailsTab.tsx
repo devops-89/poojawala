@@ -37,10 +37,10 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
+          alignItems: "center",
           flexWrap: "wrap",
-          gap: 2,
-          mb: 4,
+          gap: 1.5,
+          mb: { xs: 2.5, sm: 3.5 },
         }}
       >
         <Box>
@@ -48,9 +48,9 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              fontSize: "22px",
-              color: COLORS.DARK,
-              mb: 0.5,
+              fontSize: { xs: "18px", sm: "20px" },
+              color: "#1A1A1A",
+              mb: 0.3,
             }}
           >
             Bank Details
@@ -58,28 +58,29 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              color: COLORS.MUTED_TEXT,
-              fontSize: "14px",
+              color: "#64748B",
+              fontSize: { xs: "12.5px", sm: "13.5px" },
             }}
           >
             Manage your accounts for receiving ceremony payouts.
           </Typography>
         </Box>
         <Button
-          variant="outlined"
+          variant="contained"
           onClick={onAddNew}
           sx={{
-            borderColor: COLORS.PRIMARY,
-            color: COLORS.PRIMARY,
-            borderRadius: "10px",
+            bgcolor: COLORS.PRIMARY,
+            color: "white",
+            borderRadius: "8px",
             textTransform: "none",
             fontWeight: 700,
-            px: 2.5,
-            py: 0.8,
+            fontSize: { xs: "13px", sm: "13.5px" },
+            px: 2.2,
+            height: "38px",
             fontFamily: FONTS.OUTFIT,
+            boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
             "&:hover": {
-              borderColor: COLORS.PRIMARY_DARK,
-              bgcolor: "#FFF8F2",
+              bgcolor: COLORS.PRIMARY_DARK,
             },
           }}
         >
@@ -89,28 +90,28 @@ export const BankDetailsTab: React.FC<BankDetailsTabProps> = ({
 
       {bankAccounts.length === 0 ? (
         <Card
-          variant="outlined"
-          sx={{ borderRadius: "14px", p: 4, textAlign: "center", borderStyle: "dashed" }}
+          elevation={0}
+          sx={{ borderRadius: "14px", p: { xs: 3, sm: 4 }, textAlign: "center", border: "1px dashed #EFE6D5", bgcolor: "#FFFDF9" }}
         >
-          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: COLORS.MUTED_TEXT }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#64748B", fontSize: "14px" }}>
             No bank accounts added yet. Click "Add Bank Account" to add your payout details.
           </Typography>
         </Card>
       ) : (
-        <Grid container spacing={2.5}>
+        <Grid container spacing={{ xs: 2, sm: 2.5 }}>
           {bankAccounts.map((bank: any) => (
             <Grid size={{ xs: 12, sm: 6 }} key={bank.id} sx={{ display: "flex" }}>
               <Card
-                variant="outlined"
+                elevation={0}
                 sx={{
                   width: "100%",
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
                   justify: "space-between",
-                  borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
-                  bgcolor: "#FFF",
+                  borderRadius: "14px",
+                  border: "1px solid #EFE6D5",
+                  bgcolor: "#FFFDF9",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
                   transition: "all 0.2s ease",
                   "&:hover": {

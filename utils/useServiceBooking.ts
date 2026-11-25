@@ -600,7 +600,36 @@ export function useServiceBooking({ serviceId, service }: UseServiceBookingProps
         customerAddressId: true,
         specialInstructions: true,
       });
-      // Show validation errors cleanly only below inputs; do not show duplicate snackbar
+
+      // Auto-scroll to first mandatory field with error
+      let targetId = "";
+      let errorMsg = "";
+
+      if (errors.scheduledDate) {
+        targetId = "booking-section-datetime";
+        errorMsg = typeof errors.scheduledDate === "string" ? errors.scheduledDate : "Please select a date for the pooja";
+      } else if (errors.scheduledTime) {
+        targetId = "booking-section-datetime";
+        errorMsg = typeof errors.scheduledTime === "string" ? errors.scheduledTime : "Please select a preferred time slot";
+      } else if (errors.customerAddressId) {
+        targetId = "booking-section-address";
+        errorMsg = typeof errors.customerAddressId === "string" ? errors.customerAddressId : "Please select or add a pooja delivery address";
+      } else if (errors.paymentOption) {
+        targetId = "booking-section-payment";
+        errorMsg = typeof errors.paymentOption === "string" ? errors.paymentOption : "Please select a payment option (Token Amount or Full Payment)";
+      }
+
+      if (targetId && typeof window !== "undefined") {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      if (errorMsg) {
+        showSnackbar(errorMsg, "warning");
+      }
+
       return;
     }
     formik.handleSubmit();

@@ -142,11 +142,28 @@ export default function ServiceDetailsAddressSelector({
             fullWidth
             error={Boolean(addressError)}
             sx={{
-              bgcolor: "#FFFBF7",
-              borderRadius: "10px",
+              bgcolor: "#FFFDF9",
+              borderRadius: "12px",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "12px",
+                fontFamily: FONTS.OUTFIT,
+                bgcolor: "#FFFDF9",
+                "& fieldset": {
+                  borderColor: "#EADCCF",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#FF6200",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FF6200",
+                },
+              },
               "& .MuiInputLabel-root": {
                 fontFamily: FONTS.OUTFIT,
                 color: Boolean(addressError) ? "#d32f2f" : "#64534A",
+                "&.Mui-focused": {
+                  color: "#FF6200",
+                },
               },
             }}
           >
@@ -239,7 +256,7 @@ export default function ServiceDetailsAddressSelector({
                 },
               }}
               sx={{
-                borderRadius: "10px",
+                borderRadius: "12px",
                 fontFamily: FONTS.OUTFIT,
                 "& .MuiSelect-select": {
                   py: 1.6,
@@ -348,9 +365,9 @@ export default function ServiceDetailsAddressSelector({
                 + Add New Address
               </MenuItem>
             </Select>
-            {addressError && (
+            {Boolean(addressError) && (
               <FormHelperText error sx={{ fontFamily: FONTS.OUTFIT, mt: 0.5, ml: 1 }}>
-                {addressError}
+                {String(addressError)}
               </FormHelperText>
             )}
           </FormControl>

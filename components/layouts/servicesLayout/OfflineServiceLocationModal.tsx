@@ -304,12 +304,12 @@ function OfflineServiceStep1Personal({ onNext }: { onNext: () => void }) {
               }
               helperText={
                 field.value &&
-                field.value.length > 0 &&
-                !/^[6-9]/.test(field.value)
+                  field.value.length > 0 &&
+                  !/^[6-9]/.test(field.value)
                   ? "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
                   : meta.touched
-                  ? meta.error
-                  : undefined
+                    ? meta.error
+                    : undefined
               }
               sx={{
                 ...offlineInputStyles,
@@ -1182,7 +1182,7 @@ export default function OfflineServiceLocationModal({
             const meRes = await getMeAPI(token);
             const fresh = meRes?.user || meRes?.data?.user || meRes?.data;
             if (fresh) userObj = fresh;
-          } catch (e) {}
+          } catch (e) { }
         }
 
         const role = userObj?.role || "CUSTOMER";
@@ -1479,7 +1479,7 @@ export default function OfflineServiceLocationModal({
           console.error("Availability check error:", error);
           showSnackbar(
             error?.response?.data?.message ||
-              "Could not verify online availability. Please proceed with your booking details.",
+            "Could not verify online availability. Please proceed with your booking details.",
             "warning"
           );
           setSelectedService((prev: any) => ({
@@ -1564,7 +1564,7 @@ export default function OfflineServiceLocationModal({
           if (Array.isArray(addrList) && addrList.length > 0) {
             targetAddressId = addrList[0]?.id;
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       const numServiceId =
@@ -3339,7 +3339,8 @@ export default function OfflineServiceLocationModal({
             >
               <Button
                 variant="outlined"
-                onClick={() => setStep(service ? "LOCATION" : "SERVICES")}
+                onClick={() => setStep("SERVICES")}
+                startIcon={<ArrowBackIcon sx={{ fontSize: "18px !important" }} />}
                 sx={{
                   borderColor: "#D8C7B8",
                   color: "#5C4A40",
@@ -3390,284 +3391,259 @@ export default function OfflineServiceLocationModal({
         {/* STEP 3B: UNAVAILABLE SERVICE / SEND A MESSAGE ENQUIRY FORM  */}
         {/* ============================================================ */}
         {step === "UNAVAILABLE_FORM" && (
-          <Formik
-            initialValues={{
-              name: "",
-              email: "",
-              subject: "",
-              message: "",
-            }}
-            validationSchema={unavailableEnquirySchema}
-            onSubmit={async (values, { setSubmitting, resetForm }) => {
-              try {
-                const ref = `REQ-${Date.now().toString().slice(-6)}`;
-                setBookingRefId(ref);
+          <Box component="form" onSubmit={handleSubmitUnavailableForm}>
+            <Alert
+              severity="warning"
+              icon={<ErrorIcon sx={{ color: "#C62828" }} />}
+              sx={{
+                bgcolor: "#FFF5F5",
+                color: "#7F1D1D",
+                border: "1px solid #FECACA",
+                borderRadius: "14px",
+                mb: 3,
+                fontSize: "13.5px",
+              }}
+            >
+              <strong>Special Location Request:</strong>{" "}
+              {normalizePoojaText(selectedService?.name || "This service")} is
+              currently on high demand or requires special Acharya arrangement
+              in <strong>{effectiveCity}</strong>. Please enter your details
+              below so our senior Pooja Coordinator can arrange a verified
+              Pandit for you.
+            </Alert>
 
-                const messagePayload = [
-                  `Offline Pooja Enquiry [${ref}]:`,
-                  `Service: ${selectedService?.name || service?.name || "Offline Pooja"} (${selectedService?.hindiName || ""})`,
-                  `Location: ${effectiveCity}, ${selectedState}`,
-                  `Client Name: ${values.name}`,
-                  `Email: ${values.email}`,
-                  customerPhone ? `Mobile: ${customerPhone}` : "",
-                  `Subject: ${values.subject}`,
-                  `Message:`,
-                  values.message,
-                ]
-                  .filter(Boolean)
-                  .join("\n");
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: "14px",
+                bgcolor: "#FAF4EE",
+                border: "1px solid #EADCCF",
+                mb: 3,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: FONTS.PRIMARY,
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  color: "#2C1810",
+                }}
+              >
+                Service:{" "}
+                <strong>
+                  {normalizePoojaText(selectedService?.name || "")}
+                </strong>{" "}
+                {selectedService?.hindiName &&
+                  `(${selectedService?.hindiName})`}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "12px",
+                  color: "#6E5B50",
+                  mt: 0.3,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.4,
+                }}
+              >
+                <LocationOnIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} />{" "}
+                Requested Location:{" "}
+                <strong>
+                  {effectiveCity}, {selectedState}
+                </strong>
+              </Typography>
+            </Box>
 
-                await submitContactFormAPI({
-                  name: values.name,
-                  email: values.email,
-                  subject: values.subject,
-                  message: messagePayload,
-                });
-
-                // Save to local storage for persistence
-                if (typeof window !== "undefined") {
-                  try {
-                    const prev = JSON.parse(localStorage.getItem("offline_pooja_enquiries") || "[]");
-                    prev.push({
-                      ref,
-                      service: selectedService?.name || service?.name,
-                      city: effectiveCity,
-                      state: selectedState,
-                      name: values.name,
-                      email: values.email,
-                      subject: values.subject,
-                      message: values.message,
-                      date: new Date().toISOString(),
-                    });
-                    localStorage.setItem("offline_pooja_enquiries", JSON.stringify(prev));
-                  } catch (e) {}
-                }
-
-                setCustomerName(values.name);
-                setCustomerEmail(values.email);
-                setIsSuccessForUnavailable(true);
-                setStep("SUCCESS");
-                showSnackbar("Message sent successfully! Our team will get back to you shortly.", "success");
-                resetForm();
-              } catch (err: any) {
-                console.error("Failed submitting service inquiry:", err);
-                setIsSuccessForUnavailable(true);
-                setStep("SUCCESS");
-                showSnackbar("Your message has been sent! Our team will get back to you shortly.", "success");
-              } finally {
-                setSubmitting(false);
-              }
-            }}
-          >
-            {({ isSubmitting, touched, errors }) => (
-              <Box component={Form} noValidate sx={{ pt: 1 }}>
-                <FormikValidationSnackbar />
-
-                <Grid container spacing={2.5}>
-                  {/* Full Name */}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <Field
-                      as={TextField}
-                      name="name"
-                      fullWidth
-                      label="Full Name *"
-                      placeholder="Full Name"
-                      variant="outlined"
-                      error={touched.name && Boolean(errors.name)}
-                      helperText={touched.name && errors.name}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: FONTS.PRIMARY,
-                          bgcolor: "#FFFFFF",
-                          "&:not(.Mui-error):hover fieldset": { borderColor: COLORS.PRIMARY },
-                          "&:not(.Mui-error).Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
-                            borderWidth: "2px",
-                          },
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          "&:not(.Mui-error).Mui-focused": { color: COLORS.PRIMARY },
-                        },
-                        "& .MuiFormHelperText-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "12px",
-                          mx: 0.5,
-                          mt: 0.5,
-                        },
-                      }}
-                    />
-                  </Grid>
-
-                  {/* Email Address */}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <Field
-                      as={TextField}
-                      name="email"
-                      type="email"
-                      fullWidth
-                      label="Email Address *"
-                      placeholder="Email Address"
-                      variant="outlined"
-                      error={touched.email && Boolean(errors.email)}
-                      helperText={touched.email && errors.email}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: FONTS.PRIMARY,
-                          bgcolor: "#FFFFFF",
-                          "&:not(.Mui-error):hover fieldset": { borderColor: COLORS.PRIMARY },
-                          "&:not(.Mui-error).Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
-                            borderWidth: "2px",
-                          },
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          "&:not(.Mui-error).Mui-focused": { color: COLORS.PRIMARY },
-                        },
-                        "& .MuiFormHelperText-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "12px",
-                          mx: 0.5,
-                          mt: 0.5,
-                        },
-                      }}
-                    />
-                  </Grid>
-
-                  {/* Subject */}
-                  <Grid size={{ xs: 12 }}>
-                    <Field
-                      as={TextField}
-                      name="subject"
-                      fullWidth
-                      label="Subject *"
-                      placeholder="Subject"
-                      variant="outlined"
-                      error={touched.subject && Boolean(errors.subject)}
-                      helperText={touched.subject && errors.subject}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: FONTS.PRIMARY,
-                          bgcolor: "#FFFFFF",
-                          "&:not(.Mui-error):hover fieldset": { borderColor: COLORS.PRIMARY },
-                          "&:not(.Mui-error).Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
-                            borderWidth: "2px",
-                          },
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          "&:not(.Mui-error).Mui-focused": { color: COLORS.PRIMARY },
-                        },
-                        "& .MuiFormHelperText-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "12px",
-                          mx: 0.5,
-                          mt: 0.5,
-                        },
-                      }}
-                    />
-                  </Grid>
-
-                  {/* Your Message */}
-                  <Grid size={{ xs: 12 }}>
-                    <Field
-                      as={TextField}
-                      name="message"
-                      fullWidth
-                      multiline
-                      rows={4}
-                      label="Your Message *"
-                      placeholder="Your Message"
-                      variant="outlined"
-                      error={touched.message && Boolean(errors.message)}
-                      helperText={touched.message && errors.message}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                          fontFamily: FONTS.PRIMARY,
-                          bgcolor: "#FFFFFF",
-                          "&:not(.Mui-error):hover fieldset": { borderColor: COLORS.PRIMARY },
-                          "&:not(.Mui-error).Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
-                            borderWidth: "2px",
-                          },
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          "&:not(.Mui-error).Mui-focused": { color: COLORS.PRIMARY },
-                        },
-                        "& .MuiFormHelperText-root": {
-                          fontFamily: FONTS.PRIMARY,
-                          fontSize: "12px",
-                          mx: 0.5,
-                          mt: 0.5,
-                        },
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-
-                {/* Bottom Actions */}
-                <Box
-                  sx={{
-                    mt: 3.5,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2.5,
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  required
+                  label="Full Name / आपका पूरा नाम *"
+                  placeholder="e.g. Ramesh Sharma"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PersonIcon
+                            sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                          />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
-                >
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={isSubmitting}
-                    sx={{
-                      bgcolor: "#FF6200",
-                      color: "#FFFFFF",
-                      px: 4.5,
-                      py: 1.3,
-                      borderRadius: "24px",
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 700,
-                      fontSize: "15px",
-                      textTransform: "none",
-                      boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
-                      transition: "all 0.25s ease",
-                      "&:hover": {
-                        bgcolor: COLORS.PRIMARY_DARK,
-                        boxShadow: "0 8px 24px rgba(255, 98, 0, 0.4)",
-                      },
-                    }}
-                  >
-                    {isSubmitting ? (
-                      <CircularProgress size={20} sx={{ color: "#FFFFFF" }} />
-                    ) : (
-                      "Send Message"
-                    )}
-                  </Button>
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+                />
+              </Grid>
 
-                  <Button
-                    variant="text"
-                    onClick={() => setStep(service ? "LOCATION" : "SERVICES")}
-                    sx={{
-                      color: "#64748B",
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: 600,
-                      fontSize: "14px",
-                      textTransform: "none",
-                      "&:hover": { color: COLORS.PRIMARY },
-                    }}
-                  >
-                    ← Back to Location
-                  </Button>
-                </Box>
-              </Box>
-            )}
-          </Formik>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  required
+                  label="Mobile Number / मोबाइल नंबर *"
+                  placeholder="10-digit number"
+                  value={customerPhone}
+                  onChange={(e) =>
+                    setCustomerPhone(
+                      e.target.value.replace(/\D/g, "").slice(0, 10),
+                    )
+                  }
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Typography
+                            sx={{
+                              fontFamily: FONTS.PRIMARY,
+                              fontWeight: 700,
+                              fontSize: "14px",
+                              mr: 0.5,
+                            }}
+                          >
+                            +91
+                          </Typography>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  required
+                  type="email"
+                  label="Email Address / ईमेल *"
+                  placeholder="you@example.com"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <EmailIcon
+                            sx={{ color: COLORS.PRIMARY, fontSize: 20 }}
+                          />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="Preferred Date / इच्छित तिथि (Optional)"
+                  value={poojaDate}
+                  onChange={(e) => setPoojaDate(e.target.value)}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                    htmlInput: { min: new Date().toISOString().split("T")[0] },
+                  }}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Area / Landmark in City (वैकल्पिक)"
+                  placeholder="e.g. Sector 62, Indiranagar"
+                  value={addressDetails}
+                  onChange={(e) => setAddressDetails(e.target.value)}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={2.5}
+                  label="Special Requirements / Gotra / Note (वैकल्पिक)"
+                  placeholder="Mention any specific tradition, language preference, or rituals needed..."
+                  value={specialInstructions}
+                  onChange={(e) => setSpecialInstructions(e.target.value)}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+                />
+              </Grid>
+            </Grid>
+
+            {/* Submit Action */}
+            <Box
+              sx={{
+                mt: 3.5,
+                pt: 2.5,
+                borderTop: "1px solid #F1E5D8",
+                display: "flex",
+                flexDirection: { xs: "column-reverse", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "stretch", sm: "center" },
+                gap: 2,
+              }}
+            >
+              <Button
+                variant="outlined"
+                onClick={() => setStep("SERVICES")}
+                startIcon={<ArrowBackIcon sx={{ fontSize: "18px !important" }} />}
+                sx={{
+                  borderColor: "#D8C7B8",
+                  color: "#5C4A40",
+                  borderRadius: "10px",
+                  textTransform: "none",
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 600,
+                  width: { xs: "100%", sm: "auto" },
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY,
+                    color: COLORS.PRIMARY,
+                    bgcolor: "#FFF8F2",
+                  },
+                }}
+              >
+                Back to Services
+              </Button>
+
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={submitting}
+                endIcon={
+                  !submitting ? (
+                    <ArrowForwardIcon sx={{ fontSize: "18px !important" }} />
+                  ) : undefined
+                }
+                sx={{
+                  bgcolor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                  px: 4,
+                  py: 1.3,
+                  borderRadius: "12px",
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: "15px",
+                  textTransform: "none",
+                  boxShadow: "0 6px 20px rgba(255, 98, 0, 0.3)",
+                  width: { xs: "100%", sm: "auto" },
+                  "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+                }}
+              >
+                {submitting ? (
+                  <CircularProgress size={22} sx={{ color: "#FFFFFF" }} />
+                ) : (
+                  "Submit Request & Checkout"
+                )}
+              </Button>
+            </Box>
+          </Box>
         )}
 
         {/* ============================================================ */}

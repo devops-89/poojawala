@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -20,6 +21,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 
 interface BookingComplaintModalProps {
   open: boolean;
@@ -55,64 +57,135 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
   fileInputRef,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: { xs: "16px", sm: "18px" },
+            border: "1px solid #EFE6D5",
+            boxShadow: "0 20px 48px rgba(0, 0, 0, 0.16)",
+            m: { xs: 2, sm: "auto" },
+            width: { xs: "calc(100% - 32px)", sm: "580px", md: "620px" },
+            maxWidth: { xs: "100%", sm: "620px" },
+            p: { xs: 0.5, sm: 1 },
+          },
+        },
+      }}
+    >
       <DialogTitle
         sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
-          color: "#D32F2F",
+          color: "#1E293B",
+          fontSize: { xs: "18px", sm: "20px" },
+          pb: 1,
+          pt: { xs: 1, sm: 1.5 },
         }}
       >
-        Raise a Complaint
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <ReportProblemIcon sx={{ color: "#DC2626", fontSize: 22 }} />
+          <span>Raise a Complaint</span>
+        </Box>
+        <IconButton
+          onClick={onClose}
+          size="small"
+          sx={{
+            color: "#94A3B8",
+            "&:hover": { color: "#475569", bgcolor: "#F1F5F9" },
+          }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
       </DialogTitle>
-      <DialogContent dividers>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-          <FormControl fullWidth>
-            <InputLabel
-              id="complaint-category-label"
-              sx={{ "&.Mui-focused": { color: "#FF2600" } }}
-            >
-              Category
-            </InputLabel>
-            <Select
-              labelId="complaint-category-label"
-              value={complaintCategory}
-              label="Category"
-              onChange={(e) => setComplaintCategory(e.target.value)}
+
+      <DialogContent sx={{ px: { xs: 2, sm: 3 }, pt: "8px !important" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.8, sm: 2 } }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: { xs: 1.8, sm: 2 },
+            }}
+          >
+            <FormControl fullWidth size="small">
+              <InputLabel
+                id="complaint-category-label"
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "13.5px",
+                  "&.Mui-focused": { color: COLORS.PRIMARY },
+                }}
+              >
+                Category
+              </InputLabel>
+              <Select
+                labelId="complaint-category-label"
+                value={complaintCategory}
+                label="Category"
+                onChange={(e) => setComplaintCategory(e.target.value)}
+                sx={{
+                  borderRadius: "10px",
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "13.5px",
+                  bgcolor: "#FAFAFA",
+                  "& fieldset": { borderColor: "#E2E8F0" },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: COLORS.PRIMARY,
+                  },
+                }}
+              >
+                <MenuItem value="BEHAVIOR_ISSUE" sx={{ fontFamily: FONTS.OUTFIT, fontSize: "13.5px" }}>
+                  Behavior Issue
+                </MenuItem>
+                <MenuItem value="PAYMENT_ISSUE" sx={{ fontFamily: FONTS.OUTFIT, fontSize: "13.5px" }}>
+                  Payment Issue
+                </MenuItem>
+                <MenuItem value="SERVICE_ISSUE" sx={{ fontFamily: FONTS.OUTFIT, fontSize: "13.5px" }}>
+                  Service Issue
+                </MenuItem>
+                <MenuItem value="OTHER" sx={{ fontFamily: FONTS.OUTFIT, fontSize: "13.5px" }}>
+                  Other
+                </MenuItem>
+              </Select>
+            </FormControl>
+
+            <TextField
+              fullWidth
+              size="small"
+              label="Subject"
+              placeholder="Brief subject of complaint"
+              variant="outlined"
+              value={complaintSubject}
+              onChange={(e) => setComplaintSubject(e.target.value)}
               sx={{
-                borderRadius: "8px",
-                fontFamily: FONTS.OUTFIT,
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#FF2600",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "13.5px",
+                  bgcolor: "#FAFAFA",
+                  "& fieldset": { borderColor: "#E2E8F0" },
+                  "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY },
+                },
+                "& .MuiInputLabel-root": {
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "13.5px",
+                  "&.Mui-focused": { color: COLORS.PRIMARY },
                 },
               }}
-            >
-              <MenuItem value="BEHAVIOR_ISSUE">Behavior Issue</MenuItem>
-              <MenuItem value="PAYMENT_ISSUE">Payment Issue</MenuItem>
-              <MenuItem value="SERVICE_ISSUE">Service Issue</MenuItem>
-              <MenuItem value="OTHER">Other</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            fullWidth
-            label="Subject"
-            placeholder="Brief subject of the complaint"
-            variant="outlined"
-            value={complaintSubject}
-            onChange={(e) => setComplaintSubject(e.target.value)}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                fontFamily: FONTS.OUTFIT,
-                "&.Mui-focused fieldset": { borderColor: "#FF2600" },
-              },
-              "& .MuiInputLabel-root.Mui-focused": { color: "#FF2600" },
-            }}
-          />
+            />
+          </Box>
+
           <TextField
             fullWidth
             multiline
-            rows={4}
+            rows={3}
             label="Description"
             placeholder="Detailed description of the issue..."
             variant="outlined"
@@ -120,11 +193,18 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
             onChange={(e) => setComplaintDescription(e.target.value)}
             sx={{
               "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
+                borderRadius: "10px",
                 fontFamily: FONTS.OUTFIT,
-                "&.Mui-focused fieldset": { borderColor: "#FF2600" },
+                fontSize: "13.5px",
+                bgcolor: "#FAFAFA",
+                "& fieldset": { borderColor: "#E2E8F0" },
+                "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY },
               },
-              "& .MuiInputLabel-root.Mui-focused": { color: "#FF2600" },
+              "& .MuiInputLabel-root": {
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "13.5px",
+                "&.Mui-focused": { color: COLORS.PRIMARY },
+              },
             }}
           />
 
@@ -133,19 +213,22 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
               sx={{
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
-                mb: 1,
-                fontSize: "14px",
+                mb: 0.8,
+                fontSize: "13px",
+                color: "#475569",
               }}
             >
               Evidence (Optional)
             </Typography>
             <Box
               sx={{
-                border: "1px dashed #ccc",
-                borderRadius: "8px",
-                p: 2,
+                border: "1.5px dashed #CBD5E1",
+                borderRadius: "10px",
+                p: 1.5,
                 textAlign: "center",
-                bgcolor: "#fafafa",
+                bgcolor: "#FAFAFA",
+                transition: "all 0.15s ease",
+                "&:hover": { bgcolor: "#F8FAFC", borderColor: COLORS.PRIMARY },
               }}
             >
               <input
@@ -157,19 +240,21 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
                 onChange={onFileChange}
               />
               <Button
-                startIcon={<PhotoCameraIcon />}
+                startIcon={<PhotoCameraIcon sx={{ fontSize: 18 }} />}
                 onClick={() => fileInputRef.current?.click()}
                 sx={{
                   color: COLORS.PRIMARY,
                   textTransform: "none",
+                  fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
+                  fontSize: "13px",
                 }}
               >
                 Upload Images
               </Button>
             </Box>
             {complaintFiles.length > 0 && (
-              <Box sx={{ mt: 2, display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ mt: 1.5, display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {complaintFiles.map((file, idx) => (
                   <Chip
                     key={idx}
@@ -177,7 +262,13 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
                     onDelete={() => onRemoveFile(idx)}
                     deleteIcon={<CloseIcon />}
                     size="small"
-                    sx={{ borderRadius: "6px" }}
+                    sx={{
+                      borderRadius: "6px",
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: "12px",
+                      bgcolor: "#FFF0E6",
+                      color: COLORS.PRIMARY,
+                    }}
                   />
                 ))}
               </Box>
@@ -185,10 +276,31 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
           </Box>
         </Box>
       </DialogContent>
-      <DialogActions sx={{ p: 3 }}>
+
+      <DialogActions
+        sx={{
+          px: { xs: 2, sm: 3 },
+          pb: { xs: 2, sm: 2.5 },
+          pt: 1.5,
+          justifyContent: "flex-end",
+          gap: 1.5,
+        }}
+      >
         <Button
           onClick={onClose}
-          sx={{ color: "#666", textTransform: "none", fontWeight: 600 }}
+          variant="outlined"
+          sx={{
+            color: "#475569",
+            borderColor: "#CBD5E1",
+            textTransform: "none",
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 600,
+            borderRadius: "8px",
+            px: 2.5,
+            height: "38px",
+            fontSize: "13px",
+            "&:hover": { bgcolor: "#F8FAFC", borderColor: "#94A3B8" },
+          }}
           disabled={isSubmittingComplaint}
         >
           Cancel
@@ -203,21 +315,24 @@ export const BookingComplaintModal: React.FC<BookingComplaintModalProps> = ({
             !complaintDescription
           }
           sx={{
-            background: "#D32F2F !important",
+            background: "#DC2626 !important",
             color: "white !important",
             textTransform: "none",
-            fontWeight: 600,
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 700,
             borderRadius: "8px",
             boxShadow: "none",
             px: 3,
+            height: "38px",
+            fontSize: "13px",
             "&:hover": {
-              background: "#B71C1C !important",
-              boxShadow: "none",
+              background: "#B91C1C !important",
+              boxShadow: "0 4px 12px rgba(220, 38, 38, 0.25)",
             },
             "&.Mui-disabled": {
-              background: "#ef5350 !important",
+              background: "#FECACA !important",
               color: "white !important",
-              opacity: 0.7,
+              opacity: 0.8,
             },
           }}
         >
