@@ -4,7 +4,9 @@ export const signupSchema = Yup.object().shape({
   lastName: Yup.string().required("Please Enter Last Name"),
   phoneNumber: Yup.string().required("Please Enter Phone Number"),
   countryCode: Yup.string().required("Please Enter Country Code"),
-  email: Yup.string().required("Please Enter Email"),
+  email: Yup.string()
+    .required("Please Enter Email")
+    .email("Please Enter Valid Email"),
   dob: Yup.string().required("Please Enter Date of Birth"),
-  password:Yup.string().required("Please Enter Password")
+  password: Yup.string().required("Please Enter Password"),
 });

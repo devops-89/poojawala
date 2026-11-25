@@ -6,6 +6,7 @@ import Footer from "@/components/widgets/Footer";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import GlobalLoader from "@/components/widgets/GlobalLoader";
+import Modal from "@/components/widgets/Modal";
 import ScrollToTop from "@/components/widgets/ScrollToTop";
 import GlobalModalScrollLock from "@/components/widgets/GlobalModalScrollLock";
 import GlobalDropdownScrollClose from "@/components/widgets/GlobalDropdownScrollClose";
@@ -236,6 +237,7 @@ export default function RootLayout({
           <Footer />
           <GlobalSnackbar />
           <GlobalLoader />
+          <Modal />
         </ThemeRegistry>
       </body>
     </html>

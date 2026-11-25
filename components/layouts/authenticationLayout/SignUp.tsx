@@ -1,19 +1,28 @@
 "use client";
+import { useSendOTP } from "@/hooks/authentication/signup";
+import { useModal } from "@/stores/useModal";
+import { useSignupStore } from "@/stores/useSignupStore";
 import singupBgImage from "@/images/signup-bg1.png";
-import { COLORS } from "@/utils/enums";
+import { COLORS, ROLES } from "@/utils/enums";
 import FONTS from "@/utils/fonts";
 import { signupSchema } from "@/utils/validationSchemas";
+import OtpModal from "./OtpModal";
 import {
   CalendarMonthOutlined,
   Close,
+  RestartAlt,
   ShieldOutlined,
   SpaOutlined,
+  Visibility,
+  VisibilityOff,
 } from "@mui/icons-material";
 import {
   Box,
   Button,
+  CircularProgress,
   Grid,
   IconButton,
+  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
@@ -53,6 +62,9 @@ const RegisterUser = () => {
   ];
 
   const router = useRouter();
+  const setSignupData = useSignupStore((state) => state.setSignupData);
+  const showModal = useModal((state) => state.showModal);
+  const { loading, sendOtp } = useSendOTP();
 
   const routeToLogin = () => {
     router.push("/sign-in");
@@ -69,8 +81,13 @@ const RegisterUser = () => {
       password: "",
     },
     validationSchema: signupSchema,
-    onSubmit: (values) => {
-      console.log("values", values);
+    onSubmit: async (values) => {
+      setSignupData(values);
+      const { email } = values;
+      const isSent = await sendOtp(email, ROLES.CUSTOMER);
+      if (isSent) {
+        showModal(<OtpModal />);
+      }
     },
   });
 
@@ -78,14 +95,25 @@ const RegisterUser = () => {
 
   const handleChangePhoneNumber = (value: string, info: MuiTelInputInfo) => {
     setPhone(value);
-    formik.setFieldValue("phoneNumber", value);
     const isValid = matchIsValidTel(value);
     if (isValid) {
+      formik.setFieldValue("phoneNumber", info?.nationalNumber || "");
       formik.setFieldValue("countryCode", info?.countryCallingCode || "");
+      formik.setFieldError("phoneNumber","")
+    } else {
+      formik.setFieldValue("phoneNumber", "", false);
+      formik.setFieldValue("countryCode", "", false);
+      formik.setFieldError(
+        "phoneNumber",
+        info?.nationalNumber
+          ? "Please Enter Valid Phone Number"
+          : "Please Enter Phone Number"
+      );
     }
   };
 
   const [date, setDate] = useState<moment.Moment | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dateChangeHandler = (newDate: moment.Moment | null) => {
     setDate(newDate);
@@ -98,8 +126,6 @@ const RegisterUser = () => {
       formik.setFieldValue("dob", "");
     }
   };
-
-
 
   return (
     <AuthenticationWrapper
@@ -137,11 +163,14 @@ const RegisterUser = () => {
                 label="First Name*"
                 fullWidth
                 id="firstName"
+                name="firstName"
+                value={formik.values.firstName}
                 onChange={formik.handleChange}
-                helperText={formik.errors.firstName}
-                error={
-                  formik.touched.firstName && Boolean(formik.errors.firstName)
-                }
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.firstName && formik.errors.firstName}
+                error={Boolean(
+                  formik.touched.firstName && formik.errors.firstName,
+                )}
               />
             </Grid>
             <Grid size={6}>
@@ -149,11 +178,14 @@ const RegisterUser = () => {
                 label="Last Name*"
                 fullWidth
                 id="lastName"
+                name="lastName"
+                value={formik.values.lastName}
                 onChange={formik.handleChange}
-                helperText={formik.errors.lastName}
-                error={
-                  formik.touched.lastName && Boolean(formik.errors.lastName)
-                }
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.lastName && formik.errors.lastName}
+                error={Boolean(
+                  formik.touched.lastName && formik.errors.lastName,
+                )}
               />
             </Grid>
             <Grid size={6}>
@@ -161,22 +193,34 @@ const RegisterUser = () => {
                 label="Email Address*"
                 fullWidth
                 id="email"
+                name="email"
+                value={formik.values.email}
                 onChange={formik.handleChange}
-                helperText={formik.errors.email}
-                error={formik.touched.email && Boolean(formik.errors.email)}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.email && formik.errors.email}
+                error={Boolean(formik.touched.email && formik.errors.email)}
               />
             </Grid>
             <Grid size={6}>
               <MuiTelInput
                 label="Phone Number*"
+                name="phoneNumber"
                 defaultCountry="IN"
                 onChange={handleChangePhoneNumber}
-                value={phone}
-                error={
-                  formik.touched.phoneNumber &&
-                  Boolean(formik.errors.phoneNumber)
+                onBlur={() =>
+                  formik.setFieldTouched(
+                    "phoneNumber",
+                    true,
+                    !formik.errors.phoneNumber,
+                  )
                 }
-                helperText={formik.errors.phoneNumber}
+                value={phone}
+                error={Boolean(
+                  formik.touched.phoneNumber && formik.errors.phoneNumber,
+                )}
+                helperText={
+                  formik.touched.phoneNumber && formik.errors.phoneNumber
+                }
               />
             </Grid>
             <Grid size={6}>
@@ -187,6 +231,14 @@ const RegisterUser = () => {
                   onChange={dateChangeHandler}
                   value={date}
                   format="DD-MM-YYYY"
+                  slotProps={{
+                    textField: {
+                      name: "dob",
+                      onBlur: () => formik.setFieldTouched("dob", true),
+                      error: Boolean(formik.touched.dob && formik.errors.dob),
+                      helperText: formik.touched.dob && formik.errors.dob,
+                    },
+                  }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -195,12 +247,33 @@ const RegisterUser = () => {
                 label="Password*"
                 fullWidth
                 id="password"
-                type="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={formik.values.password}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.errors.password}
+                onBlur={formik.handleBlur}
+                error={Boolean(
+                  formik.touched.password && formik.errors.password,
+                )}
+                helperText={formik.touched.password && formik.errors.password}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          onMouseDown={(e) => e.preventDefault()}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
             </Grid>
             <Grid size={12}>
@@ -213,8 +286,13 @@ const RegisterUser = () => {
                 }}
                 fullWidth
                 type="submit"
+                disabled={loading}
               >
-                Submit
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: COLORS.WHITE }} />
+                ) : (
+                  "Submit"
+                )}
               </Button>
 
               <Typography
