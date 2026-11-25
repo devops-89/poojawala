@@ -25,18 +25,18 @@ export default function CustomerTempleServices({
   return (
     <Box
       id="temple-services-section"
-      sx={{ py: { xs: 5, md: 7 }, borderTop: "1px solid #F3E8DB", scrollMarginTop: "90px" }}
+      sx={{ pt: { xs: 1.5, md: 2 }, pb: { xs: 2, md: 3 }, scrollMarginTop: "90px" }}
     >
       {/* Section Title */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 2 }}>
         <Typography
           variant="h2"
           sx={{
-            fontFamily: FONTS.PRIMARY,
-            fontWeight: 800,
-            fontSize: { xs: "24px", md: "30px" },
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 700,
+            fontSize: { xs: "18px", md: "21px" },
             color: "#2C1810",
-            mb: 0.8,
+            mb: 0.25,
           }}
         >
           Temple Poojas & Ceremonies
@@ -44,24 +44,24 @@ export default function CustomerTempleServices({
         <Typography
           sx={{
             fontFamily: FONTS.OUTFIT,
-            fontSize: "14px",
+            fontSize: "11px",
             color: "#8C7A6B",
             fontWeight: 600,
             textTransform: "uppercase",
-            letterSpacing: "0.5px",
+            letterSpacing: "0.6px",
           }}
         >
-          Sacred Rituals performed at {temple?.name}
+          Sacred Rituals & Vedic Ceremonies
         </Typography>
       </Box>
 
       {/* Services List / Grid */}
       {servicesLoading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
           <CircularProgress sx={{ color: COLORS.PRIMARY }} />
         </Box>
       ) : services.length > 0 ? (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
           {services.map((srv: any) => (
             <CustomerServiceCard key={srv.id} service={srv} />
           ))}
@@ -70,23 +70,38 @@ export default function CustomerTempleServices({
         /* Empty State / Booking Callout */
         <Box
           sx={{
-            p: { xs: 4, md: 5 },
+            p: { xs: 2.5, sm: 3.2 },
             borderRadius: "20px",
-            bgcolor: "#FFFDF9",
-            border: "1.5px dashed #FED7AA",
+            bgcolor: "#FAF7F4",
+            border: "1.5px dashed #FFD4BC",
             textAlign: "center",
-            maxWidth: "700px",
+            maxWidth: "540px",
             mx: "auto",
           }}
         >
-          <TempleHinduIcon sx={{ fontSize: 44, color: COLORS.PRIMARY, mb: 1.5 }} />
+          <Box
+            sx={{
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              bgcolor: "#FFF0E6",
+              border: "1px solid #FFD4BC",
+              color: COLORS.PRIMARY,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 1.2,
+            }}
+          >
+            <TempleHinduIcon sx={{ fontSize: 22 }} />
+          </Box>
           <Typography
             sx={{
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: "20px",
+              fontSize: { xs: "15.5px", sm: "17px" },
               color: "#2C1810",
-              mb: 1,
+              mb: 0.6,
             }}
           >
             Book a Consecrated Pooja at {temple?.name}
@@ -94,10 +109,12 @@ export default function CustomerTempleServices({
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              fontSize: "14px",
-              color: "#64748b",
-              lineHeight: 1.6,
-              mb: 3,
+              fontSize: { xs: "12.5px", sm: "13px" },
+              color: "#64748B",
+              lineHeight: 1.55,
+              maxWidth: 440,
+              mx: "auto",
+              mb: 2.2,
             }}
           >
             Looking to perform an Archana, Rudrabhishek, or customized Vedic havan at
@@ -107,17 +124,21 @@ export default function CustomerTempleServices({
             component={NextLink}
             href={bookUrl}
             variant="contained"
-            endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
+            endIcon={<ArrowForwardIcon sx={{ fontSize: 15 }} />}
             sx={{
               background: COLORS.PRIMARY,
               color: "#FFFFFF",
               borderRadius: "30px",
-              px: 3.5,
-              py: 1.2,
+              px: 3,
+              py: 0.9,
               fontWeight: 700,
-              fontSize: "14px",
+              fontSize: "13px",
               fontFamily: FONTS.OUTFIT,
               textTransform: "none",
+              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.22)",
+              "&:hover": {
+                background: COLORS.PRIMARY_DARK,
+              },
             }}
           >
             Explore & Book Temple Pooja

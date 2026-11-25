@@ -5,6 +5,7 @@ import { addToCartAPI, deleteCartItemAPI } from "@/api/cartControllers";
 import { getAllProductsAPI } from "@/api/productControllers";
 import { useCartStore } from "@/stores/cartStore";
 import { useSnackbarStore } from "@/stores/snackbarStore";
+import { extractProductImage, getProductInitials } from "@/utils/helpers";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckIcon from "@mui/icons-material/Check";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
@@ -37,6 +38,70 @@ interface SamagriItem {
   price: number;
   image: string;
   unitString?: string;
+}
+
+function SamagriCardMedia({
+  src,
+  title,
+}: {
+  src?: string;
+  title?: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+  const initials = getProductInitials(title || "");
+
+  if (!src || imgError) {
+    return (
+      <Box
+        sx={{
+          width: { xs: 68, sm: 76 },
+          height: { xs: 68, sm: 76 },
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #FFF0E6 0%, #FFE2D1 100%)",
+          border: "2px solid #FFD4BC",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 4px 14px rgba(255, 98, 0, 0.12)",
+          userSelect: "none",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            fontSize: { xs: "22px", sm: "26px" },
+            color: COLORS.PRIMARY,
+            letterSpacing: "0.5px",
+          }}
+        >
+          {initials}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      component="img"
+      src={src}
+      alt={title}
+      onError={() => setImgError(true)}
+      sx={{
+        maxWidth: "100%",
+        maxHeight: "100%",
+        width: "auto",
+        height: "auto",
+        objectFit: "contain",
+        objectPosition: "center",
+        borderRadius: "8px",
+        transition: "transform 0.35s ease",
+        "&:hover": {
+          transform: "scale(1.05)",
+        },
+      }}
+    />
+  );
 }
 
 export default function ServiceDetailsPujaSamagri({
@@ -86,14 +151,7 @@ export default function ServiceDetailsPujaSamagri({
         if (rawList && rawList.length > 0) {
           const formatted: SamagriItem[] = rawList.map(
             (p: any, idx: number) => {
-              const img =
-                p.imageUrl ||
-                p.imageDownloadurl ||
-                p.image ||
-                p.bannerUrl ||
-                p.bannerDownloadurl ||
-                (Array.isArray(p.images) && p.images[0]) ||
-                "/images/productsHero.webp";
+              const img = extractProductImage(p);
 
               const pQty = p.quantity || p.packQuantity || p.qty;
               const pUnit = p.pricingUnit || p.unit;
@@ -490,24 +548,7 @@ export default function ServiceDetailsPujaSamagri({
                       overflow: "hidden",
                     }}
                   >
-                    <CardMedia
-                      component="img"
-                      image={item.image}
-                      alt={item.title}
-                      sx={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        width: "auto",
-                        height: "auto",
-                        objectFit: "contain",
-                        objectPosition: "center",
-                        borderRadius: "8px",
-                        transition: "transform 0.35s ease",
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
-                      }}
-                    />
+                    <SamagriCardMedia src={item.image} title={item.title} />
                     {isAdded && (
                       <Box
                         sx={{

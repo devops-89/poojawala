@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, CircularProgress, Grid, Pagination } from "@mui/material";
+import { Box, Grid, Pagination, Paper, Skeleton } from "@mui/material";
 import { getAstrologersAPI } from "@/api/userControllers";
 import { COLORS } from "@/utils/enums";
 import CustomerAstrologersHeader from "./CustomerAstrologersHeader";
@@ -51,7 +51,7 @@ export default function CustomerAstrologersContent() {
   }, [fetchAstrologers]);
 
   return (
-    <Box>
+    <Box sx={{ pb: { xs: 4, sm: 6 } }}>
       <CustomerAstrologersHeader />
 
       <CustomerAstrologersFilters
@@ -63,9 +63,47 @@ export default function CustomerAstrologersContent() {
       />
 
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-          <CircularProgress sx={{ color: COLORS.PRIMARY }} />
-        </Box>
+        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
+          {[1, 2, 3, 4].map((n) => (
+            <Grid size={{ xs: 12, lg: 6 }} key={n}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 2, sm: 2.5 },
+                  borderRadius: "20px",
+                  border: "1.5px solid #EFE6D5",
+                  bgcolor: "#FFFFFF",
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: 2,
+                }}
+              >
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    width: { xs: "100%", sm: 140 },
+                    height: { xs: 100, sm: 140 },
+                    borderRadius: "16px",
+                  }}
+                  animation="wave"
+                />
+                <Box sx={{ flex: 1 }}>
+                  <Skeleton variant="text" height={26} width="60%" animation="wave" />
+                  <Skeleton variant="text" height={18} width="40%" animation="wave" />
+                  <Skeleton variant="text" height={18} width="80%" animation="wave" />
+                  <Box sx={{ display: "flex", gap: 1, my: 1.5 }}>
+                    <Skeleton variant="rectangular" width={60} height={22} sx={{ borderRadius: "6px" }} />
+                    <Skeleton variant="rectangular" width={60} height={22} sx={{ borderRadius: "6px" }} />
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+                    <Skeleton variant="text" height={24} width="30%" animation="wave" />
+                    <Skeleton variant="rectangular" width={100} height={34} sx={{ borderRadius: "20px" }} />
+                  </Box>
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
       ) : astrologers.length === 0 ? (
         <CustomerAstrologersEmptyState
           onReset={() => {
@@ -74,7 +112,7 @@ export default function CustomerAstrologersContent() {
           }}
         />
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
           {astrologers.map((astrologer, idx) => (
             <CustomerAstrologerCard
               key={astrologer.id || idx}
@@ -85,7 +123,7 @@ export default function CustomerAstrologersContent() {
       )}
 
       {!loading && astrologers.length > 0 && totalPages > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 4, sm: 6 } }}>
           <Pagination
             count={totalPages}
             page={page}

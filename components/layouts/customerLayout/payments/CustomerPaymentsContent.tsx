@@ -2,7 +2,8 @@
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, TablePagination, Pagination, Card, Divider, Tooltip, IconButton, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Pagination, Card, Divider, Tooltip, IconButton, CircularProgress } from '@mui/material';
+import AppTablePagination from '@/components/widgets/AppTablePagination';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import EventIcon from '@mui/icons-material/Event';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -228,34 +229,16 @@ export default function CustomerPaymentsContent() {
             </Table>
           </TableContainer>
           {totalPayments > 0 && (
-            <TablePagination
-              component="div"
+            <AppTablePagination
               count={totalPayments}
               page={page}
-              onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              slotProps={{
-                select: {
-                  MenuProps: {
-                    variant: "menu",
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "left",
-                    },
-                    transformOrigin: {
-                      vertical: "bottom",
-                      horizontal: "left",
-                    },
-                    disableScrollLock: true,
-                  },
-                },
+              onPageChange={(newPage) => setPage(newPage)}
+              onRowsPerPageChange={(newLimit) => {
+                setRowsPerPage(newLimit);
+                setPage(0);
               }}
-              sx={{
-                borderTop: '1px solid #e2e8f0',
-                '& .MuiTablePagination-toolbar': { minHeight: '60px' },
-                fontFamily: FONTS.PRIMARY,
-              }}
+              itemName="payments"
             />
           )}
         </Box>

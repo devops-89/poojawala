@@ -3,6 +3,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LogoutIcon from "@mui/icons-material/Logout";
+import HomeIcon from "@mui/icons-material/Home";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import LanguageIcon from "@mui/icons-material/Language";
+import TempleHinduIcon from "@mui/icons-material/TempleHindu";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import LoginIcon from "@mui/icons-material/Login";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 import {
   Box,
   Button,
@@ -103,12 +111,12 @@ function NavbarContent() {
   };
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Offline Services", href: "/services?isOffline=true" },
-    { name: "Online Services", href: "/services?isOnline=true" },
-    { name: "Temples", href: "/temples" },
-    { name: "Astrologers", href: "/astrologers" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "Home", href: "/", icon: <HomeIcon sx={{ fontSize: 20 }} /> },
+    { name: "Offline Services", href: "/services?isOffline=true", icon: <StorefrontIcon sx={{ fontSize: 20 }} /> },
+    { name: "Online Services", href: "/services?isOnline=true", icon: <LanguageIcon sx={{ fontSize: 20 }} /> },
+    { name: "Temples", href: "/temples", icon: <TempleHinduIcon sx={{ fontSize: 20 }} /> },
+    { name: "Astrologers", href: "/astrologers", icon: <AutoAwesomeIcon sx={{ fontSize: 20 }} /> },
+    { name: "Contact Us", href: "/contact", icon: <SupportAgentIcon sx={{ fontSize: 20 }} /> },
   ];
 
   const handleDrawerToggle = () => {
@@ -117,7 +125,7 @@ function NavbarContent() {
 
   return (
     <>
-      <Box sx={{ position: "sticky", top: 0, zIndex: 1100, borderBottom: "1px solid #eee", bgcolor: "#fff", py: 2, boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
+      <Box sx={{ position: "sticky", top: 0, zIndex: 1100, borderBottom: "1px solid #eee", bgcolor: "#fff", py: { xs: 1.5, md: 1.8 }, boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
         <Container
           maxWidth="lg"
           sx={{
@@ -140,7 +148,7 @@ function NavbarContent() {
               priority
               style={{
                 height: "auto",
-                maxHeight: "46px",
+                maxHeight: "44px",
                 width: "auto",
                 objectFit: "contain",
                 filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
@@ -153,7 +161,7 @@ function NavbarContent() {
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
-              gap: 3.5,
+              gap: { md: 1, lg: 1.5 },
               alignItems: "center",
             }}
           >
@@ -167,12 +175,19 @@ function NavbarContent() {
                   prefetch={false}
                   underline="none"
                   sx={{
-                    color: isActive ? "#D32F2F" : "#666",
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: "15px",
-                    fontFamily: FONTS.PRIMARY,
-                    transition: "color 0.2s",
-                    "&:hover": { color: "#D32F2F" },
+                    color: isActive ? COLORS.PRIMARY : "#475569",
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: "14.5px",
+                    fontFamily: FONTS.OUTFIT,
+                    px: 1.6,
+                    py: 0.7,
+                    borderRadius: "20px",
+                    bgcolor: isActive ? "#FFF3EB" : "transparent",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      color: COLORS.PRIMARY,
+                      bgcolor: isActive ? "#FFF3EB" : "#FAF4EE",
+                    },
                   }}
                 >
                   {link.name}
@@ -197,11 +212,11 @@ function NavbarContent() {
                     color: "white",
                     borderRadius: "30px",
                     textTransform: "none",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     px: 2.8,
                     py: 0.8,
                     fontSize: "14px",
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
                     "&:hover": { background: COLORS.PRIMARY_DARK },
                   }}
@@ -223,7 +238,7 @@ function NavbarContent() {
                     px: 2.2,
                     py: 0.8,
                     fontSize: "14px",
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     "&:hover": {
                       borderColor: "#f87171",
                       bgcolor: "#fef2f2",
@@ -250,8 +265,9 @@ function NavbarContent() {
                     fontWeight: 600,
                     px: 2.2,
                     py: 0.8,
-                    fontSize: "14px",
-                    fontFamily: FONTS.PRIMARY,
+                    fontSize: "13.5px",
+                    fontFamily: FONTS.OUTFIT,
+                    transition: "all 0.2s ease",
                     "&:hover": {
                       borderColor: COLORS.PRIMARY_DARK,
                       bgcolor: "#FFF0E6",
@@ -268,16 +284,21 @@ function NavbarContent() {
                   variant="contained"
                   sx={{
                     display: { xs: "none", md: "inline-flex" },
-                    background: COLORS.PRIMARY,
+                    background: "linear-gradient(135deg, #FF6200 0%, #E55800 100%)",
                     color: "white",
                     borderRadius: "30px",
                     textTransform: "none",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     px: 3,
-                    py: 0.8,
+                    py: 0.85,
                     fontSize: "14px",
-                    fontFamily: FONTS.PRIMARY,
-                    "&:hover": { background: COLORS.PRIMARY_DARK },
+                    fontFamily: FONTS.OUTFIT,
+                    boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      background: COLORS.PRIMARY_DARK,
+                      boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
+                    },
                   }}
                 >
                   Sign In
@@ -291,10 +312,16 @@ function NavbarContent() {
               onClick={handleDrawerToggle}
               sx={{
                 display: { xs: "flex", md: "none" },
-                color: "#1A1A1A",
+                color: "#2C1810",
+                p: 0.9,
+                bgcolor: "#FAF4EE",
+                border: "1px solid #EFE6D5",
+                borderRadius: "10px",
+                transition: "all 0.2s ease",
+                "&:hover": { bgcolor: "#FFF0E6", color: COLORS.PRIMARY },
               }}
             >
-              <MenuIcon sx={{ fontSize: 28 }} />
+              <MenuIcon sx={{ fontSize: 24 }} />
             </IconButton>
           </Box>
         </Container>
@@ -308,15 +335,18 @@ function NavbarContent() {
         sx={{
           display: { xs: "block", md: "none" },
           "& .MuiBackdrop-root": {
-            bgcolor: "rgba(0,0,0,0.3)",
+            bgcolor: "rgba(44, 24, 16, 0.35)",
+            backdropFilter: "blur(2px)",
           },
           "& .MuiDrawer-paper": {
-            width: "280px",
-            bgcolor: "rgba(255, 255, 255, 0.95)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "-4px 0 30px rgba(0,0,0,0.15)",
-            borderLeft: "1px solid rgba(255,255,255,0.3)",
+            width: { xs: "295px", sm: "320px" },
+            maxWidth: "86vw",
+            bgcolor: "#FFFDFB",
+            boxShadow: "-8px 0 32px rgba(44, 24, 16, 0.15)",
+            borderLeft: "1px solid #FFE4D6",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
           },
         }}
       >
@@ -326,9 +356,10 @@ function NavbarContent() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            px: 2.5,
-            py: 2,
-            borderBottom: "1px solid #f1f5f9",
+            px: 2.2,
+            py: 1.8,
+            borderBottom: "1px solid #F1E9DF",
+            bgcolor: "#FFFFFF",
           }}
         >
           <Link
@@ -345,156 +376,222 @@ function NavbarContent() {
               height={47}
               style={{
                 height: "auto",
-                maxHeight: "36px",
+                maxHeight: "34px",
                 width: "auto",
                 objectFit: "contain",
-                filter: "drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)",
               }}
             />
           </Link>
-          <IconButton onClick={handleDrawerToggle} aria-label="close menu" size="small" sx={{ color: "#64748b" }}>
-            <CloseIcon />
+          <IconButton
+            onClick={handleDrawerToggle}
+            aria-label="close menu"
+            size="small"
+            sx={{
+              width: 32,
+              height: 32,
+              color: "#64748B",
+              bgcolor: "#FAF4EE",
+              border: "1px solid #EFE6D5",
+              boxShadow: "0 2px 6px rgba(44, 24, 16, 0.05)",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                bgcolor: "#FFF8F2",
+                color: COLORS.PRIMARY,
+                borderColor: "#FFD4BC",
+                transform: "scale(1.05)",
+              },
+            }}
+          >
+            <CloseIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Box>
 
-        {/* Drawer Nav Links */}
-        <List sx={{ px: 1, py: 2 }}>
-          {navLinks.map((link) => {
-            const isActive = isLinkActive(link.href);
-            return (
-              <ListItem key={link.name} disablePadding>
-                <ListItemButton
+        {/* Drawer Scrollable Content */}
+        <Box
+          sx={{
+            flex: 1,
+            overflowY: "auto",
+            px: 2,
+            py: 2,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* Drawer Nav Links */}
+          <List disablePadding sx={{ mb: 1 }}>
+            {navLinks.map((link) => {
+              const isActive = isLinkActive(link.href);
+              return (
+                <ListItem key={link.name} disablePadding sx={{ mb: 0.6 }}>
+                  <ListItemButton
+                    component={NextLink}
+                    href={link.href}
+                    prefetch={false}
+                    onClick={handleDrawerToggle}
+                    sx={{
+                      borderRadius: "12px",
+                      py: 1.1,
+                      px: 1.5,
+                      bgcolor: isActive ? "#FFF0E6" : "transparent",
+                      border: isActive
+                        ? "1px solid #FFE4D6"
+                        : "1px solid transparent",
+                      color: isActive ? COLORS.PRIMARY : "#2C1810",
+                      transition: "all 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      "&:hover": {
+                        bgcolor: isActive ? "#FFF0E6" : "#FAF4EE",
+                        color: COLORS.PRIMARY,
+                        "& .menu-icon": { color: COLORS.PRIMARY },
+                      },
+                    }}
+                  >
+                    <Box
+                      className="menu-icon"
+                      sx={{
+                        color: isActive ? COLORS.PRIMARY : "#8C7D73",
+                        display: "flex",
+                        alignItems: "center",
+                        transition: "color 0.2s ease",
+                      }}
+                    >
+                      {link.icon}
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: isActive ? 700 : 500,
+                        fontSize: "15px",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {link.name}
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+
+          {/* Action Buttons */}
+          <Box
+            sx={{
+              pt: 2,
+              borderTop: "1px dashed #EFE6D5",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.4,
+            }}
+          >
+            {isCustomer ? (
+              <>
+                <Button
                   component={NextLink}
-                  href={link.href}
-                  prefetch={false}
+                  href={dashboardHref}
+                  variant="contained"
+                  fullWidth
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
                   onClick={handleDrawerToggle}
                   sx={{
-                    borderRadius: "12px",
-                    mb: 0.5,
-                    bgcolor: isActive
-                      ? "rgba(211, 47, 47, 0.08)"
-                      : "transparent",
+                    background: COLORS.PRIMARY,
+                    color: "white",
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    py: 1.2,
+                    fontWeight: 700,
+                    fontSize: "14.5px",
+                    fontFamily: FONTS.OUTFIT,
+                    boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+                    "&:hover": { background: COLORS.PRIMARY_DARK },
+                  }}
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
+                  onClick={() => {
+                    handleDrawerToggle();
+                    handleLogout();
+                  }}
+                  sx={{
+                    borderColor: "#fed7aa",
+                    color: COLORS.PRIMARY,
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    py: 1.1,
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    fontFamily: FONTS.OUTFIT,
                     "&:hover": {
-                      bgcolor: "rgba(211, 47, 47, 0.05)",
+                      borderColor: "#f87171",
+                      bgcolor: "#fef2f2",
+                      color: "#dc2626",
                     },
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontFamily: FONTS.PRIMARY,
-                      fontWeight: isActive ? 600 : 500,
-                      color: isActive ? "#D32F2F" : "#333",
-                      fontSize: "16px",
-                    }}
-                  >
-                    {link.name}
-                  </Typography>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-
-        {/* Action Buttons — right below links */}
-        <Box sx={{ px: 2, pt: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
-          {isCustomer ? (
-            <>
-              <Button
-                component={NextLink}
-                href={dashboardHref}
-                variant="contained"
-                fullWidth
-                endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
-                onClick={handleDrawerToggle}
-                sx={{
-                  background: COLORS.PRIMARY,
-                  color: "white",
-                  borderRadius: "30px",
-                  textTransform: "none",
-                  py: 1.2,
-                  fontWeight: 600,
-                  fontSize: "15px",
-                  fontFamily: FONTS.PRIMARY,
-                  "&:hover": { background: COLORS.PRIMARY_DARK },
-                }}
-              >
-                Go to Dashboard
-              </Button>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
-                onClick={() => {
-                  handleDrawerToggle();
-                  handleLogout();
-                }}
-                sx={{
-                  borderColor: "#fed7aa",
-                  color: COLORS.PRIMARY,
-                  borderRadius: "30px",
-                  textTransform: "none",
-                  py: 1.2,
-                  fontWeight: 600,
-                  fontSize: "15px",
-                  fontFamily: FONTS.PRIMARY,
-                  "&:hover": {
-                    borderColor: "#f87171",
-                    bgcolor: "#fef2f2",
-                    color: "#dc2626",
-                  },
-                }}
-              >
-                Log Out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                component={NextLink}
-                href="/sign-in"
-                variant="contained"
-                fullWidth
-                onClick={handleDrawerToggle}
-                sx={{
-                  background: COLORS.PRIMARY,
-                  color: "white",
-                  borderRadius: "30px",
-                  textTransform: "none",
-                  py: 1.2,
-                  fontWeight: 600,
-                  fontSize: "15px",
-                  fontFamily: FONTS.PRIMARY,
-                  "&:hover": { background: COLORS.PRIMARY_DARK },
-                }}
-              >
-                Sign In
-              </Button>
-              <Button
-                component={NextLink}
-                href="/partner"
-                variant="outlined"
-                fullWidth
-                onClick={handleDrawerToggle}
-                sx={{
-                  borderColor: COLORS.PRIMARY,
-                  color: COLORS.PRIMARY,
-                  borderRadius: "30px",
-                  textTransform: "none",
-                  py: 1.2,
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  fontFamily: FONTS.PRIMARY,
-                  "&:hover": {
-                    borderColor: COLORS.PRIMARY_DARK,
-                    bgcolor: "#FFF0E6",
-                    color: COLORS.PRIMARY_DARK,
-                  },
-                }}
-              >
-                Register as Astrologer/Purohit
-              </Button>
-            </>
-          )}
+                  Log Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={NextLink}
+                  href="/sign-in"
+                  variant="contained"
+                  fullWidth
+                  startIcon={<LoginIcon sx={{ fontSize: 18 }} />}
+                  onClick={handleDrawerToggle}
+                  sx={{
+                    background: "linear-gradient(135deg, #FF6200 0%, #E55800 100%)",
+                    color: "white",
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    py: 1.25,
+                    fontWeight: 700,
+                    fontSize: "14.5px",
+                    fontFamily: FONTS.OUTFIT,
+                    boxShadow: "0 6px 18px rgba(255, 98, 0, 0.28)",
+                    "&:hover": {
+                      background: COLORS.PRIMARY_DARK,
+                      boxShadow: "0 8px 22px rgba(255, 98, 0, 0.36)",
+                    },
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  component={NextLink}
+                  href="/partner"
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<HowToRegIcon sx={{ fontSize: 18 }} />}
+                  onClick={handleDrawerToggle}
+                  sx={{
+                    borderColor: COLORS.PRIMARY,
+                    color: COLORS.PRIMARY,
+                    bgcolor: "#FFFDFB",
+                    borderRadius: "30px",
+                    textTransform: "none",
+                    py: 1.15,
+                    fontWeight: 600,
+                    fontSize: "13.5px",
+                    fontFamily: FONTS.OUTFIT,
+                    "&:hover": {
+                      borderColor: COLORS.PRIMARY_DARK,
+                      bgcolor: "#FFF0E6",
+                      color: COLORS.PRIMARY_DARK,
+                    },
+                  }}
+                >
+                  Register as Astrologer/Purohit
+                </Button>
+              </>
+            )}
+          </Box>
         </Box>
       </Drawer>
     </>

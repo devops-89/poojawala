@@ -3,6 +3,7 @@ import React from "react";
 import { Box, InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 interface CustomerAstrologersFiltersProps {
   searchTerm: string;
@@ -14,40 +15,27 @@ export default function CustomerAstrologersFilters({
   onSearchChange,
 }: CustomerAstrologersFiltersProps) {
   return (
-    <Box
-      sx={{
-        mb: 4,
-        p: { xs: 1.5, sm: 2 },
-        bgcolor: "#ffffff",
-        borderRadius: "16px",
-        border: "1px solid #e2e8f0",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-      }}
-    >
+    <Box sx={{ mb: { xs: 2.5, sm: 3.5 } }}>
       <TextField
         fullWidth
-        placeholder="Search astrologers by name...."
+        placeholder="Search astrologers by name, Vedic expertise, or language..."
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
         slotProps={{
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: "#94a3b8", fontSize: "1.3rem" }} />
+                <SearchIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
               </InputAdornment>
             ),
-          },
-        }}
-        sx={{
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "12px",
-            fontFamily: FONTS.OUTFIT,
-            bgcolor: "#f8fafc",
-            "& fieldset": {
-              borderColor: "#e2e8f0",
-            },
-            "&:hover fieldset": {
-              borderColor: "#cbd5e1",
+            sx: {
+              fontFamily: FONTS.OUTFIT,
+              fontSize: { xs: "13.5px", sm: "14px" },
+              borderRadius: "14px",
+              bgcolor: "#FFFFFF",
+              "& fieldset": { borderColor: "#EFE6D5" },
+              "&:hover fieldset": { borderColor: "#FFD4BC" },
+              "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
             },
           },
         }}

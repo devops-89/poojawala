@@ -1,6 +1,7 @@
 "use client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { getProductInitials } from "@/utils/helpers";
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -35,6 +36,51 @@ interface CustomerOrderDetailsModalProps {
   onReorder: (order: CustomerOrder) => void;
   onPayOrder?: (order: CustomerOrder) => void;
   isPaying?: boolean;
+}
+
+function ModalOrderItemMedia({ src, title }: { src?: string; title?: string }) {
+  const [imgError, setImgError] = useState(false);
+  const initials = getProductInitials(title || "");
+
+  if (!src || imgError) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(135deg, #FFF0E6 0%, #FFE2D1 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          userSelect: "none",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            fontSize: "16px",
+            color: COLORS.PRIMARY,
+          }}
+        >
+          {initials}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={title}
+      onError={() => setImgError(true)}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
+  );
 }
 
 export default function CustomerOrderDetailsModal({
@@ -559,15 +605,7 @@ export default function CustomerOrderDetailsModal({
                         flexShrink: 0,
                       }}
                     >
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
+                      <ModalOrderItemMedia src={item.image} title={item.title} />
                     </Box>
 
                     <Box sx={{ minWidth: 0 }}>

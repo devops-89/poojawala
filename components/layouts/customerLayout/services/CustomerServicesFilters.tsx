@@ -1,5 +1,7 @@
 "use client";
 
+import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 import { getServiceCategoriesAPI } from "@/api/serviceControllers";
 import { getTemplesAPI } from "@/api/templeControllers";
 import SearchIcon from "@mui/icons-material/Search";
@@ -243,26 +245,30 @@ export default function CustomerServicesFilters({
   }, [localSearch, onSearchChange, searchTerm]);
 
   return (
-    <Grid container spacing={2} sx={{ mb: 4 }}>
+    <Grid container spacing={{ xs: 1.5, sm: 2 }} sx={{ mb: { xs: 3, md: 4 } }}>
       {/* Search Input - Grid of 2 when hideLocationFilters is true, else Full Width */}
       <Grid size={hideLocationFilters ? { xs: 12, sm: 6 } : { xs: 12 }}>
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search poojas or services..."
+          placeholder="Search poojas, homams, or services..."
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
           slotProps={{
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon sx={{ color: "#999" }} />
+                  <SearchIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
                 </InputAdornment>
               ),
               sx: {
-                borderRadius: "12px",
-                bgcolor: "white",
-                "& fieldset": { borderColor: "#E0E0E0" },
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "14px",
+                borderRadius: "14px",
+                bgcolor: "#FFFFFF",
+                "& fieldset": { borderColor: "#EFE6D5" },
+                "&:hover fieldset": { borderColor: "#FFD4BC" },
+                "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
               },
             },
           }}
@@ -285,6 +291,20 @@ export default function CustomerServicesFilters({
                 !newValue || newValue === "All States" ? "All" : newValue;
               onStateChange(val);
             }}
+            slotProps={{
+              paper: {
+                sx: {
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "14px",
+                  border: "1px solid #EFE6D5",
+                  boxShadow: "0 8px 24px rgba(44, 24, 16, 0.08)",
+                  "& .MuiMenuItem-root, & .MuiAutocomplete-option": {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "13.5px",
+                  },
+                },
+              },
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -294,10 +314,16 @@ export default function CustomerServicesFilters({
                 autoComplete="off"
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    bgcolor: "white",
-                    "& fieldset": { borderColor: "#E0E0E0" },
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "14px",
+                    borderRadius: "14px",
+                    bgcolor: "#FFFFFF",
+                    "& fieldset": { borderColor: "#EFE6D5" },
+                    "&:hover fieldset": { borderColor: "#FFD4BC" },
+                    "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
                   },
+                  "& .MuiInputLabel-root": { fontFamily: FONTS.OUTFIT, color: "#7C6A60", fontSize: "14px" },
+                  "& label.Mui-focused": { color: COLORS.PRIMARY },
                 }}
               />
             )}
@@ -324,6 +350,20 @@ export default function CustomerServicesFilters({
                 }
               }
             }}
+            slotProps={{
+              paper: {
+                sx: {
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "14px",
+                  border: "1px solid #EFE6D5",
+                  boxShadow: "0 8px 24px rgba(44, 24, 16, 0.08)",
+                  "& .MuiMenuItem-root, & .MuiAutocomplete-option": {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "13.5px",
+                  },
+                },
+              },
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -333,10 +373,16 @@ export default function CustomerServicesFilters({
                 autoComplete="off"
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    bgcolor: "white",
-                    "& fieldset": { borderColor: "#E0E0E0" },
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "14px",
+                    borderRadius: "14px",
+                    bgcolor: "#FFFFFF",
+                    "& fieldset": { borderColor: "#EFE6D5" },
+                    "&:hover fieldset": { borderColor: "#FFD4BC" },
+                    "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
                   },
+                  "& .MuiInputLabel-root": { fontFamily: FONTS.OUTFIT, color: "#7C6A60", fontSize: "14px" },
+                  "& label.Mui-focused": { color: COLORS.PRIMARY },
                 }}
               />
             )}
@@ -363,6 +409,20 @@ export default function CustomerServicesFilters({
                 }
               }
             }}
+            slotProps={{
+              paper: {
+                sx: {
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "14px",
+                  border: "1px solid #EFE6D5",
+                  boxShadow: "0 8px 24px rgba(44, 24, 16, 0.08)",
+                  "& .MuiMenuItem-root, & .MuiAutocomplete-option": {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "13.5px",
+                  },
+                },
+              },
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -372,10 +432,16 @@ export default function CustomerServicesFilters({
                 autoComplete="off"
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    bgcolor: "white",
-                    "& fieldset": { borderColor: "#E0E0E0" },
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "14px",
+                    borderRadius: "14px",
+                    bgcolor: "#FFFFFF",
+                    "& fieldset": { borderColor: "#EFE6D5" },
+                    "&:hover fieldset": { borderColor: "#FFD4BC" },
+                    "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
                   },
+                  "& .MuiInputLabel-root": { fontFamily: FONTS.OUTFIT, color: "#7C6A60", fontSize: "14px" },
+                  "& label.Mui-focused": { color: COLORS.PRIMARY },
                 }}
               />
             )}
@@ -400,6 +466,20 @@ export default function CustomerServicesFilters({
                 !newValue || newValue === "All Cities" ? "All" : newValue;
               onCityChange(val);
             }}
+            slotProps={{
+              paper: {
+                sx: {
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "14px",
+                  border: "1px solid #EFE6D5",
+                  boxShadow: "0 8px 24px rgba(44, 24, 16, 0.08)",
+                  "& .MuiMenuItem-root, & .MuiAutocomplete-option": {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "13.5px",
+                  },
+                },
+              },
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -418,10 +498,17 @@ export default function CustomerServicesFilters({
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    bgcolor: "white",
-                    "& fieldset": { borderColor: "#E0E0E0" },
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "14px",
+                    borderRadius: "14px",
+                    bgcolor: "#FFFFFF",
+                    "& fieldset": { borderColor: "#EFE6D5" },
+                    "&:hover fieldset": { borderColor: "#FFD4BC" },
+                    "&.Mui-focused fieldset": { borderColor: `${COLORS.PRIMARY} !important` },
                   },
+                  "& .MuiInputLabel-root": { fontFamily: FONTS.OUTFIT, color: "#7C6A60", fontSize: "14px" },
+                  "& .MuiFormHelperText-root": { fontFamily: FONTS.OUTFIT, fontSize: "11px", mt: 0.3 },
+                  "& label.Mui-focused": { color: COLORS.PRIMARY },
                 }}
               />
             )}

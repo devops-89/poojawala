@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Breadcrumbs, Button, Grid, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import NextLink from "next/link";
@@ -38,6 +39,7 @@ export default function CustomerTempleHero({
   onBookClick,
 }: CustomerTempleHeroProps) {
   const router = useRouter();
+  const [imgError, setImgError] = React.useState(false);
 
   const rawTitle = temple?.name || "Sacred Temple";
   const titleWords = rawTitle.trim().split(/\s+/);
@@ -53,10 +55,15 @@ export default function CustomerTempleHero({
     secondPart = titleWords[1];
   }
 
+  const deityName = temple?.primaryDeity || temple?.deity;
+
   const fullLocation = [temple?.address, temple?.city, temple?.state]
     .map((s) => (s || "").trim())
     .filter(Boolean)
     .join(", ");
+
+  const isLogo = !heroImage || heroImage.includes("1Poojalogo") || heroImage.includes("logo");
+  const displayBanner = isLogo || imgError ? DEFAULT_BANNER : heroImage;
 
   const hasTimings = Boolean(temple?.openingTime || temple?.closingTime);
   const timingText = hasTimings
@@ -74,14 +81,14 @@ export default function CustomerTempleHero({
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: 2,
-          mb: 3,
+          gap: 1.5,
+          mb: 2,
         }}
       >
         <Breadcrumbs
           separator="›"
           sx={{
-            fontSize: "14px",
+            fontSize: "13.5px",
             fontFamily: FONTS.OUTFIT,
             color: "#94a3b8",
           }}
@@ -102,7 +109,7 @@ export default function CustomerTempleHero({
             sx={{
               color: COLORS.PRIMARY,
               fontWeight: 600,
-              fontSize: "14px",
+              fontSize: "13.5px",
               fontFamily: FONTS.OUTFIT,
             }}
           >
@@ -112,14 +119,19 @@ export default function CustomerTempleHero({
 
         <Button
           onClick={() => router.push("/customer/temples")}
-          startIcon={<ArrowBackIcon />}
+          startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />}
           sx={{
             color: "#64748b",
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             textTransform: "none",
             fontSize: "13px",
             fontWeight: 600,
-            "&:hover": { color: COLORS.PRIMARY, bgcolor: "rgba(255, 98, 0, 0.05)" },
+            borderRadius: "20px",
+            px: 1.8,
+            py: 0.5,
+            border: "1px solid #EFE6D5",
+            bgcolor: "#FFFFFF",
+            "&:hover": { color: COLORS.PRIMARY, bgcolor: "rgba(255, 98, 0, 0.05)", borderColor: "#FFD4BC" },
           }}
         >
           Back to Temples
@@ -129,8 +141,8 @@ export default function CustomerTempleHero({
       {/* Hero Section */}
       <Box
         sx={{
-          py: { xs: 2, md: 3 },
-          mb: { xs: 3, md: 4 },
+          py: { xs: 0.5, md: 1 },
+          mb: { xs: 2.5, md: 3 },
           position: "relative",
         }}
       >
@@ -138,14 +150,14 @@ export default function CustomerTempleHero({
         <Box
           sx={{
             position: "absolute",
-            top: -60,
-            left: -60,
-            width: 320,
-            height: 320,
+            top: -40,
+            left: -40,
+            width: 260,
+            height: 260,
             borderRadius: "50%",
             background:
-              "radial-gradient(circle, rgba(255, 145, 0, 0.1) 0%, rgba(255, 98, 0, 0) 70%)",
-            filter: "blur(40px)",
+              "radial-gradient(circle, rgba(255, 145, 0, 0.08) 0%, rgba(255, 98, 0, 0) 70%)",
+            filter: "blur(36px)",
             pointerEvents: "none",
             zIndex: 0,
           }}
@@ -153,41 +165,41 @@ export default function CustomerTempleHero({
 
         <Grid
           container
-          spacing={{ xs: 4, md: 6 }}
+          spacing={{ xs: 2.5, md: 4 }}
           sx={{ alignItems: "center", position: "relative", zIndex: 1 }}
         >
           {/* Left Side Content */}
-          <Grid size={{ xs: 12, md: 6.5, lg: 7 }}>
+          <Grid size={{ xs: 12, md: 6.5, lg: 7 }} sx={{ order: { xs: 2, md: 1 } }}>
             {/* Top Sacred Badges */}
             <Box
               sx={{
                 display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
-                gap: 1.5,
-                mb: { xs: 2, md: 2.5 },
+                gap: 1.2,
+                mb: 1.5,
               }}
             >
               <Box
                 sx={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 1,
-                  px: 2,
-                  py: 0.65,
+                  gap: 0.8,
+                  px: 1.8,
+                  py: 0.5,
                   borderRadius: "30px",
                   background: "linear-gradient(135deg, #FFF0E6 0%, #FFE4D6 100%)",
                   border: "1px solid #FFD0B8",
-                  boxShadow: "0 2px 8px rgba(255, 98, 0, 0.08)",
+                  boxShadow: "0 2px 6px rgba(255, 98, 0, 0.06)",
                 }}
               >
-                <TempleHinduIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
+                <TempleHinduIcon sx={{ fontSize: 15, color: COLORS.PRIMARY }} />
                 <Typography
                   sx={{
                     fontFamily: FONTS.OUTFIT,
-                    fontSize: "12px",
+                    fontSize: "11.5px",
                     fontWeight: 700,
-                    letterSpacing: "0.8px",
+                    letterSpacing: "0.6px",
                     color: "#D94E00",
                     textTransform: "uppercase",
                   }}
@@ -196,51 +208,52 @@ export default function CustomerTempleHero({
                 </Typography>
               </Box>
 
-              {temple?.primaryDeity && (
+              {deityName && (
                 <Box
                   sx={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: 0.8,
-                    px: 2,
-                    py: 0.65,
+                    gap: 0.6,
+                    px: 1.8,
+                    py: 0.5,
                     borderRadius: "30px",
                     bgcolor: "#FEF3C7",
                     border: "1px solid #FDE68A",
                   }}
                 >
+                  <TempleHinduIcon sx={{ fontSize: 13, color: "#92400E" }} />
                   <Typography
                     sx={{
                       fontFamily: FONTS.OUTFIT,
-                      fontSize: "12px",
+                      fontSize: "11.5px",
                       fontWeight: 700,
                       color: "#92400E",
                     }}
                   >
-                    🕉️ Deity: {temple.primaryDeity}
+                    Deity: {deityName}
                   </Typography>
                 </Box>
               )}
             </Box>
 
-            {/* Title with Two-Tone Serif Typography */}
+            {/* Title with Two-Tone Typography */}
             <Typography
               variant="h1"
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
-                fontSize: { xs: "30px", sm: "38px", md: "46px" },
+                fontSize: { xs: "26px", sm: "32px", md: "38px" },
                 lineHeight: 1.2,
                 mt: 0,
-                mb: { xs: 2, md: 2.5 },
-                letterSpacing: "-0.02em",
+                mb: 1.2,
+                letterSpacing: "-0.01em",
               }}
             >
               <Box component="span" sx={{ color: "#2C1810" }}>
                 {firstPart}{" "}
               </Box>
               {secondPart && (
-                <Box component="span" sx={{ color: "#D32F2F" }}>
+                <Box component="span" sx={{ color: COLORS.PRIMARY }}>
                   {secondPart}
                 </Box>
               )}
@@ -251,21 +264,21 @@ export default function CustomerTempleHero({
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "flex-start",
-                  gap: 1.2,
-                  mb: { xs: 3.5, md: 4.5 },
+                  alignItems: "center",
+                  gap: 0.8,
+                  mb: 1.8,
                 }}
               >
                 <LocationOnIcon
-                  sx={{ color: COLORS.PRIMARY, fontSize: 22, flexShrink: 0, mt: 0.2 }}
+                  sx={{ color: COLORS.PRIMARY, fontSize: 18, flexShrink: 0 }}
                 />
                 <Typography
                   sx={{
                     fontFamily: FONTS.OUTFIT,
-                    fontSize: { xs: "14px", md: "15.5px" },
+                    fontSize: { xs: "13.5px", md: "14.5px" },
                     fontWeight: 500,
-                    color: "#475569",
-                    lineHeight: 1.5,
+                    color: "#5C4A40",
+                    lineHeight: 1.4,
                   }}
                 >
                   {fullLocation}
@@ -273,27 +286,78 @@ export default function CustomerTempleHero({
               </Box>
             )}
 
+            {/* Trust Highlights Row (Clean text without icons) */}
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2.2 }}>
+              <Box
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  px: 1.5,
+                  py: 0.45,
+                  borderRadius: "20px",
+                  bgcolor: "#FFF8F2",
+                  border: "1px solid #FFE2D1",
+                }}
+              >
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "12px", fontWeight: 600, color: "#9A3412" }}>
+                  Consecrated Rituals
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  px: 1.5,
+                  py: 0.45,
+                  borderRadius: "20px",
+                  bgcolor: "#FFF8F2",
+                  border: "1px solid #FFE2D1",
+                }}
+              >
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "12px", fontWeight: 600, color: "#9A3412" }}>
+                  Verified Pandits
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  px: 1.5,
+                  py: 0.45,
+                  borderRadius: "20px",
+                  bgcolor: "#FFF8F2",
+                  border: "1px solid #FFE2D1",
+                }}
+              >
+                <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "12px", fontWeight: 600, color: "#9A3412" }}>
+                  Authentic Samagri
+                </Typography>
+              </Box>
+            </Box>
+
             {/* Action CTAs */}
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
               <Button
                 variant="contained"
                 onClick={onBookClick}
+                endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
                 sx={{
                   background: COLORS.PRIMARY,
                   color: "#FFFFFF",
                   borderRadius: "30px",
-                  px: 4.2,
-                  py: 1.5,
-                  fontSize: "15px",
+                  px: 3.8,
+                  py: 1.15,
+                  width: { xs: "100%", sm: "auto" },
+                  fontSize: "14.5px",
                   fontWeight: 700,
                   fontFamily: FONTS.OUTFIT,
                   textTransform: "none",
-                  boxShadow: "0 8px 24px rgba(255, 98, 0, 0.28)",
-                  transition: "all 0.3s ease",
+                  boxShadow: "0 6px 20px rgba(255, 98, 0, 0.25)",
+                  transition: "all 0.25s ease",
                   "&:hover": {
-                    background: "#E05500",
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 12px 28px rgba(255, 98, 0, 0.38)",
+                    background: COLORS.PRIMARY_DARK,
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 8px 24px rgba(255, 98, 0, 0.35)",
                   },
                 }}
               >
@@ -302,27 +366,25 @@ export default function CustomerTempleHero({
             </Box>
           </Grid>
 
-          {/* Right Side Temple Banner Image */}
-          <Grid size={{ xs: 12, md: 5.5, lg: 5 }}>
+          {/* Right Side Temple Banner Image (top on mobile) */}
+          <Grid size={{ xs: 12, md: 5.5, lg: 5 }} sx={{ order: { xs: 1, md: 2 } }}>
             <Box
               sx={{
                 position: "relative",
                 width: "100%",
-                height: { xs: "260px", sm: "340px", md: "400px" },
-                borderRadius: "24px",
+                height: { xs: "220px", sm: "260px", md: "280px" },
+                borderRadius: "18px",
                 overflow: "hidden",
-                border: "3px solid #FFFFFF",
-                boxShadow: "0 16px 40px rgba(0, 0, 0, 0.1)",
-                bgcolor: "#FAF4EE",
+                border: "1.5px solid #EFE6D5",
+                boxShadow: "0 8px 24px rgba(44, 24, 16, 0.06)",
+                bgcolor: "#FAF7F4",
               }}
             >
               <Box
                 component="img"
-                src={heroImage}
+                src={displayBanner}
                 alt={temple?.name || "Temple Banner"}
-                onError={(e: any) => {
-                  e.target.src = DEFAULT_BANNER;
-                }}
+                onError={() => setImgError(true)}
                 sx={{
                   width: "100%",
                   height: "100%",
@@ -330,32 +392,33 @@ export default function CustomerTempleHero({
                 }}
               />
 
-              {temple?.primaryDeity && (
+              {deityName && (
                 <Box
                   sx={{
                     position: "absolute",
-                    bottom: 16,
-                    left: 16,
-                    px: 2,
-                    py: 0.8,
-                    borderRadius: "12px",
-                    bgcolor: "rgba(0, 0, 0, 0.65)",
-                    backdropFilter: "blur(8px)",
+                    bottom: 12,
+                    left: 12,
+                    px: 1.6,
+                    py: 0.5,
+                    borderRadius: "10px",
+                    bgcolor: "rgba(0, 0, 0, 0.68)",
+                    backdropFilter: "blur(6px)",
                     color: "#FFFFFF",
                     display: "flex",
                     alignItems: "center",
-                    gap: 1,
+                    gap: 0.6,
                   }}
                 >
+                  <TempleHinduIcon sx={{ fontSize: 14, color: "#FFA454" }} />
                   <Typography
                     sx={{
                       fontFamily: FONTS.OUTFIT,
-                      fontSize: "13px",
-                      fontWeight: 600,
+                      fontSize: "12px",
+                      fontWeight: 700,
                       color: "#FFFFFF",
                     }}
                   >
-                    Sacred Shrine of {temple.primaryDeity}
+                    Sacred Shrine of {deityName}
                   </Typography>
                 </Box>
               )}

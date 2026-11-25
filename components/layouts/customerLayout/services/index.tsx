@@ -1,5 +1,6 @@
 "use client";
 import { COLORS } from "@/utils/enums";
+import { FONTS } from "@/utils/fonts";
 import { extractServiceLanguages } from "@/utils/serviceDetailsUtils";
 import { customerCreateBookingAPI } from "@/api/bookingControllers";
 import { getAllServicesAPI } from "@/api/serviceControllers";
@@ -466,7 +467,7 @@ export const ServicesPage = () => {
           }}
         />
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
           {filteredServices.map((service, idx) => (
             <CustomerServiceCard
               key={service?.id || idx}
@@ -477,8 +478,16 @@ export const ServicesPage = () => {
         </Grid>
       )}
 
-      {!loading && filteredServices.length > 0 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+      {!loading && filteredServices.length > 0 && totalPages > 1 && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: { xs: 4, md: 6 },
+            mb: { xs: 2, md: 4 },
+          }}
+        >
           <Pagination
             count={totalPages || 1}
             page={page}
@@ -486,11 +495,34 @@ export const ServicesPage = () => {
               setPage(value);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
+            shape="rounded"
+            size="medium"
             sx={{
-              "& .MuiPaginationItem-root.Mui-selected": {
-                bgcolor: COLORS.PRIMARY,
-                color: "white",
-                "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
+              "& .MuiPaginationItem-root": {
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                fontSize: { xs: "13px", sm: "14px" },
+                color: "#2C1810",
+                borderRadius: "10px",
+                border: "1px solid #EFE6D5",
+                bgcolor: "#FFFFFF",
+                mx: { xs: 0.2, sm: 0.4 },
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  bgcolor: "#FAF4EE",
+                  borderColor: "#FFD4BC",
+                  color: COLORS.PRIMARY,
+                },
+                "&.Mui-selected": {
+                  bgcolor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                  borderColor: COLORS.PRIMARY,
+                  fontWeight: 800,
+                  boxShadow: "0 4px 12px rgba(255, 98, 0, 0.28)",
+                  "&:hover": {
+                    bgcolor: COLORS.PRIMARY_DARK,
+                  },
+                },
               },
             }}
           />

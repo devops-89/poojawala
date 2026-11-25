@@ -11,7 +11,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
+  Typography,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useMemo, useState } from "react";
 import AddressFormInputs from "./addressModal/AddressFormInputs";
 import AddressLocationButton from "./addressModal/AddressLocationButton";
@@ -160,14 +163,17 @@ export default function AddAddressModal({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
       sx={{
         "& .MuiDialog-paper": {
-          borderRadius: { xs: "16px", sm: "22px" },
+          borderRadius: { xs: "18px", sm: "22px" },
           m: { xs: 1.5, sm: 2, md: 3 },
-          width: { xs: "calc(100% - 24px)", sm: "auto" },
-          maxHeight: { xs: "calc(100% - 24px)", sm: "90vh" },
+          width: { xs: "calc(100% - 24px)", sm: "100%" },
+          maxWidth: { xs: "100%", sm: "580px" },
+          maxHeight: { xs: "calc(100% - 32px)", sm: "90vh" },
+          boxShadow: "0 20px 60px rgba(44, 24, 16, 0.15)",
+          outline: "none",
         },
         "& .MuiOutlinedInput-root.Mui-focused fieldset": {
           borderColor: COLORS.PRIMARY,
@@ -177,26 +183,60 @@ export default function AddAddressModal({
     >
       <DialogTitle
         sx={{
-          fontFamily: FONTS.PRIMARY,
-          fontWeight: 800,
-          fontSize: { xs: "1.2rem", sm: "1.45rem" },
-          pb: 1.5,
-          pt: { xs: 2, sm: 3 },
-          px: { xs: 2, sm: 3 },
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 1.5,
+          fontFamily: FONTS.OUTFIT,
+          p: { xs: 2, sm: 2.5 },
+          pb: { xs: 1.5, sm: 2 },
         }}
       >
-        <Box component="span">
-          {addressData.id ? "Edit Address" : "Add New Address"}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 800,
+              fontSize: { xs: "1.2rem", sm: "1.35rem" },
+              color: "#2C1810",
+            }}
+          >
+            {addressData.id ? "Edit Address" : "Add New Address"}
+          </Typography>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              <AddressLocationButton
+                isFetchingLocation={isFetchingLocation}
+                onFetchLocation={fetchCurrentLocation}
+              />
+            </Box>
+            <IconButton
+              aria-label="close"
+              onClick={onClose}
+              sx={{
+                color: "#64534A",
+                bgcolor: "#F7EFE6",
+                p: 0.8,
+                "&:hover": { bgcolor: "#EFE6D5" },
+              }}
+            >
+              <CloseIcon sx={{ fontSize: "18px" }} />
+            </IconButton>
+          </Box>
         </Box>
-        <AddressLocationButton
-          isFetchingLocation={isFetchingLocation}
-          onFetchLocation={fetchCurrentLocation}
-        />
+
+        {/* Mobile: Location Button placed on clean row below Title */}
+        <Box sx={{ display: { xs: "block", sm: "none" }, width: "100%", mt: 1.2 }}>
+          <AddressLocationButton
+            isFetchingLocation={isFetchingLocation}
+            onFetchLocation={fetchCurrentLocation}
+            sx={{ width: "100%", justifyContent: "center" }}
+          />
+        </Box>
       </DialogTitle>
 
       <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
@@ -225,74 +265,108 @@ export default function AddAddressModal({
       {/* Dialog Footer Actions */}
       <DialogActions
         sx={{
-          p: { xs: 2, sm: 3 },
+          p: { xs: 2, sm: 2.5 },
           display: "flex",
-          flexDirection: { xs: "column-reverse", sm: "row" },
-          justifyContent: "space-between",
-          alignItems: { xs: "stretch", sm: "center" },
-          gap: { xs: 1.5, sm: 2 },
+          flexDirection: "column",
+          gap: 1.2,
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
-        <Button
-          onClick={resetForm}
-          variant="outlined"
-          sx={{
-            width: { xs: "100%", sm: "auto" },
-            color: "#475569",
-            borderColor: "#d1d5db",
-            borderRadius: "10px",
-            px: 2.5,
-            py: 1,
-            fontWeight: 700,
-            textTransform: "none",
-            "&:hover": { bgcolor: "#f3f4f6" },
-          }}
-        >
-          Reset
-        </Button>
         <Box
           sx={{
             display: "flex",
-            gap: { xs: 1.5, sm: 2 },
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: "space-between",
             alignItems: "center",
-            width: { xs: "100%", sm: "auto" },
+            width: "100%",
+            gap: { xs: 1.2, sm: 2 },
           }}
         >
-          <Button
-            onClick={onClose}
+          {/* Main Action Buttons: On mobile shown first */}
+          <Box
             sx={{
-              width: { xs: "50%", sm: "auto" },
-              color: "#475569",
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 700,
-              textTransform: "none",
-              py: 1,
+              display: "flex",
+              gap: { xs: 1.5, sm: 2 },
+              alignItems: "center",
+              width: { xs: "100%", sm: "auto" },
+              order: { xs: 1, sm: 2 },
             }}
           >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isSaveDisabled}
+            <Button
+              onClick={onClose}
+              variant="outlined"
+              sx={{
+                flex: { xs: 1, sm: "none" },
+                width: { sm: "auto" },
+                color: "#64534A",
+                borderColor: "#E5D9CC",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: { xs: "13px", sm: "14px" },
+                textTransform: "none",
+                py: { xs: 1, sm: 1.1 },
+                px: { xs: 2, sm: 3 },
+                borderRadius: "12px",
+                "&:hover": {
+                  borderColor: "#FF6200",
+                  bgcolor: "#FFF8F2",
+                  color: "#FF6200",
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaveDisabled}
+              sx={{
+                flex: { xs: 1.4, sm: "none" },
+                width: { sm: "auto" },
+                bgcolor: isSaveDisabled ? "#E2E8F0 !important" : "#FF6200 !important",
+                color: isSaveDisabled ? "#94A3B8 !important" : "#ffffff !important",
+                cursor: isSaveDisabled ? "not-allowed !important" : "pointer",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                fontSize: { xs: "13px", sm: "14px" },
+                px: { xs: 2, sm: 3.5 },
+                py: { xs: 1, sm: 1.1 },
+                borderRadius: "12px",
+                textTransform: "none",
+                boxShadow: isSaveDisabled ? "none" : "0 4px 12px rgba(255, 98, 0, 0.25)",
+                "&:hover": {
+                  bgcolor: isSaveDisabled ? "#E2E8F0 !important" : "#e64a00 !important",
+                },
+              }}
+            >
+              {saving ? "Saving..." : isEdit ? "Update Address" : "Save Address"}
+            </Button>
+          </Box>
+
+          {/* Reset Action: On mobile, subtle link below main actions */}
+          <Box
             sx={{
-              width: { xs: "50%", sm: "auto" },
-              bgcolor: isSaveDisabled ? "#cbd5e1 !important" : "#FF6200 !important",
-              color: isSaveDisabled ? "#64748b !important" : "white !important",
-              cursor: isSaveDisabled ? "not-allowed !important" : "pointer",
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 700,
-              px: 3,
-              py: 1.2,
-              borderRadius: "10px",
-              textTransform: "none",
-              boxShadow: "none",
-              "&:hover": {
-                bgcolor: isSaveDisabled ? "#cbd5e1 !important" : "#ea580c !important",
-              },
+              order: { xs: 2, sm: 1 },
+              width: { xs: "100%", sm: "auto" },
             }}
           >
-            {saving ? "Saving..." : isEdit ? "Update Address" : "Save Address"}
-          </Button>
+            <Button
+              onClick={resetForm}
+              variant="text"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                color: "#8C7A6B",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                fontSize: "13px",
+                textTransform: "none",
+                py: 0.5,
+                "&:hover": { bgcolor: "#F5ECE3", color: "#2C1810" },
+              }}
+            >
+              Reset Fields
+            </Button>
+          </Box>
         </Box>
       </DialogActions>
     </Dialog>

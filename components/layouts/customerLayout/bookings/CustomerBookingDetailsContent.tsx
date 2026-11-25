@@ -313,8 +313,8 @@ export default function CustomerBookingDetailsContent({
   };
 
   return (
-    <Box sx={{ maxWidth: "1100px", mx: "auto", pb: 8 }}>
-      <Box sx={{ mb: 4 }}>
+    <Box sx={{ maxWidth: "1100px", mx: "auto", pb: { xs: 4, md: 8 } }}>
+      <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
         <AppBreadcrumbs
           items={[
             { label: "Dashboard", href: "/customer/dashboard" },
@@ -326,52 +326,45 @@ export default function CustomerBookingDetailsContent({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: { xs: "flex-start", sm: "center" },
-            flexDirection: { xs: "column", sm: "row" },
-            gap: 2,
-            mt: 1,
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
+            mt: 1.5,
           }}
         >
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{
-                fontFamily: FONTS.PRIMARY,
-                fontWeight: 800,
-                color: "#0f172a",
-                mb: 0.5,
-              }}
-            >
-              Booking Details
-            </Typography>
-            <Typography
-              sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b" }}
-            >
-              Review the full details for your selected booking.
-            </Typography>
-          </Box>
+          <Typography
+            variant="h4"
+            sx={{
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 800,
+              color: "#2C1810",
+              fontSize: { xs: "22px", sm: "26px", md: "30px" },
+            }}
+          >
+            Booking Details
+          </Typography>
 
           <Button
             variant="outlined"
-            startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+            startIcon={<ArrowBackIcon sx={{ fontSize: 17 }} />}
             onClick={handleBackToBookings}
+            size="small"
             sx={{
-              color: "#475569",
-              borderColor: "#e2e8f0",
-              bgcolor: "#fff",
-              borderRadius: "10px",
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 600,
-              fontSize: "13px",
+              color: COLORS.PRIMARY,
+              borderColor: "#FFD4BC",
+              bgcolor: "#FFF0E6",
+              borderRadius: "20px",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              fontSize: "12.5px",
               textTransform: "none",
-              px: 2.5,
-              py: 0.9,
-              boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+              px: 2,
+              py: 0.6,
+              boxShadow: "none",
               transition: "all 0.2s ease",
               "&:hover": {
-                bgcolor: "#f8fafc",
+                bgcolor: "#FFE4D4",
                 borderColor: COLORS.PRIMARY,
-                color: COLORS.PRIMARY,
               },
             }}
           >
@@ -380,7 +373,7 @@ export default function CustomerBookingDetailsContent({
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 2.5, sm: 3, md: 4 } }}>
         <BookingDetailHero
           booking={booking}
           formattedDate={formattedDate}
@@ -396,7 +389,7 @@ export default function CustomerBookingDetailsContent({
           isRedirectingPayment={isRedirectingPayment}
         />
 
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 2.5, sm: 3, md: 4 }}>
           <Grid size={{ xs: 12, lg: 6 }}>
             <BookingSummaryCard booking={booking} statusLabel={statusLabel} />
           </Grid>
@@ -423,41 +416,41 @@ export default function CustomerBookingDetailsContent({
         onClose={() => setCancelModalOpen(false)}
         sx={{
           "& .MuiDialog-paper": {
-            borderRadius: "16px",
-            p: 1,
-            minWidth: { xs: "300px", sm: "400px" },
+            borderRadius: "18px",
+            p: 1.5,
+            minWidth: { xs: "300px", sm: "420px" },
           },
         }}
       >
         <DialogTitle
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
-            color: "#1e293b",
+            color: "#2C1810",
           }}
         >
           Cancel Booking
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
           <Typography
-            sx={{ fontFamily: FONTS.PRIMARY, color: "#1e293b" }}
+            sx={{ fontFamily: FONTS.OUTFIT, color: "#5C4A40", fontSize: "14px" }}
           >
             Are you sure you want to cancel this booking? This action cannot be
             undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
+        <DialogActions sx={{ p: 2, pt: 1, gap: 1 }}>
           <Button
             onClick={() => setCancelModalOpen(false)}
             disabled={isCancelling}
             sx={{
               color: "#64748b",
               textTransform: "none",
-              fontWeight: 600,
-              fontFamily: FONTS.PRIMARY,
-              borderRadius: "30px",
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
+              borderRadius: "12px",
               px: 3,
-              py: 1,
+              py: 0.9,
             }}
           >
             No, keep it
@@ -468,11 +461,11 @@ export default function CustomerBookingDetailsContent({
             variant="contained"
             sx={{
               textTransform: "none",
-              borderRadius: "30px",
-              px: 4,
-              py: 1,
-              fontWeight: 600,
-              fontFamily: FONTS.PRIMARY,
+              borderRadius: "12px",
+              px: 3.5,
+              py: 0.9,
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
               boxShadow: "none",
               background: "#ef4444",
               color: "white",
@@ -490,27 +483,27 @@ export default function CustomerBookingDetailsContent({
         onClose={() => setRescheduleModalOpen(false)}
         sx={{
           "& .MuiDialog-paper": {
-            borderRadius: "16px",
-            p: 1,
+            borderRadius: "18px",
+            p: 1.5,
             minWidth: { xs: "300px", sm: "500px" },
           },
         }}
       >
         <DialogTitle
           sx={{
-            fontFamily: FONTS.PRIMARY,
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
-            color: "#1e293b",
+            color: "#2C1810",
           }}
         >
           Reschedule Booking
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, py: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, py: 1 }}>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
-                color: "#64748b",
+                fontFamily: FONTS.OUTFIT,
+                color: "#7C6A60",
                 fontSize: "14px",
               }}
             >
@@ -546,15 +539,17 @@ export default function CustomerBookingDetailsContent({
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
+                      borderRadius: "12px",
+                      bgcolor: "#FFFBF7",
                     },
                     "& .MuiInputLabel-root": {
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                     },
                     "& .Mui-focused fieldset": {
-                      borderColor: "#3b82f6 !important",
+                      borderColor: `${COLORS.PRIMARY} !important`,
                     },
-                    "& label.Mui-focused": { color: "#3b82f6" },
+                    "& label.Mui-focused": { color: COLORS.PRIMARY },
                   }}
                 />
               );
@@ -570,63 +565,60 @@ export default function CustomerBookingDetailsContent({
               onChange={(e) => setRescheduleReason(e.target.value)}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: "12px",
+                  bgcolor: "#FFFBF7",
                 },
                 "& .MuiInputLabel-root": {
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                 },
                 "& .Mui-focused fieldset": {
-                  borderColor: "#3b82f6 !important",
+                  borderColor: `${COLORS.PRIMARY} !important`,
                 },
-                "& label.Mui-focused": { color: "#3b82f6" },
+                "& label.Mui-focused": { color: COLORS.PRIMARY },
               }}
             />
           </Box>
         </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
+        <DialogActions sx={{ p: 2, pt: 1, gap: 1 }}>
           <Button
             onClick={() => setRescheduleModalOpen(false)}
             sx={{
               color: "#64748b",
               textTransform: "none",
-              fontWeight: 600,
-              fontFamily: FONTS.PRIMARY,
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
+              borderRadius: "12px",
             }}
           >
             Cancel
           </Button>
-          <Box
-            component="button"
+          <Button
             onClick={handleRescheduleBooking}
             disabled={isRescheduling || !newScheduleTime || !rescheduleReason}
+            variant="contained"
             sx={{
-              bgcolor: "#FF6200 !important",
+              bgcolor: `${COLORS.PRIMARY} !important`,
               color: "white !important",
-              fontFamily: FONTS.PRIMARY,
-              fontWeight: 600,
-              border: "none",
-              cursor:
-                isRescheduling || !newScheduleTime || !rescheduleReason
-                  ? "not-allowed"
-                  : "pointer",
-              px: 2.5,
-              py: 1,
-              borderRadius: "8px",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 700,
+              textTransform: "none",
+              borderRadius: "12px",
+              boxShadow: "none",
+              px: 3,
+              py: 0.9,
               transition: "all 0.2s",
               opacity:
                 isRescheduling || !newScheduleTime || !rescheduleReason
                   ? 0.6
                   : 1,
               "&:hover": {
-                bgcolor:
-                  isRescheduling || !newScheduleTime || !rescheduleReason
-                    ? "#FF6200 !important"
-                    : "#ea580c !important",
+                bgcolor: "#ea580c !important",
               },
             }}
           >
             {isRescheduling ? "Rescheduling..." : "Submit Reschedule"}
-          </Box>
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

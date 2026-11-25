@@ -247,14 +247,14 @@ export default function CustomerDashboardHero() {
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
-                mb: 2.5,
+                mb: { xs: 2, sm: 2.5 },
               }}
             >
               <Box
                 sx={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: "14px",
+                  width: { xs: 38, sm: 44 },
+                  height: { xs: 38, sm: 44 },
+                  borderRadius: "12px",
                   background:
                     "linear-gradient(135deg, rgba(255, 98, 0, 0.15) 0%, rgba(255, 98, 0, 0.05) 100%)",
                   border: "1px solid rgba(255, 98, 0, 0.2)",
@@ -265,31 +265,19 @@ export default function CustomerDashboardHero() {
                   flexShrink: 0,
                 }}
               >
-                <SearchIcon sx={{ fontSize: 22 }} />
+                <SearchIcon sx={{ fontSize: { xs: 20, sm: 22 } }} />
               </Box>
-              <Box>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    fontWeight: 800,
-                    color: "#1E293B",
-                    fontSize: { xs: "19px", md: "22px" },
-                    lineHeight: 1.2,
-                  }}
-                >
-                  Find Pooja Services
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    color: "#64748B",
-                    fontSize: "13px",
-                    mt: 0.3,
-                  }}
-                >
-                  Select your state & city to discover nearby verified services
-                </Typography>
-              </Box>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  color: "#1E293B",
+                  fontSize: { xs: "18px", sm: "20px", md: "22px" },
+                  lineHeight: 1.2,
+                }}
+              >
+                Find Pooja Services
+              </Typography>
             </Box>
 
             {/* Form Fields */}
@@ -299,21 +287,21 @@ export default function CustomerDashboardHero() {
                 e.preventDefault();
                 handleSearch();
               }}
-              sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
+              sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.75, sm: 2.25 } }}
             >
               {/* State & City Selector Row */}
-              <Grid container spacing={2}>
+              <Grid container spacing={{ xs: 1.5, sm: 2 }}>
                 {/* State Autocomplete / Dropdown */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography
                     sx={{
                       fontFamily: FONTS.OUTFIT,
-                      fontSize: "12px",
+                      fontSize: { xs: "11px", sm: "12px" },
                       fontWeight: 700,
                       color: "#475569",
                       letterSpacing: "0.5px",
                       textTransform: "uppercase",
-                      mb: 0.8,
+                      mb: { xs: 0.5, sm: 0.8 },
                     }}
                   >
                     STATE
@@ -344,7 +332,7 @@ export default function CustomerDashboardHero() {
                                     <LocationOnIcon
                                       sx={{
                                         color: COLORS.PRIMARY,
-                                        fontSize: 19,
+                                        fontSize: { xs: 17, sm: 19 },
                                       }}
                                     />
                                   </InputAdornment>
@@ -356,9 +344,10 @@ export default function CustomerDashboardHero() {
                           sx={{
                             bgcolor: "#FAFAFA",
                             "& .MuiOutlinedInput-root": {
-                              borderRadius: "14px",
+                              borderRadius: "12px",
                               fontFamily: FONTS.OUTFIT,
-                              fontSize: "14px",
+                              fontSize: { xs: "13.5px", sm: "14px" },
+                              minHeight: { xs: 44, sm: 50 },
                               transition: "all 0.2s ease",
                               "& fieldset": { borderColor: "#E2E8F0" },
                               "&:hover fieldset": {
@@ -372,6 +361,10 @@ export default function CustomerDashboardHero() {
                                 },
                               },
                             },
+                            "& .MuiOutlinedInput-input": {
+                              py: { xs: "9.5px !important", sm: "13px !important" },
+                              fontSize: { xs: "13.5px", sm: "14px" },
+                            },
                           }}
                         />
                       )}
@@ -384,12 +377,12 @@ export default function CustomerDashboardHero() {
                   <Typography
                     sx={{
                       fontFamily: FONTS.OUTFIT,
-                      fontSize: "12px",
+                      fontSize: { xs: "11px", sm: "12px" },
                       fontWeight: 700,
                       color: "#475569",
                       letterSpacing: "0.5px",
                       textTransform: "uppercase",
-                      mb: 0.8,
+                      mb: { xs: 0.5, sm: 0.8 },
                     }}
                   >
                     CITY
@@ -419,7 +412,7 @@ export default function CustomerDashboardHero() {
                                     <LocationOnIcon
                                       sx={{
                                         color: COLORS.PRIMARY,
-                                        fontSize: 19,
+                                        fontSize: { xs: 17, sm: 19 },
                                       }}
                                     />
                                   </InputAdornment>
@@ -431,9 +424,10 @@ export default function CustomerDashboardHero() {
                           sx={{
                             bgcolor: "#FAFAFA",
                             "& .MuiOutlinedInput-root": {
-                              borderRadius: "14px",
+                              borderRadius: "12px",
                               fontFamily: FONTS.OUTFIT,
-                              fontSize: "14px",
+                              fontSize: { xs: "13.5px", sm: "14px" },
+                              minHeight: { xs: 44, sm: 50 },
                               transition: "all 0.2s ease",
                               "& fieldset": { borderColor: "#E2E8F0" },
                               "&:hover fieldset": {
@@ -446,6 +440,10 @@ export default function CustomerDashboardHero() {
                                   borderWidth: "1.5px",
                                 },
                               },
+                            },
+                            "& .MuiOutlinedInput-input": {
+                              py: { xs: "9.5px !important", sm: "13px !important" },
+                              fontSize: { xs: "13.5px", sm: "14px" },
                             },
                           }}
                         />
@@ -477,18 +475,18 @@ export default function CustomerDashboardHero() {
                   <ArrowForwardIcon sx={{ fontSize: "18px !important" }} />
                 }
                 sx={{
-                  mt: 0.5,
-                  py: 1.6,
+                  mt: { xs: 0.25, sm: 0.5 },
+                  py: { xs: 1.25, sm: 1.5 },
                   borderRadius: "14px",
                   background:
                     "linear-gradient(135deg, #FF6200 0%, #E65800 100%)",
                   color: "#FFFFFF",
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
-                  fontSize: "15px",
+                  fontSize: { xs: "14px", sm: "15px" },
                   letterSpacing: "0.3px",
                   textTransform: "none",
-                  boxShadow: "0 8px 22px rgba(255, 98, 0, 0.3)",
+                  boxShadow: "0 6px 20px rgba(255, 98, 0, 0.28)",
                   transition: "all 0.25s ease",
                   "&:hover": {
                     background:

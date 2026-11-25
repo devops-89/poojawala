@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Paper, Skeleton, Typography } from "@mui/material";
 import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import { useRouter } from "next/navigation";
 import { getTempleByIdAPI, registerTempleSlugMapping } from "@/api/templeControllers";
@@ -162,8 +162,43 @@ export default function CustomerTempleDetailsContent({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 14 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
+      <Box sx={{ py: 1.5, pb: { xs: 4, md: 5 } }}>
+        {/* Breadcrumb Skeleton */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2.5 }}>
+          <Skeleton variant="text" width={220} height={24} />
+          <Skeleton variant="rounded" width={120} height={32} sx={{ borderRadius: "20px" }} />
+        </Box>
+
+        {/* Hero Banner Skeleton */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 3,
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Box sx={{ flex: 1, width: "100%" }}>
+            <Skeleton variant="rounded" width={180} height={28} sx={{ borderRadius: "20px", mb: 1.5 }} />
+            <Skeleton variant="text" height={44} width="85%" sx={{ mb: 1 }} />
+            <Skeleton variant="text" height={22} width="60%" sx={{ mb: 2 }} />
+            <Skeleton variant="rounded" width={180} height={42} sx={{ borderRadius: "30px" }} />
+          </Box>
+          <Skeleton
+            variant="rounded"
+            sx={{
+              width: { xs: "100%", md: 400 },
+              height: { xs: 220, sm: 260, md: 280 },
+              borderRadius: "18px",
+            }}
+          />
+        </Box>
+
+        {/* About Section Skeleton */}
+        <Box sx={{ pt: 1 }}>
+          <Skeleton variant="rounded" height={130} sx={{ borderRadius: "20px" }} />
+        </Box>
       </Box>
     );
   }
@@ -176,22 +211,37 @@ export default function CustomerTempleDetailsContent({
           textAlign: "center",
           py: 8,
           px: 3,
-          bgcolor: "#FAF4EE",
+          bgcolor: "#FAF7F4",
           borderRadius: "20px",
-          border: "1.5px dashed #FF6200",
-          maxWidth: 600,
+          border: "1.5px dashed #FFD4BC",
+          maxWidth: 540,
           mx: "auto",
           my: 6,
         }}
       >
-        <TempleHinduIcon sx={{ fontSize: 56, color: COLORS.PRIMARY, mb: 1.5 }} />
+        <Box
+          sx={{
+            width: 60,
+            height: 60,
+            borderRadius: "50%",
+            bgcolor: "#FFF0E6",
+            border: "1px solid #FFD4BC",
+            color: COLORS.PRIMARY,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mb: 2,
+          }}
+        >
+          <TempleHinduIcon sx={{ fontSize: 32 }} />
+        </Box>
         <Typography
           variant="h6"
-          sx={{ fontFamily: FONTS.PRIMARY, color: "#2C1810", mb: 1, fontWeight: 700 }}
+          sx={{ fontFamily: FONTS.OUTFIT, color: "#2C1810", mb: 1, fontWeight: 800, fontSize: "1.25rem" }}
         >
-          Temple details not found
+          Temple Details Not Found
         </Typography>
-        <Typography sx={{ fontFamily: FONTS.PRIMARY, color: "#64748b", mb: 3, fontSize: "14px" }}>
+        <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#7C6A60", mb: 3, fontSize: "14px", lineHeight: 1.6 }}>
           We could not find the details for this temple. It may have been removed or is temporarily unavailable.
         </Typography>
         <Button
@@ -205,8 +255,9 @@ export default function CustomerTempleDetailsContent({
             px: 3.5,
             py: 1,
             fontWeight: 700,
-            fontFamily: FONTS.PRIMARY,
-            "&:hover": { background: "#e65800" },
+            fontFamily: FONTS.OUTFIT,
+            boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+            "&:hover": { background: COLORS.PRIMARY_DARK },
           }}
         >
           Back to Temples
@@ -215,17 +266,19 @@ export default function CustomerTempleDetailsContent({
     );
   }
 
-  const heroImage =
+  const rawHeroImage =
     temple?.downloadUrl ||
     temple?.imageUrl ||
     temple?.deityPhotoDownloadUrl ||
     temple?.deityPhotoUrl ||
     temple?.bannerDownloadUrl ||
     temple?.bannerUrl ||
-    DEFAULT_BANNER;
+    "";
+  const isLogo = !rawHeroImage || rawHeroImage.includes("1Poojalogo") || rawHeroImage.includes("logo");
+  const heroImage = isLogo ? DEFAULT_BANNER : rawHeroImage;
 
   return (
-    <Box sx={{ pb: 8 }}>
+    <Box sx={{ pb: { xs: 3.5, md: 4.5 } }}>
       {/* 1. Hero Section */}
       <CustomerTempleHero
         temple={temple}

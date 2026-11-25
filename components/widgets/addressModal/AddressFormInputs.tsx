@@ -40,6 +40,31 @@ export default function AddressFormInputs({
   errors = {},
   setErrors,
 }: AddressFormInputsProps) {
+  const fieldSx = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px",
+      fontFamily: FONTS.OUTFIT,
+      bgcolor: "#FFFBF7",
+      "& fieldset": { borderColor: "#E5D9CC" },
+      "&:hover fieldset": { borderColor: COLORS.PRIMARY },
+      "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY },
+    },
+    "& .MuiInputBase-input": {
+      fontFamily: FONTS.OUTFIT,
+      fontSize: { xs: "0.92rem", sm: "0.98rem" },
+      color: "#2C1810",
+    },
+    "& .MuiInputLabel-root": {
+      fontFamily: FONTS.OUTFIT,
+      color: "#786659",
+      "&.Mui-focused": { color: COLORS.PRIMARY },
+    },
+    "& .MuiFormHelperText-root": {
+      fontFamily: FONTS.OUTFIT,
+      fontSize: "12px",
+    },
+  };
+
   return (
     <Grid container spacing={{ xs: 1.5, sm: 2 }}>
       {/* ROW 1: PINCODE & ADDRESS LABEL IN 2-COLUMN GRID */}
@@ -80,10 +105,7 @@ export default function AddressFormInputs({
           variant="outlined"
           error={Boolean(errors?.pincode)}
           helperText={errors?.pincode}
-          sx={{
-            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-            "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
-          }}
+          sx={fieldSx}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -106,10 +128,7 @@ export default function AddressFormInputs({
           variant="outlined"
           error={Boolean(errors?.addressLabel)}
           helperText={errors?.addressLabel}
-          sx={{
-            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-            "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
-          }}
+          sx={fieldSx}
         />
       </Grid>
 
@@ -136,10 +155,7 @@ export default function AddressFormInputs({
             errors?.fullAddress ||
             "Enter your complete street, house/flat or landmark address details."
           }
-          sx={{
-            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-            "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
-          }}
+          sx={fieldSx}
         />
       </Grid>
 
@@ -161,10 +177,7 @@ export default function AddressFormInputs({
           variant="outlined"
           error={Boolean(errors?.city)}
           helperText={errors?.city}
-          sx={{
-            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-            "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
-          }}
+          sx={fieldSx}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -184,10 +197,7 @@ export default function AddressFormInputs({
           variant="outlined"
           error={Boolean(errors?.state)}
           helperText={errors?.state}
-          sx={{
-            "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-            "& .MuiInputBase-input": { fontSize: { xs: "0.95rem", sm: "1rem" } },
-          }}
+          sx={fieldSx}
         />
       </Grid>
 
@@ -212,9 +222,10 @@ export default function AddressFormInputs({
           label={
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
-                fontSize: { xs: "0.9rem", sm: "1rem" },
+                fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                color: "#2C1810",
               }}
             >
               Set as default address

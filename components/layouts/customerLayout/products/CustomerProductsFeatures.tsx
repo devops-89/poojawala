@@ -1,4 +1,5 @@
 "use client";
+
 import { FONTS } from "@/utils/fonts";
 import AutorenewOutlinedIcon from "@mui/icons-material/AutorenewOutlined";
 import GiteOutlinedIcon from "@mui/icons-material/GiteOutlined";
@@ -9,32 +10,32 @@ import { Box, Grid, Paper, Typography } from "@mui/material";
 export default function CustomerProductsFeatures() {
   const features = [
     {
-      icon: <StarBorderIcon sx={{ fontSize: 26 }} />,
+      icon: <StarBorderIcon sx={{ fontSize: 24 }} />,
       titleLine1: "100% Pure",
       titleLine2: "Ingredients",
       description:
-        "Every product lab-tested. No synthetic additives, no shortcuts.",
+        "Every product tested for purity. No synthetic additives, pure sacred devotion.",
     },
     {
-      icon: <LocalShippingOutlinedIcon sx={{ fontSize: 26 }} />,
+      icon: <LocalShippingOutlinedIcon sx={{ fontSize: 24 }} />,
       titleLine1: "3-5 Days",
-      titleLine2: "Delivery",
+      titleLine2: "Doorstep Delivery",
       description:
-        "Fast and reliable doorstep delivery within 3 to 5 business days.",
+        "Safe, timely dispatch to your doorstep across India with secure packaging.",
     },
     {
-      icon: <AutorenewOutlinedIcon sx={{ fontSize: 26 }} />,
+      icon: <AutorenewOutlinedIcon sx={{ fontSize: 24 }} />,
       titleLine1: "Easy 7-Day",
-      titleLine2: "Returns",
+      titleLine2: "Hassle-Free Returns",
       description:
-        "Wrong item or damaged in transit — we make it right, no questions.",
+        "Damaged or unsatisfied? We replace or refund without questions asked.",
     },
     {
-      icon: <GiteOutlinedIcon sx={{ fontSize: 26 }} />,
+      icon: <GiteOutlinedIcon sx={{ fontSize: 24 }} />,
       titleLine1: "Temple-Grade",
-      titleLine2: "Sourcing",
+      titleLine2: "Artisan Sourcing",
       description:
-        "Partnered with hereditary artisans from Varanasi, Mathura, and Udupi.",
+        "Handcrafted in sacred heritage towns: Varanasi, Mathura, Ayodhya & Udupi.",
     },
   ];
 
@@ -44,28 +45,36 @@ export default function CustomerProductsFeatures() {
       sx={{
         bgcolor: "#23150D",
         color: "white",
-        borderRadius: "24px",
-        p: { xs: 4, sm: 5, md: 6 },
-        mt: 6,
+        borderRadius: { xs: "20px", sm: "24px" },
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        p: { xs: 3, sm: 4, md: 5 },
+        mt: { xs: 4, md: 6 },
         overflow: "hidden",
       }}
     >
-      <Grid container spacing={{ xs: 4, sm: 3, md: 4 }}>
+      <Grid container spacing={{ xs: 2.5, sm: 3, md: 4 }}>
         {features.map((feature, idx) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={idx}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Grid size={{ xs: 6, md: 3 }} key={idx}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
               {/* Circular Soft Icon Badge */}
               <Box
                 sx={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: "50%",
-                  bgcolor: "rgba(217, 83, 30, 0.18)",
-                  color: "#D9531E",
+                  width: { xs: 42, sm: 48 },
+                  height: { xs: 42, sm: 48 },
+                  borderRadius: "14px",
+                  bgcolor: "rgba(255, 98, 0, 0.15)",
+                  border: "1px solid rgba(255, 98, 0, 0.25)",
+                  color: "#FF7A30",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  mb: 2.5,
+                  mb: { xs: 1.5, sm: 2 },
                   flexShrink: 0,
                 }}
               >
@@ -78,10 +87,10 @@ export default function CustomerProductsFeatures() {
                 sx={{
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 800,
-                  fontSize: "19px",
+                  fontSize: { xs: "15px", sm: "17px" },
                   lineHeight: 1.25,
                   color: "#FFFFFF",
-                  mb: 1.2,
+                  mb: 0.75,
                 }}
               >
                 {feature.titleLine1}
@@ -92,11 +101,10 @@ export default function CustomerProductsFeatures() {
               {/* Description */}
               <Typography
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   color: "#C5B7AE",
-                  fontSize: "13.5px",
-                  lineHeight: 1.6,
-                  maxWidth: 240,
+                  fontSize: { xs: "12px", sm: "13px" },
+                  lineHeight: 1.5,
                 }}
               >
                 {feature.description}

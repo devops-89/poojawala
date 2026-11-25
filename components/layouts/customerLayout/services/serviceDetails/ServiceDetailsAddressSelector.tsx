@@ -89,41 +89,46 @@ export default function ServiceDetailsAddressSelector({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              mb: 1,
+              flexWrap: "wrap",
+              gap: 1.5,
+              mb: 1.2,
               width: "100%",
             }}
           >
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
-                fontSize: { xs: "13px", sm: "14px" },
-                color: "#64534A",
+                fontSize: { xs: "13.5px", sm: "14px" },
+                color: "#2C1810",
               }}
             >
-              Select Delivery / Pooja Address *
+              Select Pooja Address *
             </Typography>
 
             <Button
               type="button"
-              variant="contained"
               onClick={onOpenAddAddressModal}
-              startIcon={<AddIcon sx={{ fontSize: { xs: "16px", sm: "18px" } }} />}
+              startIcon={<AddIcon sx={{ fontSize: { xs: "15px", sm: "16px" } }} />}
               sx={{
-                bgcolor: COLORS.PRIMARY,
-                color: "#ffffff",
-                fontFamily: FONTS.PRIMARY,
+                color: COLORS.PRIMARY,
+                bgcolor: "#FFF0E6",
+                border: "1px solid #FFD4BC",
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
-                fontSize: { xs: "12px", sm: "13px" },
+                fontSize: { xs: "12px", sm: "12.5px" },
                 textTransform: "none",
-                px: { xs: 1.8, sm: 2.2 },
-                py: { xs: 0.6, sm: 0.8 },
-                borderRadius: "8px",
+                px: { xs: 1.5, sm: 2 },
+                py: { xs: 0.45, sm: 0.55 },
+                borderRadius: "20px",
                 boxShadow: "none",
                 whiteSpace: "nowrap",
+                flexShrink: 0,
+                transition: "all 0.2s ease",
                 "&:hover": {
-                  bgcolor: "#ea580c",
-                  boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
+                  bgcolor: "#FFE4D4",
+                  borderColor: COLORS.PRIMARY,
+                  boxShadow: "0 2px 8px rgba(255, 98, 0, 0.15)",
                 },
               }}
             >
@@ -140,7 +145,7 @@ export default function ServiceDetailsAddressSelector({
               bgcolor: "#FFFBF7",
               borderRadius: "10px",
               "& .MuiInputLabel-root": {
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 color: Boolean(addressError) ? "#d32f2f" : "#64534A",
               },
             }}
@@ -149,15 +154,15 @@ export default function ServiceDetailsAddressSelector({
               id="customer-address-label"
               shrink
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 color: Boolean(addressError) ? "#d32f2f" : "#64534A",
               }}
             >
-              Delivery / Pooja Address
+              Pooja Address
             </InputLabel>
             <Select
               labelId="customer-address-label"
-              label="Delivery / Pooja Address"
+              label="Pooja Address"
               value={selectedAddressId}
               error={Boolean(addressError)}
               displayEmpty
@@ -175,8 +180,8 @@ export default function ServiceDetailsAddressSelector({
                 );
                 if (!addr) {
                   return (
-                    <span style={{ color: "#9E9E9E", fontFamily: FONTS.PRIMARY }}>
-                      Select Delivery / Pooja Address
+                    <span style={{ color: "#9E9E9E", fontFamily: FONTS.OUTFIT }}>
+                      Select Pooja Address
                     </span>
                   );
                 }
@@ -191,7 +196,7 @@ export default function ServiceDetailsAddressSelector({
                 return (
                   <Box
                     sx={{
-                      fontFamily: FONTS.PRIMARY,
+                      fontFamily: FONTS.OUTFIT,
                       fontSize: "14px",
                       color: "#2C1810",
                       overflow: "hidden",
@@ -235,7 +240,7 @@ export default function ServiceDetailsAddressSelector({
               }}
               sx={{
                 borderRadius: "10px",
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 "& .MuiSelect-select": {
                   py: 1.6,
                   lineHeight: 1.4,
@@ -282,7 +287,7 @@ export default function ServiceDetailsAddressSelector({
                     >
                       <Typography
                         sx={{
-                          fontFamily: FONTS.PRIMARY,
+                          fontFamily: FONTS.OUTFIT,
                           fontWeight: 700,
                           fontSize: "14px",
                           color: isSelected ? COLORS.PRIMARY : "#2C1810",
@@ -294,7 +299,7 @@ export default function ServiceDetailsAddressSelector({
                         <Box
                           component="span"
                           sx={{
-                            fontFamily: FONTS.PRIMARY,
+                            fontFamily: FONTS.OUTFIT,
                             fontSize: "11px",
                             fontWeight: 700,
                             color: "#059669",
@@ -310,7 +315,7 @@ export default function ServiceDetailsAddressSelector({
                     </Box>
                     <Typography
                       sx={{
-                        fontFamily: FONTS.PRIMARY,
+                        fontFamily: FONTS.OUTFIT,
                         fontSize: "13px",
                         color: "#64534A",
                         lineHeight: 1.4,
@@ -327,7 +332,7 @@ export default function ServiceDetailsAddressSelector({
                 sx={{
                   py: 1.5,
                   px: 2,
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   fontSize: "14px",
                   fontWeight: 700,
                   color: COLORS.PRIMARY,
@@ -344,7 +349,7 @@ export default function ServiceDetailsAddressSelector({
               </MenuItem>
             </Select>
             {addressError && (
-              <FormHelperText error sx={{ fontFamily: FONTS.PRIMARY, mt: 0.5, ml: 1 }}>
+              <FormHelperText error sx={{ fontFamily: FONTS.OUTFIT, mt: 0.5, ml: 1 }}>
                 {addressError}
               </FormHelperText>
             )}
@@ -353,56 +358,60 @@ export default function ServiceDetailsAddressSelector({
       ) : (
         <Box
           sx={{
-            p: 2,
-            borderRadius: "10px",
-            border: "1px dashed #FF6200",
+            p: 2.5,
+            borderRadius: "12px",
+            border: "1.5px dashed #FFD4BC",
             bgcolor: "#FFFBF7",
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
             alignItems: { xs: "flex-start", sm: "center" },
             justifyContent: "space-between",
-            gap: 1.5,
+            gap: 2,
           }}
         >
           <Box>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
                 fontSize: "14px",
                 color: "#2C1810",
+                mb: 0.3,
               }}
             >
               No Saved Address Found
             </Typography>
             <Typography
               sx={{
-                fontFamily: FONTS.PRIMARY,
+                fontFamily: FONTS.OUTFIT,
                 fontSize: "13px",
                 color: "#64534A",
               }}
             >
-              Please add a delivery / pooja address to complete your booking.
+              Please add a pooja address to complete your booking.
             </Typography>
           </Box>
           <Button
             type="button"
-            variant="contained"
             onClick={onOpenAddAddressModal}
-            startIcon={<AddIcon />}
+            startIcon={<AddIcon sx={{ fontSize: "16px" }} />}
             sx={{
-              bgcolor: "#FF6200 !important",
-              color: "white !important",
-              fontFamily: FONTS.PRIMARY,
+              bgcolor: COLORS.PRIMARY,
+              color: "#ffffff",
+              fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
               fontSize: "13px",
               textTransform: "none",
-              borderRadius: "8px",
+              borderRadius: "20px",
               boxShadow: "none",
-              px: 2,
+              px: 2.2,
               py: 0.8,
               whiteSpace: "nowrap",
-              "&:hover": { bgcolor: "#ea580c !important" },
+              flexShrink: 0,
+              "&:hover": {
+                bgcolor: "#ea580c",
+                boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
+              },
             }}
           >
             + Add Address

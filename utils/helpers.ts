@@ -666,3 +666,123 @@ export const formatScheduledTime = (
   } catch (e) {}
   return String(dateVal);
 };
+
+export const getProductInitials = (name: string): string => {
+  if (!name || typeof name !== "string") return "P";
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return (words[0] ? words[0].slice(0, 1) : "P").toUpperCase();
+};
+
+export const getProductFallbackImage = (titleOrCategory: string = ""): string => {
+  const text = (titleOrCategory || "").toLowerCase();
+  if (
+    text.includes("diya") ||
+    text.includes("lamp") ||
+    text.includes("batti") ||
+    text.includes("deepak") ||
+    text.includes("clay")
+  ) {
+    return "/images/festivals/diwali.webp";
+  }
+  if (
+    text.includes("havan") ||
+    text.includes("samagri") ||
+    text.includes("dhoop") ||
+    text.includes("camphor") ||
+    text.includes("kapoor") ||
+    text.includes("agarbatti") ||
+    text.includes("incense") ||
+    text.includes("loban") ||
+    text.includes("chandan") ||
+    text.includes("roli") ||
+    text.includes("sindoor")
+  ) {
+    return "/images/home/poojaPackages/havan.webp";
+  }
+  if (
+    text.includes("thali") ||
+    text.includes("plate") ||
+    text.includes("kalash") ||
+    text.includes("brass") ||
+    text.includes("bell") ||
+    text.includes("ghanti") ||
+    text.includes("lota")
+  ) {
+    return "/images/home/thali.webp";
+  }
+  if (text.includes("ganesh") || text.includes("ganpati")) {
+    return "/images/home/poojaPackages/ganesh.webp";
+  }
+  if (text.includes("laxmi") || text.includes("lakshmi")) {
+    return "/images/home/poojaPackages/laxmi.webp";
+  }
+  return "/images/productsHero.webp";
+};
+
+export const extractProductImage = (p: any): string => {
+  if (!p) return "";
+
+  let candidate =
+    p.imageUrl ||
+    p.imageDownloadUrl ||
+    p.imageDownloadurl ||
+    p.bannerDownloadUrl ||
+    p.bannerDownloadurl ||
+    p.bannerUrl ||
+    p.banner ||
+    p.image ||
+    p.thumbnail ||
+    p.iconUrl ||
+    p.iconDownloadurl ||
+    p.iconDownloadUrl ||
+    "";
+
+  if (Array.isArray(candidate) && candidate.length > 0) {
+    const first = candidate[0];
+    candidate = typeof first === "string" ? first : first?.url || first?.downloadUrl || "";
+  }
+
+  if (!candidate && Array.isArray(p.images) && p.images.length > 0) {
+    const first = p.images[0];
+    candidate = typeof first === "string" ? first : first?.url || first?.downloadUrl || first?.imageUrl || "";
+  }
+
+  if (
+    typeof candidate !== "string" ||
+    !candidate.trim() ||
+    candidate === "null" ||
+    candidate === "undefined"
+  ) {
+    return "";
+  }
+
+  candidate = candidate.trim();
+
+  // If candidate is a dead ephemeral ngrok tunnel, return empty so initials placeholder shows
+  if (
+    candidate.includes("ngrok-free.dev") ||
+    candidate.includes("localhost:3000") ||
+    candidate.includes("localhost:5000")
+  ) {
+    return "";
+  }
+
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://1pooja.com/api";
+  const serverHost = apiBase.replace(/\/api\/?$/, "");
+
+  if (candidate.startsWith("http://") || candidate.startsWith("https://")) {
+    return candidate;
+  }
+
+  if (candidate.startsWith("/")) {
+    if (candidate.startsWith("/images/")) {
+      return candidate;
+    }
+    return `${serverHost}${candidate}`;
+  }
+
+  return `${serverHost}/${candidate}`;
+};

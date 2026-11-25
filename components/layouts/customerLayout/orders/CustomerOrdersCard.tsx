@@ -1,6 +1,8 @@
 "use client";
+import React, { useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
+import { getProductInitials } from "@/utils/helpers";
 import { downloadOrderInvoiceAPI } from "@/api/paymentControllers";
 import { ORDER_PAYMENT_STATUS, ORDER_STATUS } from "@/utils/enums";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
@@ -31,6 +33,51 @@ interface CustomerOrdersCardProps {
   onPayOrder?: (order: CustomerOrder) => void;
   isPaying?: boolean;
   isDownloadingInvoice?: boolean;
+}
+
+function OrderItemMedia({ src, title }: { src?: string; title?: string }) {
+  const [imgError, setImgError] = useState(false);
+  const initials = getProductInitials(title || "");
+
+  if (!src || imgError) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(135deg, #FFF0E6 0%, #FFE2D1 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          userSelect: "none",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            fontSize: "14px",
+            color: COLORS.PRIMARY,
+          }}
+        >
+          {initials}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={title}
+      onError={() => setImgError(true)}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
+  );
 }
 
 export default function CustomerOrdersCard({
@@ -505,15 +552,7 @@ export default function CustomerOrdersCard({
                     flexShrink: 0,
                   }}
                 >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  <OrderItemMedia src={item.image} title={item.title} />
                 </Box>
 
                 <Box sx={{ minWidth: 0 }}>
