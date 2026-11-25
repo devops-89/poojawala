@@ -102,19 +102,64 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
     return [];
   }, [state]);
 
+  const inputFieldSx = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px",
+      fontFamily: FONTS.OUTFIT,
+      fontSize: { xs: "13px", sm: "14px" },
+      bgcolor: "#FFFDF9",
+      transition: "all 0.2s ease",
+      "& fieldset": {
+        borderColor: "#EFE6D5",
+      },
+      "&:hover fieldset": {
+        borderColor: "#FFD4BC",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: COLORS.PRIMARY,
+      },
+      "&.Mui-disabled": {
+        bgcolor: "#F8FAFC",
+        "& fieldset": {
+          borderColor: "#E2E8F0",
+        },
+      },
+    },
+    "& .MuiInputBase-input, & .MuiOutlinedInput-input": {
+      fontFamily: `${FONTS.OUTFIT} !important`,
+      fontSize: { xs: "13px", sm: "14px" },
+      color: "#1A1A1A",
+    },
+    "& .MuiInputLabel-root": {
+      fontFamily: `${FONTS.OUTFIT} !important`,
+      fontSize: { xs: "13px", sm: "14px" },
+      color: "#64748B",
+      "&.Mui-focused": {
+        color: COLORS.PRIMARY,
+      },
+    },
+    "& .MuiFormHelperText-root": {
+      fontFamily: `${FONTS.OUTFIT} !important`,
+      fontSize: "11.5px",
+      color: "#94A3B8",
+      mt: 0.5,
+    },
+  };
+
   return (
     <Box>
       <Typography
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
-          fontSize: "20px",
-          mb: 3,
+          fontSize: { xs: "18px", sm: "20px" },
+          color: "#1A1A1A",
+          mb: { xs: 2, sm: 3 },
         }}
       >
         {isAstrologer ? "Astrology Details & Charges" : "Skills & Expertise"}
       </Typography>
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 2.5 }}>
         <Grid size={{ xs: 12, sm: 6 }}>
           <Autocomplete
             openOnFocus
@@ -137,6 +182,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                 label="State"
                 placeholder="Select State"
                 variant="outlined"
+                sx={inputFieldSx}
               />
             )}
           />
@@ -164,6 +210,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                 placeholder={!state ? "Select State first" : "Select City"}
                 variant="outlined"
                 helperText={!state ? "Select state first to choose city" : undefined}
+                sx={inputFieldSx}
               />
             )}
           />
@@ -179,6 +226,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                 ? "e.g. Acharya, Shastri, Jyotish Praveen"
                 : "e.g. Acharya, Shastri, Ph.D. in Sanskrit"
             }
+            sx={inputFieldSx}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -188,6 +236,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
             label="Years of Experience"
             value={experienceYears}
             onChange={(e) => setExperienceYears(e.target.value)}
+            sx={inputFieldSx}
           />
         </Grid>
 
@@ -206,6 +255,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                 if (setRatePerMinute) setRatePerMinute(sanitized);
               }}
               helperText="Consultation price charged for astrology consultation"
+              sx={inputFieldSx}
             />
           </Grid>
         )}
@@ -279,6 +329,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                 fullWidth
                 label="Languages Spoken"
                 placeholder={languages?.length ? "" : "Select or type language (e.g. Malayalam) and press Enter"}
+                sx={inputFieldSx}
               />
             )}
           />
@@ -356,6 +407,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
                     : "Specialized Rituals & Poojas"
                 }
                 placeholder={specializations?.length ? "" : "Select or type specialization and press Enter"}
+                sx={inputFieldSx}
               />
             )}
           />
@@ -400,20 +452,25 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
         )}
       </Grid>
 
-      <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ mt: { xs: 3, sm: 4 }, display: "flex", justifyContent: { xs: "stretch", sm: "flex-end" } }}>
         <Button
           variant="contained"
           onClick={onSave}
           disabled={saving || !isDirty}
           sx={{
+            width: { xs: "100%", sm: "auto" },
             background: (saving || !isDirty) ? "#cbd5e1 !important" : "#FF6200 !important",
             cursor: (saving || !isDirty) ? "not-allowed !important" : "pointer",
             color: (saving || !isDirty) ? "#64748b !important" : "white !important",
             borderRadius: "8px",
             px: 4,
             py: 1.2,
+            height: "42px",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
+            fontSize: "14px",
             textTransform: "none",
+            boxShadow: (saving || !isDirty) ? "none" : "0 4px 14px rgba(255, 98, 0, 0.25)",
             "&:hover": { background: (saving || !isDirty) ? "#cbd5e1 !important" : "#F05A00 !important" },
           }}
         >

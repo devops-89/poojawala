@@ -12,6 +12,7 @@ import {
   Paper,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { COLORS } from "@/utils/enums";
@@ -64,7 +65,60 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
     handleAddressAdded,
   } = useServiceBooking({ serviceId, service });
 
+  const isOffline = activeBookingMode === "OFFLINE";
+  const stepLanguage = 3;
+  const stepAddress = isOffline ? 4 : null;
+  const stepPayment = isOffline ? 5 : 4;
+  const stepInstructions = isOffline ? 6 : 5;
 
+  // Calculate pricing for Mobile Sticky Bottom Bar
+  const currentPlanObj = plans?.[selectedPlan];
+  const basePrice = Number(currentPlanObj?.price || 0);
+
+  let currentPlanAddonTotal = 0;
+  if (showAddons) {
+    const currentRawFeats =
+      currentPlanObj?.features ||
+      (service?.serviceFeatures
+        ? service.serviceFeatures.filter(
+            (sf: any) => sf.plan === selectedPlan?.toUpperCase()
+          )
+        : null);
+
+    if (Array.isArray(currentRawFeats)) {
+      currentRawFeats.forEach((f: any, idx: number) => {
+        if (f && f.isActive !== false && f.type === "PRICE") {
+          const matchedSf = service?.serviceFeatures?.find(
+            (sf: any) =>
+              sf.id === f.id ||
+              (sf.plan === selectedPlan?.toUpperCase() &&
+                (sf.title || "").trim().toLowerCase() ===
+                  (f.title || f.name || "").trim().toLowerCase())
+          );
+          const fId =
+            f.id != null
+              ? Number(f.id)
+              : matchedSf?.id != null
+                ? Number(matchedSf.id)
+                : idx + 1;
+          if (selectedFeatureIds.includes(fId)) {
+            currentPlanAddonTotal += Number(f.value || f.price || 0);
+          }
+        }
+      });
+    }
+  }
+
+  const totalPrice = basePrice + currentPlanAddonTotal;
+  const tokenPercent = Number(
+    service?.tokenPercentage ||
+      (basePrice > 0 && currentPlanObj?.tokenAmount
+        ? Math.round((Number(currentPlanObj.tokenAmount) / basePrice) * 100)
+        : 40)
+  );
+  const tokenAmt = Math.round((totalPrice * tokenPercent) / 100);
+  const isToken = bookingForm.paymentOption === "TOKEN";
+  const displayAmount = isToken ? tokenAmt : totalPrice;
 
   return (
     <Paper
@@ -77,6 +131,7 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
         p: { xs: 2, sm: 3.5, md: 5 },
         mt: 4,
         mb: { xs: 4, md: 6 },
+        pb: { xs: 12, md: 5 },
         scrollMarginTop: "100px",
       }}
     >
@@ -115,142 +170,321 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
               component="form"
               noValidate
               onSubmit={handleConfirmBooking}
-              sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+              sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}
             >
               {/* Row 1: Scheduled Date & Preferred Time */}
-              <ServiceDetailsDateTimeFields
-                scheduledDate={bookingForm.scheduledDate}
-                scheduledTime={bookingForm.scheduledTime}
-                dateError={formik.touched.scheduledDate ? (formik.errors.scheduledDate as string) : undefined}
-                timeError={formik.touched.scheduledTime ? (formik.errors.scheduledTime as string) : undefined}
-                todayStr={todayStr}
-                timeOptions={timeOptions}
-                isAllSlotsPassedToday={isAllSlotsPassedToday}
-                onDateChange={(date) => handleInputChange("scheduledDate", date)}
-                onTimeChange={(time) => handleInputChange("scheduledTime", time)}
-              />
-
-              {/* Row 2: Preferred Language */}
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>
-                  <FormControl
-                    fullWidth
+              <Box id="booking-section-datetime" sx={{ scrollMarginTop: "120px" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 1.5,
+                  }}
+                >
+                  <Box
                     sx={{
-                      bgcolor: "#FFFBF7",
-                      borderRadius: "10px",
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                        fontFamily: FONTS.OUTFIT,
-                      },
-                      "& .MuiInputLabel-root": {
-                        fontFamily: FONTS.OUTFIT,
-                        color: "#64534A",
-                      },
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      bgcolor: COLORS.PRIMARY,
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      fontFamily: FONTS.OUTFIT,
                     }}
                   >
-                    <InputLabel id="preferred-language-label">
-                      Preferred Language
-                    </InputLabel>
-                    <Select
-                      labelId="preferred-language-label"
-                      label="Preferred Language"
-                      value={bookingForm.language || ""}
-                      onChange={(e) => handleInputChange("language", e.target.value)}
-                      MenuProps={{
-                        slotProps: {
-                          paper: {
-                            sx: {
-                              maxHeight: 280,
-                              overflowY: "auto",
-                              borderRadius: "10px",
-                              boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-                              mt: 0.5,
-                            },
+                    2
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 800,
+                      fontSize: { xs: "15px", sm: "16px" },
+                      color: "#1A0B05",
+                    }}
+                  >
+                    Date & Preferred Time
+                  </Typography>
+                </Box>
+                <ServiceDetailsDateTimeFields
+                  scheduledDate={bookingForm.scheduledDate}
+                  scheduledTime={bookingForm.scheduledTime}
+                  dateError={formik.touched.scheduledDate ? (formik.errors.scheduledDate as string) : undefined}
+                  timeError={formik.touched.scheduledTime ? (formik.errors.scheduledTime as string) : undefined}
+                  todayStr={todayStr}
+                  timeOptions={timeOptions}
+                  isAllSlotsPassedToday={isAllSlotsPassedToday}
+                  onDateChange={(date) => handleInputChange("scheduledDate", date)}
+                  onTimeChange={(time) => handleInputChange("scheduledTime", time)}
+                />
+              </Box>
+
+              {/* Row 2: Preferred Language */}
+              <Box id="booking-section-language" sx={{ scrollMarginTop: "120px" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
+                  <Box
+                    sx={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      bgcolor: COLORS.PRIMARY,
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      fontFamily: FONTS.OUTFIT,
+                    }}
+                  >
+                    {stepLanguage}
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontWeight: 800,
+                      fontSize: { xs: "15px", sm: "16px" },
+                      color: "#1A0B05",
+                    }}
+                  >
+                    Purohit Mantra & Guidance Language
+                  </Typography>
+                </Box>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12 }}>
+                    <FormControl
+                      fullWidth
+                      sx={{
+                        bgcolor: "#FFFDF9",
+                        borderRadius: "12px",
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "12px",
+                          fontFamily: FONTS.OUTFIT,
+                          bgcolor: "#FFFDF9",
+                          "& fieldset": {
+                            borderColor: "#EADCCF",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "#FF6200",
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#FF6200",
+                          },
+                        },
+                        "& .MuiInputLabel-root": {
+                          fontFamily: FONTS.OUTFIT,
+                          color: "#64534A",
+                          "&.Mui-focused": {
+                            color: "#FF6200",
                           },
                         },
                       }}
-                      sx={{
-                        borderRadius: "10px",
-                        fontFamily: FONTS.OUTFIT,
-                      }}
                     >
-                      {availableLanguages && availableLanguages.length > 0 ? (
-                        availableLanguages.map((lang) => (
+                      <InputLabel id="preferred-language-label">
+                        Preferred Language
+                      </InputLabel>
+                      <Select
+                        labelId="preferred-language-label"
+                        label="Preferred Language"
+                        value={bookingForm.language || ""}
+                        onChange={(e) => handleInputChange("language", e.target.value)}
+                        MenuProps={{
+                          slotProps: {
+                            paper: {
+                              sx: {
+                                maxHeight: 280,
+                                overflowY: "auto",
+                                borderRadius: "12px",
+                                boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+                                mt: 0.5,
+                              },
+                            },
+                          },
+                        }}
+                        sx={{
+                          borderRadius: "12px",
+                          fontFamily: FONTS.OUTFIT,
+                        }}
+                      >
+                        {availableLanguages && availableLanguages.length > 0 ? (
+                          availableLanguages.map((lang) => (
+                            <MenuItem
+                              key={lang}
+                              value={lang}
+                              sx={{
+                                fontFamily: FONTS.OUTFIT,
+                                fontSize: "14px",
+                              }}
+                            >
+                              {lang}
+                            </MenuItem>
+                          ))
+                        ) : (
                           <MenuItem
-                            key={lang}
-                            value={lang}
+                            value="Hindi"
                             sx={{
                               fontFamily: FONTS.OUTFIT,
                               fontSize: "14px",
                             }}
                           >
-                            {lang}
+                            Hindi
                           </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem
-                          value="Hindi"
-                          sx={{
-                            fontFamily: FONTS.OUTFIT,
-                            fontSize: "14px",
-                          }}
-                        >
-                          Hindi
-                        </MenuItem>
-                      )}
-                    </Select>
-                  </FormControl>
+                        )}
+                      </Select>
+                    </FormControl>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Box>
 
               {/* Row 3: Customer Address Selector (OFFLINE only) */}
-              {activeBookingMode === "OFFLINE" && (
-                <ServiceDetailsAddressSelector
-                  matchingAddresses={matchingAddresses}
-                  selectedAddressId={selectedAddressId}
-                  addressError={formik.touched.customerAddressId ? (formik.errors.customerAddressId as string) : undefined}
-                  onChangeAddressId={(id) => setSelectedAddressId(id)}
-                  onOpenAddAddressModal={() => setAddressModalOpen(true)}
-                />
+              {isOffline && (
+                <Box id="booking-section-address" sx={{ scrollMarginTop: "120px" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: "50%",
+                        bgcolor: COLORS.PRIMARY,
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
+                        fontWeight: 800,
+                        fontFamily: FONTS.OUTFIT,
+                      }}
+                    >
+                      {stepAddress}
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 800,
+                        fontSize: { xs: "15px", sm: "16px" },
+                        color: "#1A0B05",
+                      }}
+                    >
+                      Venue / Delivery Address
+                    </Typography>
+                  </Box>
+                  <ServiceDetailsAddressSelector
+                    matchingAddresses={matchingAddresses}
+                    selectedAddressId={selectedAddressId}
+                    addressError={formik.touched.customerAddressId ? (formik.errors.customerAddressId as string) : undefined}
+                    onChangeAddressId={(id) => setSelectedAddressId(id)}
+                    onOpenAddAddressModal={() => setAddressModalOpen(true)}
+                  />
+                </Box>
               )}
 
               {/* Row 4: Payment Option (TOKEN advance vs FULL payment) */}
-              <ServiceDetailsPaymentOption
-                plans={plans}
-                service={service}
-                selectedPlan={selectedPlan}
-                showAddons={showAddons}
-                selectedFeatureIds={selectedFeatureIds}
-                paymentOption={bookingForm.paymentOption}
-                paymentError={formik.touched.paymentOption ? (formik.errors.paymentOption as string) : undefined}
-                onChangePaymentOption={(val) => handleInputChange("paymentOption", val)}
-              />
+              <Box id="booking-section-payment" sx={{ scrollMarginTop: "120px" }}>
+                <ServiceDetailsPaymentOption
+                  plans={plans}
+                  service={service}
+                  selectedPlan={selectedPlan}
+                  showAddons={showAddons}
+                  selectedFeatureIds={selectedFeatureIds}
+                  paymentOption={bookingForm.paymentOption}
+                  paymentError={formik.touched.paymentOption ? (formik.errors.paymentOption as string) : undefined}
+                  onChangePaymentOption={(val) => handleInputChange("paymentOption", val)}
+                />
+              </Box>
 
               {/* Row 5: Special Instructions */}
-              <TextField
-                fullWidth
-                multiline
-                rows={3}
-                label="Special Instructions"
-                placeholder="Any specific requirements, dietary preferences for Prasad, accessibility needs, or other details..."
-                value={bookingForm.specialInstructions}
-                onChange={(e) => handleInputChange("specialInstructions", e.target.value)}
-                sx={{
-                  bgcolor: "#FFFBF7",
-                  borderRadius: "10px",
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                    fontFamily: FONTS.OUTFIT,
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontFamily: FONTS.OUTFIT,
-                    color: "#64534A",
-                  },
-                }}
-              />
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mb: 1.5,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: "50%",
+                        bgcolor: COLORS.PRIMARY,
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
+                        fontWeight: 800,
+                        fontFamily: FONTS.OUTFIT,
+                      }}
+                    >
+                      {stepInstructions}
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontFamily: FONTS.OUTFIT,
+                        fontWeight: 800,
+                        fontSize: { xs: "15px", sm: "16px" },
+                        color: "#1A0B05",
+                      }}
+                    >
+                      Special Instructions
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "#8C7A6B",
+                      bgcolor: "rgba(140, 122, 107, 0.1)",
+                      px: 1.2,
+                      py: 0.3,
+                      borderRadius: "12px",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Optional
+                  </Typography>
+                </Box>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  placeholder="Any specific requirements, dietary preferences for Prasad, accessibility needs, or other details..."
+                  value={bookingForm.specialInstructions}
+                  onChange={(e) => handleInputChange("specialInstructions", e.target.value)}
+                  sx={{
+                    bgcolor: "#FFFDF9",
+                    borderRadius: "12px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "12px",
+                      fontFamily: FONTS.OUTFIT,
+                      bgcolor: "#FFFDF9",
+                      "& fieldset": {
+                        borderColor: "#EADCCF",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#FF6200",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#FF6200",
+                      },
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontFamily: FONTS.OUTFIT,
+                      color: "#64534A",
+                    },
+                  }}
+                />
+              </Box>
 
-              {/* Submit Button */}
-              <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 1 }}>
+              {/* Desktop Submit Button (Hidden on Mobile) */}
+              <Box sx={{ display: { xs: "none", md: "flex" }, justifyContent: "flex-start", mt: 1 }}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -263,12 +497,12 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
                     )
                   }
                   sx={{
-                    width: { xs: "100%", sm: "auto" },
+                    width: "auto",
                     background: "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
                     color: "white",
                     px: 4,
                     py: 1.5,
-                    borderRadius: "10px",
+                    borderRadius: "12px",
                     fontWeight: 700,
                     fontFamily: FONTS.OUTFIT,
                     fontSize: "15px",
@@ -286,6 +520,120 @@ export default function ServiceDetailsBookingForm({ serviceId, service }: Props)
             </Box>
           </Grid>
         </Grid>
+      )}
+
+      {/* MOBILE STICKY BOTTOM ACTION BAR (Matching Prototype) */}
+      {isBookingAllowedForUser && (
+        <Box
+          sx={{
+            display: { xs: "block", md: "none" },
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1100,
+            bgcolor: "#FFFFFF",
+            borderTop: "1px solid #EFE6D5",
+            boxShadow: "0 -4px 20px rgba(44, 24, 16, 0.08)",
+            px: 2,
+            py: 1.5,
+          }}
+        >
+          <Box
+            sx={{
+              maxWidth: 600,
+              mx: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            {/* Price display */}
+            <Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    fontSize: "18px",
+                    color: "#1A0B05",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  ₹{displayAmount.toLocaleString("en-IN")}
+                </Typography>
+                <Box
+                  sx={{
+                    bgcolor: isToken ? "#FFF0E6" : "#EDFDF2",
+                    border: isToken ? "1px solid #FFD4BC" : "1px solid #C6F6D5",
+                    borderRadius: "6px",
+                    px: 0.8,
+                    py: 0.2,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      color: isToken ? COLORS.PRIMARY : "#22543D",
+                    }}
+                  >
+                    {isToken ? `${tokenPercent}% Advance` : "Full Pay"}
+                  </Typography>
+                </Box>
+              </Box>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "11px",
+                  color: "#8C7A6B",
+                  fontWeight: 500,
+                  mt: 0.2,
+                }}
+              >
+                {isToken
+                  ? `Rest ₹${(totalPrice - tokenAmt).toLocaleString("en-IN")} post-puja`
+                  : "Complete Dakshina"}
+              </Typography>
+            </Box>
+
+            {/* Booking CTA Button */}
+            <Button
+              type="button"
+              onClick={handleConfirmBooking}
+              disabled={submitting}
+              startIcon={
+                submitting ? (
+                  <CircularProgress size={16} sx={{ color: "white" }} />
+                ) : (
+                  <CalendarMonthIcon sx={{ fontSize: "18px" }} />
+                )
+              }
+              sx={{
+                flex: 1,
+                maxWidth: 220,
+                background: "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
+                color: "white",
+                py: 1.4,
+                px: 2.5,
+                borderRadius: "12px",
+                fontWeight: 700,
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "14px",
+                textTransform: "none",
+                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.3)",
+                whiteSpace: "nowrap",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #E65500 0%, #CC3E00 100%)",
+                },
+              }}
+            >
+              {submitting ? "Booking..." : "Confirm & Book"}
+            </Button>
+          </Box>
+        </Box>
       )}
 
       {/* REUSABLE ADD ADDRESS MODAL */}

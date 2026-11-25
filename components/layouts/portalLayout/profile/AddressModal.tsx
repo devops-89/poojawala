@@ -172,12 +172,18 @@ export const AddressModal: React.FC<AddressModalProps> = ({
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      sx={{
-        "& .MuiDialog-paper": {
-          borderRadius: { xs: "16px", sm: "22px" },
-          m: { xs: 1.5, sm: 2, md: 3 },
-          width: { xs: "calc(100% - 24px)", sm: "auto" },
-          maxHeight: { xs: "calc(100% - 24px)", sm: "90vh" },
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: { xs: "14px", sm: "18px" },
+            border: "1.5px solid #FF9800",
+            boxShadow: "0 24px 60px rgba(0, 0, 0, 0.2)",
+            m: { xs: 1.5, sm: "auto" },
+            width: { xs: "calc(100% - 24px)", sm: "auto" },
+            maxHeight: "calc(100% - 32px)",
+            bgcolor: "#FFFFFF",
+            overflow: "hidden",
+          },
         },
       }}
     >
@@ -185,15 +191,17 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         sx={{
           fontFamily: FONTS.OUTFIT,
           fontWeight: 800,
-          fontSize: { xs: "1.2rem", sm: "1.45rem" },
-          pb: 1.5,
-          pt: { xs: 2, sm: 3 },
-          px: { xs: 2, sm: 3 },
+          fontSize: { xs: "16px", sm: "19px" },
+          py: { xs: 1.5, sm: 1.8 },
+          px: { xs: 2, sm: 2.5 },
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
           gap: 1.5,
+          bgcolor: "#FAF4EE",
+          borderBottom: "1px solid #EFE6D5",
+          color: "#2C1810",
         }}
       >
         <Box component="span">

@@ -16,12 +16,14 @@ import {
   Divider,
   Tooltip,
   ListItemIcon,
+  Button,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import CloseIcon from '@mui/icons-material/Close';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocketStore } from '@/stores/socketStore';
@@ -122,13 +124,28 @@ export default function PortalHeader({
         width: isAstrologer ? '100%' : { md: `calc(100% - 260px)` },
         ml: isAstrologer ? 0 : { md: `260px` },
         bgcolor: 'white',
-        borderBottom: '1px solid #e2e8f0',
-        height: '80px',
+        borderBottom: '1px solid #eee',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+        height: isAstrologer ? { xs: '62px', md: '72px' } : '80px',
         justifyContent: 'center',
         zIndex: (theme) => (isAstrologer ? theme.zIndex.drawer + 1 : theme.zIndex.appBar),
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between', minHeight: '80px !important' }}>
+      <Toolbar
+        disableGutters={isAstrologer}
+        sx={{
+          justifyContent: 'space-between',
+          minHeight: isAstrologer
+            ? { xs: '62px !important', md: '72px !important' }
+            : '80px !important',
+          ...(isAstrologer && {
+            width: '100%',
+            maxWidth: '1400px',
+            mx: 'auto',
+            px: { xs: 2, sm: 2.5, md: 4 },
+          }),
+        }}
+      >
         {/* Left Side */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           {isAstrologer ? (
@@ -141,7 +158,15 @@ export default function PortalHeader({
                 component="img"
                 src="/images/1Poojalogo.webp"
                 alt="1Pooja"
-                sx={{ height: { xs: '30px', md: '38px' }, objectFit: 'contain' }}
+                sx={{
+                  height: { xs: '34px', md: '44px' },
+                  maxHeight: '44px',
+                  width: 'auto',
+                  objectFit: 'contain',
+                  filter:
+                    'drop-shadow(0.35px 0 0 rgba(211,47,47,0.45)) drop-shadow(-0.35px 0 0 rgba(211,47,47,0.45)) contrast(1.1)',
+                  transition: 'transform 0.2s ease',
+                }}
               />
             </Box>
           ) : mounted ? (
@@ -226,69 +251,209 @@ export default function PortalHeader({
             anchorEl={notifAnchorEl}
             open={Boolean(notifAnchorEl)}
             onClose={handleCloseNotif}
+            marginThreshold={12}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             slotProps={{
               paper: {
                 sx: {
-                  width: 320,
-                  maxHeight: 400,
-                  mt: 1.5,
-                  borderRadius: '12px',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                  width: { xs: 'calc(100vw - 24px)', sm: 360, md: 380 },
+                  maxWidth: { xs: 'calc(100vw - 24px)', sm: 380 },
+                  maxHeight: { xs: '80vh', sm: 460 },
+                  mt: 1.2,
+                  borderRadius: { xs: '14px', sm: '16px' },
+                  border: '1px solid #EFE6D5',
+                  boxShadow: '0 16px 40px rgba(44, 24, 16, 0.12)',
+                  overflow: 'hidden',
+                  p: 0,
+                  '& .MuiList-root': {
+                    p: 0,
+                  },
                 },
               },
             }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
             <Box
               sx={{
-                p: 2,
-                borderBottom: '1px solid #f1f5f9',
+                px: { xs: 2, sm: 2.2 },
+                py: 1.5,
+                bgcolor: '#FAF4EE',
+                borderBottom: '1px solid #EFE6D5',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}
             >
-              <Typography
-                variant="h6"
-                sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: '16px' }}
-              >
-                Notifications
-              </Typography>
-              {notifications.length > 0 && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <NotificationsIcon sx={{ fontSize: 20, color: COLORS.PRIMARY }} />
                 <Typography
-                  variant="caption"
-                  sx={{ color: COLORS.PRIMARY, cursor: 'pointer', fontWeight: 600 }}
-                  onClick={clearNotifications}
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 800,
+                    fontSize: { xs: '15px', sm: '16px' },
+                    color: '#1A1A1A',
+                  }}
                 >
-                  Clear All
+                  Notifications
                 </Typography>
-              )}
+                {notifications.length > 0 && (
+                  <Chip
+                    label={`${notifications.length} New`}
+                    size="small"
+                    sx={{
+                      height: '20px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      fontFamily: FONTS.OUTFIT,
+                      bgcolor: '#FFEDE0',
+                      color: COLORS.PRIMARY,
+                      border: '1px solid #FFD4BC',
+                    }}
+                  />
+                )}
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                {notifications.length > 0 && (
+                  <Button
+                    size="small"
+                    onClick={clearNotifications}
+                    sx={{
+                      fontFamily: FONTS.OUTFIT,
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      color: COLORS.PRIMARY,
+                      textTransform: 'none',
+                      minWidth: 'auto',
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: '6px',
+                      '&:hover': { bgcolor: '#FFEDE0' },
+                    }}
+                  >
+                    Clear All
+                  </Button>
+                )}
+                <IconButton
+                  size="small"
+                  onClick={handleCloseNotif}
+                  sx={{
+                    color: '#7A6858',
+                    p: 0.5,
+                    borderRadius: '6px',
+                    '&:hover': { bgcolor: '#F0E6D8' },
+                  }}
+                >
+                  <CloseIcon sx={{ fontSize: 18 }} />
+                </IconButton>
+              </Box>
             </Box>
+
             {notifications.length === 0 ? (
-              <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Typography sx={{ color: '#94a3b8', fontSize: '14px', fontFamily: FONTS.OUTFIT }}>
+              <Box
+                sx={{
+                  py: { xs: 4, sm: 4.5 },
+                  px: 3,
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: { xs: 50, sm: 56 },
+                    height: { xs: 50, sm: 56 },
+                    borderRadius: '50%',
+                    bgcolor: '#FFF7ED',
+                    border: '1px solid #FFEDD5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 1.5,
+                  }}
+                >
+                  <NotificationsIcon sx={{ fontSize: { xs: 24, sm: 28 }, color: '#EA580C' }} />
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 700,
+                    fontSize: { xs: '14.5px', sm: '15px' },
+                    color: '#2C1810',
+                    mb: 0.5,
+                  }}
+                >
                   No new notifications
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontWeight: 500,
+                    fontSize: { xs: '12px', sm: '12.5px' },
+                    color: '#8A7A6D',
+                    maxWidth: '240px',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  Booking requests, reminders, and alerts will appear right here.
                 </Typography>
               </Box>
             ) : (
-              notifications.map((notif) => (
-                <MenuItem
-                  key={notif.id}
-                  sx={{ py: 1.5, borderBottom: '1px solid #f8fafc', whiteSpace: 'normal' }}
-                >
-                  <ListItemText
-                    primary={notif.message}
-                    secondary={notif.time}
-                    slotProps={{
-                      primary: {
-                        sx: { fontFamily: FONTS.OUTFIT, fontSize: '14px', color: '#1e293b' },
-                      },
-                      secondary: { sx: { fontSize: '12px', mt: 0.5 } },
+              <Box sx={{ maxHeight: { xs: '60vh', sm: '360px' }, overflowY: 'auto' }}>
+                {notifications.map((notif) => (
+                  <MenuItem
+                    key={notif.id}
+                    onClick={handleCloseNotif}
+                    sx={{
+                      py: 1.5,
+                      px: { xs: 2, sm: 2.2 },
+                      borderBottom: '1px solid #F5ECE0',
+                      whiteSpace: 'normal',
+                      alignItems: 'flex-start',
+                      gap: 1.5,
+                      '&:hover': { bgcolor: '#FFFDF9' },
+                      '&:last-child': { borderBottom: 'none' },
                     }}
-                  />
-                </MenuItem>
-              ))
+                  >
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: COLORS.PRIMARY,
+                        mt: 0.8,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: { xs: '13px', sm: '13.5px' },
+                          fontWeight: 600,
+                          color: '#1A1A1A',
+                          lineHeight: 1.4,
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        {notif.message}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontSize: '11.5px',
+                          color: '#8A7A6D',
+                          mt: 0.4,
+                        }}
+                      >
+                        {notif.time}
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Box>
             )}
           </Menu>
 
@@ -298,17 +463,19 @@ export default function PortalHeader({
               anchorEl={userMenuAnchorEl}
               open={Boolean(userMenuAnchorEl)}
               onClose={handleCloseUserMenu}
+              marginThreshold={12}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               slotProps={{
                 paper: {
                   sx: {
-                    width: 250,
-                    borderRadius: '14px',
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)',
+                    width: { xs: 'calc(100vw - 24px)', sm: 260 },
+                    maxWidth: { xs: 'calc(100vw - 24px)', sm: 270 },
+                    borderRadius: { xs: '14px', sm: '16px' },
+                    border: '1px solid #EFE6D5',
+                    boxShadow: '0 16px 40px rgba(44, 24, 16, 0.12)',
                     p: 0.5,
-                    mt: 1.5,
+                    mt: 1.2,
                   },
                 },
               }}

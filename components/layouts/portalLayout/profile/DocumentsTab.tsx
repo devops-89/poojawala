@@ -515,20 +515,25 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
       </Grid>
 
       {/* Save Button */}
-      <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ mt: { xs: 3, sm: 4 }, display: "flex", justifyContent: { xs: "stretch", sm: "flex-end" } }}>
         <Button
           variant="contained"
           onClick={onSave}
           disabled={saving || !isDirty}
           sx={{
+            width: { xs: "100%", sm: "auto" },
             background: (saving || !isDirty) ? "#cbd5e1 !important" : "#FF6200 !important",
             cursor: (saving || !isDirty) ? "not-allowed !important" : "pointer",
             color: (saving || !isDirty) ? "#64748b !important" : "white !important",
             borderRadius: "8px",
             px: 4,
             py: 1.2,
+            height: "42px",
+            fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
+            fontSize: "14px",
             textTransform: "none",
+            boxShadow: (saving || !isDirty) ? "none" : "0 4px 14px rgba(255, 98, 0, 0.25)",
             "&:hover": { background: (saving || !isDirty) ? "#cbd5e1 !important" : "#F05A00 !important" },
           }}
         >
@@ -542,52 +547,60 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
         onClose={() => setPreviewItem(null)}
         maxWidth="md"
         fullWidth
-        sx={{
-          "& .MuiDialog-paper": {
-            borderRadius: "16px",
-            overflow: "hidden",
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: { xs: "14px", sm: "18px" },
+              border: "1px solid #EFE6D5",
+              boxShadow: "0 20px 48px rgba(0, 0, 0, 0.16)",
+              m: { xs: 1.5, sm: "auto" },
+              width: { xs: "calc(100% - 24px)", sm: "auto" },
+              overflow: "hidden",
+            },
           },
         }}
       >
         <DialogTitle
           sx={{
             m: 0,
-            p: 2,
-            px: 3,
+            py: { xs: 1.5, sm: 2 },
+            px: { xs: 2, sm: 3 },
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            fontSize: "18px",
+            fontSize: { xs: "16px", sm: "18px" },
             color: "#1e293b",
-            borderBottom: "1px solid #E2E8F0",
+            bgcolor: "#FAF4EE",
+            borderBottom: "1px solid #EFE6D5",
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <VisibilityIcon sx={{ color: COLORS.PRIMARY }} />
+            <VisibilityIcon sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
             {previewItem?.title || "Document Preview"}
           </Box>
           <IconButton
             aria-label="close"
             onClick={() => setPreviewItem(null)}
+            size="small"
             sx={{
-              color: (theme) => theme.palette.grey[500],
+              color: "#7C6A60",
               "&:hover": { color: COLORS.PRIMARY, bgcolor: "#FFF5EF" },
             }}
           >
-            <CloseIcon />
+            <CloseIcon fontSize="small" />
           </IconButton>
         </DialogTitle>
 
         <DialogContent
           sx={{
-            p: 3,
+            p: { xs: 1.5, sm: 3 },
             bgcolor: "#F8FAFC",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            minHeight: "350px",
+            minHeight: { xs: "250px", sm: "350px" },
             maxHeight: "75vh",
             overflow: "auto",
           }}

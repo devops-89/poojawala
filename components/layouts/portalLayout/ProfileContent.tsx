@@ -171,8 +171,8 @@ export default function ProfileContent() {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Box>
+    <Box sx={{ maxWidth: '1400px', mx: 'auto', width: '100%', px: { xs: 0, sm: 1.5, md: 2 }, pb: { xs: 4, sm: 6 }, display: "flex", flexDirection: "column", gap: { xs: 2, sm: 2.5 } }}>
+      <Box sx={{ mb: 0.5 }}>
         <AppBreadcrumbs
           items={[
             {
@@ -183,58 +183,67 @@ export default function ProfileContent() {
             { label: "Profile & Settings" },
           ]}
         />
-        <Box>
-          <Typography
-            variant="h4"
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 800,
-              color: "#1e293b",
-            }}
-          >
-            My Profile & Settings
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              color: "#64748b",
-              mt: 0.5,
-            }}
-          >
-            Manage your personal details, skills, service locations and payout accounts.
-          </Typography>
-        </Box>
+        <Typography
+          variant="h4"
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            color: "#1A1A1A",
+            fontSize: { xs: '20px', sm: '24px', md: '28px' },
+            lineHeight: 1.2,
+            mb: 0.5,
+          }}
+        >
+          My Profile & Settings
+        </Typography>
+        <Typography
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            color: "#64748B",
+            fontSize: { xs: '13px', sm: '14px' },
+          }}
+        >
+          Manage your personal details, skills, service locations and payout accounts.
+        </Typography>
       </Box>
 
       {p.isAdminCreated && p.verificationStatus !== "APPROVED" && !isRejected && (
         <Alert
           severity="warning"
           sx={{
-            borderRadius: "14px",
+            borderRadius: { xs: "12px", sm: "14px" },
             border: "1px solid #FFE082",
             bgcolor: "#FFF8E1",
             "& .MuiAlert-icon": { color: "#E65100" },
           }}
         >
-          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#E65100", fontSize: "15px" }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: "#E65100", fontSize: { xs: "14px", sm: "15px" } }}>
             Profile Incomplete — Action Required
           </Typography>
-          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#5D4037", fontSize: "13.5px", mt: 0.5 }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: "#5D4037", fontSize: { xs: "12.5px", sm: "13.5px" }, mt: 0.5 }}>
             Your account was created by Admin with your basic details prefilled. Please review and complete your professional skills, {isAstrologer ? "astrology specializations, consultation rate" : "rituals, service areas, bank account"}, and upload your identity verification documents to submit your profile for admin verification.
           </Typography>
         </Alert>
       )}
 
       <Paper
+        elevation={0}
         sx={{
-          borderRadius: "16px",
-          border: "1px solid #eee",
+          borderRadius: { xs: '14px', sm: '18px' },
+          border: "1px solid #EFE6D5",
           boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
           overflow: "hidden",
+          bgcolor: "#FFFFFF",
         }}
       >
         <Box
-          sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "#FAFAFA" }}
+          sx={{
+            borderBottom: "1px solid #EFE6D5",
+            bgcolor: "#FFFDF9",
+            width: "100%",
+            maxWidth: "100%",
+            overflowX: "auto",
+          }}
         >
           <Tabs
             value={p.activeTab}
@@ -244,18 +253,30 @@ export default function ProfileContent() {
             }}
             variant="scrollable"
             scrollButtons="auto"
+            allowScrollButtonsMobile
             sx={{
-              px: 2,
+              px: { xs: 1, sm: 2 },
+              minHeight: { xs: 48, sm: 54 },
               "& .MuiTab-root": {
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 600,
                 textTransform: "none",
-                fontSize: "15px",
-                py: 2,
-                minHeight: 56,
+                fontSize: { xs: "13px", sm: "14px" },
+                py: { xs: 1, sm: 1.5 },
+                px: { xs: 1.5, sm: 2.2 },
+                minHeight: { xs: 48, sm: 54 },
+                color: "#64748B",
+                transition: "all 0.2s ease",
               },
-              "& .Mui-selected": { color: COLORS.PRIMARY },
-              "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY },
+              "& .Mui-selected": {
+                color: `${COLORS.PRIMARY} !important`,
+                fontWeight: 700,
+              },
+              "& .MuiTabs-indicator": {
+                backgroundColor: COLORS.PRIMARY,
+                height: 3,
+                borderRadius: "3px 3px 0 0",
+              },
             }}
           >
             {visibleTabs.map((tab) => (
@@ -265,12 +286,17 @@ export default function ProfileContent() {
                 label={tab.label}
                 icon={tab.icon}
                 iconPosition="start"
+                sx={{
+                  "& .MuiTab-iconWrapper": {
+                    mr: { xs: 0.8, sm: 1 },
+                  },
+                }}
               />
             ))}
           </Tabs>
         </Box>
 
-        <Box sx={{ p: { xs: 2.5, md: 4 } }}>
+        <Box sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           {p.activeTab === "personal" && (
             <PersonalInfoTab
               firstName={p.firstName}

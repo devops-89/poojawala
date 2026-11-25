@@ -68,15 +68,28 @@ export default function ServiceDetailsDateTimeFields({
                 helperText: dateError,
                 onClick: () => setOpenCalendar(true),
                 sx: {
-                  bgcolor: "#FFFBF7",
-                  borderRadius: "10px",
+                  bgcolor: "#FFFDF9",
+                  borderRadius: "12px",
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                    fontFamily: FONTS.PRIMARY,
+                    borderRadius: "12px",
+                    fontFamily: FONTS.OUTFIT,
+                    bgcolor: "#FFFDF9",
+                    "& fieldset": {
+                      borderColor: "#EADCCF",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#FF6200",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#FF6200",
+                    },
                   },
                   "& .MuiInputLabel-root": {
-                    fontFamily: FONTS.PRIMARY,
+                    fontFamily: FONTS.OUTFIT,
                     color: Boolean(dateError) ? "#d32f2f" : "#64534A",
+                    "&.Mui-focused": {
+                      color: "#FF6200",
+                    },
                   },
                 },
               },
@@ -90,15 +103,28 @@ export default function ServiceDetailsDateTimeFields({
           fullWidth
           error={Boolean(timeError)}
           sx={{
-            bgcolor: "#FFFBF7",
-            borderRadius: "10px",
+            bgcolor: "#FFFDF9",
+            borderRadius: "12px",
             "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-              fontFamily: FONTS.PRIMARY,
+              borderRadius: "12px",
+              fontFamily: FONTS.OUTFIT,
+              bgcolor: "#FFFDF9",
+              "& fieldset": {
+                borderColor: "#EADCCF",
+              },
+              "&:hover fieldset": {
+                borderColor: "#FF6200",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#FF6200",
+              },
             },
             "& .MuiInputLabel-root": {
-              fontFamily: FONTS.PRIMARY,
+              fontFamily: FONTS.OUTFIT,
               color: Boolean(timeError) ? "#d32f2f" : "#64534A",
+              "&.Mui-focused": {
+                color: "#FF6200",
+              },
             },
           }}
         >
@@ -118,7 +144,7 @@ export default function ServiceDetailsDateTimeFields({
                   sx: {
                     maxHeight: 280,
                     overflowY: "auto",
-                    borderRadius: "10px",
+                    borderRadius: "12px",
                     boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
                     mt: 0.5,
                   },
@@ -128,29 +154,26 @@ export default function ServiceDetailsDateTimeFields({
             renderValue={(selected) => {
               if (!selected) {
                 return (
-                  <span style={{ color: "#9E9E9E", fontFamily: FONTS.PRIMARY }}>
+                  <span style={{ color: "#9E9E9E", fontFamily: FONTS.OUTFIT }}>
                     Select Time (08:00 AM - 08:00 PM)
                   </span>
                 );
               }
               const match = timeOptions.find((t) => t.value === selected);
-              return match ? match.label : selected;
+              return <span style={{ fontFamily: FONTS.OUTFIT }}>{match ? match.label : selected}</span>;
             }}
             sx={{
-              borderRadius: "10px",
-              fontFamily: FONTS.PRIMARY,
+              borderRadius: "12px",
+              fontFamily: FONTS.OUTFIT,
             }}
           >
-            <MenuItem value="" disabled sx={{ fontFamily: FONTS.PRIMARY, color: "#8C7A6B" }}>
-              Select Time (08:00 AM - 08:00 PM)
-            </MenuItem>
             {timeOptions.map((opt) => (
               <MenuItem
                 key={opt.value}
                 value={opt.value}
                 disabled={opt.disabled}
                 sx={{
-                  fontFamily: FONTS.PRIMARY,
+                  fontFamily: FONTS.OUTFIT,
                   color: opt.disabled ? "#BDBDBD" : "inherit",
                 }}
               >
@@ -159,15 +182,15 @@ export default function ServiceDetailsDateTimeFields({
             ))}
           </Select>
           {timeError ? (
-            <FormHelperText error sx={{ fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+            <FormHelperText error sx={{ fontFamily: FONTS.OUTFIT, mt: 0.5 }}>
               {timeError}
             </FormHelperText>
           ) : isAllSlotsPassedToday ? (
-            <FormHelperText sx={{ color: "#d97706", fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+            <FormHelperText sx={{ color: "#d97706", fontFamily: FONTS.OUTFIT, mt: 0.5 }}>
               Slots for today are closed (minimum 2 hours advance booking required). Please choose another date.
             </FormHelperText>
           ) : scheduledDate === todayStr ? (
-            <FormHelperText sx={{ color: "#8C7A6B", fontFamily: FONTS.PRIMARY, mt: 0.5 }}>
+            <FormHelperText sx={{ color: "#8C7A6B", fontFamily: FONTS.OUTFIT, mt: 0.5 }}>
               Note: Same-day pooja bookings require at least 2 hours advance notice.
             </FormHelperText>
           ) : null}

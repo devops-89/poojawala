@@ -1783,7 +1783,9 @@ export default function OfflineServiceLocationModal({
               <Button
                 variant="outlined"
                 onClick={() => setStep("SERVICES")}
-                startIcon={<ArrowBackIcon sx={{ fontSize: "18px !important" }} />}
+                startIcon={
+                  <ArrowBackIcon sx={{ fontSize: "18px !important" }} />
+                }
                 sx={{
                   borderColor: "#D8C7B8",
                   color: "#5C4A40",
@@ -2042,7 +2044,9 @@ export default function OfflineServiceLocationModal({
               <Button
                 variant="outlined"
                 onClick={() => setStep("SERVICES")}
-                startIcon={<ArrowBackIcon sx={{ fontSize: "18px !important" }} />}
+                startIcon={
+                  <ArrowBackIcon sx={{ fontSize: "18px !important" }} />
+                }
                 sx={{
                   borderColor: "#D8C7B8",
                   color: "#5C4A40",
