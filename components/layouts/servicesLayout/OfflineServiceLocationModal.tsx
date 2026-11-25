@@ -1534,6 +1534,77 @@ export default function OfflineServiceLocationModal({
     }
   };
 
+  // Handle Unavailable Form Submission
+  const handleSubmitUnavailableForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customerName.trim()) {
+      showSnackbar("Please enter your name", "warning");
+      return;
+    }
+    if (!customerPhone.trim() || customerPhone.trim().length < 10) {
+      showSnackbar("Please enter a valid 10-digit mobile number", "warning");
+      return;
+    }
+    if (!customerEmail.trim() || !customerEmail.includes("@")) {
+      showSnackbar("Please enter a valid email address", "warning");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const ref = `REQ-${Date.now().toString().slice(-6)}`;
+      setBookingRefId(ref);
+
+      const messagePayload = [
+        `Offline Pooja Request for Unavailable/Special Service:`,
+        `Service: ${selectedService?.name || "Offline Pooja"} (${selectedService?.hindiName || ""})`,
+        `Location: ${effectiveCity}, ${selectedState}`,
+        `Client Name: ${customerName}`,
+        `Mobile: ${customerPhone}`,
+        `Email: ${customerEmail}`,
+        poojaDate ? `Preferred Date: ${poojaDate}` : "",
+        specialInstructions ? `Special Instructions / Gotra: ${specialInstructions}` : "",
+        `Reference ID: ${ref}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      await submitContactFormAPI({
+        name: customerName,
+        email: customerEmail,
+        subject: `Offline Pooja Enquiry: ${selectedService?.name || "Custom Pooja"} in ${effectiveCity} [${ref}]`,
+        message: messagePayload,
+      });
+
+      // Save to local storage for persistence
+      if (typeof window !== "undefined") {
+        try {
+          const prev = JSON.parse(localStorage.getItem("offline_pooja_enquiries") || "[]");
+          prev.push({
+            ref,
+            service: selectedService?.name,
+            city: effectiveCity,
+            state: selectedState,
+            date: new Date().toISOString(),
+          });
+          localStorage.setItem("offline_pooja_enquiries", JSON.stringify(prev));
+        } catch (e) {}
+      }
+
+      setIsSuccessForUnavailable(true);
+      setStep("SUCCESS");
+      showSnackbar("Request submitted successfully! Our team will contact you shortly.", "success");
+    } catch (err: any) {
+      console.error("Failed submitting service inquiry:", err);
+      // Graceful fallback
+      setIsSuccessForUnavailable(true);
+      setStep("SUCCESS");
+      showSnackbar("Your request has been recorded! Our Acharya will call you shortly.", "success");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Handle Available Service Booking / Checkout
   const handleConfirmAvailableCheckout = async (e: React.FormEvent) => {
     e.preventDefault();

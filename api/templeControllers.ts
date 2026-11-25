@@ -15,7 +15,7 @@ export const registerTempleSlugMapping = (slug: string, id: string | number) => 
       sessionStorage.setItem(`slug_to_id_${lower}`, tid);
       localStorage.setItem(`temple_slug_${lower}`, tid);
       sessionStorage.setItem(`temple_slug_${lower}`, tid);
-    } catch (e) {}
+    } catch (e) { }
   }
 };
 
@@ -41,10 +41,10 @@ export const getTemplesAPI = async (
       const list = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data?.data)
-        ? response.data.data
-        : Array.isArray(response.data?.data?.data)
-        ? response.data.data.data
-        : [];
+          ? response.data.data
+          : Array.isArray(response.data?.data?.data)
+            ? response.data.data.data
+            : [];
       list.forEach((t: any) => {
         if (t?.id) {
           if (t?.slug) registerTempleSlugMapping(t.slug, t.id);
@@ -84,7 +84,7 @@ export const resolveTempleId = (id: string | number): string | number => {
         templeSlugToIdMap.set(lower, cached);
         return cached;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return id;
@@ -102,10 +102,10 @@ export const getTempleByIdAPI = async (id: string | number) => {
         const list = Array.isArray(res?.data)
           ? res.data
           : Array.isArray(res?.data?.data)
-          ? res.data.data
-          : Array.isArray(res?.data?.data?.data)
-          ? res.data.data.data
-          : [];
+            ? res.data.data
+            : Array.isArray(res?.data?.data?.data)
+              ? res.data.data.data
+              : [];
 
         list.forEach((t: any) => {
           if (t?.id) {
@@ -202,6 +202,7 @@ export const updateTempleStatusAPI = async (id: string | number, isActive: boole
     throw error;
   }
 };
+
 
 export const updateTempleVerificationAPI = async (
   id: string | number,
