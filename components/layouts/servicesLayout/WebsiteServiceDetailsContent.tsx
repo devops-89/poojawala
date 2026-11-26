@@ -250,7 +250,7 @@ export default function WebsiteServiceDetailsContent() {
     DEFAULT_BANNER;
 
   return (
-    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 6, md: 8 }, pt: { xs: 2, md: 4 }, overflowX: "hidden" }}>
+    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 12, md: 8 }, pt: { xs: 2, md: 4 }, overflowX: "hidden" }}>
       <Container maxWidth="lg">
         {/* Dedicated Website Service Hero Section */}
         <WebsiteServiceDetailsHero

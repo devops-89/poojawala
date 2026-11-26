@@ -2,7 +2,8 @@
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CheckIcon from "@mui/icons-material/Check";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { Box, Button, Chip, Grid, Paper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FONTS } from "@/utils/fonts";
@@ -138,6 +139,37 @@ export default function WebsiteServicePlansSection({
       {isSinglePlan ? (
         /* Single Plan Horizontal Card (Matching Customer Layout for Online / Single-Plan Services) */
         <Box sx={{ maxWidth: "900px", mx: "auto" }}>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5, mb: 2.5 }}>
+            <Box
+              sx={{
+                width: 26,
+                height: 26,
+                borderRadius: "50%",
+                bgcolor: COLORS.PRIMARY,
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "12px",
+                fontWeight: 800,
+                fontFamily: FONTS.OUTFIT,
+              }}
+            >
+              1
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "1.2px",
+                color: COLORS.PRIMARY,
+                textTransform: "uppercase",
+              }}
+            >
+              CHOOSE YOUR PLAN
+            </Typography>
+          </Box>
           <Paper
             elevation={0}
             sx={{
@@ -299,27 +331,45 @@ export default function WebsiteServicePlansSection({
       ) : (
         /* Two Plans Comparison (For Offline Services with Multiple Plans) */
         <>
-          <Box sx={{ textAlign: "center", maxWidth: "640px", mx: "auto", mb: 5 }}>
-            <Typography
-              sx={{
-                fontFamily: FONTS.OUTFIT,
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "1.2px",
-                color: COLORS.PRIMARY,
-                textTransform: "uppercase",
-                mb: 1,
-              }}
-            >
-              CHOOSE YOUR PLAN
-            </Typography>
+          <Box sx={{ textAlign: "center", maxWidth: "640px", mx: "auto", mb: { xs: 3.5, sm: 5 } }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5, mb: 1 }}>
+              <Box
+                sx={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: "50%",
+                  bgcolor: COLORS.PRIMARY,
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  fontFamily: FONTS.OUTFIT,
+                }}
+              >
+                1
+              </Box>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "1.2px",
+                  color: COLORS.PRIMARY,
+                  textTransform: "uppercase",
+                }}
+              >
+                CHOOSE YOUR PLAN
+              </Typography>
+            </Box>
 
             <Typography
               variant="h3"
               sx={{
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 700,
-                fontSize: { xs: "28px", sm: "36px", md: "44px" },
+                fontSize: { xs: "24px", sm: "36px", md: "44px" },
                 color: "#1A1A1A",
                 mb: 1.5,
               }}
@@ -330,7 +380,7 @@ export default function WebsiteServicePlansSection({
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: { xs: "14px", md: "16px" },
+                fontSize: { xs: "13.5px", md: "16px" },
                 color: "#666",
                 lineHeight: 1.6,
               }}
@@ -357,7 +407,7 @@ export default function WebsiteServicePlansSection({
                       selectedPlan === "basic"
                         ? "2px solid #FF6200"
                         : "1.5px solid #F3E4D8",
-                    bgcolor: "#FFFFFF",
+                    bgcolor: selectedPlan === "basic" ? "#FFFDF9" : "#FFFFFF",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -377,30 +427,67 @@ export default function WebsiteServicePlansSection({
                   }}
                 >
                   <Box>
-                    <Typography
+                    <Box
                       sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 700,
-                        fontSize: { xs: "22px", sm: "24px", md: "26px" },
-                        color: "#1A0B05",
-                        mb: 1.5,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 2,
+                        flexWrap: "wrap",
+                        gap: 1,
                       }}
                     >
-                      Basic
-                    </Typography>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: "50%",
+                            border:
+                              selectedPlan === "basic"
+                                ? `2px solid ${COLORS.PRIMARY}`
+                                : "2px solid #D8C7B8",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {selectedPlan === "basic" && (
+                            <Box
+                              sx={{
+                                width: 9,
+                                height: 9,
+                                borderRadius: "50%",
+                                bgcolor: COLORS.PRIMARY,
+                              }}
+                            />
+                          )}
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontWeight: 800,
+                            fontSize: { xs: "20px", sm: "24px" },
+                            color: "#1A0B05",
+                          }}
+                        >
+                          Basic
+                        </Typography>
+                      </Box>
 
-                    <Typography
-                      sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 800,
-                        fontSize: { xs: "28px", sm: "36px", md: "42px" },
-                        color: COLORS.PRIMARY,
-                        lineHeight: 1.1,
-                        mb: 3,
-                      }}
-                    >
-                      ₹ {Number(basicPlan.price || 0).toLocaleString("en-IN")}
-                    </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 800,
+                          fontSize: { xs: "24px", sm: "30px", md: "36px" },
+                          color: selectedPlan === "basic" ? COLORS.PRIMARY : "#1A0B05",
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        ₹{Number(basicPlan.price || 0).toLocaleString("en-IN")}
+                      </Typography>
+                    </Box>
 
                     <Box sx={{ borderTop: "1px solid #F3E8DB", pt: 3, mb: 4 }}>
                       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -485,7 +572,7 @@ export default function WebsiteServicePlansSection({
                       selectedPlan === "standard"
                         ? "2px solid #FF6200"
                         : "1.5px solid #F3E4D8",
-                    bgcolor: "#FFFFFF",
+                    bgcolor: selectedPlan === "standard" ? "#FFFDF9" : "#FFFFFF",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -505,51 +592,80 @@ export default function WebsiteServicePlansSection({
                     },
                   }}
                 >
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      bgcolor: selectedPlan === "standard" ? COLORS.PRIMARY : "#E2E8F0",
-                      color: selectedPlan === "standard" ? "#FFFFFF" : "#475569",
-                      px: 2.5,
-                      py: 0.6,
-                      borderRadius: "0 22px 0 14px",
-                      fontFamily: FONTS.PRIMARY,
-                      fontSize: "11px",
-                      fontWeight: 800,
-                      letterSpacing: "1px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    MOST COMPLETE
-                  </Box>
-
                   <Box>
-                    <Typography
+                    <Box
                       sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 700,
-                        fontSize: { xs: "22px", sm: "24px", md: "26px" },
-                        color: "#1A0B05",
-                        mb: 1.5,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 2,
+                        flexWrap: "wrap",
+                        gap: 1,
                       }}
                     >
-                      Standard
-                    </Typography>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: "50%",
+                            border:
+                              selectedPlan === "standard"
+                                ? `2px solid ${COLORS.PRIMARY}`
+                                : "2px solid #D8C7B8",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {selectedPlan === "standard" && (
+                            <Box
+                              sx={{
+                                width: 9,
+                                height: 9,
+                                borderRadius: "50%",
+                                bgcolor: COLORS.PRIMARY,
+                              }}
+                            />
+                          )}
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontFamily: FONTS.OUTFIT,
+                            fontWeight: 800,
+                            fontSize: { xs: "20px", sm: "24px" },
+                            color: "#1A0B05",
+                          }}
+                        >
+                          Standard
+                        </Typography>
+                        <Chip
+                          label="Most Popular"
+                          size="small"
+                          sx={{
+                            bgcolor: COLORS.PRIMARY,
+                            color: "white",
+                            fontWeight: 700,
+                            fontSize: "10px",
+                            height: "20px",
+                            borderRadius: "10px",
+                          }}
+                        />
+                      </Box>
 
-                    <Typography
-                      sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 800,
-                        fontSize: { xs: "28px", sm: "36px", md: "42px" },
-                        color: COLORS.PRIMARY,
-                        lineHeight: 1.1,
-                        mb: 3,
-                      }}
-                    >
-                      ₹ {Number(standardPlan.price || 0).toLocaleString("en-IN")}
-                    </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: FONTS.OUTFIT,
+                          fontWeight: 800,
+                          fontSize: { xs: "24px", sm: "30px", md: "36px" },
+                          color: selectedPlan === "standard" ? COLORS.PRIMARY : "#1A0B05",
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        ₹{Number(standardPlan.price || 0).toLocaleString("en-IN")}
+                      </Typography>
+                    </Box>
 
                     <Box sx={{ borderTop: "1px solid #F3E8DB", pt: 3, mb: 4 }}>
                       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -632,6 +748,114 @@ export default function WebsiteServicePlansSection({
         service={service}
         initialPlan={bookingPlanName}
       />
+
+      {/* MOBILE STICKY BOTTOM ACTION BAR (Matching Prototype) */}
+      <Box
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1100,
+          bgcolor: "#FFFFFF",
+          borderTop: "1px solid #EFE6D5",
+          boxShadow: "0 -4px 20px rgba(44, 24, 16, 0.08)",
+          px: 2,
+          py: 1.5,
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: 600,
+            mx: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
+          {/* Price display */}
+          <Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 800,
+                  fontSize: "18px",
+                  color: "#1A0B05",
+                  lineHeight: 1.2,
+                }}
+              >
+                ₹
+                {Number(
+                  selectedPlan === "standard" && standardPlan?.price
+                    ? standardPlan.price
+                    : basicPlan?.price || service?.minPrice || 0
+                ).toLocaleString("en-IN")}
+              </Typography>
+              <Box
+                sx={{
+                  bgcolor: "#EDFDF2",
+                  border: "1px solid #C6F6D5",
+                  borderRadius: "6px",
+                  px: 0.8,
+                  py: 0.2,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    color: "#22543D",
+                  }}
+                >
+                  {selectedPlan === "standard" ? "Standard" : "Basic"}
+                </Typography>
+              </Box>
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontSize: "11px",
+                color: "#8C7A6B",
+                fontWeight: 500,
+                mt: 0.2,
+              }}
+            >
+              100% Verified Vedic Pandit
+            </Typography>
+          </Box>
+
+          {/* Booking CTA Button */}
+          <Button
+            type="button"
+            onClick={(e) => handleBookPlan(selectedPlan, e)}
+            startIcon={<CalendarMonthIcon sx={{ fontSize: "18px" }} />}
+            sx={{
+              flex: 1,
+              maxWidth: 220,
+              background: "linear-gradient(135deg, #FF6200 0%, #E64A00 100%)",
+              color: "white",
+              py: 1.4,
+              px: 2.5,
+              borderRadius: "12px",
+              fontWeight: 700,
+              fontFamily: FONTS.OUTFIT,
+              fontSize: "14px",
+              textTransform: "none",
+              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.3)",
+              whiteSpace: "nowrap",
+              "&:hover": {
+                background: "linear-gradient(135deg, #E65500 0%, #CC3E00 100%)",
+              },
+            }}
+          >
+            Book This Pooja
+          </Button>
+        </Box>
+      </Box>
     </Box>
   );
 }
