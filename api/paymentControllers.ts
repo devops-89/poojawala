@@ -32,7 +32,7 @@ export const getAdminFinanceStatsAPI = async () => {
 
 export const getPaymentLinkAPI = async (bookingId: string | number, callbackUrl: string) => {
   try {
-    const route = `/payments/booking/payment-link?bookingId=${bookingId}&callbackUrl=${callbackUrl}`;
+    const route = `/payments/booking/payment-link?bookingId=${bookingId}&callbackUrl=${encodeURIComponent(callbackUrl)}`;
     const res = await paymentSecuredApi.get(route);
     return res.data;
   } catch (error: any) {

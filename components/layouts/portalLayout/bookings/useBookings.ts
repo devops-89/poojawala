@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   addComplaintAPI,
   addReviewAPI,
@@ -27,17 +28,67 @@ export function useBookings() {
   const { showSnackbar } = useSnackbarStore();
   const { showLoader, hideLoader } = useLoaderStore();
   const refreshTrigger = useSocketStore((state) => state.refreshTrigger);
+  const searchParams = useSearchParams();
 
-  const [tabValue, setTabValue] = useState(0);
+  const statuses = ["Accepted", "Enroute", "Arrived", "Ongoing", "Completed"];
+
+  const searchStatus = searchParams?.get("status");
+  const searchTab = searchParams?.get("tab");
+
+  const getInitialStatus = () => {
+    if (searchStatus) {
+      const match = statuses.find(
+        (s) => s.toLowerCase() === searchStatus.toLowerCase()
+      );
+      if (match) return match;
+    }
+    return "Accepted";
+  };
+
+  const getInitialTab = () => {
+    if (searchStatus) return 1;
+    if (searchTab !== null && searchTab !== undefined) {
+      const parsed = Number(searchTab);
+      if (!isNaN(parsed)) return parsed;
+    }
+    return 0;
+  };
+
+  const [tabValue, setTabValueState] = useState<number>(getInitialTab);
   const [isClient, setIsClient] = useState(false);
-  const [activeStatus, setActiveStatus] = useState("Accepted");
+  const [activeStatus, setActiveStatusState] = useState<string>(getInitialStatus);
   const [newRequests, setNewRequests] = useState<any[]>([]);
   const [activeBookings, setActiveBookings] = useState<any[]>([]);
   const [activePage, setActivePage] = useState(1);
   const [activeTotalPages, setActiveTotalPages] = useState(1);
+  const [activeTotalCount, setActiveTotalCount] = useState(0);
   const [isFetchingBookings, setIsFetchingBookings] = useState(true);
 
-  const statuses = ["Accepted", "Enroute", "Arrived", "Ongoing", "Completed"];
+  const setActiveStatus = (status: string) => {
+    setActiveStatusState(status);
+    setActivePage(1);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("status", status);
+      url.searchParams.set("tab", "1");
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  const setTabValue = (val: number) => {
+    setTabValueState(val);
+    try {
+      localStorage.setItem("bookingsTab", val.toString());
+    } catch (e) {}
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", val.toString());
+      if (val === 0) {
+        url.searchParams.delete("status");
+      }
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
 
   // OTP Modal states
   const [otpModalOpen, setOtpModalOpen] = useState(false);
@@ -421,12 +472,38 @@ export function useBookings() {
   };
 
   useEffect(() => {
-    const savedTab = localStorage.getItem("bookingsTab");
-    if (savedTab) {
-      setTabValue(Number(savedTab));
+    const sParam = searchParams?.get("status");
+    const tParam = searchParams?.get("tab");
+
+    if (sParam) {
+      const matched = statuses.find(
+        (s) => s.toLowerCase() === sParam.toLowerCase()
+      );
+      if (matched) {
+        setActiveStatusState(matched);
+        setTabValueState(1);
+        setIsClient(true);
+        return;
+      }
     }
+
+    if (tParam !== null && tParam !== undefined) {
+      const parsedTab = Number(tParam);
+      if (!isNaN(parsedTab)) {
+        setTabValueState(parsedTab);
+        setIsClient(true);
+        return;
+      }
+    }
+
+    try {
+      const savedTab = localStorage.getItem("bookingsTab");
+      if (savedTab) {
+        setTabValueState(Number(savedTab));
+      }
+    } catch (e) {}
     setIsClient(true);
-  }, []);
+  }, [searchParams]);
 
   const handleRespondBooking = async (
     bookingId: number | string,
@@ -465,25 +542,28 @@ export function useBookings() {
         if (response?.data?.bookings) {
           const getPriceDisplay = (booking: any) => getBookingPurohitPayoutDisplay(booking);
 
-          const mappedBookings = response.data.bookings.map((booking: any) => ({
-            id: booking.bookingNumber || booking.id,
-            customer: booking.customer
-              ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
-              : "Customer",
-            ritual: booking.service?.name || "Pooja Service",
-            date: formatScheduledDate(booking.scheduledAt),
-            time: formatScheduledTime(booking.scheduledAt),
-            location: booking.customerAddress?.fullAddress || "N/A",
-            distance: "N/A",
-            duration: booking.service?.durationMinutes
-              ? `${booking.service.durationMinutes} Mins`
-              : "N/A",
-            urgency: "Normal",
-            price: getPriceDisplay(booking),
-            plan: booking.plan,
-            bookingMode: booking.bookingMode,
-            originalData: booking,
-          }));
+          const mappedBookings = response.data.bookings.map((booking: any) => {
+            const isOnline = (booking.bookingMode || booking.service?.bookingMode || "").toUpperCase() === "ONLINE";
+            return {
+              id: booking.bookingNumber || booking.id,
+              customer: booking.customer
+                ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
+                : "Customer",
+              ritual: booking.service?.name || "Pooja Service",
+              date: formatScheduledDate(booking.scheduledAt),
+              time: formatScheduledTime(booking.scheduledAt),
+              location: booking.customerAddress?.fullAddress || (isOnline ? "Online (Video Call)" : "Address Pending"),
+              distance: "N/A",
+              duration: booking.service?.durationMinutes
+                ? `${booking.service.durationMinutes} Mins`
+                : "N/A",
+              urgency: "Normal",
+              price: getPriceDisplay(booking),
+              plan: booking.plan,
+              bookingMode: booking.bookingMode,
+              originalData: booking,
+            };
+          });
           setNewRequests(mappedBookings);
         }
       } catch (error) {
@@ -501,27 +581,37 @@ export function useBookings() {
         if (response?.data?.bookings) {
           const getPriceDisplay = (booking: any) => getBookingPurohitPayoutDisplay(booking);
 
-          const mappedBookings = response.data.bookings.map((booking: any) => ({
-            id: booking.bookingNumber || booking.id,
-            customer: booking.customer
-              ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
-              : "Customer",
-            ritual: booking.service?.name || "Pooja Service",
-            date: formatScheduledDate(booking.scheduledAt),
-            time: formatScheduledTime(booking.scheduledAt),
-            location: booking.customerAddress?.fullAddress || "N/A",
-            distance: "N/A",
-            duration: booking.service?.durationMinutes
-              ? `${booking.service.durationMinutes} Mins`
-              : "N/A",
-            price: getPriceDisplay(booking),
-            status: activeStatus.toUpperCase(),
-            plan: booking.plan,
-            bookingMode: booking.bookingMode,
-            originalData: booking,
-          }));
+          const mappedBookings = response.data.bookings.map((booking: any) => {
+            const isOnline = (booking.bookingMode || booking.service?.bookingMode || "").toUpperCase() === "ONLINE";
+            return {
+              id: booking.bookingNumber || booking.id,
+              customer: booking.customer
+                ? `${booking.customer.firstName} ${booking.customer.lastName}`.trim()
+                : "Customer",
+              ritual: booking.service?.name || "Pooja Service",
+              date: formatScheduledDate(booking.scheduledAt),
+              time: formatScheduledTime(booking.scheduledAt),
+              location: booking.customerAddress?.fullAddress || (isOnline ? "Online (Video Call)" : "Address Pending"),
+              distance: "N/A",
+              duration: booking.service?.durationMinutes
+                ? `${booking.service.durationMinutes} Mins`
+                : "N/A",
+              price: getPriceDisplay(booking),
+              status: activeStatus.toUpperCase(),
+              plan: booking.plan,
+              bookingMode: booking.bookingMode,
+              originalData: booking,
+            };
+          });
           setActiveBookings(mappedBookings);
-          setActiveTotalPages(response.data.pagination?.totalPages || 1);
+          const totalPages = response.data.pagination?.totalPages || 1;
+          const totalCount =
+            response.data.pagination?.total ||
+            response.data.pagination?.totalRecords ||
+            response.data.pagination?.totalCount ||
+            (totalPages * 10);
+          setActiveTotalPages(totalPages);
+          setActiveTotalCount(totalCount);
         }
       } catch (error) {
         console.error("Error fetching active bookings:", error);
@@ -551,6 +641,7 @@ export function useBookings() {
     activePage,
     setActivePage,
     activeTotalPages,
+    activeTotalCount,
     isFetchingBookings,
     statuses,
 

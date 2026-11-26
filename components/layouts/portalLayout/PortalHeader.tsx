@@ -105,16 +105,14 @@ export default function PortalHeader({
       useUserStore.getState().clearProfile();
       showSnackbar("Logout successful", "success");
       setTimeout(() => {
-        window.location.href = "/partner";
+        window.location.href = "/sign-in";
       }, 300);
     }
   };
 
   const displayName = profile?.firstName
     ? `${profile.firstName} ${profile.lastName || ''}`.trim()
-    : isAstrologer
-    ? 'Astrologer'
-    : 'Purohit';
+    : profile?.name || (isAstrologer ? 'Astrologer' : 'Purohit');
 
   return (
     <AppBar
@@ -126,7 +124,7 @@ export default function PortalHeader({
         bgcolor: 'white',
         borderBottom: '1px solid #eee',
         boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-        height: isAstrologer ? { xs: '62px', md: '72px' } : '80px',
+        height: isAstrologer ? { xs: '62px', md: '72px' } : { xs: '64px', md: '80px' },
         justifyContent: 'center',
         zIndex: (theme) => (isAstrologer ? theme.zIndex.drawer + 1 : theme.zIndex.appBar),
       }}
@@ -137,7 +135,7 @@ export default function PortalHeader({
           justifyContent: 'space-between',
           minHeight: isAstrologer
             ? { xs: '62px !important', md: '72px !important' }
-            : '80px !important',
+            : { xs: '64px !important', md: '80px !important' },
           ...(isAstrologer && {
             width: '100%',
             maxWidth: '1400px',
@@ -169,16 +167,34 @@ export default function PortalHeader({
                 }}
               />
             </Box>
-          ) : mounted ? (
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              sx={{ mr: 2, display: { md: 'none' }, color: '#1A1A1A' }}
-            >
-              <MenuIcon />
-            </IconButton>
-          ) : null}
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <IconButton
+                color="inherit"
+                edge="start"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                sx={{ display: { md: 'none' }, color: '#1A1A1A' }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Box
+                component={NextLink}
+                href="/partner/dashboard"
+                sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', textDecoration: 'none' }}
+              >
+                <Box
+                  component="img"
+                  src="/images/1Poojalogo.webp"
+                  alt="1Pooja"
+                  sx={{
+                    height: '32px',
+                    width: 'auto',
+                    objectFit: 'contain',
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
         </Box>
 
         {/* Right Side: Notifications & Profile Avatar */}
@@ -201,28 +217,35 @@ export default function PortalHeader({
             </Badge>
           </IconButton>
 
-          {/* Profile Circle (especially for Astrologer or any partner header) */}
-          {isAstrologer && (
-            <Tooltip title="Account Options">
-              <IconButton
-                onClick={(e) => setUserMenuAnchorEl(e.currentTarget)}
+          {/* User Profile Circle */}
+          <Tooltip title="Account Options">
+            <IconButton
+              onClick={(e) => setUserMenuAnchorEl(e.currentTarget)}
+              sx={{
+                p: 0.5,
+                border: '2px solid #FFF0E6',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  border: `2px solid ${COLORS.PRIMARY}`,
+                  transform: 'scale(1.05)',
+                },
+              }}
+            >
+              <Avatar
+                src={profile?.profileImage || profile?.avatar || undefined}
                 sx={{
-                  p: 0.5,
-                  border: '2px solid #FFF0E6',
-                  '&:hover': { border: `2px solid ${COLORS.PRIMARY}` },
+                  width: { xs: 34, sm: 38 },
+                  height: { xs: 34, sm: 38 },
+                  bgcolor: COLORS.PRIMARY,
+                  cursor: 'pointer',
                 }}
               >
-                <Avatar
-                  src={profile?.profileImage || profile?.avatar || undefined}
-                  sx={{ width: 38, height: 38, bgcolor: COLORS.PRIMARY }}
-                >
-                  {!profile?.profileImage && !profile?.avatar && (
-                    <PersonIcon sx={{ fontSize: 24, color: 'white' }} />
-                  )}
-                </Avatar>
-              </IconButton>
-            </Tooltip>
-          )}
+                {!profile?.profileImage && !profile?.avatar && (
+                  <PersonIcon sx={{ fontSize: { xs: 20, sm: 24 }, color: 'white' }} />
+                )}
+              </Avatar>
+            </IconButton>
+          </Tooltip>
 
           {/* Transient Alert */}
           {transientAlert.show && (
@@ -457,124 +480,122 @@ export default function PortalHeader({
             )}
           </Menu>
 
-          {/* User Profile Menu for Astrologer */}
-          {isAstrologer && (
-            <Menu
-              anchorEl={userMenuAnchorEl}
-              open={Boolean(userMenuAnchorEl)}
-              onClose={handleCloseUserMenu}
-              marginThreshold={12}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              slotProps={{
-                paper: {
-                  sx: {
-                    width: { xs: 'calc(100vw - 24px)', sm: 260 },
-                    maxWidth: { xs: 'calc(100vw - 24px)', sm: 270 },
-                    borderRadius: { xs: '14px', sm: '16px' },
-                    border: '1px solid #EFE6D5',
-                    boxShadow: '0 16px 40px rgba(44, 24, 16, 0.12)',
-                    p: 0.5,
-                    mt: 1.2,
-                  },
+          {/* User Profile Menu for all Partners */}
+          <Menu
+            anchorEl={userMenuAnchorEl}
+            open={Boolean(userMenuAnchorEl)}
+            onClose={handleCloseUserMenu}
+            marginThreshold={12}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            slotProps={{
+              paper: {
+                sx: {
+                  width: { xs: 'calc(100vw - 24px)', sm: 260 },
+                  maxWidth: { xs: 'calc(100vw - 24px)', sm: 270 },
+                  borderRadius: { xs: '14px', sm: '16px' },
+                  border: '1px solid #EFE6D5',
+                  boxShadow: '0 16px 40px rgba(44, 24, 16, 0.12)',
+                  p: 0.5,
+                  mt: 1.2,
                 },
+              },
+            }}
+          >
+            <Box sx={{ px: 2, py: 1.5 }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  color: '#1e293b',
+                }}
+              >
+                {displayName}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  color: '#64748b',
+                  fontSize: '0.8rem',
+                  wordBreak: 'break-all',
+                }}
+              >
+                {profile?.email || ''}
+              </Typography>
+              <Chip
+                label={isAstrologer ? "Astrologer" : "Verified Partner"}
+                size="small"
+                sx={{
+                  mt: 1,
+                  bgcolor: '#FFF0E6',
+                  color: COLORS.PRIMARY,
+                  fontWeight: 600,
+                  fontSize: '11px',
+                  height: '22px',
+                }}
+              />
+            </Box>
+            <Divider sx={{ my: 0.5 }} />
+
+            <MenuItem
+              component={NextLink}
+              href="/partner/profile"
+              onClick={handleCloseUserMenu}
+              sx={{
+                borderRadius: '8px',
+                py: 1.2,
+                fontFamily: FONTS.OUTFIT,
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': { bgcolor: '#f8fafc' },
               }}
             >
-              <Box sx={{ px: 2, py: 1.5 }}>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    color: '#1e293b',
-                  }}
-                >
-                  {displayName}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONTS.OUTFIT,
-                    color: '#64748b',
-                    fontSize: '0.8rem',
-                    wordBreak: 'break-all',
-                  }}
-                >
-                  {profile?.email || ''}
-                </Typography>
-                <Chip
-                  label="Astrologer"
-                  size="small"
-                  sx={{
-                    mt: 1,
-                    bgcolor: '#FFF0E6',
-                    color: COLORS.PRIMARY,
-                    fontWeight: 600,
-                    fontSize: '11px',
-                    height: '22px',
-                  }}
-                />
-              </Box>
-              <Divider sx={{ my: 0.5 }} />
-
-              <MenuItem
-                component={NextLink}
-                href="/partner/profile"
-                onClick={handleCloseUserMenu}
-                sx={{
-                  borderRadius: '8px',
-                  py: 1.2,
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  '&:hover': { bgcolor: '#f8fafc' },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: '32px' }}>
-                  <PersonIcon fontSize="small" />
-                </ListItemIcon>
-                My Profile
-              </MenuItem>
-              <MenuItem
-                component={NextLink}
-                href="/partner/support"
-                onClick={handleCloseUserMenu}
-                sx={{
-                  borderRadius: '8px',
-                  py: 1.2,
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  '&:hover': { bgcolor: '#f8fafc' },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: '32px', color: COLORS.PRIMARY }}>
-                  <SupportAgentIcon fontSize="small" />
-                </ListItemIcon>
-                Get Support
-              </MenuItem>
-              <Divider sx={{ my: 0.5 }} />
-              <MenuItem
-                onClick={() => {
-                  handleCloseUserMenu();
-                  handleLogout();
-                }}
-                sx={{
-                  borderRadius: '8px',
-                  py: 1.2,
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  color: '#dc2626',
-                  '&:hover': { bgcolor: '#fef2f2' },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: '32px', color: '#dc2626' }}>
-                  <LogoutIcon fontSize="small" />
-                </ListItemIcon>
-                Logout
-              </MenuItem>
-            </Menu>
-          )}
+              <ListItemIcon sx={{ minWidth: '32px' }}>
+                <PersonIcon fontSize="small" />
+              </ListItemIcon>
+              My Profile
+            </MenuItem>
+            <MenuItem
+              component={NextLink}
+              href="/partner/support"
+              onClick={handleCloseUserMenu}
+              sx={{
+                borderRadius: '8px',
+                py: 1.2,
+                fontFamily: FONTS.OUTFIT,
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': { bgcolor: '#f8fafc' },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: '32px', color: COLORS.PRIMARY }}>
+                <SupportAgentIcon fontSize="small" />
+              </ListItemIcon>
+              Get Support
+            </MenuItem>
+            <Divider sx={{ my: 0.5 }} />
+            <MenuItem
+              onClick={() => {
+                handleCloseUserMenu();
+                handleLogout();
+              }}
+              sx={{
+                borderRadius: '8px',
+                py: 1.2,
+                fontFamily: FONTS.OUTFIT,
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#dc2626',
+                '&:hover': { bgcolor: '#fef2f2' },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: '32px', color: '#dc2626' }}>
+                <LogoutIcon fontSize="small" />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </Menu>
         </Box>
       </Toolbar>
     </AppBar>
