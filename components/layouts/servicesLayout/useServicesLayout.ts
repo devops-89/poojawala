@@ -2,7 +2,7 @@
 
 import { City, State } from "@/utils/indianLocations";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ServicesMode } from "./ServicesHero";
 
 const INDIAN_STATES = State.getStatesOfCountry("IN") || [];
@@ -48,6 +48,11 @@ export const getIndianCitiesByState = (stateName: string): string[] => {
   );
 };
 
+const getStoredLocationValue = (key: string): string | null => {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem(key) || localStorage.getItem(key);
+};
+
 export const useServicesLayout = () => {
   const searchParams = useSearchParams();
   const isOffline = searchParams.get("isOffline") === "true";
@@ -65,8 +70,12 @@ export const useServicesLayout = () => {
       : "default";
 
   const [searchQuery, setSearchQuery] = useState(searchParam || "");
-  const [selectedState, setSelectedState] = useState(stateParam || "All");
-  const [selectedCity, setSelectedCity] = useState(cityParam || "All");
+  const [selectedState, setSelectedState] = useState(
+    () => stateParam || getStoredLocationValue("user_selected_state") || "All",
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    () => cityParam || getStoredLocationValue("user_selected_city") || "All",
+  );
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     categoryIdParam || "",
   );
@@ -74,10 +83,25 @@ export const useServicesLayout = () => {
     categoryParam || "All Categories",
   );
 
+  const prevParamsRef = useRef({ stateParam, cityParam });
+
   // Sync incoming URL parameter changes into local filter state
   useEffect(() => {
-    setSelectedState(stateParam || "All");
-    setSelectedCity(cityParam || "All");
+    const prev = prevParamsRef.current;
+
+    if (stateParam !== null) {
+      setSelectedState(stateParam || "All");
+    } else if (prev.stateParam !== null) {
+      setSelectedState("All");
+    }
+
+    if (cityParam !== null) {
+      setSelectedCity(cityParam || "All");
+    } else if (prev.cityParam !== null) {
+      setSelectedCity("All");
+    }
+
+    prevParamsRef.current = { stateParam, cityParam };
     setSelectedCategoryId(categoryIdParam || "");
     setSelectedCategoryName(categoryParam || "All Categories");
     setSearchQuery(searchParam || "");
