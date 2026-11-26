@@ -2,16 +2,13 @@
 
 "use client";
 
-import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import SearchIcon from "@mui/icons-material/Search";
 import {
   Autocomplete,
   Box,
   Button,
   Dialog,
   FormControl,
-  IconButton,
   InputAdornment,
   Paper,
   TextField,
@@ -19,18 +16,22 @@ import {
 } from "@mui/material";
 import { City, State } from "@/utils/indianLocations";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { COLORS } from "@/utils/enums";
 import { FONTS } from "@/utils/fonts";
+import { useSnackbarStore } from "@/stores/snackbarStore";
+import { useUserStore } from "@/stores/userStore";
 
 export default function WelcomeLocationModal() {
-  const router = useRouter();
   const pathname = usePathname();
+  const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
+  const { profile } = useUserStore();
 
   const [open, setOpen] = useState(false);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   // States & Cities Data (only computed when modal is actually opened)
   const indianStates = React.useMemo(
@@ -59,61 +60,102 @@ export default function WelcomeLocationModal() {
 
   useEffect(() => {
     // Only run on home route '/'
-    if (pathname !== "/") return;
+    if (pathname !== "/") {
+      setOpen(false);
+      return;
+    }
 
-    const alreadyShown = sessionStorage.getItem(
-      "1pooja_welcome_modal_shown",
-    ) || sessionStorage.getItem("poojawala_welcome_modal_shown");
-    if (alreadyShown) return;
+    // If any user is logged in, do NOT show this welcome modal
+    const token =
+      sessionStorage.getItem("accessToken") ||
+      localStorage.getItem("accessToken");
+    const userStr =
+      sessionStorage.getItem("user") || localStorage.getItem("user");
+    const role =
+      sessionStorage.getItem("role") ||
+      sessionStorage.getItem("activeRole") ||
+      localStorage.getItem("role");
 
-    // Trigger modal after 15 seconds (15000 ms)
+    if (profile || token || userStr || role) {
+      setOpen(false);
+      return;
+    }
+
+    const alreadyShown =
+      sessionStorage.getItem("1pooja_welcome_modal_shown") ||
+      sessionStorage.getItem("poojawala_welcome_modal_shown");
+    if (alreadyShown) {
+      setOpen(false);
+      return;
+    }
+
+    // Smoothly show for fresh unauthenticated visitors
     const timer = setTimeout(() => {
-      setOpen(true);
-      sessionStorage.setItem("1pooja_welcome_modal_shown", "true");
-    }, 10000);
+      const currentToken =
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken");
+      if (!currentToken && !useUserStore.getState().profile) {
+        setOpen(true);
+      }
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  }, [pathname, profile]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!selectedState) {
+      setFormError("Please select your State to continue");
+      showSnackbar("Please select your State to continue", "warning");
+      return;
+    }
+    if (!selectedCity) {
+      setFormError("Please select your City to continue");
+      showSnackbar("Please select your City to continue", "warning");
+      return;
+    }
+
+    setFormError(null);
     setOpen(false);
 
-    const params = new URLSearchParams();
-    params.set("isOffline", "true");
-
-    if (
-      selectedState &&
-      selectedState !== "All" &&
-      selectedState !== "All States"
-    ) {
-      params.set("state", selectedState);
-    }
-    if (
-      selectedCity &&
-      selectedCity !== "All" &&
-      selectedCity !== "All Cities"
-    ) {
-      params.set("city", selectedCity);
+    sessionStorage.setItem("1pooja_welcome_modal_shown", "true");
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("user_selected_state", selectedState);
+      sessionStorage.setItem("user_selected_city", selectedCity);
+      localStorage.setItem("user_selected_state", selectedState);
+      localStorage.setItem("user_selected_city", selectedCity);
     }
 
-    const queryString = params.toString();
-    const targetUrl = `/services?${queryString}`;
-
-    router.push(targetUrl);
+    showSnackbar(`Location set to ${selectedCity}, ${selectedState}`, "success");
   };
 
-  if (!open) return null;
+  if (!open || profile) return null;
 
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={(event, reason) => {
+        // Prevent closing via backdropClick or escapeKeyDown - filling is compulsory
+        if (reason === "backdropClick" || reason === "escapeKeyDown") {
+          return;
+        }
+      }}
+      sx={{
+        "& .MuiBackdrop-root": {
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          bgcolor: "rgba(15, 23, 42, 0.55)",
+        },
+      }}
       slotProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            bgcolor: "rgba(15, 23, 42, 0.55)",
+          },
+        },
         paper: {
           sx: {
             borderRadius: { xs: "20px", sm: "24px" },
@@ -122,7 +164,7 @@ export default function WelcomeLocationModal() {
             m: { xs: 2, sm: 3 },
             p: 0,
             overflow: "hidden",
-            boxShadow: "0 24px 64px rgba(44, 24, 16, 0.18)",
+            boxShadow: "0 24px 64px rgba(44, 24, 16, 0.25)",
             border: "1px solid #FFE4D6",
           },
         },
@@ -137,33 +179,6 @@ export default function WelcomeLocationModal() {
           background: "linear-gradient(180deg, #FFFDF9 0%, #FFF8F2 100%)",
         }}
       >
-        {/* Close Button */}
-        <IconButton
-          onClick={handleClose}
-          size="small"
-          aria-label="Close welcome modal"
-          sx={{
-            position: "absolute",
-            top: { xs: 12, sm: 14 },
-            right: { xs: 12, sm: 14 },
-            width: 32,
-            height: 32,
-            color: "#64748B",
-            bgcolor: "#FFFFFF",
-            border: "1px solid #EFE6D5",
-            boxShadow: "0 2px 6px rgba(44, 24, 16, 0.05)",
-            transition: "all 0.2s ease",
-            "&:hover": {
-              bgcolor: "#FFF8F2",
-              color: COLORS.PRIMARY,
-              borderColor: "#FFD4BC",
-              transform: "scale(1.05)",
-            },
-          }}
-        >
-          <CloseIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-
         {/* Branding & Logo */}
         <Box sx={{ textAlign: "center", mb: { xs: 2, sm: 2.5 } }}>
           <Image
@@ -224,7 +239,7 @@ export default function WelcomeLocationModal() {
                   mb: 0.6,
                 }}
               >
-                SELECT STATE
+                SELECT STATE <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
               </Typography>
               <FormControl fullWidth size="small">
                 <Autocomplete
@@ -236,6 +251,7 @@ export default function WelcomeLocationModal() {
                   onChange={(_, newValue) => {
                     setSelectedState(newValue);
                     setSelectedCity(null);
+                    setFormError(null);
                   }}
                   slotProps={{
                     popper: {
@@ -317,7 +333,7 @@ export default function WelcomeLocationModal() {
                   mb: 0.6,
                 }}
               >
-                SELECT CITY
+                SELECT CITY <Box component="span" sx={{ color: "#FF6200" }}>*</Box>
               </Typography>
               <FormControl fullWidth size="small">
                 <Autocomplete
@@ -327,7 +343,10 @@ export default function WelcomeLocationModal() {
                   disabled={!selectedState}
                   options={cityOptions}
                   value={selectedCity}
-                  onChange={(_, newValue) => setSelectedCity(newValue)}
+                  onChange={(_, newValue) => {
+                    setSelectedCity(newValue);
+                    setFormError(null);
+                  }}
                   slotProps={{
                     popper: {
                       sx: {
@@ -400,11 +419,25 @@ export default function WelcomeLocationModal() {
               </FormControl>
             </Box>
 
+            {/* Error Message */}
+            {formError && (
+              <Typography
+                sx={{
+                  color: "#DC2626",
+                  fontSize: "12px",
+                  fontFamily: FONTS.OUTFIT,
+                  textAlign: "center",
+                  fontWeight: 600,
+                }}
+              >
+                {formError}
+              </Typography>
+            )}
+
             {/* Submit Button */}
             <Button
               type="submit"
               variant="contained"
-              startIcon={<SearchIcon sx={{ fontSize: 18 }} />}
               sx={{
                 mt: 0.8,
                 py: { xs: 1.25, sm: 1.3 },
@@ -427,7 +460,7 @@ export default function WelcomeLocationModal() {
                 },
               }}
             >
-              Explore Pooja Services
+              Continue
             </Button>
           </Box>
         </Box>

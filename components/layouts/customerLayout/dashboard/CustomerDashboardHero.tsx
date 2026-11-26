@@ -33,6 +33,16 @@ export default function CustomerDashboardHero() {
 
   useEffect(() => {
     fetchProfile(true);
+    if (typeof window !== "undefined") {
+      const storedState =
+        sessionStorage.getItem("user_selected_state") ||
+        localStorage.getItem("user_selected_state");
+      const storedCity =
+        sessionStorage.getItem("user_selected_city") ||
+        localStorage.getItem("user_selected_city");
+      if (storedState) setSelectedState(storedState);
+      if (storedCity) setSelectedCity(storedCity);
+    }
   }, [fetchProfile]);
 
   // Extract user first name or full name from profile
@@ -316,6 +326,17 @@ export default function CustomerDashboardHero() {
                         setSelectedState(newValue);
                         setSelectedCity(null);
                         if (searchError) setSearchError("");
+                        if (typeof window !== "undefined") {
+                          if (newValue && newValue !== "All") {
+                            sessionStorage.setItem("user_selected_state", newValue);
+                            localStorage.setItem("user_selected_state", newValue);
+                          } else {
+                            sessionStorage.removeItem("user_selected_state");
+                            localStorage.removeItem("user_selected_state");
+                          }
+                          sessionStorage.removeItem("user_selected_city");
+                          localStorage.removeItem("user_selected_city");
+                        }
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -396,6 +417,15 @@ export default function CustomerDashboardHero() {
                       onChange={(_, newValue) => {
                         setSelectedCity(newValue);
                         if (searchError) setSearchError("");
+                        if (typeof window !== "undefined") {
+                          if (newValue && newValue !== "All") {
+                            sessionStorage.setItem("user_selected_city", newValue);
+                            localStorage.setItem("user_selected_city", newValue);
+                          } else {
+                            sessionStorage.removeItem("user_selected_city");
+                            localStorage.removeItem("user_selected_city");
+                          }
+                        }
                       }}
                       renderInput={(params) => (
                         <TextField
