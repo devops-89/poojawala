@@ -141,15 +141,33 @@ export const ServicesPage = () => {
 
       const defaultAddr = findDefaultAddress(addresses);
       if (!isOnline) {
+        const storedCity =
+          (typeof window !== "undefined" &&
+            (sessionStorage.getItem("user_selected_city") ||
+              localStorage.getItem("user_selected_city"))) ||
+          "";
+        const storedState =
+          (typeof window !== "undefined" &&
+            (sessionStorage.getItem("user_selected_state") ||
+              localStorage.getItem("user_selected_state"))) ||
+          "";
+
         if (defaultAddr?.city) {
           const city = String(defaultAddr.city).trim();
           setUserDefaultCity(city);
           setSelectedCity(city);
+        } else if (storedCity) {
+          setUserDefaultCity(storedCity);
+          setSelectedCity(storedCity);
         }
+
         if (defaultAddr?.state) {
           const state = String(defaultAddr.state).trim();
           setUserDefaultState(state);
           setSelectedState(state);
+        } else if (storedState) {
+          setUserDefaultState(storedState);
+          setSelectedState(storedState);
         }
       } else {
         setSelectedCity("All");
@@ -321,11 +339,31 @@ export const ServicesPage = () => {
     setSelectedState(val);
     setSelectedCity("All");
     setPage(1);
+    if (typeof window !== "undefined") {
+      if (val && val !== "All") {
+        sessionStorage.setItem("user_selected_state", val);
+        localStorage.setItem("user_selected_state", val);
+      } else {
+        sessionStorage.removeItem("user_selected_state");
+        localStorage.removeItem("user_selected_state");
+      }
+      sessionStorage.removeItem("user_selected_city");
+      localStorage.removeItem("user_selected_city");
+    }
   }, []);
 
   const handleCityChange = useCallback((val: string) => {
     setSelectedCity(val);
     setPage(1);
+    if (typeof window !== "undefined") {
+      if (val && val !== "All") {
+        sessionStorage.setItem("user_selected_city", val);
+        localStorage.setItem("user_selected_city", val);
+      } else {
+        sessionStorage.removeItem("user_selected_city");
+        localStorage.removeItem("user_selected_city");
+      }
+    }
   }, []);
 
   const handleCategoryChange = useCallback((catId: string, catName: string) => {

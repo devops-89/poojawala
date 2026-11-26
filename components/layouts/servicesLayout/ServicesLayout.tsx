@@ -20,20 +20,43 @@ export default function ServicesLayout() {
 
   const [activeFilters, setActiveFilters] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedState, setSelectedState] = useState<string>(
-    stateParam || "All",
-  );
+  const [selectedState, setSelectedState] = useState<string>(() => {
+    if (stateParam) return stateParam;
+    if (typeof window !== "undefined") {
+      const stored =
+        sessionStorage.getItem("user_selected_state") ||
+        localStorage.getItem("user_selected_state");
+      if (stored) return stored;
+    }
+    return "All";
+  });
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     categoryIdParam || "",
   );
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
     categoryParam || "All Categories",
   );
-  const [selectedCity, setSelectedCity] = useState<string>(cityParam || "All");
+  const [selectedCity, setSelectedCity] = useState<string>(() => {
+    if (cityParam) return cityParam;
+    if (typeof window !== "undefined") {
+      const stored =
+        sessionStorage.getItem("user_selected_city") ||
+        localStorage.getItem("user_selected_city");
+      if (stored) return stored;
+    }
+    return "All";
+  });
 
   useEffect(() => {
     if (stateParam) {
       setSelectedState(stateParam);
+    } else if (typeof window !== "undefined") {
+      const storedState =
+        sessionStorage.getItem("user_selected_state") ||
+        localStorage.getItem("user_selected_state");
+      if (storedState) {
+        setSelectedState(storedState);
+      }
     }
     const targetCatId =
       categoryIdParam ||
@@ -67,6 +90,13 @@ export default function ServicesLayout() {
     }
     if (cityParam) {
       setSelectedCity(cityParam);
+    } else if (typeof window !== "undefined") {
+      const storedCity =
+        sessionStorage.getItem("user_selected_city") ||
+        localStorage.getItem("user_selected_city");
+      if (storedCity) {
+        setSelectedCity(storedCity);
+      }
     }
   }, [stateParam, categoryParam, categoryIdParam, cityParam]);
 
@@ -290,13 +320,35 @@ export default function ServicesLayout() {
             onStateChange={(newVal) => {
               setSelectedState(newVal);
               setSelectedCity("All");
+              if (typeof window !== "undefined") {
+                if (newVal && newVal !== "All") {
+                  sessionStorage.setItem("user_selected_state", newVal);
+                  localStorage.setItem("user_selected_state", newVal);
+                } else {
+                  sessionStorage.removeItem("user_selected_state");
+                  localStorage.removeItem("user_selected_state");
+                }
+                sessionStorage.removeItem("user_selected_city");
+                localStorage.removeItem("user_selected_city");
+              }
             }}
             selectedCategory={selectedCategoryName}
             selectedCategoryId={selectedCategoryId}
             onCategoryChange={handleCategoryChange}
             cityOptions={isOnline ? [] : cityOptions}
             selectedCity={isOnline ? "All" : selectedCity}
-            onCityChange={handleCityChange}
+            onCityChange={(newCity) => {
+              handleCityChange(newCity);
+              if (typeof window !== "undefined") {
+                if (newCity && newCity !== "All") {
+                  sessionStorage.setItem("user_selected_city", newCity);
+                  localStorage.setItem("user_selected_city", newCity);
+                } else {
+                  sessionStorage.removeItem("user_selected_city");
+                  localStorage.removeItem("user_selected_city");
+                }
+              }
+            }}
             hideLocationFilters={isOnline}
           />
         </Container>

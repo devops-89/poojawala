@@ -13,7 +13,6 @@ import { useLoaderStore } from "@/stores/loaderStore";
 import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
 const DEFAULT_BANNER = "/images/home/poojaPackages/satyanarayan.webp";
 
 export default function WebsiteServiceDetailsContent() {
@@ -60,8 +59,8 @@ export default function WebsiteServiceDetailsContent() {
               (rawData.metaDescription && rawData.metaDescription.trim()) ||
               (rawData.description || rawData.shortDescription
                 ? String(rawData.shortDescription || rawData.description)
-                    .replace(/<[^>]*>?/gm, "")
-                    .slice(0, 160)
+                  .replace(/<[^>]*>?/gm, "")
+                  .slice(0, 160)
                 : "")
             );
             if (seoDesc) {
@@ -215,9 +214,9 @@ export default function WebsiteServiceDetailsContent() {
   const formattedCities =
     citiesList.length > 0
       ? citiesList
-          .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
-          .filter(Boolean)
-          .join(", ")
+        .map((c: any) => (typeof c === "string" ? c : c?.name || ""))
+        .filter(Boolean)
+        .join(", ")
       : "";
 
   const formattedLanguages =
@@ -242,15 +241,33 @@ export default function WebsiteServiceDetailsContent() {
     return "";
   })();
 
+  const getFallbackBanner = (slugOrName: string) => {
+    const s = String(slugOrName || "").toLowerCase();
+    if (
+      s.includes("engagement") ||
+      s.includes("sagai") ||
+      s.includes("roka") ||
+      s.includes("sagayi") ||
+      s.includes("vagdan")
+    ) {
+      return "/images/home/poojaPackages/engagement-sagai.jpg";
+    }
+    if (s.includes("ganesh")) return "/images/home/poojaPackages/ganesh.webp";
+    if (s.includes("grah") || s.includes("griha")) return "/images/home/poojaPackages/grahpravesh.webp";
+    if (s.includes("havan")) return "/images/home/poojaPackages/havan.webp";
+    if (s.includes("laxmi") || s.includes("lakshmi")) return "/images/home/poojaPackages/laxmi.webp";
+    return DEFAULT_BANNER;
+  };
+
   const heroImage =
     service.bannerDownloadurl ||
     service.bannerUrl ||
     service.iconDownloadurl ||
     service.iconUrl ||
-    DEFAULT_BANNER;
+    getFallbackBanner(service.slug || service.name || identifier);
 
   return (
-    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 6, md: 8 }, pt: { xs: 2, md: 4 }, overflowX: "hidden" }}>
+    <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 12, md: 8 }, pt: { xs: 2, md: 4 }, overflowX: "hidden" }}>
       <Container maxWidth="lg">
         {/* Dedicated Website Service Hero Section */}
         <WebsiteServiceDetailsHero

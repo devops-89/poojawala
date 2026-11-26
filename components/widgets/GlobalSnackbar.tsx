@@ -27,13 +27,14 @@ export default function GlobalSnackbar() {
       disableWindowBlurListener
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       sx={{
-        bottom: { xs: 20, sm: 24 },
-        right: { xs: 16, sm: 24 },
-        left: 'auto !important',
-        transform: 'none !important',
+        top: { xs: '20px !important', sm: 'auto !important' },
+        bottom: { xs: 'auto !important', sm: '24px !important' },
+        left: { xs: '50% !important', sm: 'auto !important' },
+        right: { xs: 'auto !important', sm: '24px !important' },
+        transform: { xs: 'translateX(-50%) !important', sm: 'none !important' },
         width: 'auto',
-        maxWidth: 'calc(100vw - 32px)',
-        zIndex: 9999,
+        maxWidth: { xs: 'calc(100vw - 32px)', sm: '450px' },
+        zIndex: 99999,
       }}
     >
       <Alert

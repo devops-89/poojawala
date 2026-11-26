@@ -1246,8 +1246,20 @@ export default function OfflineServiceLocationModal({
       setSubmitting(false);
       setServiceSearch("");
       setSelectedCategory("ALL");
-      setSelectedState("");
-      setSelectedCity("");
+
+      const storedState =
+        (typeof window !== "undefined" &&
+          (sessionStorage.getItem("user_selected_state") ||
+            localStorage.getItem("user_selected_state"))) ||
+        "";
+      const storedCity =
+        (typeof window !== "undefined" &&
+          (sessionStorage.getItem("user_selected_city") ||
+            localStorage.getItem("user_selected_city"))) ||
+        "";
+
+      setSelectedState(storedState);
+      setSelectedCity(storedCity);
       setSavedSignupValues(null);
       setOtp(["", "", "", "", "", ""]);
       setSignInIdentifier("");
@@ -1281,9 +1293,14 @@ export default function OfflineServiceLocationModal({
               "Authentic Vedic pooja ceremony performed by verified Purohits.",
             isAvailable: true,
             image:
+              service.bannerDownloadurl ||
+              service.bannerUrl ||
               service.iconDownloadurl ||
               service.iconUrl ||
-              "/images/home/poojaPackages/bhoomi.webp",
+              (String(service?.slug || service?.name || "").toLowerCase().includes("engagement") ||
+               String(service?.slug || service?.name || "").toLowerCase().includes("sagai")
+                ? "/images/home/poojaPackages/engagement-sagai.jpg"
+                : "/images/home/poojaPackages/bhoomi.webp"),
             duration: service.durationMinutes
               ? `${service.durationMinutes} mins`
               : "2 - 3 Hours",
@@ -1344,9 +1361,14 @@ export default function OfflineServiceLocationModal({
           "Authentic Vedic pooja ceremony.",
         isAvailable: true,
         image:
+          service.bannerDownloadurl ||
+          service.bannerUrl ||
           service.iconDownloadurl ||
           service.iconUrl ||
-          "/images/home/poojaPackages/bhoomi.webp",
+          (String(service?.slug || service?.name || "").toLowerCase().includes("engagement") ||
+           String(service?.slug || service?.name || "").toLowerCase().includes("sagai")
+            ? "/images/home/poojaPackages/engagement-sagai.jpg"
+            : "/images/home/poojaPackages/bhoomi.webp"),
         duration: "2 - 3 Hours",
       };
       list = [dynamicService, ...list];
@@ -1380,6 +1402,13 @@ export default function OfflineServiceLocationModal({
     if (!effectiveCity.trim()) {
       showSnackbar("Please select or enter your city", "warning");
       return;
+    }
+
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("user_selected_state", selectedState.trim());
+      sessionStorage.setItem("user_selected_city", effectiveCity.trim());
+      localStorage.setItem("user_selected_state", selectedState.trim());
+      localStorage.setItem("user_selected_city", effectiveCity.trim());
     }
 
     // Determine target service ID
@@ -1954,6 +1983,17 @@ export default function OfflineServiceLocationModal({
                     const newState = newValue || "";
                     setSelectedState(newState);
                     setSelectedCity("");
+                    if (typeof window !== "undefined") {
+                      if (newState) {
+                        sessionStorage.setItem("user_selected_state", newState);
+                        localStorage.setItem("user_selected_state", newState);
+                      } else {
+                        sessionStorage.removeItem("user_selected_state");
+                        localStorage.removeItem("user_selected_state");
+                      }
+                      sessionStorage.removeItem("user_selected_city");
+                      localStorage.removeItem("user_selected_city");
+                    }
                   }}
                   renderInput={(params) => (
                     <TextField
@@ -1990,11 +2030,31 @@ export default function OfflineServiceLocationModal({
                   options={cityOptions}
                   value={selectedCity || ""}
                   onChange={(_, newValue) => {
-                    setSelectedCity(newValue || "");
+                    const newCity = newValue || "";
+                    setSelectedCity(newCity);
+                    if (typeof window !== "undefined") {
+                      if (newCity) {
+                        sessionStorage.setItem("user_selected_city", newCity);
+                        localStorage.setItem("user_selected_city", newCity);
+                      } else {
+                        sessionStorage.removeItem("user_selected_city");
+                        localStorage.removeItem("user_selected_city");
+                      }
+                    }
                   }}
                   onInputChange={(_, newInputValue, reason) => {
                     if (reason === "input" || reason === "clear") {
-                      setSelectedCity(newInputValue || "");
+                      const newCity = newInputValue || "";
+                      setSelectedCity(newCity);
+                      if (typeof window !== "undefined") {
+                        if (newCity) {
+                          sessionStorage.setItem("user_selected_city", newCity);
+                          localStorage.setItem("user_selected_city", newCity);
+                        } else {
+                          sessionStorage.removeItem("user_selected_city");
+                          localStorage.removeItem("user_selected_city");
+                        }
+                      }
                     }
                   }}
                   renderInput={(params) => (
