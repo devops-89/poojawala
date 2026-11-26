@@ -55,7 +55,7 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
         >
           Enter the 6-digit OTP provided by the client to start the job.
         </Typography>
-        <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2 }}>
+        <Box sx={{ display: "flex", gap: { xs: 0.75, sm: 1 }, justifyContent: "center", mb: 2 }}>
           {Array.from({ length: 6 }).map((_, idx) => (
             <TextField
               key={idx}
@@ -68,12 +68,12 @@ export const BookingStartOtpModal: React.FC<BookingStartOtpModalProps> = ({
               onPaste={onOtpPaste}
               slotProps={{ htmlInput: { maxLength: 6 } }}
               sx={{
-                width: "50px",
+                width: { xs: "40px", sm: "48px" },
                 "& .MuiInputBase-input": {
                   textAlign: "center",
-                  fontSize: "22px",
+                  fontSize: { xs: "18px", sm: "22px" },
                   fontWeight: 700,
-                  p: "12px 0",
+                  p: { xs: "8px 0", sm: "12px 0" },
                   fontFamily: FONTS.OUTFIT,
                   borderRadius: "8px",
                 },

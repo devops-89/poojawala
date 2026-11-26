@@ -38,7 +38,7 @@ import {
   addReviewAPI,
 } from '@/api/bookingControllers';
 import { getMeAPI } from '@/api/authControllers';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import ErrorIcon from '@mui/icons-material/Error';
 import EditIcon from '@mui/icons-material/Edit';
@@ -162,11 +162,46 @@ export default function AstrologyBookingsContent() {
   const showIncompleteProfileCard =
     isAdminCreated && verificationStatus !== "APPROVED" && !isRejected;
 
-  const [activeStatus, setActiveStatus] = useState('Accepted');
+  const searchParams = useSearchParams();
+  const searchStatus = searchParams?.get('status');
+
+  const getInitialStatus = () => {
+    if (searchStatus) {
+      const match = ASTROLOGER_STATUSES.find(
+        (s) => s.toLowerCase() === searchStatus.toLowerCase()
+      );
+      if (match) return match;
+    }
+    return 'Accepted';
+  };
+
+  const [activeStatus, setActiveStatusState] = useState<string>(getInitialStatus);
   const [activePage, setActivePage] = useState(1);
   const [activeTotalPages, setActiveTotalPages] = useState(1);
   const [activeBookings, setActiveBookings] = useState<any[]>([]);
   const [isFetchingBookings, setIsFetchingBookings] = useState(true);
+
+  const setActiveStatus = (status: string) => {
+    setActiveStatusState(status);
+    setActivePage(1);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("status", status);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  useEffect(() => {
+    const sParam = searchParams?.get('status');
+    if (sParam) {
+      const matched = ASTROLOGER_STATUSES.find(
+        (s) => s.toLowerCase() === sParam.toLowerCase()
+      );
+      if (matched && matched !== activeStatus) {
+        setActiveStatusState(matched);
+      }
+    }
+  }, [searchParams]);
 
   // Status Menu states
   const [statusMenuAnchorEl, setStatusMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -439,7 +474,7 @@ export default function AstrologyBookingsContent() {
   };
 
   return (
-    <Box sx={{ maxWidth: '1400px', mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, pt: { xs: 1.5, sm: 2, md: 2.5 }, pb: { xs: 3, sm: 4 } }}>
+    <Box sx={{ maxWidth: '1400px', mx: 'auto', pb: { xs: 3, sm: 4 } }}>
       {/* Top Header */}
       <Box
         sx={{

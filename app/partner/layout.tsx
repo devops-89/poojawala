@@ -22,13 +22,28 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const normalizedPath = (pathname || '').replace(/\/$/, '') || '/';
   const isPublicRegister = normalizedPath === '/partner' || normalizedPath === '/partner/register';
   const isAstrologyRoute = normalizedPath.startsWith('/partner/astrologybookings');
+  const isPurohitRoute =
+    normalizedPath === '/partner/dashboard' ||
+    normalizedPath.startsWith('/partner/dashboard/') ||
+    normalizedPath === '/partner/bookings' ||
+    normalizedPath.startsWith('/partner/bookings/') ||
+    normalizedPath === '/partner/earnings' ||
+    normalizedPath.startsWith('/partner/earnings/') ||
+    normalizedPath === '/partner/my-services' ||
+    normalizedPath.startsWith('/partner/my-services/') ||
+    normalizedPath === '/partner/services' ||
+    normalizedPath.startsWith('/partner/services/');
 
   useEffect(() => {
     setMounted(true);
     try {
       const u = JSON.parse(sessionStorage.getItem('user') || '{}');
-      const r = u?.role || sessionStorage.getItem('role') || sessionStorage.getItem('activeRole');
-      if (r) setStoredRole(r);
+      if (u?.role) {
+        setStoredRole(u.role);
+      } else {
+        const r = sessionStorage.getItem('role') || sessionStorage.getItem('activeRole');
+        if (r) setStoredRole(r);
+      }
     } catch (e) {}
   }, []);
 
@@ -45,9 +60,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     storedRole;
 
   const isAstrologer =
-    isAstrologyRoute ||
-    effectiveRole === USER_ROLE.ASTROLOGER ||
-    effectiveRole === 'ASTROLOGER';
+    !isPurohitRoute &&
+    (isAstrologyRoute ||
+      effectiveRole === USER_ROLE.ASTROLOGER ||
+      effectiveRole === 'ASTROLOGER');
 
   const allowedAstrologerPaths = [
     '/partner/astrologybookings',
@@ -72,7 +88,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         userObj = JSON.parse(userStr);
         if (userObj.role === 'PUROHIT' || userObj.role === 'ASTROLOGER') {
           isAuthorized = true;
-          const currentRole = userObj.role === 'ASTROLOGER' || isAstrologer ? 'ASTROLOGER' : 'PUROHIT';
+          const currentRole = userObj.role === 'ASTROLOGER' ? 'ASTROLOGER' : 'PUROHIT';
           sessionStorage.setItem('activeRole', currentRole);
           sessionStorage.setItem('role', currentRole);
         }
@@ -81,7 +97,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
     if (isPublicRegister) {
       if (isAuthorized) {
-        if (userObj?.role === 'ASTROLOGER' || isAstrologer) {
+        if (userObj?.role === 'ASTROLOGER') {
           router.replace('/partner/astrologybookings');
         } else {
           router.replace('/partner/dashboard');
@@ -90,7 +106,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     } else {
       if (!isAuthorized) {
         router.replace('/sign-in');
-      } else if (userObj?.role === 'ASTROLOGER' || isAstrologer) {
+      } else if (userObj?.role === 'ASTROLOGER') {
         // If astrologer tries to go to any page other than astrologybookings or profile:
         const isAllowed = allowedAstrologerPaths.some(
           (p) => normalizedPath === p || normalizedPath.startsWith(p + '/')
@@ -126,7 +142,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         />
 
         {/* Sidebar ONLY for Purohit - Never rendered for Astrologer */}
-        {mounted && !isAstrologer && (
+        {!isAstrologer && (
           <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
             <Drawer
               variant="temporary"
@@ -166,8 +182,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           component="main"
           sx={{
             flexGrow: 1,
-            p: { xs: 2, md: 4 },
-            mt: isAstrologer ? { xs: '62px', md: '72px' } : { xs: 11, md: 11 },
+            p: { xs: 2, sm: 3, md: 4 },
+            mt: isAstrologer ? { xs: '70px', md: '80px' } : { xs: '72px', md: '88px' },
             width: isAstrologer ? '100%' : { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
             maxWidth: '100vw',
             overflowX: 'hidden',

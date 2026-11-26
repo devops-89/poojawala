@@ -8,6 +8,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import EventIcon from "@mui/icons-material/Event";
 import TimerIcon from "@mui/icons-material/Timer";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 
@@ -40,6 +41,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
   const isStandard = rawPlan.includes("STANDARD");
   const planLabel = rawPlan ? (isStandard ? "STANDARD PLAN" : "BASIC PLAN") : null;
   const bookingMode = (req.bookingMode || rawData?.bookingMode || "").toString().toUpperCase();
+  const isOnline = bookingMode === "ONLINE" || (Boolean(req.location) && req.location.toLowerCase().includes("online"));
 
   // Extract selected add-on features (no price shown to purohit)
   const selectedAddons: string[] = [];
@@ -80,39 +82,48 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
 
   return (
     <Paper
+      elevation={0}
       sx={{
-        p: 3,
-        borderRadius: "12px",
-        border: "1px solid #FFE0D0",
-        bgcolor: "#FFF",
-        mb: 3,
-        boxShadow: "0 2px 12px rgba(255,98,0,0.05)",
+        p: { xs: 2, sm: 2.5, md: 3 },
+        borderRadius: { xs: "16px", sm: "20px" },
+        border: "1.5px solid #FFEDD5",
+        bgcolor: "#FFFFFF",
+        mb: { xs: 2, sm: 2.5, md: 3 },
+        boxShadow: "0 4px 20px rgba(255,98,0,0.06)",
+        transition: "all 0.25s ease",
+        "&:hover": {
+          boxShadow: "0 8px 24px rgba(255,98,0,0.12)",
+          borderColor: "#FED7AA",
+        },
       }}
     >
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
+          alignItems: { xs: "flex-start", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1.5,
           mb: 2,
         }}
       >
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1.5,
-              mb: 0.5,
+              gap: 1,
+              mb: 0.75,
               flexWrap: "wrap",
             }}
           >
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontWeight: 700,
-                fontSize: "18px",
-                color: "#1A1A1A",
+                fontWeight: 800,
+                fontSize: { xs: "17px", sm: "19px", md: "20px" },
+                color: "#1E293B",
+                lineHeight: 1.25,
               }}
             >
               {req.ritual}
@@ -132,7 +143,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
                 }}
               />
             )}
-            {bookingMode && (
+            {bookingMode && bookingMode !== "ONLINE" && (
               <Chip
                 label={bookingMode}
                 size="small"
@@ -154,58 +165,131 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
                 size="small"
                 icon={<BoltIcon sx={{ fontSize: "14px !important" }} />}
                 sx={{
-                  bgcolor: "#FFF0F0",
-                  color: "#D32F2F",
+                  bgcolor: "#FEF2F2",
+                  color: "#DC2626",
                   fontWeight: 700,
                   fontSize: "11px",
                   height: "22px",
-                  border: "1px solid #FFCDD2",
+                  borderRadius: "6px",
+                  border: "1px solid #FECACA",
                 }}
               />
             )}
           </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: "#64748B",
+                fontSize: "13.5px",
+              }}
+            >
+              Client: <span style={{ fontWeight: 700, color: "#1E293B" }}>{req.customer}</span>
+            </Typography>
+            <Box
+              sx={{
+                px: 1,
+                py: 0.2,
+                borderRadius: "6px",
+                bgcolor: "#FFF7ED",
+                border: "1px solid #FFEDD5",
+                fontSize: "11.5px",
+                fontWeight: 700,
+                color: COLORS.PRIMARY,
+                fontFamily: "monospace",
+              }}
+            >
+              #B-{bookingId}
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Payout Hero Highlight */}
+        <Box
+          sx={{
+            textAlign: { xs: "left", sm: "right" },
+            p: { xs: 1, sm: 1.25 },
+            bgcolor: "#FFF7ED",
+            borderRadius: "12px",
+            border: "1px solid #FFEDD5",
+            minWidth: { sm: "110px" },
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "10.5px",
+              fontWeight: 700,
+              color: "#9A3412",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            Est. Payout
+          </Typography>
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
-              color: "#666",
-              fontSize: "14px",
+              fontWeight: 800,
+              fontSize: { xs: "20px", sm: "22px" },
+              color: COLORS.PRIMARY,
+              lineHeight: 1.1,
             }}
           >
-            Client: <span style={{ fontWeight: 600 }}>{req.customer}</span> • B-
-            {bookingId}
+            {req.price}
           </Typography>
         </Box>
-        <Typography
-          sx={{
-            fontFamily: FONTS.OUTFIT,
-            fontWeight: 800,
-            fontSize: "22px",
-            color: COLORS.PRIMARY,
-          }}
-        >
-          {req.price}
-        </Typography>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, borderColor: "#F1F5F9" }} />
 
+      {/* Details 3-Box Grid: Schedule, Duration, Location */}
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: 2,
-          mb: 3,
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          },
+          gap: 1.5,
+          mb: 2.5,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <EventIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
-          <Box>
+        {/* Schedule */}
+        <Box
+          sx={{
+            p: 1.5,
+            borderRadius: "12px",
+            bgcolor: "#F8FAFC",
+            border: "1px solid #F1F5F9",
+            display: "flex",
+            alignItems: "center",
+            gap: 1.25,
+          }}
+        >
+          <Box
+            sx={{
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              bgcolor: "rgba(255, 98, 0, 0.1)",
+              color: COLORS.PRIMARY,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <EventIcon sx={{ fontSize: 20 }} />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: "11px",
-                color: "#999",
+                color: "#64748B",
                 textTransform: "uppercase",
                 fontWeight: 700,
+                letterSpacing: "0.5px",
               }}
             >
               Schedule
@@ -213,24 +297,52 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#333",
+                fontSize: "13.5px",
+                fontWeight: 700,
+                color: "#1E293B",
+                lineHeight: 1.3,
               }}
             >
               {req.date}, {req.time}
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <TimerIcon sx={{ color: COLORS.PRIMARY, fontSize: 18 }} />
-          <Box>
+
+        {/* Duration */}
+        <Box
+          sx={{
+            p: 1.5,
+            borderRadius: "12px",
+            bgcolor: "#F8FAFC",
+            border: "1px solid #F1F5F9",
+            display: "flex",
+            alignItems: "center",
+            gap: 1.25,
+          }}
+        >
+          <Box
+            sx={{
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              bgcolor: "rgba(255, 98, 0, 0.1)",
+              color: COLORS.PRIMARY,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <TimerIcon sx={{ fontSize: 20 }} />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: "11px",
-                color: "#999",
+                color: "#64748B",
                 textTransform: "uppercase",
                 fontWeight: 700,
+                letterSpacing: "0.5px",
               }}
             >
               Duration
@@ -238,52 +350,76 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#333",
+                fontSize: "13.5px",
+                fontWeight: 700,
+                color: "#1E293B",
+                lineHeight: 1.3,
               }}
             >
               {req.duration}
             </Typography>
           </Box>
         </Box>
+
+        {/* Location */}
         <Box
           sx={{
+            p: 1.5,
+            borderRadius: "12px",
+            bgcolor: "#F8FAFC",
+            border: "1px solid #F1F5F9",
             display: "flex",
-            alignItems: "flex-start",
-            gap: 1,
-            minWidth: 0,
+            alignItems: "center",
+            gap: 1.25,
+            gridColumn: { xs: "1", sm: "span 2", md: "span 1" },
           }}
         >
-          <LocationOnIcon
+          <Box
             sx={{
-              color: COLORS.PRIMARY,
-              fontSize: 18,
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              bgcolor: isOnline ? "#EFF6FF" : "#EFF6FF",
+              color: "#0284C7",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               flexShrink: 0,
-              mt: 0.2,
             }}
-          />
+          >
+            {isOnline ? (
+              <VideocamIcon sx={{ fontSize: 20 }} />
+            ) : (
+              <LocationOnIcon sx={{ fontSize: 20 }} />
+            )}
+          </Box>
           <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: "11px",
-                color: "#999",
+                color: "#64748B",
                 textTransform: "uppercase",
                 fontWeight: 700,
+                letterSpacing: "0.5px",
               }}
             >
-              Location
+              {isOnline ? "Mode" : "Location"}
             </Typography>
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: 600,
-                color: "#333",
+                color: "#1E293B",
+                lineHeight: 1.3,
                 wordBreak: "break-word",
               }}
             >
-              {req.location}
+              {req.location && req.location !== "N/A"
+                ? req.location
+                : isOnline
+                ? "Online (Video Call)"
+                : "Address Pending"}
             </Typography>
           </Box>
         </Box>
@@ -292,10 +428,10 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
       {(selectedAddons.length > 0 || carryItems.length > 0) && (
         <Box
           sx={{
-            mb: 3,
-            p: 2,
+            mb: 2.5,
+            p: { xs: 1.5, sm: 2 },
             bgcolor: "#FFFDF5",
-            borderRadius: "10px",
+            borderRadius: "14px",
             border: "1px dashed #FCD34D",
           }}
         >
@@ -326,7 +462,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
                       bgcolor: "#FEF3C7",
                       color: "#92400E",
                       border: "1px solid #FDE68A",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       fontSize: "12px",
                       height: "26px",
                       borderRadius: "6px",
@@ -364,7 +500,7 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
                       bgcolor: "#F3F4F6",
                       color: "#374151",
                       border: "1px solid #E5E7EB",
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: "12px",
                       height: "26px",
                       borderRadius: "6px",
@@ -377,7 +513,35 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
         </Box>
       )}
 
-      <Box sx={{ display: "flex", gap: 2 }}>
+      {/* Action Buttons */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1.5,
+          flexDirection: { xs: "column-reverse", sm: "row" },
+        }}
+      >
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => onRespond(bookingId, "DISMISS")}
+          sx={{
+            color: "#475569",
+            borderColor: "#CBD5E1",
+            textTransform: "none",
+            fontWeight: 700,
+            fontSize: "14px",
+            borderRadius: "10px",
+            py: { xs: 1.1, sm: 1.2 },
+            minHeight: 44,
+            "&:hover": {
+              bgcolor: "#F8FAFC",
+              borderColor: "#94A3B8",
+            },
+          }}
+        >
+          Decline
+        </Button>
         <Button
           variant="contained"
           fullWidth
@@ -386,29 +550,19 @@ export const BookingNewRequestCard: React.FC<BookingNewRequestCardProps> = ({
             background: COLORS.PRIMARY,
             color: "white",
             textTransform: "none",
-            fontWeight: 700,
-            borderRadius: "8px",
-            py: 1.2,
-            boxShadow: "none",
-            "&:hover": { background: COLORS.PRIMARY_DARK },
+            fontWeight: 800,
+            fontSize: "14px",
+            borderRadius: "10px",
+            py: { xs: 1.1, sm: 1.2 },
+            minHeight: 44,
+            boxShadow: "0 4px 14px rgba(255, 98, 0, 0.25)",
+            "&:hover": {
+              background: COLORS.PRIMARY_DARK,
+              boxShadow: "0 6px 18px rgba(255, 98, 0, 0.35)",
+            },
           }}
         >
           Accept Booking
-        </Button>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() => onRespond(bookingId, "DISMISS")}
-          sx={{
-            color: "#666",
-            borderColor: "#ccc",
-            textTransform: "none",
-            fontWeight: 600,
-            borderRadius: "8px",
-            py: 1.2,
-          }}
-        >
-          Decline
         </Button>
       </Box>
     </Paper>

@@ -18,6 +18,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import EventIcon from "@mui/icons-material/Event";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
@@ -122,6 +123,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
   const isStandard = rawPlan.includes("STANDARD");
   const planLabel = rawPlan ? (isStandard ? "STANDARD PLAN" : "BASIC PLAN") : null;
   const bookingMode = (job.bookingMode || rawData?.bookingMode || "").toString().toUpperCase();
+  const isOnline = bookingMode === "ONLINE" || (Boolean(job.location) && job.location.toLowerCase().includes("online"));
 
   // Extract selected add-on features (no price shown to purohit)
   const selectedAddons: string[] = [];
@@ -160,15 +162,102 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
     });
   }
 
+  const renderStatusChip = () => (
+    <Chip
+      label={
+        job.status
+          ? job.status.charAt(0).toUpperCase() +
+            job.status.slice(1).toLowerCase()
+          : "Status"
+      }
+      size="small"
+      deleteIcon={
+        isStatusUpdatable ? <KeyboardArrowDownIcon /> : undefined
+      }
+      onDelete={
+        isStatusUpdatable
+          ? (e) => onUpdateStatusClick(e as any, jobId)
+          : undefined
+      }
+      onClick={
+        isStatusUpdatable
+          ? (e) => onUpdateStatusClick(e, jobId)
+          : undefined
+      }
+      sx={{
+        bgcolor: "#E8F5E9",
+        color: "#2E7D32",
+        fontWeight: 700,
+        fontSize: "11px",
+        height: "22px",
+        borderRadius: "6px",
+        cursor: isStatusUpdatable ? "pointer" : "default",
+        border: "1px solid #C8E6C9",
+        "& .MuiChip-deleteIcon": {
+          color: "#2E7D32",
+          fontSize: "16px",
+          "&:hover": { color: "#1B5E20" },
+        },
+        "&:hover": {
+          bgcolor: isStatusUpdatable ? "#C8E6C9" : "#E8F5E9",
+        },
+      }}
+    />
+  );
+
+  const renderPlanChip = () =>
+    planLabel ? (
+      <Chip
+        label={planLabel}
+        size="small"
+        sx={{
+          bgcolor: isStandard ? "#F0FDF4" : "#FFF8F5",
+          color: isStandard ? "#16A34A" : COLORS.PRIMARY,
+          border: isStandard ? "1px solid #BBF7D0" : "1px solid #FFD8C2",
+          fontWeight: 700,
+          fontSize: "11px",
+          height: "22px",
+          borderRadius: "6px",
+        }}
+      />
+    ) : null;
+
+  const renderModeChip = () =>
+    bookingMode && bookingMode !== "ONLINE" ? (
+      <Chip
+        label={bookingMode}
+        size="small"
+        sx={{
+          bgcolor: bookingMode === "OFFLINE" ? "#FEF3C7" : "#E0F2FE",
+          color: bookingMode === "OFFLINE" ? "#92400E" : "#0369A1",
+          border:
+            bookingMode === "OFFLINE"
+              ? "1px solid #FDE68A"
+              : "1px solid #BAE6FD",
+          fontWeight: 700,
+          fontSize: "11px",
+          height: "22px",
+          borderRadius: "6px",
+          letterSpacing: "0.5px",
+        }}
+      />
+    ) : null;
+
   return (
     <Paper
+      elevation={0}
       sx={{
-        p: 3,
-        borderRadius: "12px",
-        border: "1px solid #eee",
-        bgcolor: "#FFF",
-        mb: 3,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.02)",
+        p: { xs: 2, sm: 2.5, md: 3 },
+        borderRadius: { xs: "16px", sm: "20px" },
+        border: "1px solid #E2E8F0",
+        bgcolor: "#FFFFFF",
+        mb: { xs: 2, sm: 2.5, md: 3 },
+        boxShadow: "0 4px 18px rgba(0,0,0,0.03)",
+        transition: "all 0.25s ease",
+        "&:hover": {
+          boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+          borderColor: "#CBD5E1",
+        },
       }}
     >
       <Box
@@ -177,117 +266,97 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
           flexDirection: { xs: "column", md: "row" },
           justifyContent: "space-between",
           alignItems: { xs: "flex-start", md: "center" },
-          gap: 2,
+          gap: 1.5,
           mb: 2,
         }}
       >
-        <Box>
+        <Box sx={{ minWidth: 0, width: { xs: "100%", md: "auto" } }}>
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-              mb: 0.5,
-              flexWrap: "wrap",
+              alignItems: { xs: "flex-start", sm: "center" },
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 1,
+              mb: 0.75,
+              flexWrap: { sm: "wrap" },
             }}
           >
+            {/* Title */}
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontWeight: 700,
-                fontSize: "18px",
-                color: "#1A1A1A",
+                fontWeight: 800,
+                fontSize: { xs: "18px", sm: "19px", md: "20px" },
+                color: "#1E293B",
+                lineHeight: 1.25,
               }}
             >
               {job.ritual}
             </Typography>
-            {planLabel && (
-              <Chip
-                label={planLabel}
-                size="small"
-                sx={{
-                  bgcolor: isStandard ? "#F0FDF4" : "#FFF8F5",
-                  color: isStandard ? "#16A34A" : COLORS.PRIMARY,
-                  border: isStandard ? "1px solid #BBF7D0" : "1px solid #FFD8C2",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  height: "22px",
-                  borderRadius: "6px",
-                }}
-              />
-            )}
-            {bookingMode && (
-              <Chip
-                label={bookingMode}
-                size="small"
-                sx={{
-                  bgcolor: bookingMode === "OFFLINE" ? "#FEF3C7" : "#E0F2FE",
-                  color: bookingMode === "OFFLINE" ? "#92400E" : "#0369A1",
-                  border: bookingMode === "OFFLINE" ? "1px solid #FDE68A" : "1px solid #BAE6FD",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  height: "22px",
-                  borderRadius: "6px",
-                  letterSpacing: "0.5px",
-                }}
-              />
-            )}
-            <Chip
-              label={
-                job.status
-                  ? job.status.charAt(0).toUpperCase() +
-                    job.status.slice(1).toLowerCase()
-                  : "Status"
-              }
-              size="small"
-              deleteIcon={
-                isStatusUpdatable ? <KeyboardArrowDownIcon /> : undefined
-              }
-              onDelete={
-                isStatusUpdatable
-                  ? (e) => onUpdateStatusClick(e as any, jobId)
-                  : undefined
-              }
-              onClick={
-                isStatusUpdatable
-                  ? (e) => onUpdateStatusClick(e, jobId)
-                  : undefined
-              }
+
+            {/* Badges Bar (On Mobile: unified row right below title; On Desktop: inline with title) */}
+            <Box
               sx={{
-                bgcolor: "#E8F5E9",
-                color: "#2E7D32",
-                fontWeight: 700,
-                fontSize: "11px",
-                height: "22px",
-                cursor: isStatusUpdatable ? "pointer" : "default",
-                "& .MuiChip-deleteIcon": {
-                  color: "#2E7D32",
-                  fontSize: "16px",
-                  "&:hover": { color: "#1B5E20" },
-                },
-                "&:hover": {
-                  bgcolor: isStatusUpdatable ? "#C8E6C9" : "#E8F5E9",
-                },
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                flexWrap: "wrap",
               }}
-            />
+            >
+              <Box sx={{ order: { xs: 1, sm: 3 } }}>
+                {renderStatusChip()}
+              </Box>
+              {planLabel && (
+                <Box sx={{ order: { xs: 2, sm: 1 } }}>
+                  {renderPlanChip()}
+                </Box>
+              )}
+              {bookingMode && bookingMode !== "ONLINE" && (
+                <Box sx={{ order: { xs: 3, sm: 2 } }}>
+                  {renderModeChip()}
+                </Box>
+              )}
+            </Box>
           </Box>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              color: "#666",
-              fontSize: "14px",
-            }}
-          >
-            Client: <span style={{ fontWeight: 600 }}>{job.customer}</span> • B-
-            {jobId}
-          </Typography>
+
+          {/* Client & Booking ID Row */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: "#64748B",
+                fontSize: "13.5px",
+              }}
+            >
+              Client: <span style={{ fontWeight: 700, color: "#1E293B" }}>{job.customer}</span>
+            </Typography>
+            <Box
+              sx={{
+                px: 1,
+                py: 0.2,
+                borderRadius: "6px",
+                bgcolor: "#F1F5F9",
+                border: "1px solid #E2E8F0",
+                fontSize: "11.5px",
+                fontWeight: 700,
+                color: "#475569",
+                fontFamily: "monospace",
+              }}
+            >
+              #B-{jobId}
+            </Box>
+          </Box>
         </Box>
+
+        {/* Action Buttons Row */}
         <Box
           sx={{
             display: "flex",
             flexWrap: "wrap",
             gap: 1,
-            mt: { xs: 1, md: 0 },
+            width: { xs: "100%", md: "auto" },
+            mt: { xs: 0.5, md: 0 },
+            alignItems: "center",
           }}
         >
           {job.status?.toUpperCase() === BOOKING_STATUS.ARRIVED && (
@@ -299,13 +368,18 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 background: COLORS.PRIMARY,
                 color: "white",
                 textTransform: "none",
-                fontWeight: 600,
-                borderRadius: "8px",
+                fontWeight: 700,
+                fontSize: "13px",
+                borderRadius: "10px",
+                px: 2,
+                py: { xs: 0.8, sm: 0.6 },
+                minHeight: { xs: 38, sm: 36 },
+                flex: { xs: "1 1 100%", sm: "0 0 auto" },
                 "&:hover": {
-                  background: "#E55000",
+                  background: COLORS.PRIMARY_DARK,
                   boxShadow: "none",
                 },
-                boxShadow: "none",
+                boxShadow: "0 4px 12px rgba(255, 98, 0, 0.25)",
               }}
             >
               Verify OTP
@@ -321,13 +395,18 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 background: "#10b981",
                 color: "white",
                 textTransform: "none",
-                fontWeight: 600,
-                borderRadius: "8px",
+                fontWeight: 700,
+                fontSize: "13px",
+                borderRadius: "10px",
+                px: 2,
+                py: { xs: 0.8, sm: 0.6 },
+                minHeight: { xs: 38, sm: 36 },
+                flex: { xs: "1 1 100%", sm: "0 0 auto" },
                 "&:hover": {
                   background: "#059669",
                   boxShadow: "none",
                 },
-                boxShadow: "none",
+                boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)",
               }}
             >
               Make Payment
@@ -341,13 +420,18 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 onClick={() => onProofClick(jobId)}
                 startIcon={<PhotoCameraIcon />}
                 sx={{
-                  background: "#4CAF50",
+                  background: "#16A34A",
                   color: "white",
                   textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: "8px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  borderRadius: "10px",
+                  px: 1.8,
+                  py: { xs: 0.8, sm: 0.6 },
+                  minHeight: { xs: 38, sm: 36 },
+                  flex: { xs: "1 1 calc(50% - 6px)", sm: "0 0 auto" },
                   "&:hover": {
-                    background: "#388E3C",
+                    background: "#15803D",
                     boxShadow: "none",
                   },
                   boxShadow: "none",
@@ -361,13 +445,18 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 onClick={() => onReviewClick(jobId)}
                 startIcon={<RateReviewIcon />}
                 sx={{
-                  background: "#2196F3",
+                  background: "#0284C7",
                   color: "white",
                   textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: "8px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  borderRadius: "10px",
+                  px: 1.8,
+                  py: { xs: 0.8, sm: 0.6 },
+                  minHeight: { xs: 38, sm: 36 },
+                  flex: { xs: "1 1 calc(50% - 6px)", sm: "0 0 auto" },
                   "&:hover": {
-                    background: "#1976D2",
+                    background: "#0369A1",
                     boxShadow: "none",
                   },
                   boxShadow: "none",
@@ -381,13 +470,18 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 onClick={() => onComplaintClick(jobId)}
                 startIcon={<ReportProblemIcon />}
                 sx={{
-                  background: "#F44336",
+                  background: "#EF4444",
                   color: "white",
                   textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: "8px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  borderRadius: "10px",
+                  px: 1.8,
+                  py: { xs: 0.8, sm: 0.6 },
+                  minHeight: { xs: 38, sm: 36 },
+                  flex: { xs: "1 1 100%", sm: "0 0 auto" },
                   "&:hover": {
-                    background: "#D32F2F",
+                    background: "#DC2626",
                     boxShadow: "none",
                   },
                   boxShadow: "none",
@@ -406,12 +500,21 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                 : undefined
             }
             sx={{
-              color: "#333",
-              borderColor: "#ccc",
+              color: "#334155",
+              borderColor: "#CBD5E1",
+              bgcolor: "#FFFFFF",
               textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "8px",
-              "&:hover": { bgcolor: "#f5f5f5" },
+              fontWeight: 700,
+              fontSize: "13px",
+              borderRadius: "10px",
+              px: 2,
+              py: { xs: 0.8, sm: 0.6 },
+              minHeight: { xs: 38, sm: 36 },
+              flex: { xs: "1 1 100%", md: "0 0 auto" },
+              "&:hover": {
+                bgcolor: "#F8FAFC",
+                borderColor: "#94A3B8",
+              },
             }}
           >
             Contact Client{" "}
@@ -422,25 +525,56 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
         </Box>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, borderColor: "#F1F5F9" }} />
 
+      {/* Details 3-Box Grid: Schedule, Est. Payout, Location */}
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          gap: 2,
-          mb: 3,
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          },
+          gap: 1.5,
+          mb: 2.5,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <EventIcon sx={{ color: "#2E7D32", fontSize: 18 }} />
-          <Box>
+        {/* Box 1: Schedule */}
+        <Box
+          sx={{
+            p: 1.5,
+            borderRadius: "12px",
+            bgcolor: "#F8FAFC",
+            border: "1px solid #F1F5F9",
+            display: "flex",
+            alignItems: "center",
+            gap: 1.25,
+          }}
+        >
+          <Box
+            sx={{
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              bgcolor: "rgba(255, 98, 0, 0.1)",
+              color: COLORS.PRIMARY,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <EventIcon sx={{ fontSize: 20 }} />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: "11px",
-                color: "#999",
+                color: "#64748B",
                 textTransform: "uppercase",
                 fontWeight: 700,
+                letterSpacing: "0.5px",
               }}
             >
               Schedule
@@ -448,24 +582,52 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#333",
+                fontSize: "13.5px",
+                fontWeight: 700,
+                color: "#1E293B",
+                lineHeight: 1.3,
               }}
             >
               {job.date}, {job.time}
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <AccountBalanceWalletIcon sx={{ color: "#2E7D32", fontSize: 18 }} />
-          <Box>
+
+        {/* Box 2: Est. Payout */}
+        <Box
+          sx={{
+            p: 1.5,
+            borderRadius: "12px",
+            bgcolor: "#FAFDFB",
+            border: "1px solid #C8E6C9",
+            display: "flex",
+            alignItems: "center",
+            gap: 1.25,
+          }}
+        >
+          <Box
+            sx={{
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              bgcolor: "#E8F5E9",
+              color: "#2E7D32",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: "11px",
-                color: "#999",
+                color: "#2E7D32",
                 textTransform: "uppercase",
                 fontWeight: 700,
+                letterSpacing: "0.5px",
               }}
             >
               Est. Payout
@@ -473,52 +635,76 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "14px",
+                fontSize: "16px",
                 fontWeight: 800,
-                color: "#333",
+                color: "#1B5E20",
+                lineHeight: 1.3,
               }}
             >
               {job.price}
             </Typography>
           </Box>
         </Box>
+
+        {/* Box 3: Location */}
         <Box
           sx={{
+            p: 1.5,
+            borderRadius: "12px",
+            bgcolor: "#F8FAFC",
+            border: "1px solid #F1F5F9",
             display: "flex",
-            alignItems: "flex-start",
-            gap: 1,
-            minWidth: 0,
+            alignItems: "center",
+            gap: 1.25,
+            gridColumn: { xs: "1", sm: "span 2", md: "span 1" },
           }}
         >
-          <LocationOnIcon
+          <Box
             sx={{
-              color: "#2E7D32",
-              fontSize: 18,
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              bgcolor: isOnline ? "#EFF6FF" : "#EFF6FF",
+              color: "#0284C7",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               flexShrink: 0,
-              mt: 0.2,
             }}
-          />
+          >
+            {isOnline ? (
+              <VideocamIcon sx={{ fontSize: 20 }} />
+            ) : (
+              <LocationOnIcon sx={{ fontSize: 20 }} />
+            )}
+          </Box>
           <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: "11px",
-                color: "#999",
+                color: "#64748B",
                 textTransform: "uppercase",
                 fontWeight: 700,
+                letterSpacing: "0.5px",
               }}
             >
-              Location
+              {isOnline ? "Mode" : "Location"}
             </Typography>
             <Typography
               sx={{
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: 600,
-                color: "#333",
+                color: "#1E293B",
+                lineHeight: 1.3,
                 wordBreak: "break-word",
               }}
             >
-              {job.location}
+              {job.location && job.location !== "N/A"
+                ? job.location
+                : isOnline
+                ? "Online (Video Call)"
+                : "Address Pending"}
             </Typography>
           </Box>
         </Box>
@@ -527,10 +713,10 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
       {(selectedAddons.length > 0 || carryItems.length > 0) && (
         <Box
           sx={{
-            mb: 3,
-            p: 2,
+            mb: 2.5,
+            p: { xs: 1.5, sm: 2 },
             bgcolor: "#FFFDF5",
-            borderRadius: "10px",
+            borderRadius: "14px",
             border: "1px dashed #FCD34D",
           }}
         >
@@ -561,7 +747,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                       bgcolor: "#FEF3C7",
                       color: "#92400E",
                       border: "1px solid #FDE68A",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       fontSize: "12px",
                       height: "26px",
                       borderRadius: "6px",
@@ -599,7 +785,7 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
                       bgcolor: "#F3F4F6",
                       color: "#374151",
                       border: "1px solid #E5E7EB",
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: "12px",
                       height: "26px",
                       borderRadius: "6px",
@@ -612,9 +798,9 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
         </Box>
       )}
 
-      <Divider sx={{ my: 3, borderStyle: "dashed" }} />
+      <Divider sx={{ my: { xs: 2, sm: 2.5 }, borderStyle: "dashed", borderColor: "#E2E8F0" }} />
 
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ width: "100%", mb: { xs: 1, sm: 2 } }}>
         {(() => {
           const isOnline = bookingMode === "ONLINE";
           const displayStatuses = isOnline
@@ -632,27 +818,51 @@ export const BookingActiveCard: React.FC<BookingActiveCardProps> = ({
               }
               alternativeLabel
               sx={{
+                width: "100%",
+                p: 0,
+                m: 0,
+                "& .MuiStep-root": {
+                  p: 0,
+                  flex: 1,
+                },
+                "& .MuiStepIcon-root": {
+                  fontSize: { xs: "22px", sm: "24px" },
+                },
                 "& .MuiStepIcon-root.Mui-active": {
                   color: COLORS.PRIMARY,
                 },
                 "& .MuiStepIcon-root.Mui-completed": {
                   color: COLORS.PRIMARY,
                 },
+                "& .MuiStepConnector-root": {
+                  top: { xs: 11, sm: 12 },
+                  left: "calc(-50% + 14px)",
+                  right: "calc(50% + 14px)",
+                },
+                "& .MuiStepConnector-line": {
+                  borderColor: "#E2E8F0",
+                },
+                "& .MuiStepLabel-label": {
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  fontSize: { xs: "11px", sm: "12.5px" },
+                  color: "#64748B",
+                  mt: 0.75,
+                  textAlign: "center",
+                },
+                "& .MuiStepLabel-label.Mui-active": {
+                  color: `${COLORS.PRIMARY} !important`,
+                  fontWeight: 800,
+                },
+                "& .MuiStepLabel-label.Mui-completed": {
+                  color: "#1E293B",
+                  fontWeight: 700,
+                },
               }}
             >
               {displayStatuses.map((label) => (
                 <Step key={label}>
-                  <StepLabel>
-                    <Typography
-                      sx={{
-                        fontFamily: FONTS.OUTFIT,
-                        fontWeight: 600,
-                        fontSize: "12px",
-                      }}
-                    >
-                      {label}
-                    </Typography>
-                  </StepLabel>
+                  <StepLabel>{label}</StepLabel>
                 </Step>
               ))}
             </Stepper>

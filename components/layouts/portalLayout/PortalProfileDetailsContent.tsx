@@ -4,6 +4,8 @@ import { COLORS } from "@/utils/enums";
 import AppBreadcrumbs from "@/components/widgets/AppBreadcrumbs";
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Grid, Avatar, Divider, Chip, Breadcrumbs, Button, CircularProgress, Dialog, DialogContent, IconButton } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NextLink from 'next/link';
 import EmailIcon from '@mui/icons-material/Email';
@@ -39,6 +41,7 @@ const getPdfUrlWithParams = (url: string) => {
 };
 
 export default function PortalProfileDetailsContent() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const { profile: profileData, fetchProfile } = useUserStore();
@@ -95,10 +98,18 @@ export default function PortalProfileDetailsContent() {
   const rawSpecs = profile?.specializations || profile?.specialization;
   const specializations = parseList(rawSpecs);
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(isAstrologer ? "/partner/astrologybookings" : "/partner/dashboard");
+    }
+  };
+
   return (
-    <Box sx={{ maxWidth: '1400px', mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, pb: { xs: 4, sm: 6 } }}>
+    <Box sx={{ maxWidth: '1400px', mx: 'auto', pb: { xs: 4, sm: 6 } }}>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: { xs: 2.5, sm: 3.5 } }}>
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <AppBreadcrumbs
             items={[
               {
@@ -107,6 +118,7 @@ export default function PortalProfileDetailsContent() {
               },
               { label: "Profile" },
             ]}
+            sx={{ mb: 0.5 }}
           />
           <Typography
             variant="h4"
@@ -125,6 +137,60 @@ export default function PortalProfileDetailsContent() {
             View your complete public profile and contact information.
           </Typography>
         </Box>
+
+        <Button
+          onClick={handleBack}
+          startIcon={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                bgcolor: "rgba(255, 98, 0, 0.12)",
+                color: COLORS.PRIMARY,
+                transition: "all 0.25s ease",
+              }}
+            >
+              <ArrowBackIcon sx={{ fontSize: 14 }} />
+            </Box>
+          }
+          sx={{
+            color: "#1F1A17",
+            bgcolor: "#FFFFFF",
+            border: "1.5px solid rgba(255, 98, 0, 0.28)",
+            borderRadius: "32px",
+            pl: 1.2,
+            pr: 2.2,
+            py: 0.6,
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 600,
+            fontSize: "13px",
+            textTransform: "none",
+            boxShadow:
+              "0 4px 14px -2px rgba(255, 98, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.04)",
+            flexShrink: 0,
+            alignSelf: { xs: "flex-start", sm: "auto" },
+            transition: "all 0.25s ease",
+            "& .MuiButton-startIcon": { mr: 1 },
+            "&:hover": {
+              bgcolor: "#FFFFFF",
+              borderColor: COLORS.PRIMARY,
+              color: COLORS.PRIMARY,
+              transform: "translateY(-1px)",
+              boxShadow: "0 6px 18px -2px rgba(255, 98, 0, 0.25)",
+              "& .MuiButton-startIcon > div": {
+                bgcolor: COLORS.PRIMARY,
+                color: "#FFFFFF",
+                transform: "translateX(-2px)",
+              },
+            },
+          }}
+        >
+          {isAstrologer ? "Back to Bookings" : "Back to Dashboard"}
+        </Button>
       </Box>
 
       <Grid container spacing={{ xs: 2.5, sm: 3, md: 4 }}>
