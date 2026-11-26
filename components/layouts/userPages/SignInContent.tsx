@@ -49,6 +49,14 @@ export default function SignInContent() {
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   const redirectParam =
     searchParams.get("redirect") ||
     (typeof window !== "undefined"
@@ -113,7 +121,7 @@ export default function SignInContent() {
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
-        {/* Top Header: Desktop has Logo Left + Back Button Right; Mobile has ONLY the Grand Centered Logo */}
+        {/* Top Header: Mobile has Back Icon Left + Centered Logo; Desktop has Logo Left + Back Button Right */}
         <Box
           sx={{
             position: { xs: "relative", md: "absolute" },
@@ -129,6 +137,30 @@ export default function SignInContent() {
             zIndex: 10,
           }}
         >
+          {/* Mobile Back Icon Button */}
+          <IconButton
+            aria-label="Go back"
+            onClick={handleBack}
+            sx={{
+              display: { xs: "inline-flex", md: "none" },
+              position: "absolute",
+              left: { xs: 16, sm: 32 },
+              width: 38,
+              height: 38,
+              bgcolor: "#FFFFFF",
+              color: "#1F1A17",
+              border: "1.5px solid rgba(255, 98, 0, 0.28)",
+              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.16)",
+              "&:hover": {
+                bgcolor: "#FFFFFF",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
+              },
+            }}
+          >
+            <ArrowBackIcon sx={{ fontSize: 19 }} />
+          </IconButton>
+
           {/* Logo: Centered on Mobile; Left-aligned on Desktop */}
           <Box
             component={Link}
@@ -155,10 +187,9 @@ export default function SignInContent() {
             />
           </Box>
 
-          {/* Desktop Back Navigation: Top-Right on Desktop; Hidden on Mobile (placed below card on mobile) */}
+          {/* Desktop Back Button */}
           <Button
-            component={Link}
-            href="/"
+            onClick={handleBack}
             startIcon={
               <Box
                 sx={{
@@ -215,7 +246,7 @@ export default function SignInContent() {
               },
             }}
           >
-            Back to Website
+            Back
           </Button>
         </Box>
 
@@ -955,72 +986,6 @@ export default function SignInContent() {
             </Box>
           </Box>
         </Container>
-
-        {/* Mobile Back Button: Centered Cleanly Below the Card */}
-        <Box
-          sx={{
-            display: { xs: "flex", md: "none" },
-            justifyContent: "center",
-            width: "100%",
-            mt: { xs: 2, sm: 2.5, md: 3 },
-            position: "relative",
-            zIndex: 2,
-          }}
-        >
-          <Button
-            component={Link}
-            href="/"
-            startIcon={
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 26,
-                  height: 26,
-                  borderRadius: "50%",
-                  bgcolor: "rgba(255, 98, 0, 0.12)",
-                  color: COLORS.PRIMARY,
-                  transition: "all 0.25s ease",
-                }}
-              >
-                <ArrowBackIcon sx={{ fontSize: 15 }} />
-              </Box>
-            }
-            sx={{
-              color: "#1F1A17",
-              bgcolor: "#FFFFFF",
-              border: "1.5px solid rgba(255, 98, 0, 0.28)",
-              borderRadius: "32px",
-              pl: 1.2,
-              pr: 2.4,
-              py: 0.8,
-              fontFamily: FONTS.OUTFIT_ONLY,
-              fontWeight: 600,
-              fontSize: "13.5px",
-              letterSpacing: "0.1px",
-              textTransform: "none",
-              boxShadow:
-                "0 6px 20px -3px rgba(255, 98, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.05)",
-              transition: "all 0.25s ease",
-              "& .MuiButton-startIcon": {
-                mr: 1,
-              },
-              "&:hover": {
-                bgcolor: "#FFFFFF",
-                borderColor: COLORS.PRIMARY,
-                color: COLORS.PRIMARY,
-                transform: "translateY(-1.5px)",
-                boxShadow: "0 8px 24px -3px rgba(255, 98, 0, 0.28)",
-              },
-              "&:active": {
-                transform: "translateY(0)",
-              },
-            }}
-          >
-            Back to Website
-          </Button>
-        </Box>
       </Box>
     </>
   );

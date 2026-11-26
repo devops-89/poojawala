@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
-import AstrologerCard from './AstrologerCard';
+import AstrologerCard, { AstrologerCardProps } from './AstrologerCard';
 import { getPublicAstrologersListAPI } from '@/api/userControllers';
 import EmptyStateCard from '@/components/widgets/EmptyStateCard';
 import { FONTS } from '@/utils/fonts';
@@ -53,12 +53,28 @@ const parseList = (val: any): string[] => {
   return [];
 };
 
-export default function AstrologerGrid() {
+interface AstrologerGridProps {
+  searchQuery?: string;
+  onSearchChange?: (val: string) => void;
+  CardComponent?: React.ComponentType<AstrologerCardProps>;
+  hideSearchHeader?: boolean;
+}
+
+export default function AstrologerGrid({
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+  CardComponent,
+  hideSearchHeader = false,
+}: AstrologerGridProps = {}) {
+  const CardToRender = CardComponent || AstrologerCard;
   const [astrologers, setAstrologers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
+  const searchQuery =
+    externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const setSearchQuery = onSearchChange || setInternalSearchQuery;
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
   const [totalAstrologers, setTotalAstrologers] = useState(0);
 
   const itemsPerPage = 6;
@@ -204,125 +220,127 @@ export default function AstrologerGrid() {
   return (
     <Box ref={gridTopRef} sx={{ position: 'relative' }}>
       {/* Header and Search Bar */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          justifyContent: 'space-between',
-          alignItems: { xs: 'flex-start', md: 'center' },
-          gap: 2,
-          mb: 4,
-        }}
-      >
-        <Box>
-          <Typography
-            variant="h4"
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 700,
-              color: '#1e293b',
-              fontSize: { xs: '22px', sm: '26px', md: '28px' },
-              mb: 0.5,
-            }}
-          >
-            Top Astrologers for You
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT,
-              color: '#64748b',
-              fontSize: '14px',
-              fontWeight: 500,
-            }}
-          >
-            {totalAstrologers} Astrologers available
-          </Typography>
-        </Box>
-
-        {/* Search Box (Matching Temples & Purohits) */}
+      {!hideSearchHeader && (
         <Box
-          component="form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setDebouncedQuery(searchQuery);
-            setPage(1);
-          }}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            bgcolor: "#FFFFFF",
-            borderRadius: "14px",
-            p: "4px 6px 4px 14px",
-            border: "1.5px solid #E2E8F0",
-            width: { xs: "100%", sm: "360px", md: "400px" },
-            transition: "all 0.25s ease",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
-            "&:focus-within": {
-              borderColor: COLORS.PRIMARY,
-              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.15)",
-            },
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: { xs: 'flex-start', md: 'center' },
+            gap: 2,
+            mb: 4,
           }}
         >
-          <SearchIcon sx={{ color: "#94a3b8", fontSize: 20, mr: 1 }} />
-          <TextField
-            variant="standard"
-            placeholder="Search astrologers by name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            slotProps={{
-              input: {
-                disableUnderline: true,
-                sx: {
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: "14px",
-                  color: "#1e293b",
-                  "&::placeholder": { color: "#94a3b8" },
-                },
-                endAdornment: searchQuery ? (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setDebouncedQuery("");
-                        setPage(1);
-                      }}
-                      aria-label="clear search"
-                      sx={{ p: 0.5, mr: 0.5 }}
-                    >
-                      <ClearIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ) : null,
-              },
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 700,
+                color: '#1e293b',
+                fontSize: { xs: '22px', sm: '26px', md: '28px' },
+                mb: 0.5,
+              }}
+            >
+              Top Astrologers for You
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: '#64748b',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              {totalAstrologers} Astrologers available
+            </Typography>
+          </Box>
+
+          {/* Search Box (Matching Temples & Purohits) */}
+          <Box
+            component="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setDebouncedQuery(searchQuery);
+              setPage(1);
             }}
-            sx={{ flexGrow: 1 }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
             sx={{
-              bgcolor: COLORS.PRIMARY,
-              color: "#FFFFFF",
-              fontFamily: FONTS.OUTFIT,
-              fontWeight: 600,
-              fontSize: "13px",
-              textTransform: "none",
-              borderRadius: "10px",
-              px: 2,
-              py: 0.8,
-              minWidth: "auto",
-              boxShadow: "none",
-              "&:hover": {
-                bgcolor: "#E05600",
-                boxShadow: "none",
+              display: "flex",
+              alignItems: "center",
+              bgcolor: "#FFFFFF",
+              borderRadius: "14px",
+              p: "4px 6px 4px 14px",
+              border: "1.5px solid #E2E8F0",
+              width: { xs: "100%", sm: "360px", md: "400px" },
+              transition: "all 0.25s ease",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+              "&:focus-within": {
+                borderColor: COLORS.PRIMARY,
+                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.15)",
               },
             }}
           >
-            Search
-          </Button>
+            <SearchIcon sx={{ color: "#94a3b8", fontSize: 20, mr: 1 }} />
+            <TextField
+              variant="standard"
+              placeholder="Search astrologers by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                  sx: {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "14px",
+                    color: "#1e293b",
+                    "&::placeholder": { color: "#94a3b8" },
+                  },
+                  endAdornment: searchQuery ? (
+                    <InputAdornment position="end">
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setSearchQuery("");
+                          setDebouncedQuery("");
+                          setPage(1);
+                        }}
+                        aria-label="clear search"
+                        sx={{ p: 0.5, mr: 0.5 }}
+                      >
+                        <ClearIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  ) : null,
+                },
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                bgcolor: COLORS.PRIMARY,
+                color: "#FFFFFF",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                fontSize: "13px",
+                textTransform: "none",
+                borderRadius: "10px",
+                px: 2,
+                py: 0.8,
+                minWidth: "auto",
+                boxShadow: "none",
+                "&:hover": {
+                  bgcolor: "#E05600",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              Search
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      )}
 
       {/* Grid Content */}
       {loading ? (
@@ -348,10 +366,10 @@ export default function AstrologerGrid() {
         />
       ) : (
         <>
-          <Grid container spacing={3}>
+          <Grid container spacing={CardComponent ? 2 : 3}>
             {astrologers.map((item) => (
               <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={item.id}>
-                <AstrologerCard {...item} />
+                <CardToRender {...item} />
               </Grid>
             ))}
           </Grid>

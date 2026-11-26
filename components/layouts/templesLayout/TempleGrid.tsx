@@ -26,13 +26,18 @@ interface TempleGridProps {
   searchQuery: string;
   onSearchChange?: (val: string) => void;
   onClearSearch?: () => void;
+  CardComponent?: React.ComponentType<{ temple: TempleItem }>;
+  hideSearchHeader?: boolean;
 }
 
 export default function TempleGrid({
   searchQuery,
   onSearchChange,
   onClearSearch,
+  CardComponent,
+  hideSearchHeader = false,
 }: TempleGridProps) {
+  const CardToRender = CardComponent || TempleCard;
   const [temples, setTemples] = useState<TempleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -162,103 +167,105 @@ export default function TempleGrid({
 
   return (
     <Box ref={gridTopRef}>
-      {/* Header Row: "Top Temples for You" on left, Search Bar on right (k barabar m) */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 2,
-          mb: 3.5,
-        }}
-      >
-        <Typography
-          variant="h5"
-          sx={{
-            fontFamily: FONTS.OUTFIT,
-            fontWeight: 700,
-            color: "#1A1A1A",
-            fontSize: { xs: "22px", sm: "26px", md: "28px" },
-          }}
-        >
-          {searchQuery ? "Search Results" : "Top Temples for You"}
-        </Typography>
-
-        {/* Search Bar beside Top Temples for you */}
+      {/* Header Row: "Top Temples for You" on left, Search Bar on right */}
+      {!hideSearchHeader && (
         <Box
-          component="form"
-          onSubmit={handleSearchSubmit}
           sx={{
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            bgcolor: "#FFFFFF",
-            borderRadius: "14px",
-            p: "4px 6px 4px 14px",
-            border: "1.5px solid #E2E8F0",
-            width: { xs: "100%", sm: "360px", md: "400px" },
-            transition: "all 0.25s ease",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
-            "&:focus-within": {
-              borderColor: COLORS.PRIMARY,
-              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.15)",
-            },
+            flexWrap: "wrap",
+            gap: 2,
+            mb: 3.5,
           }}
         >
-          <SearchIcon sx={{ color: "#94a3b8", fontSize: 20, mr: 1 }} />
-          <TextField
-            variant="standard"
-            placeholder="Search temples by name or city..."
-            value={searchInput}
-            onChange={handleInputChange}
-            slotProps={{
-              input: {
-                disableUnderline: true,
-                sx: {
-                  fontFamily: FONTS.OUTFIT,
-                  fontSize: "14px",
-                  color: "#1e293b",
-                  "&::placeholder": { color: "#94a3b8" },
-                },
-                endAdornment: searchInput ? (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      onClick={handleClear}
-                      aria-label="clear search"
-                      sx={{ p: 0.5, mr: 0.5 }}
-                    >
-                      <ClearIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ) : null,
-              },
-            }}
-            sx={{ flexGrow: 1 }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
+          <Typography
+            variant="h5"
             sx={{
-              bgcolor: COLORS.PRIMARY,
-              color: "#FFFFFF",
               fontFamily: FONTS.OUTFIT,
-              fontWeight: 600,
-              fontSize: "13px",
-              textTransform: "none",
-              borderRadius: "10px",
-              px: 2,
-              py: 0.7,
-              boxShadow: "none",
-              "&:hover": {
-                bgcolor: COLORS.PRIMARY_DARK || "#E05500",
+              fontWeight: 700,
+              color: "#1A1A1A",
+              fontSize: { xs: "22px", sm: "26px", md: "28px" },
+            }}
+          >
+            {searchQuery ? "Search Results" : "Top Temples for You"}
+          </Typography>
+
+          {/* Search Bar beside Top Temples for you */}
+          <Box
+            component="form"
+            onSubmit={handleSearchSubmit}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              bgcolor: "#FFFFFF",
+              borderRadius: "14px",
+              p: "4px 6px 4px 14px",
+              border: "1.5px solid #E2E8F0",
+              width: { xs: "100%", sm: "360px", md: "400px" },
+              transition: "all 0.25s ease",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+              "&:focus-within": {
+                borderColor: COLORS.PRIMARY,
+                boxShadow: "0 4px 14px rgba(255, 98, 0, 0.15)",
               },
             }}
           >
-            Search
-          </Button>
+            <SearchIcon sx={{ color: "#94a3b8", fontSize: 20, mr: 1 }} />
+            <TextField
+              variant="standard"
+              placeholder="Search temples by name or city..."
+              value={searchInput}
+              onChange={handleInputChange}
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                  sx: {
+                    fontFamily: FONTS.OUTFIT,
+                    fontSize: "14px",
+                    color: "#1e293b",
+                    "&::placeholder": { color: "#94a3b8" },
+                  },
+                  endAdornment: searchInput ? (
+                    <InputAdornment position="end">
+                      <IconButton
+                        size="small"
+                        onClick={handleClear}
+                        aria-label="clear search"
+                        sx={{ p: 0.5, mr: 0.5 }}
+                      >
+                        <ClearIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  ) : null,
+                },
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                bgcolor: COLORS.PRIMARY,
+                color: "#FFFFFF",
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 600,
+                fontSize: "13px",
+                textTransform: "none",
+                borderRadius: "10px",
+                px: 2,
+                py: 0.7,
+                boxShadow: "none",
+                "&:hover": {
+                  bgcolor: COLORS.PRIMARY_DARK || "#E05500",
+                },
+              }}
+            >
+              Search
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      )}
 
       {/* Loading Skeletons */}
       {loading ? (
@@ -302,14 +309,14 @@ export default function TempleGrid({
           actionHref={searchQuery ? "/temples" : undefined}
         />
       ) : (
-        <Grid container spacing={3} sx={{ alignItems: "stretch" }}>
+        <Grid container spacing={CardComponent ? 2 : 3} sx={{ alignItems: "stretch" }}>
           {temples.map((temple: TempleItem) => (
             <Grid
               size={{ xs: 12, sm: 6, md: 4 }}
               key={temple.id}
               sx={{ display: "flex" }}
             >
-              <TempleCard temple={temple} />
+              <CardToRender temple={temple} />
             </Grid>
           ))}
         </Grid>

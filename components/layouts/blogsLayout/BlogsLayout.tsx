@@ -1,5 +1,6 @@
 "use client";
 
+import ListingBackButton from "@/components/widgets/ListingBackButton";
 import { Box, Button, Container, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { getAllBlogsAPI } from "@/api/blogControllers";
@@ -89,6 +90,7 @@ export default function BlogsLayout() {
         >
           {/* Content */}
           <Box sx={{ maxWidth: { xs: "100%", md: "620px" }, mt: "auto", mb: "auto", position: "relative", zIndex: 2 }}>
+            <ListingBackButton variant="hero" />
             <Typography
               component="h1"
               sx={{

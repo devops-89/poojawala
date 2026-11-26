@@ -5,9 +5,10 @@ import WebsiteWhyPoojawalaSection from "@/components/layouts/servicesLayout/Webs
 import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useLoaderStore } from "@/stores/loaderStore";
 import { COLORS } from "@/utils/enums";
-import { Box, Button, Container, Paper, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, Typography, useMediaQuery } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import MobileTempleDetailsContent from "./mobile/MobileTempleDetailsContent";
 import WebsiteTempleAboutSection from "./WebsiteTempleAboutSection";
 import WebsiteTempleDetailsHero from "./WebsiteTempleDetailsHero";
 import WebsiteTempleServicesSection from "./WebsiteTempleServicesSection";
@@ -23,6 +24,7 @@ export default function WebsiteTempleDetailsContent() {
 
   const showSnackbar = useSnackbarStore((state) => state.showSnackbar);
   const { showLoader, hideLoader } = useLoaderStore();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const identifier = (params.slug || params.id) as string;
 
@@ -144,6 +146,16 @@ export default function WebsiteTempleDetailsContent() {
     temple.deityPhotoUrl ||
     temple.image ||
     DEFAULT_BANNER;
+
+  if (isMobile) {
+    return (
+      <MobileTempleDetailsContent
+        temple={temple}
+        heroImage={heroImage}
+        onBookClick={handleBookClick}
+      />
+    );
+  }
 
   return (
     <Box sx={{ bgcolor: "#FFFDF9", minHeight: "100vh", pb: { xs: 6, md: 8 }, pt: 2, overflowX: "hidden" }}>

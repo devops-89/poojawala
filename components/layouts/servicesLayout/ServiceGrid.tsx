@@ -21,7 +21,9 @@ export default function ServiceGrid({
   selectedCity,
   isOnline,
   isOffline,
+  CardComponent,
 }: ServiceGridProps) {
+  const CardToRender = CardComponent || ServiceCard;
   const searchParams = useSearchParams();
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -275,10 +277,10 @@ export default function ServiceGrid({
           description="No pooja services are currently available matching your search or selected category/city filter. Try adjusting your filters!"
         />
       ) : (
-        <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
+        <Grid container spacing={CardComponent ? 2 : 3} sx={{ alignItems: 'stretch' }}>
           {services.map(service => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={service.id} sx={{ display: 'flex' }}>
-              <ServiceCard
+              <CardToRender
                 id={service.id}
                 slug={service.slug}
                 title={service.title}

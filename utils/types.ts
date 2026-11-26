@@ -291,6 +291,7 @@ export interface ServiceGridProps {
   selectedCity?: string;
   isOnline?: boolean;
   isOffline?: boolean;
+  CardComponent?: React.ComponentType<ServiceCardProps>;
 }
 
 export interface ServiceFiltersProps {

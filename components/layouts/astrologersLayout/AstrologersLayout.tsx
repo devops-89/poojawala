@@ -1,15 +1,23 @@
 'use client';
-import { Box, Container, Grid, Typography } from '@mui/material';
+import ListingBackButton from '@/components/widgets/ListingBackButton';
+import { Box, Container, Grid, Typography, useMediaQuery } from '@mui/material';
 import React, { useEffect } from 'react';
 import AstrologerGrid from './AstrologerGrid';
+import MobileAstrologersLayout from './mobile/MobileAstrologersLayout';
 import { FONTS } from '@/utils/fonts';
 
 export default function AstrologersLayout() {
+  const isMobile = useMediaQuery('(max-width:600px)');
+
   useEffect(() => {
     if (typeof window !== 'undefined' && !window.location.hash) {
       window.scrollTo(0, 0);
     }
   }, []);
+
+  if (isMobile) {
+    return <MobileAstrologersLayout />;
+  }
 
   return (
     <Box
@@ -55,6 +63,7 @@ export default function AstrologersLayout() {
         >
           {/* Hero Content */}
           <Box sx={{ maxWidth: { xs: '100%', md: '620px' }, mt: 'auto', mb: 'auto', position: 'relative', zIndex: 2 }}>
+            <ListingBackButton variant="hero" />
             <Typography
               component="h1"
               sx={{

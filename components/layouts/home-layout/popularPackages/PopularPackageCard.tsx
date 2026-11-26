@@ -330,15 +330,15 @@ const PopularPackageCard = ({ pkg, onSelect }: PopularPackageCardProps) => {
           <Button
             variant="outlined"
             startIcon={
-              <InfoOutlinedIcon sx={{ fontSize: 16, color: "#B87A1E" }} />
+              <InfoOutlinedIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
             }
             onClick={handleActionClick}
             sx={{
               flex: 1,
               minWidth: 0,
-              border: "1.5px solid #C89B3C",
-              color: "#2C1810",
-              bgcolor: "#FFFDF8",
+              border: `1.5px solid ${COLORS.PRIMARY}`,
+              color: COLORS.PRIMARY,
+              bgcolor: COLORS.BG_CREAM,
               borderRadius: "16px",
               px: 1,
               py: 1.05,
@@ -350,8 +350,8 @@ const PopularPackageCard = ({ pkg, onSelect }: PopularPackageCardProps) => {
               transition: "all 0.25s ease",
               "& .MuiButton-startIcon": { mr: 0.5 },
               "&:hover": {
-                bgcolor: "#FAF0DC",
-                borderColor: "#B37820",
+                bgcolor: COLORS.LIGHT_BG_HOVER,
+                borderColor: COLORS.PRIMARY_HOVER,
               },
             }}
           >
@@ -366,7 +366,7 @@ const PopularPackageCard = ({ pkg, onSelect }: PopularPackageCardProps) => {
             sx={{
               flex: 1,
               minWidth: 0,
-              background: "linear-gradient(180deg, #E89D24 0%, #CC770E 100%)",
+              bgcolor: COLORS.PRIMARY,
               color: COLORS.WHITE,
               borderRadius: "16px",
               px: 1,
@@ -376,11 +376,11 @@ const PopularPackageCard = ({ pkg, onSelect }: PopularPackageCardProps) => {
               fontFamily: FONTS.OUTFIT,
               textTransform: "none",
               whiteSpace: "nowrap",
+              boxShadow: `0 4px 14px ${COLORS.PRIMARY_SHADOW}`,
               transition: "all 0.25s ease",
               "& .MuiButton-startIcon": { mr: 0.5 },
               "&:hover": {
-                background: "linear-gradient(180deg, #D98E18 0%, #B86809 100%)",
-                boxShadow: "0 6px 16px rgba(204, 119, 14, 0.3)",
+                bgcolor: COLORS.PRIMARY_HOVER,
               },
             }}
           >
