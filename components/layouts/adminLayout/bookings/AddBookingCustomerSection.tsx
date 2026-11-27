@@ -65,6 +65,8 @@ export default function AddBookingCustomerSection({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
+          gap: 1,
           mb: 1,
         }}
       >
@@ -72,10 +74,11 @@ export default function AddBookingCustomerSection({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
+            fontSize: { xs: "12.5px", sm: "13px" },
             color: "#1e293b",
           }}
         >
-          {showAddCustomer ? "Add New Customer" : "Select Customer"}
+          {showAddCustomer ? "Add New Customer" : "Select Customer *"}
         </Typography>
         <Button
           size="small"
@@ -106,7 +109,9 @@ export default function AddBookingCustomerSection({
           }}
           sx={{
             textTransform: "none",
-            fontWeight: 600,
+            fontWeight: 700,
+            fontSize: "13px",
+            fontFamily: FONTS.OUTFIT,
             color: COLORS.PRIMARY,
           }}
         >
@@ -155,6 +160,7 @@ export default function AddBookingCustomerSection({
             return (
               <TextField
                 {...params}
+                size="small"
                 name="search_customer_input"
                 variant="outlined"
                 placeholder="Search customer..."
@@ -163,7 +169,13 @@ export default function AddBookingCustomerSection({
                   touched.customerId ? (errors.customerId as string) : undefined
                 }
                 sx={{
-                  "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                    "& input": { py: 0 },
+                  },
                 }}
               />
             );
@@ -173,16 +185,23 @@ export default function AddBookingCustomerSection({
         <Card
           elevation={0}
           sx={{
-            p: 3,
-            border: "1px solid #e2e8f0",
-            borderRadius: "12px",
-            bgcolor: "#f8fafc",
+            p: { xs: 1.8, sm: 2.5 },
+            border: "1px solid #EFEAE3",
+            borderRadius: "14px",
+            bgcolor: "#FAF8F5",
+            "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active": {
+              WebkitBoxShadow: "0 0 0 1000px #FFFFFF inset !important",
+              WebkitTextFillColor: "#1e293b !important",
+              caretColor: "#1e293b",
+              transition: "background-color 50000s ease-in-out 0s",
+            },
           }}
         >
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 1.5, sm: 2 }}>
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
+                size="small"
                 label="Full Name *"
                 name="newCustomerName"
                 variant="outlined"
@@ -204,8 +223,15 @@ export default function AddBookingCustomerSection({
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     bgcolor: "white",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -213,6 +239,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <MuiTelInput
                 fullWidth
+                size="small"
                 label="Mobile Number *"
                 name="newCustomerMobile"
                 variant="outlined"
@@ -261,8 +288,15 @@ export default function AddBookingCustomerSection({
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     bgcolor: "white",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -270,8 +304,10 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
+                size="small"
                 label="Email *"
                 name="newCustomerEmail"
+                autoComplete="off"
                 variant="outlined"
                 value={values.newCustomerEmail}
                 onKeyDown={allowOnlyEmailCharsOnKeyDown}
@@ -289,8 +325,15 @@ export default function AddBookingCustomerSection({
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     bgcolor: "white",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -298,9 +341,11 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
+                size="small"
                 label="Password *"
                 name="newCustomerPassword"
                 type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
                 variant="outlined"
                 value={values.newCustomerPassword}
                 onChange={handleChange}
@@ -315,13 +360,16 @@ export default function AddBookingCustomerSection({
                 }
                 slotProps={{
                   input: {
+                    autoComplete: "new-password",
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
+                          size="small"
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
+                          sx={{ color: "#64748B" }}
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -329,8 +377,15 @@ export default function AddBookingCustomerSection({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     bgcolor: "white",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -338,6 +393,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
+                size="small"
                 label="Address *"
                 name="newCustomerAddress"
                 variant="outlined"
@@ -358,8 +414,15 @@ export default function AddBookingCustomerSection({
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     bgcolor: "white",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -367,6 +430,7 @@ export default function AddBookingCustomerSection({
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
+                size="small"
                 label="City *"
                 name="newCustomerCity"
                 variant="outlined"
@@ -381,8 +445,15 @@ export default function AddBookingCustomerSection({
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     bgcolor: "white",
+                    height: { xs: "40px", sm: "42px" },
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: { xs: "13px", sm: "13.5px" },
+                    fontFamily: FONTS.OUTFIT,
                   },
                 }}
               />
@@ -390,7 +461,7 @@ export default function AddBookingCustomerSection({
           </Grid>
           <Box
             sx={{
-              mt: 3,
+              mt: 2,
               display: "flex",
               justifyContent: "flex-end",
             }}
@@ -403,10 +474,15 @@ export default function AddBookingCustomerSection({
                 bgcolor: COLORS.PRIMARY,
                 color: "white",
                 "&:hover": { bgcolor: COLORS.PRIMARY_DARK },
-                borderRadius: "8px",
+                borderRadius: "10px",
                 textTransform: "none",
-                fontWeight: 600,
+                fontWeight: 700,
+                fontSize: "13px",
+                fontFamily: FONTS.OUTFIT,
                 boxShadow: "none",
+                width: { xs: "100%", sm: "auto" },
+                height: { xs: "40px", sm: "38px" },
+                px: 2.5,
               }}
             >
               {isCreatingCustomer ? "Creating..." : "Create Customer"}

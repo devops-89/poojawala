@@ -72,6 +72,8 @@ export default function AdminPageHeader({
             fontFamily: FONTS.OUTFIT,
             fontWeight: 800,
             color: '#1e293b',
+            fontSize: { xs: '22px', sm: '26px', md: '30px' },
+            lineHeight: 1.2,
           }}
         >
           {title}
@@ -82,7 +84,7 @@ export default function AdminPageHeader({
               fontFamily: FONTS.OUTFIT,
               color: '#64748b',
               mt: 0.5,
-              fontSize: '0.95rem',
+              fontSize: { xs: '0.85rem', sm: '0.92rem' },
             }}
           >
             {subtitle}
@@ -90,7 +92,7 @@ export default function AdminPageHeader({
         )}
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: { xs: 1.2, sm: 1.5 }, alignItems: 'center', flexWrap: 'wrap', width: { xs: '100%', sm: 'auto' } }}>
         {onSearchChange !== undefined && (
           <TextField
             size="small"
@@ -100,18 +102,39 @@ export default function AdminPageHeader({
             slotProps={{
               input: {
                 startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" sx={{ color: '#94a3b8' }} />
+                  <InputAdornment position="start" sx={{ mr: 0.8 }}>
+                    <SearchIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
                   </InputAdornment>
                 ),
               },
             }}
             sx={{
-              width: { xs: '100%', sm: 280, md: 320 },
+              width: { xs: '100%', sm: 250, md: 280 },
               '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
+                borderRadius: '10px',
                 bgcolor: 'white',
                 fontFamily: FONTS.OUTFIT,
+                height: { xs: '38px', sm: '40px' },
+                fontSize: { xs: '13px', sm: '13.5px' },
+                px: 1.2,
+                '& fieldset': {
+                  borderColor: '#E2E8F0',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#CBD5E1',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: COLORS.PRIMARY,
+                },
+              },
+              '& .MuiOutlinedInput-input': {
+                py: 0,
+                fontSize: { xs: '13px', sm: '13.5px' },
+                '&::placeholder': {
+                  color: '#94A3B8',
+                  fontSize: { xs: '12.5px', sm: '13px' },
+                  opacity: 1,
+                },
               },
             }}
           />
@@ -127,13 +150,15 @@ export default function AdminPageHeader({
               background: COLORS.PRIMARY,
               color: 'white',
               textTransform: 'none',
-              borderRadius: '12px',
+              borderRadius: '10px',
               fontWeight: 600,
-              py: 1,
-              px: 3,
+              height: { xs: '38px', sm: '40px' },
+              px: { xs: 2, sm: 2.5 },
               boxShadow: 'none',
               fontFamily: FONTS.OUTFIT,
+              fontSize: { xs: '13px', sm: '13.5px' },
               whiteSpace: 'nowrap',
+              width: { xs: '100%', sm: 'auto' },
               '&:hover': { background: COLORS.PRIMARY_DARK, boxShadow: 'none' },
             }}
             startIcon={actionButtonIcon}

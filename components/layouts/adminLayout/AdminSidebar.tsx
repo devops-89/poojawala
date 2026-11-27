@@ -1,8 +1,4 @@
 "use client";
-import { logoutAPI } from "@/api/authControllers";
-import { clearRoleCsrfToken } from "@/api/config";
-import { useSnackbarStore } from "@/stores/snackbarStore";
-import { useUserStore } from "@/stores/userStore";
 import CategoryIcon from "@mui/icons-material/Category";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -13,7 +9,6 @@ import EventNoteIcon from "@mui/icons-material/EventNote";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import GroupsIcon from "@mui/icons-material/Groups";
 import LocalAtmIcon from "@mui/icons-material/LocalAtm";
-import LogoutIcon from "@mui/icons-material/Logout";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
@@ -31,12 +26,10 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Menu,
-  MenuItem,
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -50,34 +43,9 @@ const DRAWER_WIDTH = 288;
 
 const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const pathname = usePathname();
-  const router = useRouter();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {},
   );
-  const { showSnackbar } = useSnackbarStore();
-
-  const handleLogout = async () => {
-    try {
-      await logoutAPI();
-    } catch (error: any) {
-      console.error("Logout notice:", error);
-    } finally {
-      clearRoleCsrfToken();
-      if (typeof window !== "undefined") {
-        sessionStorage.clear();
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
-        localStorage.removeItem("activeRole");
-        localStorage.removeItem("csrfToken");
-      }
-      useUserStore.getState().clearProfile();
-      showSnackbar("Logout successful", "success");
-      setTimeout(() => {
-        window.location.href = "/admin";
-      }, 300);
-    }
-  };
 
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon fontSize="small" />, path: "/admin/dashboard" },
@@ -145,10 +113,6 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       }
     });
   }, [pathname]);
-
-  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorEl(event.currentTarget);
-  const handleProfileClose = () => setAnchorEl(null);
 
   const toggleExpand = (path: string) => {
     setExpandedItems((prev) => ({ ...prev, [path]: !prev[path] }));
@@ -337,110 +301,6 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
           })}
         </List>
       </Box>
-
-      {/* Profile Section */}
-      <Box sx={{ p: 2, borderTop: "1px solid #e2e8f0", bgcolor: "#ffffff" }}>
-        <Box
-          onClick={handleProfileClick}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            px: 1.5,
-            py: 1.25,
-            borderRadius: "12px",
-            cursor: "pointer",
-            transition: "background-color 0.2s ease-in-out",
-            "&:hover": {
-              backgroundColor: "#f8fafc",
-            },
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              backgroundColor: COLORS.PRIMARY,
-              color: "white",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              flexShrink: 0,
-              fontFamily: FONTS.OUTFIT_ONLY,
-              boxShadow: "0 2px 8px rgba(255, 98, 0, 0.25)",
-            }}
-          >
-            SA
-          </Box>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              sx={{
-                fontFamily: FONTS.OUTFIT_ONLY,
-                fontWeight: 700,
-                fontSize: "0.9rem",
-                color: COLORS.SLATE_DARK,
-                lineHeight: 1.2,
-              }}
-              noWrap
-            >
-              Super Admin
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: FONTS.OUTFIT_ONLY,
-                fontSize: "0.75rem",
-                fontWeight: 500,
-                color: COLORS.SLATE_MUTED,
-                mt: 0.25,
-              }}
-            >
-              System Control
-            </Typography>
-          </Box>
-          <ChevronRightIcon fontSize="small" sx={{ color: "#94a3b8" }} />
-        </Box>
-
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleProfileClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          transformOrigin={{ vertical: "bottom", horizontal: "center" }}
-          sx={{
-            "& .MuiPaper-root": {
-              borderRadius: "12px",
-              mt: -1,
-              width: anchorEl ? anchorEl.clientWidth : 240,
-              boxShadow:
-                "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-              border: "1px solid #e2e8f0",
-            },
-          }}
-        >
-          <MenuItem
-            onClick={(e) => {
-              e.preventDefault();
-              handleProfileClose();
-              handleLogout();
-            }}
-            sx={{
-              color: "#dc2626",
-              fontWeight: 500,
-              fontSize: "0.95rem",
-              fontFamily: FONTS.OUTFIT_ONLY,
-              display: "flex",
-              gap: 1.5,
-              py: 1.5,
-            }}
-          >
-            <LogoutIcon fontSize="small" />
-            Logout
-          </MenuItem>
-        </Menu>
-      </Box>
     </Box>
   );
 };
@@ -502,9 +362,11 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           zIndex: 1300,
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
-            width: DRAWER_WIDTH,
+            width: { xs: 290, sm: 300 },
             maxWidth: "85vw",
             backgroundColor: "#ffffff",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+            borderRight: "none",
           },
         }}
       >
@@ -514,7 +376,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            px: 3,
+            px: { xs: 2, sm: 3 },
             borderBottom: "1px solid #e2e8f0",
           }}
         >
@@ -523,7 +385,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             src="/images/1Poojalogo.webp"
             alt="1Pooja"
             sx={{
-              height: { xs: "28px", sm: "36px" },
+              height: { xs: "32px", sm: "36px" },
               maxWidth: "160px",
               objectFit: "contain",
               objectPosition: "left center",
@@ -531,9 +393,16 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           />
           <IconButton
             onClick={onClose}
-            sx={{ color: COLORS.PRIMARY, "&:hover": { backgroundColor: "#FFF0E6" } }}
+            aria-label="Close navigation"
+            sx={{
+              color: "#64748b",
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              "&:hover": { backgroundColor: "#FFF0E6", color: COLORS.PRIMARY },
+            }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{ fontSize: 20 }} />
           </IconButton>
         </Box>
         <SidebarContent onLinkClick={onClose} />

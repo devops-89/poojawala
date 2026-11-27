@@ -153,8 +153,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                 display: { xs: 'block', md: 'none' },
                 '& .MuiDrawer-paper': {
                   boxSizing: 'border-box',
-                  width: drawerWidth,
+                  width: { xs: 290, sm: 320 },
                   borderRight: 'none',
+                  boxShadow: '8px 0 32px rgba(0,0,0,0.15)',
                 },
               }}
             >
@@ -182,8 +183,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           component="main"
           sx={{
             flexGrow: 1,
-            p: { xs: 2, sm: 3, md: 4 },
-            mt: isAstrologer ? { xs: '70px', md: '80px' } : { xs: '72px', md: '88px' },
+            p: { xs: 1.5, sm: 2.5, md: 4 },
+            mt: isAstrologer ? { xs: '66px', md: '80px' } : { xs: '68px', md: '88px' },
             width: isAstrologer ? '100%' : { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
             maxWidth: '100vw',
             overflowX: 'hidden',

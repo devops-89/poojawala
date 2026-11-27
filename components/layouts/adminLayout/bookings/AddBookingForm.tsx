@@ -1,5 +1,6 @@
 'use client';
 import { FONTS } from "@/utils/fonts";
+import { COLORS } from "@/utils/enums";
 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import {
@@ -465,18 +466,19 @@ export default function AddBookingForm() {
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            maxWidth: 900,
-            mx: 'auto',
+            width: '100%',
+            maxWidth: '1280px',
             display: 'flex',
             flexDirection: 'column',
-            gap: 4,
+            gap: { xs: 2, sm: 3 },
+            pb: { xs: 5, sm: 2 },
           }}
         >
           {/* Page Header */}
           <Box>
             <Breadcrumbs
               separator={<NavigateNextIcon fontSize="small" />}
-              sx={{ mb: 2 }}
+              sx={{ mb: { xs: 1, sm: 1.5 } }}
             >
               <NextLink
                 href="/admin/bookings"
@@ -485,17 +487,17 @@ export default function AddBookingForm() {
                   color: '#64748b',
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 600,
-                  fontSize: '14px',
+                  fontSize: '13.5px',
                 }}
               >
                 Bookings
               </NextLink>
               <Typography
                 sx={{
-                  color: '#10b981',
+                  color: COLORS.PRIMARY,
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
-                  fontSize: '14px',
+                  fontSize: '13.5px',
                 }}
               >
                 Add Booking
@@ -507,7 +509,8 @@ export default function AddBookingForm() {
                 fontFamily: FONTS.OUTFIT,
                 fontWeight: 800,
                 color: '#1e293b',
-                fontSize: { xs: '1.8rem', md: '2.2rem' },
+                fontSize: { xs: '1.45rem', sm: '1.8rem', md: '2.1rem' },
+                lineHeight: 1.25,
               }}
             >
               Create New Booking
@@ -517,6 +520,7 @@ export default function AddBookingForm() {
                 fontFamily: FONTS.OUTFIT,
                 color: '#64748b',
                 mt: 0.5,
+                fontSize: { xs: '13px', sm: '14px' },
               }}
             >
               Manually create a booking on behalf of a customer.
@@ -526,13 +530,14 @@ export default function AddBookingForm() {
           <Paper
             elevation={0}
             sx={{
-              p: 4,
-              borderRadius: '16px',
-              border: '1px solid #e2e8f0',
+              p: { xs: 2, sm: 2.5, md: 3.5 },
+              borderRadius: { xs: '14px', sm: '16px' },
+              border: '1px solid #EFEAE3',
+              boxShadow: '0 2px 10px rgba(44, 24, 16, 0.03)',
               bgcolor: 'white',
             }}
           >
-            <Grid container spacing={3}>
+            <Grid container spacing={{ xs: 1.8, sm: 2, md: 2.5 }}>
               {/* Row 1: Select Customer */}
               <AddBookingCustomerSection
                 showAddCustomer={showAddCustomer}
@@ -558,7 +563,8 @@ export default function AddBookingForm() {
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
-                    mb: 1,
+                    fontSize: { xs: '12.5px', sm: '13px' },
+                    mb: 0.5,
                     color: '#1e293b',
                   }}
                 >
@@ -566,8 +572,8 @@ export default function AddBookingForm() {
                 </Typography>
                 <TextField
                   fullWidth
+                  size="small"
                   select
-                  label="Select Booking Mode *"
                   name="bookingMode"
                   variant="outlined"
                   value={values.bookingMode}
@@ -583,8 +589,18 @@ export default function AddBookingForm() {
                   helperText={
                     touched.bookingMode && (errors.bookingMode as string)
                   }
+                  slotProps={{
+                    select: {
+                      displayEmpty: true,
+                    },
+                  }}
                   sx={{
-                    '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                      height: { xs: '40px', sm: '42px' },
+                      fontSize: { xs: '13px', sm: '13.5px' },
+                      fontFamily: FONTS.OUTFIT,
+                    },
                   }}
                 >
                   <MenuItem
@@ -614,7 +630,8 @@ export default function AddBookingForm() {
                   sx={{
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 700,
-                    mb: 1,
+                    fontSize: { xs: '12.5px', sm: '13px' },
+                    mb: 0.5,
                     color: '#1e293b',
                   }}
                 >
@@ -622,8 +639,8 @@ export default function AddBookingForm() {
                 </Typography>
                 <TextField
                   fullWidth
+                  size="small"
                   select
-                  label="Select Service *"
                   name="serviceId"
                   variant="outlined"
                   disabled={!values.bookingMode}
@@ -635,17 +652,19 @@ export default function AddBookingForm() {
                   onBlur={handleBlur}
                   error={touched.serviceId && Boolean(errors.serviceId)}
                   helperText={
-                    touched.serviceId && (errors.serviceId as string)
-                      ? (errors.serviceId as string)
-                      : !values.bookingMode
-                      ? 'Please select Booking Mode first'
-                      : undefined
+                    touched.serviceId ? (errors.serviceId as string) : undefined
                   }
                   sx={{
-                    '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                      height: { xs: '40px', sm: '42px' },
+                      fontSize: { xs: '13px', sm: '13.5px' },
+                      fontFamily: FONTS.OUTFIT,
+                    },
                   }}
                   slotProps={{
                     select: {
+                      displayEmpty: true,
                       MenuProps: {
                         anchorOrigin: {
                           vertical: 'bottom',
@@ -713,14 +732,33 @@ export default function AddBookingForm() {
               />
             </Grid>
 
-            <Divider sx={{ my: 4 }} />
+            <Divider sx={{ my: { xs: 3, sm: 4 }, borderColor: '#EFEAE3' }} />
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                gap: 1.5,
+                width: '100%',
+              }}
+            >
               <Button
                 component={NextLink}
                 href="/admin/bookings"
-                sx={{ color: '#64748b', textTransform: 'none', fontWeight: 600 }}
+                sx={{
+                  color: '#64748b',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontFamily: FONTS.OUTFIT,
+                  borderRadius: '10px',
+                  width: { xs: '38%', sm: 'auto' },
+                  height: { xs: '44px', sm: '40px' },
+                  px: 2.5,
+                  border: '1px solid #E2E8F0',
+                  '&:hover': { bgcolor: '#F8FAFC' },
+                }}
               >
                 Cancel
               </Button>
@@ -729,14 +767,19 @@ export default function AddBookingForm() {
                 disabled={isSubmitting}
                 variant="contained"
                 sx={{
-                  background: '#10b981',
+                  background: COLORS.PRIMARY,
                   color: 'white',
                   textTransform: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 600,
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  fontFamily: FONTS.OUTFIT,
                   boxShadow: 'none',
+                  flex: { xs: 1, sm: 'none' },
+                  height: { xs: '44px', sm: '40px' },
+                  px: 3.5,
                   '&:hover': {
-                    background: '#059669',
+                    background: COLORS.PRIMARY_DARK,
                     boxShadow: 'none',
                   },
                 }}

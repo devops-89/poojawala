@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -52,7 +50,8 @@ export default function WelcomeLocationModal() {
 
   const cityOptions = React.useMemo(() => {
     if (!open || !selectedStateObj) return [];
-    const rawCities = City.getCitiesOfState("IN", selectedStateObj.isoCode) || [];
+    const rawCities =
+      City.getCitiesOfState("IN", selectedStateObj.isoCode) || [];
     const names = rawCities.map((c) => c.name);
     return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
   }, [open, selectedStateObj]);
@@ -61,9 +60,9 @@ export default function WelcomeLocationModal() {
     // Only run on home route '/'
     if (pathname !== "/") return;
 
-    const alreadyShown = sessionStorage.getItem(
-      "1pooja_welcome_modal_shown",
-    ) || sessionStorage.getItem("poojawala_welcome_modal_shown");
+    const alreadyShown =
+      sessionStorage.getItem("1pooja_welcome_modal_shown") ||
+      sessionStorage.getItem("poojawala_welcome_modal_shown");
     if (alreadyShown) return;
 
     // Trigger modal after 15 seconds (15000 ms)
@@ -209,7 +208,11 @@ export default function WelcomeLocationModal() {
         </Box>
 
         {/* Location Form */}
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: { xs: 2, sm: 2.5 } }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ mt: { xs: 2, sm: 2.5 } }}
+        >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* State Input */}
             <Box>
@@ -274,7 +277,10 @@ export default function WelcomeLocationModal() {
                         ...params.InputProps,
                         startAdornment: (
                           <>
-                            <InputAdornment position="start" sx={{ mr: 0.5, ml: 0.5 }}>
+                            <InputAdornment
+                              position="start"
+                              sx={{ mr: 0.5, ml: 0.5 }}
+                            >
                               <LocationOnIcon
                                 sx={{ color: COLORS.PRIMARY, fontSize: 18 }}
                               />
@@ -367,10 +373,15 @@ export default function WelcomeLocationModal() {
                         ...params.InputProps,
                         startAdornment: (
                           <>
-                            <InputAdornment position="start" sx={{ mr: 0.5, ml: 0.5 }}>
+                            <InputAdornment
+                              position="start"
+                              sx={{ mr: 0.5, ml: 0.5 }}
+                            >
                               <LocationOnIcon
                                 sx={{
-                                  color: selectedState ? COLORS.PRIMARY : "#94A3B8",
+                                  color: selectedState
+                                    ? COLORS.PRIMARY
+                                    : "#94A3B8",
                                   fontSize: 18,
                                 }}
                               />
@@ -387,7 +398,9 @@ export default function WelcomeLocationModal() {
                           fontSize: "13.5px",
                           minHeight: "44px",
                           "& fieldset": { borderColor: "#EFE6D5" },
-                          "&:hover fieldset": { borderColor: selectedState ? "#FFD4BC" : "#EFE6D5" },
+                          "&:hover fieldset": {
+                            borderColor: selectedState ? "#FFD4BC" : "#EFE6D5",
+                          },
                           "&.Mui-focused fieldset": {
                             borderColor: COLORS.PRIMARY,
                             boxShadow: "0 0 0 3px rgba(255, 98, 0, 0.1)",

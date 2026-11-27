@@ -1,12 +1,31 @@
 "use client";
 
+import { logoutAPI } from "@/api/authControllers";
+import { clearRoleCsrfToken } from "@/api/config";
 import { SERVER_ENDPOINTS } from "@/api/serverConstant";
+import { useSnackbarStore } from "@/stores/snackbarStore";
 import { useSocketStore } from "@/stores/socketStore";
 import { useUserStore } from "@/stores/userStore";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Badge, Box, IconButton, ListItemText, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Chip,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
+import NextLink from "next/link";
 import { io } from "socket.io-client";
 import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
@@ -29,6 +48,8 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const { showSnackbar } = useSnackbarStore();
 
   useEffect(() => {
     fetchProfile().then((res) => {
@@ -214,6 +235,49 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutAPI();
+    } catch (error: any) {
+      console.error("Logout notice:", error);
+    } finally {
+      clearRoleCsrfToken();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("activeRole");
+        localStorage.removeItem("csrfToken");
+      }
+      useUserStore.getState().clearProfile();
+      showSnackbar("Logout successful", "success");
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 300);
+    }
+  };
+
+  const displayName =
+    currentUser?.name ||
+    (profile?.firstName ? `${profile.firstName} ${profile.lastName || ""}`.trim() : null) ||
+    profile?.name ||
+    (currentUser?.email ? currentUser.email.split("@")[0] : "Super Admin");
+
+  const email = currentUser?.email || profile?.email || "admin@poojawala.com";
+  const rawRole = String(currentUser?.role || profile?.role || "ADMIN").toUpperCase();
+  const roleLabel =
+    rawRole === "SUPER_ADMIN" || rawRole === "SUPERADMIN"
+      ? "Super Admin"
+      : "Administrator";
+
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .filter(Boolean)
+    .join("")
+    .substring(0, 2)
+    .toUpperCase() || "SA";
+
   return (
     <Box
       component="header"
@@ -227,7 +291,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
         justifyContent: "space-between",
         bgcolor: "#FFFFFF",
         borderBottom: "1px solid #e2e8f0",
-        px: { xs: 2, sm: 4 },
+        px: { xs: 2, sm: 2.5, md: 3, lg: 4 },
         gap: 1.5,
       }}
     >
@@ -235,31 +299,57 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 1.5,
+          gap: { xs: 1, sm: 1.5 },
           flex: 1,
           minWidth: 0,
         }}
       >
         <IconButton
           onClick={onMenuClick}
+          aria-label="Open menu"
+          edge="start"
           sx={{
             display: { lg: "none" },
             color: "#475569",
             borderRadius: "8px",
             p: 1,
+            ml: { xs: -1, sm: -1 },
             "&:hover": { bgcolor: "#f1f5f9", color: "#0f172a" },
           }}
         >
           <MenuIcon />
         </IconButton>
+
+        {/* Mobile / Tablet Logo (hidden on desktop where sidebar already has the logo) */}
+        <Box
+          component={NextLink}
+          href="/admin/dashboard"
+          sx={{
+            display: { xs: "flex", lg: "none" },
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/1Poojalogo.webp"
+            alt="1Pooja"
+            sx={{
+              height: { xs: "28px", sm: "32px" },
+              maxWidth: "130px",
+              objectFit: "contain",
+              cursor: "pointer",
+            }}
+          />
+        </Box>
       </Box>
 
-      {/* Right Action Icons: Notification Icon */}
+      {/* Right Action Icons: Notification Icon & Profile Avatar */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 1.5,
+          gap: { xs: 1, sm: 1.5 },
           position: "relative",
         }}
       >
@@ -270,7 +360,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               color: COLORS.SLATE_MUTED,
               bgcolor: "#f8fafc",
               border: "1px solid #e2e8f0",
-              p: 1.2,
+              p: { xs: 0.9, sm: 1.2 },
               borderRadius: "10px",
               "&:hover": {
                 bgcolor: "#fff7ed",
@@ -293,21 +383,60 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                 },
               }}
             >
-              <NotificationsIcon sx={{ fontSize: 22 }} />
+              <NotificationsIcon sx={{ fontSize: { xs: 20, sm: 22 } }} />
             </Badge>
           </IconButton>
         </Tooltip>
 
+        {/* User Profile Avatar Circle */}
+        <Tooltip title="Admin Account">
+          <IconButton
+            onClick={(e) => setUserMenuAnchorEl(e.currentTarget)}
+            sx={{
+              p: 0.5,
+              border: "2px solid #FFF0E6",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                border: `2px solid ${COLORS.PRIMARY}`,
+                transform: "scale(1.05)",
+              },
+            }}
+          >
+            <Avatar
+              src={
+                currentUser?.profileImage ||
+                currentUser?.avatar ||
+                profile?.profileImage ||
+                profile?.avatar ||
+                undefined
+              }
+              sx={{
+                width: { xs: 34, sm: 38 },
+                height: { xs: 34, sm: 38 },
+                bgcolor: COLORS.PRIMARY,
+                color: "white",
+                fontWeight: 700,
+                fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                fontFamily: FONTS.OUTFIT_ONLY,
+                cursor: "pointer",
+              }}
+            >
+              {initials}
+            </Avatar>
+          </IconButton>
+        </Tooltip>
 
         {/* Notifications Dropdown Menu */}
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleCloseNotif}
+          marginThreshold={12}
           slotProps={{
             paper: {
               sx: {
-                width: 340,
+                width: { xs: "calc(100vw - 32px)", sm: 340 },
+                maxWidth: { xs: "calc(100vw - 32px)", sm: 360 },
                 maxHeight: 420,
                 mt: 1.5,
                 borderRadius: "16px",
@@ -405,6 +534,91 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               </MenuItem>
             ))
           )}
+        </Menu>
+
+        {/* User Profile Dropdown Menu */}
+        <Menu
+          anchorEl={userMenuAnchorEl}
+          open={Boolean(userMenuAnchorEl)}
+          onClose={() => setUserMenuAnchorEl(null)}
+          marginThreshold={12}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          slotProps={{
+            paper: {
+              sx: {
+                width: { xs: "calc(100vw - 32px)", sm: 260 },
+                maxWidth: { xs: "calc(100vw - 32px)", sm: 270 },
+                borderRadius: { xs: "14px", sm: "16px" },
+                border: "1px solid #EFE6D5",
+                boxShadow: "0 16px 40px rgba(44, 24, 16, 0.12)",
+                p: 0.5,
+                mt: 1.2,
+              },
+            },
+          }}
+        >
+          <Box sx={{ px: 2, py: 1.5 }}>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT_ONLY,
+                fontWeight: 700,
+                fontSize: "0.95rem",
+                color: "#1e293b",
+              }}
+              noWrap
+            >
+              {displayName}
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT_ONLY,
+                color: "#64748b",
+                fontSize: "0.8rem",
+                wordBreak: "break-all",
+                mt: 0.25,
+              }}
+              noWrap
+            >
+              {email}
+            </Typography>
+            <Chip
+              label={roleLabel}
+              size="small"
+              sx={{
+                mt: 1,
+                bgcolor: "#FFF0E6",
+                color: COLORS.PRIMARY,
+                fontWeight: 600,
+                fontSize: "11px",
+                height: "22px",
+                border: "1px solid #FFE0D0",
+              }}
+            />
+          </Box>
+          <Divider sx={{ my: 0.5 }} />
+
+          <MenuItem
+            onClick={() => {
+              setUserMenuAnchorEl(null);
+              handleLogout();
+            }}
+            sx={{
+              borderRadius: "8px",
+              py: 1.2,
+              fontFamily: FONTS.OUTFIT_ONLY,
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "#dc2626",
+              display: "flex",
+              alignItems: "center",
+              gap: 1.2,
+              "&:hover": { bgcolor: "#fef2f2" },
+            }}
+          >
+            <LogoutIcon sx={{ fontSize: 18, color: "#dc2626" }} />
+            Logout
+          </MenuItem>
         </Menu>
       </Box>
     </Box>

@@ -17,6 +17,7 @@ import {
   TablePagination,
   CircularProgress,
   Typography,
+  Skeleton,
   Box,
 } from '@mui/material';
 
@@ -41,6 +42,7 @@ export default function AdminDataTable<T = any>({
   keyExtractor,
   onRowClick,
   getRowHref,
+  renderMobileCard,
 }: AdminDataTableProps<T>) {
   const router = useRouter();
   const effectiveCount = totalCount !== undefined ? totalCount : data.length;
@@ -100,8 +102,45 @@ export default function AdminDataTable<T = any>({
       {/* Optional Extra Header (e.g. secondary filter tabs) */}
       {extraHeader}
 
-      {/* Table Container */}
-      <TableContainer>
+      {/* 1. Mobile Cards View (Rendered when renderMobileCard prop is provided) */}
+      {renderMobileCard && (
+        <Box sx={{ display: { xs: 'block', md: 'none' }, p: { xs: 1.5, sm: 2 } }}>
+          {isLoading ? (
+            Array.from(new Array(3)).map((_, i) => (
+              <Box 
+                key={i} 
+                sx={{ 
+                  p: 2, 
+                  mb: 1.5, 
+                  borderRadius: '16px', 
+                  bgcolor: '#FAF8F5', 
+                  border: '1px solid #EFEAE3' 
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                  <Skeleton width="30%" height={24} />
+                  <Skeleton width="25%" height={24} />
+                </Box>
+                <Skeleton width="70%" height={26} sx={{ mb: 1 }} />
+                <Skeleton width="90%" height={40} sx={{ borderRadius: '8px' }} />
+              </Box>
+            ))
+          ) : data.length === 0 ? (
+            <Box sx={{ py: 6, textAlign: 'center' }}>
+              <Typography sx={{ color: '#64748b', fontFamily: FONTS.OUTFIT, fontSize: '14px' }}>
+                {emptyMessage}
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              {data.map((item, index) => renderMobileCard(item, index))}
+            </Box>
+          )}
+        </Box>
+      )}
+
+      {/* 2. Desktop/Tablet Table View */}
+      <TableContainer sx={{ display: renderMobileCard ? { xs: 'none', md: 'block' } : 'block' }}>
         <Table sx={{ minWidth, width: '100%', tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow sx={{ bgcolor: '#f8fafc' }}>
@@ -241,8 +280,19 @@ export default function AdminDataTable<T = any>({
           }}
           sx={{
             borderTop: '1px solid #e2e8f0',
+            '& .MuiTablePagination-toolbar': {
+              px: { xs: 1, sm: 2 },
+              flexWrap: 'wrap',
+              justifyContent: { xs: 'center', sm: 'flex-end' },
+              gap: { xs: 0.5, sm: 1 },
+              py: { xs: 1, sm: 0 },
+            },
             '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
               fontFamily: FONTS.OUTFIT,
+              fontSize: { xs: '12px', sm: '13px' },
+            },
+            '& .MuiTablePagination-actions': {
+              ml: { xs: 0.5, sm: 2 },
             },
           }}
         />

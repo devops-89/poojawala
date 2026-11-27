@@ -191,49 +191,111 @@ export default function AddBookingServiceSection({
       <Card
         elevation={0}
         sx={{
-          border: '1px solid #e2e8f0',
-          borderRadius: '12px',
+          border: '1px solid #EFEAE3',
+          borderRadius: '14px',
+          bgcolor: '#FAF8F5',
+          p: { xs: 1.5, sm: 2 },
           display: 'flex',
-          alignItems: 'center',
-          p: 2,
-          gap: 2,
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          gap: { xs: 1.5, sm: 2 },
           mb: 3,
         }}
       >
-        {imageSrc ? (
-          <Box
-            component="img"
-            src={imageSrc}
-            onError={(e: any) => {
-              e.target.onerror = null;
-              e.target.src =
-                'https://via.placeholder.com/80?text=No+Image';
-            }}
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '8px',
-              objectFit: 'cover',
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '8px',
-              bgcolor: '#f1f5f9',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Typography sx={{ color: '#94a3b8', fontSize: '12px' }}>
-              No Image
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: { xs: '100%', sm: 'auto' } }}>
+          {imageSrc ? (
+            <Box
+              component="img"
+              src={imageSrc}
+              onError={(e: any) => {
+                e.target.onerror = null;
+                e.target.src =
+                  'https://via.placeholder.com/80?text=No+Image';
+              }}
+              sx={{
+                width: { xs: 64, sm: 80 },
+                height: { xs: 64, sm: 80 },
+                borderRadius: '10px',
+                objectFit: 'cover',
+                flexShrink: 0,
+              }}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: { xs: 64, sm: 80 },
+                height: { xs: 64, sm: 80 },
+                borderRadius: '10px',
+                bgcolor: '#f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Typography sx={{ color: '#94a3b8', fontSize: '11px' }}>
+                No Image
+              </Typography>
+            </Box>
+          )}
+
+          {/* On Mobile only: Title, Badges, Price beside image */}
+          <Box sx={{ display: { xs: 'block', sm: 'none' }, flex: 1, minWidth: 0 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
+              <Typography
+                sx={{
+                  fontFamily: FONTS.OUTFIT,
+                  fontWeight: 700,
+                  color: '#1e293b',
+                  fontSize: '14.5px',
+                  lineHeight: 1.25,
+                }}
+              >
+                {selectedService.name}
+              </Typography>
+              {isOnlineMode && (
+                <Chip
+                  label="Online"
+                  size="small"
+                  icon={<VideocamIcon sx={{ fontSize: '12px !important' }} />}
+                  sx={{
+                    fontFamily: FONTS.OUTFIT,
+                    bgcolor: '#EFF6FF',
+                    color: '#1D4ED8',
+                    fontWeight: 700,
+                    fontSize: '10px',
+                    border: '1px solid #BFDBFE',
+                    borderRadius: '5px',
+                    height: 20,
+                  }}
+                />
+              )}
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                fontWeight: 800,
+                color: COLORS.PRIMARY,
+                fontSize: '16px',
+                mt: 0.3,
+              }}
+            >
+              ₹{Number(displayPrice).toLocaleString('en-IN')}
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: FONTS.OUTFIT,
+                color: '#64748b',
+                fontSize: '11px',
+              }}
+            >
+              ⏱ {selectedService.durationMinutes || currentPlanObj?.durationMinutes || 60} mins
             </Typography>
           </Box>
-        )}
-        <Box sx={{ flex: 1 }}>
+        </Box>
+
+        {/* On Desktop: Full Middle column */}
+        <Box sx={{ flex: 1, display: { xs: 'none', sm: 'block' } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
             <Typography
               sx={{
@@ -277,12 +339,32 @@ export default function AddBookingServiceSection({
             {selectedService.description || 'No description available.'}
           </Typography>
         </Box>
-        <Box sx={{ textAlign: 'right' }}>
+
+        {/* On Mobile: Description below image row */}
+        {selectedService.description && (
+          <Typography
+            sx={{
+              display: { xs: '-webkit-box', sm: 'none' },
+              fontFamily: FONTS.OUTFIT,
+              color: '#64748b',
+              fontSize: '12px',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              lineHeight: 1.4,
+            }}
+          >
+            {selectedService.description}
+          </Typography>
+        )}
+
+        {/* On Desktop: Right price box */}
+        <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
           <Typography
             sx={{
               fontFamily: FONTS.OUTFIT,
               fontWeight: 800,
-              color: '#10b981',
+              color: COLORS.PRIMARY,
               fontSize: '1.3rem',
             }}
           >
@@ -380,7 +462,7 @@ export default function AddBookingServiceSection({
                     fontFamily: FONTS.OUTFIT,
                     fontWeight: 800,
                     fontSize: '1.4rem',
-                    color: '#10b981',
+                    color: COLORS.PRIMARY,
                     lineHeight: 1.2,
                   }}
                 >
@@ -491,11 +573,11 @@ export default function AddBookingServiceSection({
                   onClick={() => setFieldValue('plan', planKey.toLowerCase())}
                   elevation={0}
                   sx={{
-                    p: 2.5,
-                    borderRadius: '12px',
+                    p: { xs: 2, sm: 2.5 },
+                    borderRadius: '14px',
                     border: isSelected
                       ? '2px solid #FF6200'
-                      : '1px solid #e2e8f0',
+                      : '1px solid #EFEAE3',
                     bgcolor: isSelected ? '#FFF8F5' : '#FFFFFF',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
@@ -503,6 +585,9 @@ export default function AddBookingServiceSection({
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    boxShadow: isSelected
+                      ? '0 4px 14px rgba(255, 98, 0, 0.08)'
+                      : '0 2px 8px rgba(44, 24, 16, 0.02)',
                     '&:hover': { borderColor: COLORS.PRIMARY },
                   }}
                 >
@@ -531,14 +616,14 @@ export default function AddBookingServiceSection({
                           fontFamily: FONTS.OUTFIT,
                           fontWeight: 800,
                           fontSize: '1.25rem',
-                          color: '#10b981',
+                          color: isSelected ? COLORS.PRIMARY : '#0F172A',
                         }}
                       >
                         ₹{Number(price).toLocaleString('en-IN')}
                       </Typography>
                     </Box>
 
-                    <Divider sx={{ mb: 2, opacity: 0.6 }} />
+                    <Divider sx={{ mb: 2, borderColor: isSelected ? '#FED7AA' : '#EFEAE3' }} />
 
                     {/* Features List */}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
@@ -552,7 +637,7 @@ export default function AddBookingServiceSection({
                           }}
                         >
                           <CheckIcon
-                            sx={{ color: '#10b981', fontSize: 18 }}
+                            sx={{ color: isSelected ? COLORS.PRIMARY : '#059669', fontSize: 17 }}
                           />
                           <Typography
                             sx={{
@@ -579,6 +664,7 @@ export default function AddBookingServiceSection({
                         fontSize: '12px',
                         fontWeight: 700,
                         color: isSelected ? COLORS.PRIMARY : '#94a3b8',
+                        fontFamily: FONTS.OUTFIT,
                       }}
                     >
                       {isSelected ? '✓ SELECTED' : 'SELECT THIS PLAN'}

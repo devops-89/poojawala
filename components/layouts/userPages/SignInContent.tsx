@@ -117,59 +117,32 @@ export default function SignInContent() {
           alignItems: "center",
           justifyContent: "center",
           position: "relative",
-          py: { xs: 2.5, sm: 3.5, md: 6 },
+          py: { xs: 3, sm: 4, md: 6 },
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
-        {/* Top Header: Mobile has Back Icon Left + Centered Logo; Desktop has Logo Left + Back Button Right */}
+        {/* Desktop Top Header: Logo Left + Back Button Right */}
         <Box
           sx={{
-            position: { xs: "relative", md: "absolute" },
-            top: { xs: 0, md: 28 },
+            display: { xs: "none", md: "flex" },
+            position: "absolute",
+            top: 28,
             left: 0,
             right: 0,
-            px: { xs: 2, sm: 4, md: 6 },
-            display: "flex",
+            px: { md: 6 },
             alignItems: "center",
-            justifyContent: { xs: "center", md: "space-between" },
+            justifyContent: "space-between",
             width: "100%",
-            mb: { xs: 2, sm: 2.5, md: 0 },
             zIndex: 10,
           }}
         >
-          {/* Mobile Back Icon Button */}
-          <IconButton
-            aria-label="Go back"
-            onClick={handleBack}
-            sx={{
-              display: { xs: "inline-flex", md: "none" },
-              position: "absolute",
-              left: { xs: 16, sm: 32 },
-              width: 38,
-              height: 38,
-              bgcolor: "#FFFFFF",
-              color: "#1F1A17",
-              border: "1.5px solid rgba(255, 98, 0, 0.28)",
-              boxShadow: "0 4px 14px rgba(255, 98, 0, 0.16)",
-              "&:hover": {
-                bgcolor: "#FFFFFF",
-                borderColor: COLORS.PRIMARY,
-                color: COLORS.PRIMARY,
-              },
-            }}
-          >
-            <ArrowBackIcon sx={{ fontSize: 19 }} />
-          </IconButton>
-
-          {/* Logo: Centered on Mobile; Left-aligned on Desktop */}
+          {/* Logo: Left-aligned on Desktop */}
           <Box
             component={Link}
             href="/"
             sx={{
               display: "inline-flex",
               alignItems: "center",
-              justifyContent: "center",
-              order: 1,
               transition: "transform 0.2s ease",
               "&:hover": { transform: "scale(1.04)" },
             }}
@@ -179,7 +152,7 @@ export default function SignInContent() {
               src="/images/1Poojalogo.webp"
               alt="1Pooja Logo"
               sx={{
-                height: { xs: "52px", sm: "58px", md: "52px" },
+                height: "52px",
                 width: "auto",
                 objectFit: "contain",
                 filter: "drop-shadow(0 3px 12px rgba(0, 0, 0, 0.08))",
@@ -208,8 +181,6 @@ export default function SignInContent() {
               </Box>
             }
             sx={{
-              display: { xs: "none", md: "inline-flex" },
-              order: 2,
               color: "#1F1A17",
               bgcolor: "#FFFFFF",
               border: "1.5px solid rgba(255, 98, 0, 0.28)",
@@ -250,20 +221,59 @@ export default function SignInContent() {
           </Button>
         </Box>
 
-        {/* Master Card Container */}
+        {/* Master Card Container: Contains mobile header & the card, perfectly aligned */}
         <Container
           maxWidth="lg"
           sx={{
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center",
             position: "relative",
             zIndex: 1,
-            px: { xs: 1.5, sm: 3 },
+            px: { xs: 0, sm: 2 },
           }}
         >
+          {/* Mobile Top Header: Logo centered, strictly aligned with Card */}
           <Box
             sx={{
-              maxWidth: { xs: "100%", sm: "480px", md: "1050px" },
+              display: { xs: "flex", md: "none" },
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              maxWidth: { xs: "100%", sm: "460px" },
+              mb: { xs: 2, sm: 2.5 },
+            }}
+          >
+            {/* Logo: Centered directly above card */}
+            <Box
+              component={Link}
+              href="/"
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "transform 0.2s ease",
+                "&:hover": { transform: "scale(1.04)" },
+              }}
+            >
+              <Box
+                component="img"
+                src="/images/1Poojalogo.webp"
+                alt="1Pooja Logo"
+                sx={{
+                  height: { xs: "48px", sm: "54px" },
+                  width: "auto",
+                  objectFit: "contain",
+                  filter: "drop-shadow(0 3px 12px rgba(0, 0, 0, 0.08))",
+                }}
+              />
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              maxWidth: { xs: "100%", sm: "460px", md: "1050px" },
               width: "100%",
               borderRadius: { xs: "24px", sm: "32px" },
               overflow: "hidden",
@@ -284,7 +294,7 @@ export default function SignInContent() {
             <Box
               sx={{
                 flex: { md: 1 },
-                p: { xs: "32px 22px", sm: "40px 32px", md: "48px 44px" },
+                p: { xs: "22px 18px", sm: "30px 24px", md: "48px 44px" },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -299,10 +309,10 @@ export default function SignInContent() {
                 sx={{
                   fontFamily: FONTS.OUTFIT,
                   fontWeight: 700,
-                  fontSize: { xs: "26px", sm: "30px", md: "36px" },
+                  fontSize: { xs: "23px", sm: "28px", md: "36px" },
                   color: "#1F1A17",
                   letterSpacing: "-0.5px",
-                  mb: 1,
+                  mb: 0.5,
                 }}
               >
                 Welcome Back
@@ -310,9 +320,9 @@ export default function SignInContent() {
               <Typography
                 sx={{
                   fontFamily: FONTS.OUTFIT_ONLY,
-                  fontSize: "14.5px",
+                  fontSize: { xs: "13.5px", sm: "14.5px" },
                   color: "#6B7280",
-                  mb: 3.5,
+                  mb: { xs: 2, md: 3.5 },
                 }}
               >
                 Sign in to continue to your account.
@@ -488,14 +498,14 @@ export default function SignInContent() {
                     <FormikValidationSnackbar />
 
                     {/* Email Field */}
-                    <Box sx={{ mb: 2 }}>
+                    <Box sx={{ mb: { xs: 1.5, md: 2 } }}>
                       <Typography
                         sx={{
                           fontFamily: FONTS.OUTFIT_ONLY,
-                          fontSize: "13.5px",
+                          fontSize: { xs: "12.5px", sm: "13.5px" },
                           fontWeight: 600,
                           color: "#374151",
-                          mb: 0.7,
+                          mb: 0.5,
                         }}
                       >
                         Email address
@@ -598,10 +608,10 @@ export default function SignInContent() {
                       <Typography
                         sx={{
                           fontFamily: FONTS.OUTFIT_ONLY,
-                          fontSize: "13.5px",
+                          fontSize: { xs: "12.5px", sm: "13.5px" },
                           fontWeight: 600,
                           color: "#374151",
-                          mb: 0.7,
+                          mb: 0.5,
                         }}
                       >
                         Password
@@ -717,8 +727,8 @@ export default function SignInContent() {
                         display: "flex",
                         justifyContent: "flex-end",
                         alignItems: "center",
-                        mt: 1,
-                        mb: 3,
+                        mt: 0.75,
+                        mb: { xs: 2, md: 3 },
                       }}
                     >
                       <MuiLink
@@ -727,7 +737,7 @@ export default function SignInContent() {
                         underline="hover"
                         sx={{
                           fontFamily: FONTS.OUTFIT_ONLY,
-                          fontSize: "13.5px",
+                          fontSize: { xs: "12.5px", sm: "13.5px" },
                           color: COLORS.PRIMARY,
                           fontWeight: 600,
                           transition: "color 0.2s ease",
@@ -757,12 +767,12 @@ export default function SignInContent() {
                         background:
                           "linear-gradient(135deg, #FF6200 0%, #FF8533 100%)",
                         color: "white",
-                        py: 1.5,
+                        py: { xs: 1.25, md: 1.5 },
                         borderRadius: "14px",
                         textTransform: "none",
                         fontFamily: FONTS.OUTFIT_ONLY,
                         fontWeight: 700,
-                        fontSize: "16px",
+                        fontSize: { xs: "15px", md: "16px" },
                         letterSpacing: "0.2px",
                         boxShadow: "0 10px 24px -4px rgba(255, 98, 0, 0.4)",
                         transition: "all 0.25s ease",
@@ -790,8 +800,8 @@ export default function SignInContent() {
               {/* Sign Up Link */}
               <Box
                 sx={{
-                  mt: 2,
-                  pt: 0.5,
+                  mt: { xs: 1.5, md: 2 },
+                  pt: 0,
                   textAlign: "center",
                 }}
               >
@@ -799,7 +809,7 @@ export default function SignInContent() {
                   sx={{
                     fontFamily: FONTS.OUTFIT_ONLY,
                     color: "#6B7280",
-                    fontSize: "14px",
+                    fontSize: { xs: "13px", sm: "14px" },
                   }}
                 >
                   Don&apos;t have an account?{" "}
@@ -986,6 +996,72 @@ export default function SignInContent() {
             </Box>
           </Box>
         </Container>
+
+        {/* Mobile Back Button: Centered Cleanly Below the Card */}
+        <Box
+          sx={{
+            display: { xs: "flex", md: "none" },
+            justifyContent: "center",
+            width: "100%",
+            mt: 2.5,
+            mb: 1.5,
+            position: "relative",
+            zIndex: 2,
+          }}
+        >
+          <Button
+            onClick={handleBack}
+            startIcon={
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 26,
+                  height: 26,
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 98, 0, 0.12)",
+                  color: COLORS.PRIMARY,
+                  transition: "all 0.25s ease",
+                }}
+              >
+                <ArrowBackIcon sx={{ fontSize: 15 }} />
+              </Box>
+            }
+            sx={{
+              color: "#1F1A17",
+              bgcolor: "#FFFFFF",
+              border: "1.5px solid rgba(255, 98, 0, 0.28)",
+              borderRadius: "32px",
+              pl: 1.2,
+              pr: 2.4,
+              py: 0.8,
+              fontFamily: FONTS.OUTFIT_ONLY,
+              fontWeight: 600,
+              fontSize: "13.5px",
+              letterSpacing: "0.1px",
+              textTransform: "none",
+              boxShadow:
+                "0 6px 20px -3px rgba(255, 98, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.05)",
+              transition: "all 0.25s ease",
+              "& .MuiButton-startIcon": {
+                mr: 1,
+              },
+              "&:hover": {
+                bgcolor: "#FFFFFF",
+                borderColor: COLORS.PRIMARY,
+                color: COLORS.PRIMARY,
+                transform: "translateY(-1.5px)",
+                boxShadow: "0 8px 24px -3px rgba(255, 98, 0, 0.28)",
+              },
+              "&:active": {
+                transform: "translateY(0)",
+              },
+            }}
+          >
+            Back to Website
+          </Button>
+        </Box>
       </Box>
     </>
   );

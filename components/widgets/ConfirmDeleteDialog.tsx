@@ -50,7 +50,9 @@ export default function ConfirmDeleteDialog({
 
   const activeTitle = open ? title : lastPropsRef.current.title;
   const activeItemName = open ? itemName : lastPropsRef.current.itemName;
-  const activeCustomMessage = open ? customMessage : lastPropsRef.current.customMessage;
+  const activeCustomMessage = open
+    ? customMessage
+    : lastPropsRef.current.customMessage;
 
   return (
     <Dialog
@@ -87,7 +89,9 @@ export default function ConfirmDeleteDialog({
             activeCustomMessage
           ) : activeItemName ? (
             <>
-              Are you sure you want to delete <strong>&quot;{activeItemName}&quot;</strong>? This action cannot be undone.
+              Are you sure you want to delete{" "}
+              <strong>&quot;{activeItemName}&quot;</strong>? This action cannot
+              be undone.
             </>
           ) : (
             "Are you sure you want to delete this item? This action cannot be undone."
@@ -112,7 +116,9 @@ export default function ConfirmDeleteDialog({
           disabled={loading}
           variant="contained"
           color="error"
-          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
+          startIcon={
+            loading ? <CircularProgress size={16} color="inherit" /> : null
+          }
           sx={{
             textTransform: "none",
             borderRadius: "8px",

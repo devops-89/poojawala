@@ -174,6 +174,14 @@ export default function AdminLoginForm() {
     }
   };
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -184,19 +192,57 @@ export default function AdminLoginForm() {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         p: { xs: 2, sm: 3 },
         position: 'relative',
       }}
     >
+      {/* Top Header: Centered 1Pooja Logo */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          maxWidth: 440,
+          mb: 2.5,
+          zIndex: 2,
+        }}
+      >
+        <Box
+          component={NextLink}
+          href="/"
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.2s ease',
+            '&:hover': { transform: 'scale(1.04)' },
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/1Poojalogo.webp"
+            alt="1Pooja Logo"
+            sx={{
+              height: { xs: '46px', sm: '52px' },
+              width: 'auto',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 3px 12px rgba(0, 0, 0, 0.08))',
+            }}
+          />
+        </Box>
+      </Box>
+
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 3.5, sm: 4.5, md: 5 },
-          maxWidth: 450,
+          p: { xs: 3, sm: 4, md: 4.5 },
+          maxWidth: 440,
           width: '100%',
-          borderRadius: '24px',
+          borderRadius: '20px',
           bgcolor: '#FFFFFF',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)',
           position: 'relative',
@@ -204,21 +250,21 @@ export default function AdminLoginForm() {
         }}
       >
         {/* Header Icon & Title */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
           <Box
             sx={{
-              width: 54,
-              height: 54,
-              borderRadius: '16px',
+              width: 50,
+              height: 50,
+              borderRadius: '14px',
               bgcolor: '#FFF0E6',
               border: '1px solid #FFE0D0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              mb: 2,
+              mb: 1.5,
             }}
           >
-            <AdminPanelSettingsIcon sx={{ fontSize: 28, color: '#EA580C' }} />
+            <AdminPanelSettingsIcon sx={{ fontSize: 26, color: '#EA580C' }} />
           </Box>
           <Typography
             variant="h4"
@@ -226,24 +272,12 @@ export default function AdminLoginForm() {
               fontFamily: FONTS.OUTFIT_ONLY,
               fontWeight: 800,
               color: '#0f172a',
-              fontSize: { xs: '24px', sm: '26px' },
+              fontSize: { xs: '22px', sm: '24px' },
               letterSpacing: '-0.02em',
-              mb: 0.6,
               textAlign: 'center',
             }}
           >
             Admin Control
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: FONTS.OUTFIT_ONLY,
-              color: '#64748b',
-              fontSize: '13.5px',
-              fontWeight: 400,
-              textAlign: 'center',
-            }}
-          >
-            Sign in to manage the 1Pooja platform.
           </Typography>
         </Box>
 
@@ -260,7 +294,7 @@ export default function AdminLoginForm() {
           }}
         >
           {/* Email Address */}
-          <Box sx={{ mb: 2.2 }}>
+          <Box sx={{ mb: 2 }}>
             <Typography
               component="label"
               htmlFor="email"
@@ -270,7 +304,7 @@ export default function AdminLoginForm() {
                 fontSize: '13px',
                 fontWeight: 600,
                 color: '#475569',
-                mb: 0.8,
+                mb: 0.6,
               }}
             >
               Email Address
@@ -322,9 +356,20 @@ export default function AdminLoginForm() {
                   '&.Mui-error fieldset': {
                     borderColor: '#EF4444',
                   },
+                  '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active':
+                  {
+                    WebkitBoxShadow: '0 0 0 1000px #FAF5F0 inset !important',
+                    WebkitTextFillColor: '#1e293b !important',
+                    caretColor: '#1e293b',
+                    borderRadius: '0px !important',
+                    transition: 'background-color 50000s ease-in-out 0s',
+                  },
+                  '&.Mui-focused input:-webkit-autofill': {
+                    WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset !important',
+                  },
                 },
                 '& .MuiOutlinedInput-input': {
-                  py: 1.4,
+                  py: 1.3,
                   '&::placeholder': {
                     color: '#94a3b8',
                     opacity: 0.8,
@@ -345,7 +390,7 @@ export default function AdminLoginForm() {
                 fontSize: '13px',
                 fontWeight: 600,
                 color: '#475569',
-                mb: 0.8,
+                mb: 0.6,
               }}
             >
               Password
@@ -405,9 +450,20 @@ export default function AdminLoginForm() {
                   '&.Mui-error fieldset': {
                     borderColor: '#EF4444',
                   },
+                  '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active':
+                  {
+                    WebkitBoxShadow: '0 0 0 1000px #FAF5F0 inset !important',
+                    WebkitTextFillColor: '#1e293b !important',
+                    caretColor: '#1e293b',
+                    borderRadius: '0px !important',
+                    transition: 'background-color 50000s ease-in-out 0s',
+                  },
+                  '&.Mui-focused input:-webkit-autofill': {
+                    WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset !important',
+                  },
                 },
                 '& .MuiOutlinedInput-input': {
-                  py: 1.4,
+                  py: 1.3,
                   '&::placeholder': {
                     color: '#94a3b8',
                     opacity: 0.8,
@@ -418,7 +474,7 @@ export default function AdminLoginForm() {
           </Box>
 
           {/* Forgot Password Link */}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
             <Typography
               component={NextLink}
               href="/forgot-password?redirect=/admin"
@@ -441,21 +497,21 @@ export default function AdminLoginForm() {
             type="submit"
             fullWidth
             disabled={isLoading}
-            endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
+            endIcon={<ArrowForwardIcon sx={{ fontSize: 17 }} />}
             sx={{
+              height: 44,
               background: 'linear-gradient(90deg, #F97316 0%, #EA580C 100%)',
               color: '#fff',
-              py: 1.35,
-              borderRadius: '24px',
+              borderRadius: '12px',
               fontFamily: FONTS.OUTFIT_ONLY,
-              fontWeight: 700,
-              fontSize: '15px',
+              fontWeight: 600,
+              fontSize: '14px',
               textTransform: 'none',
-              boxShadow: '0 6px 18px rgba(234, 88, 12, 0.35)',
+              boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)',
               transition: 'all 0.25s ease',
               '&:hover': {
                 background: 'linear-gradient(90deg, #EA580C 0%, #C2410C 100%)',
-                boxShadow: '0 8px 24px rgba(234, 88, 12, 0.45)',
+                boxShadow: '0 6px 18px rgba(234, 88, 12, 0.35)',
                 transform: 'translateY(-1px)',
               },
               '&.Mui-disabled': {
@@ -467,16 +523,15 @@ export default function AdminLoginForm() {
             {isLoading ? 'Logging in...' : 'Secure Login'}
           </Button>
 
-          {/* Go to Website Button */}
-          <Box sx={{ mt: 1.8 }}>
+          {/* Back to Website Button */}
+          <Box sx={{ mt: 1.3 }}>
             <Button
-              component={NextLink}
-              href="/"
+              onClick={handleBack}
               fullWidth
-              startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+              startIcon={<ArrowBackIcon sx={{ fontSize: 17 }} />}
               sx={{
-                py: 1.2,
-                borderRadius: '24px',
+                height: 44,
+                borderRadius: '12px',
                 border: '1.5px solid #F0E3D8',
                 bgcolor: '#FAF5F0',
                 color: '#334155',
@@ -492,7 +547,7 @@ export default function AdminLoginForm() {
                 },
               }}
             >
-              Go to Website
+              Back to Website
             </Button>
           </Box>
         </form>

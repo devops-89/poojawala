@@ -44,18 +44,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F8FAFC' }}>
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <Box 
-          onClick={() => setSidebarOpen(false)}
-          sx={{ position: 'fixed', inset: 0, bgcolor: 'rgba(0,0,0,0.5)', zIndex: 1200, display: { lg: 'none' } }}
-        />
-      )}
 
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
-        <Box component="main" sx={{ flex: 1, p: { xs: 2, sm: 3, lg: 4 } }}>
+        <Box component="main" sx={{ flex: 1, p: { xs: 2, sm: 2.5, md: 3, lg: 4 } }}>
           {children}
         </Box>
       </Box>

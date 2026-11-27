@@ -21,25 +21,29 @@ import AddIcon from "@mui/icons-material/Add";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {
   Alert,
   Autocomplete,
   Box,
-  CircularProgress,
   Button,
+  Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
   IconButton,
+  Paper,
   Tab,
   Tabs,
   TextField,
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import AdminTableActionMenu from "../common/AdminTableActionMenu";
 import React, { useEffect, useState } from "react";
 
@@ -62,6 +66,7 @@ import {
 } from "@/utils/paginationHelper";
 
 export default function AdminBookingsContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialPagination = getTablePaginationState("admin_bookings_state", {
     defaultStatus: "All Bookings",
@@ -348,9 +353,17 @@ export default function AdminBookingsContent() {
       width: "18%",
       minWidth: 160,
       render: (booking) => {
-        const customerName = booking.customer?.firstName
-          ? `${booking.customer.firstName} ${booking.customer.lastName || ""}`
-          : "Unknown";
+        const customerName =
+          booking.customer?.name ||
+          (booking.customer?.firstName
+            ? `${booking.customer.firstName} ${booking.customer.lastName || ""}`.trim()
+            : null) ||
+          (booking.user
+            ? `${booking.user.firstName || ""} ${booking.user.lastName || ""}`.trim()
+            : null) ||
+          booking.customerName ||
+          "Unknown";
+        const customerPhone = booking.customer?.phone || booking.user?.phone || booking.customerPhone || "-";
         return (
           <Box>
             <Typography
@@ -358,6 +371,7 @@ export default function AdminBookingsContent() {
                 fontWeight: 700,
                 color: "#1e293b",
                 fontFamily: FONTS.OUTFIT,
+                fontSize: "13.5px",
               }}
             >
               {customerName}
@@ -367,10 +381,10 @@ export default function AdminBookingsContent() {
               sx={{
                 color: "#64748b",
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "0.8rem",
+                fontSize: "12px",
               }}
             >
-              {booking.customer?.phone || "-"}
+              {customerPhone}
             </Typography>
           </Box>
         );
@@ -381,17 +395,25 @@ export default function AdminBookingsContent() {
       label: "SERVICE",
       width: "20%",
       minWidth: 180,
-      render: (booking) => (
-        <Typography
-          sx={{
-            color: "#1e293b",
-            fontFamily: FONTS.OUTFIT,
-            fontWeight: 500,
-          }}
-        >
-          {booking.service?.name || "-"}
-        </Typography>
-      ),
+      render: (booking) => {
+        const serviceName =
+          booking.service?.name ||
+          booking.serviceName ||
+          booking.title ||
+          "Pooja Service";
+        return (
+          <Typography
+            sx={{
+              color: "#1e293b",
+              fontFamily: FONTS.OUTFIT,
+              fontWeight: 600,
+              fontSize: "13.5px",
+            }}
+          >
+            {serviceName}
+          </Typography>
+        );
+      },
     },
     {
       id: "purohit",
@@ -399,9 +421,17 @@ export default function AdminBookingsContent() {
       width: "14%",
       minWidth: 130,
       render: (booking) => {
-        const technicianName = booking.purohit?.user?.firstName
-          ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`
-          : "Unassigned";
+        const technicianName =
+          (booking.purohit?.user?.firstName
+            ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`.trim()
+            : null) ||
+          (booking.purohit?.firstName
+            ? `${booking.purohit.firstName} ${booking.purohit.lastName || ""}`.trim()
+            : null) ||
+          booking.purohit?.name ||
+          "Unassigned";
+        const technicianPhone = booking.purohit?.user?.phone || booking.purohit?.phone || "-";
+
         if (technicianName === "Unassigned") {
           return (
             <Typography
@@ -409,7 +439,7 @@ export default function AdminBookingsContent() {
                 color: "#f59e0b",
                 fontStyle: "italic",
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "0.9rem",
+                fontSize: "13px",
               }}
             >
               Unassigned
@@ -423,6 +453,7 @@ export default function AdminBookingsContent() {
                 fontWeight: 600,
                 color: "#1e293b",
                 fontFamily: FONTS.OUTFIT,
+                fontSize: "13.5px",
               }}
             >
               {technicianName}
@@ -432,10 +463,10 @@ export default function AdminBookingsContent() {
               sx={{
                 color: "#64748b",
                 fontFamily: FONTS.OUTFIT,
-                fontSize: "0.8rem",
+                fontSize: "12px",
               }}
             >
-              {booking.purohit?.user?.phone || "-"}
+              {technicianPhone}
             </Typography>
           </Box>
         );
@@ -451,7 +482,7 @@ export default function AdminBookingsContent() {
           sx={{
             color: "#64748b",
             fontFamily: FONTS.OUTFIT,
-            fontSize: "0.9rem",
+            fontSize: "13px",
           }}
         >
           {booking.scheduledAt
@@ -473,9 +504,10 @@ export default function AdminBookingsContent() {
             fontWeight: 700,
             color: "#1e293b",
             fontFamily: FONTS.OUTFIT,
+            fontSize: "13.5px",
           }}
         >
-          {booking.finalAmount ? `₹${booking.finalAmount}` : "-"}
+          {booking.finalAmount ? `₹${Math.round(Number(booking.finalAmount)).toLocaleString("en-IN")}` : "-"}
         </Typography>
       ),
     },
@@ -488,6 +520,7 @@ export default function AdminBookingsContent() {
         booking.status === "PENDING" ? (
           <AdminStatusSelect
             value={booking.status}
+            size="small"
             options={[
               { value: "PENDING", label: "Pending" },
               { value: "CANCELLED", label: "Cancel Booking" },
@@ -497,7 +530,7 @@ export default function AdminBookingsContent() {
             }
           />
         ) : (
-          <AdminStatusSelect value={booking.status} readOnly />
+          <AdminStatusSelect value={booking.status} readOnly size="small" />
         ),
     },
     {
@@ -536,6 +569,169 @@ export default function AdminBookingsContent() {
     },
   ];
 
+  const renderMobileBookingCard = (booking: any) => {
+    const customerName =
+      booking.customer?.name ||
+      (booking.customer?.firstName
+        ? `${booking.customer.firstName} ${booking.customer.lastName || ""}`.trim()
+        : null) ||
+      (booking.user
+        ? `${booking.user.firstName || ""} ${booking.user.lastName || ""}`.trim()
+        : null) ||
+      booking.customerName ||
+      "Unknown";
+    const customerPhone = booking.customer?.phone || booking.user?.phone || booking.customerPhone || "-";
+
+    const technicianName =
+      (booking.purohit?.user?.firstName
+        ? `${booking.purohit.user.firstName} ${booking.purohit.user.lastName || ""}`.trim()
+        : null) ||
+      (booking.purohit?.firstName
+        ? `${booking.purohit.firstName} ${booking.purohit.lastName || ""}`.trim()
+        : null) ||
+      booking.purohit?.name ||
+      "Unassigned";
+    const technicianPhone = booking.purohit?.user?.phone || booking.purohit?.phone || "-";
+
+    const serviceName =
+      booking.service?.name ||
+      booking.serviceName ||
+      booking.title ||
+      "Pooja Service";
+
+    const canAssign =
+      technicianName === "Unassigned" && booking.status === "PENDING";
+
+    const isOnline =
+      booking.bookingMode === "ONLINE" ||
+      bookingMode === "ONLINE" ||
+      Boolean(booking.service?.isOnline);
+
+    return (
+      <Paper
+        key={booking.id}
+        elevation={0}
+        onClick={() => router.push(`/admin/bookings/${booking.id}`)}
+        sx={{
+          p: { xs: 1.8, sm: 2 },
+          borderRadius: "16px",
+          bgcolor: "#FFFFFF",
+          border: "1.5px solid #EFEAE3",
+          boxShadow: "0 2px 10px rgba(44, 24, 16, 0.03)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.2,
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          "&:active": { transform: "scale(0.99)", bgcolor: "#FAF8F5" },
+        }}
+      >
+        {/* Top Header: ID + Mode chip + Amount + Status */}
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: "14px", color: COLORS.PRIMARY }}>
+              B-{booking.id}
+            </Typography>
+            <Chip
+              label={isOnline ? "Online" : "Offline"}
+              size="small"
+              sx={{
+                height: 20,
+                fontSize: "10.5px",
+                fontWeight: 700,
+                fontFamily: FONTS.OUTFIT,
+                bgcolor: isOnline ? "#E0F2FE" : "#FFF7ED",
+                color: isOnline ? "#0284C7" : "#EA580C",
+                border: isOnline ? "1px solid #BAE6FD" : "1px solid #FFEDD5",
+              }}
+            />
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: "14px", color: "#0F172A" }}>
+              {booking.finalAmount ? `₹${Math.round(Number(booking.finalAmount)).toLocaleString("en-IN")}` : "-"}
+            </Typography>
+            <AdminStatusSelect value={booking.status} readOnly size="small" />
+          </Box>
+        </Box>
+
+        {/* Service Name */}
+        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: "15px", color: "#0F172A", lineHeight: 1.25 }}>
+          {serviceName}
+        </Typography>
+
+        {/* Customer & Purohit Section */}
+        <Box sx={{ bgcolor: "#FAF8F5", p: 1.2, borderRadius: "10px", border: "1px solid #F0ECE4", display: "flex", flexDirection: "column", gap: 0.6 }}>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "12px" }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "12px", color: "#64748B" }}>
+              Customer: <strong style={{ color: "#1E293B" }}>{customerName}</strong>
+            </Typography>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "11.5px", color: "#8C7A70" }}>
+              {customerPhone}
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "12px" }}>
+            <Typography sx={{ fontFamily: FONTS.PRIMARY, fontSize: "12px", color: "#64748B" }}>
+              Purohit:{" "}
+              <strong style={{ color: technicianName === "Unassigned" ? "#ED6C02" : "#1E293B", fontStyle: technicianName === "Unassigned" ? "italic" : "normal" }}>
+                {technicianName}
+              </strong>
+            </Typography>
+            {technicianName !== "Unassigned" ? (
+              <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "11.5px", color: "#8C7A70" }}>
+                {technicianPhone}
+              </Typography>
+            ) : canAssign ? (
+              <Button
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenAssignModal(booking.id);
+                }}
+                sx={{
+                  py: 0.2,
+                  px: 1,
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  textTransform: "none",
+                  bgcolor: "#FFF0E6",
+                  color: COLORS.PRIMARY,
+                  border: "1px solid #FFD4BC",
+                  borderRadius: "6px",
+                  minHeight: 22,
+                  "&:hover": { bgcolor: "#FFE4D0" },
+                }}
+              >
+                Assign Now
+              </Button>
+            ) : null}
+          </Box>
+        </Box>
+
+        {/* Footer: Date & Details action */}
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pt: 0.2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.6 }}>
+            <AccessTimeIcon sx={{ fontSize: 13, color: "#94A3B8" }} />
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "12px", color: "#64748B" }}>
+              {booking.scheduledAt
+                ? formatScheduledDateTime(booking.scheduledAt)
+                : booking.createdAt
+                ? new Date(booking.createdAt).toLocaleDateString()
+                : "-"}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}>
+            <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: "12px", fontWeight: 700, color: COLORS.PRIMARY }}>
+              View Details
+            </Typography>
+            <ArrowForwardIcon sx={{ fontSize: 14, color: COLORS.PRIMARY }} />
+          </Box>
+        </Box>
+      </Paper>
+    );
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <AdminPageHeader
@@ -556,16 +752,18 @@ export default function AdminBookingsContent() {
         <Tabs
           value={bookingMode}
           onChange={handleBookingModeChange}
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{
-            minHeight: "48px",
+            minHeight: "44px",
             "& .MuiTab-root": {
               fontFamily: FONTS.PRIMARY,
               fontWeight: 600,
-              fontSize: "15px",
+              fontSize: { xs: "13.5px", sm: "15px" },
               textTransform: "none",
               color: "#64748B",
-              minHeight: "48px",
-              px: 3,
+              minHeight: "44px",
+              px: { xs: 2, sm: 3 },
               "&.Mui-selected": {
                 color: COLORS.PRIMARY,
               },
@@ -600,6 +798,7 @@ export default function AdminBookingsContent() {
           setStatusFilter(tab);
           setPage(0);
         }}
+        renderMobileCard={renderMobileBookingCard}
         keyExtractor={(booking) => booking.id}
         getRowHref={(booking) => `/admin/bookings/${booking.id}`}
         emptyMessage={

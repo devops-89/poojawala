@@ -35,6 +35,7 @@ export interface AdminStatusSelectProps {
   options?: StatusOption[];
   onChange?: (newValue: string) => void;
   readOnly?: boolean;
+  size?: "small" | "medium";
   textTransform?: "uppercase" | "capitalize" | "none";
 }
 
@@ -77,6 +78,7 @@ export interface AdminDataTableProps<T = any> {
     event: React.MouseEvent<HTMLTableRowElement>,
   ) => void;
   getRowHref?: (item: T, index: number) => string | undefined;
+  renderMobileCard?: (item: T, index: number) => React.ReactNode;
   [key: string]: any;
 }
 

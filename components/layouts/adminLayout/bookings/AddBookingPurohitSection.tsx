@@ -38,7 +38,8 @@ export default function AddBookingPurohitSection({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            mb: 1,
+            fontSize: { xs: '12.5px', sm: '13px' },
+            mb: 0.5,
             color: '#1e293b',
           }}
         >
@@ -91,20 +92,27 @@ export default function AddBookingPurohitSection({
           renderInput={(params) => (
             <TextField
               {...params}
+              size="small"
               variant="outlined"
               placeholder={
                 !values.bookingMode ||
                 !values.customerId ||
                 !values.serviceId
-                  ? 'Select Customer, Mode & Service first'
-                  : 'Search purohit by name, email or phone'
+                  ? 'Select customer & service first'
+                  : 'Search purohit...'
               }
               error={touched.purohitId && Boolean(errors.purohitId)}
               helperText={
                 touched.purohitId ? (errors.purohitId as string) : undefined
               }
               sx={{
-                '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '10px',
+                  height: { xs: '40px', sm: '42px' },
+                  fontSize: { xs: '13px', sm: '13.5px' },
+                  fontFamily: FONTS.OUTFIT,
+                  '& input': { py: 0 },
+                },
               }}
             />
           )}
@@ -117,7 +125,8 @@ export default function AddBookingPurohitSection({
           sx={{
             fontFamily: FONTS.OUTFIT,
             fontWeight: 700,
-            mb: 1,
+            fontSize: { xs: '12.5px', sm: '13px' },
+            mb: 0.5,
             color: '#1e293b',
           }}
         >
@@ -125,6 +134,7 @@ export default function AddBookingPurohitSection({
         </Typography>
         <DateTimePicker
           value={values.bookingDate ? moment(values.bookingDate) : null}
+          format="DD/MM/YYYY hh:mm A"
           disablePast
           minDateTime={moment()}
           maxDateTime={moment().add(3, 'months').endOf('day')}
@@ -137,6 +147,7 @@ export default function AddBookingPurohitSection({
           }}
           slotProps={{
             textField: {
+              size: 'small',
               name: 'bookingDate',
               variant: 'outlined',
               error: touched.bookingDate && Boolean(errors.bookingDate),
@@ -145,7 +156,13 @@ export default function AddBookingPurohitSection({
                 : undefined,
               fullWidth: true,
               sx: {
-                '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '10px',
+                  height: { xs: '40px', sm: '42px' },
+                  fontSize: { xs: '13px', sm: '13.5px' },
+                  fontFamily: FONTS.OUTFIT,
+                  '& input': { py: 0 },
+                },
               },
             } as any,
           }}

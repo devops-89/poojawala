@@ -186,58 +186,72 @@ export default function DashboardContent() {
       {/* Profile Hero Card */}
       <Paper 
         sx={{ 
-          p: { xs: 2.5, sm: 3, md: 4 }, 
-          borderRadius: { xs: '18px', md: '24px' }, 
-          mb: { xs: 3, md: 4 }, 
+          p: { xs: 2, sm: 2.5, md: 4 }, 
+          borderRadius: { xs: '16px', md: '24px' }, 
+          mb: { xs: 2.25, md: 4 }, 
           background: 'linear-gradient(135deg, #FF6200 0%, #FF8A3D 100%)',
           color: 'white',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 10px 30px rgba(255, 98, 0, 0.2)'
+          boxShadow: '0 8px 24px rgba(255, 98, 0, 0.18)'
         }}
       >
-        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'space-between', gap: { xs: 2.5, md: 4 } }}>
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: { xs: 2, sm: 3 } }}>
+        <Box sx={{ 
+          position: 'relative', 
+          zIndex: 1, 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' }, 
+          alignItems: { xs: 'stretch', md: 'center' }, 
+          justifyContent: 'space-between', 
+          gap: { xs: 2, md: 4 } 
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            gap: { xs: 1.5, sm: 2.5 } 
+          }}>
             <Avatar 
               src={profile?.profileImage || profile?.avatar || undefined} 
               sx={{ 
-                width: { xs: 72, sm: 84, md: 100 }, 
-                height: { xs: 72, sm: 84, md: 100 }, 
-                border: '3px solid rgba(255,255,255,0.4)', 
+                width: { xs: 58, sm: 76, md: 96 }, 
+                height: { xs: 58, sm: 76, md: 96 }, 
+                border: '2.5px solid rgba(255,255,255,0.4)', 
                 bgcolor: 'rgba(255,255,255,0.2)',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+                flexShrink: 0
               }} 
             >
-              {!profile?.profileImage && !profile?.avatar && <PersonIcon sx={{ fontSize: { xs: 46, sm: 56, md: 70 }, color: 'white' }} />}
+              {!profile?.profileImage && !profile?.avatar && <PersonIcon sx={{ fontSize: { xs: 36, sm: 48, md: 66 }, color: 'white' }} />}
             </Avatar>
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
               {isProfileLoading && !profile?.firstName && !profile?.name ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Skeleton variant="rounded" width={220} height={32} sx={{ bgcolor: 'rgba(255,255,255,0.25)' }} />
-                  <Skeleton variant="rounded" width={140} height={18} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  <Skeleton variant="rounded" width="75%" height={26} sx={{ bgcolor: 'rgba(255,255,255,0.25)' }} />
+                  <Skeleton variant="rounded" width="45%" height={16} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
                 </Box>
               ) : (
                 <>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.25, flexWrap: 'wrap' }}>
-                    <Typography variant="h3" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '20px', sm: '26px', md: '30px' }, lineHeight: 1.2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: { xs: 0.25, sm: 0.75 }, flexWrap: 'wrap' }}>
+                    <Typography variant="h3" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '17px', sm: '22px', md: '28px' }, lineHeight: 1.2 }}>
                       Welcome, {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : (profile?.name || (isAstrologer ? 'Astrologer' : 'Partner'))}!
                     </Typography>
                     {(isApproved || profile?.status === 'APPROVED') && (
-                      <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: { xs: 22, md: 26 } }} />
+                      <VerifiedIcon sx={{ color: '#4CAF50', bgcolor: 'white', borderRadius: '50%', fontSize: { xs: 18, sm: 22, md: 24 } }} />
                     )}
                   </Box>
                   
-                  <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 3 }, flexWrap: 'wrap', opacity: 0.95 }}>
+                  <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2.5 }, flexWrap: 'wrap', opacity: 0.95 }}>
                     {profile?.email && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                        <EmailIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />
-                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: { xs: '12.5px', sm: '14px' }, fontWeight: 500 }}>{profile.email}</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <EmailIcon sx={{ fontSize: { xs: 13, sm: 16 } }} />
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: { xs: '11.5px', sm: '13px' }, fontWeight: 500 }} noWrap>{profile.email}</Typography>
                       </Box>
                     )}
                     {profile?.phone && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                        <PhoneIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />
-                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: { xs: '12.5px', sm: '14px' }, fontWeight: 500 }}>+91 {profile.phone}</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <PhoneIcon sx={{ fontSize: { xs: 13, sm: 16 } }} />
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: { xs: '11.5px', sm: '13px' }, fontWeight: 500 }}>+91 {profile.phone}</Typography>
                       </Box>
                     )}
                   </Box>
@@ -249,21 +263,21 @@ export default function DashboardContent() {
           <Button
             component={NextLink}
             href="/partner/profile"
-            startIcon={<PersonIcon />}
+            startIcon={<PersonIcon sx={{ fontSize: { xs: 17, sm: 20 } }} />}
             sx={{
-              alignSelf: { xs: 'stretch', sm: 'flex-start', md: 'center' },
+              alignSelf: { xs: 'stretch', md: 'center' },
               justifyContent: 'center',
               bgcolor: 'rgba(255,255,255,0.18)',
               backdropFilter: 'blur(8px)',
               border: '1px solid rgba(255,255,255,0.4)',
               color: 'white',
-              borderRadius: '12px',
+              borderRadius: '10px',
               textTransform: 'none',
               fontFamily: FONTS.OUTFIT,
               fontWeight: 700,
-              fontSize: { xs: '13px', sm: '14px' },
-              px: { xs: 2.5, md: 3 },
-              py: { xs: 0.85, md: 1.1 },
+              fontSize: { xs: '12.5px', sm: '13.5px' },
+              px: { xs: 2, md: 3 },
+              py: { xs: 0.75, md: 1 },
               flexShrink: 0,
               boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
               transition: 'all 0.2s ease',
@@ -609,42 +623,43 @@ export default function DashboardContent() {
       )}
 
       {/* Stats Cards: Responsive 2-column on mobile, 3-column on tablet/desktop */}
-      <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ mb: { xs: 3, md: 4 } }}>
+      <Grid container spacing={{ xs: 1.25, sm: 2, md: 3 }} sx={{ mb: { xs: 2.5, md: 4 } }}>
         {stats.map((stat, idx) => (
           <Grid size={{ xs: 6, sm: 6, md: 4 }} key={idx}>
             <NextLink href={stat.link} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
               <Paper 
                 elevation={0}
                 sx={{ 
-                  p: { xs: 1.75, sm: 2.25, md: 2.5 }, 
-                  borderRadius: { xs: '14px', sm: '16px' }, 
+                  p: { xs: 1.5, sm: 2, md: 2.5 }, 
+                  borderRadius: { xs: '12px', sm: '16px' }, 
                   display: 'flex', 
                   flexDirection: { xs: 'column', sm: 'row' }, 
                   alignItems: { xs: 'flex-start', sm: 'center' }, 
-                  gap: { xs: 1.25, sm: 2 }, 
+                  gap: { xs: 1, sm: 1.75 }, 
                   border: '1px solid #eee', 
-                  boxShadow: '0 4px 18px rgba(0,0,0,0.03)', 
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.02)', 
                   transition: 'all 0.2s ease', 
                   height: '100%',
-                  minHeight: { xs: 104, sm: 108 },
+                  minHeight: { xs: 96, sm: 108 },
                   bgcolor: '#ffffff',
                   position: 'relative',
                   overflow: 'hidden',
                   '&:hover': { 
-                    transform: 'translateY(-3px)', 
-                    boxShadow: '0 8px 24px rgba(255, 98, 0, 0.1)',
+                    transform: 'translateY(-2px)', 
+                    boxShadow: '0 8px 20px rgba(255, 98, 0, 0.08)',
                     borderColor: '#FFD8BE'
                   },
                   '&:active': {
-                    transform: 'scale(0.98)'
+                    transform: 'scale(0.97)',
+                    bgcolor: '#FFFDF9'
                   }
                 }}
               >
                 <Box 
                   sx={{ 
-                    width: { xs: 44, sm: 54, md: 60 }, 
-                    height: { xs: 44, sm: 54, md: 60 }, 
-                    borderRadius: { xs: '12px', sm: '50%' }, 
+                    width: { xs: 38, sm: 50, md: 56 }, 
+                    height: { xs: 38, sm: 50, md: 56 }, 
+                    borderRadius: { xs: '10px', sm: '50%' }, 
                     bgcolor: stat.color, 
                     display: 'flex', 
                     alignItems: 'center', 
@@ -654,7 +669,7 @@ export default function DashboardContent() {
                 >
                   {React.cloneElement(stat.icon, { 
                     sx: { 
-                      fontSize: { xs: 24, sm: 28, md: 34 }, 
+                      fontSize: { xs: 20, sm: 26, md: 32 }, 
                       color: (stat.icon.props as any)?.sx?.color || 'inherit' 
                     } 
                   })}
@@ -664,14 +679,19 @@ export default function DashboardContent() {
                     sx={{ 
                       fontFamily: FONTS.OUTFIT, 
                       color: '#666', 
-                      fontSize: { xs: '11px', sm: '12.5px' }, 
+                      fontSize: { xs: '10.5px', sm: '12px' }, 
                       fontWeight: 600,
-                      lineHeight: 1.2,
-                      mb: 0.5,
+                      lineHeight: 1.25,
+                      mb: 0.35,
                       textTransform: 'uppercase',
-                      letterSpacing: '0.4px'
+                      letterSpacing: '0.3px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      wordBreak: 'break-word',
+                      minHeight: { xs: '26px', sm: 'auto' }
                     }}
-                    noWrap
                   >
                     {stat.title}
                   </Typography>
@@ -679,14 +699,14 @@ export default function DashboardContent() {
                     sx={{ 
                       fontFamily: FONTS.OUTFIT, 
                       fontWeight: 800, 
-                      fontSize: { xs: '17px', sm: '22px', md: '26px' }, 
+                      fontSize: { xs: '16px', sm: '20px', md: '24px' }, 
                       color: '#1A1A1A',
                       lineHeight: 1.1
                     }}
                     noWrap
                   >
                     {isStatsLoading ? (
-                      <Skeleton variant="rounded" width={80} height={26} sx={{ borderRadius: '6px', mt: 0.5 }} />
+                      <Skeleton variant="rounded" width={65} height={22} sx={{ borderRadius: '6px', mt: 0.5 }} />
                     ) : (
                       stat.value
                     )}
@@ -708,42 +728,42 @@ export default function DashboardContent() {
       </Grid>
 
       {/* Active Bookings Section */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 1.5, sm: 2 } }}>
-        <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', fontSize: { xs: '18px', sm: '22px' } }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 1.25, sm: 2 } }}>
+        <Typography variant="h5" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 700, color: '#1A1A1A', fontSize: { xs: '16px', sm: '20px' } }}>
           Active Bookings
         </Typography>
         <Button 
           component={NextLink} 
           href={isAstrologer ? "/partner/astrologybookings" : "/partner/bookings"} 
-          sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700, fontFamily: FONTS.OUTFIT, fontSize: { xs: '13px', sm: '14px' }, px: 1 }}
+          sx={{ color: COLORS.PRIMARY, textTransform: 'none', fontWeight: 700, fontFamily: FONTS.OUTFIT, fontSize: { xs: '12px', sm: '13.5px' }, px: 0.5 }}
         >
           View All Bookings
         </Button>
       </Box>
 
       {isBookingsLoading ? (
-        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
+        <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
           {[1, 2].map((k) => (
             <Grid size={{ xs: 12, md: 6 }} key={k}>
-              <Paper sx={{ p: { xs: 2, sm: 2.5, md: 3 }, borderRadius: { xs: '14px', sm: '16px' }, border: '1px solid #eee' }}>
-                <Skeleton variant="text" width="60%" height={28} sx={{ mb: 1 }} />
-                <Skeleton variant="text" width="35%" height={20} sx={{ mb: 2 }} />
+              <Paper sx={{ p: { xs: 1.75, sm: 2.25, md: 3 }, borderRadius: { xs: '12px', sm: '16px' }, border: '1px solid #eee' }}>
+                <Skeleton variant="text" width="60%" height={26} sx={{ mb: 1 }} />
+                <Skeleton variant="text" width="35%" height={18} sx={{ mb: 1.5 }} />
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Skeleton variant="rounded" width={110} height={32} sx={{ borderRadius: '8px' }} />
-                  <Skeleton variant="rounded" width={110} height={32} sx={{ borderRadius: '8px' }} />
+                  <Skeleton variant="rounded" width={90} height={28} sx={{ borderRadius: '8px' }} />
+                  <Skeleton variant="rounded" width={90} height={28} sx={{ borderRadius: '8px' }} />
                 </Box>
               </Paper>
             </Grid>
           ))}
         </Grid>
       ) : activeBookings.length === 0 ? (
-        <Paper sx={{ p: { xs: 3, sm: 4 }, textAlign: 'center', borderRadius: { xs: '14px', sm: '16px' }, border: '1px dashed #ccc', bgcolor: '#fafafa' }}>
-          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: { xs: '13.5px', sm: '15px' } }}>
+        <Paper sx={{ p: { xs: 2.5, sm: 3.5 }, textAlign: 'center', borderRadius: { xs: '12px', sm: '16px' }, border: '1px dashed #ccc', bgcolor: '#fafafa' }}>
+          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#666', fontSize: { xs: '13px', sm: '14.5px' } }}>
             No active bookings at the moment.
           </Typography>
         </Paper>
       ) : (
-        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
+        <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
           {activeBookings.map((booking: any) => (
             <Grid size={{ xs: 12, md: 6 }} key={booking.id}>
               <Card 
@@ -751,52 +771,53 @@ export default function DashboardContent() {
                 sx={{ 
                   borderRadius: { xs: '14px', sm: '16px' }, 
                   border: '1px solid #eee', 
-                  boxShadow: '0 4px 18px rgba(0,0,0,0.03)', 
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.03)', 
                   cursor: 'pointer',
                   transition: 'all 0.25s ease',
                   '&:hover': { 
-                    boxShadow: '0 10px 28px rgba(255, 98, 0, 0.1)', 
+                    boxShadow: '0 8px 24px rgba(255, 98, 0, 0.08)', 
                     borderColor: '#FFD8BE',
                     transform: 'translateY(-2px)'
                   },
                   '&:active': {
-                    transform: 'scale(0.99)'
+                    transform: 'scale(0.98)',
+                    bgcolor: '#FFFDF9'
                   }
                 }}
               >
-                <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2, gap: 1 }}>
+                <CardContent sx={{ p: { xs: 1.75, sm: 2.25, md: 3 }, '&:last-child': { pb: { xs: 1.75, sm: 2.25, md: 3 } } }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1 }}>
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '16px', sm: '18px' }, color: '#1A1A1A', lineHeight: 1.25 }}>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, fontSize: { xs: '15px', sm: '17px' }, color: '#1A1A1A', lineHeight: 1.25 }}>
                         {booking.service?.name || 'Pooja Service'}
                       </Typography>
                       {booking.id && (
-                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '12px', color: '#888', fontWeight: 600, mt: 0.25 }}>
+                        <Typography sx={{ fontFamily: FONTS.OUTFIT, fontSize: '11.5px', color: '#888', fontWeight: 600, mt: 0.25 }}>
                           Booking #{booking.id}
                         </Typography>
                       )}
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-                      <Chip label={booking.status || 'ACCEPTED'} size="small" sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 700, fontSize: '11px', height: '24px', borderRadius: '6px' }} />
-                      <ChevronRightIcon sx={{ color: '#bbb', fontSize: 20 }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexShrink: 0 }}>
+                      <Chip label={booking.status || 'ACCEPTED'} size="small" sx={{ bgcolor: '#E8F5E9', color: '#2E7D32', fontWeight: 700, fontSize: '10.5px', height: '22px', borderRadius: '6px' }} />
+                      <ChevronRightIcon sx={{ color: '#bbb', fontSize: 18 }} />
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, mb: 2.5 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                      <Box sx={{ bgcolor: '#FFF0E6', p: 0.75, borderRadius: '8px', display: 'flex', flexShrink: 0 }}>
-                        <CalendarTodayIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ bgcolor: '#FFF0E6', p: 0.6, borderRadius: '6px', display: 'flex', flexShrink: 0 }}>
+                        <CalendarTodayIcon sx={{ fontSize: 15, color: COLORS.PRIMARY }} />
                       </Box>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: { xs: '13px', sm: '14px' }, fontWeight: 500 }}>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: { xs: '12.5px', sm: '13.5px' }, fontWeight: 500 }}>
                         {booking.scheduledAt ? formatScheduledDate(booking.scheduledAt) : 'N/A'}
                       </Typography>
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                      <Box sx={{ bgcolor: '#FFF0E6', p: 0.75, borderRadius: '8px', display: 'flex', flexShrink: 0 }}>
-                        <AccessTimeIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ bgcolor: '#FFF0E6', p: 0.6, borderRadius: '6px', display: 'flex', flexShrink: 0 }}>
+                        <AccessTimeIcon sx={{ fontSize: 15, color: COLORS.PRIMARY }} />
                       </Box>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: { xs: '13px', sm: '14px' }, fontWeight: 500 }}>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: { xs: '12.5px', sm: '13.5px' }, fontWeight: 500 }}>
                         {booking.scheduledAt ? formatScheduledTime(booking.scheduledAt) : 'N/A'}
                       </Typography>
                     </Box>
@@ -804,15 +825,15 @@ export default function DashboardContent() {
                     {(() => {
                       const isBookingOnline = (booking.bookingMode || booking.service?.bookingMode || "").toUpperCase() === "ONLINE";
                       return (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                          <Box sx={{ bgcolor: isBookingOnline ? '#EFF6FF' : '#FFF0E6', p: 0.75, borderRadius: '8px', display: 'flex', flexShrink: 0 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box sx={{ bgcolor: isBookingOnline ? '#EFF6FF' : '#FFF0E6', p: 0.6, borderRadius: '6px', display: 'flex', flexShrink: 0 }}>
                             {isBookingOnline ? (
-                              <VideocamIcon sx={{ fontSize: 16, color: '#0284C7' }} />
+                              <VideocamIcon sx={{ fontSize: 15, color: '#0284C7' }} />
                             ) : (
-                              <LocationOnIcon sx={{ fontSize: 16, color: COLORS.PRIMARY }} />
+                              <LocationOnIcon sx={{ fontSize: 15, color: COLORS.PRIMARY }} />
                             )}
                           </Box>
-                          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: { xs: '13px', sm: '14px' }, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#444', fontSize: { xs: '12.5px', sm: '13.5px' }, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {booking.customerAddress?.fullAddress || (isBookingOnline ? 'Online (Video Call)' : 'Address Pending')}
                           </Typography>
                         </Box>
@@ -820,16 +841,16 @@ export default function DashboardContent() {
                     })()}
                   </Box>
                   
-                  <Divider sx={{ mb: 2 }} />
+                  <Divider sx={{ mb: 1.5 }} />
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Payout</Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontSize: { xs: '16px', sm: '18px' }, fontWeight: 800 }}>₹{booking.purohitPayoutAmount || booking.agreedPrice || '0'}</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '10.5px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Payout</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontSize: { xs: '15px', sm: '17px' }, fontWeight: 800 }}>₹{booking.purohitPayoutAmount || booking.agreedPrice || '0'}</Typography>
                     </Box>
                     <Box sx={{ textAlign: 'right' }}>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Customer</Typography>
-                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontSize: { xs: '13px', sm: '14px' }, fontWeight: 600 }}>{booking.customer ? `${booking.customer.firstName} ${booking.customer.lastName || ''}`.trim() : 'Customer'}</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#999', fontSize: '10.5px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Customer</Typography>
+                      <Typography sx={{ fontFamily: FONTS.OUTFIT, color: '#1A1A1A', fontSize: { xs: '12.5px', sm: '13.5px' }, fontWeight: 600 }}>{booking.customer ? `${booking.customer.firstName} ${booking.customer.lastName || ''}`.trim() : 'Customer'}</Typography>
                     </Box>
                   </Box>
 

@@ -39,30 +39,46 @@ export default function AdminDashboardContent() {
 
   return (
     <Box sx={{ animation: 'fadeIn 0.5s ease-out' }}>
-      <Typography variant="h4" sx={{ fontFamily: FONTS.OUTFIT, fontWeight: 800, color: '#1A1A1A', mb: 1 }}>
-        Marketplace Overview
-      </Typography>
-      <Breadcrumbs 
-        separator={<NavigateNextIcon fontSize="small" sx={{ color: '#999' }}/>} 
-        aria-label="breadcrumb"
-        sx={{ mb: 4 }}
-      >
-        <NextLink href="/admin/dashboard" style={{ color: '#666', textDecoration: 'none', fontFamily: FONTS.OUTFIT, fontSize: '14px', fontWeight: 500 }}>
-          Control Centre
-        </NextLink>
-        <Typography sx={{ color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: '14px' }}>
-          Admin Dashboard
+      {/* Header & Breadcrumbs */}
+      <Box sx={{ mb: { xs: 2.5, sm: 3 } }}>
+        <Typography
+          variant="h4"
+          sx={{
+            fontFamily: FONTS.OUTFIT,
+            fontWeight: 800,
+            color: '#1A1A1A',
+            fontSize: { xs: '22px', sm: '26px', md: '30px' },
+            lineHeight: 1.2,
+            mb: 0.5,
+          }}
+        >
+          Marketplace Overview
         </Typography>
-      </Breadcrumbs>
 
+        <Breadcrumbs 
+          separator={<NavigateNextIcon fontSize="small" sx={{ color: '#999', fontSize: 16 }}/>} 
+          aria-label="breadcrumb"
+          sx={{ '& .MuiBreadcrumbs-li': { fontSize: '13px' } }}
+        >
+          <NextLink href="/admin/dashboard" style={{ color: '#666', textDecoration: 'none', fontFamily: FONTS.OUTFIT, fontSize: '13px', fontWeight: 500 }}>
+            Control Centre
+          </NextLink>
+          <Typography sx={{ color: COLORS.PRIMARY, fontFamily: FONTS.OUTFIT, fontWeight: 700, fontSize: '13px' }}>
+            Admin Dashboard
+          </Typography>
+        </Breadcrumbs>
+      </Box>
+
+      {/* KPI Stats Cards */}
       <KPICards stats={statsData} loading={loading} />
 
-      <Grid container spacing={4}>
-        <Grid size={{xs:12,lg:4}}>
-          <PendingPurohitsWidget />
-        </Grid>
-        <Grid size={{xs:12,lg:8}}>
+      {/* Widgets Grid */}
+      <Grid container spacing={{ xs: 2.5, sm: 3 }}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <AcceptedBookingsWidget />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <PendingPurohitsWidget />
         </Grid>
       </Grid>
     </Box>

@@ -3,11 +3,13 @@ import { FONTS } from "@/utils/fonts";
 import { COLORS } from "@/utils/enums";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import CloseIcon from "@mui/icons-material/Close";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import HelpIcon from "@mui/icons-material/Help";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import {
   Box,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -57,13 +59,14 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
         borderRight: "1px solid #e2e8f0",
       }}
     >
+      {/* Top Header */}
       <Box
         sx={{
-          height: "80px",
+          height: { xs: "68px", md: "80px" },
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
+          justifyContent: { xs: "space-between", md: "center" },
+          px: { xs: 2.5, md: 2 },
           borderBottom: "1px solid #e2e8f0",
         }}
       >
@@ -71,16 +74,31 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
           component="img"
           src="/images/1Poojalogo.webp"
           alt="1Pooja"
-          sx={{ height: { xs: "30px", md: "38px" }, objectFit: "contain" }}
+          sx={{ height: { xs: "32px", md: "38px" }, objectFit: "contain" }}
         />
+        <IconButton
+          onClick={() => setMobileOpen(false)}
+          sx={{
+            display: { xs: "flex", md: "none" },
+            color: "#64748b",
+            p: 0.75,
+            borderRadius: "8px",
+            bgcolor: "#f8fafc",
+            "&:hover": { bgcolor: "#f1f5f9", color: "#1e293b" },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 20 }} />
+        </IconButton>
       </Box>
 
+      {/* Navigation Links */}
       <List
         sx={{
           flex: 1,
           px: 2,
-          py: 3,
-          "& .MuiListItemButton-root": { mb: 0.5, borderRadius: "12px" },
+          py: 2.5,
+          overflowY: "auto",
+          "& .MuiListItemButton-root": { mb: 0.75, borderRadius: "12px" },
         }}
       >
         {menuItems.map((item: any) => {
@@ -97,12 +115,20 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
                 sx={{
                   backgroundColor: isActive ? "#FFF0E6" : "transparent",
                   color: isActive ? COLORS.PRIMARY : "#475569",
+                  py: 1.1,
+                  px: 2,
+                  transition: "all 0.15s ease",
                   "&:hover": {
                     backgroundColor: isActive ? "#FFF0E6" : "#FAFAFA",
                   },
                 }}
               >
-                <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>
+                <ListItemIcon
+                  sx={{
+                    color: isActive ? COLORS.PRIMARY : "inherit",
+                    minWidth: 40,
+                  }}
+                >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
@@ -111,7 +137,7 @@ export default function PortalSidebar({ setMobileOpen }: PortalSidebarProps) {
                     <Typography
                       sx={{
                         fontFamily: FONTS.OUTFIT,
-                        fontWeight: isActive ? 600 : 500,
+                        fontWeight: isActive ? 700 : 500,
                         fontSize: "0.95rem",
                       }}
                     >
